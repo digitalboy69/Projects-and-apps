@@ -1,0 +1,3016 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project manager new virtion</title>
+    <style></style>
+</head>
+<body>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project Manager</title>
+    <!-- Include JSZip for Webapp Packaging -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        /* --- SVG Icons --- */
+        .icon {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            stroke-width: 2;
+            stroke: currentColor;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vertical-align: middle;
+        }
+        .icon-small { width: 18px; height: 18px; }
+        .icon-large { width: 24px; height: 24px; }
+        
+        /* --- Theme Variables --- */
+        :root {
+            --system-font: -apple-system, BlinkMacMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+            /* Light Theme */
+            --bg-primary-light: #f0f0f7;
+            --bg-secondary-light: #ffffff;
+            --text-primary-light: #1c1c1e;
+            --text-secondary-light: #3c3c4399; /* Opacity 60% */
+            --text-tertiary-light: #3c3c434d; /* Opacity 30% */
+            --border-color-light: #d1d1d6;
+            --separator-color-light: rgba(60, 60, 67, 0.29);
+            --accent-color-light: #007AFF;
+            --accent-color-hover-light: #005ecb;
+            --button-secondary-bg-light: #e5e5ea;
+            --button-secondary-text-light: #007AFF;
+            --button-secondary-hover-bg-light: #dcdce0;
+            --header-bg-light: rgba(247, 247, 247, 0.85);
+            --modal-bg-light: rgba(252, 252, 252, 0.92);
+            --input-bg-light: #ffffff;
+            --input-border-light: #C6C6C8;
+            --danger-color-light: #FF3B30;
+            --danger-hover-light: #d92c23;
+            --textarea-bg-light: #f9f9f9;
+            --placeholder-color-light: #3c3c434d;
+            --success-color-light: #34C759;
+            --warning-color-light: #FF9500;
+
+
+            /* Dark Theme */
+            --bg-primary-dark: #000000;
+            --bg-secondary-dark: #1c1c1e;
+            --text-primary-dark: #ffffff;
+            --text-secondary-dark: #ebebf599;
+            --text-tertiary-dark: #ebebf54d;
+            --border-color-dark: #38383a;
+            --separator-color-dark: rgba(84, 84, 88, 0.65);
+            --accent-color-dark: #0A84FF;
+            --accent-color-hover-dark: #0060df;
+            --button-secondary-bg-dark: #2c2c2e;
+            --button-secondary-text-dark: #0A84FF;
+            --button-secondary-hover-bg-dark: #3a3a3c;
+            --header-bg-dark: rgba(28, 28, 30, 0.75);
+            --modal-bg-dark: rgba(38, 38, 40, 0.85);
+            --input-bg-dark: #2c2c2e;
+            --input-border-dark: #48484a;
+            --danger-color-dark: #FF453A;
+            --danger-hover-dark: #ff2d22;
+            --textarea-bg-dark: #151515;
+            --placeholder-color-dark: #ebebf54d;
+            --success-color-dark: #30D158;
+            --warning-color-dark: #FF9F0A;
+
+            /* Default to Light Theme */
+            --bg-primary: var(--bg-primary-light);
+            --bg-secondary: var(--bg-secondary-light);
+            --text-primary: var(--text-primary-light);
+            --text-secondary: var(--text-secondary-light);
+            --text-tertiary: var(--text-tertiary-light);
+            --border-color: var(--border-color-light);
+            --separator-color: var(--separator-color-light);
+            --accent-color: var(--accent-color-light);
+            --accent-color-hover: var(--accent-color-hover-light);
+            --button-secondary-bg: var(--button-secondary-bg-light);
+            --button-secondary-text: var(--button-secondary-text-light);
+            --button-secondary-hover-bg: var(--button-secondary-hover-bg-light);
+            --header-bg: var(--header-bg-light);
+            --modal-bg: var(--modal-bg-light);
+            --input-bg: var(--input-bg-light);
+            --input-border: var(--input-border-light);
+            --danger-color: var(--danger-color-light);
+            --danger-hover: var(--danger-hover-light);
+            --textarea-bg: var(--textarea-bg-light);
+            --placeholder-color: var(--placeholder-color-light);
+            --success-color: var(--success-color-light);
+            --warning-color: var(--warning-color-light);
+        }
+
+        body.dark-theme {
+            --bg-primary: var(--bg-primary-dark);
+            --bg-secondary: var(--bg-secondary-dark);
+            --text-primary: var(--text-primary-dark);
+            --text-secondary: var(--text-secondary-dark);
+            --text-tertiary: var(--text-tertiary-dark);
+            --border-color: var(--border-color-dark);
+            --separator-color: var(--separator-color-dark);
+            --accent-color: var(--accent-color-dark);
+            --accent-color-hover: var(--accent-color-hover-dark);
+            --button-secondary-bg: var(--button-secondary-bg-dark);
+            --button-secondary-text: var(--button-secondary-text-dark);
+            --button-secondary-hover-bg: var(--button-secondary-hover-bg-dark);
+            --header-bg: var(--header-bg-dark);
+            --modal-bg: var(--modal-bg-dark);
+            --input-bg: var(--input-bg-dark);
+            --input-border: var(--input-border-dark);
+            --danger-color: var(--danger-color-dark);
+            --danger-hover: var(--danger-hover-dark);
+            --textarea-bg: var(--textarea-bg-dark);
+            --placeholder-color: var(--placeholder-color-dark);
+            --success-color: var(--success-color-dark);
+            --warning-color: var(--warning-color-dark);
+        }
+
+        /* Base styles */
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { margin: 0; font-family: var(--system-font); background: var(--bg-primary); color: var(--text-primary); display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s ease, color 0.3s ease; }
+        
+        /* --- Header & Navigation --- */
+        header { 
+            background: var(--header-bg); 
+            backdrop-filter: blur(25px) saturate(180%); 
+            -webkit-backdrop-filter: blur(25px) saturate(180%); 
+            padding: 10px 20px; 
+            border-bottom: 0.5px solid var(--separator-color); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            transition: background-color 0.3s ease, border-color 0.3s ease; 
+        }
+        header h1 { margin: 0; font-size: 17px; font-weight: 600; }
+        .header-controls { display: flex; align-items: center; gap: 10px; }
+        .header-buttons { display: flex; gap: 10px; }
+
+        /* --- Buttons (Enhanced Professional Look) --- */
+        button { 
+            background: var(--accent-color); 
+            color: white; 
+            border: none; 
+            padding: 8px 16px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 15px; 
+            font-weight: 600; /* Slightly bolder font */
+            transition: background-color 0.2s ease-out, transform 0.1s ease-out, color 0.2s ease-out, box-shadow 0.2s ease; 
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 6px rgba(0, 122, 255, 0.1); /* Subtle shadow */
+        }
+        button:hover { 
+            background: var(--accent-color-hover); 
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+        button:active { transform: scale(0.97); }
+        button:disabled {
+            background-color: var(--button-secondary-bg);
+            color: var(--text-tertiary);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        button.secondary { 
+            background: var(--button-secondary-bg); 
+            color: var(--button-secondary-text); 
+            box-shadow: none;
+            font-weight: 500;
+        }
+        button.secondary:hover { 
+            background: var(--button-secondary-hover-bg); 
+            color: var(--button-secondary-text);
+            box-shadow: none;
+        }
+        button.danger { 
+            background-color: var(--danger-color); 
+            color: white; 
+            box-shadow: 0 4px 6px rgba(255, 59, 48, 0.1);
+        }
+        button.danger:hover { 
+            background-color: var(--danger-hover); 
+            box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+        }
+        
+        #themeToggleBtn, #themeToggleBtnEditor, #moreActionsBtn, #shortcutsBtn { 
+            background: var(--button-secondary-bg);
+            color: var(--text-primary); 
+            padding: 8px; 
+            width: 40px; 
+            height: 40px; 
+            justify-content: center;
+        }
+        #themeToggleBtn:hover, #themeToggleBtnEditor:hover, #moreActionsBtn:hover, #shortcutsBtn:hover { 
+            background-color: var(--button-secondary-hover-bg); 
+            box-shadow: none;
+        }
+        
+        .theme-icon-dark { display: none; }
+        body.dark-theme .theme-icon-light, #themeToggleBtnEditor.dark-theme-active .theme-icon-light { display: none; }
+        body.dark-theme .theme-icon-dark, #themeToggleBtnEditor.dark-theme-active .theme-icon-dark { display: inline; }
+
+
+        /* --- Main Content & Project Cards --- */
+        #mainPageContent {
+            flex: 1;
+            padding: 1.5rem 2rem; 
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            display: block; 
+        }
+
+        #projectCardsGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem; 
+            align-content: start;
+        }
+
+        .project-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem; 
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05); 
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease, background-color 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-height: 150px;
+        }
+        body.dark-theme .project-card {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px); 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        body.dark-theme .project-card:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .project-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .project-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            flex-grow: 1;
+        }
+
+        .project-card-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .no-projects-message {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            padding: 5rem;
+            width: 100%; 
+            grid-column: 1 / -1; 
+        }
+
+        /* --- Editor Styles --- */
+        .editor-pane, .preview-pane { 
+            flex: 1 1 400px; 
+            background: var(--bg-secondary); 
+            border-radius: 12px; 
+            padding: 1rem; 
+            display: flex; 
+            flex-direction: column; 
+            min-width: 300px; 
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05); 
+            transition: background-color 0.3s ease, box-shadow 0.3s ease; 
+        }
+        .editor-group { flex: 1; display: flex; flex-direction: column; margin-bottom: 1rem; position: relative; }
+        .editor-group:last-child { margin-bottom: 0; }
+        .editor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .editor-actions { display: flex; gap: 0.5rem; }
+        .editor-actions button { padding: 5px 10px; font-size: 13px; font-weight: 500; }
+        label { font-weight: 600; font-size: 16px; color: var(--text-primary); transition: color 0.3s ease; }
+        textarea { 
+            flex: 1; 
+            font-family: "SF Mono", "Menlo", "Monaco", monospace; 
+            font-size: 0.9rem; 
+            padding: 0.8rem; 
+            border-radius: 6px; 
+            border: 1px solid var(--border-color); 
+            resize: vertical; 
+            min-height: 100px; 
+            background-color: var(--textarea-bg); 
+            color: var(--text-primary); 
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; 
+            line-height: 1.4;
+        }
+        textarea::placeholder { color: var(--placeholder-color); }
+        .preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; font-weight: 600; font-size: 16px; color: var(--text-primary); transition: color 0.3s ease; }
+        iframe { flex: 1; border: 1px solid var(--border-color); border-radius: 6px; min-height: 300px; background: #fff; transition: border-color 0.3s ease; }
+        
+        /* Fullscreen editor styles */
+        .fullscreen-editor { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-primary); z-index: 1000; padding: 0; display: none; flex-direction: column; opacity: 0; transform: translateY(30px); transition: opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), background-color 0.3s ease; }
+        .fullscreen-editor.visible { opacity: 1; transform: translateY(0); display: flex; }
+        .fullscreen-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: var(--header-bg); backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%); border-bottom: 0.5px solid var(--separator-color); transition: background-color 0.3s ease, border-color 0.3s ease; position: relative;}
+        
+        /* Dropdown Menu */
+        .menu-dropdown {
+            position: absolute;
+            top: 55px; 
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1010;
+            padding: 5px;
+            display: none;
+            flex-direction: column;
+            min-width: 180px;
+        }
+        .menu-dropdown.visible {
+            display: flex;
+        }
+        .menu-dropdown button {
+            background: none;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 400;
+            transition: background-color 0.2s;
+            justify-content: flex-start;
+        }
+        .menu-dropdown button:hover {
+            background: var(--button-secondary-hover-bg);
+        }
+
+
+        .feature-bar {
+            padding: 0.75rem 1rem; 
+            background: var(--bg-secondary);
+            border-bottom: 0.5px solid var(--separator-color);
+            flex-shrink: 0;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .find-replace-bar, .jump-to-line-container { 
+            display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; 
+            padding: 0;
+        }
+        .find-replace-bar:last-child { margin-bottom: 0; }
+        
+        .find-replace-input, .jump-to-line-input { 
+            flex-grow: 1; padding: 8px 10px; border-radius: 6px; 
+            border: 1px solid var(--input-border); background-color: var(--input-bg); 
+            color: var(--text-primary); font-size: 14px; 
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; 
+        }
+        .find-replace-input:focus, .jump-to-line-input:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-color) 20%, transparent); }
+        .find-replace-btn, .jump-to-line-btn { padding: 8px 10px; font-size: 14px; }
+        .find-matches-count { font-size: 13px; color: var(--text-secondary); padding: 0 0.5rem; min-width: 40px; text-align: right; }
+        .find-options { display: flex; gap: 1rem; font-size: 13px; color: var(--text-secondary); padding-top: 0.25rem; }
+        .find-options label { font-size: 13px; font-weight: normal; color: var(--text-secondary); }
+        .find-options input[type="checkbox"] { vertical-align: middle; margin-right: 4px; accent-color: var(--accent-color); }
+        
+        .fullscreen-content { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 1rem; /* Padding for the main editor wrapper */
+            overflow: hidden; 
+        }
+        .fullscreen-textarea { flex: 1; width: 100%; font-family: "SF Mono", "Menlo", "Monaco", monospace; font-size: 1rem; padding: 1rem; border: none; border-radius: 0; resize: none; background-color: var(--textarea-bg); color: var(--text-primary); transition: background-color 0.3s ease, color 0.3s ease; line-height: 1.4; }
+        .fullscreen-textarea::placeholder { color: var(--placeholder-color); }
+        
+        /* Line Number Styling */
+        .code-editor-container {
+            flex: 1;
+            display: flex;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--textarea-bg);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            overflow: hidden; 
+        }
+
+        .line-numbers {
+            min-width: 40px; 
+            max-width: 60px;
+            padding: 1rem 0.5rem;
+            font-family: "SF Mono", "Menlo", "Monaco", monospace;
+            font-size: 1rem;
+            line-height: 1.4; 
+            text-align: right;
+            color: var(--text-tertiary);
+            background-color: var(--textarea-bg);
+            border-right: 1px solid var(--border-color);
+            overflow: hidden; 
+            user-select: none; 
+            flex-shrink: 0;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* --- Modal Styles --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000; opacity: 0; transition: opacity 0.25s ease-out; }
+        .modal.visible { display: flex; opacity: 1; }
+        .modal-content { 
+            background: var(--modal-bg); 
+            backdrop-filter: blur(30px) saturate(200%); 
+            -webkit-backdrop-filter: blur(30px) saturate(200%); 
+            padding: 1.5rem; 
+            border-radius: 14px; 
+            width: 90%; 
+            max-width: 500px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+            transform: scale(0.95) translateY(10px); 
+            opacity: 0; 
+            transition: transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), background-color 0.3s ease; 
+        }
+        .modal.visible .modal-content { transform: scale(1) translateY(0); opacity: 1; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; padding-bottom: 0.8rem; border-bottom: 0.5px solid var(--separator-color); }
+        .modal-title { margin: 0; font-size: 17px; font-weight: 600; }
+        .close-modal { 
+            background: none; border: none; font-size: 22px; font-weight: 400; line-height: 1; cursor: pointer; color: var(--text-tertiary); 
+            padding: 5px; border-radius: 50%; 
+            transition: color 0.2s ease, background-color 0.2s ease; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .close-modal:hover { color: var(--text-secondary); background-color: var(--button-secondary-bg); }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+        .form-group input[type="text"], .form-group select, .form-group input[type="number"], .form-group textarea, .form-group input[type="url"], .form-group input[type="password"] { 
+            width: 100%; padding: 10px 12px; border: 0.5px solid var(--input-border); border-radius: 6px; 
+            background-color: var(--input-bg); color: var(--text-primary); font-size: 15px; 
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; 
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
+            outline: none; border-color: var(--accent-color); 
+            box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-color) 20%, transparent); 
+        }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; }
+        
+        /* Guide Box Styles (for Telegram, GitHub, etc.) */
+        .guide-box {
+            background: var(--bg-primary);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+        .guide-box h4 { 
+            font-size: 16px; 
+            margin-top: 0; 
+            margin-bottom: 0.5rem; 
+            font-weight: 600;
+        }
+        .guide-box ol, .guide-box ul { margin: 0.5rem 0 1rem 1rem; padding-left: 10px; }
+        .guide-box code {
+            display: inline-block;
+            background: var(--button-secondary-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "SF Mono", monospace;
+            font-size: 0.85rem;
+        }
+        .guide-box .warning {
+            color: var(--warning-color);
+            font-weight: 600;
+        }
+
+        /* Keyboard Shortcut Guide Style */
+        .shortcut-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+        .shortcut-table th, .shortcut-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--separator-color);
+            text-align: left;
+        }
+        .shortcut-table th {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .shortcut-table td:last-child {
+            font-family: "SF Mono", monospace;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        /* GitHub Sync Modal Styles */
+        .sync-container {
+            max-height: 40vh;
+            overflow-y: auto;
+            padding-right: 10px; /* for scrollbar */
+        }
+        .sync-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sync-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+        }
+        .sync-project-name {
+            font-weight: 500;
+            font-size: 15px;
+        }
+        .sync-project-status {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .sync-project-status.newer { color: var(--success-color); }
+        .sync-project-status.older { color: var(--warning-color); }
+        .sync-list-item button {
+            padding: 5px 12px;
+            font-size: 13px;
+        }
+        .sync-section-header {
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        #githubSyncStatus {
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-secondary);
+        }
+        .sync-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+        /* --- Floating Credits Banner --- */
+        .floating-credits {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+            background: var(--accent-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            opacity: 0.9;
+            transition: opacity 0.3s ease, background-color 0.3s ease;
+            cursor: default;
+        }
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 768px) {
+            #mainPageContent { padding: 1rem 0.75rem; }
+            #projectCardsGrid { grid-template-columns: 1fr; gap: 1rem; }
+            .project-card { padding: 1rem; }
+            
+            header { padding: 8px 15px; flex-wrap: wrap; row-gap: 8px;}
+            header h1 { display: none; }
+            .header-controls { flex-wrap: wrap; justify-content: flex-end; width: 100%;}
+            .header-controls button { padding: 8px 10px; font-size: 13px; }
+            
+            #editorModal main { flex-direction: column; padding: 0.75rem; gap: 0.75rem; }
+            .editor-pane, .preview-pane { padding: 0.75rem; }
+            textarea { min-height: 80px; }
+            
+            .fullscreen-header .header-buttons { flex-wrap: wrap; justify-content: flex-end; }
+            .feature-bar { padding: 0.75rem; }
+            .find-replace-bar { flex-wrap: wrap; }
+            .find-replace-bar button { flex-grow: 1; }
+            
+            .modal-content { max-width: 95%; }
+            .floating-credits {
+                bottom: 10px; right: 10px; font-size: 12px; padding: 8px 12px;
+            }
+
+            /* Hide shortcut guide icon on mobile */
+            #shortcutsBtn { display: none !important; }
+        }
+    </style>
+<style id="sb_dark_style">img{-webkit-filter:brightness(70%);}</style><style id="sb_cln_style">ins[class*="adsbygoogle"],ins[class*="adsbyadop"],[id*="div-gpt-ad"],amp-ad{display:none !important;}</style>
+</head>
+<body class="dark-theme">
+
+    <header id="mainHeader" style="display: flex;">
+        <h1>Project Manager</h1>
+        <div class="header-controls">
+            <button id="githubSyncBtn" class="secondary" title="Sync with GitHub">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/></svg>
+                Sync with GitHub
+            </button>
+            <button id="setupTelegramBtn" class="secondary" title="Configure Telegram Export">
+                 <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M22 10c0 5.5-4.5 10-10 10s-10-4.5-10-10 4.5-10 10-10 10 4.5 10 10zm-3.5-3.5-7.6 5.8-3.4-2.6-1.5 1.1 5.4 4.1 9.6-7.3-1.5-1.6z"></path></svg> 
+                 Telegram Setup
+            </button>
+            <button id="makeWebappBtn" title="Create a downloadable Webapp (PWA) from a saved project">
+                 <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M12 21.5V11.5M12 3.5V6.5M10 5.5H14M4 11.5H7M17 11.5H20M5 18.5H19C20.1 18.5 21 17.6 21 16.5V7.5C21 6.4 20.1 5.5 19 5.5H5C3.9 5.5 3 6.4 3 7.5V16.5C3 17.6 3.9 18.5 5 18.5Z"/></svg>
+                 Make Webapp
+            </button>
+            <button id="exportAllTelegramBtn" class="secondary" title="Export All Projects to Telegram">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export All
+            </button>
+            <button id="importProjectsBtn" class="secondary">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Import
+            </button>
+            <button id="exportProjectsBtn" class="secondary">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export
+            </button>
+            <button id="shortcutsBtn" class="secondary" aria-label="Keyboard Shortcuts">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M3 15v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/><path d="M21 10V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v5"/><path d="M10 7h4"/><path d="M12 21v-7"/></svg>
+            </button>
+            <button id="themeToggleBtn" aria-label="Toggle theme">
+                <svg class="icon icon-small theme-icon-light" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+                <svg class="icon icon-small theme-icon-dark" viewBox="0 0 24 24"><path d="M12 3a6.36 6.36 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+            </button>
+            <button id="addProjectBtn">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                Add Project
+            </button>
+        </div>
+    </header>
+
+    <main id="mainPageContent" style="display: block;">
+        <div id="projectCardsGrid"></div>
+        <p class="no-projects-message" id="noProjectsMessage" style="display: block;">
+            <svg class="icon icon-large" viewBox="0 0 24 24" style="margin-bottom: 10px;"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><path d="M12 8v8"></path><path d="M8 12h8"></path></svg><br>
+            No projects found. Click "Add Project" to start combining HTML, CSS, and JS!
+        </p>
+    </main>
+
+    <!-- Fullscreen Editor Modal (initially hidden) -->
+    <div id="editorModal" class="fullscreen-editor" style="display: none;">
+        <!-- Content dynamically injected/controlled by JS -->
+    </div>
+
+    <!-- Floating Credits Banner -->
+    <div class="floating-credits">
+        Made By Madhu Yadav
+    </div>
+
+    <!-- Hidden global file inputs for uploads and imports -->
+    <input type="file" id="fileUploader" style="display: none;">
+    <input type="file" id="jsonFileUploader" accept=".json" style="display: none;">
+    <input type="file" id="iconFileUploader" accept="image/png, image/svg+xml, image/webp" style="display: none;">
+
+
+    <!-- --- GLOBAL MODALS --- -->
+
+    <!-- GitHub Setup Modal -->
+    <div class="modal" id="githubSetupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">GitHub Sync Setup</h3>
+                <button class="close-modal" data-modal-id="githubSetupModal" aria-label="Close modal">
+                    <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="form-group">
+                <label for="githubTokenInput">Personal Access Token (PAT)</label>
+                <input type="password" id="githubTokenInput" placeholder="ghp_...">
+            </div>
+            <div class="form-group">
+                <label for="githubUsernameInput">GitHub Username</label>
+                <input type="text" id="githubUsernameInput" placeholder="e.g., octocat">
+            </div>
+            <div class="form-group">
+                <label for="githubRepoInput">Repository Name</label>
+                <input type="text" id="githubRepoInput" placeholder="e.g., my-projects-repo">
+            </div>
+
+            <div class="guide-box">
+                <h4>How to Get a Personal Access Token:</h4>
+                <ol>
+                    <li>Go to your <a href="https://github.com/settings/tokens" target="_blank">GitHub Developer Settings</a>.</li>
+                    <li>Click "Generate new token" and select "Generate new token (classic)".</li>
+                    <li>Give it a name (e.g., "ProjectManagerApp") and set an expiration date.</li>
+                    <li>
+                        Under "Select scopes," check the <code>repo</code> box. This grants full control of public and private repositories.
+                    </li>
+                    <li>Click "Generate token" and copy the token immediately. <strong class="warning">You will not see it again.</strong></li>
+                </ol>
+                <p><strong class="warning">Security Note:</strong> Your token is stored in your browser's local storage. This is convenient but less secure than server-side authentication. Use a token with limited permissions and a short expiration date.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="secondary" id="cancelGithubSetup">Cancel</button>
+                <button id="saveGithubSetup">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GitHub Sync Modal -->
+    <div class="modal" id="githubSyncModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Sync with GitHub</h3>
+                <button class="close-modal" data-modal-id="githubSyncModal" aria-label="Close modal">
+                    <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div id="githubSyncContent">
+                <!-- This content is dynamically generated by JS -->
+            </div>
+            <div id="githubSyncStatus">
+                Click Refresh to compare local and remote projects.
+            </div>
+
+            <div class="modal-actions sync-actions">
+                <div>
+                    <button id="openGithubSetupBtn" class="secondary" title="Edit GitHub Configuration">
+                         <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                        Settings
+                    </button>
+                </div>
+                <div>
+                     <button class="secondary" id="cancelSync">Close</button>
+                     <button id="refreshSyncBtn">
+                        <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+                        Refresh
+                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Telegram Setup Modal -->
+    <div class="modal" id="telegramSetupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Telegram Export Setup</h3>
+                <button class="close-modal" data-modal-id="telegramSetupModal" aria-label="Close modal">
+                    <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="form-group">
+                <label for="botTokenInput">Telegram Bot Token</label>
+                <input type="text" id="botTokenInput" placeholder="e.g., 123456789:AABBCC-DDeeffgGgHHhIJJJkkLLMmNnOoP">
+            </div>
+            <div class="form-group">
+                <label for="chatIdInput">Telegram Chat ID</label>
+                <input type="text" id="chatIdInput" placeholder="e.g., -123456789 or @username">
+            </div>
+
+            <div class="guide-box">
+                <h4>How to Get Your IDs:</h4>
+                <ol>
+                    <li>
+                        <strong>Bot Token:</strong> Find the BotFather bot on Telegram and send <code>/newbot</code>. Follow the instructions. Your token will be provided after setup.
+                    </li>
+                    <li>
+                        <strong>Chat ID:</strong>
+                        <ul>
+                            <li>For a Private Chat: Start a chat with <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a> and send <code>/start</code>. It will reply with your ID.</li>
+                            <li>For a Channel/Group: Add <a href="https://t.me/getidsbot" target="_blank">@getidsbot</a> to your group/channel. Send <code>/getid</code> in the chat to retrieve the ID (it will start with a hyphen, e.g., <code>-123456789</code>).</li>
+                        </ul>
+                    </li>
+                </ol>
+                <p><strong>Note:</strong> We save this data locally in your browser for export functionality.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="secondary" id="cancelTelegramSetup">Cancel</button>
+                <button id="saveTelegramSetup">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Export Single Project Modal (Needed in both scopes, but defined globally) -->
+    <div class="modal" id="exportSingleTelegramModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Export Current Project to Telegram</h3>
+                <button class="close-modal" data-modal-id="exportSingleTelegramModal" aria-label="Close modal">
+                    <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="form-group">
+                <label for="codePartSelect">Select Code Part to Send</label>
+                <select id="codePartSelect">
+                    <option value="html">HTML (Text)</option>
+                    <option value="css">CSS (Text)</option>
+                    <option value="js">JavaScript (Text)</option>
+                    <option value="combined" selected>Combined (HTML File)</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="secondary" id="cancelSingleExport">Cancel</button>
+                <button id="confirmSingleExport">Send to Telegram</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Make Webapp Modal -->
+    <div class="modal" id="makeWebappModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Web App (PWA)</h3>
+                <button class="close-modal" data-modal-id="makeWebappModal" aria-label="Close modal">
+                    <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="form-group">
+                <label for="webappProjectSelect">Select Saved Project</label>
+                <select id="webappProjectSelect">
+                    <option value="">-- Select a project --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="webappAppName">Application Name (e.g., My Awesome App)</label>
+                <input type="text" id="webappAppName" placeholder="Required for Manifest">
+            </div>
+            <div class="form-group">
+                <label for="webappPackageName">Start URL (e.g., /index.html)</label>
+                <input type="text" id="webappPackageName" value="/" placeholder="Usually / or /index.html">
+            </div>
+             <div class="form-group">
+                <label for="webappIconUpload">App Icon (PNG/SVG/WebP - 512x512 recommended)</label>
+                <button id="webappIconUploadBtn" class="secondary" style="margin-top: 5px;">
+                    <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Upload Icon
+                </button>
+                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px;" id="webappIconStatus">No icon selected. Will use default.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="secondary" id="cancelWebapp">Cancel</button>
+                <button id="confirmWebapp">Build and Download ZIP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Modal (Desktop only) -->
+    <div class="modal" id="shortcutsModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Keyboard Shortcuts Guide (Desktop Only)</h3>
+                <button class="close-modal" data-modal-id="shortcutsModal" aria-label="Close modal">
+                    <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <p style="color: var(--text-secondary);">Shortcuts are active when the main editor window is open. <br><code>Cmd</code> is used on macOS, <code>Ctrl</code> on Windows/Linux.</p>
+            
+            <table class="shortcut-table">
+                <thead>
+                    <tr><th>Action</th><th>Shortcut</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Save Current Project</td><td>Cmd/Ctrl + S</td></tr>
+                    <tr><td>Load Project List</td><td>Cmd/Ctrl + O</td></tr>
+                    <tr><td>Go Back to Projects (Editor Close)</td><td>Cmd/Ctrl + Q</td></tr>
+                    <tr><td>Open Preview in New Tab</td><td>Cmd/Ctrl + Enter</td></tr>
+                    <tr><td colspan="2" style="font-weight: 700; color: var(--text-primary); padding-top: 15px;">In Fullscreen Editor Mode:</td></tr>
+                    <tr><td>Find / Replace</td><td>Cmd/Ctrl + F</td></tr>
+                    <tr><td>Go to Line</td><td>Cmd/Ctrl + G</td></tr>
+                    <tr><td>Undo</td><td>Cmd/Ctrl + Z</td></tr>
+                    <tr><td>Redo</td><td>Cmd/Ctrl + Y (or Shift+Z)</td></tr>
+                    <tr><td>Exit Fullscreen / Close Modal</td><td>Esc</td></tr>
+                </tbody>
+            </table>
+
+            <div class="modal-actions">
+                <button class="secondary" id="okShortcuts">Got It</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Store editor's HTML body content as a string for dynamic injection
+        const editorContentHTML = `
+  <header>
+    <h1>New Project</h1>
+    <div class="header-controls">
+        <button id="backToProjectsBtn" class="secondary">
+            <svg class="icon icon-small" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+            Back to Projects (Q)
+        </button>
+        <button id="themeToggleBtnEditor" aria-label="Toggle theme">
+            <svg class="icon icon-small theme-icon-light" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <svg class="icon icon-small theme-icon-dark" viewBox="0 0 24 24"><path d="M12 3a6.36 6.36 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+        <div class="header-buttons">
+          <button id="saveBtn">
+            <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+            Save (S)
+          </button>
+          <button id="loadBtn">
+            <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            Load (O)
+          </button>
+          <button id="exportSingleTelegramBtn" class="secondary" title="Export current code block to Telegram">
+            <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export to Telegram
+          </button>
+          <button id="openInNewBtn">
+            <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Open Preview (Enter)
+          </button>
+        </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="editor-pane">
+      <div class="editor-group" id="htmlGroup">
+        <div class="editor-header">
+          <label for="htmlCode">HTML</label>
+          <div class="editor-actions">
+            <button class="secondary upload-btn" data-target="htmlCode" data-accept=".html,text/html">Upload</button>
+            <button class="secondary paste-btn" data-target="htmlCode">Paste</button>
+            <button class="secondary expand-btn" data-target="htmlCode">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            </button>
+          </div>
+        </div>
+        <textarea id="htmlCode" placeholder="Enter HTML code here..." spellcheck="false"></textarea>
+      </div>
+      <div class="editor-group" id="cssGroup">
+        <div class="editor-header">
+          <label for="cssCode">CSS</label>
+          <div class="editor-actions">
+            <button class="secondary upload-btn" data-target="cssCode" data-accept=".css,text/css">Upload</button>
+            <button class="secondary paste-btn" data-target="cssCode">Paste</button>
+            <button class="secondary expand-btn" data-target="cssCode">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            </button>
+          </div>
+        </div>
+        <textarea id="cssCode" placeholder="Enter CSS code here..." spellcheck="false"></textarea>
+      </div>
+      <div class="editor-group" id="jsGroup">
+        <div class="editor-header">
+          <label for="jsCode">JavaScript</label>
+          <div class="editor-actions">
+            <button class="secondary upload-btn" data-target="jsCode" data-accept=".js,text/javascript,application/javascript">Upload</button>
+            <button class="secondary paste-btn" data-target="jsCode">Paste</button>
+            <button class="secondary expand-btn" data-target="jsCode">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            </button>
+          </div>
+        </div>
+        <textarea id="jsCode" placeholder="Enter JavaScript code here..." spellcheck="false"></textarea>
+      </div>
+    </div>
+
+    <div class="preview-pane">
+      <div class="preview-header">
+        <span>Live Preview</span>
+        <button id="downloadBtn">
+            <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download
+        </button>
+      </div>
+      <iframe id="preview" sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+  </main>
+
+  <!-- Fullscreen Editor (nested within editor modal) -->
+  <div id="fullscreenEditor" class="fullscreen-editor">
+    <div class="fullscreen-header">
+      <h2 id="fullscreenTitle">Editor</h2>
+      <div class="header-buttons">
+        <!-- More Actions Button -->
+        <button id="moreActionsBtn" class="secondary" title="More Actions">
+            <svg class="icon icon-small" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        </button>
+        
+        <!-- Menu Dropdown -->
+        <div id="fullscreenMenuDropdown" class="menu-dropdown">
+            <button id="menuFindBtn" data-action="find">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Find / Replace (F)
+            </button>
+            <button id="menuGoToLineBtn" data-action="line">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+                Go to Line (G)
+            </button>
+            <button id="menuUndoBtn" data-action="undo">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M21 17H7a4 4 0 0 1 0-8h11.2c.7 0 1.3.4 1.8 1 1 1 1.5 2 1 3v1"/></svg>
+                Undo (Z)
+            </button>
+            <button id="menuRedoBtn" data-action="redo">
+                <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M3 17h14a4 4 0 0 0 0-8H5.8C5.4 11 5 12 5 13v1"/></svg>
+                Redo (Y/Shift+Z)
+            </button>
+        </div>
+
+        <button id="exitFullscreenBtn" class="secondary">
+            <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+            Back to Editor (Esc)
+        </button>
+      </div>
+    </div>
+    
+    <!-- Feature Bars Container (Dynamically managed) -->
+    <div id="activeFeatureContainer">
+        <!-- Find/Replace Bar -->
+        <div class="find-replace-container feature-bar" id="findReplaceBar" style="display: none;">
+            <div class="find-replace-bar">
+                <input type="text" id="findInput" placeholder="Find text" class="find-replace-input">
+                <button id="findPrevBtn" class="secondary find-replace-btn" title="Find Previous">
+                    <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button id="findNextBtn" class="secondary find-replace-btn" title="Find Next">
+                    <svg class="icon icon-small" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+                <span id="findMatchesCount" class="find-matches-count"></span>
+            </div>
+            <div class="find-replace-bar">
+                <input type="text" id="replaceInput" placeholder="Replace with" class="find-replace-input">
+                <button id="replaceBtn" class="secondary find-replace-btn">Replace</button>
+                <button id="replaceAllBtn" class="secondary find-replace-btn">Replace All</button>
+            </div>
+             <div class="find-options">
+                <label><input type="checkbox" id="caseSensitiveCheck"> Case Sensitive</label>
+                <label><input type="checkbox" id="regexCheck"> Use Regex</label>
+            </div>
+        </div>
+        <!-- Jump to Line Bar -->
+        <div class="jump-to-line-container feature-bar" id="jumpToLineBar" style="display: none;">
+            <label for="jumpToLineInput">Go to Line:</label>
+            <input type="number" id="jumpToLineInput" placeholder="Line #" class="jump-to-line-input" min="1">
+            <button id="jumpToLineBtn" class="secondary jump-to-line-btn">Go</button>
+        </div>
+    </div>
+
+    <!-- Main Editor Area -->
+    <div class="fullscreen-content">
+        <div class="code-editor-container">
+            <div class="line-numbers" id="fullscreenLineNumbers"></div>
+            <textarea id="fullscreenTextarea" class="fullscreen-textarea" spellcheck="false"></textarea>
+        </div>
+    </div>
+  </div>
+
+  <!-- Modals (within editor context) -->
+  <div class="modal" id="downloadModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Download Project</h3>
+        <button class="close-modal" data-modal-id="downloadModal" aria-label="Close modal">
+            <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="form-group">
+        <label for="projectName">File Name (e.g., my-page)</label>
+        <input type="text" id="projectName" placeholder="my-page">
+      </div>
+      <div class="modal-actions">
+        <button class="secondary" id="cancelDownload">Cancel</button>
+        <button id="confirmDownload">Download</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="saveModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Save Project</h3>
+        <button class="close-modal" data-modal-id="saveModal" aria-label="Close modal">
+            <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="form-group">
+        <label for="saveProjectName">Project Name</label>
+        <input type="text" id="saveProjectName" placeholder="Enter project name">
+      </div>
+      <div class="modal-actions">
+        <button class="secondary" id="cancelSave">Cancel</button>
+        <button id="confirmSave">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="loadModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Load Project</h3>
+        <button class="close-modal" data-modal-id="loadModal" aria-label="Close modal">
+            <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="form-group">
+        <label for="savedProjects">Select Project</label>
+        <select id="savedProjects" class="form-control">
+          <option value="">-- Select a project --</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="secondary" id="cancelLoad">Cancel</button>
+        <button id="confirmLoad">Load</button>
+        <button class="danger" id="clearIncompleteBtn" style="margin-right: auto; display: none;">Clear Incomplete</button>
+      </div>
+    </div>
+  </div>
+        `;
+
+        // Main application logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const editorModal = document.getElementById('editorModal');
+            const addProjectBtn = document.getElementById('addProjectBtn');
+            const mainPageContent = document.getElementById('mainPageContent');
+            const mainHeader = document.getElementById('mainHeader');
+            const themeToggleBtn = document.getElementById('themeToggleBtn'); 
+            const projectCardsGrid = document.getElementById('projectCardsGrid');
+            const noProjectsMessage = document.getElementById('noProjectsMessage');
+            const fileUploader = document.getElementById('fileUploader');
+            const jsonFileUploader = document.getElementById('jsonFileUploader');
+            const iconFileUploader = document.getElementById('iconFileUploader');
+
+            // Import/Export buttons
+            const importProjectsBtn = document.getElementById('importProjectsBtn');
+            const exportProjectsBtn = document.getElementById('exportProjectsBtn');
+
+            // Telegram buttons and modal elements (Main Page scope)
+            const setupTelegramBtn = document.getElementById('setupTelegramBtn');
+            const exportAllTelegramBtn = document.getElementById('exportAllTelegramBtn');
+            const telegramSetupModal = document.getElementById('telegramSetupModal');
+            const botTokenInput = document.getElementById('botTokenInput');
+            const chatIdInput = document.getElementById('chatIdInput');
+            const saveTelegramSetup = document.getElementById('saveTelegramSetup');
+            const cancelTelegramSetup = document.getElementById('cancelTelegramSetup');
+
+            // GitHub Sync Elements
+            const githubSyncBtn = document.getElementById('githubSyncBtn');
+            const githubSetupModal = document.getElementById('githubSetupModal');
+            const githubSyncModal = document.getElementById('githubSyncModal');
+            const githubTokenInput = document.getElementById('githubTokenInput');
+            const githubUsernameInput = document.getElementById('githubUsernameInput');
+            const githubRepoInput = document.getElementById('githubRepoInput');
+            const saveGithubSetup = document.getElementById('saveGithubSetup');
+            const cancelGithubSetup = document.getElementById('cancelGithubSetup');
+            const openGithubSetupBtn = document.getElementById('openGithubSetupBtn');
+            const refreshSyncBtn = document.getElementById('refreshSyncBtn');
+            const cancelSync = document.getElementById('cancelSync');
+            const githubSyncContent = document.getElementById('githubSyncContent');
+            const githubSyncStatus = document.getElementById('githubSyncStatus');
+            
+            // Webapp Generation elements
+            const makeWebappBtn = document.getElementById('makeWebappBtn');
+            const makeWebappModal = document.getElementById('makeWebappModal');
+            const webappProjectSelect = document.getElementById('webappProjectSelect');
+            const webappAppName = document.getElementById('webappAppName');
+            const webappPackageName = document.getElementById('webappPackageName');
+            const webappIconUploadBtn = document.getElementById('webappIconUploadBtn');
+            const webappIconStatus = document.getElementById('webappIconStatus');
+            const confirmWebapp = document.getElementById('confirmWebapp');
+            const cancelWebapp = document.getElementById('cancelWebapp');
+
+            // Shortcuts
+            const shortcutsBtn = document.getElementById('shortcutsBtn');
+            const shortcutsModal = document.getElementById('shortcutsModal');
+            const okShortcuts = document.getElementById('okShortcuts');
+
+
+            let editorInitialized = false; 
+            let currentEditorInstance = null; 
+            let currentIconFile = null; // Store icon file for webapp creation
+
+            // --- Theme Management (Main Page & Global) ---
+            function applyTheme(theme) {
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-theme');
+                } else {
+                    document.body.classList.remove('dark-theme');
+                }
+                localStorage.setItem('codePlaygroundTheme', theme);
+
+                const editorThemeToggleBtn = editorModal.querySelector('#themeToggleBtnEditor');
+                if (editorThemeToggleBtn) {
+                    if (document.body.classList.contains('dark-theme')) {
+                        editorThemeToggleBtn.classList.add('dark-theme-active');
+                    } else {
+                        editorThemeToggleBtn.classList.remove('dark-theme-active');
+                    }
+                }
+            }
+
+            themeToggleBtn.addEventListener('click', () => {
+                const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+                applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+            });
+
+            const savedTheme = localStorage.getItem('codePlaygroundTheme') || 
+                               (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            applyTheme(savedTheme);
+            
+            // --- Modal Helpers (Main Scope) ---
+            function showModal(modal) {
+                modal.classList.add('visible');
+                //modal.style.display = 'flex'; 
+                const firstInput = modal.querySelector('input[type="text"], input[type="password"], select, input[type="number"], input[type="url"]');
+                if (firstInput) setTimeout(() => firstInput.focus(), 50);
+            }
+
+            function hideModal(modal) {
+                modal.classList.remove('visible');
+                /*
+                modal.addEventListener('transitionend', function handler() {
+                    modal.removeEventListener('transitionend', handler);
+                    modal.style.display = 'none';
+                }, { once: true });
+                */
+            }
+
+            // Global modal close handlers
+            document.querySelectorAll('.modal .close-modal').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const modalId = e.target.closest('.modal').id;
+                    hideModal(document.getElementById(modalId));
+                });
+            });
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) hideModal(modal);
+                });
+            });
+
+            // --- Reusable HTML Generation Helper ---
+            function generateCombinedHTML(project, titleOverride = null) {
+                const projectTitle = titleOverride || project.name || 'Code Playground Project';
+                // Note: CSS and JS are INLINED here for simple combined file download/preview
+                return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>${projectTitle}</title>
+    <style>${project.css || ''}</style>
+</head>
+<body>
+    ${project.html || ''}
+    <script>${project.js || ''}<\/script>
+</body>
+</html>`;
+            }
+
+
+            // --- Project Card Management ---
+            function getProjects() {
+                return JSON.parse(localStorage.getItem('codePlaygroundProjects') || '[]');
+            }
+
+            function saveProjects(projects) {
+                localStorage.setItem('codePlaygroundProjects', JSON.stringify(projects));
+                renderProjectCards();
+            }
+
+            function openProjectInNewTab(project) {
+                const combinedCode = generateCombinedHTML(project);
+
+                const blob = new Blob([combinedCode], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const newWindow = window.open(url, '_blank');
+                if (newWindow) {
+                    newWindow.focus();
+                } else {
+                    alert('Pop-up blocked! Please allow pop-ups for this site to open the preview.');
+                }
+            }
+
+
+            function renderProjectCards() {
+                const projects = getProjects();
+                // Sort by timestamp descending
+                projects.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                projectCardsGrid.innerHTML = ''; 
+
+                if (projects.length === 0) {
+                    noProjectsMessage.style.display = 'block';
+                } else {
+                    noProjectsMessage.style.display = 'none';
+                    projects.forEach(project => {
+                        const card = document.createElement('div');
+                        card.className = 'project-card';
+                        card.dataset.projectName = project.name;
+                        card.innerHTML = `
+                            <h3>${project.name}</h3>
+                            <p>Last modified: ${new Date(project.timestamp).toLocaleString()}</p>
+                            <div class="project-card-actions">
+                                <button class="secondary edit-project-btn" data-project-name="${project.name}">
+                                    <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M17 3a2.85 2.85 0 0 0-4 0L10 6l-7 7v4h4l7-7 3-3a2.85 2.85 0 0 0 0-4z"/><line x1="10" y1="14" x2="14" y2="10"/></svg>
+                                    Edit
+                                </button>
+                                <button class="danger delete-project-btn" data-project-name="${project.name}">
+                                    <svg class="icon icon-small" viewBox="0 0 24 24"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M4 7h16"/><path d="M18 7l-1 12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 7"/><path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/></svg>
+                                    Delete
+                                </button>
+                            </div>
+                        `;
+                        projectCardsGrid.appendChild(card);
+                    });
+
+                    projectCardsGrid.querySelectorAll('.project-card').forEach(card => {
+                        card.addEventListener('click', (e) => {
+                            if (!e.target.closest('.project-card-actions')) {
+                                const projectName = card.dataset.projectName;
+                                const projectToLoad = getProjects().find(p => p.name === projectName);
+                                if (projectToLoad) {
+                                    openProjectInNewTab(projectToLoad);
+                                }
+                            }
+                        });
+                    });
+
+                    projectCardsGrid.querySelectorAll('.edit-project-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            e.stopPropagation(); 
+                            const projectName = e.target.closest('button').dataset.projectName;
+                            const projectToLoad = getProjects().find(p => p.name === projectName);
+                            if (projectToLoad) {
+                                openEditor(projectToLoad);
+                            }
+                        });
+                    });
+
+                    projectCardsGrid.querySelectorAll('.delete-project-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const projectName = e.target.closest('button').dataset.projectName;
+                            if (confirm(`Are you sure you want to delete project "${projectName}"?`)) {
+                                const updatedProjects = getProjects().filter(p => p.name !== projectName);
+                                saveProjects(updatedProjects);
+                            }
+                        });
+                    });
+                }
+            }
+
+
+            // --- Editor Modal Handling ---
+            function openEditor(projectToLoad = null) {
+                mainPageContent.style.display = 'none';
+                mainHeader.style.display = 'none';
+                document.body.classList.add('editor-active');
+
+                if (!editorInitialized) {
+                    editorModal.innerHTML = editorContentHTML;
+                    currentEditorInstance = initializeCodeEditor(editorModal, getProjects, saveProjects, closeEditor);
+                    editorInitialized = true;
+                }
+
+                const htmlCode = editorModal.querySelector('#htmlCode');
+                const cssCode = editorModal.querySelector('#cssCode');
+                const jsCode = editorModal.querySelector('#jsCode');
+                const saveProjectNameInput = editorModal.querySelector('#saveProjectName');
+                const projectNameInput = editorModal.querySelector('#projectName'); 
+
+                if (projectToLoad) {
+                    htmlCode.value = projectToLoad.html || '';
+                    cssCode.value = projectToLoad.css || '';
+                    jsCode.value = projectToLoad.js || '';
+                    saveProjectNameInput.value = projectToLoad.name;
+                    projectNameInput.value = projectToLoad.name;
+                    editorModal.querySelector('header h1').textContent = `Editing: ${projectToLoad.name}`;
+                } else {
+                    htmlCode.value = '';
+                    cssCode.value = '';
+                    jsCode.value = '';
+                    saveProjectNameInput.value = '';
+                    projectNameInput.value = '';
+                    editorModal.querySelector('header h1').textContent = 'New Project';
+                }
+
+                htmlCode.dispatchEvent(new Event('input')); 
+
+                editorModal.style.display = 'flex'; 
+                requestAnimationFrame(() => {
+                    editorModal.classList.add('visible'); 
+                });
+            }
+
+            function closeEditor() {
+                editorModal.classList.remove('visible');
+
+                editorModal.addEventListener('transitionend', function handler() {
+                    editorModal.removeEventListener('transitionend', handler);
+
+                    editorModal.style.display = 'none';
+                    document.body.classList.remove('editor-active');
+                    mainPageContent.style.display = 'block'; 
+                    mainHeader.style.display = 'flex';
+                    
+                    renderProjectCards(); 
+                }, { once: true });
+            }
+
+            addProjectBtn.addEventListener('click', () => openEditor());
+
+            // --- Persistent Draft (Incomplete Project) Handler ---
+            window.addEventListener('beforeunload', (e) => {
+                if (editorModal.classList.contains('visible') && currentEditorInstance && currentEditorInstance.isWorkUnsaved()) {
+                    // Save work silently before attempting closure
+                    currentEditorInstance.saveIncompleteProjectSilent();
+                }
+            });
+
+            // --- Import/Export JSON Functions ---
+            exportProjectsBtn.addEventListener('click', () => {
+                const projects = getProjects();
+                const dataStr = JSON.stringify(projects, null, 2); 
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'code_playground_projects.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            importProjectsBtn.addEventListener('click', () => {
+                jsonFileUploader.value = null; 
+                jsonFileUploader.click();
+            });
+
+            jsonFileUploader.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importedProjects = JSON.parse(e.target.result);
+                        if (!Array.isArray(importedProjects)) {
+                            alert('Invalid JSON file format. Expected an array of projects.');
+                            return;
+                        }
+
+                        let currentProjects = getProjects();
+                        let importedCount = 0;
+                        let skippedCount = 0;
+
+                        importedProjects.forEach(newProject => {
+                            if (newProject.name && typeof newProject.name === 'string') {
+
+                                // Ensure it's a valid project format
+                                if (!('html' in newProject) || !('css' in newProject) || !('js' in newProject)) {
+                                     newProject.html = newProject.html || '';
+                                     newProject.css = newProject.css || '';
+                                     newProject.js = newProject.js || '';
+                                }
+
+                                const existingIndex = currentProjects.findIndex(p => p.name === newProject.name);
+
+                                if (existingIndex === -1) {
+                                    currentProjects.push(newProject);
+                                    importedCount++;
+                                } else {
+                                    // Overwrite if imported is newer
+                                    const localTimestamp = new Date(currentProjects[existingIndex].timestamp || 0);
+                                    const importTimestamp = new Date(newProject.timestamp || 0);
+                                    if (importTimestamp > localTimestamp) {
+                                        currentProjects[existingIndex] = newProject;
+                                        importedCount++;
+                                    } else {
+                                        skippedCount++;
+                                    }
+                                }
+                            } else {
+                                console.warn('Skipping malformed project entry:', newProject);
+                            }
+                        });
+
+                        saveProjects(currentProjects); 
+                        alert(`Import complete!\n${importedCount} projects imported or updated.\n${skippedCount} projects skipped (local version was newer or identical).`);
+
+                    } catch (error) {
+                        alert('Error parsing JSON file. Please ensure it is a valid JSON format.');
+                        console.error('Import error:', error);
+                    }
+                };
+                reader.onerror = function() {
+                    alert('Error reading file.');
+                    console.error("File reading error:", reader.error);
+                };
+                reader.readAsText(file);
+            });
+            
+            // --- Telegram Setup & Export Logic (Shared Functions) ---
+            
+            function getTelegramConfig() {
+                const config = localStorage.getItem('telegramConfig');
+                return config ? JSON.parse(config) : { token: '', chatId: '' };
+            }
+
+            function saveTelegramConfig(token, chatId) {
+                localStorage.setItem('telegramConfig', JSON.stringify({ token, chatId }));
+            }
+
+            // Setup Modal Handlers
+            setupTelegramBtn.addEventListener('click', () => {
+                const config = getTelegramConfig();
+                botTokenInput.value = config.token;
+                chatIdInput.value = config.chatId;
+                showModal(telegramSetupModal);
+            });
+
+            saveTelegramSetup.addEventListener('click', () => {
+                const token = botTokenInput.value.trim();
+                const chatId = chatIdInput.value.trim();
+                if (!token || !chatId) {
+                    alert('Both Bot Token and Chat ID are required.');
+                    return;
+                }
+                saveTelegramConfig(token, chatId);
+                hideModal(telegramSetupModal);
+                alert('Telegram configuration saved successfully!');
+            });
+
+            cancelTelegramSetup.addEventListener('click', () => hideModal(telegramSetupModal));
+            
+            async function sendToTelegram(payload, isDocument = false, projectName = 'Project Manager', filename = null, mimeType = null) {
+                const config = getTelegramConfig();
+                const token = config.token.trim();
+                const chatId = config.chatId.trim();
+
+                if (!token || !chatId) {
+                    alert('Telegram Bot not configured. Please set up the Bot Token and Chat ID first.');
+                    showModal(telegramSetupModal);
+                    return false;
+                }
+
+                let apiUrl;
+                let fetchOptions = {};
+                const escapeMarkdownV2 = (text) => text.replace(/([_*\[\]()~`>#+=\-|{}\.!])/g, '\\$1');
+                const markdownCaption = `*Project:* ${escapeMarkdownV2(projectName)}`;
+
+                if (isDocument && payload instanceof Blob && filename && mimeType) {
+                    apiUrl = `https://api.telegram.org/bot${token}/sendDocument`;
+                    
+                    const formData = new FormData();
+                    formData.append('chat_id', chatId);
+                    formData.append('caption', markdownCaption);
+                    formData.append('parse_mode', 'MarkdownV2');
+                    formData.append('document', payload, filename);
+
+                    fetchOptions.method = 'POST';
+                    fetchOptions.body = formData;
+
+                } else if (typeof payload === 'string') {
+                    apiUrl = `https://api.telegram.org/bot${token}/sendMessage`;
+                    
+                    fetchOptions.method = 'POST';
+                    fetchOptions.headers = { 'Content-Type': 'application/json' };
+                    fetchOptions.body = JSON.stringify({ 
+                        chat_id: chatId, 
+                        text: payload,
+                        parse_mode: 'MarkdownV2' 
+                    });
+                } else {
+                    console.error("Invalid payload type for Telegram export.");
+                    return false;
+                }
+                
+                try {
+                    const response = await fetch(apiUrl, fetchOptions);
+                    const data = await response.json();
+
+                    if (data.ok) {
+                        return true;
+                    } else {
+                        let errorMessage = `Failed to send to Telegram (Status: ${response.status}).`;
+                        if (data.description) {
+                            errorMessage += ` Error: ${data.description}`;
+                        } else if (data.error_code === 401) {
+                            errorMessage += ' Error: Invalid Bot Token.';
+                        } else if (data.error_code === 400 && data.description.includes("chat not found")) {
+                            errorMessage += ' Error: Invalid Chat ID or bot is not a member of the chat.';
+                        }
+                        alert(errorMessage);
+                        console.error("Telegram error data:", data);
+                        return false;
+                    }
+                } catch (error) {
+                    alert('Network error while connecting to Telegram API.');
+                    console.error('Telegram API error:', error);
+                    return false;
+                }
+            }
+            
+            // Export All Projects Handler (Sends individual HTML files)
+            exportAllTelegramBtn.addEventListener('click', async () => {
+                const projects = getProjects();
+                if (projects.length === 0) {
+                    alert('No projects to export.');
+                    return;
+                }
+
+                if (!confirm(`Are you sure you want to export all ${projects.length} saved projects to Telegram as individual HTML files?`)) {
+                    return;
+                }
+
+                let successCount = 0;
+                let failedCount = 0;
+
+                for (const project of projects) {
+                    const combinedCode = generateCombinedHTML(project); 
+                    const fileName = `${project.name.replace(/[^a-z0-9_.-]/gi, '_')}.html`;
+                    const blob = new Blob([combinedCode], { type: 'text/html' });
+
+                    const sent = await sendToTelegram(blob, true, project.name, fileName, 'text/html');
+
+                    if (sent) {
+                        successCount++;
+                    } else {
+                        failedCount++;
+                        // Stop if the first failure is a configuration issue
+                        const config = getTelegramConfig();
+                        if (!config.token || !config.chatId) break; 
+                    }
+                }
+
+                alert(`Export finished. Successes: ${successCount} files sent. Failures: ${failedCount}.`);
+            });
+
+
+            // --- Make Webapp Feature Logic ---
+            makeWebappBtn.addEventListener('click', openMakeWebappModal);
+
+            function updateWebappProjectList() {
+                 const projects = getProjects();
+                 webappProjectSelect.innerHTML = '<option value="">-- Select a project --</option>';
+                 projects.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.name;
+                    opt.textContent = p.name;
+                    webappProjectSelect.appendChild(opt);
+                 });
+            }
+
+            function openMakeWebappModal() {
+                updateWebappProjectList();
+                webappAppName.value = '';
+                webappPackageName.value = '/';
+                currentIconFile = null;
+                webappIconStatus.textContent = 'No icon selected. Will use default.';
+                showModal(makeWebappModal);
+            }
+
+            webappIconUploadBtn.addEventListener('click', () => {
+                iconFileUploader.value = null;
+                iconFileUploader.click();
+            });
+
+            iconFileUploader.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    currentIconFile = file;
+                    webappIconStatus.textContent = `Icon selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                } else {
+                    currentIconFile = null;
+                    webappIconStatus.textContent = 'No icon selected. Will use default.';
+                }
+            });
+
+            cancelWebapp.addEventListener('click', () => hideModal(makeWebappModal));
+            confirmWebapp.addEventListener('click', confirmMakeWebapp);
+
+            async function confirmMakeWebapp() {
+                const projectName = webappProjectSelect.value;
+                const appName = webappAppName.value.trim();
+                const startUrl = webappPackageName.value.trim();
+                
+                if (!projectName) { alert('Please select a project.'); return; }
+                if (!appName) { alert('Please enter an Application Name.'); return; }
+                if (!startUrl) { alert('Please enter a Start URL (e.g., / or /index.html).'); return; }
+
+                const project = getProjects().find(p => p.name === projectName);
+                if (!project) { alert('Project not found.'); return; }
+                
+                hideModal(makeWebappModal);
+                
+                alert('Building Webapp ZIP. Please wait...');
+
+                try {
+                    const zip = new JSZip();
+
+                    // --- 1. Core Files (Index, CSS, JS) ---
+                    const htmlContent = project.html || '';
+                    const cssContent = project.css || '/* Add your CSS here */';
+                    const jsContent = project.js || '/* Add your JavaScript here */';
+
+                    // Save raw code files
+                    zip.file('style.css', cssContent);
+                    zip.file('script.js', jsContent);
+                    
+                    // --- 2. Manifest and Index.html linking files ---
+                    const iconFileName = currentIconFile ? currentIconFile.name : 'default_icon.png';
+                    const iconPath = `icon/${iconFileName}`;
+                    
+                    // Basic HTML escaping function
+                    function escapeHtml(unsafe) {
+                        if (!unsafe) return '';
+                        return unsafe
+                            .toString()
+                            .replace(/&/g, "&amp;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
+                            .replace(/"/g, "&quot;")
+                            .replace(/'/g, "&#039;");
+                    }
+                    
+                    const pwaIndexHtml = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${escapeHtml(appName)}</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="${escapeHtml(iconPath)}">
+    <meta name="theme-color" content="#007AFF">
+    <!-- PWA enhancements -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script src="script.js" defer><\/script>
+</head>
+<body>
+    ${htmlContent}
+</body>
+</html>`;
+
+
+                    zip.file('index.html', pwaIndexHtml);
+
+                    const manifest = {
+                        name: appName,
+                        short_name: appName,
+                        start_url: startUrl,
+                        display: 'standalone',
+                        background_color: '#ffffff',
+                        theme_color: '#007AFF',
+                        icons: [
+                            // Ensure 512x512 is available for maximum compatibility
+                            {
+                                src: iconPath,
+                                sizes: '512x512', 
+                                type: currentIconFile ? (currentIconFile.type || 'image/png') : 'image/png' 
+                            }
+                        ]
+                    };
+                    zip.file('manifest.json', JSON.stringify(manifest, null, 2));
+
+
+                    // --- 3. Icon Handling ---
+                    if (currentIconFile) {
+                        const iconData = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = () => resolve(reader.result.split(',')[1]); // Base64 data
+                            reader.onerror = reject;
+                            reader.readAsDataURL(currentIconFile);
+                        });
+                        // Add icon file to 'icon' subdirectory
+                        zip.file(iconPath, iconData, { base64: true });
+
+                    } else {
+                        // Create a simple, minimal default icon file (a dummy white square) if none provided
+                         const defaultIconData = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
+                         zip.file('icon/default_icon.png', defaultIconData, { base64: true });
+                    }
+                    
+                    // --- 4. Generate & Download ZIP ---
+                    const zipBlob = await zip.generateAsync({ type: 'blob' });
+                    
+                    const fileName = `${appName.toLowerCase().replace(/\s/g, '-')}-webapp.zip`;
+                    const downloadUrl = URL.createObjectURL(zipBlob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(downloadUrl);
+                    
+                    alert('Webapp ZIP downloaded successfully!');
+
+                } catch (error) {
+                    console.error('Webapp creation error:', error);
+                    alert('Failed to create webapp: ' + error.message);
+                }
+            }
+
+
+            // --- Keyboard Shortcuts Guide ---
+            shortcutsBtn.addEventListener('click', () => showModal(shortcutsModal));
+            okShortcuts.addEventListener('click', () => hideModal(shortcutsModal));
+            
+            // --- GitHub Sync Logic ---
+
+            const GITHUB_API_BASE = 'https://api.github.com';
+            const PROJECTS_DIR = 'projects'; // Directory within the repo to store projects
+
+            function getGitHubConfig() {
+                const config = localStorage.getItem('githubConfig');
+                return config ? JSON.parse(config) : { token: '', username: '', repo: '' };
+            }
+
+            function saveGitHubConfig(token, username, repo) {
+                localStorage.setItem('githubConfig', JSON.stringify({ token, username, repo }));
+            }
+            
+            async function githubApiRequest(endpoint, options = {}) {
+                const config = getGitHubConfig();
+                if (!config.token) {
+                    throw new Error("GitHub Personal Access Token is not configured.");
+                }
+
+                const headers = {
+                    'Authorization': `token ${config.token}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    ...options.headers,
+                };
+
+                const response = await fetch(`${GITHUB_API_BASE}${endpoint}`, { ...options, headers });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    const message = errorData.message || `API request failed with status ${response.status}`;
+                    console.error("GitHub API Error:", errorData);
+                    throw new Error(message);
+                }
+                
+                // For '204 No Content' or similar successful but empty responses
+                if (response.status === 204 || response.headers.get('Content-Length') === '0') {
+                    return null;
+                }
+
+                return response.json();
+            }
+
+            function b64EncodeUnicode(str) {
+                return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1)));
+            }
+
+            function b64DecodeUnicode(str) {
+                return decodeURIComponent(atob(str).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+            }
+
+            async function pushProjectToGithub(projectName, button) {
+                const config = getGitHubConfig();
+                const project = getProjects().find(p => p.name === projectName);
+                if (!project) {
+                    alert("Local project not found!");
+                    return;
+                }
+                
+                const originalButtonText = button.innerHTML;
+                button.innerHTML = 'Pushing...';
+                button.disabled = true;
+
+                try {
+                    const filePath = `${PROJECTS_DIR}/${projectName}.json`;
+                    const content = JSON.stringify(project, null, 2);
+                    
+                    let fileSha = null;
+                    try {
+                        const existingFile = await githubApiRequest(`/repos/${config.username}/${config.repo}/contents/${filePath}`);
+                        fileSha = existingFile.sha;
+                    } catch (e) {
+                        // File doesn't exist, which is fine for a new push
+                        if (e.message.toLowerCase().includes('not found')) {
+                            console.log(`File ${filePath} not found on GitHub. Creating new file.`);
+                        } else {
+                            throw e; // Re-throw other errors
+                        }
+                    }
+
+                    const payload = {
+                        message: `Update project: ${projectName}`,
+                        content: b64EncodeUnicode(content),
+                        sha: fileSha // Include SHA if updating an existing file
+                    };
+
+                    await githubApiRequest(`/repos/${config.username}/${config.repo}/contents/${filePath}`, {
+                        method: 'PUT',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(payload)
+                    });
+
+                    alert(`Project "${projectName}" successfully pushed to GitHub!`);
+                    await populateSyncModal(); // Refresh the list
+                } catch (error) {
+                    alert(`Error pushing project: ${error.message}`);
+                } finally {
+                    button.innerHTML = originalButtonText;
+                    button.disabled = false;
+                }
+            }
+            
+            async function pullProjectFromGithub(projectName, sha, button) {
+                const config = getGitHubConfig();
+                const originalButtonText = button.innerHTML;
+                button.innerHTML = 'Pulling...';
+                button.disabled = true;
+
+                try {
+                    const fileData = await githubApiRequest(`/repos/${config.username}/${config.repo}/git/blobs/${sha}`);
+                    if (!fileData.content) throw new Error("File content not found in response.");
+
+                    const projectData = JSON.parse(b64DecodeUnicode(fileData.content));
+                    let projects = getProjects();
+                    const existingIndex = projects.findIndex(p => p.name === projectData.name);
+
+                    if (existingIndex > -1) {
+                        projects[existingIndex] = projectData; // Overwrite
+                    } else {
+                        projects.push(projectData); // Add new
+                    }
+
+                    saveProjects(projects);
+                    alert(`Project "${projectName}" successfully pulled and saved locally!`);
+                    await populateSyncModal(); // Refresh list
+
+                } catch (error) {
+                    alert(`Error pulling project: ${error.message}`);
+                } finally {
+                    button.innerHTML = originalButtonText;
+                    button.disabled = false;
+                }
+            }
+
+
+            async function populateSyncModal() {
+                githubSyncStatus.textContent = 'Fetching data from GitHub...';
+                githubSyncContent.innerHTML = '';
+                
+                try {
+                    const config = getGitHubConfig();
+                    if (!config.token || !config.username || !config.repo) {
+                        githubSyncStatus.innerHTML = 'GitHub is not configured. <button id="setupGithubFromSync" class="secondary">Setup Now</button>';
+                        document.getElementById('setupGithubFromSync').addEventListener('click', () => {
+                            hideModal(githubSyncModal);
+                            showModal(githubSetupModal);
+                        });
+                        return;
+                    }
+
+                    let remoteFiles = [];
+                    try {
+                        const contents = await githubApiRequest(`/repos/${config.username}/${config.repo}/contents/${PROJECTS_DIR}`);
+                        if (Array.isArray(contents)) {
+                            remoteFiles = contents.filter(file => file.name.endsWith('.json')).map(file => ({
+                                name: file.name.replace('.json', ''),
+                                sha: file.sha
+                            }));
+                        }
+                    } catch (e) {
+                         if (e.message.toLowerCase().includes('not found')) {
+                            console.log(`Directory ${PROJECTS_DIR} not found. Assuming empty repo.`);
+                         } else {
+                            throw e;
+                         }
+                    }
+
+                    const localProjects = getProjects();
+                    const localProjectNames = localProjects.map(p => p.name);
+                    const remoteProjectNames = remoteFiles.map(f => f.name);
+
+                    const allNames = [...new Set([...localProjectNames, ...remoteProjectNames])];
+                    let html = '';
+
+                    const toPush = [], toPull = [], inSync = [], conflicted = [];
+
+                    for (const name of allNames) {
+                        const local = localProjects.find(p => p.name === name);
+                        const remote = remoteFiles.find(f => f.name === name);
+
+                        if (local && !remote) {
+                            toPush.push({ name, type: 'local-only' });
+                        } else if (!local && remote) {
+                            toPull.push({ name, sha: remote.sha, type: 'remote-only' });
+                        } else {
+                            const localTime = new Date(local.timestamp).getTime();
+                            const item = {name, localTime, sha: remote.sha };
+
+                            // To check remote time, we need another API call.
+                            // For simplicity, we compare local time against existence.
+                            // A more robust check would involve fetching remote file commit date.
+                            // Let's assume for now local is always newer if both exist for this simplified example.
+                            // A better check: if timestamps differ, show status.
+                            
+                            // Let's fetch the remote project content to get its timestamp
+                            try {
+                                const fileData = await githubApiRequest(`/repos/${config.username}/${config.repo}/git/blobs/${remote.sha}`);
+                                const remoteProject = JSON.parse(b64DecodeUnicode(fileData.content));
+                                const remoteTime = new Date(remoteProject.timestamp).getTime();
+                                item.remoteTime = remoteTime;
+                                
+                                if (localTime > remoteTime) {
+                                    conflicted.push({ ...item, status: 'local-newer' });
+                                } else if (remoteTime > localTime) {
+                                    conflicted.push({ ...item, status: 'remote-newer' });
+                                } else {
+                                    inSync.push(item);
+                                }
+
+                            } catch (e) {
+                                console.error(`Could not fetch details for ${name}: ${e.message}`);
+                            }
+                        }
+                    }
+
+                    const renderItem = (project, action) => {
+                        let statusHtml = '';
+                        let buttonHtml = '';
+                        if (action === 'push') {
+                            buttonHtml = `<button class="secondary push-to-github-btn" data-project-name="${project.name}">Push</button>`;
+                            if (project.type !== 'local-only') {
+                                statusHtml = `<span class="sync-project-status newer">Local is newer</span>`;
+                            }
+                        } else if (action === 'pull') {
+                             buttonHtml = `<button class="pull-from-github-btn" data-project-name="${project.name}" data-sha="${project.sha}">Pull</button>`;
+                             if (project.type !== 'remote-only') {
+                                statusHtml = `<span class="sync-project-status older">Remote is newer</span>`;
+                            }
+                        }
+
+                        return `
+                        <li class="sync-list-item">
+                            <div>
+                                <div class="sync-project-name">${project.name}</div>
+                                ${statusHtml}
+                            </div>
+                            ${buttonHtml}
+                        </li>`;
+                    };
+                    
+                    let hasActions = false;
+
+                    if (toPush.length > 0 || conflicted.some(p => p.status === 'local-newer')) {
+                        hasActions = true;
+                        html += '<h4 class="sync-section-header">Ready to Push to GitHub</h4><ul class="sync-list">';
+                        toPush.forEach(p => html += renderItem(p, 'push'));
+                        conflicted.filter(p => p.status === 'local-newer').forEach(p => html += renderItem(p, 'push'));
+                        html += '</ul>';
+                    }
+
+                    if (toPull.length > 0 || conflicted.some(p => p.status === 'remote-newer')) {
+                         hasActions = true;
+                         html += '<h4 class="sync-section-header">Available to Pull from GitHub</h4><ul class="sync-list">';
+                         toPull.forEach(p => html += renderItem(p, 'pull'));
+                         conflicted.filter(p => p.status === 'remote-newer').forEach(p => html += renderItem(p, 'pull'));
+                         html += '</ul>';
+                    }
+                    
+                    if (inSync.length > 0) {
+                        html += `<h4 class="sync-section-header">Projects in Sync (${inSync.length})</h4>`;
+                    }
+
+                    if (!hasActions && inSync.length > 0) {
+                         githubSyncStatus.textContent = 'All projects are in sync!';
+                    } else if (!hasActions && inSync.length === 0) {
+                         githubSyncStatus.textContent = 'No local or remote projects found.';
+                    }
+                    else {
+                         githubSyncStatus.textContent = '';
+                    }
+
+                    githubSyncContent.innerHTML = `<div class="sync-container">${html}</div>`;
+
+                } catch (error) {
+                    githubSyncStatus.textContent = `Error: ${error.message}`;
+                }
+            }
+            
+            // GitHub Event Listeners
+            githubSyncBtn.addEventListener('click', () => {
+                 githubSyncContent.innerHTML = '';
+                 githubSyncStatus.textContent = 'Click Refresh to compare local and remote projects.';
+                 showModal(githubSyncModal);
+            });
+            
+            saveGithubSetup.addEventListener('click', () => {
+                const token = githubTokenInput.value.trim();
+                const username = githubUsernameInput.value.trim();
+                const repo = githubRepoInput.value.trim();
+
+                if (!token || !username || !repo) {
+                    alert('All fields are required.');
+                    return;
+                }
+                saveGitHubConfig(token, username, repo);
+                hideModal(githubSetupModal);
+                alert('GitHub configuration saved!');
+                showModal(githubSyncModal); // Re-open sync modal
+                populateSyncModal();
+            });
+
+            cancelGithubSetup.addEventListener('click', () => hideModal(githubSetupModal));
+            cancelSync.addEventListener('click', () => { hideModal(githubSyncModal); renderProjectCards(); });
+            refreshSyncBtn.addEventListener('click', populateSyncModal);
+
+            openGithubSetupBtn.addEventListener('click', () => {
+                const config = getGitHubConfig();
+                githubTokenInput.value = config.token;
+                githubUsernameInput.value = config.username;
+                githubRepoInput.value = config.repo;
+                hideModal(githubSyncModal);
+                showModal(githubSetupModal);
+            });
+
+            githubSyncContent.addEventListener('click', e => {
+                const button = e.target.closest('button');
+                if (!button) return;
+
+                if (button.classList.contains('push-to-github-btn')) {
+                    const projectName = button.dataset.projectName;
+                    if (confirm(`Are you sure you want to push "${projectName}" to GitHub? This will overwrite the remote version if it exists.`)) {
+                         pushProjectToGithub(projectName, button);
+                    }
+                } else if (button.classList.contains('pull-from-github-btn')) {
+                    const projectName = button.dataset.projectName;
+                    const sha = button.dataset.sha;
+                    if (confirm(`Are you sure you want to pull "${projectName}" from GitHub? This will overwrite your local version if it exists.`)) {
+                        pullProjectFromGithub(projectName, sha, button);
+                    }
+                }
+            });
+
+
+            // Global Keyboard Shortcut Listener
+            document.addEventListener('keydown', (e) => {
+                const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+                const isCmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
+                const editorVisible = editorModal.classList.contains('visible');
+                
+                // Escape key always closes modals/fullscreen editor first
+                if (e.key === "Escape") {
+                    const visibleModal = document.querySelector('.modal.visible');
+                    if (visibleModal) {
+                        e.preventDefault();
+                        hideModal(visibleModal);
+                        return;
+                    }
+                }
+                
+                if (editorVisible && currentEditorInstance) {
+                    const fullscreenVisible = editorModal.querySelector('#fullscreenEditor').classList.contains('visible');
+
+                    if (isCmdOrCtrl) {
+                        switch (e.key.toLowerCase()) {
+                            case 's': // Save
+                                e.preventDefault();
+                                currentEditorInstance.showSaveModal();
+                                break;
+                            case 'o': // Load
+                                e.preventDefault();
+                                currentEditorInstance.showLoadModal();
+                                break;
+                            case 'q': // Back to Projects
+                                e.preventDefault();
+                                editorModal.querySelector('#backToProjectsBtn').click();
+                                break;
+                            case 'enter': // Open Preview in New Tab (Cmd/Ctrl + Enter)
+                                e.preventDefault();
+                                editorModal.querySelector('#openInNewBtn').click();
+                                break;
+                            case 'f': // Find (in fullscreen)
+                                if (fullscreenVisible) {
+                                    e.preventDefault();
+                                    currentEditorInstance.showFindReplaceBar();
+                                }
+                                break;
+                            case 'g': // Go to Line (in fullscreen)
+                                if (fullscreenVisible) {
+                                    e.preventDefault();
+                                    currentEditorInstance.showJumpToLineBar();
+                                }
+                                break;
+                        }
+                    }
+                    
+                    // Undo/Redo are handled by browser defaults, but Redo (Ctrl+Y/Shift+Z) needs explicit handling for Shift+Z
+                    if (e.key === 'Z' && isCmdOrCtrl && e.shiftKey && fullscreenVisible) {
+                         e.preventDefault();
+                         editorModal.querySelector('#menuRedoBtn').click(); // Trigger redo explicitly
+                    }
+                }
+            });
+
+
+            // --- Editor initialization logic (passed down from main app) ---
+            function initializeCodeEditor(editorRoot, getProjectsFromMain, saveProjectsToMain, closeEditorCallback) {
+                // --- DOM Elements (scoped to editorRoot) ---
+                const htmlCode = editorRoot.querySelector('#htmlCode');
+                const cssCode = editorRoot.querySelector('#cssCode');
+                const jsCode = editorRoot.querySelector('#jsCode');
+                const preview = editorRoot.querySelector('#preview');
+
+                // Buttons
+                const downloadBtn = editorRoot.querySelector('#downloadBtn');
+                const openInNewBtn = editorRoot.querySelector('#openInNewBtn');
+                const saveBtn = editorRoot.querySelector('#saveBtn');
+                const loadBtn = editorRoot.querySelector('#loadBtn');
+                const backToProjectsBtn = editorRoot.querySelector('#backToProjectsBtn'); 
+                
+                // Telegram Single Export
+                const exportSingleTelegramBtn = editorRoot.querySelector('#exportSingleTelegramBtn');
+                const exportSingleTelegramModal = document.getElementById('exportSingleTelegramModal'); // Global access
+                const codePartSelect = document.getElementById('codePartSelect');
+                const confirmSingleExport = document.getElementById('confirmSingleExport');
+                const cancelSingleExport = document.getElementById('cancelSingleExport');
+
+
+                // Fullscreen Editor
+                const fullscreenEditor = editorRoot.querySelector('#fullscreenEditor');
+                const fullscreenTextarea = editorRoot.querySelector('#fullscreenTextarea');
+                const fullscreenTitle = editorRoot.querySelector('#fullscreenTitle');
+                const exitFullscreenBtn = editorRoot.querySelector('#exitFullscreenBtn');
+                
+                // Fullscreen Menu and Feature Bars
+                const moreActionsBtn = editorRoot.querySelector('#moreActionsBtn');
+                const fullscreenMenuDropdown = editorRoot.querySelector('#fullscreenMenuDropdown');
+                const findReplaceBar = editorRoot.querySelector('#findReplaceBar');
+                const jumpToLineBar = editorRoot.querySelector('#jumpToLineBar');
+                const menuFindBtn = editorRoot.querySelector('#menuFindBtn');
+                const menuGoToLineBtn = editorRoot.querySelector('#menuGoToLineBtn');
+                const menuUndoBtn = editorRoot.querySelector('#menuUndoBtn');
+                const menuRedoBtn = editorRoot.querySelector('#menuRedoBtn');
+
+
+                // Find & Replace in Fullscreen
+                const findInput = editorRoot.querySelector('#findInput');
+                const replaceInput = editorRoot.querySelector('#replaceInput');
+                const findNextBtn = editorRoot.querySelector('#findNextBtn');
+                const findPrevBtn = editorRoot.querySelector('#findPrevBtn');
+                const replaceBtn = editorRoot.querySelector('#replaceBtn');
+                const replaceAllBtn = editorRoot.querySelector('#replaceAllBtn');
+                const caseSensitiveCheck = editorRoot.querySelector('#caseSensitiveCheck');
+                const regexCheck = editorRoot.querySelector('#regexCheck');
+                const findMatchesCount = editorRoot.querySelector('#findMatchesCount');
+
+                // Line numbers and Jump to Line
+                const fullscreenLineNumbers = editorRoot.querySelector('#fullscreenLineNumbers');
+                const jumpToLineInput = editorRoot.querySelector('#jumpToLineInput');
+                const jumpToLineBtn = editorRoot.querySelector('#jumpToLineBtn');
+
+
+                // Modals
+                const downloadModal = editorRoot.querySelector('#downloadModal');
+                const saveModal = editorRoot.querySelector('#saveModal');
+                const loadModal = editorRoot.querySelector('#loadModal');
+                const projectNameInput = editorRoot.querySelector('#projectName');
+                const saveProjectNameInput = editorRoot.querySelector('#saveProjectName');
+                const savedProjectsSelect = editorRoot.querySelector('#savedProjects');
+
+                const confirmDownload = editorRoot.querySelector('#confirmDownload');
+                const cancelDownload = editorRoot.querySelector('#cancelDownload');
+                const confirmSave = editorRoot.querySelector('#confirmSave');
+                const cancelSave = editorRoot.querySelector('#cancelSave');
+                const confirmLoad = editorRoot.querySelector('#confirmLoad');
+                const cancelLoad = editorRoot.querySelector('#cancelLoad');
+                const clearIncompleteBtn = editorRoot.querySelector('#clearIncompleteBtn');
+
+                // --- State Variables ---
+                let currentFullscreenEditor = null;
+                let debounceTimeout;
+                const MAX_INCOMPLETE_PROJECTS = 5;
+                const INCOMPLETE_PROJECT_PREFIX = "Unsaved Session - ";
+
+                // Find & Replace State
+                let currentFindQuery = '';
+                let findResultsIndices = [];
+                let currentFindIndex = -1;
+
+                // --- Incomplete Projects ---
+                const state = { isWorkUnsaved: false };
+                const markWorkAsUnsaved = () => { state.isWorkUnsaved = true; };
+                const markWorkAsSaved = () => { state.isWorkUnsaved = false; };
+                
+                function getTimestamp() {
+                    return new Date().toLocaleString('sv-SE', {
+                        year: 'numeric', month: '2-digit', day: '2-digit',
+                        hour: '2-digit', minute: '2-digit', second: '2-digit'
+                    }).replace(',', '');
+                }
+
+                function saveIncompleteProject(silent = false) {
+                    if (!htmlCode.value && !cssCode.value && !jsCode.value) return;
+
+                    const incompleteProjectName = `${INCOMPLETE_PROJECT_PREFIX}${getTimestamp()}`;
+                    const projectData = {
+                        name: incompleteProjectName, html: htmlCode.value, css: cssCode.value, js: jsCode.value,
+                        timestamp: new Date().toISOString(), type: 'incomplete'
+                    };
+
+                    let incompleteProjects = JSON.parse(localStorage.getItem('codePlaygroundIncompleteProjects') || '[]');
+                    const existingContentHash = JSON.stringify({ h: htmlCode.value, c: cssCode.value, j: jsCode.value });
+                    
+                    // Remove any existing drafts that are identical to the current unsaved state (preventing duplicates)
+                    incompleteProjects = incompleteProjects.filter(p => JSON.stringify({ h: p.html, c: p.css, j: p.js }) !== existingContentHash);
+                    
+                    incompleteProjects.unshift(projectData);
+                    if (incompleteProjects.length > MAX_INCOMPLETE_PROJECTS) {
+                        incompleteProjects = incompleteProjects.slice(0, MAX_INCOMPLETE_PROJECTS);
+                    }
+                    localStorage.setItem('codePlaygroundIncompleteProjects', JSON.stringify(incompleteProjects));
+                    markWorkAsSaved();
+                    
+                    if (!silent) {
+                         alert('Work saved as draft!');
+                    }
+                }
+
+                function clearIncompleteProjects() {
+                    if (confirm("Are you sure you want to clear all incomplete sessions? This cannot be undone.")) {
+                        localStorage.removeItem('codePlaygroundIncompleteProjects');
+                        updateProjectsList();
+                        alert("Incomplete sessions cleared.");
+                    }
+                }
+
+                // Expose core functions needed by main scope
+                const exposedFunctions = {
+                    showSaveModal: () => showModal(saveModal),
+                    showLoadModal: () => { updateProjectsList(); showModal(loadModal); },
+                    saveIncompleteProjectSilent: () => saveIncompleteProject(true),
+                    isWorkUnsaved: () => state.isWorkUnsaved,
+                    showFindReplaceBar: () => { 
+                         hideAllFeatureBars();
+                         findReplaceBar.style.display = 'block';
+                         fullscreenMenuDropdown.classList.remove('visible');
+                         findInput.focus();
+                         findInput.select();
+                    },
+                    showJumpToLineBar: () => {
+                         hideAllFeatureBars();
+                         jumpToLineBar.style.display = 'flex';
+                         fullscreenMenuDropdown.classList.remove('visible');
+                         jumpToLineInput.focus();
+                         jumpToLineInput.select();
+                    },
+                    updateLineNumbers: null 
+                };
+                
+                // --- Clipboard Fix (Paste Functionality) ---
+                async function pasteToEditor(targetId) {
+                    const targetTextarea = editorRoot.querySelector(`#${targetId}`);
+                    try {
+                        // Use the modern clipboard API
+                        const text = await navigator.clipboard.readText();
+                        if (text) {
+                            targetTextarea.value = text;
+                            markWorkAsUnsaved();
+                            targetTextarea.dispatchEvent(new Event('input'));
+                            
+                            // Sync to fullscreen editor if active
+                            if (currentFullscreenEditor === targetId) {
+                                fullscreenTextarea.value = text;
+                                exposedFunctions.updateLineNumbers();
+                            }
+                        } else {
+                            // If permission is denied or clipboard empty, focus for manual paste
+                            alert('Clipboard is empty or access denied. Focusing the field, please paste manually (Ctrl/Cmd+V).');
+                            targetTextarea.focus(); 
+                        }
+                    } catch (e) {
+                        // Fallback/Warning for browsers blocking readText()
+                        alert('Automatic pasting failed (Permission issue). Focusing the field, please paste manually (Ctrl/Cmd+V).');
+                        console.error('Paste error:', e);
+                        targetTextarea.focus(); 
+                    }
+                }
+                
+                // --- Core Editor Logic ---
+                function getCombinedCode(titleOverride = null) {
+                    const projectTitle = titleOverride || projectNameInput.value || 'Code Playground Project';
+                    return generateCombinedHTML({
+                        name: projectTitle,
+                        html: htmlCode.value,
+                        css: cssCode.value,
+                        js: jsCode.value
+                    }, titleOverride);
+                }
+
+                function updatePreview() {
+                    const blob = new Blob([getCombinedCode("Live Preview")], {type: 'text/html'});
+                    const url = URL.createObjectURL(blob);
+                    preview.src = url;
+                }
+
+                // Debounced input handling
+                [htmlCode, cssCode, jsCode].forEach(el => {
+                    el.addEventListener('input', () => {
+                        markWorkAsUnsaved();
+                        clearTimeout(debounceTimeout);
+                        debounceTimeout = setTimeout(updatePreview, 300);
+                    });
+                });
+
+                // --- Fullscreen Editor Menu & Feature Toggle ---
+                
+                function hideAllFeatureBars() {
+                    findReplaceBar.style.display = 'none';
+                    jumpToLineBar.style.display = 'none';
+                }
+
+                moreActionsBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    fullscreenMenuDropdown.classList.toggle('visible');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!moreActionsBtn.contains(e.target) && !fullscreenMenuDropdown.contains(e.target)) {
+                        fullscreenMenuDropdown.classList.remove('visible');
+                    }
+                });
+                
+                menuFindBtn.addEventListener('click', () => {
+                    exposedFunctions.showFindReplaceBar();
+                });
+
+                menuGoToLineBtn.addEventListener('click', () => {
+                    exposedFunctions.showJumpToLineBar();
+                });
+                
+                menuUndoBtn.addEventListener('click', () => {
+                    fullscreenTextarea.focus();
+                    document.execCommand('undo', false, null);
+                    exposedFunctions.updateLineNumbers();
+                    fullscreenMenuDropdown.classList.remove('visible');
+                });
+                
+                menuRedoBtn.addEventListener('click', () => {
+                    fullscreenTextarea.focus();
+                    document.execCommand('redo', false, null);
+                    exposedFunctions.updateLineNumbers();
+                    fullscreenMenuDropdown.classList.remove('visible');
+                });
+
+
+                // --- Fullscreen Editor Logic ---
+                function openFullscreenEditor(textareaId) {
+                    const textarea = editorRoot.querySelector(`#${textareaId}`);
+                    currentFullscreenEditor = textareaId;
+                    fullscreenTextarea.value = textarea.value;
+                    fullscreenTextarea.setAttribute('data-current-editor-id', textareaId); 
+                    fullscreenTitle.textContent = textareaId.replace('Code', '').toUpperCase() + ' Editor';
+                    
+                    hideAllFeatureBars(); 
+                    fullscreenEditor.classList.add('visible');
+                    fullscreenTextarea.focus();
+                    resetFindState();
+                    exposedFunctions.updateLineNumbers();
+                    editorRoot.querySelector('header').style.visibility = 'hidden';
+                    editorRoot.querySelector('main').style.visibility = 'hidden';
+                }
+
+                function closeFullscreenEditor() {
+                    fullscreenEditor.classList.remove('visible');
+                    currentFullscreenEditor = null;
+                    fullscreenTextarea.removeAttribute('data-current-editor-id'); 
+                    resetFindState();
+                    editorRoot.querySelector('header').style.visibility = 'visible';
+                    editorRoot.querySelector('main').style.visibility = 'visible';
+                }
+
+                fullscreenTextarea.addEventListener('input', function() {
+                    if (currentFullscreenEditor) {
+                        markWorkAsUnsaved();
+                        editorRoot.querySelector(`#${currentFullscreenEditor}`).value = fullscreenTextarea.value;
+                        clearTimeout(debounceTimeout);
+                        debounceTimeout = setTimeout(updatePreview, 300);
+                        resetFindStateOnContentChange(); 
+                        exposedFunctions.updateLineNumbers(); 
+                    }
+                });
+
+                fullscreenTextarea.addEventListener('scroll', () => {
+                    fullscreenLineNumbers.scrollTop = fullscreenTextarea.scrollTop;
+                });
+
+                function updateLineNumbers() {
+                    const lines = fullscreenTextarea.value.split('\n');
+                    let lineNumbersHTML = '';
+                    for (let i = 1; i <= lines.length; i++) {
+                        lineNumbersHTML += `<div>${i}</div>`;
+                    }
+                    fullscreenLineNumbers.innerHTML = lineNumbersHTML;
+                }
+                exposedFunctions.updateLineNumbers = updateLineNumbers; // Export for external use
+
+                jumpToLineBtn.addEventListener('click', () => {
+                    const lineNumber = parseInt(jumpToLineInput.value, 10);
+                    if (isNaN(lineNumber) || lineNumber < 1) {
+                        alert('Please enter a valid line number.');
+                        return;
+                    }
+
+                    const lines = fullscreenTextarea.value.split('\n');
+                    if (lineNumber > lines.length) {
+                        alert(`Line ${lineNumber} is beyond the end of the file (last line is ${lines.length}).`);
+                        return;
+                    }
+
+                    let charIndex = 0;
+                    for (let i = 0; i < lineNumber - 1; i++) {
+                        charIndex += lines[i].length + 1;
+                    }
+
+                    fullscreenTextarea.focus();
+                    fullscreenTextarea.setSelectionRange(charIndex, charIndex);
+
+                    const style = window.getComputedStyle(fullscreenTextarea);
+                    const lineHeight = parseFloat(style.lineHeight) || (parseFloat(style.fontSize) * 1.2);
+
+                    // Calculate scroll position to center the line (or near the top third)
+                    const targetScrollTop = (lineNumber - 1) * lineHeight - (fullscreenTextarea.clientHeight / 3);
+                    fullscreenTextarea.scrollTop = Math.max(0, targetScrollTop);
+
+
+                    const lineDiv = fullscreenLineNumbers.children[lineNumber - 1];
+                    if (lineDiv) {
+                        lineDiv.style.backgroundColor = 'var(--accent-color)';
+                        lineDiv.style.color = 'white';
+                        setTimeout(() => {
+                            lineDiv.style.backgroundColor = '';
+                            lineDiv.style.color = '';
+                        }, 500);
+                    }
+                });
+
+                exitFullscreenBtn.addEventListener('click', closeFullscreenEditor);
+
+                // --- Find and Replace Logic ---
+
+                function resetFindState() {
+                    currentFindQuery = '';
+                    findResultsIndices = [];
+                    currentFindIndex = -1;
+                    findMatchesCount.textContent = '';
+                }
+
+                function resetFindStateOnContentChange() {
+                    if (findResultsIndices.length > 0) {
+                        findResultsIndices = [];
+                        currentFindIndex = -1;
+                        findMatchesCount.textContent = ''; 
+                    }
+                }
+
+                function performFind(direction = 1) { 
+                    const query = findInput.value;
+                    if (!query) {
+                        findMatchesCount.textContent = '';
+                        findResultsIndices = [];
+                        currentFindIndex = -1;
+                        return;
+                    }
+
+                    const content = fullscreenTextarea.value;
+                    const isCaseSensitive = caseSensitiveCheck.checked;
+                    const isRegex = regexCheck.checked;
+
+                    // Recalculate if query or options changed, or if results array is empty
+                    if (query !== currentFindQuery || findResultsIndices.length === 0 || findMatchesCount.textContent === 'Invalid Regex') { 
+                        currentFindQuery = query;
+                        findResultsIndices = [];
+                        try {
+                            const flags = isCaseSensitive ? 'g' : 'gi';
+                            const searchRegex = isRegex ? new RegExp(query, flags) : new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
+                            let match;
+                            while ((match = searchRegex.exec(content)) !== null) {
+                                findResultsIndices.push({ index: match.index, length: match[0].length });
+                            }
+                        } catch (e) {
+                            findMatchesCount.textContent = 'Invalid Regex';
+                            return;
+                        }
+                        
+                        if (direction > 0) {
+                             currentFindIndex = -1; 
+                        } else {
+                             currentFindIndex = findResultsIndices.length; 
+                        }
+                    }
+
+                    if (findResultsIndices.length === 0) {
+                        findMatchesCount.textContent = '0 matches';
+                        return;
+                    }
+
+                    currentFindIndex += direction;
+
+                    if (currentFindIndex >= findResultsIndices.length) {
+                        currentFindIndex = 0; 
+                    } else if (currentFindIndex < 0) {
+                        currentFindIndex = findResultsIndices.length - 1; 
+                    }
+
+                    const result = findResultsIndices[currentFindIndex];
+                    fullscreenTextarea.focus();
+                    fullscreenTextarea.setSelectionRange(result.index, result.index + result.length);
+                    scrollToSelection(fullscreenTextarea, result.index);
+
+                    findMatchesCount.textContent = `${currentFindIndex + 1}/${findResultsIndices.length}`;
+                }
+
+                function scrollToSelection(textarea, selectionStart) {
+                    const text = textarea.value;
+                    const textBeforeSelection = text.substring(0, selectionStart);
+                    const linesBeforeSelection = textBeforeSelection.split('\n').length -1;
+
+                    const style = window.getComputedStyle(textarea);
+                    const lineHeight = parseFloat(style.lineHeight) || (parseFloat(style.fontSize) * 1.2);
+
+                    const scrollTop = linesBeforeSelection * lineHeight;
+
+                    // Scroll only if the selection is outside the visible area
+                    if (scrollTop < textarea.scrollTop || scrollTop > textarea.scrollTop + textarea.clientHeight - lineHeight * 2) {
+                         textarea.scrollTop = scrollTop - (textarea.clientHeight / 2) + lineHeight;
+                    }
+                }
+
+                // Find/Replace button handlers (Trigger search explicitly)
+                findNextBtn.addEventListener('click', () => performFind(1));
+                findPrevBtn.addEventListener('click', () => performFind(-1));
+                
+                findInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        performFind(e.shiftKey ? -1 : 1);
+                    }
+                });
+
+                findInput.addEventListener('input', () => {
+                    resetFindStateOnContentChange();
+                    findMatchesCount.textContent = ''; 
+                });
+                [caseSensitiveCheck, regexCheck].forEach(el => el.addEventListener('change', () => {
+                    resetFindStateOnContentChange();
+                    findMatchesCount.textContent = '';
+                }));
+                
+
+                replaceBtn.addEventListener('click', () => {
+                    if (currentFindIndex === -1 || findResultsIndices.length === 0 || !findInput.value) {
+                         alert("Please perform a Find search first to select text for replacement.");
+                         return;
+                    }
+
+                    const result = findResultsIndices[currentFindIndex];
+                    const replacement = replaceInput.value;
+                    const originalLength = result.length;
+
+                    fullscreenTextarea.setSelectionRange(result.index, result.index + originalLength);
+                    document.execCommand('insertText', false, replacement);
+                    
+                    // Update main content areas
+                    markWorkAsUnsaved();
+                    editorRoot.querySelector(`#${currentFullscreenEditor}`).value = fullscreenTextarea.value;
+                    updatePreview();
+                    exposedFunctions.updateLineNumbers();
+
+                    // Re-run find logic
+                    const oldQuery = currentFindQuery;
+                    resetFindStateOnContentChange(); 
+                    findInput.value = oldQuery; 
+                    performFind(1);
+                });
+
+                replaceAllBtn.addEventListener('click', () => {
+                    const query = findInput.value;
+                    if (!query) {
+                        alert("Please enter text to find.");
+                        return;
+                    }
+
+                    const content = fullscreenTextarea.value;
+                    const replacement = replaceInput.value;
+                    const isCaseSensitive = caseSensitiveCheck.checked;
+                    const isRegex = regexCheck.checked;
+
+                    try {
+                        const flags = isCaseSensitive ? 'g' : 'gi';
+                        const searchRegex = isRegex ? new RegExp(query, flags) : new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
+
+                        const matches = (content.match(searchRegex) || []);
+                        if (matches.length === 0) {
+                            findMatchesCount.textContent = '0 matches to replace';
+                            return;
+                        }
+                        
+                        if (!confirm(`Are you sure you want to replace all ${matches.length} occurrences of "${query}"?`)) {
+                            return;
+                        }
+
+                        const newContent = content.replace(searchRegex, replacement);
+                        const replacedCount = matches.length;
+
+                        fullscreenTextarea.value = newContent;
+                        editorRoot.querySelector(`#${currentFullscreenEditor}`).value = newContent;
+                        markWorkAsUnsaved();
+                        updatePreview();
+                        exposedFunctions.updateLineNumbers();
+
+                        resetFindState();
+                        findMatchesCount.textContent = `${replacedCount} replaced`;
+
+                    } catch (e) {
+                        findMatchesCount.textContent = 'Invalid Regex';
+                        console.error("Regex error:", e);
+                    }
+                });
+
+
+                // --- Event Listeners (Modals, Buttons, etc.) ---
+                downloadBtn.addEventListener('click', () => {
+                    if (!projectNameInput.value && saveProjectNameInput.value) {
+                         projectNameInput.value = saveProjectNameInput.value;
+                    }
+                    showModal(downloadModal);
+                });
+                
+                openInNewBtn.addEventListener('click', () => openProjectInNewTab({
+                    name: projectNameInput.value || 'Untitled Project',
+                    html: htmlCode.value,
+                    css: cssCode.value,
+                    js: jsCode.value
+                }));
+                saveBtn.addEventListener('click', () => {
+                    if (!saveProjectNameInput.value && projectNameInput.value) {
+                         saveProjectNameInput.value = projectNameInput.value;
+                    }
+                    showModal(saveModal);
+                });
+                loadBtn.addEventListener('click', () => { exposedFunctions.showLoadModal(); });
+
+                confirmDownload.addEventListener('click', downloadCombined);
+                cancelDownload.addEventListener('click', () => hideModal(downloadModal));
+                confirmSave.addEventListener('click', saveProject);
+                cancelSave.addEventListener('click', () => hideModal(saveModal));
+                confirmLoad.addEventListener('click', loadProject);
+                cancelLoad.addEventListener('click', () => hideModal(loadModal));
+                clearIncompleteBtn.addEventListener('click', clearIncompleteProjects);
+
+                backToProjectsBtn.addEventListener('click', () => {
+                    if (state.isWorkUnsaved && confirm("You have unsaved changes. Do you want to save them as an incomplete session before returning?")) {
+                        saveIncompleteProject(true); // Save silently
+                    }
+                    closeEditorCallback();
+                });
+
+
+                editorRoot.querySelectorAll('.expand-btn').forEach(btn => {
+                    btn.addEventListener('click', function() { openFullscreenEditor(this.getAttribute('data-target')); });
+                });
+
+                editorRoot.querySelectorAll('.paste-btn').forEach(btn => {
+                    btn.addEventListener('click', function() { pasteToEditor(this.getAttribute('data-target')); });
+                });
+
+                // Set up upload buttons (delegates to global fileUploader)
+                editorRoot.querySelectorAll('.upload-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const targetId = this.getAttribute('data-target');
+                        const acceptTypes = this.getAttribute('data-accept');
+                        fileUploader.setAttribute('data-upload-target', targetId);
+                        fileUploader.accept = acceptTypes;
+                        fileUploader.value = null;
+                        fileUploader.click();
+                    });
+                });
+
+                // --- Telegram Single Project Export Logic ---
+
+                exportSingleTelegramBtn.addEventListener('click', () => {
+                    // Update project name in editor scope
+                    if (saveProjectNameInput.value) {
+                        exportSingleTelegramModal.querySelector('.modal-title').textContent = `Export: ${saveProjectNameInput.value}`;
+                    }
+                    showModal(exportSingleTelegramModal);
+                });
+
+                confirmSingleExport.addEventListener('click', async () => {
+                    const selectedPart = codePartSelect.value;
+                    const currentProjectName = saveProjectNameInput.value || 'Untitled Project';
+                    let content = '';
+                    let partName = '';
+
+                    switch (selectedPart) {
+                        case 'html': content = htmlCode.value; partName = 'HTML'; break;
+                        case 'css': content = cssCode.value; partName = 'CSS'; break;
+                        case 'js': content = jsCode.value; partName = 'JavaScript'; break;
+                        case 'combined': 
+                            content = getCombinedCode(currentProjectName); 
+                            partName = 'Combined HTML File'; 
+                            break;
+                    }
+
+                    if (!content.trim()) {
+                        alert(`The selected code section (${partName}) is empty.`);
+                        return;
+                    }
+
+                    let success = false;
+
+                    if (selectedPart === 'combined') {
+                        const fileName = `${currentProjectName.replace(/[^a-z0-9_.-]/gi, '_')}.html`;
+                        const blob = new Blob([content], { type: 'text/html' });
+                        success = await sendToTelegram(blob, true, currentProjectName, fileName, 'text/html');
+
+                    } else {
+                        // Send as text message (MarkdownV2 code block)
+                        const safeContent = content.replace(/```/g, '`\u200B`\u200B`'); 
+                        const payload = `*Project:* ${currentProjectName}\n*Part:* ${partName}\n\n\`\`\`\n${safeContent}\n\`\`\``;
+                        success = await sendToTelegram(payload, false, currentProjectName);
+                    }
+
+
+                    if (success) {
+                        alert(`Successfully exported ${partName} for "${currentProjectName}" to Telegram!`);
+                        hideModal(exportSingleTelegramModal);
+                    }
+                });
+
+                cancelSingleExport.addEventListener('click', () => hideModal(exportSingleTelegramModal));
+
+                // --- Helper Functions ---
+                
+                function downloadCombined() {
+                    const fileNameBase = projectNameInput.value.trim() || 'code-playground';
+                    const fileName = `${fileNameBase.replace(/[^a-z0-9_.-]/gi, '_')}.html`;
+                    const blob = new Blob([getCombinedCode(projectNameInput.value.trim() || 'My Project')], {type: 'text/html'});
+
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob); a.download = fileName;
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    URL.revokeObjectURL(a.href);
+                    hideModal(downloadModal); 
+                }
+
+                function saveProject() {
+                    const projectName = saveProjectNameInput.value.trim();
+                    if (!projectName) { alert('Project name required.'); saveProjectNameInput.focus(); return; }
+
+                    const projectData = {
+                        name: projectName, html: htmlCode.value, css: cssCode.value, js: jsCode.value,
+                        timestamp: new Date().toISOString()
+                    };
+
+                    let projects = getProjectsFromMain(); 
+                    const existingIndex = projects.findIndex(p => p.name === projectName);
+
+                    if (existingIndex >= 0) {
+                        if (!confirm(`Project "${projectName}" exists. Overwrite?`)) return;
+                        projects[existingIndex] = projectData;
+                    } else {
+                        projects.push(projectData);
+                    }
+
+                    saveProjectsToMain(projects); 
+                    hideModal(saveModal); 
+                    alert('Project saved!'); markWorkAsSaved();
+                    projectNameInput.value = projectName;
+                    editorModal.querySelector('header h1').textContent = `Editing: ${projectName}`;
+                }
+
+                function loadProject() {
+                    const selectedProjectName = savedProjectsSelect.value;
+                    if (!selectedProjectName) return;
+
+                    const isInc = selectedProjectName.startsWith(INCOMPLETE_PROJECT_PREFIX);
+                    const storageKey = isInc ? 'codePlaygroundIncompleteProjects' : 'codePlaygroundProjects';
+                    let projects = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                    const project = projects.find(p => p.name === selectedProjectName);
+
+                    if (project) {
+                        // Load content
+                        htmlCode.value = project.html || ''; cssCode.value = project.css || ''; jsCode.value = project.js || '';
+                        updatePreview(); hideModal(loadModal); markWorkAsSaved();
+                        
+                        // Update UI fields
+                        const effectiveName = project.name.replace(INCOMPLETE_PROJECT_PREFIX, '').trim();
+                        saveProjectNameInput.value = effectiveName; 
+                        projectNameInput.value = effectiveName; 
+                        editorModal.querySelector('header h1').textContent = `Editing: ${effectiveName || 'New Project'}`;
+
+                        // If loaded from incomplete, delete the draft
+                        if (isInc) {
+                            projects = projects.filter(p => p.name !== selectedProjectName);
+                            localStorage.setItem(storageKey, JSON.stringify(projects));
+                        }
+                        updateProjectsList(); 
+                    } else {
+                        alert("Error: Project not found.");
+                    }
+                }
+
+                function updateProjectsList() {
+                    const savedRegularProjects = JSON.parse(localStorage.getItem('codePlaygroundProjects') || '[]');
+                    const incompleteProjects = JSON.parse(localStorage.getItem('codePlaygroundIncompleteProjects') || '[]');
+                    savedProjectsSelect.innerHTML = '<option value="">-- Select a project --</option>';
+
+                    if (incompleteProjects.length > 0) {
+                        const optGroup = document.createElement('optgroup'); optGroup.label = `Incomplete Sessions (${incompleteProjects.length})`;
+                        incompleteProjects.forEach(p => {
+                            const date = new Date(p.timestamp).toLocaleString();
+                            const opt = document.createElement('option'); opt.value = p.name; opt.textContent = `[Draft] ${date}`;
+                            optGroup.appendChild(opt);
+                        });
+                        savedProjectsSelect.appendChild(optGroup);
+                        clearIncompleteBtn.style.display = 'inline-block';
+                    } else {
+                        clearIncompleteBtn.style.display = 'none';
+                    }
+
+                    if (savedRegularProjects.length > 0) {
+                        const optGroup = document.createElement('optgroup'); optGroup.label = `Saved Projects (${savedRegularProjects.length})`;
+                        savedRegularProjects.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sort by date descending
+                        savedRegularProjects.forEach(p => {
+                            const opt = document.createElement('option'); opt.value = p.name; opt.textContent = p.name;
+                            optGroup.appendChild(opt);
+                        });
+                        savedProjectsSelect.appendChild(optGroup);
+                    }
+                }
+
+                // Initial setup
+                updateProjectsList();
+                markWorkAsSaved(); 
+                return exposedFunctions;
+            }
+
+            // --- Global Event Listener for File Uploader ---
+            fileUploader.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const targetId = this.getAttribute('data-upload-target');
+                if (editorModal.classList.contains('visible') && editorInitialized) {
+                    const targetTextarea = editorModal.querySelector(`#${targetId}`);
+                    if (targetTextarea) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            targetTextarea.value = e.target.result;
+                            targetTextarea.dispatchEvent(new Event('input'));
+                            
+                            const fullscreenTextarea = editorModal.querySelector('#fullscreenTextarea');
+                            if (fullscreenTextarea && fullscreenTextarea.getAttribute('data-current-editor-id') === targetId) {
+                                fullscreenTextarea.value = e.target.result;
+                                if (currentEditorInstance && typeof currentEditorInstance.updateLineNumbers === 'function') {
+                                    currentEditorInstance.updateLineNumbers();
+                                }
+                            }
+                        };
+                        reader.onerror = function() {
+                            alert('Error reading file.');
+                            console.error("File reading error:", reader.error);
+                        };
+                        reader.readAsText(file);
+                    }
+                }
+            });
+
+            // --- Initial Render of Project Cards ---
+            renderProjectCards();
+        });
+    </script>
+</body>
+</html>
+    <script></script>
+</body>
+</html>
