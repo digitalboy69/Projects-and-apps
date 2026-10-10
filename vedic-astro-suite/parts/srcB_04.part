@@ -1,8 +1,3 @@
-
-// Classical Arudha Pada algorithm (BPHS): count from the house to its lord's
-// house, then count the same number of houses again from the lord's house.
-// If the result would fall in the same house or the 7th from the house
-// itself (i.e. the Pada would be identical to, or in opposition to, the
 // house it represents), the CORRECTED rule (BPHS 29.4-29.5, cross-verified
 // against multiple translations) is to take the 10th house FROM THAT
 // INTERMEDIATE RESULT — i.e. add 9 signs (0-indexed), not 10.
@@ -519,6 +514,22 @@ function buildPlanetsPanel(chart){
     </button>`;
   }).join('');
 
+  const outerCards = OUTER_LIST.map(n=>{
+    const o = chart.outer[n], sg = SIGNS[o.sign], c = OUTER_COL[n];
+    return `<button type="button" class="pl-card" data-planet-click="${n}" data-flags="outer" style="--pc:${c}">
+      <span class="pl-top"><span class="pl-dot" style="background:${c}">${OUTER_GLYPHS[n]}</span>
+        <span class="pl-name"><b>${n}${o.retrograde?' <em>℞</em>':''}</b><small>${o.nakshatra.name} · Pada ${o.nakshatra.pada}</small></span>
+        <span class="pl-house">H${o.house}</span></span>
+      <span class="pl-sign">${sg.symbol} ${sg.name}<em>${formatDeg(o.degInSign)}</em></span>
+      <span class="pl-track"><i style="width:${(o.degInSign/30*100).toFixed(1)}%"></i></span>
+      <span class="pl-tags"><span class="pl-tag">${OUTER_INFO[n].role}</span></span></button>`;
+  }).join('');
+  const outerAsp = OUTER_LIST.map(n=>{
+    const o = chart.outer[n], tg = PLANET_LIST.map(x=>[x, chart.planets[x].longitude]).concat(OUTER_LIST.map(x=>[x, chart.outer[x].longitude])).concat([['Ascendant', chart.ascendant.longitude]]);
+    const a = outerAspectsTo(o.longitude, tg, n).map(r=>`<span class="pl-asp">${r.asp.symbol} ${r.target} ${r.dev.toFixed(1)}°</span>`).join('') || '<span class="pl-asp">no close aspects</span>';
+    return `<div class="pl-arow" data-planet-click="${n}"><span class="pl-dot sm" style="background:${OUTER_COL[n]}">${OUTER_GLYPHS[n]}</span><span class="pl-an"><b>${n}</b><small>in House ${o.house}</small></span><span class="pl-achips">${a}</span></div>`;
+  }).join('');
+
   const asp = PLANET_LIST.map(name=>{
     const pl = chart.planets[name], c = DASHA_PLANET_COLORS[name]||'#888';
     const chips = pl.aspectsHouses.map(h=>`<span class="pl-asp">H${h} ${SIGNS[(chart.ascendant.sign+h-1)%12].symbol}</span>`).join('');
@@ -535,6 +546,8 @@ function buildPlanetsPanel(chart){
     </div>
     <div class="pl-grid">${cards}</div>
     <div class="pl-empty" id="plEmpty" hidden>No planets match this filter in your chart.</div>
+    <div class="pl-sec"><h5>Outer planets <span>Modern · tap for details</span></h5><div class="pl-grid">${outerCards}</div>
+      <div class="pl-asplist" style="margin-top:10px">${outerAsp}</div></div>
     <div class="pl-sec"><h5>Who looks at whom <span>Drishti · aspected houses</span></h5><div class="pl-asplist">${asp}</div></div></div>`;
 }
 document.addEventListener('click',(e)=>{
@@ -547,8 +560,40 @@ document.addEventListener('click',(e)=>{
 
 let pdCurrent = null;
 function pdBlock(title, inner){ return `<div class="pd-blk"><div class="pd-blk-t">${title}</div>${inner}</div>`; }
+function openOuterDetail(name){
+  const chart = currentChartForModal, o = chart.outer && chart.outer[name]; if (!o) return;
+  pdCurrent = name; const I = OUTER_INFO[name], sign = SIGNS[o.sign], c = OUTER_COL[name];
+  const nakSpan = 360/27, nakPct = Math.max(0,Math.min(100,(o.nakshatra.degInNak||0)/nakSpan*100)), degRem = nakSpan - (o.nakshatra.degInNak||0);
+  document.getElementById('pdBox').style.setProperty('--pc', c);
+  document.getElementById('pdGlyph').textContent = OUTER_GLYPHS[name];
+  document.getElementById('pdTitle').textContent = name;
+  document.getElementById('pdSubtitle').textContent = `${sign.symbol} ${sign.name} · House ${o.house} · ${I.sk}`;
+  document.getElementById('pdPills').innerHTML = [`<span class="pd-pill gold">${I.role}</span>`, `<span class="pd-pill ${o.retrograde?'bad':''}">${o.retrograde?'℞ Retrograde':'Direct motion'}</span>`, '<span class="pd-pill">Outer planet</span>'].join('');
+  const k = name.toLowerCase(), l1 = planetGeocentricLongitude(k, chart.julianDay-0.25), l2 = planetGeocentricLongitude(k, chart.julianDay+0.25);
+  let dd = l2-l1; if (dd>180) dd-=360; if (dd<-180) dd+=360; const speed = Math.abs(dd*2);
+  let h = '';
+  h += pdBlock('What it means', `<div class="pd-jsub" style="font-size:13px;line-height:1.6;color:var(--text-main)">${I.about}</div>`);
+  h += pdBlock(`In your chart: house ${o.house}`, `<div class="pd-jsub" style="font-size:13px;line-height:1.6;color:var(--text-main)">${outerHouseLine(name, o.house)}</div>`);
+  h += pdBlock(`Journey through ${sign.name}`, `<div class="pd-journey"><div class="pd-jtrack"><i style="width:${(o.degInSign/30*100).toFixed(1)}%"></i><u style="left:${(o.degInSign/30*100).toFixed(1)}%"></u></div>
+    <div class="pd-jlbl"><span>0°</span><b>${formatDeg(o.degInSign)} travelled</b><span>30°</span></div>
+    <div class="pd-jsub">Typical stay in a sign: ${I.perSign}</div></div>`);
+  h += `<div class="pd-mini"><div><small>Sign lord</small><b>${sign.lord}</b></div><div><small>House</small><b>${o.house}</b></div><div><small>Daily speed</small><b>${speed.toFixed(3)}°</b></div><div><small>Nakshatra lord</small><b>${o.nakshatra.lord}</b></div></div>`;
+  h += pdBlock('Nakshatra', `<div class="pd-nak"><b>${o.nakshatra.name}</b><span>Pada ${o.nakshatra.pada}</span></div><div class="pd-jtrack thin"><i style="width:${nakPct.toFixed(1)}%"></i></div><div class="pd-jsub">${formatDeg(degRem)} remaining in this nakshatra</div>`);
+  const tg = PLANET_LIST.map(n=>[n, chart.planets[n].longitude]).concat(OUTER_LIST.map(n=>[n, chart.outer[n].longitude])).concat([['Ascendant', chart.ascendant.longitude]]);
+  const asp = outerAspectsTo(o.longitude, tg, name);
+  h += pdBlock('Aspects (Western orbs)', asp.length ? asp.map(a=>`<div class="pd-alert"><b>${a.asp.symbol} ${a.asp.name} ${a.target}</b><span>${name} ${a.asp.verb} ${a.target} · ${a.dev.toFixed(1)}° orb</span></div>`).join('') : '<div class="pd-jsub">No close aspects to your planets or Ascendant.</div>');
+  h += pdBlock('Key themes', `<div class="pl-achips">${I.themes.map(t=>`<span class="pl-asp">${t}</span>`).join('')}</div>`);
+  h += pdBlock('Facts', `<div class="pd-mini" style="grid-template-columns:repeat(2,1fr)">${I.facts.map(f=>`<div><small>${f[0]} ${f[1]}</small><b style="font-size:12.5px">${f[2]}</b></div>`).join('')}</div>`);
+  document.getElementById('pdStatGrid').innerHTML = h;
+  document.getElementById('pdNote').textContent = OUTER_VEDIC_NOTE;
+  document.getElementById('pdStrengthBtn').style.display = 'none';
+  document.getElementById('pdBox').scrollTop = 0;
+  document.getElementById('planetDetailModal').classList.add('show');
+}
 function openPlanetDetail(planetName){
   if (!currentChartForModal) return;
+  document.getElementById('pdStrengthBtn').style.display = '';
+  if (OUTER_LIST.includes(planetName)) return openOuterDetail(planetName);
   const chart = currentChartForModal, pl = chart.planets[planetName];
   if (!pl) return;
   pdCurrent = planetName;
@@ -600,8 +645,8 @@ function openPlanetDetail(planetName){
 document.addEventListener('click',(e)=>{
   const go = e.target.closest('[data-pd-go]');
   if (go && pdCurrent){
-    const i = PLANET_LIST.indexOf(pdCurrent), n = PLANET_LIST.length;
-    openPlanetDetail(PLANET_LIST[(i + parseInt(go.dataset.pdGo) + n) % n]); return;
+    const ALLP = PLANET_LIST.concat(OUTER_LIST), i = ALLP.indexOf(pdCurrent), n = ALLP.length;
+    openPlanetDetail(ALLP[(i + parseInt(go.dataset.pdGo) + n) % n]); return;
   }
   if (e.target.closest('#pdStrengthBtn')){
     document.getElementById('planetDetailModal').classList.remove('show'); switchAppTab('panel-shadbala');
@@ -1544,34 +1589,3 @@ function buildAspectRow(label, result, isActiveNow){
   const prevText = result.previous ? formatRelDate(result.previous.jd) : "Not found in the last 10 years";
   const nextText = result.next ? formatRelDate(result.next.jd) : "Not found in the next 10 years";
   return `
-  <div class="rel-aspect-row">
-    <div class="rel-aspect-name">${label}${isActiveNow ? '<span class="rel-aspect-active-badge">Active now</span>' : ''}</div>
-    <div class="rel-aspect-dates">
-      <span class="past">← ${prevText}</span>
-      <span class="future">${nextText} →</span>
-    </div>
-  </div>`;
-}
-
-function formatRelDate(jd){
-  let j = jd + 0.5;
-  const Z = Math.floor(j), F = j-Z;
-  let A = Z;
-  if (Z>=2299161){ const alpha=Math.floor((Z-1867216.25)/36524.25); A=Z+1+alpha-Math.floor(alpha/4); }
-  const B=A+1524, C=Math.floor((B-122.1)/365.25), D=Math.floor(365.25*C), E=Math.floor((B-D)/30.6001);
-  const day = B-D-Math.floor(30.6001*E)+F;
-  const month = E<14 ? E-1 : E-13;
-  const year = month>2 ? C-4716 : C-4715;
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  return `${Math.floor(day)} ${months[month-1]} ${year}`;
-}
-
-document.getElementById('profileSelect').addEventListener('change', (e) => {
-  document.getElementById('mainMenuModal').classList.remove('show'); // Hide menu immediately so UI doesn't freeze
-
-  const idx = e.target.value;
-  if (idx !== "") {
-    localStorage.setItem('VedicAstrology_lastProfileIdx', idx);
-  } else {
-    localStorage.removeItem('VedicAstrology_lastProfileIdx');
-  }

@@ -1,3 +1,34 @@
+  <div class="rel-aspect-row">
+    <div class="rel-aspect-name">${label}${isActiveNow ? '<span class="rel-aspect-active-badge">Active now</span>' : ''}</div>
+    <div class="rel-aspect-dates">
+      <span class="past">← ${prevText}</span>
+      <span class="future">${nextText} →</span>
+    </div>
+  </div>`;
+}
+
+function formatRelDate(jd){
+  let j = jd + 0.5;
+  const Z = Math.floor(j), F = j-Z;
+  let A = Z;
+  if (Z>=2299161){ const alpha=Math.floor((Z-1867216.25)/36524.25); A=Z+1+alpha-Math.floor(alpha/4); }
+  const B=A+1524, C=Math.floor((B-122.1)/365.25), D=Math.floor(365.25*C), E=Math.floor((B-D)/30.6001);
+  const day = B-D-Math.floor(30.6001*E)+F;
+  const month = E<14 ? E-1 : E-13;
+  const year = month>2 ? C-4716 : C-4715;
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return `${Math.floor(day)} ${months[month-1]} ${year}`;
+}
+
+document.getElementById('profileSelect').addEventListener('change', (e) => {
+  document.getElementById('mainMenuModal').classList.remove('show'); // Hide menu immediately so UI doesn't freeze
+
+  const idx = e.target.value;
+  if (idx !== "") {
+    localStorage.setItem('VedicAstrology_lastProfileIdx', idx);
+  } else {
+    localStorage.removeItem('VedicAstrology_lastProfileIdx');
+  }
 
   if (idx === "") {
     document.getElementById('intakeSection').style.display = '';
@@ -666,6 +697,16 @@ function buildFullReportText(chart, profile, sections, liveSkyData){
       add(`${pad('',10)} Nakshatra: ${p.nakshatra.name}, Pada ${p.nakshatra.pada} (Lord ${p.nakshatra.lord})  |  Dignity: ${p.dignity.label}`);
       add(`${pad('',10)} Degrees traveled in sign: ${formatDeg(p.degInSign)}  |  Degrees remaining: ${formatDeg(p.degRemainingInSign)}  |  Speed: ${Math.abs(p.speed).toFixed(4)}°/day ${p.retrograde?'(retrograde)':'(direct)'}`);
       add(`${pad('',10)} Absolute sidereal longitude: ${formatDeg(normDeg(p.longitude))}  |  Aspects houses: ${p.aspectsHouses.map(h=>'H'+h).join(', ')}`);
+    });
+
+    subsection('Outer Planets (modern; not used in classical Vedic strength or dasha)');
+    OUTER_LIST.forEach(n=>{
+      const o = chart.outer[n], sg = SIGNS[o.sign];
+      add(`${pad(n,10)} ${sg.name} (${sg.sk}), ${formatDeg(o.degInSign)}  |  House ${o.house}${o.retrograde ? '  |  RETROGRADE' : ''}  |  Nakshatra: ${o.nakshatra.name}, Pada ${o.nakshatra.pada}  |  Absolute sidereal longitude: ${formatDeg(normDeg(o.longitude))}`);
+      add(`${pad('',10)} Themes: ${OUTER_INFO[n].themes.slice(0,4).join(', ')}  |  ${outerHouseLine(n, o.house)}`);
+      const tg = PLANET_LIST.map(x=>[x, chart.planets[x].longitude]).concat(OUTER_LIST.map(x=>[x, chart.outer[x].longitude])).concat([['Ascendant', chart.ascendant.longitude]]);
+      const a = outerAspectsTo(o.longitude, tg, n);
+      add(`${pad('',10)} Western aspects: ${a.length ? a.map(r=>`${r.asp.name} ${r.target} (${r.dev.toFixed(1)}° orb)`).join('; ') : 'none within orb'}`);
     });
 
     subsection('Combustion Status');
@@ -1548,30 +1589,3 @@ function mtAvatar(name, col){ return `<span class="mt-av" style="background:${co
 const MT_COLS = ['#D4AF37', '#5EC4B7', '#8A6FB8', '#E0A64A', '#6B7FA3', '#C95050', '#5B8A9E'];
 function mtColor(name){ return MT_COLS[[...(name || '?')].reduce((a, c) => a + c.charCodeAt(0), 0) % MT_COLS.length]; }
 function mtSummary(p){
-  try { const P = kmPerson(p); return `<div class="mt-sum"><span>${SIGNS[P.moonSign].symbol} ${SIGNS[P.moonSign].name} Moon</span><span>★ ${NAKSHATRAS[P.nak].name} · pada ${P.pada}</span><span>↑ ${SIGNS[P.lagna].name} Lagna</span></div>`; }
-  catch(e){ return '<div class="mt-sum"><span>Could not read this chart</span></div>'; }
-}
-function mtRenderCard(i){
-  const el = document.getElementById('mtCard' + i); if (!el) return; const S = MT[i];
-  const role = i === 1 ? ['Person 1', 'Groom side · Vara'] : ['Person 2', 'Bride side · Kanya'];
-  const head = `<div class="mt-ch"><span class="mt-role">${role[0]}</span><small>${role[1]}</small></div>
-    <div class="mt-seg"><button type="button" class="${S.mode === 'saved' ? 'on' : ''}" data-mt-mode="${i}:saved">Saved profile</button><button type="button" class="${S.mode === 'new' ? 'on' : ''}" data-mt-mode="${i}:new">New person</button></div>`;
-  let body;
-  if (S.mode === 'saved'){
-    body = MT.list.length ? `<div class="mt-chips">${MT.list.map((p, idx) => `<button type="button" class="mt-chip ${S.profile && mtKey(S.profile) === mtKey(p) ? 'on' : ''}" data-mt-pick="${i}:${idx}">${mtAvatar(p.name, mtColor(p.name))}<span><b>${escapeHtml(p.name || 'Unnamed')}</b><small>${formatDateHuman(p.dob)} · ${p.tob.slice(0, 5)}</small></span></button>`).join('')}</div>`
-      : `<div class="mt-empty">No saved profiles yet — switch to “New person”.</div>`;
-    body += S.profile ? mtSummary(S.profile) : `<div class="mt-hint">Tap a profile above</div>`;
-  } else {
-    const d = S.draft;
-    body = `<div class="mt-form">
-      <label>Name <small>(optional)</small><input type="text" data-mt-f="name" value="${escapeHtml(d.name)}" placeholder="e.g. Ananya"></label>
-      <div class="mt-row"><label>Date of birth<input type="date" data-mt-f="dob" value="${d.dob}"></label><label>Time of birth<input type="time" data-mt-f="tob" step="1" value="${d.tob}"></label></div>
-      <label class="mt-place">Place of birth<input type="text" data-mt-place="${i}" value="${escapeHtml(d.place)}" placeholder="Search a city…" autocomplete="off"><div class="mt-res" id="mtRes${i}"></div></label>
-      <div class="lp-tools"><button type="button" data-mt-loc="${i}:map">🗺️ Pick on map</button><button type="button" data-mt-loc="${i}:coords">⌖ Enter coordinates</button></div>
-      <div class="mt-coord ${d.lat !== null ? 'ok' : ''}" id="mtCoord${i}">${d.lat !== null ? `✓ ${(+d.lat).toFixed(3)}°, ${(+d.lon).toFixed(3)}°` : 'Location not selected yet'}</div>
-      <label>Timezone<select data-mt-f="tz">${TZ_OPTIONS.map(v => `<option value="${v}" ${+d.tz === v ? 'selected' : ''}>${fmtTz(v)}</option>`).join('')}</select></label>
-      <details><summary>Enter coordinates manually</summary><div class="mt-row"><label>Latitude<input type="number" step="any" data-mt-f="lat" value="${d.lat === null ? '' : d.lat}"></label><label>Longitude<input type="number" step="any" data-mt-f="lon" value="${d.lon === null ? '' : d.lon}"></label></div></details>
-      <label class="mt-save"><input type="checkbox" data-mt-f="save" ${d.save ? 'checked' : ''}> Save to my profiles</label>
-    </div>`;
-  }
-  el.innerHTML = head + body;

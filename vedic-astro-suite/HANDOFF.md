@@ -35,3 +35,4 @@ Kama (labelled unverified), PDF client report, remedies, link Fate Meter/Sahams 
 
 - Added Uranus/Neptune/Pluto (JPL Standish elements) to 3D wheel + Birth Chart wheels (toggle "Outer planets"); kept out of Vedic aspect/yoga engines (OUTER_LIST, separate from PLANET_LIST).
 - 3D: "Solar System" switch (srcA: SOL / solBuild / setSceneView), Easy-fit and True-scale modes, new Solar tab. Tested with Three r128 + swiftshader.
+- Outer-planet popups: shared knowledge block `OUTER_INFO` / `outerAspectsTo` (copied in srcA and srcB). A: openOuterPlanetDetail; B: openOuterDetail + Outer planets section in Planets panel + report lines. Western aspects (orbs 8/4/7/7/8).

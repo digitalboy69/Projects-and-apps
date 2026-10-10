@@ -2116,9 +2116,9 @@ clickRaycaster.params.Points = { threshold: 0.4 };
 // Reverse-lookup: scene mesh -> canonical planet name (works for both helio_* and geo_* keys)
 function meshKeyToPlanetName(key){
   if (!key) return null;
-  const stripped = key.replace(/^geo_/, '');
+  const stripped = key.replace(/^(geo_|sol_)/, '');
   const capitalized = stripped.charAt(0).toUpperCase()+stripped.slice(1);
-  if (PLANET_LIST.includes(capitalized)) return capitalized;
+  if (ALL_BODIES.includes(capitalized)) return capitalized;
   return null;
 }
 const nakshatraLineGroup = new THREE.Group();
@@ -2289,7 +2289,7 @@ function handleCanvasClick(e){
   clickRaycaster.params.Line = { threshold: 0.8 }; // Larger threshold makes tapping lines easier on mobile
 
   const candidateMeshes = Object.entries(bodyMeshes)
-    .filter(([key])=> !key.startsWith('signlabel_') && !key.startsWith('nakshatra_') && !key.startsWith('ghost_'))
+    .filter(([key,m])=> !key.startsWith('signlabel_') && !key.startsWith('nakshatra_') && !key.startsWith('ghost_') && m.visible!==false && !(m.parent && m.parent.visible===false))
     .map(([key,mesh])=>({key,mesh}));
   
   const hits = clickRaycaster.intersectObjects(candidateMeshes.map(c=>c.mesh), false);
@@ -3522,8 +3522,7 @@ function buildSkyTableRows(){
     row.style.setProperty('--pc', PLANET_COLORS[name]);
     row.style.cursor = 'pointer';
     row.addEventListener('click', ()=>{
-      if (OUTER_LIST.includes(name)){ if (SOL.view==='solar') setSceneView('wheel'); setCamMode('focus'); focusedPlanetKey = 'geo_'+name; autoRotate = false; const sel = document.getElementById('focusPlanetSelect'); if (sel) sel.value = focusedPlanetKey; updateLegend(); markDirty(); }
-      else openPlanetDetail(name);
+      openPlanetDetail(name);
     });
     row.innerHTML = `
       <div class="sky-glyph" style="color:${PLANET_COLORS[name]}">${PLANET_GLYPHS[name]}</div>
@@ -4498,6 +4497,7 @@ function pdxTab(btn, id){
 }
 function openPlanetDetail(name, jd){
   if (jd == null) jd = currentJD;
+  if (OUTER_LIST.includes(name)) return openOuterPlanetDetail(name, jd);
   const snap = snapshotPositions(jd), lon = snap.sidereal[name], si = getSignIndex(lon), sign = SIGNS[si], dms = degreeInSign(lon);
   const nakIdx = getNakshatraIndex(lon), nak = NAKSHATRAS[nakIdx], pada = getPadaIndex(lon)+1, d = PD[name], col = PLANET_COLORS[name];
   const isNode = name === 'Rahu' || name === 'Ketu', isRetro = isNode || snap.retro[name];
@@ -4577,6 +4577,137 @@ function openPlanetDetail(name, jd){
     <div class="pdx-pane" data-pane="fa">
       <div class="pdx-h">${isNode?'About the node':'Astronomy facts'}</div>
       <div class="pdx-grid">${d.facts.map(f=>card(f[0]+' '+f[1], f[2])).join('')}</div>
+    </div>
+  </div>`;
+  const box = document.getElementById('planetDetailContent'); box.innerHTML = html;
+  document.getElementById('planetDetailOverlay').classList.add('show');
+  const m = box.closest('.pdmodal'); if (m) m.scrollTop = 0;
+  requestAnimationFrame(()=> requestAnimationFrame(()=> box.querySelector('.pdx-root').classList.add('go')));
+}
+
+/* ---- Outer (trans-Saturnian) planet knowledge, shared by popups, reports and aspects ---- */
+const OUTER_INFO = {
+  Uranus:{ic:'⚡', role:'The Awakener', sk:'Prajapati',
+    about:'Uranus is the planet of sudden change, originality and freedom. It breaks old structures so something truer can appear. Where it sits in your chart shows where you refuse to be ordinary, where life jolts you awake, and where you innovate. Its pace is slow (about 7 years per sign), so it colours a whole generation and is personal mainly through its house and its aspects to your own planets.',
+    themes:['Sudden change','Innovation','Freedom','Rebellion','Technology','Eccentricity','Awakening','Surprises'],
+    body:['Nervous system','Circulation','Ankles','Electrical impulses'], rules:'Aquarius (modern co-ruler with Saturn)', cycle:'≈ 84 years, about 7 years per sign', yrs:84, perSign:'≈ 7 years',
+    facts:[['📏','Diameter','50,724 km (3.98× Earth)'],['☀️','Distance from Sun','19.2 AU (2.9 billion km)'],['🔄','Year','84 Earth years'],['⏱️','Day length','17 h 14 m'],['🌀','Quirk','Spins on its side (98° tilt)'],['🔭','Discovered','1781, William Herschel'],['🌡️','Cloud tops','≈ −224 °C'],['💍','Rings','13 faint rings']]},
+  Neptune:{ic:'🔱', role:'The Dreamer', sk:'Varuna',
+    about:'Neptune is the planet of imagination, compassion and illusion. It dissolves boundaries: it gives inspiration, music, faith and empathy, and also confusion, escapism and blind spots. Its house shows where you dream, idealise and sacrifice; its aspects show which planets it softens or clouds. It moves very slowly (about 14 years per sign).',
+    themes:['Dreams','Compassion','Spirituality','Imagination','Illusion','Escapism','Intuition','Dissolving boundaries'],
+    body:['Pineal gland','Immune system','Feet','Lymph'], rules:'Pisces (modern ruler)', cycle:'≈ 165 years, about 14 years per sign', yrs:165, perSign:'≈ 14 years',
+    facts:[['📏','Diameter','49,244 km (3.86× Earth)'],['☀️','Distance from Sun','30.1 AU (4.5 billion km)'],['🔄','Year','164.8 Earth years'],['⏱️','Day length','16 h 6 m'],['🌬️','Winds','Up to ≈ 2,100 km/h'],['🔭','Discovered','1846, found by maths first'],['🌡️','Cloud tops','≈ −214 °C'],['🌑','Largest moon','Triton (orbits backwards)']]},
+  Pluto:{ic:'♇', role:'The Transformer', sk:'Yama',
+    about:'Pluto is the planet of deep transformation, power and rebirth. It strips away what is no longer true, then rebuilds. Its house shows where you meet intensity, control, secrets and renewal; aspects to your planets show what gets purged and reborn. Its orbit is very elongated, so it spends anywhere from about 12 to 31 years in a sign.',
+    themes:['Transformation','Power','Death & rebirth','Secrets','Obsession','Regeneration','Purging','Depth'],
+    body:['Reproductive organs','Excretory system','Regeneration'], rules:'Scorpio (modern co-ruler with Mars)', cycle:'≈ 248 years, about 12–31 years per sign', yrs:248, perSign:'≈ 12–31 years',
+    facts:[['📏','Diameter','2,377 km (0.19× Earth)'],['☀️','Distance from Sun','29.7 – 49.3 AU'],['🔄','Year','247.9 Earth years'],['⏱️','Day length','6.4 Earth days'],['🪐','Status','Dwarf planet since 2006'],['🔭','Discovered','1930, Clyde Tombaugh'],['🌡️','Surface','≈ −229 °C'],['🌑','Moons','5 (largest: Charon)']]}
+};
+const OUTER_VEDIC_NOTE = 'Classical Jyotish works with the seven visible planets plus Rahu and Ketu. Uranus, Neptune and Pluto have no Parashari drishti, dasha or Shadbala, so their aspects here are Western-style (by angle and orb). Some Indian astrologers call them Prajapati, Varuna and Yama (names vary by author). Use them as supporting colour, not as primary significators.';
+const OUTER_ASPECTS = [
+  {name:'Conjunction', angle:0, symbol:'☌', orb:8, verb:'merges with'}, {name:'Sextile', angle:60, symbol:'⚹', orb:4, verb:'supports'},
+  {name:'Square', angle:90, symbol:'□', orb:7, verb:'pressures'}, {name:'Trine', angle:120, symbol:'△', orb:7, verb:'flows with'},
+  {name:'Opposition', angle:180, symbol:'☍', orb:8, verb:'pulls against'}
+];
+const OUTER_HOUSE_KW = ['self, body and identity','money, family and speech','courage, skills and siblings','home, mother and inner peace','creativity, children and romance','work, health and daily service','partnerships and marriage','change, the hidden and shared resources','beliefs, teachers and long journeys','career, status and public life','gains, friends and ambitions','endings, sleep, foreign lands and the spiritual'];
+function outerHouseLine(name, h){ const t = OUTER_INFO[name].themes; return `${name} brings ${t[0].toLowerCase()}, ${t[1].toLowerCase()} and ${t[2].toLowerCase()} into the area of ${OUTER_HOUSE_KW[h-1]} (house ${h}).`; }
+// targets: [[label, longitude], ...]; returns aspects within orb, tightest first. Orb is widened for Sun/Moon/Ascendant by 1°.
+function outerAspectsTo(lon, targets, selfName){
+  const res = [];
+  targets.forEach(([n,l])=>{
+    if (n===selfName) return;
+    const diff = (((lon - l) % 360) + 360) % 360, d = diff > 180 ? 360 - diff : diff; // separation 0..180
+    OUTER_ASPECTS.forEach(a=>{ const dev = Math.abs(d - a.angle), orb = a.orb + ((n==='Sun'||n==='Moon'||n==='Ascendant')?1:0); if (dev <= orb) res.push({target:n, asp:a, dev}); });
+  });
+  return res.sort((x,y)=>x.dev-y.dev);
+}
+
+/* ---- Rich popup for Uranus / Neptune / Pluto (same look as the other planets) ---- */
+function focusBody(name){
+  if (SOL.view==='solar'){ solBuild(); }
+  setCamMode('focus'); focusedPlanetKey = (SOL.view==='solar' ? 'sol_' : 'geo_') + name; autoRotate = false; SOL.lastFocus = null;
+  const sel = document.getElementById('focusPlanetSelect'); if (sel) sel.value = focusedPlanetKey;
+  updateLegend(); markDirty(); if (typeof syncPickBtn==='function') syncPickBtn();
+}
+function openOuterPlanetDetail(name, jd){
+  if (jd == null) jd = currentJD;
+  const I = OUTER_INFO[name], snap = snapshotPositions(jd), lon = snap.sidereal[name], si = getSignIndex(lon), sign = SIGNS[si], dms = degreeInSign(lon);
+  const nakIdx = getNakshatraIndex(lon), nak = NAKSHATRAS[nakIdx], pada = getPadaIndex(lon)+1, col = PLANET_COLORS[name];
+  const isRetro = !!snap.retro[name], speed = planetSpeed(name, jd);
+  const card = (k,v,sb,w)=> `<div class="pdx-card pdx-in ${w?'wide':''}"><div class="k">${k}</div><div class="v">${v}</div>${sb?`<div class="s">${sb}</div>`:''}</div>`;
+  const chips = a=> a.map(x=>`<span class="pdx-chip">${x}</span>`).join('');
+  const pchip = n=> `<button type="button" class="pdx-pchip" style="--c:${PLANET_COLORS[n]||'#8FA3B8'}" onclick="openPlanetDetail('${n}',${jd})">${PLANET_GLYPHS[n]||'⌖'} ${n}</button>`;
+  // house from Lagna (if a natal profile is active)
+  let house = '', houseLine = '';
+  if (isValidProfile(activeNatalProfile)){ const L = computeNatalAscendant(activeNatalProfile).lagnaLon; const h = getHouseOfLongitude(lon, getSignIndex(L));
+    house = card('House from Lagna', `${h}${h===1?' · Lagna':''}`, activeNatalProfile.name); houseLine = `<div class="pdx-card wide pdx-in"><div class="k">What this means for ${activeNatalProfile.name}</div><div class="s" style="font-size:13px;line-height:1.6;color:var(--text)">${outerHouseLine(name, h)}</div></div>`; }
+  const conj = PLANET_LIST.filter(n=> getSignIndex(snap.sidereal[n]) === si);
+  // sign occupancy (slow planets: guard against long searches)
+  let occ = {enterJD:null, exitJD:null, daysIn:null, daysLeft:null};
+  try { occ = getSignOccupancy(name, jd); } catch(e){}
+  const total = (occ.daysIn!=null && occ.daysLeft!=null) ? occ.daysIn + occ.daysLeft : null, prog = total ? Math.round(occ.daysIn/total*100) : Math.round(dms.raw/30*100);
+  let ing = '', j = occ.exitJD, cnt = 0;
+  try { while (j != null && cnt < 3){ const nj = j + 1, ns = getSignIndex(snapshotPositions(nj).sidereal[name]); ing += `<div class="pdx-row pdx-in" style="--i:${cnt}"><span>${SIGNS[ns].symbol} ${SIGNS[ns].name}</span><b>${formatFullDate(j)}</b></div>`; j = getSignOccupancy(name, nj).exitJD; cnt++; } } catch(e){}
+  // Western aspects to the other planets now (transiting)
+  const nowTargets = ALL_BODIES.map(n=>[n, snap.sidereal[n]]);
+  const asp = outerAspectsTo(lon, nowTargets, name);
+  const aspRow = (a,i,sub)=> { const t = a.target, tc = PLANET_COLORS[t]||'#8FA3B8', tg = PLANET_GLYPHS[t]||'⌖';
+    return `<div class="pdx-row pdx-in" style="--i:${i};cursor:${PLANET_COLORS[t]?'pointer':'default'}" ${PLANET_COLORS[t]&&t!=='Ascendant'?`onclick="openPlanetDetail('${t}',${jd})"`:''}><span style="color:${tc};font-size:18px">${tg}</span><span>${a.asp.symbol} ${a.asp.name} <b style="color:var(--text);margin:0;font-family:inherit;font-size:13px">${t}</b><br><small style="color:var(--text-faint)">${name} ${a.asp.verb} ${t}${sub||''}</small></span><b>${a.dev.toFixed(1)}° orb</b></div>`; };
+  const aspHtml = asp.map((a,i)=> aspRow(a,i)).join('');
+  // aspects from transiting outer planet to the natal chart
+  let natalHtml = '';
+  if (isValidProfile(activeNatalProfile)){
+    try {
+      const nc = computeNatalAscendant(activeNatalProfile), ns = snapshotPositions(nc.jd).sidereal;
+      const tg = PLANET_LIST.map(n=>[n, ns[n]]).concat(OUTER_LIST.map(n=>[n, ns[n]])).concat([['Ascendant', nc.lagnaLon]]);
+      const na = outerAspectsTo(lon, tg, null);
+      natalHtml = `<div class="pdx-h">To ${activeNatalProfile.name}'s birth chart</div>` + (na.length ? na.map((a,i)=> aspRow(a,i,' (natal)')).join('') : '<div class="pd-empty-note">No close aspects to the natal chart right now.</div>');
+    } catch(e){}
+  }
+  const ratio = Math.abs(speed), spTxt = ratio < 0.003 ? 'Nearly stationary (changing direction)' : ratio < 0.02 ? 'Slow, typical for an outer planet' : 'Moving steadily';
+  const html = `<div class="pdx-root" style="--pc:${col};--pca:${col}55">
+    <div class="pdx-hero">
+      <div class="pdx-orb"><span>${PLANET_GLYPHS[name]}</span></div>
+      <div class="pdx-name">${name}</div><div class="pdx-sk">${I.sk} · ${I.role}</div>
+      <div class="pdx-date">${formatFullDate(jd)}</div>
+      <div class="pdx-badges"><span class="pdx-badge">${sign.symbol} ${sign.name}</span><span class="pdx-badge">${nak} · Pada ${pada}</span>
+        <span class="pdx-badge ${isRetro?'bad':'good'}">${isRetro?'℞ Retrograde':'Direct'}</span><span class="pdx-badge">Outer planet</span></div>
+    </div>
+    <div class="pdx-tabs"><button class="pdx-tab on" onclick="pdxTab(this,'ov')">Overview</button><button class="pdx-tab" onclick="pdxTab(this,'me')">Meaning</button><button class="pdx-tab" onclick="pdxTab(this,'ti')">Timeline</button><button class="pdx-tab" onclick="pdxTab(this,'as')">Aspects</button><button class="pdx-tab" onclick="pdxTab(this,'fa')">Facts</button></div>
+    <div class="pdx-pane on" data-pane="ov">
+      <div class="pdx-about pdx-in">${I.about}</div>
+      <div class="pdx-h">Position</div>
+      <div class="pd-gauge-row pdx-in" style="--i:1">${buildDegreeGaugeSVG(dms.raw, col)}<div class="pd-gauge-label"><div class="pd-gauge-deg">${dms.deg}° ${dms.min}' ${dms.sec}"</div><div class="pd-gauge-sign">into ${sign.symbol} ${sign.name} (${sign.sk})</div></div></div>
+      <div class="pdx-grid" style="margin-top:12px">
+        ${card('Sidereal longitude', lon.toFixed(3)+'°', 'Lahiri ayanamsa')}${card('Nakshatra', nak, 'Lord '+NAKSHATRA_LORDS[nakIdx]+' · Pada '+pada+' of 4')}
+        ${card('Sign lord', sign.lord, sign.sk+' rashi')}${house}
+        ${card('Daily motion', (speed>=0?'+':'')+speed.toFixed(4)+'°/day', spTxt)}
+        ${houseLine}
+        ${conj.length ? `<div class="pdx-card wide pdx-in"><div class="k">Sharing the sign with</div><div class="pdx-chips" style="margin-top:8px">${conj.map(pchip).join('')}</div></div>` : ''}
+      </div>
+      <button type="button" class="btn-block" style="margin-top:14px" onclick="closePlanetDetail();focusBody('${name}')">🎥 Fly the camera to ${name}</button>
+    </div>
+    <div class="pdx-pane" data-pane="me">
+      <div class="pdx-h">Key themes</div><div class="pdx-chips pdx-in">${chips(I.themes)}</div>
+      <div class="pdx-h">Body &amp; areas</div><div class="pdx-chips pdx-in">${chips(I.body)}</div>
+      <div class="pdx-grid" style="margin-top:12px">${card('Modern ruler of', I.rules)}${card('Cycle', I.cycle)}${card('Sanskrit name (modern use)', I.sk)}${card('Role', I.role)}</div>
+      <div class="pdx-card wide pdx-in" style="margin-top:12px"><div class="k">A note on Vedic use</div><div class="s" style="font-size:12.5px;line-height:1.6">${OUTER_VEDIC_NOTE}</div></div>
+    </div>
+    <div class="pdx-pane" data-pane="ti">
+      <div class="pdx-h">Time in ${sign.name}</div>
+      <div class="pdx-card pdx-in"><div class="v">${prog}% through this sign</div><div class="pdx-bar"><i style="--w:${prog}%"></i></div>
+        <div class="s" style="margin-top:8px">${occ.daysIn!=null?formatDurationDays(occ.daysIn)+' in · ':''}${occ.daysLeft!=null?formatDurationDays(occ.daysLeft)+' left':'Typical stay: '+I.perSign}</div></div>
+      <div class="pdx-grid" style="margin-top:10px">${card('Entered', occ.enterJD!=null?formatFullDate(occ.enterJD):'Before the search range')}${card('Leaves', occ.exitJD!=null?formatFullDate(occ.exitJD):'After the search range')}</div>
+      <div class="pdx-h">Next sign changes</div>${ing || '<div class="pd-empty-note">Beyond the calculable range (it moves very slowly).</div>'}
+    </div>
+    <div class="pdx-pane" data-pane="as">
+      <div class="pdx-h">Aspects to the sky now (Western orbs)</div>${aspHtml || `<div class="pd-empty-note">No close aspects to other planets right now.</div>`}
+      ${natalHtml}
+      <div class="s" style="margin-top:12px;font-size:11.5px;color:var(--text-faint)">Orbs: conjunction 8°, opposition 8°, trine 7°, square 7°, sextile 4° (+1° for Sun, Moon and Ascendant).</div>
+    </div>
+    <div class="pdx-pane" data-pane="fa">
+      <div class="pdx-h">Astronomy facts</div>
+      <div class="pdx-grid">${I.facts.map(f=>card(f[0]+' '+f[1], f[2])).join('')}</div>
     </div>
   </div>`;
   const box = document.getElementById('planetDetailContent'); box.innerHTML = html;
@@ -5228,7 +5359,7 @@ function initPlanetPicker(){
       }
       const lon = snap.sidereal[n], sg = SIGNS[getSignIndex(lon)], dm = degreeInSign(lon), rx = (n==='Rahu'||n==='Ketu'||snap.retro[n]) ? ' ℞' : '';
       const outer = OUTER_LIST.includes(n), sk = outer ? OUTER_SK[n] : PD[n].sk.split(' ')[0];
-      return `<div class="pk-tile ${sel?'sel':''}" style="--pc:${PLANET_COLORS[n]};--i:${i}" data-p="${n}">${outer?'':`<button class="pk-info" data-i="${n}" aria-label="Details">i</button>`}
+      return `<div class="pk-tile ${sel?'sel':''}" style="--pc:${PLANET_COLORS[n]};--i:${i}" data-p="${n}"><button class="pk-info" data-i="${n}" aria-label="Details">i</button>
         <div class="pk-orb">${PLANET_GLYPHS[n]}</div><div class="pk-name">${n}</div><div class="pk-sk">${sk}</div><div class="pk-pos">${sg.symbol} ${dm.deg}°${rx}</div></div>`;
     };
     box.innerHTML = `<div class="pk-title">Select a planet</div><div class="pk-sub">Tap a planet to fly the camera to it.${solar?'':' Tap ⓘ for its full details.'}</div>
@@ -9979,6 +10110,43 @@ const OUTER_GLYPHS = {Uranus:"♅",Neptune:"♆",Pluto:"♇"};
 const OUTER_COL = {Uranus:"#7DE3E0",Neptune:"#5B7CFA",Pluto:"#C9A38A"};
 const OUTER_SK = {Uranus:"Prajapati",Neptune:"Varuna",Pluto:"Yama"};
 window.__showOuter = true;
+/* ---- Outer (trans-Saturnian) planet knowledge, shared by popups, reports and aspects ---- */
+const OUTER_INFO = {
+  Uranus:{ic:'⚡', role:'The Awakener', sk:'Prajapati',
+    about:'Uranus is the planet of sudden change, originality and freedom. It breaks old structures so something truer can appear. Where it sits in your chart shows where you refuse to be ordinary, where life jolts you awake, and where you innovate. Its pace is slow (about 7 years per sign), so it colours a whole generation and is personal mainly through its house and its aspects to your own planets.',
+    themes:['Sudden change','Innovation','Freedom','Rebellion','Technology','Eccentricity','Awakening','Surprises'],
+    body:['Nervous system','Circulation','Ankles','Electrical impulses'], rules:'Aquarius (modern co-ruler with Saturn)', cycle:'≈ 84 years, about 7 years per sign', yrs:84, perSign:'≈ 7 years',
+    facts:[['📏','Diameter','50,724 km (3.98× Earth)'],['☀️','Distance from Sun','19.2 AU (2.9 billion km)'],['🔄','Year','84 Earth years'],['⏱️','Day length','17 h 14 m'],['🌀','Quirk','Spins on its side (98° tilt)'],['🔭','Discovered','1781, William Herschel'],['🌡️','Cloud tops','≈ −224 °C'],['💍','Rings','13 faint rings']]},
+  Neptune:{ic:'🔱', role:'The Dreamer', sk:'Varuna',
+    about:'Neptune is the planet of imagination, compassion and illusion. It dissolves boundaries: it gives inspiration, music, faith and empathy, and also confusion, escapism and blind spots. Its house shows where you dream, idealise and sacrifice; its aspects show which planets it softens or clouds. It moves very slowly (about 14 years per sign).',
+    themes:['Dreams','Compassion','Spirituality','Imagination','Illusion','Escapism','Intuition','Dissolving boundaries'],
+    body:['Pineal gland','Immune system','Feet','Lymph'], rules:'Pisces (modern ruler)', cycle:'≈ 165 years, about 14 years per sign', yrs:165, perSign:'≈ 14 years',
+    facts:[['📏','Diameter','49,244 km (3.86× Earth)'],['☀️','Distance from Sun','30.1 AU (4.5 billion km)'],['🔄','Year','164.8 Earth years'],['⏱️','Day length','16 h 6 m'],['🌬️','Winds','Up to ≈ 2,100 km/h'],['🔭','Discovered','1846, found by maths first'],['🌡️','Cloud tops','≈ −214 °C'],['🌑','Largest moon','Triton (orbits backwards)']]},
+  Pluto:{ic:'♇', role:'The Transformer', sk:'Yama',
+    about:'Pluto is the planet of deep transformation, power and rebirth. It strips away what is no longer true, then rebuilds. Its house shows where you meet intensity, control, secrets and renewal; aspects to your planets show what gets purged and reborn. Its orbit is very elongated, so it spends anywhere from about 12 to 31 years in a sign.',
+    themes:['Transformation','Power','Death & rebirth','Secrets','Obsession','Regeneration','Purging','Depth'],
+    body:['Reproductive organs','Excretory system','Regeneration'], rules:'Scorpio (modern co-ruler with Mars)', cycle:'≈ 248 years, about 12–31 years per sign', yrs:248, perSign:'≈ 12–31 years',
+    facts:[['📏','Diameter','2,377 km (0.19× Earth)'],['☀️','Distance from Sun','29.7 – 49.3 AU'],['🔄','Year','247.9 Earth years'],['⏱️','Day length','6.4 Earth days'],['🪐','Status','Dwarf planet since 2006'],['🔭','Discovered','1930, Clyde Tombaugh'],['🌡️','Surface','≈ −229 °C'],['🌑','Moons','5 (largest: Charon)']]}
+};
+const OUTER_VEDIC_NOTE = 'Classical Jyotish works with the seven visible planets plus Rahu and Ketu. Uranus, Neptune and Pluto have no Parashari drishti, dasha or Shadbala, so their aspects here are Western-style (by angle and orb). Some Indian astrologers call them Prajapati, Varuna and Yama (names vary by author). Use them as supporting colour, not as primary significators.';
+const OUTER_ASPECTS = [
+  {name:'Conjunction', angle:0, symbol:'☌', orb:8, verb:'merges with'}, {name:'Sextile', angle:60, symbol:'⚹', orb:4, verb:'supports'},
+  {name:'Square', angle:90, symbol:'□', orb:7, verb:'pressures'}, {name:'Trine', angle:120, symbol:'△', orb:7, verb:'flows with'},
+  {name:'Opposition', angle:180, symbol:'☍', orb:8, verb:'pulls against'}
+];
+const OUTER_HOUSE_KW = ['self, body and identity','money, family and speech','courage, skills and siblings','home, mother and inner peace','creativity, children and romance','work, health and daily service','partnerships and marriage','change, the hidden and shared resources','beliefs, teachers and long journeys','career, status and public life','gains, friends and ambitions','endings, sleep, foreign lands and the spiritual'];
+function outerHouseLine(name, h){ const t = OUTER_INFO[name].themes; return `${name} brings ${t[0].toLowerCase()}, ${t[1].toLowerCase()} and ${t[2].toLowerCase()} into the area of ${OUTER_HOUSE_KW[h-1]} (house ${h}).`; }
+// targets: [[label, longitude], ...]; returns aspects within orb, tightest first. Orb is widened for Sun/Moon/Ascendant by 1°.
+function outerAspectsTo(lon, targets, selfName){
+  const res = [];
+  targets.forEach(([n,l])=>{
+    if (n===selfName) return;
+    const diff = (((lon - l) % 360) + 360) % 360, d = diff > 180 ? 360 - diff : diff; // separation 0..180
+    OUTER_ASPECTS.forEach(a=>{ const dev = Math.abs(d - a.angle), orb = a.orb + ((n==='Sun'||n==='Moon'||n==='Ascendant')?1:0); if (dev <= orb) res.push({target:n, asp:a, dev}); });
+  });
+  return res.sort((x,y)=>x.dev-y.dev);
+}
+
 const PLANET_GLYPHS = {Sun:"☉",Moon:"☽",Mars:"♂",Mercury:"☿",Jupiter:"♃",Venus:"♀",Saturn:"♄",Rahu:"☊",Ketu:"☋"};
 
 const EXALTATION = {
@@ -11425,6 +11593,22 @@ function buildPlanetsPanel(chart){
     </button>`;
   }).join('');
 
+  const outerCards = OUTER_LIST.map(n=>{
+    const o = chart.outer[n], sg = SIGNS[o.sign], c = OUTER_COL[n];
+    return `<button type="button" class="pl-card" data-planet-click="${n}" data-flags="outer" style="--pc:${c}">
+      <span class="pl-top"><span class="pl-dot" style="background:${c}">${OUTER_GLYPHS[n]}</span>
+        <span class="pl-name"><b>${n}${o.retrograde?' <em>℞</em>':''}</b><small>${o.nakshatra.name} · Pada ${o.nakshatra.pada}</small></span>
+        <span class="pl-house">H${o.house}</span></span>
+      <span class="pl-sign">${sg.symbol} ${sg.name}<em>${formatDeg(o.degInSign)}</em></span>
+      <span class="pl-track"><i style="width:${(o.degInSign/30*100).toFixed(1)}%"></i></span>
+      <span class="pl-tags"><span class="pl-tag">${OUTER_INFO[n].role}</span></span></button>`;
+  }).join('');
+  const outerAsp = OUTER_LIST.map(n=>{
+    const o = chart.outer[n], tg = PLANET_LIST.map(x=>[x, chart.planets[x].longitude]).concat(OUTER_LIST.map(x=>[x, chart.outer[x].longitude])).concat([['Ascendant', chart.ascendant.longitude]]);
+    const a = outerAspectsTo(o.longitude, tg, n).map(r=>`<span class="pl-asp">${r.asp.symbol} ${r.target} ${r.dev.toFixed(1)}°</span>`).join('') || '<span class="pl-asp">no close aspects</span>';
+    return `<div class="pl-arow" data-planet-click="${n}"><span class="pl-dot sm" style="background:${OUTER_COL[n]}">${OUTER_GLYPHS[n]}</span><span class="pl-an"><b>${n}</b><small>in House ${o.house}</small></span><span class="pl-achips">${a}</span></div>`;
+  }).join('');
+
   const asp = PLANET_LIST.map(name=>{
     const pl = chart.planets[name], c = DASHA_PLANET_COLORS[name]||'#888';
     const chips = pl.aspectsHouses.map(h=>`<span class="pl-asp">H${h} ${SIGNS[(chart.ascendant.sign+h-1)%12].symbol}</span>`).join('');
@@ -11441,6 +11625,8 @@ function buildPlanetsPanel(chart){
     </div>
     <div class="pl-grid">${cards}</div>
     <div class="pl-empty" id="plEmpty" hidden>No planets match this filter in your chart.</div>
+    <div class="pl-sec"><h5>Outer planets <span>Modern · tap for details</span></h5><div class="pl-grid">${outerCards}</div>
+      <div class="pl-asplist" style="margin-top:10px">${outerAsp}</div></div>
     <div class="pl-sec"><h5>Who looks at whom <span>Drishti · aspected houses</span></h5><div class="pl-asplist">${asp}</div></div></div>`;
 }
 document.addEventListener('click',(e)=>{
@@ -11453,8 +11639,40 @@ document.addEventListener('click',(e)=>{
 
 let pdCurrent = null;
 function pdBlock(title, inner){ return `<div class="pd-blk"><div class="pd-blk-t">${title}</div>${inner}</div>`; }
+function openOuterDetail(name){
+  const chart = currentChartForModal, o = chart.outer && chart.outer[name]; if (!o) return;
+  pdCurrent = name; const I = OUTER_INFO[name], sign = SIGNS[o.sign], c = OUTER_COL[name];
+  const nakSpan = 360/27, nakPct = Math.max(0,Math.min(100,(o.nakshatra.degInNak||0)/nakSpan*100)), degRem = nakSpan - (o.nakshatra.degInNak||0);
+  document.getElementById('pdBox').style.setProperty('--pc', c);
+  document.getElementById('pdGlyph').textContent = OUTER_GLYPHS[name];
+  document.getElementById('pdTitle').textContent = name;
+  document.getElementById('pdSubtitle').textContent = `${sign.symbol} ${sign.name} · House ${o.house} · ${I.sk}`;
+  document.getElementById('pdPills').innerHTML = [`<span class="pd-pill gold">${I.role}</span>`, `<span class="pd-pill ${o.retrograde?'bad':''}">${o.retrograde?'℞ Retrograde':'Direct motion'}</span>`, '<span class="pd-pill">Outer planet</span>'].join('');
+  const k = name.toLowerCase(), l1 = planetGeocentricLongitude(k, chart.julianDay-0.25), l2 = planetGeocentricLongitude(k, chart.julianDay+0.25);
+  let dd = l2-l1; if (dd>180) dd-=360; if (dd<-180) dd+=360; const speed = Math.abs(dd*2);
+  let h = '';
+  h += pdBlock('What it means', `<div class="pd-jsub" style="font-size:13px;line-height:1.6;color:var(--text-main)">${I.about}</div>`);
+  h += pdBlock(`In your chart: house ${o.house}`, `<div class="pd-jsub" style="font-size:13px;line-height:1.6;color:var(--text-main)">${outerHouseLine(name, o.house)}</div>`);
+  h += pdBlock(`Journey through ${sign.name}`, `<div class="pd-journey"><div class="pd-jtrack"><i style="width:${(o.degInSign/30*100).toFixed(1)}%"></i><u style="left:${(o.degInSign/30*100).toFixed(1)}%"></u></div>
+    <div class="pd-jlbl"><span>0°</span><b>${formatDeg(o.degInSign)} travelled</b><span>30°</span></div>
+    <div class="pd-jsub">Typical stay in a sign: ${I.perSign}</div></div>`);
+  h += `<div class="pd-mini"><div><small>Sign lord</small><b>${sign.lord}</b></div><div><small>House</small><b>${o.house}</b></div><div><small>Daily speed</small><b>${speed.toFixed(3)}°</b></div><div><small>Nakshatra lord</small><b>${o.nakshatra.lord}</b></div></div>`;
+  h += pdBlock('Nakshatra', `<div class="pd-nak"><b>${o.nakshatra.name}</b><span>Pada ${o.nakshatra.pada}</span></div><div class="pd-jtrack thin"><i style="width:${nakPct.toFixed(1)}%"></i></div><div class="pd-jsub">${formatDeg(degRem)} remaining in this nakshatra</div>`);
+  const tg = PLANET_LIST.map(n=>[n, chart.planets[n].longitude]).concat(OUTER_LIST.map(n=>[n, chart.outer[n].longitude])).concat([['Ascendant', chart.ascendant.longitude]]);
+  const asp = outerAspectsTo(o.longitude, tg, name);
+  h += pdBlock('Aspects (Western orbs)', asp.length ? asp.map(a=>`<div class="pd-alert"><b>${a.asp.symbol} ${a.asp.name} ${a.target}</b><span>${name} ${a.asp.verb} ${a.target} · ${a.dev.toFixed(1)}° orb</span></div>`).join('') : '<div class="pd-jsub">No close aspects to your planets or Ascendant.</div>');
+  h += pdBlock('Key themes', `<div class="pl-achips">${I.themes.map(t=>`<span class="pl-asp">${t}</span>`).join('')}</div>`);
+  h += pdBlock('Facts', `<div class="pd-mini" style="grid-template-columns:repeat(2,1fr)">${I.facts.map(f=>`<div><small>${f[0]} ${f[1]}</small><b style="font-size:12.5px">${f[2]}</b></div>`).join('')}</div>`);
+  document.getElementById('pdStatGrid').innerHTML = h;
+  document.getElementById('pdNote').textContent = OUTER_VEDIC_NOTE;
+  document.getElementById('pdStrengthBtn').style.display = 'none';
+  document.getElementById('pdBox').scrollTop = 0;
+  document.getElementById('planetDetailModal').classList.add('show');
+}
 function openPlanetDetail(planetName){
   if (!currentChartForModal) return;
+  document.getElementById('pdStrengthBtn').style.display = '';
+  if (OUTER_LIST.includes(planetName)) return openOuterDetail(planetName);
   const chart = currentChartForModal, pl = chart.planets[planetName];
   if (!pl) return;
   pdCurrent = planetName;
@@ -11506,8 +11724,8 @@ function openPlanetDetail(planetName){
 document.addEventListener('click',(e)=>{
   const go = e.target.closest('[data-pd-go]');
   if (go && pdCurrent){
-    const i = PLANET_LIST.indexOf(pdCurrent), n = PLANET_LIST.length;
-    openPlanetDetail(PLANET_LIST[(i + parseInt(go.dataset.pdGo) + n) % n]); return;
+    const ALLP = PLANET_LIST.concat(OUTER_LIST), i = ALLP.indexOf(pdCurrent), n = ALLP.length;
+    openPlanetDetail(ALLP[(i + parseInt(go.dataset.pdGo) + n) % n]); return;
   }
   if (e.target.closest('#pdStrengthBtn')){
     document.getElementById('planetDetailModal').classList.remove('show'); switchAppTab('panel-shadbala');
@@ -13149,6 +13367,16 @@ function buildFullReportText(chart, profile, sections, liveSkyData){
       add(`${pad('',10)} Nakshatra: ${p.nakshatra.name}, Pada ${p.nakshatra.pada} (Lord ${p.nakshatra.lord})  |  Dignity: ${p.dignity.label}`);
       add(`${pad('',10)} Degrees traveled in sign: ${formatDeg(p.degInSign)}  |  Degrees remaining: ${formatDeg(p.degRemainingInSign)}  |  Speed: ${Math.abs(p.speed).toFixed(4)}°/day ${p.retrograde?'(retrograde)':'(direct)'}`);
       add(`${pad('',10)} Absolute sidereal longitude: ${formatDeg(normDeg(p.longitude))}  |  Aspects houses: ${p.aspectsHouses.map(h=>'H'+h).join(', ')}`);
+    });
+
+    subsection('Outer Planets (modern; not used in classical Vedic strength or dasha)');
+    OUTER_LIST.forEach(n=>{
+      const o = chart.outer[n], sg = SIGNS[o.sign];
+      add(`${pad(n,10)} ${sg.name} (${sg.sk}), ${formatDeg(o.degInSign)}  |  House ${o.house}${o.retrograde ? '  |  RETROGRADE' : ''}  |  Nakshatra: ${o.nakshatra.name}, Pada ${o.nakshatra.pada}  |  Absolute sidereal longitude: ${formatDeg(normDeg(o.longitude))}`);
+      add(`${pad('',10)} Themes: ${OUTER_INFO[n].themes.slice(0,4).join(', ')}  |  ${outerHouseLine(n, o.house)}`);
+      const tg = PLANET_LIST.map(x=>[x, chart.planets[x].longitude]).concat(OUTER_LIST.map(x=>[x, chart.outer[x].longitude])).concat([['Ascendant', chart.ascendant.longitude]]);
+      const a = outerAspectsTo(o.longitude, tg, n);
+      add(`${pad('',10)} Western aspects: ${a.length ? a.map(r=>`${r.asp.name} ${r.target} (${r.dev.toFixed(1)}° orb)`).join('; ') : 'none within orb'}`);
     });
 
     subsection('Combustion Status');

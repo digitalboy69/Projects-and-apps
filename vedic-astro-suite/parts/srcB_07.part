@@ -1,3 +1,16 @@
+          toSign: sign.name,
+          toSignSanskrit: sign.sk,
+          label: aspectOffsetLabel(houseNum)
+        });
+      });
+      if (occupants.length === 0) {
+        targets.push({
+          toPlanet: null,
+          toHouse: houseNum,
+          toSign: sign.name,
+          toSignSanskrit: sign.sk,
+          label: aspectOffsetLabel(houseNum)
+        });
       }
     });
 

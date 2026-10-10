@@ -1,17 +1,3 @@
-  transition: all 0.2s;
-}
-.ai-sug-chip:hover { background: rgba(212,175,55,0.15); color: var(--gold-bright); border-color: var(--gold); }
-
-.ai-chat-input-row {
-  padding: 16px 20px; background: rgba(0, 0, 0, 0.4); border-top: 1px solid var(--border-light);
-  display: flex; gap: 12px; align-items: center;
-}
-.ai-chat-input {
-  flex: 1; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-light); border-radius: var(--radius-md);
-  color: var(--text-main); font-family: var(--font-sans); font-size: 14px; padding: 12px 16px; outline: none;
-  transition: border-color 0.2s;
-}
-.ai-chat-input:focus { border-color: var(--gold); box-shadow: 0 0 8px rgba(212,175,55,0.2); }
 .ai-send-btn {
   background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color: #000;
   border: none; border-radius: var(--radius-md); padding: 12px 20px; font-weight: 600;
@@ -1575,3 +1561,31 @@ const APP = (() => {
     remove(k){ try { localStorage.removeItem(NS + k); } catch(e){} }
   };
   let box = null, lastErr = 0;
+  function toast(msg, type = 'info', ms = 3200){
+    if (!box){
+      box = document.createElement('div'); box.id = 'appToasts';
+      box.setAttribute('role', 'status'); box.setAttribute('aria-live', 'polite');
+      document.body.appendChild(box);
+    }
+    const t = document.createElement('div'); t.className = 'app-toast ' + type; t.textContent = msg;
+    box.appendChild(t);
+    requestAnimationFrame(() => t.classList.add('in'));
+    setTimeout(() => { t.classList.remove('in'); setTimeout(() => t.remove(), 300); }, ms);
+  }
+  function report(label, err){
+    const now = Date.now(); if (now - lastErr < 4000) return; lastErr = now;
+    toast('Something went wrong' + (label ? ' in ' + label : '') + '. Your data is safe — please try again.', 'error', 4500);
+  }
+  function safe(label, fn, fallback){
+    try { return fn(); }
+    catch(err){ console.error('[' + label + ']', err); report(label, err); return typeof fallback === 'function' ? fallback(err) : fallback; }
+  }
+  async function copy(text){
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch(e){
+      try {
+        const ta = document.createElement('textarea'); ta.value = text; ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        const ok = document.execCommand('copy'); document.body.removeChild(ta); return ok;
+      } catch(e2){ return false; }
+    }

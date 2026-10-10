@@ -1575,3 +1575,17 @@ body.qsearch-mode-on .app-panel { cursor: crosshair; }
 .ai-sug-chip {
   background: rgba(212,175,55,0.06); border: 1px solid var(--border-light); border-radius: var(--radius-full);
   color: var(--text-muted); font-size: 12px; padding: 6px 14px; white-space: nowrap; cursor: pointer;
+  transition: all 0.2s;
+}
+.ai-sug-chip:hover { background: rgba(212,175,55,0.15); color: var(--gold-bright); border-color: var(--gold); }
+
+.ai-chat-input-row {
+  padding: 16px 20px; background: rgba(0, 0, 0, 0.4); border-top: 1px solid var(--border-light);
+  display: flex; gap: 12px; align-items: center;
+}
+.ai-chat-input {
+  flex: 1; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-light); border-radius: var(--radius-md);
+  color: var(--text-main); font-family: var(--font-sans); font-size: 14px; padding: 12px 16px; outline: none;
+  transition: border-color 0.2s;
+}
+.ai-chat-input:focus { border-color: var(--gold); box-shadow: 0 0 8px rgba(212,175,55,0.2); }

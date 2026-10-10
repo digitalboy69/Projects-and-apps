@@ -1,3 +1,30 @@
+  try { const P = kmPerson(p); return `<div class="mt-sum"><span>${SIGNS[P.moonSign].symbol} ${SIGNS[P.moonSign].name} Moon</span><span>★ ${NAKSHATRAS[P.nak].name} · pada ${P.pada}</span><span>↑ ${SIGNS[P.lagna].name} Lagna</span></div>`; }
+  catch(e){ return '<div class="mt-sum"><span>Could not read this chart</span></div>'; }
+}
+function mtRenderCard(i){
+  const el = document.getElementById('mtCard' + i); if (!el) return; const S = MT[i];
+  const role = i === 1 ? ['Person 1', 'Groom side · Vara'] : ['Person 2', 'Bride side · Kanya'];
+  const head = `<div class="mt-ch"><span class="mt-role">${role[0]}</span><small>${role[1]}</small></div>
+    <div class="mt-seg"><button type="button" class="${S.mode === 'saved' ? 'on' : ''}" data-mt-mode="${i}:saved">Saved profile</button><button type="button" class="${S.mode === 'new' ? 'on' : ''}" data-mt-mode="${i}:new">New person</button></div>`;
+  let body;
+  if (S.mode === 'saved'){
+    body = MT.list.length ? `<div class="mt-chips">${MT.list.map((p, idx) => `<button type="button" class="mt-chip ${S.profile && mtKey(S.profile) === mtKey(p) ? 'on' : ''}" data-mt-pick="${i}:${idx}">${mtAvatar(p.name, mtColor(p.name))}<span><b>${escapeHtml(p.name || 'Unnamed')}</b><small>${formatDateHuman(p.dob)} · ${p.tob.slice(0, 5)}</small></span></button>`).join('')}</div>`
+      : `<div class="mt-empty">No saved profiles yet — switch to “New person”.</div>`;
+    body += S.profile ? mtSummary(S.profile) : `<div class="mt-hint">Tap a profile above</div>`;
+  } else {
+    const d = S.draft;
+    body = `<div class="mt-form">
+      <label>Name <small>(optional)</small><input type="text" data-mt-f="name" value="${escapeHtml(d.name)}" placeholder="e.g. Ananya"></label>
+      <div class="mt-row"><label>Date of birth<input type="date" data-mt-f="dob" value="${d.dob}"></label><label>Time of birth<input type="time" data-mt-f="tob" step="1" value="${d.tob}"></label></div>
+      <label class="mt-place">Place of birth<input type="text" data-mt-place="${i}" value="${escapeHtml(d.place)}" placeholder="Search a city…" autocomplete="off"><div class="mt-res" id="mtRes${i}"></div></label>
+      <div class="lp-tools"><button type="button" data-mt-loc="${i}:map">🗺️ Pick on map</button><button type="button" data-mt-loc="${i}:coords">⌖ Enter coordinates</button></div>
+      <div class="mt-coord ${d.lat !== null ? 'ok' : ''}" id="mtCoord${i}">${d.lat !== null ? `✓ ${(+d.lat).toFixed(3)}°, ${(+d.lon).toFixed(3)}°` : 'Location not selected yet'}</div>
+      <label>Timezone<select data-mt-f="tz">${TZ_OPTIONS.map(v => `<option value="${v}" ${+d.tz === v ? 'selected' : ''}>${fmtTz(v)}</option>`).join('')}</select></label>
+      <details><summary>Enter coordinates manually</summary><div class="mt-row"><label>Latitude<input type="number" step="any" data-mt-f="lat" value="${d.lat === null ? '' : d.lat}"></label><label>Longitude<input type="number" step="any" data-mt-f="lon" value="${d.lon === null ? '' : d.lon}"></label></div></details>
+      <label class="mt-save"><input type="checkbox" data-mt-f="save" ${d.save ? 'checked' : ''}> Save to my profiles</label>
+    </div>`;
+  }
+  el.innerHTML = head + body;
 }
 function mtUpdateGo(){
   const b = document.getElementById('mtGo'); if (!b) return;
@@ -1562,16 +1589,3 @@ function computeVargaAspects(chart, vdata){
         targets.push({
           toPlanet: toName,
           toHouse: houseNum,
-          toSign: sign.name,
-          toSignSanskrit: sign.sk,
-          label: aspectOffsetLabel(houseNum)
-        });
-      });
-      if (occupants.length === 0) {
-        targets.push({
-          toPlanet: null,
-          toHouse: houseNum,
-          toSign: sign.name,
-          toSignSanskrit: sign.sk,
-          label: aspectOffsetLabel(houseNum)
-        });
