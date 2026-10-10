@@ -32,3 +32,6 @@ Location picker (parts/locpicker.js, lives in wrapper): LocPicker.open({mode:'ma
 Kama (labelled unverified), PDF client report, remedies, link Fate Meter/Sahams into Chart Reading.
 
 - Export/Copy add-on merged (srcA + srcB). Original file kept as parts/export_addon.js. Tested in Birth Chart (modal, 30 sections, full report ~220K chars); 3D side not testable in sandbox (no Three.js CDN).
+
+- Added Uranus/Neptune/Pluto (JPL Standish elements) to 3D wheel + Birth Chart wheels (toggle "Outer planets"); kept out of Vedic aspect/yoga engines (OUTER_LIST, separate from PLANET_LIST).
+- 3D: "Solar System" switch (srcA: SOL / solBuild / setSceneView), Easy-fit and True-scale modes, new Solar tab. Tested with Three r128 + swiftshader.

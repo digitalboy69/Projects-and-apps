@@ -1,7 +1,3 @@
-.ai-suggestions::-webkit-scrollbar { display: none; }
-.ai-sug-chip {
-  background: rgba(212,175,55,0.06); border: 1px solid var(--border-light); border-radius: var(--radius-full);
-  color: var(--text-muted); font-size: 12px; padding: 6px 14px; white-space: nowrap; cursor: pointer;
   transition: all 0.2s;
 }
 .ai-sug-chip:hover { background: rgba(212,175,55,0.15); color: var(--gold-bright); border-color: var(--gold); }
@@ -1569,3 +1565,13 @@ function copyDevNumber(btn){
    8. Orchestrator ............. renderResults(profile)  — builds every panel, then shows Home
    META HELPERS (this block): APP.store · APP.toast · APP.safe · APP.copy · APP.debounce · APP.report
    RULES: every panel builder is wrapped in an error boundary (see bottom), so one failing section never
+          takes down the whole app. Add new panels to SAFE_BUILDERS and HOME_ITEMS.
+   ============================================================================= */
+const APP = (() => {
+  const NS = 'va_ui_';
+  const store = {
+    get(k, d){ try { const v = localStorage.getItem(NS + k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+    set(k, v){ try { localStorage.setItem(NS + k, JSON.stringify(v)); return true; } catch(e){ return false; } },
+    remove(k){ try { localStorage.removeItem(NS + k); } catch(e){} }
+  };
+  let box = null, lastErr = 0;

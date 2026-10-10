@@ -1,3 +1,5 @@
+
+// Classical Arudha Pada algorithm (BPHS): count from the house to its lord's
 // house, then count the same number of houses again from the lord's house.
 // If the result would fall in the same house or the 7th from the house
 // itself (i.e. the Pada would be identical to, or in opposition to, the
@@ -312,7 +314,8 @@ function buildVargaFromLagna(chart, lagnaSignIdx, vargaKey){
       planets: planetsHere, isEmpty: planetsHere.length === 0
     });
   }
-  return { ascendantSign: lagnaSignIdx, houses, planetVargaSign };
+  const V0 = chart.vargas[vargaKey];
+  return { ascendantSign: lagnaSignIdx, houses, planetVargaSign, outerSign: V0.outerSign, outerRx: V0.outerRx };
 }
 
 // Plain-text render of one lagna's chart (for a chosen divisional chart) —
@@ -1569,3 +1572,6 @@ document.getElementById('profileSelect').addEventListener('change', (e) => {
   const idx = e.target.value;
   if (idx !== "") {
     localStorage.setItem('VedicAstrology_lastProfileIdx', idx);
+  } else {
+    localStorage.removeItem('VedicAstrology_lastProfileIdx');
+  }

@@ -143,6 +143,20 @@ input, select { font-family: inherit; }
 }
 .planet-label .dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
 .planet-label.dimmed { opacity: 0.35; }
+.view-switch-wrap { position:absolute; top:24px; left:50%; transform:translateX(-50%); z-index:11; display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none; }
+.view-switch, .sol-sub { display:flex; gap:4px; padding:4px; border-radius:14px; background:rgba(18,25,38,.7); border:1px solid var(--glass-border); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); pointer-events:auto; }
+.view-switch button, .sol-sub button { padding:8px 14px; border-radius:10px; font-size:12px; font-weight:600; color:var(--text-dim); border:0; background:transparent; cursor:pointer; white-space:nowrap; transition:all .2s; }
+.sol-sub button { padding:6px 11px; font-size:11px; }
+.view-switch button.active, .sol-sub button.active { color:#07101c; background:linear-gradient(135deg,var(--cyan),#7B6EF6); box-shadow:0 2px 12px var(--cyan-glow); }
+.view-switch button:not(.active):hover, .sol-sub button:not(.active):hover { color:var(--text); background:rgba(255,255,255,.07); }
+.sol-row { display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center; padding:12px 14px; margin-bottom:8px; border-radius:16px; cursor:pointer; border:1px solid var(--glass-border); background:linear-gradient(100deg,color-mix(in srgb,var(--pc) 13%,transparent),rgba(255,255,255,.02) 60%); transition:transform .2s; }
+.sol-row:hover { transform:translateY(-2px); }
+.sol-g { font-size:26px; width:34px; text-align:center; flex:none; }
+.sol-main { display:flex; flex-direction:column; gap:2px; min-width:0; flex:1; }
+.sol-main b { font-size:14px; color:var(--text); }
+.sol-main span, .sol-nums span { font-size:11px; color:var(--text-dim); font-family:var(--font-mono); }
+.sol-nums { display:flex; flex-direction:column; gap:2px; text-align:left; width:100%; padding-left:46px; }
+@media (max-width:720px){ .view-switch-wrap{ top:calc(160px + var(--safe-t)); left:calc(50% - 22px); } .view-switch button{ padding:7px 11px; font-size:11.5px; } .sol-row{ flex-wrap:wrap; } .sol-nums{ text-align:left; max-width:100%; width:100%; } }
 
 .sign-label {
   position: absolute; left: 0; top: 0; pointer-events: none; z-index: 4; will-change: transform;
@@ -1020,6 +1034,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
       <div class="hud-sub" id="hudSub">JD — · Ayanamsa —°</div>
       <div class="hud-moon" id="hudMoon">☽ — · —</div>
     </div>
+    <div class="view-switch-wrap">
+      <div class="view-switch" id="viewSwitch"><button data-v="wheel" class="active">☸ Zodiac Wheel</button><button data-v="solar">☉ Solar System</button></div>
+      <div class="sol-sub" id="solScale" style="display:none"><button data-s="easy" class="active">Easy fit</button><button data-s="real">True scale</button></div>
+      <div class="sol-sub" id="solPresets" style="display:none"><button data-p="inner">Inner</button><button data-p="outer">Outer</button><button data-p="all">Whole system</button></div>
+    </div>
     <div class="viewport-legend" id="viewportLegend"></div>
     <div class="viewport-actions">
       <button class="vp-btn" id="planetPickBtn" title="Select a planet" aria-label="Select a planet">🪐</button>
@@ -1047,6 +1066,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
       <button class="panel-tab" data-tab="natal"><span class="ti">✦</span><span>Natal</span></button>
       <button class="panel-tab" data-tab="returns"><span class="ti">↺</span><span>Returns</span></button>
       <button class="panel-tab" data-tab="retro"><span class="ti">℞</span><span>Retro</span></button>
+      <button class="panel-tab" data-tab="solar"><span class="ti">🪐</span><span>Solar</span></button>
       <button class="panel-tab" data-tab="chart"><span class="ti">◎</span><span>Chart</span></button>
       <button class="panel-tab" data-tab="view"><span class="ti">◐</span><span>View</span></button>
       <button class="panel-tab" data-tab="export"><span class="ti">⇪</span><span>Export</span></button>
@@ -1152,6 +1172,15 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
         <div class="rt-year"><button type="button" id="rtPrev" aria-label="Previous year">‹</button><input type="number" id="rtYear" min="1900" max="2100" inputmode="numeric"><button type="button" id="rtNext" aria-label="Next year">›</button></div>
         <div class="filter-row" id="rtChips"><button type="button" class="filter-chip" data-y="-1">Last year</button><button type="button" class="filter-chip" data-y="0">This year</button><button type="button" class="filter-chip" data-y="1">Next year</button></div>
         <div id="rtBody"></div>
+      </div>
+
+      <div class="panel-section" id="tab-solar">
+        <div class="tab-intro"><span class="ico">🪐</span><div><b>The real solar system for this date.</b> Every planet's true distance from the Sun and from Earth, its real size and its year. Use the <b>Solar System</b> switch above the 3D view, then tap a row to fly to that planet. <b>True scale</b> shows how empty space really is.</div></div>
+        <div class="panel-heading">Planet Sizes (true proportions)</div>
+        <div id="solSizes" style="margin:0 0 18px"></div>
+        <div class="panel-heading">Distances &amp; Facts</div>
+        <div id="solTable"></div>
+        <div class="transit-note" style="margin-top:12px">Positions come from JPL Keplerian orbital elements (accurate to about an arc-minute for 1800–2050, less outside that range). The Sun's own diameter is about 1,391,400 km.</div>
       </div>
 
       <div class="panel-section" id="tab-chart">
@@ -1378,6 +1407,11 @@ const PLANET_ELEMENTS = {
   jupiter:{a:5.202561,e:0.048498,i:1.3033,L:34.3515,Lrate:3034.9057,peri:14.3312,periRate:0.2155,node:100.4644,nodeRate:0.1767},
   saturn:{a:9.554747,e:0.055546,i:2.4886,L:50.0774,Lrate:1222.1138,peri:93.0572,periRate:0.5150,node:113.6634,nodeRate:-0.2566}
 };
+Object.assign(PLANET_ELEMENTS,{
+  uranus:{a:19.18797948,e:0.04685740,i:0.77298127,L:313.23810451,Lrate:428.48202785,peri:170.95427630,periRate:0.40805281,node:74.01692503,nodeRate:0.04240589},
+  neptune:{a:30.06952752,e:0.00895439,i:1.77005520,L:-55.12002969,Lrate:218.45945325,peri:44.96476227,periRate:-0.32241464,node:131.78422574,nodeRate:-0.00508664},
+  pluto:{a:39.48686035,e:0.24885238,i:17.14104260,L:238.96535011,Lrate:145.18042903,peri:224.09702598,periRate:-0.04062942,node:110.30167986,nodeRate:-0.01183482}
+});
 const EARTH_ELEMENTS = {a:1.000001,e:0.016709,i:0.0,L:100.4664,Lrate:35999.3729,peri:102.9373,periRate:0.3225,node:0,nodeRate:0};
 
 function solveKepler(M,e){
@@ -1428,7 +1462,13 @@ function rahuLongitude(jd){
 
 const PLANET_LIST = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"];
 const PLANET_GLYPHS = {Sun:"☉",Moon:"☽",Mars:"♂",Mercury:"☿",Jupiter:"♃",Venus:"♀",Saturn:"♄",Rahu:"☊",Ketu:"☋"};
+const OUTER_LIST = ["Uranus","Neptune","Pluto"];
+const OUTER_SK = {Uranus:"Prajapati",Neptune:"Varuna",Pluto:"Yama"};
+const OUTER_ORBIT_R = {Uranus:10.6,Neptune:10.95,Pluto:11.3};
 const PLANET_COLORS = {Sun:"#FFD84A",Moon:"#D8DEE8",Mars:"#FF6B4A",Mercury:"#8FB3C9",Jupiter:"#E8B95C",Venus:"#F5E6C8",Saturn:"#8A9BB0",Rahu:"#7B6EC9",Ketu:"#C97B9E"};
+Object.assign(PLANET_GLYPHS,{Uranus:"♅",Neptune:"♆",Pluto:"♇"});
+Object.assign(PLANET_COLORS,{Uranus:"#7DE3E0",Neptune:"#5B7CFA",Pluto:"#C9A38A"});
+const ALL_BODIES = PLANET_LIST.concat(OUTER_LIST); // outer planets are shown/plotted but are not part of Vedic aspect/yoga logic
 
 function siderealLongitude(name,jd){
   const ayan=lahiriAyanamsa(jd);
@@ -1441,6 +1481,7 @@ function siderealLongitude(name,jd){
     case "Mars": tropical=planetGeocentricLongitude("mars",jd); break;
     case "Jupiter": tropical=planetGeocentricLongitude("jupiter",jd); break;
     case "Saturn": tropical=planetGeocentricLongitude("saturn",jd); break;
+    case "Uranus": case "Neptune": case "Pluto": tropical=planetGeocentricLongitude(name.toLowerCase(),jd); break;
     case "Rahu": return normDeg(rahuLongitude(jd)-ayan);
     case "Ketu": return normDeg(rahuLongitude(jd)-ayan+180);
   }
@@ -1755,12 +1796,12 @@ function findConjunctions(bodyA,bodyB,startJD,endJD,orb){
 function snapshotPositions(jd){
   const ayan = lahiriAyanamsa(jd);
   const helio = {};
-  ["mercury","venus","mars","jupiter","saturn"].forEach(k=> helio[k]=planetHeliocentric(k,jd));
+  ["mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto"].forEach(k=> helio[k]=planetHeliocentric(k,jd));
   const earth = earthHeliocentric(jd);
   const sidereal = {};
-  PLANET_LIST.forEach(name=> sidereal[name] = siderealLongitude(name,jd));
+  ALL_BODIES.forEach(name=> sidereal[name] = siderealLongitude(name,jd));
   const retro = {};
-  PLANET_LIST.forEach(name=> retro[name] = isRetrograde(name,jd));
+  ALL_BODIES.forEach(name=> retro[name] = isRetrograde(name,jd));
   return { jd, ayanamsa: ayan, helio, earth, sidereal, retro };
 }
 
@@ -1893,7 +1934,7 @@ function showNakshatraHighlight(nakIdx){
   
   // 3. SHOOT BEAM TO OCCUPYING PLANETS AT EXACT DEGREE & CALCULATE TRANSIT TIMINGS
   const snap = snapshotPositions(currentJD);
-  const planetOrbitRadius = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2 };
+  const planetOrbitRadius = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2, Uranus:10.6, Neptune:10.95, Pluto:11.3 };
   let found = false;
   let occupantsHtml = '';
 
@@ -2063,7 +2104,7 @@ function initScene(){
   
   // The Sun's actual light source (intense, warm)
   const sunLight = new THREE.PointLight(0xFFFFFF, 3.5, 0, 0.1); 
-  scene.add(sunLight);
+  scene.add(sunLight); window._wheelSunLight = sunLight;
   
   // Subtle blue rim light for 3D volume
   const rimLight = new THREE.DirectionalLight(0x4F9BE0, 0.8);
@@ -2127,7 +2168,7 @@ function initScene(){
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       const dist = Math.hypot(dx,dy);
       const scale = pinchStartDist/dist;
-      orbitDist = Math.max(6, Math.min(120, pinchStartOrbit*scale));
+      orbitDist = clampZoom(pinchStartOrbit*scale);
       markDirty();
     }
   }, {passive:false});
@@ -2138,7 +2179,7 @@ function initScene(){
       const forward = new THREE.Vector3(Math.cos(freeCamPitch)*Math.cos(freeCamYaw), Math.sin(freeCamPitch), Math.cos(freeCamPitch)*Math.sin(freeCamYaw));
       freeCamPos.addScaledVector(forward, -e.deltaY*0.03);
     } else {
-      orbitDist = Math.max(6, Math.min(120, orbitDist + e.deltaY*0.02));
+      orbitDist = clampZoom(SOL.view==="solar" ? orbitDist*(1 + e.deltaY*0.0012) : orbitDist + e.deltaY*0.02);
     }
     markDirty();
   }, {passive:false});
@@ -2525,9 +2566,9 @@ function buildZodiacRingGroup(){
   bodyMeshes["geo_earth"] = earth;
 
   // Planet markers
-  const planetOrbitRadius = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2 };
-  PLANET_LIST.forEach(name=>{
-    const mesh = makeSphere(name==="Sun"?0.5: name==="Moon"?0.4:0.32, parseInt(PLANET_COLORS[name].replace('#',''),16), name==="Sun"?0xFFB347:0, name);
+  const planetOrbitRadius = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2, Uranus:10.6, Neptune:10.95, Pluto:11.3 };
+  ALL_BODIES.forEach(name=>{
+    const mesh = makeSphere(name==="Sun"?0.5: name==="Moon"?0.4: OUTER_LIST.includes(name)?0.26:0.32, parseInt(PLANET_COLORS[name].replace('#',''),16), name==="Sun"?0xFFB347:0, name);
     zodiacRingGroup.add(mesh);
     bodyMeshes["geo_"+name] = mesh;
   });
@@ -2553,10 +2594,10 @@ function _atmo(hex, power, k){
     blending:THREE.AdditiveBlending, transparent:true, depthWrite:false });
 }
 function enhanceZodiac(){
-  const ORBIT = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2 };
-  const ATMO = { Earth:[0x4F9BE0,2.2,1.6], Venus:[0xFFD9A0,2.4,1.3], Mars:[0xFF7B4A,3.2,0.9], Jupiter:[0xFFC999,2.6,1.1], Saturn:[0xF0DCA0,2.6,1.1], Mercury:[0xBBBBBB,3.5,0.6], Moon:[0xCFD8FF,3.2,0.8], Rahu:[0x7B6EC9,1.6,2.0], Ketu:[0xC97B9E,1.6,2.0] };
+  const ORBIT = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2, Uranus:10.6, Neptune:10.95, Pluto:11.3 };
+  const ATMO = { Earth:[0x4F9BE0,2.2,1.6], Venus:[0xFFD9A0,2.4,1.3], Mars:[0xFF7B4A,3.2,0.9], Jupiter:[0xFFC999,2.6,1.1], Saturn:[0xF0DCA0,2.6,1.1], Mercury:[0xBBBBBB,3.5,0.6], Moon:[0xCFD8FF,3.2,0.8], Rahu:[0x7B6EC9,1.6,2.0], Ketu:[0xC97B9E,1.6,2.0], Uranus:[0x7DE3E0,2.2,1.0], Neptune:[0x5B7CFA,2.4,1.1] };
   const addGlow = (mesh, hex, scale, op)=>{ const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:_glowTex(), color:hex, transparent:true, opacity:op, blending:THREE.AdditiveBlending, depthWrite:false })); sp.scale.set(scale,scale,1); mesh.add(sp); };
-  const bodies = { geo_earth:'Earth' }; PLANET_LIST.forEach(n=> bodies['geo_'+n] = n);
+  const bodies = { geo_earth:'Earth' }; ALL_BODIES.forEach(n=> bodies['geo_'+n] = n);
   for (const key in bodies){
     const mesh = bodyMeshes[key], name = bodies[key]; if (!mesh) continue;
     const r = mesh.geometry.parameters.radius;
@@ -2634,8 +2675,8 @@ function updateSceneForJD(jd){
   const snap = snapshotPositions(jd);
 
   // Geocentric zodiac wheel positions
-  const planetOrbitRadius = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2 };
-  PLANET_LIST.forEach(name=>{
+  const planetOrbitRadius = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2, Uranus:10.6, Neptune:10.95, Pluto:11.3 };
+  ALL_BODIES.forEach(name=>{
     const lon = snap.sidereal[name];
     const r = planetOrbitRadius[name];
     bodyMeshes["geo_"+name].position.set(r*Math.cos(lon*DEG), 0, -r*Math.sin(lon*DEG));
@@ -2649,6 +2690,7 @@ function updateSceneForJD(jd){
   }
 
   updateOverlays(snap);
+  solUpdate(jd);
   markDirty();
   return snap;
 }
@@ -2742,6 +2784,14 @@ function renderLoop(ts){
   if (!needsRender) return;
   needsRender = false;
 
+  if (SOL.view==='solar'){
+    if (camMode==='focus'){
+      if (SOL.lastFocus!==focusedPlanetKey){ SOL.lastFocus = focusedPlanetKey; orbitDist = solFocusDist(); }
+      orbitDist = clampZoom(orbitDist);
+    } else { SOL.lastFocus = null; orbitDist = clampZoom(orbitDist); }
+    const nn = camMode==='focus' ? Math.max(0.00005, orbitDist*0.04) : 0.1;
+    if (Math.abs(nn-SOL.lastNear) > 1e-9){ SOL.lastNear = nn; camera.near = Math.min(0.1, nn); camera.updateProjectionMatrix(); }
+  }
   if (camMode==="focus"){
     const target = getFocusTargetPos() || new THREE.Vector3(0,0,0);
     const x = target.x + orbitDist*Math.sin(orbitAnglePhi)*Math.cos(orbitAngleTheta);
@@ -2770,6 +2820,179 @@ function setViewMode(){
   markDirty();
 }
 
+/* ============================================================================
+   SOLAR SYSTEM VIEW — heliocentric, planets at their real positions for the
+   chosen date. Two scale modes:
+     "easy"  distances compressed (sqrt) + sizes exaggerated, everything visible
+     "real"  true distances (1 AU = 10 units) and true relative sizes
+   Orbital elements: JPL/Standish Keplerian elements (best for 1800-2050).
+   ============================================================================ */
+const SOL_AU_KM = 149597870.7, SOL_SUN_KM = 695700, SOL_UNITS_PER_AU = 10, SOL_LIGHT_MIN_PER_AU = 8.3167;
+const SOL_BODIES = ["Mercury","Venus","Earth","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
+const SOL_DATA = {
+  Mercury:{R:2439.7, P:0.2408, c:0x8FB3C9, g:"☿"}, Venus:{R:6051.8, P:0.6152, c:0xF5E6C8, g:"♀"},
+  Earth:{R:6371.0, P:1.0000, c:0x4F9BE0, g:"⊕"}, Mars:{R:3389.5, P:1.8808, c:0xFF6B4A, g:"♂"},
+  Jupiter:{R:69911, P:11.862, c:0xE8B95C, g:"♃"}, Saturn:{R:58232, P:29.457, c:0xD9C58E, g:"♄"},
+  Uranus:{R:25362, P:84.011, c:0x7DE3E0, g:"♅"}, Neptune:{R:24622, P:164.79, c:0x5B7CFA, g:"♆"},
+  Pluto:{R:1188.3, P:247.94, c:0xC9A38A, g:"♇"}
+};
+const SOL = { view:'wheel', scale:'easy', built:false, group:null, bodies:{}, orbits:{}, sun:null, light:null, lastFocus:null, lastNear:0.1 };
+
+function solHelio(name, jd){ return name==="Earth" ? earthHeliocentric(jd) : planetHeliocentric(name.toLowerCase(), jd); }
+function solMapPos(h){ // ecliptic (x,y,z AU) -> scene coords for current scale mode
+  const r = Math.sqrt(h.x*h.x + h.y*h.y + h.z*h.z) || 1e-9;
+  const k = SOL.scale==='real' ? SOL_UNITS_PER_AU : (5.2*Math.sqrt(r)/r);
+  return new THREE.Vector3(h.x*k, h.z*k, -h.y*k);
+}
+function solRadius(name){ // sphere radius in scene units
+  if (SOL.scale==='real') return (name==="Sun" ? SOL_SUN_KM : SOL_DATA[name].R) / SOL_AU_KM * SOL_UNITS_PER_AU;
+  if (name==="Sun") return 1.7;
+  return Math.max(0.12, 0.34*Math.pow(SOL_DATA[name].R/6371, 0.5));
+}
+function solBuild(){
+  if (SOL.built) return; SOL.built = true;
+  const g = SOL.group = new THREE.Group(); g.visible = false; scene.add(g);
+  // Sun
+  const sun = makeSphere(1, 0xFFD84A, 0xFFB347, 'Sun'); g.add(sun); SOL.sun = sun; bodyMeshes['sol_Sun'] = sun;
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map:_glowTex(), color:0xFFB347, transparent:true, opacity:0.5, blending:THREE.AdditiveBlending, depthWrite:false }));
+  g.add(glow); SOL.sunGlow = glow; SOL.dots = {};
+  SOL.light = new THREE.PointLight(0xFFF2D6, 1.4, 0, 0); g.add(SOL.light);
+  SOL_BODIES.forEach(n=>{
+    const m = makeSphere(1, SOL_DATA[n].c, 0, n); g.add(m); SOL.bodies[n] = m; bodyMeshes['sol_'+n] = m;
+    // fixed-screen-size dot so tiny true-scale planets stay findable
+    const dot = new THREE.Sprite(new THREE.SpriteMaterial({ map:_glowTex(), color:SOL_DATA[n].c, transparent:true, opacity:0.95, depthWrite:false, sizeAttenuation:false }));
+    dot.scale.set(0.022,0.022,1); dot.visible = false; g.add(dot); SOL.dots[n] = dot;
+    if (n==='Saturn'){
+      m.userData.noSpin = true;
+      const c = document.createElement('canvas'); c.width = 512; c.height = 4; const x = c.getContext('2d');
+      const gr = x.createLinearGradient(0,0,512,0);
+      [[0,'rgba(0,0,0,0)'],[0.08,'rgba(190,170,130,0.55)'],[0.3,'rgba(235,215,165,0.9)'],[0.45,'rgba(120,100,70,0.25)'],[0.52,'rgba(240,222,175,0.95)'],[0.8,'rgba(210,190,145,0.75)'],[0.93,'rgba(170,150,110,0.35)'],[1,'rgba(0,0,0,0)']].forEach(([p,col])=> gr.addColorStop(p,col));
+      x.fillStyle = gr; x.fillRect(0,0,512,4);
+      const rg = new THREE.RingGeometry(1.45, 2.45, 96, 1), pos = rg.attributes.position, uv = rg.attributes.uv;
+      for (let i=0;i<pos.count;i++){ const d = Math.hypot(pos.getX(i), pos.getY(i)); uv.setXY(i, (d-1.45)/1, 0.5); }
+      const ring = new THREE.Mesh(rg, new THREE.MeshBasicMaterial({ map:new THREE.CanvasTexture(c), transparent:true, side:THREE.DoubleSide, depthWrite:false }));
+      ring.rotation.x = -Math.PI/2 + 0.42; m.add(ring);
+    }
+  });
+  solMakeLabels();
+  solRebuildOrbits(); solApplyScale(); solUpdate(currentJD);
+}
+function solMakeLabels(){
+  const container = document.getElementById('planetLabels');
+  ["Sun"].concat(SOL_BODIES).forEach(n=>{
+    const el = document.createElement('div'); el.className = 'planet-label';
+    const col = '#'+(n==="Sun"?0xFFD84A:SOL_DATA[n].c).toString(16).padStart(6,'0');
+    el.innerHTML = `<span class="dot" style="background:${col}"></span>${n}`; el.style.display = 'none';
+    container.appendChild(el); labelNodes['sol_'+n] = { el, label:n };
+  });
+}
+function solRebuildOrbits(){
+  for (const k in SOL.orbits){ SOL.group.remove(SOL.orbits[k]); SOL.orbits[k].geometry.dispose(); }
+  SOL.orbits = {};
+  SOL_BODIES.forEach(n=>{
+    const key = n.toLowerCase(), el = n==="Earth" ? EARTH_ELEMENTS : PLANET_ELEMENTS[key];
+    const T0 = (currentJD-J2000)/36525.0, N = 360, pts = [];
+    // sweep the mean longitude through one full revolution at the current epoch's elements
+    for (let i=0;i<=N;i++){
+      const e2 = Object.assign({}, el, { L: el.L + el.Lrate*T0 + i*360/N, Lrate:0, peri: el.peri + el.periRate*T0, periRate:0, node: el.node + el.nodeRate*T0, nodeRate:0 });
+      pts.push(solMapPos(heliocentricPos(e2, 0)));
+    }
+    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color:SOL_DATA[n].c, transparent:true, opacity:0.38 }));
+    SOL.group.add(line); SOL.orbits[n] = line;
+  });
+}
+function solApplyScale(){
+  if (!SOL.built) return;
+  const real = SOL.scale==='real';
+  SOL.sun.scale.setScalar(solRadius("Sun"));
+  SOL.sunGlow.material.sizeAttenuation = !real; SOL.sunGlow.material.needsUpdate = true;
+  if (real) SOL.sunGlow.scale.set(0.11,0.11,1); else SOL.sunGlow.scale.set(6,6,1);
+  SOL_BODIES.forEach(n=>{
+    const m = SOL.bodies[n]; m.scale.setScalar(solRadius(n));
+    SOL.dots[n].visible = real; // real mode: planets are sub-pixel, so mark them with a dot
+  });
+  solRebuildOrbits(); solUpdate(currentJD);
+  document.querySelectorAll('#solScale button').forEach(b=> b.classList.toggle('active', b.dataset.s===SOL.scale));
+  markDirty();
+}
+function solUpdate(jd){
+  if (!SOL.built) return;
+  SOL_BODIES.forEach(n=>{ const p = solMapPos(solHelio(n, jd)); SOL.bodies[n].position.copy(p); SOL.dots[n].position.copy(p); });
+  if (SOL.view==='solar') solRenderTable(jd);
+}
+function solZoomRange(){
+  if (SOL.view!=='solar') return [6,120];
+  if (camMode==='focus' && focusedPlanetKey){
+    const n = focusedPlanetKey.replace(/^(geo_|sol_)/,''); const r = n==='Sun' ? solRadius('Sun') : (SOL.bodies[n] ? solRadius(n) : 1);
+    return [Math.max(r*1.8, 0.0006), SOL.scale==='real' ? 900 : 120];
+  }
+  return SOL.scale==='real' ? [3, 950] : [4, 120];
+}
+function clampZoom(v){ const z = solZoomRange(); return Math.max(z[0], Math.min(z[1], v)); }
+function solFocusDist(){
+  const n = focusedPlanetKey ? focusedPlanetKey.replace(/^(geo_|sol_)/,'') : null;
+  if (!n || !SOL.bodies[n]) return SOL.scale==='real' ? 60 : 30;
+  return solRadius(n) * (SOL.scale==='real' ? 6 : 7);
+}
+function solPreset(which){
+  if (SOL.view!=='solar') setSceneView('solar');
+  setCamMode('orbit'); autoRotate = false; orbitAnglePhi = 1.0;
+  const real = SOL.scale==='real';
+  orbitDist = which==='inner' ? (real ? 30 : 22) : which==='outer' ? (real ? 700 : 85) : (real ? 950 : 90);
+  markDirty();
+}
+function setSceneView(v){
+  if (v==='solar') solBuild();
+  SOL.view = v; const solar = v==='solar';
+  zodiacRingGroup.visible = !solar; aspectLineGroup.visible = !solar;
+  if (SOL.group) SOL.group.visible = solar;
+  if (window._wheelSunLight) window._wheelSunLight.intensity = solar ? 0.25 : 3.5;
+  document.querySelectorAll('#viewSwitch button').forEach(b=> b.classList.toggle('active', b.dataset.v===v));
+  document.getElementById('solScale').style.display = solar ? 'flex' : 'none';
+  document.getElementById('solPresets').style.display = solar ? 'flex' : 'none';
+  if (solar){ if (camMode==='focus') setCamMode('orbit'); orbitDist = SOL.scale==='real' ? 120 : 62; solUpdate(currentJD); }
+  else { orbitDist = 26; }
+  if (!solar){ camera.near = 0.1; camera.updateProjectionMatrix(); }
+  populateFocusPlanetSelect(); updateLegend(); markDirty();
+  if (typeof syncPickBtn === 'function') syncPickBtn();
+}
+function solRenderTable(jd){
+  const wrap = document.getElementById('solTable'); if (!wrap) return;
+  const earth = earthHeliocentric(jd);
+  let html = '';
+  SOL_BODIES.forEach(n=>{
+    const h = solHelio(n, jd), r = Math.hypot(h.x,h.y,h.z);
+    const d = n==="Earth" ? 0 : Math.hypot(h.x-earth.x, h.y-earth.y, h.z-earth.z);
+    const lon = normDeg(Math.atan2(h.y,h.x)*RAD), D = SOL_DATA[n], col = '#'+D.c.toString(16).padStart(6,'0');
+    html += `<div class="sol-row" data-n="${n}" style="--pc:${col}">
+      <div class="sol-g" style="color:${col}">${D.g}</div>
+      <div class="sol-main"><b>${n}</b><span>${(D.R*2).toLocaleString('en-US',{maximumFractionDigits:0})} km wide · ${(D.R/6371).toFixed(n==="Pluto"||n==="Mercury"||n==="Mars"?3:2)}× Earth</span></div>
+      <div class="sol-nums"><span>${r.toFixed(3)} AU from Sun</span><span>${n==="Earth" ? 'home' : d.toFixed(3)+' AU · '+(d*SOL_LIGHT_MIN_PER_AU).toFixed(1)+' light-min from Earth'}</span><span>year ${D.P<2 ? (D.P*365.25).toFixed(0)+' d' : D.P.toFixed(1)+' y'} · helio. ${lon.toFixed(1)}°</span></div>
+    </div>`;
+  });
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('.sol-row').forEach(r=> r.addEventListener('click', ()=>{
+    setCamMode('focus'); focusedPlanetKey = 'sol_'+r.dataset.n; autoRotate = false;
+    const sel = document.getElementById('focusPlanetSelect'); if (sel) sel.value = focusedPlanetKey;
+    SOL.lastFocus = null; updateLegend(); markDirty(); if (typeof syncPickBtn==='function') syncPickBtn();
+  }));
+}
+function solBuildSizeStrip(){
+  // true relative sizes (Sun omitted: it would be ~10x Jupiter), drawn as one SVG row
+  const wrap = document.getElementById('solSizes'); if (!wrap) return;
+  const list = SOL_BODIES.slice().sort((a,b)=> SOL_DATA[b].R - SOL_DATA[a].R);
+  const scale = 38 / SOL_DATA.Jupiter.R; let x = 8, svg = '', svgI = 0;
+  list.forEach(n=>{
+    const r = Math.max(1.2, SOL_DATA[n].R*scale), col = '#'+SOL_DATA[n].c.toString(16).padStart(6,'0');
+    x += r; const lo = (r<6 && (svgI++ % 2)) ? 9 : 0; svg += `<circle cx="${x.toFixed(1)}" cy="46" r="${r.toFixed(2)}" fill="${col}" fill-opacity=".85"><title>${n}: ${(SOL_DATA[n].R*2).toLocaleString('en-US',{maximumFractionDigits:0})} km</title></circle><text x="${x.toFixed(1)}" y="${(46+Math.max(r,6)+9+lo).toFixed(1)}" text-anchor="middle" font-size="6.5" fill="#8FA3B8" font-family="sans-serif">${n.slice(0,3)}</text>`;
+    x += r + 5;
+  });
+  wrap.innerHTML = `<svg viewBox="0 0 ${Math.ceil(x+6)} 100" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">${svg}</svg>`;
+}
+document.querySelectorAll('#viewSwitch button').forEach(b=> b.addEventListener('click', ()=> setSceneView(b.dataset.v)));
+document.querySelectorAll('#solScale button').forEach(b=> b.addEventListener('click', ()=>{ SOL.scale = b.dataset.s; solApplyScale(); orbitDist = clampZoom(SOL.scale==='real' ? 120 : 62); markDirty(); }));
+document.querySelectorAll('#solPresets button').forEach(b=> b.addEventListener('click', ()=> solPreset(b.dataset.p)));
+
 function updateLegend(){
   const legend = document.getElementById('viewportLegend');
   if (camMode==="free"){
@@ -2777,8 +3000,14 @@ function updateLegend(){
     return;
   }
   if (camMode==="focus" && focusedPlanetKey){
-    const label = focusedPlanetKey.replace(/^geo_/,'');
+    const label = focusedPlanetKey.replace(/^(geo_|sol_)/,'');
     legend.innerHTML = `<div>FOCUSED ON ${label.toUpperCase()}</div><div>DRAG TO ORBIT THE PLANET · PINCH OR SCROLL TO ZOOM</div>`;
+    return;
+  }
+  if (SOL.view==='solar'){
+    legend.innerHTML = SOL.scale==='real'
+      ? `<div>SUN-CENTERED · TRUE SCALE (1 AU = 10 UNITS)</div><div>REAL DISTANCES &amp; SIZES · DOTS MARK TINY PLANETS · DRAG TO ORBIT</div>`
+      : `<div>SUN-CENTERED · EASY FIT (DISTANCES COMPRESSED)</div><div>REAL POSITIONS · SIZES EXAGGERATED · DRAG TO ORBIT</div>`;
     return;
   }
   legend.innerHTML = `<div>EARTH-CENTERED · SIDEREAL LONGITUDE (LAHIRI)</div><div>RING = 12 RASHI · DRAG TO ORBIT</div>`;
@@ -2811,8 +3040,8 @@ function setCamMode(newCamMode){
 function populateFocusPlanetSelect(){
   const sel = document.getElementById('focusPlanetSelect');
   sel.innerHTML = "";
-  const geoOptions = PLANET_LIST.map(n=>[n,"geo_"+n]);
-  const options = geoOptions;
+  const geoOptions = ALL_BODIES.map(n=>[n,"geo_"+n]);
+  const options = SOL.view==='solar' ? ["Sun"].concat(SOL_BODIES).map(n=>[n,"sol_"+n]) : geoOptions;
   options.forEach(([label,key])=>{
     const opt = document.createElement('option');
     opt.value = key; opt.textContent = label;
@@ -2910,7 +3139,7 @@ function rebuildLabelNodes(){
   const container = document.getElementById('planetLabels');
   container.innerHTML = "";
   for (const k in labelNodes) delete labelNodes[k];
-  const activeSet = PLANET_LIST.map(n=>[n,"geo_"+n]);
+  const activeSet = ALL_BODIES.map(n=>[n,"geo_"+n]);
   activeSet.forEach(([label,key])=>{
     const el = document.createElement('div');
     el.className = 'planet-label';
@@ -2933,6 +3162,7 @@ function rebuildLabelNodes(){
       labelNodes["signlabel_"+i] = { el, label: SIGNS[i].name, isSign:true };
     }
   }
+  if (SOL.built) solMakeLabels();
 }
 
 let _vw = 0, _vh = 0;
@@ -2942,7 +3172,7 @@ function updatePlanetLabels(){
   for (const key in labelNodes){
     const { el, label, isSign } = labelNodes[key];
     let mesh = bodyMeshes[key];
-    if (!mesh){ el.style.display='none'; continue; }
+    if (!mesh || mesh.visible===false || (mesh.parent && mesh.parent.visible===false)){ el.style.display='none'; continue; }
     const pos = mesh.position.clone();
     pos.project(camera);
     if (pos.z > 1){ el.style.display='none'; continue; }
@@ -3006,12 +3236,15 @@ const skyRowNodes = {}; // planet name -> {glyph, name, sign, deg}
 function buildSkyTableRows(){
   const wrap = document.getElementById('skyTable');
   wrap.innerHTML = "";
-  PLANET_LIST.forEach(name=>{
+  ALL_BODIES.forEach(name=>{
     const row = document.createElement('div');
     row.className = 'sky-row';
     row.style.setProperty('--pc', PLANET_COLORS[name]);
     row.style.cursor = 'pointer';
-    row.addEventListener('click', ()=> openPlanetDetail(name));
+    row.addEventListener('click', ()=>{
+      if (OUTER_LIST.includes(name)){ if (SOL.view==='solar') setSceneView('wheel'); setCamMode('focus'); focusedPlanetKey = 'geo_'+name; autoRotate = false; const sel = document.getElementById('focusPlanetSelect'); if (sel) sel.value = focusedPlanetKey; updateLegend(); markDirty(); }
+      else openPlanetDetail(name);
+    });
     row.innerHTML = `
       <div class="sky-glyph" style="color:${PLANET_COLORS[name]}">${PLANET_GLYPHS[name]}</div>
       <div class="sky-info">
@@ -3029,7 +3262,7 @@ function buildSkyTableRows(){
 }
 
 function renderSkyTable(snap){
-  PLANET_LIST.forEach(name=>{
+  ALL_BODIES.forEach(name=>{
     const nodes = skyRowNodes[name];
     if (!nodes) return;
     const lon = snap.sidereal[name];
@@ -3039,7 +3272,7 @@ function renderSkyTable(snap){
     const pada = Math.floor((normDeg(lon) % (360/27)) / ((360/27)/4)) + 1;
     const deg = getDegInSign(lon);
     const nakLord = NAKSHATRA_LORDS[nakIdx];
-    nodes.sign.textContent = `${sign.symbol} ${sign.name} (${sign.sk}) · ${nak} Pada ${pada} (Lord: ${nakLord})`;
+    nodes.sign.textContent = `${sign.symbol} ${sign.name} (${sign.sk}) · ${nak} Pada ${pada} (Lord: ${nakLord})` + (OUTER_LIST.includes(name) ? ` · ${OUTER_SK[name]} (outer planet)` : '');
     nodes.deg.textContent = formatDeg(deg);
     const showRetro = snap.retro[name] && name!=="Rahu" && name!=="Ketu";
     nodes.retro.style.display = showRetro ? '' : 'none';
@@ -4296,10 +4529,10 @@ document.getElementById('nowBtn').addEventListener('click', ()=>{
   jumpToJD(jd);
 });
 
-document.getElementById('zoomInBtn').addEventListener('click', ()=>{ orbitDist = Math.max(6, orbitDist-4); });
-document.getElementById('zoomOutBtn').addEventListener('click', ()=>{ orbitDist = Math.min(120, orbitDist+4); });
+document.getElementById('zoomInBtn').addEventListener('click', ()=>{ orbitDist = clampZoom(SOL.view==='solar' ? orbitDist*0.78 : orbitDist-4); markDirty(); });
+document.getElementById('zoomOutBtn').addEventListener('click', ()=>{ orbitDist = clampZoom(SOL.view==='solar' ? orbitDist*1.28 : orbitDist+4); markDirty(); });
 document.getElementById('resetViewBtn').addEventListener('click', ()=>{
-  orbitAngleTheta=0.55; orbitAnglePhi=1.15; orbitDist = 26; autoRotate=true;
+  orbitAngleTheta=0.55; orbitAnglePhi=1.15; orbitDist = SOL.view==='solar' ? (SOL.scale==='real'?120:62) : 26; autoRotate=true; markDirty();
 });
 
 /* ---- Natal form + location autocomplete (mini) ---- */
@@ -4571,7 +4804,7 @@ document.getElementById('copyDataBtn').addEventListener('click', () => {
 const A = { ready:false, snap:null, natal:null, np:null, lagnaLon:null, lastArc:0, T:{} };
 const CONDEX = { Sun:0, Moon:1, Mars:9, Mercury:5, Jupiter:3, Venus:11, Saturn:6, Rahu:1, Ketu:7 };
 const COMBUST = { Moon:12, Mars:17, Mercury:14, Jupiter:11, Venus:10, Saturn:15 };
-const ORB_R = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2 };
+const ORB_R = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2, Uranus:10.6, Neptune:10.95, Pluto:11.3 };
 const _pt = (lon, r)=> new THREE.Vector3(r*Math.cos(lon*DEG), 0, -r*Math.sin(lon*DEG));
 const _on = id => document.getElementById(id).checked;
 
@@ -4694,24 +4927,33 @@ function initPlanetPicker(){
   const close = ()=> ov.classList.remove('show');
   window.syncPickBtn = function(){
     if (camMode === 'focus' && focusedPlanetKey){
-      const n = focusedPlanetKey.replace(/^geo_/, ''); btn.textContent = PLANET_GLYPHS[n]; btn.style.setProperty('--pc', PLANET_COLORS[n]); btn.classList.add('following'); btn.title = 'Following ' + n + ' (tap to change)';
+      const n = focusedPlanetKey.replace(/^(geo_|sol_)/, ''); btn.textContent = PLANET_GLYPHS[n] || (SOL_DATA[n] && SOL_DATA[n].g) || '☉'; btn.style.setProperty('--pc', PLANET_COLORS[n] || '#FFD84A'); btn.classList.add('following'); btn.title = 'Following ' + n + ' (tap to change)';
     } else { btn.textContent = '🪐'; btn.classList.remove('following'); btn.title = 'Select a planet'; }
   };
   function pick(n){
-    setCamMode('focus'); focusedPlanetKey = 'geo_' + n;
+    setCamMode('focus'); focusedPlanetKey = (SOL.view==='solar' ? 'sol_' : 'geo_') + n;
     const sel = document.getElementById('focusPlanetSelect'); if (sel) sel.value = focusedPlanetKey;
     autoRotate = false; updateLegend(); markDirty(); syncPickBtn(); close();
   }
-  function wheel(){ setCamMode('orbit'); orbitDist = 26; markDirty(); syncPickBtn(); close(); }
+  function wheel(){ setCamMode('orbit'); orbitDist = SOL.view==='solar' ? (SOL.scale==='real'?120:62) : 26; markDirty(); syncPickBtn(); close(); }
   function render(){
     const snap = snapshotPositions(currentJD);
-    box.innerHTML = `<div class="pk-title">Select a planet</div><div class="pk-sub">Tap a planet to fly the camera to it. Tap ⓘ for its full details.</div>
-      <div class="pk-grid">${PLANET_LIST.map((n,i)=>{
-        const lon = snap.sidereal[n], sg = SIGNS[getSignIndex(lon)], dm = degreeInSign(lon), rx = (n==='Rahu'||n==='Ketu'||snap.retro[n]) ? ' ℞' : '';
-        const sel = camMode==='focus' && focusedPlanetKey==='geo_'+n;
-        return `<div class="pk-tile ${sel?'sel':''}" style="--pc:${PLANET_COLORS[n]};--i:${i}" data-p="${n}"><button class="pk-info" data-i="${n}" aria-label="Details">i</button>
-          <div class="pk-orb">${PLANET_GLYPHS[n]}</div><div class="pk-name">${n}</div><div class="pk-sk">${PD[n].sk.split(' ')[0]}</div><div class="pk-pos">${sg.symbol} ${dm.deg}°${rx}</div></div>`; }).join('')}</div>
-      <button class="pk-all" id="pkAll">◎ Whole wheel view</button>`;
+    const solar = SOL.view==='solar', names = solar ? ["Sun"].concat(SOL_BODIES) : ALL_BODIES;
+    const tile = (n,i)=>{
+      const sel = camMode==='focus' && focusedPlanetKey===(solar?'sol_':'geo_')+n;
+      if (solar){
+        const col = n==='Sun' ? '#FFD84A' : '#'+SOL_DATA[n].c.toString(16).padStart(6,'0'), g = n==='Sun' ? '☉' : SOL_DATA[n].g;
+        const h = n==='Sun' ? {x:0,y:0,z:0} : solHelio(n, currentJD), r = Math.hypot(h.x,h.y,h.z);
+        return `<div class="pk-tile ${sel?'sel':''}" style="--pc:${col};--i:${i}" data-p="${n}"><div class="pk-orb">${g}</div><div class="pk-name">${n}</div><div class="pk-sk">from Sun</div><div class="pk-pos">${n==='Sun' ? '—' : r.toFixed(2)+' AU'}</div></div>`;
+      }
+      const lon = snap.sidereal[n], sg = SIGNS[getSignIndex(lon)], dm = degreeInSign(lon), rx = (n==='Rahu'||n==='Ketu'||snap.retro[n]) ? ' ℞' : '';
+      const outer = OUTER_LIST.includes(n), sk = outer ? OUTER_SK[n] : PD[n].sk.split(' ')[0];
+      return `<div class="pk-tile ${sel?'sel':''}" style="--pc:${PLANET_COLORS[n]};--i:${i}" data-p="${n}">${outer?'':`<button class="pk-info" data-i="${n}" aria-label="Details">i</button>`}
+        <div class="pk-orb">${PLANET_GLYPHS[n]}</div><div class="pk-name">${n}</div><div class="pk-sk">${sk}</div><div class="pk-pos">${sg.symbol} ${dm.deg}°${rx}</div></div>`;
+    };
+    box.innerHTML = `<div class="pk-title">Select a planet</div><div class="pk-sub">Tap a planet to fly the camera to it.${solar?'':' Tap ⓘ for its full details.'}</div>
+      <div class="pk-grid">${names.map(tile).join('')}</div>
+      <button class="pk-all" id="pkAll">${solar?'☉ Whole solar system':'◎ Whole wheel view'}</button>`;
     box.querySelectorAll('.pk-tile').forEach(t=> t.addEventListener('click', e=>{
       if (e.target.closest('.pk-info')){ close(); openPlanetDetail(e.target.closest('.pk-info').dataset.i); return; }
       pick(t.dataset.p); }));
@@ -4732,6 +4974,7 @@ function init(){
   refreshProfileSelect();
   initScene();
   buildSkyTableRows();
+  solBuildSizeStrip();
   setViewMode();
   renderLineToggleList();
   applyLineToggles();
