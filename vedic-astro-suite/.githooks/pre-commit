@@ -1,0 +1,10 @@
+#!/bin/sh
+# Keeps AI_GUIDE.md (AUTO block) and symbols.idx in sync with the code on every commit.
+ROOT="$(git rev-parse --show-toplevel)"
+for d in "$ROOT/vedic-astro-suite" "$ROOT"; do
+  if [ -f "$d/build.py" ] && [ -d "$d/parts" ]; then
+    (cd "$d" && python3 build.py --guide >/dev/null 2>&1 && git add AI_GUIDE.md symbols.idx 2>/dev/null)
+    break
+  fi
+done
+exit 0
