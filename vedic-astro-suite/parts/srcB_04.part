@@ -1,0 +1,1571 @@
+// house, then count the same number of houses again from the lord's house.
+// If the result would fall in the same house or the 7th from the house
+// itself (i.e. the Pada would be identical to, or in opposition to, the
+// house it represents), the CORRECTED rule (BPHS 29.4-29.5, cross-verified
+// against multiple translations) is to take the 10th house FROM THAT
+// INTERMEDIATE RESULT — i.e. add 9 signs (0-indexed), not 10.
+function calcArudhaPadaSign(houseSignIdx, ascSignIdx, planets){
+  const houseLordName = SIGNS[houseSignIdx].lord;
+  const lordSignIdx = planets[houseLordName].sign;
+  let distance = ((lordSignIdx - houseSignIdx + 12) % 12); // houses counted from the house to its lord (0-11)
+  let padaSignIdx = (lordSignIdx + distance) % 12;
+  // Check: is padaSignIdx the same as houseSignIdx (1st) or opposite (7th)?
+  const diffFromHouse = ((padaSignIdx - houseSignIdx + 12) % 12); // 0 = same sign, 6 = opposite
+  if (diffFromHouse === 0 || diffFromHouse === 6){
+    padaSignIdx = (padaSignIdx + 9) % 12; // 10th FROM the intermediate result = +9 offset
+  }
+  return padaSignIdx;
+}
+
+function calcAllArudhaPadas(chart, ascSignIdx){
+  const result = {};
+  for (const key in ARUDHA_HOUSE_META){
+    const meta = ARUDHA_HOUSE_META[key];
+    const houseSignIdx = (ascSignIdx + meta.fromHouse - 1) % 12;
+    result[key] = calcArudhaPadaSign(houseSignIdx, ascSignIdx, chart.planets);
+  }
+  return result;
+}
+
+// Sun's sidereal longitude at the most recent sunrise before birth (the anchor of Hora/Ghati/Bhava/Vighati lagnas).
+// (Earlier these used the Sun's longitude AT BIRTH, which drifts up to ~1° from the sunrise position.)
+function lastSunriseInfo(chart){
+  let sr = chart.sunriseJD; if (chart.julianDay < sr) sr -= 1;
+  return { jd: sr, sun: getSiderealLongitudeAt('Sun', sr) };
+}
+// Hora Lagna (BPHS Ch.5, cross-checked against multiple worked examples):
+// starts at the Sun's longitude at sunrise and advances 1 full sign (30°)
+// per 2.5 ghatis (= 1 hour) of elapsed time since the most recent sunrise.
+// Computed at full degree precision, then reduced to a sign.
+function calcHoraLagnaLongitude(chart){
+  let elapsedDays = chart.julianDay - chart.sunriseJD;
+  if (elapsedDays < 0) elapsedDays += 1; // birth was before today's sunrise -> measure from previous sunrise
+  const elapsedGhatis = elapsedDays * 60; // 60 ghatis in a full day
+  const degreesTravelled = (elapsedGhatis / 2.5) * 30; // 1 rashi (30°) per 2.5 ghatis
+  return normDeg(lastSunriseInfo(chart).sun + degreesTravelled);
+}
+function calcHoraLagnaSign(chart){
+  return getSignIndex(calcHoraLagnaLongitude(chart));
+}
+
+// Ghati Lagna (BPHS Ch.5): starts at the SUN'S longitude at sunrise (not the
+// Ascendant) and advances 1 full sign (30°) per ghati (24 min) elapsed since
+// the most recent sunrise.
+function calcGhatiLagnaLongitude(chart){
+  let elapsedDays = chart.julianDay - chart.sunriseJD;
+  if (elapsedDays < 0) elapsedDays += 1;
+  const elapsedGhatis = elapsedDays * 60;
+  const degreesTravelled = elapsedGhatis * 30; // 1 rashi (30°) per ghati
+  return normDeg(lastSunriseInfo(chart).sun + degreesTravelled);
+}
+function calcGhatiLagnaSign(chart){
+  return getSignIndex(calcGhatiLagnaLongitude(chart));
+}
+
+// Varnada Lagna (BPHS + cross-verified worked examples from multiple Jaimini
+// sources): for the Lagna and separately for the Hora Lagna, count signs
+// directly from Aries if the sign is odd, or in reverse from Pisces if the
+// sign is even. If both counts share the same odd/even parity, add them;
+// otherwise take their absolute difference (treating a result of 0 as 12).
+// Reduce that total to the 1-12 range, then count it out from Aries (if the
+// natal Lagna is odd) or in reverse from Pisces (if the natal Lagna is even).
+function countFromAriesOrPisces(signIdx){
+  const oneIndexed = signIdx + 1;
+  const isOdd = (oneIndexed % 2) === 1;
+  return isOdd ? oneIndexed : (12 - signIdx);
+}
+function calcVarnadaLagnaSign(ascSignIdx, horaSignIdx){
+  const nLagna = countFromAriesOrPisces(ascSignIdx);
+  const nHora = countFromAriesOrPisces(horaSignIdx);
+  const lagnaOdd = (ascSignIdx % 2) === 0; // 0-indexed even sign == 1-indexed odd sign
+  const horaOdd = (horaSignIdx % 2) === 0;
+  let result;
+  if (lagnaOdd === horaOdd){
+    result = nLagna + nHora;
+  } else {
+    result = Math.abs(nLagna - nHora);
+    if (result === 0) result = 12;
+  }
+  result = result % 12;
+  if (result === 0) result = 12;
+  return lagnaOdd ? (result - 1) % 12 : (12 - result) % 12;
+}
+
+// Indu Lagna: uses the "Kalas" assigned to the lord of the 9th house counted
+// from the Moon, and the lord of the 9th house counted from the Lagna. Their
+// Kala values are added; the sum (reduced mod 12, with 0 treated as 12) is
+// counted forward from the Moon's own sign (Moon's sign = count 1).
+const INDU_LAGNA_KALAS = { Sun:30, Moon:16, Mars:6, Mercury:8, Jupiter:10, Venus:12, Saturn:1 };
+function calcInduLagnaSign(chart, ascSignIdx){
+  const moonSignIdx = getSignIndex(chart.siderealLongitudes.Moon);
+  const ninthFromMoonSignIdx = (moonSignIdx + 8) % 12;
+  const ninthFromLagnaSignIdx = (ascSignIdx + 8) % 12;
+  const lordOfNinthFromMoon = SIGNS[ninthFromMoonSignIdx].lord;
+  const lordOfNinthFromLagna = SIGNS[ninthFromLagnaSignIdx].lord;
+  const totalKalas = (INDU_LAGNA_KALAS[lordOfNinthFromMoon] || 0) + (INDU_LAGNA_KALAS[lordOfNinthFromLagna] || 0);
+  let remainder = totalKalas % 12;
+  if (remainder === 0) remainder = 12;
+  return (moonSignIdx + remainder - 1) % 12;
+}
+
+// Shree Lagna: the fraction of the Moon's current Nakshatra already crossed
+// is scaled across the full 360° zodiac and added to the Ascendant's exact
+// longitude (not merely its sign — precision matters near sign boundaries).
+function calcShreeLagnaLongitude(chart){
+  const moonLon = chart.siderealLongitudes.Moon;
+  const nakSpanDeg = 360/27;
+  const posInNak = normDeg(moonLon) % nakSpanDeg;
+  const fraction = posInNak / nakSpanDeg; // 0..1 through the current nakshatra
+  const mappedDeg = fraction * 360; // stretched across a full sign-wheel
+  return normDeg(chart.ascendant.longitude + mappedDeg);
+}
+function calcShreeLagnaSign(chart){
+  return getSignIndex(calcShreeLagnaLongitude(chart));
+}
+
+// Pranapada Lagna (BPHS Ch.6 v.71-74, verified against the text's own three
+// worked examples): time elapsed since the most recent sunrise, in vighatis,
+// is converted at 2° per vighati (i.e. divide by 15 to get rashis directly)
+// and added to the SUN'S OWN LONGITUDE. If the Sun is in a fixed sign, add a
+// further 240°; if in a dual sign, add a further 120° (movable signs: no
+// further addition).
+function calcPranapadaLagnaLongitude(chart){
+  const sunLon = chart.siderealLongitudes.Sun;
+  const sunSignIdx = getSignIndex(sunLon);
+  let elapsedDays = chart.julianDay - chart.sunriseJD;
+  if (elapsedDays < 0) elapsedDays += 1;
+  const elapsedVighatis = elapsedDays * 3600; // 1 day = 60 ghatis * 60 vighatis = 3600 vighatis
+  const xDeg = normDeg(elapsedVighatis * 2); // 30 deg per 15 vighatis = 2 deg/vighati
+  const modality = sunSignIdx % 3; // 0 = movable, 1 = fixed, 2 = dual
+  let offsetDeg = 0;
+  if (modality === 1) offsetDeg = 240;
+  else if (modality === 2) offsetDeg = 120;
+  return normDeg(sunLon + xDeg + offsetDeg);
+}
+function calcPranapadaLagnaSign(chart){
+  return getSignIndex(calcPranapadaLagnaLongitude(chart));
+}
+
+// Karakamsha Lagna: the Navamsa (D9) sign occupied by the Atmakaraka planet
+// (the planet with the highest degree among the 7 classical grahas).
+function calcKarakamshaSign(chart){
+  const atmakaraka = chart.charaKarakas.Atmakaraka.planet;
+  return chart.vargas.D9.planetVargaSign[atmakaraka];
+}
+
+// Swamsha Lagna (Lagnamsa): the Navamsa chart's own Ascendant (the D9 Lagna
+// sign) — distinct from the Karakamsha (the Atmakaraka's D9 sign). Classical
+// texts group both under the umbrella term "Svamsa" when a shared rule
+// applies to them, but as a standalone point Swamsha = the D9 Lagna itself.
+function calcSwamshaLagnaSign(chart){
+  return chart.vargas.D9.ascendantSign;
+}
+
+// Padanadhamsa Lagna (per Jaimini Sutramritam / Krishna Mishra's Phaladeepika
+// Ratnamala, and multiple cross-checked commentaries): the Navamsa (D9) sign
+// occupied by the LORD of the Arudha Lagna (AL) — i.e. find AL in the Rashi
+// chart, find its ruling planet, and see which sign that planet falls in
+// within the D9 chart.
+function calcPadanadhamsaLagnaSign(chart, alSignIdx){
+  const alLord = SIGNS[alSignIdx].lord;
+  return chart.vargas.D9.planetVargaSign[alLord];
+}
+
+// Bhava Lagna (BPHS Ch.5, same family as Hora/Ghati Lagna): starts at the
+// Sun's longitude at sunrise and advances 1 full sign (30°) per 5 ghatis
+// (2 hours) elapsed since the most recent sunrise — this is the slowest of
+// the three "sunrise-anchored" special lagnas, moving at roughly the same
+// average pace as the true Ascendant itself.
+function calcBhavaLagnaLongitude(chart){
+  let elapsedDays = chart.julianDay - chart.sunriseJD;
+  if (elapsedDays < 0) elapsedDays += 1;
+  const elapsedGhatis = elapsedDays * 60;
+  const degreesTravelled = (elapsedGhatis / 5) * 30; // 1 rashi (30°) per 5 ghatis
+  return normDeg(lastSunriseInfo(chart).sun + degreesTravelled);
+}
+function calcBhavaLagnaSign(chart){
+  return getSignIndex(calcBhavaLagnaLongitude(chart));
+}
+
+// Vighati Lagna: the fourth and fastest member of the sunrise-anchored
+// family (Bhava: 5 ghati/rashi, Hora: 2.5 ghati/rashi, Ghati: 1 ghati/rashi),
+// completing the same "1 rashi per unit" pattern one level finer — 1 full
+// sign (30°) per Vighati (24 seconds) elapsed since the most recent sunrise.
+// This makes it extremely time-sensitive, useful chiefly for disambiguating
+// near-simultaneous births (classically invoked before resorting to D-60).
+function calcVighatiLagnaLongitude(chart){
+  let elapsedDays = chart.julianDay - chart.sunriseJD;
+  if (elapsedDays < 0) elapsedDays += 1;
+  const elapsedVighatis = elapsedDays * 3600; // 1 day = 3600 vighatis
+  const degreesTravelled = elapsedVighatis * 30; // 1 rashi (30°) per vighati
+  return normDeg(lastSunriseInfo(chart).sun + degreesTravelled);
+}
+function calcVighatiLagnaSign(chart){
+  return getSignIndex(calcVighatiLagnaLongitude(chart));
+}
+
+// Bhrigu Bindu (Rahu-Moon midpoint / "destiny point"): the point exactly
+// midway between the Moon and Rahu along the SHORTER arc between them.
+function calcBhriguBinduLongitude(chart){
+  const moonLon = chart.siderealLongitudes.Moon;
+  const rahuLon = chart.siderealLongitudes.Rahu;
+  const gap = normDeg(rahuLon - moonLon); // 0-360, moving from Moon to Rahu
+  let midpoint = normDeg((moonLon + rahuLon) / 2);
+  if (gap > 180) midpoint = normDeg(midpoint + 180); // flip to the shorter arc
+  return midpoint;
+}
+function calcBhriguBinduSign(chart){
+  return getSignIndex(calcBhriguBinduLongitude(chart));
+}
+
+// Paka Lagna ("ripening" ascendant): simply the sign occupied by the Lagna
+// Lord (the ruler of the natal Ascendant) — shows what a person actually
+// gravitates toward, versus the raw potential shown by the Lagna itself.
+function calcPakaLagnaSign(chart, ascSignIdx){
+  const lagnaLord = SIGNS[ascSignIdx].lord;
+  return chart.planets[lagnaLord].sign;
+}
+
+const SPECIAL_LAGNAS_META = {
+  UL_LAGNA:   { key:"UL_LAGNA",   name:"Udaya Lagna",        sanskrit:"Lagna / Ascendant",  group:"core",   desc:"The Ascendant itself — physical body, personality, overall life direction." },
+  AL:         { key:"AL",         name:"Arudha Lagna",       sanskrit:"AL / Pada Lagna",    group:"arudha", desc: ARUDHA_HOUSE_META.AL.desc },
+  KL:         { key:"KL",         name:"Karakamsha Lagna",   sanskrit:"KL",                 group:"karaka", desc:"The Navamsa sign of the Atmakaraka — soul purpose and spiritual identity." },
+  UL:         { key:"UL",         name:"Upapada Lagna",      sanskrit:"UL / Gauna Pada / A7",group:"arudha",desc: ARUDHA_HOUSE_META.UL.desc },
+  HL:         { key:"HL",         name:"Hora Lagna",         sanskrit:"HL",                 group:"kala",   desc:"Wealth and resource flow, based on elapsed time since sunrise." },
+  GL:         { key:"GL",         name:"Ghati Lagna",        sanskrit:"GL",                 group:"kala",   desc:"Fame, honors, and government favor, based on elapsed time since sunrise." },
+  BL:         { key:"BL",         name:"Bhava Lagna",        sanskrit:"BL",                 group:"kala",   desc:"General nature, mentality, and physical/mental constitution — the slowest of the sunrise-anchored lagnas." },
+  VGL:        { key:"VGL",        name:"Vighati Lagna",      sanskrit:"VGL / Pal Lagna",    group:"kala",   desc:"An extremely fine-grained timing point, classically used to distinguish near-simultaneous births (e.g. twins)." },
+  VL:         { key:"VL",         name:"Varnada Lagna",      sanskrit:"VL",                 group:"kala",   desc:"Social standing, class, and reputation." },
+  INDU:       { key:"INDU",       name:"Indu Lagna",         sanskrit:"Indu Lagna",         group:"karaka", desc:"Financial prosperity and accumulated wealth (a special money-point)." },
+  SL:         { key:"SL",         name:"Shree Lagna",        sanskrit:"SL",                 group:"karaka", desc:"General auspiciousness, prosperity, and good fortune." },
+  PRANAPADA:  { key:"PRANAPADA",  name:"Pranapada Lagna",    sanskrit:"Pranapada",          group:"kala",   desc:"Vitality, life-force, and how one meets fated events." },
+  SWAMSHA:    { key:"SWAMSHA",    name:"Swamsha Lagna",      sanskrit:"Swamsha / Lagnamsa", group:"karaka", desc:"The Navamsa chart's own Ascendant (Lagnamsa) — inner self and dharmic path, distinct from the Karakamsha." },
+  PADANADHAMSA:{key:"PADANADHAMSA",name:"Padanadhamsa Lagna",sanskrit:"Padanadhamsa",       group:"arudha", desc:"The Navamsa sign of the Arudha Lagna's own lord — a refinement of public image at the soul-division level." },
+  BB:         { key:"BB",         name:"Bhrigu Bindu",       sanskrit:"BB / Destiny Point", group:"karaka", desc:"The midpoint of Moon and Rahu — a sensitive karmic 'destiny point' activated by transits and dashas." },
+  PAKA:       { key:"PAKA",       name:"Paka Lagna",         sanskrit:"Paka Lagna",         group:"arudha", desc:"The sign occupied by the Lagna Lord — what a person actually gravitates toward, versus raw Lagna potential." },
+  CHANDRA:    { key:"CHANDRA",    name:"Chandra Lagna",      sanskrit:"Moon Sign",          group:"core",   desc:"The Moon's own sign, used as an alternate ascendant for mind and emotion." },
+  SURYA:      { key:"SURYA",      name:"Surya Lagna",        sanskrit:"Sun Sign",           group:"core",   desc:"The Sun's own sign, used as an alternate ascendant for soul and vitality." },
+  A2:         { key:"A2",         name:"Dhana Pada",         sanskrit:"A2",                 group:"arudha", desc: ARUDHA_HOUSE_META.A2.desc },
+  A3:         { key:"A3",         name:"Bhatru Pada",        sanskrit:"A3",                 group:"arudha", desc: ARUDHA_HOUSE_META.A3.desc },
+  A4:         { key:"A4",         name:"Matru Pada",         sanskrit:"A4",                 group:"arudha", desc: ARUDHA_HOUSE_META.A4.desc },
+  A5:         { key:"A5",         name:"Mantra Pada",        sanskrit:"A5",                 group:"arudha", desc: ARUDHA_HOUSE_META.A5.desc },
+  A6:         { key:"A6",         name:"Roga Pada",          sanskrit:"A6",                 group:"arudha", desc: ARUDHA_HOUSE_META.A6.desc },
+  A8:         { key:"A8",         name:"Mrityu Pada",        sanskrit:"A8",                 group:"arudha", desc: ARUDHA_HOUSE_META.A8.desc },
+  A9:         { key:"A9",         name:"Pitri Pada",         sanskrit:"A9",                 group:"arudha", desc: ARUDHA_HOUSE_META.A9.desc },
+  A10:        { key:"A10",        name:"Rajya Pada",         sanskrit:"A10",                group:"arudha", desc: ARUDHA_HOUSE_META.A10.desc },
+  A11:        { key:"A11",        name:"Labha Pada",         sanskrit:"A11",                group:"arudha", desc: ARUDHA_HOUSE_META.A11.desc }
+};
+const SPECIAL_LAGNAS_ORDER = ["UL_LAGNA","AL","KL","UL","HL","GL","BL","VGL","VL","INDU","SL","PRANAPADA","SWAMSHA","PADANADHAMSA","BB","PAKA","CHANDRA","SURYA","A2","A3","A4","A5","A6","A8","A9","A10","A11"];
+
+// Computes the sign index (0-11, Aries=0) for every special lagna.
+function computeAllSpecialLagnaSigns(chart){
+  const ascSignIdx = chart.ascendant.sign;
+  const arudhaPadas = calcAllArudhaPadas(chart, ascSignIdx);
+  const horaSignIdx = calcHoraLagnaSign(chart);
+
+  const signs = {
+    UL_LAGNA: ascSignIdx,
+    AL: arudhaPadas.AL,
+    KL: calcKarakamshaSign(chart),
+    UL: arudhaPadas.UL,
+    HL: horaSignIdx,
+    GL: calcGhatiLagnaSign(chart),
+    BL: calcBhavaLagnaSign(chart),
+    VGL: calcVighatiLagnaSign(chart),
+    VL: calcVarnadaLagnaSign(ascSignIdx, horaSignIdx),
+    INDU: calcInduLagnaSign(chart, ascSignIdx),
+    SL: calcShreeLagnaSign(chart),
+    PRANAPADA: calcPranapadaLagnaSign(chart),
+    SWAMSHA: calcSwamshaLagnaSign(chart),
+    PADANADHAMSA: calcPadanadhamsaLagnaSign(chart, arudhaPadas.AL),
+    BB: calcBhriguBinduSign(chart),
+    PAKA: calcPakaLagnaSign(chart, ascSignIdx),
+    CHANDRA: getSignIndex(chart.siderealLongitudes.Moon),
+    SURYA: getSignIndex(chart.siderealLongitudes.Sun),
+    A2: arudhaPadas.A2, A3: arudhaPadas.A3, A4: arudhaPadas.A4, A5: arudhaPadas.A5,
+    A6: arudhaPadas.A6, A8: arudhaPadas.A8, A9: arudhaPadas.A9, A10: arudhaPadas.A10, A11: arudhaPadas.A11
+  };
+  return signs;
+}
+
+// Builds a full varga-shaped dataset (ascendantSign, houses, planetVargaSign)
+// for a chosen special lagna acting as the new Ascendant, for a given
+// divisional chart (D1..D60). Planets keep their own divisional placement;
+// only the reference point (Lagna) changes, exactly as classical Jyotish
+// treats these special points as alternate ascendants for house-counting.
+function buildVargaFromLagna(chart, lagnaSignIdx, vargaKey){
+  const planetVargaSign = {};
+  PLANET_LIST.forEach(name => {
+    planetVargaSign[name] = chart.vargas[vargaKey].planetVargaSign[name];
+  });
+  const houses = [];
+  for (let h=1; h<=12; h++){
+    const signIdx = (lagnaSignIdx + h - 1) % 12;
+    const sign = SIGNS[signIdx];
+    const planetsHere = PLANET_LIST.filter(name => planetVargaSign[name] === signIdx).map(name => ({
+      name, retrograde: chart.planets[name].retrograde,
+      dignity: vargaKey === "D1" ? chart.planets[name].dignity : getDignity(name, signIdx, 15)
+    }));
+    houses.push({
+      houseNum: h, sign: signIdx, signName: sign.name, signSanskrit: sign.sk,
+      signLord: sign.lord, signSymbol: sign.symbol, element: sign.element, modality: sign.modality,
+      planets: planetsHere, isEmpty: planetsHere.length === 0
+    });
+  }
+  return { ascendantSign: lagnaSignIdx, houses, planetVargaSign };
+}
+
+// Plain-text render of one lagna's chart (for a chosen divisional chart) —
+// used by the "Copy Current Chart" button in the Lagnas tab.
+function lagnaChartToPlainText(chart, lagnaKey, vargaKey, vdata, aspectRows){
+  const lagnaMeta = SPECIAL_LAGNAS_META[lagnaKey];
+  const vargaMeta = VARGAS[vargaKey];
+  const ascSign = SIGNS[vdata.ascendantSign];
+  let out = `${lagnaMeta.name} (${lagnaMeta.sanskrit}) — ${vargaKey} ${vargaMeta.name}\n`;
+  out += '='.repeat(60) + '\n';
+  out += `${lagnaMeta.desc}\n`;
+  out += `Ascendant (this Lagna): ${ascSign.name} (${ascSign.sk})\n\n`;
+  out += `HOUSES\n${'-'.repeat(60)}\n`;
+  vdata.houses.forEach(h => {
+    const occupants = h.isEmpty ? 'Empty' : h.planets.map(p => `${p.name}${p.retrograde ? ' (R)' : ''}`).join(', ');
+    out += `H${h.houseNum} — ${h.signName} (${h.signSanskrit}), Lord: ${h.signLord} :: ${occupants}\n`;
+  });
+  if (aspectRows){
+    out += `\n${aspectRowsToPlainText(aspectRows, `${lagnaKey} · ${vargaKey}`)}`;
+  }
+  return out;
+}
+
+// Plain-text render of ALL 23 special lagnas at once (their sign placements
+// and a full D1 house breakdown for each) — used by "Copy All Lagnas".
+function allLagnasToPlainText(chart, specialLagnaSigns, vargaKey){
+  const vargaMeta = VARGAS[vargaKey];
+  let out = `SPECIAL LAGNAS — FULL EXPORT (cast on ${vargaKey} ${vargaMeta.name})\n`;
+  out += '='.repeat(70) + '\n\n';
+  const groupLabels = { core: "Core Ascendants", arudha: "Arudha Padas", karaka: "Karaka-Based", kala: "Time-Based (Kala)" };
+  ["core","arudha","karaka","kala"].forEach(group => {
+    out += `${groupLabels[group].toUpperCase()}\n${'-'.repeat(70)}\n`;
+    SPECIAL_LAGNAS_ORDER.filter(k => SPECIAL_LAGNAS_META[k].group === group).forEach(key => {
+      const meta = SPECIAL_LAGNAS_META[key];
+      const signIdx = specialLagnaSigns[key];
+      const sign = SIGNS[signIdx];
+      out += `\n${meta.name} (${meta.sanskrit}): ${sign.name} (${sign.sk})\n`;
+      out += `  ${meta.desc}\n`;
+      const vdata = buildVargaFromLagna(chart, signIdx, vargaKey);
+      vdata.houses.forEach(h => {
+        if (h.isEmpty) return;
+        const occupants = h.planets.map(p => `${p.name}${p.retrograde ? ' (R)' : ''}`).join(', ');
+        out += `    H${h.houseNum} ${h.signName}: ${occupants}\n`;
+      });
+    });
+    out += '\n';
+  });
+  return out;
+}
+
+/* ============================================================================
+   UI & DOM LOGIC
+   ============================================================================ */
+const TZ_OPTIONS = [-12,-11,-10,-9.5,-9,-8,-7,-6,-5,-4.5,-4,-3.5,-3,-2,-1,0,1,2,3,3.5,4,4.5,5,5.5,5.75,6,6.5,7,8,8.75,9,9.5,10,10.5,11,12,12.75,13,14];
+function fmtTz(v){
+  const sign = v>=0?"+":"-";
+  const abs = Math.abs(v);
+  const h = Math.floor(abs);
+  const m = Math.round((abs-h)*60);
+  return `UTC${sign}${h}${m?":"+String(m).padStart(2,"0"):":00"}`;
+}
+function populateTz(){
+  const sel = document.getElementById('tzInput');
+  sel.innerHTML = "";
+  TZ_OPTIONS.forEach(v=>{
+    const opt = document.createElement('option');
+    opt.value = v; opt.textContent = fmtTz(v);
+    if (v===5.5) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+let selectedLat=null, selectedLon=null, tzAutoGuess=null;
+let searchDebounce=null;
+const placeInput = document.getElementById('placeInput');
+const locationResults = document.getElementById('locationResults');
+const locationStatus = document.getElementById('locationStatus');
+const coordReadout = document.getElementById('coordReadout');
+
+placeInput.addEventListener('input', ()=>{
+  const q = placeInput.value.trim();
+  selectedLat = null; selectedLon = null;
+  coordReadout.textContent = "— not yet selected —";
+  clearTimeout(searchDebounce);
+  if (q.length < 3){ locationResults.classList.remove('open'); locationResults.innerHTML=""; return; }
+  locationStatus.textContent = "Searching…";
+  // Increased debounce to 1000ms to enforce 1 req/sec limit
+  searchDebounce = setTimeout(()=> doLocationSearch(q), 1000);
+});
+
+async function doLocationSearch(q){
+  try{
+    const appEmail = "contact@yourdomain.com"; // Replace with your actual email
+    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=7&q=${encodeURIComponent(q)}&email=${appEmail}`;
+    const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+    if (!res.ok) throw new Error("Network response was not ok");
+    const data = await res.json();
+    renderLocationResults(data);
+    locationStatus.textContent = data.length ? "" : "No matches found — try a broader search";
+  } catch(err){
+    locationStatus.textContent = "Location search unavailable right now — you can still enter coordinates manually below.";
+    locationResults.classList.remove('open');
+  }
+}
+
+function renderLocationResults(results){
+  locationResults.innerHTML = "";
+  if (!results.length){ locationResults.classList.remove('open'); return; }
+  results.forEach(r=>{
+    const div = document.createElement('div');
+    div.className = 'location-item';
+    const main = r.display_name.split(',')[0];
+    div.innerHTML = `<span class="lname">${main}</span><span class="lsub">${r.display_name}</span>`;
+    div.addEventListener('click', ()=> selectLocation(r));
+    locationResults.appendChild(div);
+  });
+  locationResults.classList.add('open');
+}
+
+function selectLocation(r){
+  placeInput.value = r.display_name;
+  selectedLat = parseFloat(r.lat);
+  selectedLon = parseFloat(r.lon);
+  coordReadout.textContent = `${selectedLat.toFixed(4)}°, ${selectedLon.toFixed(4)}°`;
+  locationResults.classList.remove('open');
+  locationStatus.textContent = "";
+  guessTimezone(selectedLat, selectedLon, r);
+}
+
+
+/* Map + coordinates pickers (shared popup hosted by the outer page) */
+try{ if (window.parent && window.parent!==window && window.parent.LocPicker) window.parent.LocPicker.attach(document, placeInput, r=>selectLocation(r), {title:'Place of birth', get:()=> selectedLat!=null ? {lat:selectedLat, lon:selectedLon} : null}); }catch(e){}
+
+/* Accurate timezone guess: country rule first (fixes +5:30 India etc.), then longitude */
+const TZ_BY_COUNTRY={in:5.5,lk:5.5,np:5.75,ir:3.5,af:4.5,mm:6.5,bd:6,pk:5,bt:6,mv:5,uz:5,cn:8,sg:8,my:8,ph:8,hk:8,tw:8,kr:9,jp:9,th:7,vn:7,kh:7,la:7,nz:12,ae:4,om:4,sa:3,qa:3,kw:3,bh:3,ye:3,iq:3,tr:3,eg:2,ke:3,et:3,tz:3,ug:3,za:2,ng:1,gh:0,gb:0,ie:0,pt:0,is:0};
+function estimateTz(lat, lon, r){
+  const cc = r && r.address && r.address.country_code ? r.address.country_code.toLowerCase() : '';
+  let tz;
+  if (cc === 'au') tz = lon < 129 ? 8 : (lon < 138 ? 9.5 : 10);
+  else if (cc in TZ_BY_COUNTRY) tz = TZ_BY_COUNTRY[cc];
+  else tz = Math.round(lon/15);           // whole hours only; no more half-hour rounding errors
+  return TZ_OPTIONS.reduce((a,b)=> Math.abs(b-tz)<Math.abs(a-tz)?b:a);
+}
+function setTzSelect(sel, v){ [...sel.options].forEach(o=>{ o.selected = (parseFloat(o.value)===v); }); }
+function guessTimezone(lat, lon, r){
+  const closest = estimateTz(lat, lon, r);
+  setTzSelect(document.getElementById('tzInput'), closest);
+  document.getElementById('tzHint').textContent = `Estimated from longitude — please verify against local records`;
+}
+
+document.addEventListener('click', (e)=>{
+  if (!e.target.closest('.location-wrap')) locationResults.classList.remove('open');
+});
+
+const STORAGE_KEY = 'Vedic Astrology_profiles_v1';
+function loadProfiles(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }catch(e){ return []; } }
+function saveProfiles(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+function refreshProfileSelect(){
+  const profiles = loadProfiles();
+  const sel = document.getElementById('profileSelect');
+  const currentVal = sel.value;
+  sel.innerHTML = '<option value="">— Select a profile —</option>';
+  profiles.forEach((p,i)=>{
+    const opt = document.createElement('option');
+    opt.value = i; opt.textContent = p.name;
+    sel.appendChild(opt);
+  });
+  if (currentVal) sel.value = currentVal;
+}
+
+let currentChartForModal = null; 
+let currentProfileForExport = null; 
+
+/* ===== Planets panel + detail popup (redesigned) ===== */
+function plDigInfo(pl){
+  const st = pl.dignity.status;
+  const good = st==='Exalted'||st==='OwnSign'||st==='Moolatrikona', bad = st==='Debilitated';
+  return {good, bad, cls: good?'good':bad?'bad':''};
+}
+function buildPlanetsPanel(chart){
+  let nRetro=0,nStrong=0,nChall=0;
+  const cards = PLANET_LIST.map(name=>{
+    const pl = chart.planets[name], sg = SIGNS[pl.sign], d = plDigInfo(pl), c = DASHA_PLANET_COLORS[name]||'#888';
+    const combust = pl.combustion && pl.combustion.combust, warLose = pl.war && !pl.war.won;
+    const flags = [];
+    if (pl.retrograde){ flags.push('retro'); nRetro++; }
+    if (d.good){ flags.push('strong'); nStrong++; }
+    if (d.bad || combust || warLose){ flags.push('chall'); nChall++; }
+    const tags = [
+      d.cls ? `<span class="pl-tag ${d.cls}">${pl.dignity.label}</span>` : (pl.dignity.label && pl.dignity.label!=='—' ? `<span class="pl-tag">${pl.dignity.label}</span>` : ''),
+      combust ? `<span class="pl-tag bad">Combust ${pl.combustion.separation.toFixed(1)}°</span>` : '',
+      pl.war ? `<span class="pl-tag ${pl.war.won?'good':'bad'}">${pl.war.won?'Wins':'Loses'} vs ${pl.war.with}</span>` : ''
+    ].join('');
+    return `<button type="button" class="pl-card" data-planet-click="${name}" data-flags="${flags.join(' ')}" style="--pc:${c}">
+      <span class="pl-top"><span class="pl-dot" style="background:${c}">${PLANET_GLYPHS[name]}</span>
+        <span class="pl-name"><b>${name}${pl.retrograde?' <em>℞</em>':''}</b><small>${pl.nakshatra.name} · Pada ${pl.nakshatra.pada}</small></span>
+        <span class="pl-house">H${pl.house}</span></span>
+      <span class="pl-sign">${sg.symbol} ${sg.name}<em>${formatDeg(pl.degInSign)}</em></span>
+      <span class="pl-track"><i style="width:${(pl.degInSign/30*100).toFixed(1)}%"></i></span>
+      <span class="pl-tags">${tags}</span>
+    </button>`;
+  }).join('');
+
+  const asp = PLANET_LIST.map(name=>{
+    const pl = chart.planets[name], c = DASHA_PLANET_COLORS[name]||'#888';
+    const chips = pl.aspectsHouses.map(h=>`<span class="pl-asp">H${h} ${SIGNS[(chart.ascendant.sign+h-1)%12].symbol}</span>`).join('');
+    return `<div class="pl-arow" data-planet-click="${name}"><span class="pl-dot sm" style="background:${c}">${PLANET_GLYPHS[name]}</span><span class="pl-an"><b>${name}</b><small>in House ${pl.house}</small></span><span class="pl-achips">${chips}</span></div>`;
+  }).join('');
+
+  return `<div class="pl">
+    <div class="pl-intro">Where every planet stood at birth. Tap any planet for its full story — use the filters to spot what stands out.</div>
+    <div class="pl-chips">
+      <button type="button" class="pl-chip on" data-pl-f="all">All <b>${PLANET_LIST.length}</b></button>
+      <button type="button" class="pl-chip" data-pl-f="retro">℞ Retrograde <b>${nRetro}</b></button>
+      <button type="button" class="pl-chip" data-pl-f="strong">💪 Strong <b>${nStrong}</b></button>
+      <button type="button" class="pl-chip" data-pl-f="chall">⚠ Challenged <b>${nChall}</b></button>
+    </div>
+    <div class="pl-grid">${cards}</div>
+    <div class="pl-empty" id="plEmpty" hidden>No planets match this filter in your chart.</div>
+    <div class="pl-sec"><h5>Who looks at whom <span>Drishti · aspected houses</span></h5><div class="pl-asplist">${asp}</div></div></div>`;
+}
+document.addEventListener('click',(e)=>{
+  const f = e.target.closest('[data-pl-f]'); if(!f) return;
+  const k = f.dataset.plF; let shown = 0;
+  document.querySelectorAll('.pl-chip').forEach(c=>c.classList.toggle('on', c===f));
+  document.querySelectorAll('.pl-card').forEach(c=>{ const ok = k==='all' || c.dataset.flags.split(' ').includes(k); c.hidden = !ok; if(ok) shown++; });
+  document.getElementById('plEmpty').hidden = shown>0;
+});
+
+let pdCurrent = null;
+function pdBlock(title, inner){ return `<div class="pd-blk"><div class="pd-blk-t">${title}</div>${inner}</div>`; }
+function openPlanetDetail(planetName){
+  if (!currentChartForModal) return;
+  const chart = currentChartForModal, pl = chart.planets[planetName];
+  if (!pl) return;
+  pdCurrent = planetName;
+  const sign = SIGNS[pl.sign], d = plDigInfo(pl), c = DASHA_PLANET_COLORS[planetName]||'#D4AF37';
+  const nakSpan = 360/27, nakPct = Math.max(0,Math.min(100,pl.nakshatra.degInNak/nakSpan*100));
+  const degRemNak = nakSpan - pl.nakshatra.degInNak;
+  document.getElementById('pdBox').style.setProperty('--pc', c);
+  document.getElementById('pdGlyph').textContent = PLANET_GLYPHS[planetName];
+  document.getElementById('pdTitle').textContent = planetName;
+  document.getElementById('pdSubtitle').textContent = `${sign.symbol} ${sign.name} · House ${pl.house}`;
+
+  // role pills
+  const pills = [`<span class="pd-pill ${d.cls}">${pl.dignity.label}</span>`,
+    `<span class="pd-pill ${pl.retrograde?'bad':''}">${pl.retrograde?'℞ Retrograde':'Direct motion'}</span>`];
+  KARAKA_NAMES.forEach(k=>{ if (chart.charaKarakas[k] && chart.charaKarakas[k].planet===planetName) pills.push(`<span class="pd-pill gold">${k}</span>`); });
+  const act = findActiveDasha(chart.dashaData.mahadashas, new Date());
+  if (act){
+    if (act.mahadasha.lord===planetName) pills.push('<span class="pd-pill gold">Running Mahadasha</span>');
+    if (act.antardasha && act.antardasha.lord===planetName) pills.push('<span class="pd-pill gold">Running Antardasha</span>');
+  }
+  document.getElementById('pdPills').innerHTML = pills.join('');
+
+  let h = '';
+  h += pdBlock(`Journey through ${sign.name}`, `<div class="pd-journey"><div class="pd-jtrack"><i style="width:${(pl.degInSign/30*100).toFixed(1)}%"></i><u style="left:${(pl.degInSign/30*100).toFixed(1)}%"></u></div>
+    <div class="pd-jlbl"><span>0°</span><b>${formatDeg(pl.degInSign)} travelled</b><span>30°</span></div>
+    <div class="pd-jsub">${formatDeg(pl.degRemainingInSign)} left before it enters the next sign</div></div>`);
+  h += `<div class="pd-mini">
+    <div><small>Sign lord</small><b>${sign.lord}</b></div><div><small>House</small><b>${pl.house}</b></div>
+    <div><small>Daily speed</small><b>${Math.abs(pl.speed).toFixed(3)}°</b></div><div><small>Nakshatra lord</small><b>${pl.nakshatra.lord}</b></div></div>`;
+  h += pdBlock('Nakshatra', `<div class="pd-nak"><b>${pl.nakshatra.name}</b><span>Pada ${pl.nakshatra.pada}</span></div>
+    <div class="pd-jtrack thin"><i style="width:${nakPct.toFixed(1)}%"></i></div><div class="pd-jsub">${formatDeg(degRemNak)} remaining in this nakshatra</div>`);
+  if (chart.shadbala && chart.shadbala.planets && chart.shadbala.planets[planetName]){
+    const s = chart.shadbala.planets[planetName], p = Math.min(100, s.percentOfRequired);
+    h += pdBlock('Strength (Shadbala)', `<div class="pd-str"><b>${s.totalRupas.toFixed(2)} <small>/ ${s.requiredRupas} Rupas</small></b><span class="pd-pill ${s.isStrong?'good':'bad'}">${s.isStrong?'Strong':'Below threshold'}</span></div>
+      <div class="pd-jtrack thin"><i style="width:${p}%;background:${s.isStrong?'var(--teal-bright)':'#C95050'}"></i></div><div class="pd-jsub">${s.percentOfRequired.toFixed(0)}% of required strength</div>`);
+  }
+  h += pdBlock('Aspects (Drishti)', `<div class="pl-achips">${pl.aspectsHouses.map(x=>`<span class="pl-asp">H${x} ${SIGNS[(chart.ascendant.sign+x-1)%12].symbol}</span>`).join('')}</div>`);
+  if (pl.combustion && pl.combustion.separation !== undefined){
+    h += `<div class="pd-alert ${pl.combustion.combust?'bad':''}"><b>${pl.combustion.combust?'🔥 Combust':'☀ Not combust'}</b><span>${pl.combustion.separation.toFixed(2)}° from the Sun (orb ${pl.combustion.orb}°)</span></div>`;
+  }
+  if (pl.war){
+    h += `<div class="pd-alert ${pl.war.won?'':'bad'}"><b>⚔ Planetary war</b><span>${pl.war.won?'Wins against':'Loses against'} ${pl.war.with}, ${pl.war.separation.toFixed(2)}° apart</span></div>`;
+  }
+  document.getElementById('pdStatGrid').innerHTML = h;
+  document.getElementById('pdNote').textContent = `Sidereal longitude ${formatDeg(normDeg(pl.longitude))} · Speed is instantaneous and varies through the orbit; planets slow near stations before turning retrograde or direct.`;
+  const box = document.getElementById('pdBox'); box.scrollTop = 0;
+  document.getElementById('planetDetailModal').classList.add('show');
+}
+document.addEventListener('click',(e)=>{
+  const go = e.target.closest('[data-pd-go]');
+  if (go && pdCurrent){
+    const i = PLANET_LIST.indexOf(pdCurrent), n = PLANET_LIST.length;
+    openPlanetDetail(PLANET_LIST[(i + parseInt(go.dataset.pdGo) + n) % n]); return;
+  }
+  if (e.target.closest('#pdStrengthBtn')){
+    document.getElementById('planetDetailModal').classList.remove('show'); switchAppTab('panel-shadbala');
+  }
+});
+
+document.addEventListener('click', (e)=>{
+  const clickable = e.target.closest('[data-planet-click]');
+  if (clickable){
+    openPlanetDetail(clickable.dataset.planetClick);
+    return;
+  }
+  const shadbalaCard = e.target.closest('[data-shadbala-toggle]');
+  if (shadbalaCard){
+    shadbalaCard.classList.toggle('expanded');
+  }
+});
+
+document.getElementById('pdModalClose').addEventListener('click', ()=>{
+  document.getElementById('planetDetailModal').classList.remove('show');
+});
+document.getElementById('planetDetailModal').addEventListener('click', (e)=>{
+  if (e.target.id === 'planetDetailModal') document.getElementById('planetDetailModal').classList.remove('show');
+});
+
+// Contact & Bug Report Modal Logic
+document.getElementById('contactDevBtn').addEventListener('click', () => {
+  document.getElementById('mainMenuModal').classList.remove('show'); // Auto-close menu
+  document.getElementById('contactModal').classList.add('show');
+});
+document.getElementById('contactModalClose').addEventListener('click', () => {
+  document.getElementById('contactModal').classList.remove('show');
+});
+document.getElementById('contactModal').addEventListener('click', (e) => {
+  if (e.target.id === 'contactModal') document.getElementById('contactModal').classList.remove('show');
+});
+
+// Main Menu Modal Logic
+document.getElementById('openMenuBtn').addEventListener('click', () => {
+  document.getElementById('mainMenuModal').classList.add('show');
+});
+document.getElementById('mainMenuClose').addEventListener('click', () => {
+  document.getElementById('mainMenuModal').classList.remove('show');
+});
+document.getElementById('mainMenuModal').addEventListener('click', (e) => {
+  if (e.target.id === 'mainMenuModal') document.getElementById('mainMenuModal').classList.remove('show');
+});
+
+// Auto-close menu when a profile action is taken
+document.getElementById('deleteProfileBtn').addEventListener('click', () => {
+  document.getElementById('mainMenuModal').classList.remove('show');
+});
+document.getElementById('newProfileBtn').addEventListener('click', () => {
+  document.getElementById('mainMenuModal').classList.remove('show');
+});
+document.getElementById('exportReportBtn').addEventListener('click', () => {
+  document.getElementById('mainMenuModal').classList.remove('show');
+});
+
+/* ============================================================================
+   BIRTH TIME RECTIFICATION — full-screen tab panel (rewired on every render,
+   since results.innerHTML — and therefore this panel's DOM — is rebuilt
+   each time a profile loads or the chart is recalculated).
+   ============================================================================ */
+let rectSelectedIdx = null;
+let rectRows = [];
+
+function fmtDegShort(deg){
+  const d = Math.floor(deg);
+  const mFull = (deg-d)*60;
+  let m = Math.floor(mFull);
+  let s = Math.round((mFull-m)*60);
+  if (s === 60){ s = 0; m += 1; }
+  let dd = d;
+  if (m === 60){ m = 0; dd += 1; }
+  return `${String(dd).padStart(2,'0')}°${String(m).padStart(2,'0')}'${String(s).padStart(2,'0')}"`;
+}
+
+function runRectificationScan(){
+  if (!currentProfileForExport){ return; }
+  const lat = currentProfileForExport.lat, lon = currentProfileForExport.lon, tz = currentProfileForExport.tz;
+  const dateStr = document.getElementById('rectDate').value;
+  const centerTime = document.getElementById('rectCenterTime').value;
+  const windowMin = parseInt(document.getElementById('rectWindow').value, 10);
+  const step = parseInt(document.getElementById('rectStep').value, 10);
+  const wrap = document.getElementById('rectResultsWrap');
+
+  if (!dateStr || !centerTime){
+    wrap.innerHTML = `<div class="rect-empty">Please enter a date and a center time to scan around.</div>`;
+    return;
+  }
+  const totalRange = windowMin*60;
+  const steps = Math.floor((totalRange*2)/step) + 1;
+  if (steps > 6000){
+    wrap.innerHTML = `<div class="rect-empty">That window/step combination is ${steps.toLocaleString()} candidate seconds — too many to scan smoothly. Widen the step or narrow the window.</div>`;
+    return;
+  }
+
+  rectRows = [];
+  for (let off = -totalRange; off <= totalRange; off += step){
+    const shifted = shiftLocalDateTime(dateStr, centerTime, off);
+    const pt = rectifyPoint(shifted.dateStr, shifted.timeStr, lat, lon, tz);
+    pt.offsetSec = off;
+    rectRows.push(pt);
+  }
+  rectSelectedIdx = null;
+  document.getElementById('rectDetail').classList.remove('show');
+  renderRectificationTable();
+}
+
+function renderRectificationTable(){
+  const wrap = document.getElementById('rectResultsWrap');
+  if (!wrap) return;
+  if (rectRows.length === 0){ wrap.innerHTML = ""; return; }
+
+  let rowsHtml = "";
+  for (let i=0; i<rectRows.length; i++){
+    const r = rectRows[i];
+    const prev = i>0 ? rectRows[i-1] : null;
+    const d60Boundary = prev && (prev.asc.sign !== r.asc.sign || prev.asc.d60Amsa !== r.asc.d60Amsa);
+    const nakBoundary = prev && (prev.asc.nak.index !== r.asc.nak.index || prev.asc.nak.pada !== r.asc.nak.pada);
+    const isCenter = r.offsetSec === 0;
+    const cls = [
+      d60Boundary ? 'rect-d60-boundary' : '',
+      nakBoundary ? 'rect-nak-boundary' : '',
+      i===rectSelectedIdx ? 'rect-selected' : ''
+    ].filter(Boolean).join(' ');
+    const ascSign = SIGNS[r.asc.sign];
+    const moonD60Sign = SIGNS[r.moon.d60Sign];
+    rowsHtml += `<tr class="${cls}" data-idx="${i}">
+      <td>${r.timeStr}${isCenter ? ' <span style="color:var(--gold-bright);font-family:var(--font-sans);font-size:10px;">● recorded</span>' : ''}</td>
+      <td>${ascSign.symbol} ${ascSign.name} ${fmtDegShort(r.asc.degInSign)}</td>
+      <td>${escapeHtml(r.asc.nak.name)}-${r.asc.nak.pada}</td>
+      <td>#${r.asc.d60Amsa} → ${SIGNS[r.asc.d60Sign].name}</td>
+      <td>#${r.moon.d60Amsa} → ${moonD60Sign.name}</td>
+    </tr>`;
+  }
+
+  wrap.innerHTML = `
+    <div class="rect-summary">
+      <span>${rectRows.length.toLocaleString()} candidate seconds scanned · click any row to inspect &amp; apply</span>
+      <span class="rect-legend">
+        <span><i style="background:var(--gold-dim);"></i> new D60 (Shashtiamsha) division begins</span>
+        <span><i style="background:var(--teal-bright);"></i> new Nakshatra pada begins</span>
+      </span>
+    </div>
+    <div class="rect-table-wrap" style="max-height:480px; overflow-y:auto;">
+      <table class="rect-table">
+        <thead><tr><th>Local Time</th><th>Ascendant</th><th>Asc Nakshatra-Pada</th><th>Asc D60 Amsa</th><th>Moon D60 Amsa</th></tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    </div>`;
+
+  wrap.querySelectorAll('tbody tr').forEach(tr => {
+    tr.addEventListener('click', () => {
+      rectSelectedIdx = parseInt(tr.dataset.idx, 10);
+      renderRectificationTable();
+      renderRectificationDetail();
+      document.getElementById('rectDetail').scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+  });
+}
+
+function renderRectificationDetail(){
+  const detail = document.getElementById('rectDetail');
+  if (!detail) return;
+  if (rectSelectedIdx === null || !rectRows[rectSelectedIdx]){ detail.classList.remove('show'); return; }
+  const r = rectRows[rectSelectedIdx];
+  const ascSign = SIGNS[r.asc.sign];
+  const moonSign = SIGNS[r.moon.sign];
+  detail.innerHTML = `
+    <h4>Candidate: ${r.dateStr} · ${r.timeStr} local</h4>
+    <div class="rect-detail-grid">
+      <div><span class="rd-label">Ascendant</span><span class="rd-value">${ascSign.symbol} ${ascSign.name} ${fmtDegShort(r.asc.degInSign)}</span></div>
+      <div><span class="rd-label">Asc Nakshatra / Pada</span><span class="rd-value">${escapeHtml(r.asc.nak.name)} · Pada ${r.asc.nak.pada}</span></div>
+      <div><span class="rd-label">Asc D60 (Shashtiamsha)</span><span class="rd-value">Amsa #${r.asc.d60Amsa} of 60 → ${SIGNS[r.asc.d60Sign].name}</span></div>
+      <div><span class="rd-label">Moon Sign / Degree</span><span class="rd-value">${moonSign.symbol} ${moonSign.name} ${fmtDegShort(r.moon.degInSign)}</span></div>
+      <div><span class="rd-label">Moon D60 (Shashtiamsha)</span><span class="rd-value">Amsa #${r.moon.d60Amsa} of 60 → ${SIGNS[r.moon.d60Sign].name}</span></div>
+      <div><span class="rd-label">Julian Day (UT)</span><span class="rd-value">${r.jd.toFixed(6)}</span></div>
+    </div>
+    <div class="rect-detail-actions">
+      <button type="button" class="btn btn-primary btn-sm" id="rectApplyBtn">✓ Apply This Second & Recalculate Full Chart</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="rectCopyBtn">📋 Copy Time</button>
+    </div>`;
+  detail.classList.add('show');
+
+  document.getElementById('rectApplyBtn').addEventListener('click', () => {
+    const updatedProfile = { ...currentProfileForExport, dob: r.dateStr, tob: r.timeStr };
+    const profiles = loadProfiles();
+    const idx = profiles.findIndex(p => p.savedAt === currentProfileForExport.savedAt);
+    if (idx >= 0){ profiles[idx] = updatedProfile; saveProfiles(profiles); refreshProfileSelect(); }
+    renderResults(updatedProfile);
+    switchAppTab('panel-overview');
+  });
+  document.getElementById('rectCopyBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(r.timeStr);
+    const btn = document.getElementById('rectCopyBtn');
+    btn.textContent = '✓ Copied';
+    setTimeout(()=>{ btn.innerHTML = '📋 Copy Time'; }, 1500);
+  });
+}
+
+let rectHms = { h:0, m:0, s:0 };
+
+function padHms(n){ return String(n).padStart(2,'0'); }
+
+function syncHmsHiddenInput(){
+  const hidden = document.getElementById('rectCenterTime');
+  if (hidden) hidden.value = `${padHms(rectHms.h)}:${padHms(rectHms.m)}:${padHms(rectHms.s)}`;
+}
+
+function updateHmsDisplay(){
+  const hEl = document.getElementById('rectHmsH');
+  const mEl = document.getElementById('rectHmsM');
+  const sEl = document.getElementById('rectHmsS');
+  if (hEl) hEl.textContent = padHms(rectHms.h);
+  if (mEl) mEl.textContent = padHms(rectHms.m);
+  if (sEl) sEl.textContent = padHms(rectHms.s);
+  syncHmsHiddenInput();
+}
+
+function changeHmsUnit(unit, dir){
+  if (unit === 'h') rectHms.h = (rectHms.h + dir + 24) % 24;
+  else if (unit === 'm') rectHms.m = (rectHms.m + dir + 60) % 60;
+  else if (unit === 's') rectHms.s = (rectHms.s + dir + 60) % 60;
+  updateHmsDisplay();
+}
+
+function wireHmsSteppers(){
+  document.querySelectorAll('#rectHmsRow .hms-btn').forEach(btn => {
+    const unit = btn.dataset.unit;
+    const dir = parseInt(btn.dataset.dir, 10);
+    let holdTimer = null, holdInterval = null, repeatStarted = false, activePointerId = null;
+
+    const clearTimers = () => {
+      clearTimeout(holdTimer); clearInterval(holdInterval);
+      holdTimer = null; holdInterval = null;
+    };
+    const startHold = () => {
+      repeatStarted = false;
+      holdTimer = setTimeout(() => {
+        repeatStarted = true;
+        holdInterval = setInterval(() => changeHmsUnit(unit, dir), 90);
+      }, 450);
+    };
+    const endHold = (fireIfTap) => {
+      if (fireIfTap && !repeatStarted) changeHmsUnit(unit, dir);
+      clearTimers();
+      activePointerId = null;
+    };
+
+    // Pointer Events unify mouse + touch + pen into a single reliable path,
+    // so a single tap always registers on the very first touch — no ghost
+    // clicks, no missed taps, no needing to tap twice.
+    if (window.PointerEvent){
+      btn.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        activePointerId = e.pointerId;
+        if (btn.setPointerCapture){ try { btn.setPointerCapture(e.pointerId); } catch(err){} }
+        startHold();
+      });
+      btn.addEventListener('pointerup', (e) => {
+        if (activePointerId !== null && e.pointerId !== activePointerId) return;
+        endHold(true);
+      });
+      btn.addEventListener('pointercancel', () => endHold(false));
+      btn.addEventListener('contextmenu', (e) => e.preventDefault());
+    } else {
+      // Fallback for older browsers without Pointer Events support
+      let touchFired = false;
+      btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        touchFired = true;
+        startHold();
+      }, {passive:false});
+      btn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        endHold(true);
+        setTimeout(() => { touchFired = false; }, 400);
+      }, {passive:false});
+      btn.addEventListener('touchcancel', () => endHold(false));
+      btn.addEventListener('mousedown', () => { if (!touchFired) startHold(); });
+      btn.addEventListener('mouseup', () => { if (!touchFired) endHold(true); });
+      btn.addEventListener('mouseleave', () => { if (!touchFired) endHold(false); });
+      btn.addEventListener('click', (e) => { if (touchFired) e.preventDefault(); });
+    }
+  });
+}
+
+function runFullChartCalculation(){
+  const resultsEl = document.getElementById('rectFullChartResults');
+  if (!currentProfileForExport){
+    resultsEl.innerHTML = `<div class="rect-empty">Generate a chart first — Full Chart calculation needs a Place of Birth (lat/lon/timezone) to work from.</div>`;
+    return;
+  }
+  const dateStr = document.getElementById('rectDate').value;
+  const timeStr = document.getElementById('rectCenterTime').value;
+  if (!dateStr || !timeStr){
+    resultsEl.innerHTML = `<div class="rect-empty">Please pick a date and dial in a time first.</div>`;
+    return;
+  }
+  // Recompute EVERYTHING through the exact same pipeline the main intake form
+  // uses (renderResults → computeChart), so every tab — Overview, Dasha, Yogas,
+  // Ashtakavarga, Shadbala, Planets, Divisions, Lagnas — reflects this dialed
+  // time identically to a normal chart generation. Nothing is saved to the
+  // stored profile unless you use "Apply" — this is a live, temporary preview.
+  const tempProfile = { ...currentProfileForExport, dob: dateStr, tob: timeStr };
+  renderResults(tempProfile);
+  switchAppTab('panel-overview');
+}
+
+function wireRectificationPanel(){
+  rectSelectedIdx = null; rectRows = [];
+  const scanBtn = document.getElementById('rectScanBtn');
+  if (scanBtn) scanBtn.addEventListener('click', runRectificationScan);
+
+  const tobVal = (currentProfileForExport && currentProfileForExport.tob) || "00:00:00";
+  const parts = tobVal.split(':').map(Number);
+  rectHms = { h: parts[0]||0, m: parts[1]||0, s: parts[2]||0 };
+  updateHmsDisplay();
+  wireHmsSteppers();
+
+  const fullCalcBtn = document.getElementById('rectFullCalcBtn');
+  if (fullCalcBtn) fullCalcBtn.addEventListener('click', runFullChartCalculation);
+
+  const dateInput = document.getElementById('rectDate');
+  if (dateInput) dateInput.addEventListener('change', syncHmsHiddenInput);
+}
+
+/* ============================================================================
+   TRANSIT TIMER TAB
+   ============================================================================ */
+let ttCountdownInterval = null;
+const VARGA_ORDER = Object.keys(VARGAS).sort((a,b) => VARGAS[a].n - VARGAS[b].n);
+
+function wireTransitTimerPanel(){
+  if (ttCountdownInterval){ clearInterval(ttCountdownInterval); ttCountdownInterval = null; }
+  const vargaSel = document.getElementById('ttVarga');
+  if (vargaSel){
+    vargaSel.innerHTML = VARGA_ORDER.map(k => `<option value="${k}" ${k==="D9"?"selected":""}>${k} — ${VARGAS[k].name} (${VARGAS[k].full})</option>`).join('');
+  }
+  const checkBtn = document.getElementById('ttCheckBtn');
+  if (checkBtn) checkBtn.addEventListener('click', runTransitTimerCheck);
+}
+
+function runTransitTimerCheck(){
+  if (ttCountdownInterval){ clearInterval(ttCountdownInterval); ttCountdownInterval = null; }
+  const resultsEl = document.getElementById('ttResults');
+  if (!currentProfileForExport){
+    resultsEl.innerHTML = `<div class="rect-empty">Generate a chart first — the Ascendant needs a Place of Birth (lat/lon) to compute, and planet transits need a location for context.</div>`;
+    return;
+  }
+  const bodyName = document.getElementById('ttBody').value;
+  const vargaKey = document.getElementById('ttVarga').value;
+  const lat = currentProfileForExport.lat, lon = currentProfileForExport.lon, tz = currentProfileForExport.tz;
+
+  const t = computeDivisionTiming(bodyName, vargaKey, lat, lon);
+  renderTransitTimerResult(t, tz);
+
+  ttCountdownInterval = setInterval(() => {
+    const el = document.getElementById('ttResults');
+    if (!el || !document.getElementById('ttCountdownValue')){ clearInterval(ttCountdownInterval); ttCountdownInterval = null; return; }
+    const nowJD = nowJulianDay();
+    const remaining = t.jdNext - nowJD;
+    const sinceNow = nowJD - t.jdEntered;
+    const cdEl = document.getElementById('ttCountdownValue');
+    const cdCard = document.getElementById('ttCountdownCard');
+    if (remaining <= 0){
+      cdEl.textContent = "Crossing now →";
+      if (cdCard) cdCard.classList.add('tt-countdown-past');
+    } else {
+      cdEl.textContent = formatDurationHMS(remaining);
+    }
+    const sinceEl = document.getElementById('ttSinceValue');
+    if (sinceEl) sinceEl.textContent = formatDurationHMS(sinceNow) + " ago";
+  }, 1000);
+}
+
+function renderTransitTimerResult(t, tz){
+  const resultsEl = document.getElementById('ttResults');
+  const sign = SIGNS[t.signIdx];
+  const vargaSign = SIGNS[t.vargaSignIdx];
+  const nak = getNakshatra(t.currentLon);
+  const enteredParts = jdToLocalParts(t.jdEntered, tz);
+  const nextParts = jdToLocalParts(t.jdNext, tz);
+  const bodyLabel = t.bodyName === "Ascendant" ? "🌅 Ascendant (Lagna)" : `${PLANET_GLYPHS[t.bodyName]} ${t.bodyName}`;
+
+  resultsEl.innerHTML = `
+    <div class="tt-result-wrap">
+      <div class="tt-result-badge">
+        <span>${bodyLabel} in ${t.vargaKey} — ${VARGAS[t.vargaKey].name}</span>
+        ${t.retrograde ? '<span class="retro-tag">Retrograde</span>' : ''}
+        <span>· ${Math.abs(t.speed).toFixed(t.bodyName==="Ascendant"?1:4)}°/day</span>
+      </div>
+      <div class="tt-result-body">
+        <div class="tt-grid" style="margin-bottom:14px;">
+          <div class="tt-stat-card">
+            <div class="tt-label">D1 Position</div>
+            <div class="tt-value">${sign.symbol} ${sign.name} ${fmtDegShort(t.degInSign)}</div>
+            <div class="tt-sub">${escapeHtml(nak.name)} · Pada ${nak.pada}</div>
+          </div>
+          <div class="tt-stat-card">
+            <div class="tt-label">${t.vargaKey} Division</div>
+            <div class="tt-value">${vargaSign.symbol} ${vargaSign.name}</div>
+            <div class="tt-sub">Amsa ${t.divWithinSign} of ${t.n} · width ${t.width.toFixed(4)}°</div>
+          </div>
+        </div>
+        <div class="tt-grid">
+          <div class="tt-stat-card">
+            <div class="tt-label">Entered This Division</div>
+            <div class="tt-value">${enteredParts.timeStr}</div>
+            <div class="tt-sub">${enteredParts.dateStr} · <span id="ttSinceValue">${formatDurationHMS(t.sinceDays)} ago</span></div>
+          </div>
+          <div class="tt-stat-card">
+            <div class="tt-label">Moves to Next Division</div>
+            <div class="tt-value">${nextParts.timeStr}</div>
+            <div class="tt-sub">${nextParts.dateStr}${t.retrograde ? ' (moving backward)' : ''}</div>
+          </div>
+          <div class="tt-stat-card tt-countdown-card" id="ttCountdownCard">
+            <div class="tt-label">Time Remaining</div>
+            <div class="tt-value" id="ttCountdownValue">${formatDurationHMS(t.remainingDays)}</div>
+            <div class="tt-sub">live countdown</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ============================================================================
+   SANDHI TABLE TAB
+   ============================================================================ */
+let sandhiCountdownInterval = null;
+let sandhiRows = [];
+
+function wireSandhiPanel(){
+  if (sandhiCountdownInterval){ clearInterval(sandhiCountdownInterval); sandhiCountdownInterval = null; }
+  sandhiRows = [];
+  const btn = document.getElementById('sandhiCalcBtn');
+  if (btn) btn.addEventListener('click', runSandhiCalculation);
+}
+
+function runSandhiCalculation(){
+  if (sandhiCountdownInterval){ clearInterval(sandhiCountdownInterval); sandhiCountdownInterval = null; }
+  const resultsEl = document.getElementById('sandhiResults');
+  if (!currentProfileForExport){
+    resultsEl.innerHTML = `<div class="rect-empty">Generate a chart first — the Ascendant needs a Place of Birth (lat/lon) to compute.</div>`;
+    return;
+  }
+  const lat = currentProfileForExport.lat, lon = currentProfileForExport.lon, tz = currentProfileForExport.tz;
+  sandhiRows = VARGA_ORDER.map(key => computeDivisionTiming("Ascendant", key, lat, lon));
+  renderSandhiTable(tz);
+
+  sandhiCountdownInterval = setInterval(() => {
+    if (!document.getElementById('sandhiTableBody')){ clearInterval(sandhiCountdownInterval); sandhiCountdownInterval = null; return; }
+    const nowJD = nowJulianDay();
+    sandhiRows.forEach(t => {
+      const cell = document.getElementById(`sandhi-rem-${t.vargaKey}`);
+      if (cell){
+        const remaining = t.jdNext - nowJD;
+        cell.textContent = remaining <= 0 ? "now →" : formatDurationHMS(remaining);
+      }
+    });
+  }, 1000);
+}
+
+function renderSandhiTable(tz){
+  const resultsEl = document.getElementById('sandhiResults');
+  const d1 = sandhiRows.find(r => r.vargaKey === "D1");
+  const d1Sign = SIGNS[d1.signIdx];
+
+  let rows = "";
+  sandhiRows.forEach(t => {
+    const before = jdToLocalParts(t.jdBefore, tz);
+    const current = jdToLocalParts(t.jdEntered, tz);
+    const next = jdToLocalParts(t.jdNext, tz);
+    rows += `<tr class="${t.vargaKey==='D1' ? 'sandhi-d1-row' : ''}">
+      <td>${t.vargaKey} — ${VARGAS[t.vargaKey].name}</td>
+      <td>${formatDurationHMS(t.remainingDays + t.sinceDays)}</td>
+      <td>${before.timeStr}</td>
+      <td>${current.timeStr}</td>
+      <td>${next.timeStr}</td>
+      <td class="sandhi-remaining" id="sandhi-rem-${t.vargaKey}">${formatDurationHMS(t.remainingDays)}</td>
+    </tr>`;
+  });
+
+  resultsEl.innerHTML = `
+    <div class="sandhi-meta">Ascendant currently in <strong>${d1Sign.symbol} ${d1Sign.name}</strong> · D1 window ≈ <strong>${formatDurationHMS(d1.remainingDays + d1.sinceDays)}</strong> wide for this location and date</div>
+    <div class="sandhi-table-wrap">
+      <table class="sandhi-table">
+        <thead><tr><th>Varga</th><th>Window Width</th><th>Before Started</th><th>Current Started</th><th>Next Starts</th><th>Remaining</th></tr></thead>
+        <tbody id="sandhiTableBody">${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+/* ============================================================================
+   VARGA TIMELINE TAB — anchored to the BIRTH TIME, not live "now"
+   ============================================================================ */
+function wireVargaTimelinePanel(){
+  const sel = document.getElementById('vtVarga');
+  if (sel){
+    sel.innerHTML = VARGA_ORDER.map(k => `<option value="${k}" ${k==="D9"?"selected":""}>${k} — ${VARGAS[k].name} (${VARGAS[k].full})</option>`).join('');
+  }
+  const infoEl = document.getElementById('vtBirthInfo');
+  if (infoEl){
+    if (!currentProfileForExport){
+      infoEl.innerHTML = `<div class="rect-empty">Generate a chart first — this needs the birth date, time, and place.</div>`;
+    } else {
+      const tz = currentProfileForExport.tz;
+      const w = computeAscendantD1Window(currentProfileForExport.lat, currentProfileForExport.lon, getBirthJD(currentProfileForExport));
+      const sign = SIGNS[w.d1SignIdx];
+      const startParts = jdToLocalParts(w.jdD1Start, tz);
+      const endParts = jdToLocalParts(w.jdD1End, tz);
+      infoEl.innerHTML = `
+        <div class="vt-birth-card">
+          <div class="tt-stat-card"><div class="tt-label">Birth Ascendant</div><div class="tt-value">${sign.symbol} ${sign.name}</div></div>
+          <div class="tt-stat-card"><div class="tt-label">D1 Window Started</div><div class="tt-value">${startParts.timeStr}</div><div class="tt-sub">${startParts.dateStr}</div></div>
+          <div class="tt-stat-card"><div class="tt-label">D1 Window Ended</div><div class="tt-value">${endParts.timeStr}</div><div class="tt-sub">${endParts.dateStr}</div></div>
+          <div class="tt-stat-card"><div class="tt-label">Total Width</div><div class="tt-value">${formatDurationHMS(w.jdD1End - w.jdD1Start)}</div></div>
+        </div>`;
+    }
+  }
+  const btn = document.getElementById('vtMapBtn');
+  if (btn) btn.addEventListener('click', runVargaTimeline);
+}
+
+function getBirthJD(profile){
+  const [year,month,day] = profile.dob.split("-").map(Number);
+  const timeStr = (profile.tob && profile.tob.length===5) ? profile.tob+":00" : profile.tob;
+  const [hour,minute,second] = timeStr.split(":").map(Number);
+  const localJD = toJulianDay(year,month,day,hour,minute,second||0);
+  return localJD - profile.tz/24;
+}
+
+function runVargaTimeline(){
+  const resultsEl = document.getElementById('vtResults');
+  if (!currentProfileForExport){
+    resultsEl.innerHTML = `<div class="rect-empty">Generate a chart first — this needs the birth date, time, and place.</div>`;
+    return;
+  }
+  const vargaKey = document.getElementById('vtVarga').value;
+  const tz = currentProfileForExport.tz;
+  const birthJD = getBirthJD(currentProfileForExport);
+  const tl = computeVargaTimelineForD1Window(vargaKey, currentProfileForExport.lat, currentProfileForExport.lon, birthJD);
+
+  let rows = "";
+  tl.rows.forEach(r => {
+    const s = jdToLocalParts(r.startJD, tz);
+    const e = jdToLocalParts(r.endJD, tz);
+    const sign = SIGNS[r.vargaSignIdx];
+    rows += `<tr class="${r.containsBirth ? 'vt-birth-row' : ''}">
+      <td>${r.index} of ${tl.n}</td>
+      <td>${s.timeStr}</td>
+      <td>${e.timeStr}</td>
+      <td>${sign.symbol} ${sign.name}</td>
+      <td class="vt-birth-flag">${r.containsBirth ? '← birth moment' : ''}</td>
+    </tr>`;
+  });
+
+  resultsEl.innerHTML = `
+    <div class="sandhi-meta">
+      ${vargaKey} — ${VARGAS[vargaKey].name}: ${tl.n} division${tl.n>1?'s':''} across the D1 window
+      (${jdToLocalParts(tl.jdD1Start,tz).timeStr} to ${jdToLocalParts(tl.jdD1End,tz).timeStr}),
+      each ≈ <strong>${formatDurationHMS((tl.jdD1End-tl.jdD1Start)/tl.n)}</strong> wide
+    </div>
+    <div class="sandhi-table-wrap">
+      <table class="sandhi-table">
+        <thead><tr><th>Division</th><th>Start</th><th>End</th><th>Sign</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+/* ============================================================================
+   EXPORT / IMPORT ALL PROFILES (backup & restore via copy-paste)
+   ============================================================================ */
+function openProfileDataModal(mode){
+  document.getElementById('mainMenuModal').classList.remove('show');
+  const modal = document.getElementById('profileDataModal');
+  const title = document.getElementById('profileDataModalTitle');
+  const hint = document.getElementById('profileDataModalHint');
+  const ta = document.getElementById('profileDataTextarea');
+  const primaryBtn = document.getElementById('profileDataPrimaryBtn');
+  const secondaryBtn = document.getElementById('profileDataSecondaryBtn');
+  const status = document.getElementById('profileDataStatus');
+  status.textContent = '';
+  status.className = 'profile-data-status';
+
+  if (mode === 'export'){
+    const profiles = loadProfiles();
+    title.textContent = 'Export All Profiles';
+    hint.textContent = `This is a backup of all ${profiles.length} saved profile${profiles.length===1?'':'s'} on this device. Copy it somewhere safe — on another device or browser, open this menu, choose "Import Profiles", paste it in, and they'll all come back.`;
+    ta.value = JSON.stringify(profiles, null, 2);
+    ta.readOnly = true;
+    ta.placeholder = '';
+    primaryBtn.innerHTML = '<span>📋</span> Copy to Clipboard';
+    primaryBtn.style.display = '';
+    primaryBtn.onclick = () => {
+      copyTextToClipboard(ta.value, primaryBtn, '<span>📋</span> Copy to Clipboard');
+    };
+    secondaryBtn.style.display = 'none';
+  } else {
+    title.textContent = 'Import Profiles';
+    hint.textContent = 'Paste profile backup text (from "Export All Profiles" on this or another device) below, then import. Profiles are merged with what you already have — existing profiles with the same name, date, time and place are updated in place; everything else is added.';
+    ta.value = '';
+    ta.readOnly = false;
+    ta.placeholder = 'Paste exported profile JSON here...';
+    primaryBtn.style.display = 'none';
+    secondaryBtn.style.display = '';
+    secondaryBtn.innerHTML = '<span>📥</span> Import These Profiles';
+    secondaryBtn.onclick = () => {
+      let incoming;
+      try {
+        incoming = JSON.parse(ta.value);
+        if (!Array.isArray(incoming)) throw new Error('not an array');
+      } catch (e){
+        status.textContent = '⚠ That doesn\'t look like valid exported profile data. Make sure you pasted the full text.';
+        status.className = 'profile-data-status error';
+        return;
+      }
+      const validKeys = ['name','dob','tob','tz','place','lat','lon'];
+      const valid = incoming.filter(p => p && typeof p === 'object' && validKeys.every(k => k in p));
+      if (valid.length === 0){
+        status.textContent = '⚠ No valid profiles found in that text.';
+        status.className = 'profile-data-status error';
+        return;
+      }
+      const existing = loadProfiles();
+      let added = 0, updated = 0;
+      valid.forEach(p => {
+        if (!p.savedAt) p.savedAt = Date.now();
+        const idx = existing.findIndex(e => e.name===p.name && e.dob===p.dob && e.tob===p.tob && e.place===p.place);
+        if (idx >= 0){ existing[idx] = p; updated++; } else { existing.push(p); added++; }
+      });
+      saveProfiles(existing);
+      refreshProfileSelect();
+      status.textContent = `✓ Imported successfully — ${added} new, ${updated} updated. Total profiles: ${existing.length}.`;
+      status.className = 'profile-data-status success';
+    };
+  }
+
+  modal.classList.add('show');
+}
+document.getElementById('exportProfilesBtn').addEventListener('click', () => openProfileDataModal('export'));
+document.getElementById('importProfilesBtn').addEventListener('click', () => openProfileDataModal('import'));
+document.getElementById('profileDataModalClose').addEventListener('click', () => {
+  document.getElementById('profileDataModal').classList.remove('show');
+});
+document.getElementById('profileDataModal').addEventListener('click', (e) => {
+  if (e.target.id === 'profileDataModal') document.getElementById('profileDataModal').classList.remove('show');
+});
+
+/* ============================================================================
+   APP TAB SWITCHING
+   ============================================================================ */
+
+/* [panelId, icon, title, description, section, bar-group] */
+const HOME_ITEMS=[
+ ['panel-reading','📖','Chart Reading','Plain-language reading, life areas & timing','Your Chart','chart'],
+ ['panel-overview','◈','Overview','Birth chart & key details','Your Chart','chart'],
+ ['panel-planets','☉','Planets','Positions & aspects of every planet','Your Chart','chart'],
+ ['panel-bhava','⌂','Bhava Chalit','Sripati house cusps & shifted planets','Your Chart','chart'],
+ ['panel-vargas','◫','Divisional Charts','D1 to D60 chart viewer','Your Chart','chart'],
+ ['panel-lagnas','✧','Special Lagnas','23 alternate ascendants','Your Chart','chart'],
+ ['panel-rectification','🎯','Rectify Birth Time','Test times & compare charts','Fix Birth Time','rectify'],
+ ['panel-sandhi','⏱','Sandhi Table','Ascendant window across all charts','Fix Birth Time','rectify'],
+ ['panel-vargatimeline','🗺️','Varga Timeline','Map the birth window on any chart','Fix Birth Time','rectify'],
+ ['panel-transittimer','⏳','Transit Timer','When a planet changes house','Fix Birth Time','rectify'],
+ ['panel-panchanga','🌙','Panchanga','Tithi, nakshatra, yoga, karana & day timings','Time & Cycles','home'],
+ ['panel-vbday','🎂','Vedic Birthday','Tithi, Nakshatra & solar birthday for any year','Time & Cycles','home'],
+ ['panel-active','🔥','Life Activation','Houses lit up now · pick any date','Time & Cycles','home'],
+ ['panel-dasha','◷','Dasha','120-year life-period timeline','Time & Cycles','home'],
+ ['panel-tithi','🪔','Tithi Pravesh','Your yearly lunar-birthday chart','Time & Cycles','home'],
+ ['panel-transits','♄','Transits & Sade Sati','Saturn, Jupiter & node ingress dates','Time & Cycles','home'],
+ ['panel-transit','⟲','Live Sky','Today\'s planets vs your chart','Time & Cycles','home'],
+ ['panel-numerology','🔢','Numerology','Name number & birth-date numbers with meanings','Analysis','home'],
+ ['panel-yogas','✦','Yogas','Notable planet combinations','Analysis','home'],
+ ['panel-shadbala','⚖','Shadbala','Planet strength','Analysis','home'],
+ ['panel-bhavabala','🏠','Bhava Bala','House strength — which life areas are strong','Analysis','home'],
+ ['panel-fate','🌡️','Fate Meter','How much is written vs in your control','Analysis','home'],
+ ['panel-sahams','⭐','Sahams','36 sensitive points with readings','Analysis','home'],
+ ['panel-ashtakavarga','▦','Ashtakavarga','Point-strength system','Analysis','home'],
+ ['panel-relationships','⚯','Relationships','Conjunctions & aspects','Analysis','home'],
+ ['panel-match','💞','Kundali Matching','Ashtakoota 36-point match & Manglik check','Compatibility','match'],
+ ['panel-export','📤','Export & Share','Download a file or copy your full report','Export & Help','export'],
+ ['panel-contact','💬','Contact Developer','Bugs, ideas or astrology chat','Export & Help','export']];
+const HOME_SEC_COL={'Your Chart':'#D4AF37','Fix Birth Time':'#5EC4B7','Time & Cycles':'#8A6FB8','Analysis':'#6B7FA3','Compatibility':'#D96C9B','Export & Help':'#C95050'};
+function buildHomePanel(name){
+  const secs=[...new Set(HOME_ITEMS.map(i=>i[4]))], PL=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+  const pr=window.__vgProf||{}, ch=(typeof currentChartForModal!=='undefined')?currentChartForModal:null;
+  const fd=d=>{try{return new Date(d+'T00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return d||'';}};
+  const pct=(s,e)=>Math.max(0,Math.min(100,(Date.now()-s)/(e-s)*100));
+  let h=`<div class="app-panel" id="panel-home"><div class="home-wrap hm">`, top='';
+  try{
+    const asc=SIGNS[ch.ascendant.sign],mo=ch.planets.Moon,su=ch.planets.Sun,nk=mo.nakshatra,act=findActiveDasha(ch.dashaData.mahadashas,new Date());
+    const big=(l,s,sub)=>`<button type="button" class="hm-b" data-go="panel-overview"><small>${l}</small><b>${s.symbol} ${s.name}</b><span>${sub}</span></button>`;
+    top+=`<section class="hm-hero"><div class="hm-top"><div class="hm-av">${escapeHtml((name||'✦').trim().charAt(0).toUpperCase()||'✦')}</div><div class="hm-id"><small>Namaste 🙏</small><h2>${escapeHtml(name||'Your chart')}</h2><p>${pr.dob?'🗓 '+fd(pr.dob):''}${pr.tob?' · 🕒 '+pr.tob.slice(0,5):''}${pr.place?' · 📍 '+escapeHtml(String(pr.place).split(',')[0]):''}</p></div></div>
+      <div class="hm-big">${big('Rising',asc,asc.sk)}${big('Moon',SIGNS[mo.sign],nk.name+' · pada '+nk.pada)}${big('Sun',SIGNS[su.sign],su.nakshatra?su.nakshatra.name:SIGNS[su.sign].sk)}</div></section>`;
+    if(act&&act.antardasha){const m=act.mahadasha,ad=act.antardasha;
+      top+=`<button type="button" class="hm-now" data-go="panel-dasha"><div class="hm-now-h"><span>⏳ Running now</span><em>Open timeline ›</em></div><div class="hm-now-t">${PLANET_GLYPHS[m.lord]} ${m.lord} <i>›</i> ${PLANET_GLYPHS[ad.lord]} ${ad.lord}</div>
+        <div class="hm-pb"><label>${m.lord} Mahadasha<small>until ${formatDashaDate(m.endDate)}</small></label><i><u style="width:${pct(m.startDate,m.endDate)}%"></u></i></div>
+        <div class="hm-pb"><label>${ad.lord} Antardasha<small>until ${formatDashaDate(ad.endDate)}</small></label><i><u style="width:${pct(ad.startDate,ad.endDate)}%"></u></i></div></button>`;}
+    top+=`<section><h3 class="hm-h">Your planets</h3><div class="hm-strip">${PL.map(n=>{const p=ch.planets[n],s=SIGNS[p.sign];return `<button type="button" class="hm-pl" data-go="panel-overview"><span>${PLANET_GLYPHS[n]}</span><b>${n}${p.retrograde?' ℞':''}</b><small>${s.symbol} ${s.name}</small><em>${Math.floor(p.degInSign)}° · H${p.house}</em></button>`}).join('')}</div></section>`;
+  }catch(e){top=`<section class="hm-hero"><div class="hm-id"><small>Namaste 🙏</small><h2>${escapeHtml(name||'Your chart')}</h2><p>Your chart is ready. Pick what you want to explore.</p></div></section>`;}
+  h+=top+`<div class="hm-search"><span>🔎</span><input id="hmQ" type="search" placeholder="Search tools — dasha, yoga, match…" autocomplete="off"></div>`;
+  const pref=['panel-reading','panel-active','panel-overview','panel-dasha','panel-vargas','panel-lagnas','panel-yogas','panel-shadbala'];
+  const feat=pref.map(id=>HOME_ITEMS.find(i=>i[0]===id)).filter(Boolean).concat(HOME_ITEMS).filter((v,i,a)=>a.indexOf(v)===i).slice(0,4);
+  h+=`<section><h3 class="hm-h">Quick start</h3><div class="hm-feat">${feat.map(i=>`<button type="button" class="hm-f" style="--sc:${HOME_SEC_COL[i[4]]||'#D4AF37'}" data-go="${i[0]}"><span>${i[1]}</span><b>${i[2]}</b><small>${i[4]}</small></button>`).join('')}</div></section><div id="hmSecs">`;
+  secs.forEach(s=>{const its=HOME_ITEMS.filter(i=>i[4]===s);
+    h+=`<section class="hm-sec" style="--sc:${HOME_SEC_COL[s]||'#D4AF37'}"><h3 class="hm-h"><i></i>${s}<em>${its.length}</em></h3><div class="hm-grid">${its.map(i=>`<button type="button" class="hm-c" data-go="${i[0]}"><span class="hm-ci">${i[1]}</span><span class="hm-ct"><b>${i[2]}</b><small>${i[3]}</small></span><span class="hm-ar">›</span></button>`).join('')}</div></section>`;});
+  h+=`</div><p class="hm-none" id="hmNone" hidden>No tool matches that search.</p></div></div><div class="panel-back" id="panelBack" style="display:none"><button type="button" data-go="panel-home">← Home</button><span></span></div>`;
+  const r=document.getElementById('results');
+  r.insertAdjacentHTML('afterbegin',h);
+  const bk=document.getElementById('panelBack'); const home=document.getElementById('panel-home');
+  home.after(bk);
+  r.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>switchAppTab(b.dataset.go)));
+  const q=document.getElementById('hmQ'); q.addEventListener('input',()=>{const t=q.value.trim().toLowerCase();let any=false;
+    home.querySelectorAll('.hm-sec').forEach(s=>{let n=0;s.querySelectorAll('.hm-c').forEach(c=>{const ok=!t||c.textContent.toLowerCase().includes(t);c.hidden=!ok;if(ok)n++;});s.hidden=!n;if(n)any=true;});document.getElementById('hmNone').hidden=any;});
+}
+
+document.getElementById('hdrBack').addEventListener('click',()=>switchAppTab('panel-home'));
+new MutationObserver(()=>{
+  const on=document.getElementById('results').classList.contains('show');
+  document.body.classList.toggle('app-mode',on);
+  if(!on){document.body.classList.remove('on-sub');const h=document.querySelector('.brand-text h1');if(h&&h.dataset.orig)h.textContent=h.dataset.orig;}
+}).observe(document.getElementById('results'),{attributes:true,attributeFilter:['class']});
+function switchAppTab(panelId){
+  if (panelId==='panel-export'){ openExportModal(); return; }
+  if (panelId==='panel-contact'){ document.getElementById('contactModal').classList.add('show'); return; }
+  document.querySelectorAll('.app-panel').forEach(p=> p.classList.remove('active'));
+  document.querySelectorAll('.app-tab').forEach(t=> t.classList.remove('active'));
+  const panel = document.getElementById(panelId);
+  if (panel) panel.classList.add('active');
+  const grp = (HOME_ITEMS.find(i=>i[0]===panelId)||[])[5] || 'home';
+  const barBtn = document.querySelector(`.app-tab[data-group="${panelId==='panel-home'?'home':grp}"]`) || document.querySelector('.app-tab[data-group="home"]');
+  if (barBtn) barBtn.classList.add('active');
+  const it0 = HOME_ITEMS.find(i=>i[0]===panelId);
+  const h1 = document.querySelector('.brand-text h1');
+  if (h1){ if(!h1.dataset.orig) h1.dataset.orig=h1.textContent; if(document.body.classList.contains('app-mode')) h1.textContent = it0 ? it0[2] : 'Home'; }
+  document.body.classList.toggle('on-sub', panelId!=='panel-home');
+  const back = document.getElementById('panelBack');
+  if (back){
+    back.style.display = panelId==='panel-home' ? 'none' : 'flex';
+    const it = HOME_ITEMS.find(i=>i[0]===panelId);
+    if (it) back.querySelector('span').textContent = it[2];
+  }
+  window.scrollTo({ top:0, behavior:'instant' in window ? 'instant' : 'auto' });
+}
+document.querySelectorAll('.app-tab').forEach(tab=>{
+  tab.addEventListener('click', ()=> switchAppTab(tab.dataset.panel));
+});
+
+/* ============================================================================
+   QUICK SEARCH — click any placement in the chart to Google it
+   ============================================================================ */
+let qsearchActive = false;
+let qsearchEngine = 'google'; // 'google' | 'google-ai'
+
+(function initQuickSearch(){
+  const btn = document.getElementById('quickSearchBtn');
+  const popover = document.getElementById('quickSearchPopover');
+  const toggle = document.getElementById('qsearchToggle');
+  const engineGoogleBtn = document.getElementById('qsearchEngineGoogle');
+  const engineAiBtn = document.getElementById('qsearchEngineAi');
+  const liveBadge = document.getElementById('qsearchLiveBadge');
+  const liveBadgeText = document.getElementById('qsearchLiveBadgeText');
+  const liveBadgeOff = document.getElementById('qsearchLiveBadgeOff');
+
+  function engineLabel(){ return qsearchEngine === 'google-ai' ? 'Google AI Search' : 'Google Search'; }
+
+  function refreshUI(){
+    btn.classList.toggle('qsearch-active', qsearchActive);
+    toggle.classList.toggle('on', qsearchActive);
+    engineGoogleBtn.classList.toggle('active', qsearchEngine === 'google');
+    engineAiBtn.classList.toggle('active', qsearchEngine === 'google-ai');
+    document.body.classList.toggle('qsearch-mode-on', qsearchActive);
+    liveBadge.classList.toggle('show', qsearchActive);
+    liveBadgeText.textContent = `🔍 Quick Search active (${engineLabel()}) — click anything in the chart`;
+  }
+
+  // Restore saved preference
+  try {
+    const saved = JSON.parse(localStorage.getItem('VedicAstrology_quickSearch') || 'null');
+    if (saved){ qsearchActive = !!saved.active; qsearchEngine = saved.engine || 'google'; }
+  } catch(e){}
+  refreshUI();
+
+  function persist(){
+    try { localStorage.setItem('VedicAstrology_quickSearch', JSON.stringify({active: qsearchActive, engine: qsearchEngine})); } catch(e){}
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    popover.classList.toggle('show');
+  });
+  document.addEventListener('click', (e) => {
+    if (popover.classList.contains('show') && !popover.contains(e.target) && e.target !== btn && !btn.contains(e.target)){
+      popover.classList.remove('show');
+    }
+  });
+
+  toggle.addEventListener('click', () => {
+    qsearchActive = !qsearchActive;
+    refreshUI(); persist();
+  });
+  engineGoogleBtn.addEventListener('click', () => { qsearchEngine = 'google'; refreshUI(); persist(); });
+  engineAiBtn.addEventListener('click', () => { qsearchEngine = 'google-ai'; refreshUI(); persist(); });
+  liveBadgeOff.addEventListener('click', () => { qsearchActive = false; refreshUI(); persist(); });
+
+  // Elements inside the chart that should never trigger a search themselves
+  // (their own click behaviour — buttons, inputs, links, tabs, dropdowns — stays intact).
+  const IGNORE_SELECTOR = 'button, a, input, select, textarea, label, .app-tab, .btn';
+  // Preferred "unit of meaning" to grab text from, most specific first.
+  const UNIT_SELECTOR = [
+    '.detail-chip', '.planet-clickable', '.big3-value', '.badge', '.karaka-card',
+    '.house-card', '.yoga-card', '.varga-house', '.shadbala-card', '.dasha-period-row',
+    'td', 'th', 'li', '.rd-value'
+  ].join(', ');
+
+  function buildQueryText(target){
+    const unit = target.closest(UNIT_SELECTOR);
+    const el = unit || target;
+    let text = (el.innerText || el.textContent || '').replace(/\s+/g,' ').trim();
+    if (text.length > 140) text = text.slice(0,140);
+    return text;
+  }
+
+  function openSearch(query){
+    const q = encodeURIComponent(query + ' vedic astrology meaning');
+    const url = qsearchEngine === 'google-ai'
+      ? `https://www.google.com/search?q=${q}&udm=50`
+      : `https://www.google.com/search?q=${q}`;
+    window.open(url, '_blank', 'noopener');
+  }
+
+  // Capture phase so this runs before any chart element's own click handler.
+  document.addEventListener('click', (e) => {
+    if (!qsearchActive) return;
+    const panel = e.target.closest('.app-panel');
+    if (!panel) return; // only intercept clicks on chart content, not header/nav/modals
+    if (e.target.closest(IGNORE_SELECTOR)) return; // let real controls keep working
+    const text = buildQueryText(e.target);
+    if (!text) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    openSearch(text);
+  }, true);
+})();
+
+/* ============================================================================
+   RELATIONSHIPS TAB
+   ============================================================================ */
+let relSelectedPlanets = new Set();
+let relSystem = "vedic";
+
+document.addEventListener('click', (e)=>{
+  const chip = e.target.closest('[data-rel-planet]');
+  if (chip){
+    const name = chip.dataset.relPlanet;
+    if (relSelectedPlanets.has(name)){ relSelectedPlanets.delete(name); chip.classList.remove('selected'); }
+    else { relSelectedPlanets.add(name); chip.classList.add('selected'); }
+    return;
+  }
+  const sysBtn = e.target.closest('[data-rel-system]');
+  if (sysBtn){
+    relSystem = sysBtn.dataset.relSystem;
+    document.querySelectorAll('#relSystemToggle .rel-system-btn').forEach(b=>b.classList.remove('active'));
+    sysBtn.classList.add('active');
+    return;
+  }
+  if (e.target.id === 'relFindBtn'){
+    runRelationshipScan();
+  }
+});
+
+function runRelationshipScan(){
+  const resultsDiv = document.getElementById('relResults');
+  if (!resultsDiv) return;
+  const selected = [...relSelectedPlanets];
+  if (selected.length < 2){
+    resultsDiv.innerHTML = `<div class="rel-empty-state">Select at least two planets above, then click "Find Relationships".</div>`;
+    return;
+  }
+  resultsDiv.innerHTML = `<div class="rel-loading">Scanning planetary motion across time — this searches up to 10 years in each direction…</div>`;
+
+  setTimeout(()=>{
+    const nowJD = toJulianDay(new Date().getUTCFullYear(), new Date().getUTCMonth()+1, new Date().getUTCDate(), new Date().getUTCHours(), new Date().getUTCMinutes(), 0);
+    let html = "";
+    for (let i=0; i<selected.length; i++){
+      for (let j=i+1; j<selected.length; j++){
+        const a = selected[i], b = selected[j];
+        html += buildRelPairCard(a, b, nowJD);
+      }
+    }
+    resultsDiv.innerHTML = html;
+  }, 30);
+}
+
+function buildRelPairCard(bodyA, bodyB, nowJD){
+  const lonA = getSiderealLongitudeAt(bodyA, nowJD);
+  const lonB = getSiderealLongitudeAt(bodyB, nowJD);
+  const currentSep = angDiffLocal(lonA, lonB);
+
+  let rowsHtml = "";
+
+  if (relSystem === "vedic"){
+    const vedicTargets = [
+      { name:"Conjunction (same sign)", angle:0 },
+      { name:"Opposition (7th aspect)", angle:180 }
+    ];
+    vedicTargets.forEach(t=>{
+      const result = findNearestAspectForPair(bodyA, bodyB, t.angle, nowJD, 3650);
+      const isActiveNow = Math.abs(angleErrorForTarget(lonA, lonB, t.angle)) <= 3;
+      rowsHtml += buildAspectRow(t.name, result, isActiveNow);
+    });
+  } else {
+    WESTERN_ASPECTS.forEach(asp=>{
+      const result = findNearestAspectForPair(bodyA, bodyB, asp.angle, nowJD, 3650);
+      const isActiveNow = Math.abs(angleErrorForTarget(lonA, lonB, asp.angle)) <= asp.orb;
+      rowsHtml += buildAspectRow(`${asp.symbol} ${asp.name} (${asp.angle}°)`, result, isActiveNow);
+    });
+  }
+
+  return `
+  <div class="rel-pair-card">
+    <div class="rel-pair-head">
+      <div class="rel-pair-planets">
+        <span>${PLANET_GLYPHS[bodyA]} ${bodyA}</span>
+        <span class="rel-pair-symbol">⟷</span>
+        <span>${PLANET_GLYPHS[bodyB]} ${bodyB}</span>
+      </div>
+      <div class="rel-pair-current">Currently ${currentSep.toFixed(1)}° apart</div>
+    </div>
+    ${rowsHtml}
+  </div>`;
+}
+
+function buildAspectRow(label, result, isActiveNow){
+  const prevText = result.previous ? formatRelDate(result.previous.jd) : "Not found in the last 10 years";
+  const nextText = result.next ? formatRelDate(result.next.jd) : "Not found in the next 10 years";
+  return `
+  <div class="rel-aspect-row">
+    <div class="rel-aspect-name">${label}${isActiveNow ? '<span class="rel-aspect-active-badge">Active now</span>' : ''}</div>
+    <div class="rel-aspect-dates">
+      <span class="past">← ${prevText}</span>
+      <span class="future">${nextText} →</span>
+    </div>
+  </div>`;
+}
+
+function formatRelDate(jd){
+  let j = jd + 0.5;
+  const Z = Math.floor(j), F = j-Z;
+  let A = Z;
+  if (Z>=2299161){ const alpha=Math.floor((Z-1867216.25)/36524.25); A=Z+1+alpha-Math.floor(alpha/4); }
+  const B=A+1524, C=Math.floor((B-122.1)/365.25), D=Math.floor(365.25*C), E=Math.floor((B-D)/30.6001);
+  const day = B-D-Math.floor(30.6001*E)+F;
+  const month = E<14 ? E-1 : E-13;
+  const year = month>2 ? C-4716 : C-4715;
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return `${Math.floor(day)} ${months[month-1]} ${year}`;
+}
+
+document.getElementById('profileSelect').addEventListener('change', (e) => {
+  document.getElementById('mainMenuModal').classList.remove('show'); // Hide menu immediately so UI doesn't freeze
+
+  const idx = e.target.value;
+  if (idx !== "") {
+    localStorage.setItem('VedicAstrology_lastProfileIdx', idx);

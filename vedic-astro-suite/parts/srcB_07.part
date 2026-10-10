@@ -1,0 +1,1570 @@
+          toHouse: houseNum,
+          toSign: sign.name,
+          toSignSanskrit: sign.sk,
+          label: aspectOffsetLabel(houseNum)
+        });
+      }
+    });
+
+    const realPlanet = chart.planets[fromName];
+    const fromSign = SIGNS[from.sign];
+
+    results.push({
+      planet: fromName,
+      glyph: PLANET_GLYPHS[fromName],
+      fromHouse: from.house,
+      fromSign: fromSign.name,
+      fromSignSanskrit: fromSign.sk,
+      nakshatra: realPlanet.nakshatra.name,
+      nakshatraLord: realPlanet.nakshatra.lord,
+      pada: realPlanet.nakshatra.pada,
+      degree: formatDeg(realPlanet.degInSign),
+      retrograde: realPlanet.retrograde,
+      aspectedHouses: aspectedHouseNums,
+      aspectedSigns: aspectedSignIdxs.map(i => SIGNS[i].name),
+      targets
+    });
+  });
+
+  return results;
+}
+
+function buildAspectsTableHtml(aspectRows, idPrefix){
+  const prefix = idPrefix || 'varga';
+  let rows = '';
+  aspectRows.forEach(r => {
+    const planetTargets = r.targets.filter(t => t.toPlanet);
+    const targetHtml = planetTargets.length
+      ? planetTargets.map(t => `<span class="occupant-chip aspect-target-chip"><span class="planet-glyph">${PLANET_GLYPHS[t.toPlanet]}</span>${t.toPlanet} <span class="tiny">(H${t.toHouse} ${t.toSign})</span></span>`).join(' ')
+      : `<span class="house-empty-tag">No planets aspected</span>`;
+    const housesHtml = r.aspectedHouses.map(h => `H${h}`).join(', ');
+
+    rows += `<tr>
+      <td class="planet-name-cell"><span class="planet-glyph">${r.glyph}</span>${r.planet}${r.retrograde ? '<sup class="retro-tag-sm">R</sup>' : ''}</td>
+      <td>H${r.fromHouse} — ${r.fromSign} <span class="sign-sk">(${r.fromSignSanskrit})</span></td>
+      <td>${r.nakshatra} <span class="sign-sk">(Pada ${r.pada})</span><br><span class="tiny">Lord: ${r.nakshatraLord} · ${r.degree}</span></td>
+      <td class="mono">${housesHtml}</td>
+      <td>${targetHtml}</td>
+    </tr>`;
+  });
+
+  return `<div class="varga-aspect-table-wrap" id="${prefix}AspectTableWrap">
+    <div class="aspect-table-head">
+      <span class="section-sub" style="margin:0;">Full Aspects (Drishti) Table</span>
+      <button type="button" class="chart-dl-btn-single aspect-copy-btn" id="${prefix}CopyAspectTableBtn"><span>📋</span> Copy Table</button>
+    </div>
+    <div class="aspect-table-scroll">
+      <table class="varga-house-table aspect-table">
+        <thead><tr><th>Planet</th><th>Position</th><th>Nakshatra</th><th>Aspects Houses</th><th>Aspects Planets</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function aspectRowsToPlainText(aspectRows, vargaKey){
+  let out = `PLANETARY ASPECTS (DRISHTI) — ${vargaKey}\n`;
+  out += '='.repeat(60) + '\n\n';
+  aspectRows.forEach(r => {
+    out += `${r.planet}${r.retrograde ? ' (R)' : ''} — House ${r.fromHouse}, ${r.fromSign} (${r.fromSignSanskrit})\n`;
+    out += `  Nakshatra: ${r.nakshatra}, Pada ${r.pada}, Lord ${r.nakshatraLord}, ${r.degree}\n`;
+    out += `  Aspects Houses: ${r.aspectedHouses.map(h=>'H'+h).join(', ')}\n`;
+    const planetTargets = r.targets.filter(t => t.toPlanet);
+    if (planetTargets.length){
+      out += `  Aspects Planets:\n`;
+      planetTargets.forEach(t => {
+        out += `    -> ${t.toPlanet} in House ${t.toHouse} (${t.toSign}) — ${t.label}\n`;
+      });
+    } else {
+      out += `  Aspects Planets: none\n`;
+    }
+    out += '\n';
+  });
+  return out;
+}
+
+// 1. NORTH INDIAN DIAMOND CHART (Kendra-centric diamond layout)
+const PCOL={Sun:'#F4A340',Moon:'#E6EBF5',Mars:'#E2625F',Mercury:'#6FCF97',Jupiter:'#F9D976',Venus:'#F4A9D3',Saturn:'#8EA2D6',Rahu:'#B393E0',Ketu:'#C4A484'};
+const ELC={Fire:'#F26B4F',Earth:'#79B868',Air:'#E7C95A',Water:'#5BA7E0'};
+const HTc=h=>[1,4,7,10].includes(h)?'#D4AF37':[5,9].includes(h)?'#5EC4B7':[6,8,12].includes(h)?'#E25555':'#8C93A8';
+const HAl=h=>h===1?.26:[4,7,10].includes(h)?.13:[5,9].includes(h)?.11:[6,8,12].includes(h)?.10:.04;
+const dRing=s=>/Exalt/i.test(s)?'#F9D976':/Own|Moola/i.test(s)?'#5EC4B7':/Debil/i.test(s)?'#E25555':/Enemy/i.test(s)?'#C26B45':/Friend/i.test(s)?'#7FC8A9':'#6B7390';
+function chMeta(v){const inf={},c=window.__vgC;v.houses.forEach(h=>h.planets.forEach(p=>{inf[p.name]={st:(p.dignity||{}).status||'',rx:!!p.retrograde};}));
+  PLANET_LIST.forEach(n=>{inf[n]=inf[n]||{st:'',rx:false};inf[n].vg=!!(c&&c.planets&&c.planets[n]&&v!==c.vargas.D1&&v.planetVargaSign[n]===c.planets[n].sign);});return inf;}
+function chBadge(n,x,y,r,i,lab){const c=PCOL[n],f=(r*1.3).toFixed(1);
+  return `<g><title>${n}${i.rx?' (retrograde)':''}${i.st?' · '+i.st:''}${i.vg?' · Vargottama':''}</title><circle cx="${x}" cy="${y}" r="${r}" fill="${c}" fill-opacity=".17" stroke="${dRing(i.st)}" stroke-width="1.5"/><text x="${x}" y="${y+.5}" text-anchor="middle" dominant-baseline="central" font-size="${f}" fill="${c}" font-family="sans-serif" font-weight="700">${PLANET_GLYPHS[n]}</text>${i.rx?`<text x="${x+r*.95}" y="${y-r*.6}" font-size="${(r*.85).toFixed(1)}" fill="#FF8A8A" font-weight="800" font-family="sans-serif" text-anchor="middle">R</text>`:''}${i.vg?`<text x="${x-r*.95}" y="${y-r*.5}" font-size="${(r*.95).toFixed(1)}" fill="#F9D976" text-anchor="middle">★</text>`:''}${lab?`<text x="${x}" y="${y+r+6}" font-size="5.6" fill="${c}" fill-opacity=".85" font-family="sans-serif" text-anchor="middle">${n.slice(0,2)}</text>`:''}</g>`;}
+function chPlanets(list,inf,cx,cy,maxCols){const n=list.length;if(!n)return '';const r=n<=2?9:n<=4?8:6.5,cols=n<=2?n:(n>4&&maxCols?maxCols:2),gap=2*r+(n<=4?8:3),rows=Math.ceil(n/cols);
+  return list.map((p,i)=>{const ro=Math.floor(i/cols),k=Math.min(cols,n-ro*cols),j=i%cols;return chBadge(p,+(cx+(j-(k-1)/2)*gap).toFixed(1),+(cy+(ro-(rows-1)/2)*gap).toFixed(1),r,inf[p],n<=4);}).join('');}
+function chDefs(id){return `<defs><radialGradient id="${id}b" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#1c2242"/><stop offset=".6" stop-color="#0d1020"/><stop offset="1" stop-color="#05060b"/></radialGradient><linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F9D976"/><stop offset=".5" stop-color="#D4AF37"/><stop offset="1" stop-color="#8C7323"/></linearGradient></defs><rect x="1.5" y="1.5" width="297" height="297" rx="16" fill="url(#${id}b)" stroke="url(#${id}g)" stroke-width="1.2"/>`+[[22,40],[270,26],[40,270],[262,262],[120,16],[285,150],[180,285],[14,150]].map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="${i%3?.6:.9}" fill="#fff" opacity=".3"/>`).join('');}
+function chSignDot(x,y,si,r){const el=SIGNS[si].element,c=ELC[el];return `<g><title>${SIGNS[si].name} · ${el}</title><circle cx="${x}" cy="${y}" r="${r}" fill="${c}" fill-opacity=".22" stroke="${c}" stroke-width="1"/><text x="${x}" y="${y+.5}" text-anchor="middle" dominant-baseline="central" font-size="${r*1.1}" fill="${c}" font-family="sans-serif" font-weight="700">${si+1}</text></g>`;}
+function chAspects(rows,pos){let s='<g class="aspect-lines-layer">';rows.forEach(r=>{const f=pos(r.fromHouse);[...new Set(r.targets.filter(t=>t.toPlanet).map(t=>t.toHouse))].forEach(h=>{const t=pos(h);s+=`<line x1="${f[0]}" y1="${f[1]}" x2="${t[0]}" y2="${t[1]}" class="aspect-line aspect-line-${r.planet.toLowerCase()}"><title>${r.planet} aspects H${h}</title></line>`;});});return s+'</g>';}
+
+function buildNorthIndianSvg(v,asp){
+  const asc=v.ascendantSign,inf=chMeta(v),hp={};for(let h=1;h<=12;h++)hp[h]=[];PLANET_LIST.forEach(n=>hp[((v.planetVargaSign[n]-asc+12)%12)+1].push(n));
+  const A=[10,10],B=[290,10],C=[290,290],D=[10,290],T=[150,10],R=[290,150],Bo=[150,290],L=[10,150],O=[150,150],Q1=[80,80],Q2=[220,80],Q3=[220,220],Q4=[80,220];
+  const poly={1:[T,Q2,O,Q1],2:[A,T,Q1],3:[A,Q1,L],4:[L,Q1,O,Q4],5:[L,Q4,D],6:[D,Q4,Bo],7:[Bo,Q4,O,Q3],8:[Bo,Q3,C],9:[C,Q3,R],10:[R,Q3,O,Q2],11:[R,Q2,B],12:[B,Q2,T]};
+  const an={1:[150,76],2:[78,46],3:[46,78],4:[74,150],5:[46,222],6:[78,254],7:[150,224],8:[222,254],9:[254,222],10:[226,150],11:[254,78],12:[222,46]};
+  const sd={1:[150,28],2:[104,20],3:[20,104],4:[28,150],5:[20,196],6:[104,280],7:[150,272],8:[196,280],9:[280,196],10:[272,150],11:[280,104],12:[196,20]};
+  let s=`<svg class="varga-chart-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">${chDefs('n')}`;
+  for(let h=1;h<=12;h++)s+=`<polygon points="${poly[h].map(p=>p.join(',')).join(' ')}" fill="${HTc(h)}" fill-opacity="${HAl(h)}" stroke="url(#ng)" stroke-width="${h===1?1.8:1.2}" stroke-linejoin="round"/>`;
+  s+=`<circle cx="150" cy="150" r="13" fill="none" stroke="#D4AF37" stroke-opacity=".3"/><circle cx="150" cy="150" r="3" fill="url(#ng)"/>`;
+  if(asp)s+=chAspects(asp,h=>an[h]);
+  for(let h=1;h<=12;h++){s+=chSignDot(sd[h][0],sd[h][1],(asc+h-1)%12,7.5)+chPlanets(hp[h],inf,an[h][0],an[h][1]+(h===1?4:0),3);}
+  s+=`<rect x="137" y="40" width="26" height="11" rx="5.5" fill="#D4AF37"/><text x="150" y="45.8" font-size="7" fill="#1a1405" font-weight="800" font-family="sans-serif" text-anchor="middle" dominant-baseline="central">ASC</text></svg>`;
+  return s;}
+
+function buildWesternWheelSvg(v,asp){
+  const asc=v.ascendantSign,inf=chMeta(v),hp={},cx=150,cy=150,R0=136,R1=112,R2=92,R3=30;for(let h=1;h<=12;h++)hp[h]=[];PLANET_LIST.forEach(n=>hp[((v.planetVargaSign[n]-asc+12)%12)+1].push(n));
+  const pt=(r,a)=>[+(cx+r*Math.cos(a*Math.PI/180)).toFixed(1),+(cy+r*Math.sin(a*Math.PI/180)).toFixed(1)];
+  const sec=(r1,r2,a1,a2)=>{const p1=pt(r2,a1),p2=pt(r2,a2),p3=pt(r1,a2),p4=pt(r1,a1);return `M${p1} A${r2} ${r2} 0 0 1 ${p2} L${p3} A${r1} ${r1} 0 0 0 ${p4}Z`;};
+  const mid=h=>180-30*(h-1)-15;
+  let s=`<svg class="varga-chart-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">${chDefs('w')}`;
+  for(let h=1;h<=12;h++){const a2=180-30*(h-1),a1=a2-30,si=(asc+h-1)%12,el=SIGNS[si].element,ec=ELC[el];
+    s+=`<path d="${sec(R1,R0,a1,a2)}" fill="${ec}" fill-opacity=".2" stroke="url(#wg)" stroke-width=".9"><title>${SIGNS[si].name} · ${el}</title></path>`
+     +`<path d="${sec(R2,R1,a1,a2)}" fill="${HTc(h)}" fill-opacity="${HAl(h)+.06}" stroke="url(#wg)" stroke-width=".7"/>`
+     +`<path d="${sec(R3,R2,a1,a2)}" fill="${HTc(h)}" fill-opacity="${HAl(h)*.45}" stroke="url(#wg)" stroke-opacity=".5" stroke-width=".6"/>`;
+    const sp=pt((R0+R1)/2,mid(h)),hp2=pt((R1+R2)/2,mid(h));
+    s+=`<text x="${sp[0]}" y="${sp[1]}" text-anchor="middle" dominant-baseline="central" font-size="8.5" font-weight="700" fill="${ec}" font-family="sans-serif">${SIGNS[si].name.slice(0,3)}</text><text x="${hp2[0]}" y="${hp2[1]}" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="700" fill="${HTc(h)}" font-family="sans-serif">${h}</text>`;}
+  if(asp)s+=chAspects(asp,h=>pt(R3+7,mid(h)));
+  s+=`<circle cx="${cx}" cy="${cy}" r="${R3}" fill="url(#wb)" stroke="url(#wg)" stroke-width="1.4"/><text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="6" letter-spacing="1" fill="#D4AF37" font-family="sans-serif" font-weight="700">LAGNA</text><text x="${cx}" y="${cy+6}" text-anchor="middle" font-size="9.5" fill="#F4F1E8" font-weight="700" font-family="sans-serif">${SIGNS[asc].name.slice(0,3)}</text>`;
+  for(let h=1;h<=12;h++){const L2=hp[h],n=L2.length;if(!n)continue;const pr=n>6?3:2,rb=n<=2?8:n<=4?7.5:6.5;
+    L2.forEach((p,i)=>{const row=Math.floor(i/pr),k=Math.min(pr,n-row*pr),j=i%pr,r=R2-15-row*19,sp=Math.min(24,(2*rb+3)/r*57.3),q=pt(r,mid(h)+(j-(k-1)/2)*sp);s+=chBadge(p,q[0],q[1],rb,inf[p],false);});}
+  const e1=pt(R0+3,180),e2=pt(R3,180);
+  s+=`<line x1="${e1[0]}" y1="${e1[1]}" x2="${e2[0]}" y2="${e2[1]}" stroke="#FF8A8A" stroke-width="2" stroke-linecap="round"/><rect x="2" y="136" width="9" height="28" rx="3" fill="#FF8A8A"/><text transform="translate(8,150) rotate(-90)" font-size="6.5" fill="#1a0a0a" font-weight="800" font-family="sans-serif" text-anchor="middle">ASC</text></svg>`;
+  return s;}
+
+function buildSouthIndianSvg(v,asp){
+  const asc=v.ascendantSign,inf=chMeta(v),cell=[[1,0],[2,0],[3,0],[3,1],[3,2],[3,3],[2,3],[1,3],[0,3],[0,2],[0,1],[0,0]],hp={};for(let i=0;i<12;i++)hp[i]=[];PLANET_LIST.forEach(n=>hp[v.planetVargaSign[n]].push(n));
+  const xy=si=>[10+cell[si][0]*70,10+cell[si][1]*70],ctr=h=>{const p=xy((asc+h-1)%12);return [p[0]+35,p[1]+35];};
+  let s=`<svg class="varga-chart-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">${chDefs('s')}`;
+  s+=`<g opacity=".9"><circle cx="150" cy="150" r="58" fill="none" stroke="#D4AF37" stroke-opacity=".22"/><circle cx="150" cy="150" r="40" fill="none" stroke="#5EC4B7" stroke-opacity=".25" stroke-dasharray="3 4"/><circle cx="150" cy="150" r="3" fill="url(#sg)"/></g>`;
+  for(let si=0;si<12;si++){const [x,y]=xy(si),h=((si-asc+12)%12)+1,el=SIGNS[si].element,ec=ELC[el];
+    s+=`<rect x="${x}" y="${y}" width="70" height="70" fill="${ec}" fill-opacity="${si===asc?.2:.09}" stroke="url(#sg)" stroke-width="${si===asc?2:1.1}"><title>${SIGNS[si].name} · ${el}</title></rect>`
+     +`<text x="${si===asc?x+31:x+5}" y="${y+10}" font-size="7.5" font-weight="700" fill="${ec}" font-family="sans-serif">${SIGNS[si].name.slice(0,3)}</text>`
+     +`<circle cx="${x+60}" cy="${y+10}" r="6.5" fill="${HTc(h)}" fill-opacity=".2" stroke="${HTc(h)}" stroke-width=".9"/><text x="${x+60}" y="${y+10.5}" font-size="7.5" font-weight="700" fill="${HTc(h)}" font-family="sans-serif" text-anchor="middle" dominant-baseline="central">${h}</text>`;
+    if(si===asc)s+=`<path d="M${x} ${y} L${x+26} ${y} L${x} ${y+26}Z" fill="#D4AF37" fill-opacity=".85"/><text x="${x+4.5}" y="${y+10}" font-size="6.5" font-weight="800" fill="#1a1405" font-family="sans-serif">ASC</text>`;}
+  if(asp)s+=chAspects(asp,h=>ctr(h));
+  for(let si=0;si<12;si++){const [x,y]=xy(si);s+=chPlanets(hp[si],inf,x+35,y+41,3);}
+  s+=`<text x="150" y="146" text-anchor="middle" font-size="7" letter-spacing="1.5" fill="#D4AF37" font-family="sans-serif" font-weight="700">LAGNA</text><text x="150" y="160" text-anchor="middle" font-size="11" font-weight="700" fill="#F4F1E8" font-family="sans-serif">${SIGNS[asc].name}</text></svg>`;
+  return s;}
+
+// Generic clipboard copy helper with button feedback + legacy fallback.
+function copyTextToClipboard(text, btnEl, idleLabel){
+  const idle = idleLabel || '<span>📋</span> Copy';
+  const finish = (ok) => {
+    if (!btnEl) return;
+    btnEl.innerHTML = ok ? '<span>✓</span> Copied' : '<span>⚠</span> Copy Failed';
+    setTimeout(() => { btnEl.innerHTML = idle; }, 2000);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => finish(true)).catch(() => {
+      legacyCopyFallback(text, finish);
+    });
+  } else {
+    legacyCopyFallback(text, finish);
+  }
+}
+function legacyCopyFallback(text, finish){
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    finish(ok);
+  } catch (e) { finish(false); }
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+function formatDateHuman(dob){
+  const [y,m,d] = dob.split('-').map(Number);
+  const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  return `${d} ${months[m-1]} ${y}`;
+}
+
+function downloadActiveChartImage(format, vargaKey, styleName, personName) {
+  downloadActiveChartImageFromWrapper('vargaSvgWrapper', format, vargaKey, styleName, personName);
+}
+
+function downloadActiveChartImageFromWrapper(wrapperId, format, vargaKey, styleName, personName) {
+  const svgEl = document.querySelector(`#${wrapperId} svg`);
+  if (!svgEl) return;
+
+  const safeName = (personName || 'Chart').replace(/[^a-z0-9]/gi, '_');
+  const filename = `${safeName}_${vargaKey}_${styleName}_chart.${format}`;
+
+  // Clone SVG and inline critical CSS styles for clean standalone rendering
+  const clonedSvg = svgEl.cloneNode(true);
+  clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+  const styleElement = document.createElement('style');
+  styleElement.textContent = `
+    .chart-bg-outer { fill: #07090F; }
+    .chart-line-main { stroke: #D4AF37; stroke-width: 1.6px; }
+    .chart-line-sub { stroke: rgba(212,175,55,0.4); stroke-width: 1px; }
+    .chart-line-wheel { stroke: rgba(66, 135, 126, 0.4); stroke-width: 1px; }
+    .chart-txt-house { fill: rgba(255,255,255,0.4); font-size: 9px; font-family: sans-serif; }
+    .chart-txt-sign { fill: #8C7323; font-size: 10px; font-weight: 600; font-family: sans-serif; }
+    .chart-txt-asc { fill: #D95F5F; font-size: 10px; font-weight: 700; font-family: sans-serif; }
+    .chart-txt-planet { fill: #F9D976; font-size: 11px; font-weight: 600; font-family: sans-serif; }
+    .chart-wheel-spoke { stroke: rgba(212,175,55,0.3); stroke-width: 1px; }
+    .aspect-line { stroke: rgba(94, 196, 183, 0.55); stroke-width: 1.1px; stroke-dasharray: 3 3; }
+    .aspect-line-mars { stroke: rgba(217, 95, 95, 0.6); }
+    .aspect-line-jupiter { stroke: rgba(249, 217, 118, 0.6); }
+    .aspect-line-saturn { stroke: rgba(107, 127, 163, 0.6); }
+  `;
+  clonedSvg.insertBefore(styleElement, clonedSvg.firstChild);
+
+  const serializer = new XMLSerializer();
+  let svgString = serializer.serializeToString(clonedSvg);
+
+  if (format === 'svg') {
+    const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  } else if (format === 'png') {
+    // Render to high-resolution 1200x1200 canvas
+    const canvas = document.createElement('canvas');
+    const scale = 4; // 4x supersampling for ultra-crisp resolution
+    canvas.width = 300 * scale;
+    canvas.height = 300 * scale;
+    const ctx = canvas.getContext('2d');
+
+    const img = new Image();
+    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+
+    img.onload = () => {
+      // Draw background
+      ctx.fillStyle = '#07090F';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+
+      const pngUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = pngUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+    img.src = url;
+  }
+}
+
+
+/* ---- Profile cards (menu) ---- */
+function renderProfileCards(){
+  const box=document.getElementById('profileCards'); if(!box) return;
+  const profiles=loadProfiles(), cur=document.getElementById('profileSelect').value;
+  document.getElementById('profCount').textContent = profiles.length ? `(${profiles.length})` : '';
+  if(!profiles.length){ box.innerHTML='<div class="prof-empty">No saved profiles yet.<br>Create your first chart with “Create New Profile” below.</div>'; return; }
+  const cols=['#D4AF37','#5EC4B7','#8A6FB8','#E0A64A','#6B7FA3','#C95050','#5B8A9E'];
+  box.innerHTML=profiles.map((p,i)=>{
+    const col=cols[[...(p.name||'?')].reduce((a,c)=>a+c.charCodeAt(0),0)%cols.length];
+    const place=(p.place||'').split(',')[0];
+    return `<div class="prof-card ${String(i)===cur?'active':''}" data-prof="${i}">
+      <span class="prof-av" style="background:${col}">${escapeHtml((p.name||'?').trim().charAt(0).toUpperCase())}</span>
+      <span class="prof-info"><b>${escapeHtml(p.name||'Unnamed')}${String(i)===cur?'<span class="prof-badge">Active</span>':''}</b>
+      <small>${formatDateHuman(p.dob)} · ${p.tob||''}${place?' · '+escapeHtml(place):''}</small></span>
+      <button type="button" class="prof-del" data-prof-del="${i}" title="Delete profile" aria-label="Delete profile">🗑️</button>
+    </div>`;
+  }).join('');
+}
+document.getElementById('profileCards').addEventListener('click',(e)=>{
+  const sel=document.getElementById('profileSelect');
+  const del=e.target.closest('[data-prof-del]');
+  if(del){ e.stopPropagation(); sel.value=del.dataset.profDel; document.getElementById('deleteProfileBtn').click(); return; }
+  const card=e.target.closest('[data-prof]');
+  if(card){ sel.value=card.dataset.prof; sel.dispatchEvent(new Event('change')); }
+});
+(function(){ const orig=refreshProfileSelect; refreshProfileSelect=function(){ orig.apply(this,arguments); renderProfileCards(); }; })();
+document.getElementById('openMenuBtn').addEventListener('click', renderProfileCards);
+/* ---- META: error boundaries around every panel builder ---- */
+const SAFE_BUILDERS = {
+  buildOverviewPanel:'My Chart', buildPlanetsPanel:'Planets', buildDashaSection:'Dasha', buildYogaSection:'Yogas',
+  buildShadbalaSection:'Shadbala', buildNumerologyPanel:'Numerology', buildVedicBirthdayPanel:'Vedic Birthday', buildMatchPanel:'Matching', buildPanchangaPanel:'Panchanga', buildTransitsPanel:'Transits', buildBhavaPanel:'Bhava Chalit', buildAshtakavargaSection:'Ashtakavarga', buildRelationshipsSection:'Relations'
+};
+Object.keys(SAFE_BUILDERS).forEach(name => {
+  const orig = window[name]; if (typeof orig !== 'function') return;
+  window[name] = function(){
+    try { return orig.apply(this, arguments); }
+    catch(err){
+      console.error('[' + name + ']', err); APP.report(SAFE_BUILDERS[name], err);
+      return `<div class="meta-err"><b>⚠ ${SAFE_BUILDERS[name]} couldn't be built.</b><p>The rest of your chart is fine. Try recalculating; if it keeps happening, use Menu → Contact Developer.</p><details><summary>Technical detail</summary><code>${escapeHtml(String(err && err.message || err))}</code></details></div>`;
+    }
+  };
+});
+
+/* ---- META: back-button routing (phone Back returns to Home instead of leaving the app) ---- */
+(function(){
+  const base = window.switchAppTab; let replaying = false;
+  window.switchAppTab = function(id){
+    base(id);
+    if (replaying || id === 'panel-export' || id === 'panel-contact') return;
+    const h = '#' + id.replace('panel-', '');
+    if (location.hash !== h){ try { history.pushState({ p: id }, '', h); } catch(e){} }
+  };
+  window.addEventListener('popstate', (e) => {
+    const id = e.state && e.state.p;
+    if (id && document.getElementById(id)){ replaying = true; base(id); replaying = false; }
+  });
+})();
+
+/* ---- META: keyboard, scroll-lock and accessibility for all modals ---- */
+(function(){
+  const modals = [...document.querySelectorAll('[id$="Modal"]')];
+  const sync = () => document.body.classList.toggle('modal-open', modals.some(m => m.classList.contains('show')));
+  modals.forEach(m => {
+    m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+    new MutationObserver(sync).observe(m, { attributes: true, attributeFilter: ['class'] });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const open = modals.filter(m => m.classList.contains('show'));
+    if (open.length) open[open.length - 1].classList.remove('show');
+  });
+  document.querySelectorAll('.pd-modal-close,.export-modal-close,[id$="ModalClose"],#mainMenuClose').forEach(b => b.setAttribute('aria-label', 'Close'));
+  const labels = { openMenuBtn: 'Open menu', hdrBack: 'Back to Home' };
+  Object.keys(labels).forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('aria-label', labels[id]); });
+  const menuBox = document.querySelector('#mainMenuModal > *');
+  if (menuBox) menuBox.insertAdjacentHTML('beforeend', `<div class="menu-version">${APP.name} · v${APP.version}</div>`);
+})();
+
+populateTz();
+refreshProfileSelect();
+/* ---- Intake: progress + welcome-back chips ---- */
+function inUpdate(){
+  const v = id => (document.getElementById(id).value||'').trim();
+  const d1 = v('profileName').length>0, d2 = !!(v('dobInput') && v('tobInput')), d3 = (typeof selectedLat==='number' && !isNaN(selectedLat));
+  [d1,d2,d3].forEach((d,i)=> document.querySelector(`.in-step[data-step="${i+1}"]`).classList.toggle('done', d));
+  const n=[d1,d2,d3].filter(Boolean).length, hints=["Let's start with your name","Now your birth date and time","Last step — where were you born?"];
+  document.getElementById('inBarFill').style.width = (n/3*100)+'%';
+  document.getElementById('inStepLbl').textContent = n===3 ? 'All set ✓' : `Step ${n+1} of 3`;
+  document.getElementById('inStepHint').textContent = n===3 ? 'Tap “Reveal my chart” below' : (!d1?hints[0]:!d2?hints[1]:hints[2]);
+}
+function renderIntakeSaved(){
+  const box=document.getElementById('inSaved'); if(!box) return;
+  const ps=loadProfiles();
+  if(!ps.length){ box.hidden=true; return; }
+  box.hidden=false;
+  box.innerHTML='<span>Welcome back — open a saved chart:</span>'+ps.map((p,i)=>`<button type="button" data-in-prof="${i}">${escapeHtml(p.name||'Unnamed')}</button>`).join('');
+}
+document.getElementById('inSaved').addEventListener('click',(e)=>{
+  const b=e.target.closest('[data-in-prof]'); if(!b) return;
+  const sel=document.getElementById('profileSelect'); sel.value=b.dataset.inProf; sel.dispatchEvent(new Event('change'));
+});
+(function(){
+  const form=document.getElementById('birthForm');
+  form.addEventListener('input',inUpdate); form.addEventListener('change',inUpdate);
+  form.addEventListener('reset',()=>setTimeout(inUpdate,0));
+  new MutationObserver(inUpdate).observe(document.getElementById('coordReadout'),{childList:true,characterData:true,subtree:true});
+  const o=refreshProfileSelect; refreshProfileSelect=function(){ o.apply(this,arguments); renderIntakeSaved(); };
+  renderIntakeSaved(); inUpdate();
+})();
+
+
+// Automatically track new profile saves and form clears
+document.getElementById('birthForm').addEventListener('submit', () => {
+  setTimeout(() => {
+    const sel = document.getElementById('profileSelect');
+    if (sel.value !== "") localStorage.setItem('VedicAstrology_lastProfileIdx', sel.value);
+  }, 500); // Trigger just after the chart renders
+});
+document.getElementById('newProfileBtn').addEventListener('click', () => {
+  localStorage.removeItem('VedicAstrology_lastProfileIdx');
+});
+document.getElementById('modalConfirm').addEventListener('click', () => {
+  localStorage.removeItem('VedicAstrology_lastProfileIdx');
+});
+
+// Auto-load last active profile on page load
+(function autoLoadLastProfile() {
+  const profiles = loadProfiles();
+  if (profiles && profiles.length > 0) {
+    let lastIdx = localStorage.getItem('VedicAstrology_lastProfileIdx');
+    // Default to the most recently added profile if none is stored or index is invalid
+    if (lastIdx === null || lastIdx >= profiles.length || lastIdx < 0 || lastIdx === "") {
+      lastIdx = profiles.length - 1;
+    }
+    const sel = document.getElementById('profileSelect');
+    sel.value = lastIdx;
+    if (sel.value !== "") {
+      sel.dispatchEvent(new Event('change')); // Trigger chart rendering
+    }
+  }
+})();
+</script>
+<script>
+(function(){
+const AREA={D1:['🧍','Self · Body'],D2:['💰','Wealth'],D3:['🦁','Siblings · Courage'],D4:['🏡','Home · Fortune'],D5:['👑','Fame · Power'],D6:['🩺','Health · Foes'],D7:['👶','Children'],D8:['⏳','Longevity'],D9:['💍','Marriage · Dharma'],D10:['💼','Career'],D11:['📈','Gains'],D12:['🌳','Parents'],D16:['🚗','Comforts'],D20:['🕉️','Spiritual'],D24:['🎓','Learning'],D27:['💪','Strength'],D30:['⚡','Troubles'],D40:['🌙','Maternal line'],D45:['☀️','Paternal line'],D60:['🌀','Past karma']};
+const P=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+const KEND=[1,4,7,10],TRI=[1,5,9],DUS=[6,8,12],UPA=[3,6,10,11];
+const f=(x,d)=>(typeof x==='number'&&isFinite(x))?x.toFixed(d):'—';
+const dms=d=>{const t=Math.round(d*3600);return Math.floor(t/3600)+'°'+String(Math.floor(t%3600/60)).padStart(2,'0')+'′'+String(t%60).padStart(2,'0')+'″'};
+const dc=s=>/Exalt|Own|Moola/i.test(s||'')?'g':/Debil|Enemy/i.test(s||'')?'b':'';
+const ord=n=>n+(['th','st','nd','rd'][(n%100>10&&n%100<14)?0:Math.min(n%10,4)%4]||'th');
+let tab=0;
+const _b=window.buildTransitsPanel; if(typeof _b==='function') window.buildTransitsPanel=function(c){window.__vgC=c;return _b.apply(this,arguments);};
+function model(c,k,v0){const v=v0||c.vargas[k],m=VARGAS[k],asc=v.ascendantSign,hs=v.houses;
+  const rows=P.map(n=>{const p=c.planets[n],s=v.planetVargaSign[n],h=((s-asc+12)%12)+1,hp=hs[h-1].planets.find(x=>x.name===n)||{};
+    const sb=c.shadbala&&c.shadbala.planets&&c.shadbala.planets[n];
+    return {n,p,s,h,dig:hp.dignity||{status:'',label:''},vg:s===p.sign,part:Math.min(m.n,Math.floor(p.degInSign/(30/m.n))+1),sb,sg:SIGNS[s],ret:p.retrograde,own:hs.filter(x=>x.signLord===n).map(x=>x.houseNum)};});
+  return {c,k,v,m,asc,hs,rows,cu:!!v0};}
+const chips=(a,cl)=>a.length?a.map(x=>`<span class="vx-chip ${cl||''}">${x}</span>`).join(''):'<span class="vx-chip">None</span>';
+const g=n=>`${PLANET_GLYPHS[n]} ${n}`;
+function overview(M){const {rows,hs,asc,m,k}=M,sg=SIGNS[asc],ll=rows.find(r=>r.n===sg.lord);
+  const cnt=f=>rows.filter(r=>f(r)).length, by=s=>rows.filter(r=>dc(r.dig.status)===s&&/Exalt|Own|Moola|Debil/i.test(r.dig.status));
+  const ex=rows.filter(r=>/Exalt/i.test(r.dig.status)),ow=rows.filter(r=>/Own|Moola/i.test(r.dig.status)),de=rows.filter(r=>/Debil/i.test(r.dig.status)),vg=rows.filter(r=>r.vg),rt=rows.filter(r=>r.ret);
+  const emp=hs.filter(h=>h.isEmpty).map(h=>'H'+h.houseNum),groups={};rows.forEach(r=>(groups[r.s]=groups[r.s]||[]).push(r.n));
+  const conj=Object.keys(groups).filter(s=>groups[s].length>1).map(s=>`${SIGNS[s].symbol} ${SIGNS[s].name}: ${groups[s].join(' + ')}`);
+  const bars=(title,keys,f)=>`<div class="vx-t wide"><label>${title}</label>${keys.map(x=>{const n=cnt(r=>f(r)===x);return `<div class="vx-bar"><span>${x}</span><i><u style="width:${n/9*100}%"></u></i><b>${n}</b></div>`}).join('')}</div>`;
+  const inH=a=>rows.filter(r=>a.includes(r.h)).length;
+  const notes=[];
+  if(ex.length)notes.push(['g',`⭐ Exalted: ${ex.map(r=>g(r.n)+' in H'+r.h).join(', ')} — peak strength in ${k}.`]);
+  if(ow.length)notes.push(['g',`🏠 Own/Moolatrikona sign: ${ow.map(r=>g(r.n)+' (H'+r.h+')').join(', ')} — steady and self-reliant.`]);
+  if(de.length)notes.push(['b',`⚠️ Debilitated: ${de.map(r=>g(r.n)+' in H'+r.h).join(', ')} — needs support from other planets.`]);
+  if(vg.length)notes.push(['g',`🔱 Vargottama (same sign as D1): ${vg.map(r=>g(r.n)).join(', ')} — results of these planets are strengthened.`]);
+  notes.push(['',`🧭 ${sg.name} ascendant: lord ${sg.lord} sits in your ${ord(ll.h)} house (${ll.sg.name}) — ${KEND.includes(ll.h)?'a Kendra, supportive':TRI.includes(ll.h)?'a Trikona, fortunate':DUS.includes(ll.h)?'a Dusthana, brings challenge and growth':'a neutral house'}.`]);
+  return `<div class="vx-grid">
+   <div class="vx-t"><label>Lagna</label><b>${sg.symbol} ${sg.name}</b><small>${sg.sk} · ${sg.element} · ${sg.modality}</small></div>
+   <div class="vx-t"><label>Lagna lord</label><b>${g(sg.lord)}</b><small>H${ll.h} · ${ll.sg.symbol} ${ll.sg.name}${ll.dig.label?' · '+ll.dig.label:''}</small></div>
+   <div class="vx-t"><label>Division</label><b>1/${m.n} · ${m.name}</b><small>${m.full}</small></div>
+   <div class="vx-t"><label>Houses occupied</label><b>${12-emp.length} of 12</b><small>Empty: ${emp.join(', ')||'none'}</small></div>
+   <div class="vx-t"><label>Vargottama ★</label>${chips(vg.map(r=>g(r.n)),'g')}</div>
+   <div class="vx-t"><label>Retrograde ℞</label>${chips(rt.map(r=>g(r.n)),'t')}</div>
+   <div class="vx-t"><label>Strong signs</label>${chips(ex.concat(ow).map(r=>g(r.n)),'g')}</div>
+   <div class="vx-t"><label>Debilitated</label>${chips(de.map(r=>g(r.n)),'b')}</div>
+   <div class="vx-t"><label>Kendra · Trikona</label><b>${inH(KEND)} · ${inH(TRI)}</b><small>planets in 1-4-7-10 · 1-5-9</small></div>
+   <div class="vx-t"><label>Dusthana · Upachaya</label><b>${inH(DUS)} · ${inH(UPA)}</b><small>planets in 6-8-12 · 3-6-10-11</small></div>
+   <div class="vx-t wide"><label>Conjunctions (same sign)</label>${conj.length?conj.map(x=>`<span class="vx-chip t">${x}</span>`).join(''):'<small>No two planets share a sign.</small>'}</div>
+   ${bars('Element balance',['Fire','Earth','Air','Water'],r=>r.sg.element)}${bars('Modality balance',['Movable','Fixed','Dual'],r=>r.sg.modality)}</div>
+   ${notes.map(x=>`<div class="vx-note ${x[0]}">${x[1]}</div>`).join('')}`;}
+function planets(M){const {rows,m,k,c}=M;
+  return rows.map(r=>{const p=r.p,nk=p.nakshatra,sb=r.sb,kv=(l,v,w)=>`<div class="vx-kv${w?' w':''}"><label>${l}</label><span>${v}</span></div>`;
+   return `<details class="vx-pl"><summary><span class="vx-gl">${PLANET_GLYPHS[r.n]}</span><div><b>${r.n}${r.ret?' ℞':''}${r.vg?' ★':''}</b><small>${r.sg.symbol} ${r.sg.name} · H${r.h}</small></div><span class="vx-chip ${dc(r.dig.status)}">${r.dig.status||'—'}</span></summary><div class="vx-body">
+    ${kv(k+' sign',`${r.sg.symbol} ${r.sg.name} (${r.sg.sk})`)}${kv('Sign lord',g(r.sg.lord))}${kv('Element · Mode',r.sg.element+' · '+r.sg.modality)}${kv('House in '+k,'H'+r.h+' · '+(KEND.includes(r.h)?'Kendra':TRI.includes(r.h)?'Trikona':DUS.includes(r.h)?'Dusthana':UPA.includes(r.h)?'Upachaya':'Neutral'))}
+    ${kv('Division part',r.part+' of '+m.n)}${kv('Rules houses',r.own.length?r.own.map(x=>'H'+x).join(', '):'none')}${kv('Vargottama',r.vg?'Yes ★ same as D1':'No')}${kv('Dignity here',r.dig.label||'—')}
+    ${kv('D1 position',`${SIGNS[p.sign].symbol} ${SIGNS[p.sign].name} ${dms(p.degInSign)}`,1)}${kv('Nakshatra',`${nk.name} · pada ${nk.pada}`)}${kv('Nak. lord · deity',nk.lord+' · '+nk.deity)}${kv('D1 house · dignity','H'+p.house+' · '+((p.dignity||{}).label||(p.dignity||{}).status||'—'))}
+    ${kv('Motion',(p.retrograde?'Retrograde ℞':'Direct')+' · '+f(Math.abs(p.speed),3)+'°/day')}${kv('Combustion',p.combustion&&p.combustion.combust?'Combust ('+f(p.combustion.separation,1)+'° < '+p.combustion.orb+'°)':'Free ('+(p.combustion?f(p.combustion.separation,1)+'° from Sun':'—')+')')}${kv('Aspects D1 houses',(p.aspectsHouses||[]).map(x=>'H'+x).join(', ')||'—')}
+    ${sb?kv('Shadbala',f(sb.totalRupas,2)+' / '+sb.requiredRupas+' rupas '+(sb.isStrong?'✓ strong':'✗ weak'),1)+`<div class="vx-kv w"><div class="vx-bar" style="grid-template-columns:1fr"><i><u style="width:${Math.min(100,(sb.percentOfRequired||0)/2)}%"></u></i></div></div>`:''}
+   </div></details>`}).join('');}
+function houses(M){const {hs,rows,k,c}=M,sav=k==='D1'&&!M.cu&&c.ashtakavarga&&c.ashtakavarga.sav;
+  return `<div class="vx-hs">`+hs.map(h=>{const lr=rows.find(r=>r.n===h.signLord),th=(typeof HOUSE_THEMES!=='undefined'&&HOUSE_THEMES[h.houseNum-1])||'';
+   return `<div class="vx-h ${h.isEmpty?'':'occ'}"><header><em>${h.houseNum}</em><b>${h.signSymbol} ${h.signName}</b></header><p>${h.signSanskrit} · ${h.element} · ${h.modality}</p><p>${th}</p>
+   <p>Lord: <b>${h.signLord}</b>${lr?' in H'+lr.h+' ('+lr.sg.name+')':''}</p><div>${h.isEmpty?'<span class="vx-chip">Empty</span>':h.planets.map(p=>`<span class="vx-chip ${dc(p.dignity.status)}">${PLANET_GLYPHS[p.name]} ${p.name}${p.retrograde?' ℞':''}</span>`).join('')}</div>
+   ${sav?`<div class="vx-bar" style="grid-template-columns:34px 1fr 22px"><span>SAV</span><i><u style="width:${Math.min(100,sav[h.sign]/40*100)}%"></u></i><b>${sav[h.sign]}</b></div>`:''}</div>`}).join('')+`</div>`;}
+function vsD1(M){const {rows,k,asc,c}=M;const a1=c.vargas.D1.ascendantSign;
+  return `<div class="vx-note">Compare each planet's Rashi (D1) sign with its ${k} sign. Same sign = <b>Vargottama ★</b>.</div>
+   <div class="vx-row ${asc===a1?'vg':''}"><span class="vx-gl">⬆</span><span>Lagna: ${SIGNS[a1].symbol} ${SIGNS[a1].name} → ${SIGNS[asc].symbol} ${SIGNS[asc].name}</span><b>${asc===a1?'★':''}</b></div>`+
+   rows.map(r=>`<div class="vx-row ${r.vg?'vg':''}"><span class="vx-gl">${PLANET_GLYPHS[r.n]}</span><span>${SIGNS[r.p.sign].symbol} ${SIGNS[r.p.sign].name} → ${r.sg.symbol} ${r.sg.name}<br><small style="color:var(--text-muted)">House ${r.p.house} → ${r.h} · ${r.dig.label||''}</small></span><b>${r.vg?'★':''}</b></div>`).join('');}
+function build(c,k,v){const M=model(c,k,v),T=['Overview','Planets','Houses','vs D1'],B=[overview,planets,houses,vsD1];
+  return `<div class="vx"><div class="vx-tabs">${T.map((t,i)=>`<button type="button" data-i="${i}" class="${i===tab?'on':''}">${['✨','🪐','🏠','⚖️'][i]} ${t}</button>`).join('')}</div>${B.map((f,i)=>`<div class="vx-pane ${i===tab?'on':''}">${f(M)}</div>`).join('')}</div>`;}
+const GRP={core:['🌅','Core','#F9D976'],arudha:['🪞','Arudha','#5EC4B7'],karaka:['🧿','Karaka','#A98BD6'],kala:['⏳','Kala','#7F95C4']};
+const ab=k=>k==='UL_LAGNA'?'Lagna':k;
+function mk(selId,id,order){const sel=document.getElementById(selId);if(!sel)return null;let r=document.getElementById(id);if(r)return r;r=document.createElement('div');r.className='vg-rail';r.id=id;r.dataset.sel=selId;if(order)r.style.order=order;sel.closest('.varga-toolbar').prepend(r);
+  r.addEventListener('click',e=>{const b=e.target.closest('.vg-tile');if(!b)return;sel.value=b.dataset.k;sel.dispatchEvent(new Event('change'));});return r;}
+function fillV(r,sel){r.innerHTML=[...sel.options].map(o=>{const k=o.value,a=AREA[k]||['✦',''],nm=(o.text.split('—')[1]||k).split('(')[0].trim();return `<button type="button" class="vg-tile" data-k="${k}"><i>${a[0]}</i><b>${k}</b><small>${nm}</small><em>${a[1]}</em></button>`}).join('');}
+function rail(){const c=window.__vgC;
+  [['vargaSelect','vgRail'],['lagnaVargaSelect','vgRail2']].forEach(([s,id])=>{const r=mk(s,id);if(r&&!r.firstChild)fillV(r,document.getElementById(s));});
+  const r=mk('lagnaSelect','lgRail',-2);
+  if(r&&c&&r.dataset.jd!==String(c.julianDay)){r.dataset.jd=c.julianDay;r.dataset.cur='';const sg=computeAllSpecialLagnaSigns(c),ud=c.ascendant.sign;let h='';
+    Object.keys(GRP).forEach(gp=>{h+=`<span class="lg-sep" style="--gc:${GRP[gp][2]}">${GRP[gp][0]} ${GRP[gp][1]}</span>`;SPECIAL_LAGNAS_ORDER.filter(k=>SPECIAL_LAGNAS_META[k].group===gp).forEach(k=>{const s=SIGNS[sg[k]];h+=`<button type="button" class="vg-tile lg" style="--gc:${GRP[gp][2]}" data-k="${k}"><i>${s.symbol}</i><b>${ab(k)}</b><small>${SPECIAL_LAGNAS_META[k].name}</small><em>${s.name} · H${((sg[k]-ud+12)%12)+1}</em></button>`;});});r.innerHTML=h;}
+  document.querySelectorAll('.vg-rail').forEach(r=>{const s=document.getElementById(r.dataset.sel);if(!s||r.dataset.cur===s.value)return;r.dataset.cur=s.value;r.querySelectorAll('.vg-tile').forEach(t=>{const on=t.dataset.k===s.value;t.classList.toggle('active',on);if(on)t.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});});});}
+function lagnaExtras(){const c=window.__vgC,sel=document.getElementById('lagnaSelect'),strip=document.getElementById('lagnaSummaryStrip');if(!c||!sel||!strip)return;
+  const sg=computeAllSpecialLagnaSigns(c),ud=c.ascendant.sign;let map=document.getElementById('lagnaMap');
+  if(!map||map.dataset.jd!==String(c.julianDay)){if(map)map.remove();map=document.createElement('div');map.id='lagnaMap';map.dataset.jd=c.julianDay;
+    map.innerHTML=`<h4 class="vl-h">Where every lagna falls</h4><div class="vl-grid">${SIGNS.map((s,i)=>`<div class="vl-cell${i===ud?' ud':''}"><header><em>${s.symbol}</em><b>${s.name}</b><small>H${((i-ud+12)%12)+1}</small></header><div>${SPECIAL_LAGNAS_ORDER.filter(k=>sg[k]===i).map(k=>`<button type="button" class="vl-chip" style="--gc:${GRP[SPECIAL_LAGNAS_META[k].group][2]}" data-k="${k}">${ab(k)}</button>`).join('')}</div><p>${P.filter(n=>c.planets[n].sign===i).map(n=>PLANET_GLYPHS[n]).join(' ')||'·'}</p></div>`).join('')}</div><div class="vxa-leg">${Object.values(GRP).map(g=>`<span><i style="background:${g[2]}"></i>${g[1]}</span>`).join('')}<span>Bottom line = D1 planets</span></div>`;
+    strip.parentNode.insertBefore(map,strip);map.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;sel.value=b.dataset.k;sel.dispatchEvent(new Event('change'));});}
+  map.querySelectorAll('.vl-chip').forEach(x=>x.classList.toggle('on',x.dataset.k===sel.value));
+  const card=strip.querySelector('.lagna-summary-card');
+  if(card&&!card.dataset.vg){card.dataset.vg=1;const key=sel.value,s=sg[key],S=SIGNS[s],lr=c.planets[S.lord],h=((s-ud+12)%12)+1,occ=P.filter(n=>c.planets[n].sign===s),also=SPECIAL_LAGNAS_ORDER.filter(k=>k!==key&&sg[k]===s);
+    card.style.setProperty('--gc',GRP[SPECIAL_LAGNAS_META[key].group][2]);
+    card.insertAdjacentHTML('beforeend',`<div class="vx-grid" style="margin-top:12px"><div class="vx-t"><label>From Udaya Lagna</label><b>House ${h}</b><small>${h===1?'Same as the ascendant':ord(h)+' from the ascendant · '+(KEND.includes(h)?'Kendra':TRI.includes(h)?'Trikona':DUS.includes(h)?'Dusthana':UPA.includes(h)?'Upachaya':'Neutral')}</small></div><div class="vx-t"><label>Sign nature</label><b>${S.element} · ${S.modality}</b><small>${S.sk}</small></div><div class="vx-t"><label>Sign lord</label><b>${g(S.lord)}</b><small>${lr?'in '+SIGNS[lr.sign].symbol+' '+SIGNS[lr.sign].name+' · H'+lr.house+' · '+((lr.dignity||{}).label||''):''}</small></div><div class="vx-t"><label>Planets here (D1)</label>${chips(occ.map(g),'g')}</div><div class="vx-t wide"><label>Other lagnas in this sign</label>${also.length?also.map(k=>`<span class="vx-chip t">${SPECIAL_LAGNAS_META[k].name}</span>`).join(''):'<small>None — this lagna stands alone.</small>'}</div></div>`);}}
+function aspects(card,k,v0){
+  const c=window.__vgC,wrap=card.querySelector('.varga-aspect-table-wrap');
+  if(!c||!(v0||c.vargas[k])||!wrap||wrap.dataset.vxa||typeof computeVargaAspects!=='function')return; wrap.dataset.vxa=1;
+  const rows=computeVargaAspects(c,v0||c.vargas[k]),col=n=>({Mars:'#D95F5F',Jupiter:'#F9D976',Saturn:'#7F95C4',Rahu:'#A98BD6',Ketu:'#A98BD6'}[n]||'#5EC4B7'),num=l=>(String(l).match(/(\d+)/)||[,'7'])[1];
+  const M={},inc={},hh={};
+  rows.forEach(r=>{r.targets.filter(t=>t.toPlanet).forEach(t=>{(M[r.planet]=M[r.planet]||{})[t.toPlanet]=t.label;(inc[t.toPlanet]=inc[t.toPlanet]||[]).push(r.planet);});r.aspectedHouses.forEach(h=>(hh[h]=hh[h]||[]).push(r.planet));});
+  let mut=0;const mp=[];P.forEach((a,i)=>P.slice(i+1).forEach(b=>{if(M[a]&&M[a][b]&&M[b]&&M[b][a]){mut++;mp.push(a+' ⇄ '+b);}}));
+  const total=rows.reduce((s,r)=>s+r.targets.filter(t=>t.toPlanet).length,0);
+  const top=Object.keys(inc).sort((a,b)=>inc[b].length-inc[a].length)[0],topH=Object.keys(hh).sort((a,b)=>hh[b].length-hh[a].length)[0];
+  const cell=(a,b)=>{if(a===b)return '<i class="vxa-c self"></i>';const l=M[a]&&M[a][b];if(!l)return '<i class="vxa-c"></i>';const m=M[b]&&M[b][a];
+    return `<button type="button" class="vxa-c on${m?' m':''}" style="--c:${col(a)}" data-t="${PLANET_GLYPHS[a]} ${a} → ${PLANET_GLYPHS[b]} ${b}: ${l}${m?' · 🔗 mutual':''}">${num(l)}</button>`;};
+  const html=`<div class="vxa">
+   <div class="vx-grid">
+    <div class="vx-t"><label>Planet → planet aspects</label><b>${total}</b><small>drishti links in ${k}</small></div>
+    <div class="vx-t"><label>Most aspected planet</label><b>${top?g(top):'—'}</b><small>${top?inc[top].length+' aspects from '+inc[top].join(', '):''}</small></div>
+    <div class="vx-t"><label>Most aspected house</label><b>${topH?'H'+topH:'—'}</b><small>${topH?hh[topH].length+' planets look at it':''}</small></div>
+    <div class="vx-t"><label>Mutual aspects 🔗</label><b>${mut}</b><small>${mp.slice(0,4).join(' · ')||'none'}</small></div></div>
+   <h4>Aspect map · tap a cell</h4>
+   <div class="vxa-mx">${'<i class="vxa-hd"></i>'+P.map(n=>`<b class="vxa-hd" title="${n} receives">${PLANET_GLYPHS[n]}</b>`).join('')}${P.map(a=>`<b class="vxa-hd" title="${a} aspects">${PLANET_GLYPHS[a]}</b>`+P.map(b=>cell(a,b)).join('')).join('')}</div>
+   <div class="vxa-tip" id="vxaTip">Rows aspect → columns. The number is the aspect (3rd, 4th, 5th, 7th, 8th, 9th, 10th). Gold ring = mutual.</div>
+   <div class="vxa-leg"><span><i style="background:#5EC4B7"></i>7th (all)</span><span><i style="background:#D95F5F"></i>Mars 4·8</span><span><i style="background:#F9D976"></i>Jupiter 5·9</span><span><i style="background:#7F95C4"></i>Saturn 3·10</span><span><i style="background:#A98BD6"></i>Rahu/Ketu 5·9</span></div>
+   <h4>Houses under drishti</h4>
+   <div class="vxa-hs">${Array.from({length:12},(_,i)=>{const a=hh[i+1]||[];return `<div class="vxa-h${a.length>2?' hot':''}"><b>${i+1}</b><span>${a.map(n=>PLANET_GLYPHS[n]).join('')||'·'}</span><small>${a.length} aspect${a.length===1?'':'s'}</small></div>`}).join('')}</div>
+   <h4>Planet by planet</h4>
+   <div class="vxa-cards">${rows.map(r=>{const pt=r.targets.filter(t=>t.toPlanet);return `<div class="vxa-p" style="--c:${col(r.planet)}"><header><span class="vx-gl">${r.glyph}</span><div><b>${r.planet}${r.retrograde?' ℞':''}</b><small>H${r.fromHouse} · ${r.fromSign} · ${r.nakshatra} p${r.pada}</small></div></header>
+    <p>${r.degree} · Nak. lord ${r.nakshatraLord}</p><label>Looks at houses</label>${chips(r.aspectedHouses.map(x=>'H'+x),'t')}
+    <label>Hits planets</label>${pt.length?pt.map(t=>`<span class="vx-chip" title="${t.label}">${PLANET_GLYPHS[t.toPlanet]} ${t.toPlanet} · H${t.toHouse} · ${num(t.label)}th</span>`).join(''):'<span class="vx-chip">No planets</span>'}
+    <label>Receives from</label>${chips((inc[r.planet]||[]).map(n=>PLANET_GLYPHS[n]+' '+n),'g')}</div>`}).join('')}</div></div>`;
+  wrap.classList.add('vxa-on');wrap.insertAdjacentHTML('beforeend',html);
+  const tip=wrap.querySelector('#vxaTip'),mx=wrap.querySelector('.vxa-mx');
+  mx.addEventListener('click',e=>{const b=e.target.closest('.vxa-c.on');if(!b)return;mx.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');tip.textContent=b.dataset.t;});
+}
+function decorate(card,lag){const c0=window.__vgC,V=(lag&&c0)?buildVargaFromLagna(c0,computeAllSpecialLagnaSigns(c0)[lag],((card.querySelector('.varga-code')||{}).textContent||'').trim()):null;const k=((card.querySelector('.varga-code')||{}).textContent||'').trim(),a=AREA[k],t=card.querySelector('.varga-card-title');
+  try{aspects(card,k,V);}catch(e){console.warn('aspects',e);}
+  if(a&&t)t.insertAdjacentHTML('afterend',`<div class="vg-area"><span>${a[0]}</span>${a[1]}</div>`);
+  const cc=card.querySelector('.varga-chart-container');if(cc&&!cc.querySelector('.vc-leg'))cc.insertAdjacentHTML('beforeend','<div class="vc-leg"><span><i style="background:#D4AF37"></i>Kendra</span><span><i style="background:#5EC4B7"></i>Trikona</span><span><i style="background:#E25555"></i>Dusthana</span><span><i class="r" style="border-color:#F9D976"></i>Exalted</span><span><i class="r" style="border-color:#5EC4B7"></i>Own sign</span><span><i class="r" style="border-color:#E25555"></i>Debilitated</span><span style="color:#FF8A8A">R&nbsp;Retrograde</span><span style="color:#F9D976">★&nbsp;Vargottama</span></div>');
+  const wrap=card.querySelector('.varga-house-table-wrap'),c=window.__vgC;
+  if(wrap&&c&&(V||(c.vargas&&c.vargas[k]))){let ok=false;try{wrap.innerHTML=build(c,k,V);ok=true;}catch(e){console.warn('explorer',e);}
+    const tb=ok&&wrap.querySelector('.vx-tabs');if(tb)tb.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;tab=+b.dataset.i;wrap.querySelectorAll('.vx-tabs button').forEach((x,i)=>x.classList.toggle('on',i===tab));wrap.querySelectorAll('.vx-pane').forEach((x,i)=>x.classList.toggle('on',i===tab));});}}
+setInterval(()=>{if(document.hidden)return;rail();document.querySelectorAll('.varga-style-toggle').forEach(gp=>{const i=Math.max(0,[...gp.children].findIndex(b=>b.classList.contains('active')));if(gp.dataset.i!==String(i)){gp.dataset.i=i;gp.style.setProperty('--i',i);}});
+  const card=document.querySelector('#vargaDisplayContainer .varga-card');if(card&&!card.dataset.vg){card.dataset.vg=1;try{decorate(card);}catch(e){console.warn('decorate',e);}}
+  try{lagnaExtras();}catch(e){console.warn('lagna',e);}
+  const lc=document.querySelector('#panel-lagnas .varga-single-display .varga-card,#panel-lagnas .varga-card');const ls=document.getElementById('lagnaSelect');if(lc&&ls&&!lc.dataset.vg){lc.dataset.vg=1;try{decorate(lc,ls.value);}catch(e){console.warn('lagna decorate',e);}}},300);
+})();
+</script>
+<script>
+/* ===== Chart Reading: plain-language interpretation engine ===== */
+(function(){
+const PL=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'],SEV=PL.slice(0,7),KEND=[1,4,7,10],TRI=[1,5,9],DUS=[6,8,12],UPA=[3,6,10,11],BEN=['Jupiter','Venus','Mercury','Moon'],MAL=['Saturn','Mars','Rahu','Ketu'];
+const SK=['bold, direct, pioneering','steady, sensual, determined','curious, witty, adaptable','nurturing, emotional, protective','proud, generous, commanding','analytical, practical, perfectionist','charming, fair-minded, partnership-focused','intense, private, transformative','optimistic, freedom-loving, philosophical','disciplined, ambitious, patient','original, humanitarian, independent','compassionate, intuitive, dreamy'];
+const NK=['swift, healing','intense, carries burdens','sharp, purifying','charming, creative','searching, curious','stormy, transformative','renewing, optimistic','nourishing, wise','perceptive, magnetic','regal, ancestral','pleasure-loving, creative','dependable, helpful','skilled, clever','artistic, striking','independent, flexible','determined, goal-driven','devoted, friendly','protective, senior','rooted, truth-seeking','invincible, persuasive','lasting victory, principled','listening, learning','rhythmic, prosperous','healing, secretive','intense, idealistic','deep, compassionate','gentle, guiding'];
+const PT={Sun:['soul, authority, confidence','recognition and self-belief','ego clashes and low confidence'],Moon:['mind, emotions, mother, peace','emotional steadiness and popularity','mood swings and restlessness'],Mars:['energy, courage, drive','boldness and stamina','anger, accidents and conflict'],Mercury:['intellect, speech, business','sharp thinking and communication','nervousness and scattered focus'],Jupiter:['wisdom, luck, teachers, children','guidance, growth and protection','over-optimism and missed chances'],Venus:['love, comforts, arts, spouse','harmony, attraction and pleasure','relationship friction and overindulgence'],Saturn:['discipline, karma, delay, service','lasting success through effort','delays, burden and isolation'],Rahu:['ambition, foreign things, obsession','sudden rise and unconventional gains','confusion and restless craving'],Ketu:['detachment, past skills, spirituality','deep insight and release','withdrawal and lack of direction']};
+const HT=['self, body, personality','money, family, speech','courage, siblings, self-effort','home, mother, inner peace','children, creativity, intelligence','work, service, health issues, rivals','marriage and partnerships','change, research, sudden events','luck, dharma, mentors','career and public status','gains, friends, aspirations','losses, foreign lands, sleep, moksha'];
+const AREAS=[{id:'car',i:'💼',n:'Career & Status',h:[10],k:['Sun','Saturn','Mercury'],v:'D10'},{id:'mar',i:'💍',n:'Marriage & Partnership',h:[7],k:['Venus','Jupiter'],v:'D9'},{id:'wel',i:'💰',n:'Wealth & Gains',h:[2,11],k:['Jupiter','Venus'],v:'D2'},{id:'hea',i:'🩺',n:'Health & Vitality',h:[1,6],k:['Sun','Moon'],v:'D1'},{id:'edu',i:'🎓',n:'Education & Intellect',h:[4,5],k:['Mercury','Jupiter'],v:'D24'},{id:'chi',i:'👶',n:'Children',h:[5],k:['Jupiter'],v:'D7'},{id:'hom',i:'🏡',n:'Home, Mother & Property',h:[4],k:['Moon','Mars'],v:'D4'},{id:'spi',i:'🕉️',n:'Luck & Spirituality',h:[9,12],k:['Jupiter','Ketu'],v:'D20'}];
+const YX={panchaMahapurusha:['Pancha Mahapurusha','a rare planetary excellence that gives distinction'],gajaKesari:['Gaja Kesari','wisdom, good name and protection'],rajaYogas:['Raja Yoga','power, status and success'],parivartana:['Parivartana (exchange)','two planets swap signs, tightly linking their houses'],viparitaRaja:['Viparita Raja','gains that rise out of hardship'],neechaBhanga:['Neecha Bhanga','a weakness that gets cancelled; strength after struggle']};
+const ord=n=>n+(['th','st','nd','rd'][(n%100>10&&n%100<14)?0:Math.min(n%10,4)%4]||'th'),esc=s=>String(s).replace(/</g,'&lt;');
+const sgn=s=>SIGNS[s].symbol+' '+SIGNS[s].name,gl=n=>PLANET_GLYPHS[n]+' '+n,grp=h=>KEND.includes(h)?'Kendra':TRI.includes(h)?'Trikona':DUS.includes(h)?'Dusthana':UPA.includes(h)?'Upachaya':'neutral house';
+function X(c){const D=c.vargas.D1,hs=D.houses,P=c.planets,dg=n=>{const s=(P[n].dignity||{}).status||'';return /Exalt|Own|Moola/i.test(s)?2:/Debil/i.test(s)?-2:/Enemy/i.test(s)?-1:/Friend/i.test(s)?1:0;};
+  const hasp=h=>PL.filter(a=>(P[a].aspectsHouses||[]).includes(h)&&P[a].house!==h),rules=n=>hs.filter(x=>x.signLord===n).map(x=>x.houseNum),sb=n=>c.shadbala&&c.shadbala.planets&&c.shadbala.planets[n];
+  const ps=n=>dg(n)*2+(KEND.includes(P[n].house)||TRI.includes(P[n].house)?1:DUS.includes(P[n].house)?-1:0)+(sb(n)?(sb(n).isStrong?1:-1):0)-((P[n].combustion||{}).combust?1:0);
+  return {c,hs,P,dg,hasp,rules,sb,ps,lord:h=>hs[h-1].signLord,sav:c.ashtakavarga.sav,asc:c.ascendant.sign};}
+function planetRead(x,n){const p=x.P[n],h=p.house,d=x.dg(n),t=PT[n],L=[];
+  L.push(`${n}'s themes — ${t[0]} — show up through ${HT[h-1]} (${ord(h)} house, ${grp(h)}).`);
+  L.push(d>=2?`✓ Strong in ${SIGNS[p.sign].name} (${p.dignity.label||p.dignity.status}): it delivers ${t[1]} readily.`:d<=-2?`⚠ Weak in ${SIGNS[p.sign].name} (${p.dignity.label||p.dignity.status}): watch for ${t[2]}; effort and remedies help.`:d<0?`⚠ Uncomfortable in an unfriendly sign: results come with friction.`:d>0?`✓ In a friendly sign: supported and cooperative.`:`In a neutral sign: results depend on aspects and the running period.`);
+  if(DUS.includes(h)&&MAL.concat('Sun').includes(n))L.push('A harsh planet in a dusthana can still fight off enemies and problems.');
+  if(p.retrograde&&n!=='Rahu'&&n!=='Ketu')L.push('℞ Retrograde: results come late, turn inward or get revisited before they land.');
+  if((p.combustion||{}).combust)L.push('☀ Combust (too close to the Sun): its own voice is dimmed.');
+  const c=x.c.vargas.D9;if(c&&c.planetVargaSign[n]===p.sign)L.push('★ Vargottama (same sign in D9): extra strength.');
+  const co=PL.filter(o=>o!==n&&x.P[o].sign===p.sign);if(co.length)L.push(`Conjunct ${co.join(', ')}: their energies blend with ${n}.`);
+  const as=PL.filter(o=>o!==n&&(x.P[o].aspectsHouses||[]).includes(h));if(as.length)L.push(`Aspected by ${as.map(o=>o+(BEN.includes(o)&&o!=='Moon'?' (helpful)':MAL.includes(o)?' (pressuring)':'')).join(', ')}.`);
+  const r=x.rules(n);if(r.length)L.push(`Rules the ${r.map(ord).join(' & ')} house${r.length>1?'s':''}, tying those areas to ${n}'s story.`);
+  return L;}
+function areaScore(x,A){let sc=50,w=[];
+  A.h.forEach(h=>{const lo=x.lord(h),lh=x.P[lo].house,d=x.dg(lo);
+    if(KEND.includes(lh)||TRI.includes(lh)){sc+=8;w.push(['g',`${ord(h)} lord ${lo} sits in house ${lh} (${grp(lh)}) — supportive`]);}else if(DUS.includes(lh)){sc-=8;w.push(['b',`${ord(h)} lord ${lo} sits in house ${lh} (dusthana) — needs effort`]);}else w.push(['',`${ord(h)} lord ${lo} sits in house ${lh}`]);
+    if(d>=2){sc+=7;w.push(['g',`${lo} is strong in its sign`]);}else if(d<=-2){sc-=7;w.push(['b',`${lo} is weak (debilitated)`]);}
+    PL.filter(n=>x.P[n].house===h).forEach(n=>{if(BEN.includes(n)){sc+=5;w.push(['g',`${n} in house ${h} adds support`]);}else if(!UPA.includes(h)){sc-=5;w.push(['b',`${n} in house ${h} adds pressure`]);}else sc+=2;});
+    const a=x.hasp(h);if(a.includes('Jupiter')){sc+=6;w.push(['g','Jupiter aspects this house — protection and growth']);}
+    const m=a.filter(n=>MAL.includes(n));if(m.length){sc-=3*m.length;w.push(['b',`${m.join(', ')} aspect${m.length>1?'':'s'} this house`]);}
+    const sv=x.sav[x.hs[h-1].sign];sc+=(sv-28)*.6;w.push([sv>=28?'g':'b',`Ashtakavarga: ${sv} points in house ${h} (28 = average)`]);});
+  A.k.forEach(n=>{const d=x.dg(n),s=x.sb(n);if(d>=2){sc+=5;w.push(['g',`Significator ${n} is strong`]);}else if(d<=-2){sc-=5;w.push(['b',`Significator ${n} is weak`]);}if(s)sc+=s.isStrong?3:-3;});
+  sc=Math.max(8,Math.min(96,Math.round(sc)));return {sc,w,v:sc>=70?['Strong','g']:sc>=55?['Good','t']:sc>=40?['Mixed','']:['Needs care','b']};}
+function periods(x){const md=x.c.dashaData.mahadashas,now=Date.now(),lim=now+22*3.156e10,o=[];md.forEach(m=>{if(m.endDate<now||m.startDate>lim)return;calculateAntardashas(m).forEach(a=>{if(a.endDate>now&&a.startDate<lim)o.push({m:m.lord,a:a.lord,s:a.startDate,e:a.endDate});});});return o;}
+function related(x,A){const s=new Set(A.k);A.h.forEach(h=>{s.add(x.lord(h));PL.forEach(n=>{if(x.P[n].house===h)s.add(n);});});return s;}
+function windows(x,A,pr){const r=related(x,A),w=pr.map(p=>({p,s:(r.has(p.a)?2:0)+(r.has(p.m)?1:0)})).filter(o=>o.s>=2);const best=w.filter(o=>o.s>=3);return (best.length>=2?best:w).slice(0,3);}
+function trans(x){const t=new Date(),jd=toJulianDay(t.getUTCFullYear(),t.getUTCMonth()+1,t.getUTCDate(),t.getUTCHours(),t.getUTCMinutes(),0),ay=lahiriAyanamsa(jd),sg=n=>Math.floor(normDeg((n==='Rahu'?rahuLongitude(jd):n==='Ketu'?rahuLongitude(jd)+180:planetGeocentricLongitude(n.toLowerCase(),jd))-ay)/30),mo=x.P.Moon.sign,o={};
+  ['Saturn','Jupiter','Rahu','Ketu'].forEach(n=>{const s=sg(n);o[n]={s,hl:(s-x.asc+12)%12+1,hm:(s-mo+12)%12+1};});return o;}
+function build(c){const x=X(c),pr=periods(x),act=findActiveDasha(c.dashaData.mahadashas,new Date()),tr=trans(x),name=(window.__vgProf||{}).name||'You';
+  const ar=AREAS.map(A=>({A,r:areaScore(x,A),w:windows(x,A,pr),rel:related(x,A)})).sort((a,b)=>b.r.sc-a.r.sc),asc=x.asc,mo=x.P.Moon,su=x.P.Sun,al=SIGNS[asc].lord,ap=x.P[al];
+  const rk=SEV.slice().sort((a,b)=>x.ps(b)-x.ps(a)),stP=rk[0],wkP=rk[rk.length-1],ml=act&&act.mahadasha,al2=act&&act.antardasha,pd=act&&act.pratyantardasha;
+  const foc=n=>[...new Set(x.rules(n).concat(x.P[n].house))].sort((a,b)=>a-b).map(h=>HT[h-1].split(',')[0]).join(' · ');
+  const yg=[];Object.keys(YX).forEach(k=>{const v=c.yogas[k];(Array.isArray(v)?v:v?[v]:[]).forEach(e=>{if(e&&typeof e==='object')yg.push({k,t:(e.yoga||e.name||e.type||YX[k][0])+(e.planet?' · '+e.planet:'')+(e.house?' · H'+e.house:''),d:YX[k][1]});});});
+  const sd=tr.Saturn.hm,sade=sd===12?'Sade Sati — first phase (Saturn in the 12th from your Moon)':sd===1?'Sade Sati — peak phase (Saturn over your Moon sign)':sd===2?'Sade Sati — last phase (Saturn in the 2nd from your Moon)':sd===4?'Ardha-Ashtama / Kantaka Shani (Saturn 4th from Moon)':sd===8?'Ashtama Shani (Saturn 8th from Moon)':'Not in Sade Sati';
+  const note=(cl,t)=>`<div class="vx-note ${cl}"><div>${t}</div></div>`,chips=(a,k)=>a.map(t=>`<span class="vx-chip ${k||''}">${t}</span>`).join('');
+  const sum=`<div class="vx-note g"><div>📌 <b>${esc(name)}'s chart in 30 seconds</b></div></div>
+   ${note('','🧭 <b>Personality — '+SIGNS[asc].name+' Lagna:</b> '+SK[asc]+`. The Lagna lord ${al} sits in the ${ord(ap.house)} house in ${SIGNS[ap.sign].name}${ap.dignity&&ap.dignity.label?' ('+ap.dignity.label+')':''}, so life energy flows toward ${HT[ap.house-1]}.`)}
+   ${note('','🌙 <b>Mind — Moon in '+SIGNS[mo.sign].name+', '+mo.nakshatra.name+':</b> '+SK[mo.sign]+'; nakshatra qualities: '+NK[Math.floor(c.siderealLongitudes.Moon/(360/27))]+'.')}
+   ${note('','☀️ <b>Core — Sun in '+SIGNS[su.sign].name+', '+ord(su.house)+' house:</b> confidence and purpose are tied to '+HT[su.house-1]+'.')}
+   ${note('g','💪 <b>Strongest planet:</b> '+gl(stP)+' — lean on '+PT[stP][0]+'. &nbsp;<b>Needs care:</b> '+gl(wkP)+' — watch '+PT[wkP][2]+'.')}
+   ${note('g','🏆 <b>Best life areas:</b> '+ar.slice(0,2).map(a=>a.A.i+' '+a.A.n+' ('+a.r.sc+')').join(' · ')+'<br>⚠️ <b>Needs attention:</b> '+ar.slice(-2).map(a=>a.A.i+' '+a.A.n+' ('+a.r.sc+')').join(' · '))}
+   ${ml?note('','⏳ <b>Running now: '+ml.lord+' › '+al2.lord+'</b> — focus on '+foc(ml.lord)+', sharpened by '+foc(al2.lord)+'.'):''}
+   ${note(sd===12||sd===1||sd===2||sd===4||sd===8?'b':'g','🪐 <b>Saturn now:</b> '+sade+'. <b>Jupiter</b> is in your '+ord(tr.Jupiter.hm)+' from Moon — '+([2,5,7,9,11].includes(tr.Jupiter.hm)?'a favourable transit.':'a neutral/testing transit.'))}
+   ${yg.length?note('g','🧿 <b>'+yg.length+' notable yoga'+(yg.length>1?'s':'')+':</b> '+yg.slice(0,4).map(y=>y.t).join(', ')+(yg.length>4?'…':'')):''}`;
+  const areas=ar.map((a,i)=>{const r=a.r;return `<details class="vx-pl"${i===0?' open':''}><summary><span class="vx-gl">${a.A.i}</span><div><b>${a.A.n}</b><small>${a.A.h.map(h=>ord(h)+' house').join(' + ')} · ${a.A.v}</small></div><span class="vx-chip ${r.v[1]}">${r.v[0]} ${r.sc}</span></summary><div class="rd-b"><div class="vx-bar" style="grid-template-columns:1fr"><i><u style="width:${r.sc}%"></u></i></div>
+    ${r.w.map(w=>`<div class="rd-w ${w[0]}">${w[0]==='g'?'✓':w[0]==='b'?'⚠':'•'} ${w[1]}</div>`).join('')}
+    <div class="rd-h">Favourable windows (next 22 years)</div>${a.w.length?a.w.map(o=>`<div class="rd-win"><b>${formatDashaDate(o.p.s)} → ${formatDashaDate(o.p.e)}</b><span>${o.p.m} › ${o.p.a} · ${[a.rel.has(o.p.m)?o.p.m:'',a.rel.has(o.p.a)?o.p.a:''].filter(Boolean).join(' & ')} linked to this area</span></div>`).join(''):'<div class="rd-w">No strong dasha window found in this span.</div>'}
+    ${ml&&(a.rel.has(ml.lord)||a.rel.has(al2.lord))?note('g','⭐ Active now: '+[a.rel.has(ml.lord)?ml.lord+' (Mahadasha)':'',a.rel.has(al2.lord)?al2.lord+' (Antardasha)':''].filter(Boolean).join(' & ')+' connect to this area.'):''}</div></details>`;}).join('');
+  const pls=PL.map(n=>{const p=x.P[n];return `<details class="vx-pl"><summary><span class="vx-gl">${PLANET_GLYPHS[n]}</span><div><b>${n}${p.retrograde&&n!=='Rahu'&&n!=='Ketu'?' ℞':''}</b><small>${sgn(p.sign)} · house ${p.house}</small></div><span class="vx-chip ${x.dg(n)>=2?'g':x.dg(n)<=-2?'b':''}">${(p.dignity||{}).status||'—'}</span></summary><div class="rd-b">${planetRead(x,n).map(l=>`<div class="rd-w">${l}</div>`).join('')}</div></details>`;}).join('');
+  const ads=ml?calculateAntardashas(ml):[],nowP=Date.now();
+  const now=`<div class="vx-grid"><div class="vx-t"><label>Mahadasha</label><b>${ml?gl(ml.lord):'—'}</b><small>${ml?'until '+formatDashaDate(ml.endDate):''}</small></div><div class="vx-t"><label>Antardasha</label><b>${al2?gl(al2.lord):'—'}</b><small>${al2?'until '+formatDashaDate(al2.endDate):''}</small></div><div class="vx-t"><label>Pratyantar</label><b>${pd?gl(pd.lord):'—'}</b><small>${pd?'until '+formatDashaDate(pd.endDate):''}</small></div></div>
+   ${ml?[ml,al2].map((d,i)=>note('',`<b>${d.lord} ${i?'Antardasha':'Mahadasha'}:</b> ${PT[d.lord][0]}. Rules the ${x.rules(d.lord).map(ord).join(' & ')||'—'} house(s) and sits in the ${ord(x.P[d.lord].house)} → expect themes of <b>${foc(d.lord)}</b>. ${x.dg(d.lord)>=2?'Strong planet — good results.':x.dg(d.lord)<=-2?'Weak planet — results need effort.':''}`)).join(''):''}
+   <div class="rd-h">Sub-periods of this Mahadasha</div>${ads.map(a=>`<div class="vx-row${a.startDate<=nowP&&nowP<a.endDate?' vg':''}"><span class="vx-gl">${PLANET_GLYPHS[a.lord]}</span><span><b>${a.lord}</b> · ${foc(a.lord)}<br><small style="color:var(--text-muted)">${formatDashaDate(a.startDate)} → ${formatDashaDate(a.endDate)}</small></span><b>${a.startDate<=nowP&&nowP<a.endDate?'NOW':''}</b></div>`).join('')}
+   <div class="rd-h">Transits today</div><div class="vx-grid">${['Saturn','Jupiter','Rahu','Ketu'].map(n=>`<div class="vx-t"><label>${n}</label><b>${sgn(tr[n].s)}</b><small>House ${tr[n].hl} from Lagna · ${tr[n].hm} from Moon</small></div>`).join('')}</div>${note(sd===12||sd===1||sd===2||sd===4||sd===8?'b':'g','🪐 '+sade)}`;
+  const yogas=yg.length?yg.map(y=>`<div class="vx-row vg"><span class="vx-gl">🧿</span><span><b>${y.t}</b><br><small style="color:var(--text-muted)">${YX[y.k][0]} — ${y.d}</small></span><b></b></div>`).join(''):note('','No major yogas detected in the standard checks.');
+  const T=['✨ Summary','🎯 Life areas','🪐 Planets','⏳ Now','🧿 Yogas'],Pn=[sum,areas,pls,now,yogas];
+  return `<div class="section-heading"><h3>Chart Reading — in plain words</h3><div class="rule"></div></div><div class="vx rd"><div class="vx-note">Auto-generated from classical rules (house lords, dignity, aspects, Ashtakavarga, Dasha). Use it as a fast starting point for a reading, not a final verdict.</div><div class="vx-tabs">${T.map((t,i)=>`<button type="button" data-i="${i}" class="${i?'':'on'}">${t}</button>`).join('')}</div>${Pn.map((p,i)=>`<div class="vx-pane${i?'':' on'}">${p}</div>`).join('')}</div>`;}
+window.buildReadingPanel=function(c){try{return build(c);}catch(e){console.warn('reading',e);return '<div class="vx-note b">Could not build the reading for this chart.</div>';}};
+document.addEventListener('click',e=>{const b=e.target.closest('.rd .vx-tabs button');if(!b)return;const r=b.closest('.rd'),i=+b.dataset.i;r.querySelectorAll('.vx-tabs button').forEach((x,j)=>x.classList.toggle('on',j===i));r.querySelectorAll(':scope>.vx-pane').forEach((x,j)=>x.classList.toggle('on',j===i));});
+})();
+</script>
+<script>
+/* ===== Life Activation: which houses are lit up on any date ===== */
+(function(){
+const PL=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'],BEN=['Jupiter','Venus','Mercury','Moon'];
+const IC=['🧍','💰','🦁','🏡','👶','🩺','💍','🔮','🙏','💼','🤝','🌙'],TH=['self & health','money & family','courage & effort','home & peace','children & creativity','work, service & health issues','marriage & partnership','change & the hidden','luck & guidance','career & status','gains & friends','loss, foreign lands & rest'];
+const ord=n=>n+(['th','st','nd','rd'][(n%100>10&&n%100<14)?0:Math.min(n%10,4)%4]||'th');
+const TR={Saturn:[3,2,[3,7,10]],Jupiter:[3,2,[5,7,9]],Rahu:[2,1,[5,7,9]],Ketu:[2,1,[5,7,9]],Mars:[1.5,1,[4,7,8]],Sun:[1,0,[]]};
+const VERB={Saturn:'tests and matures this area',Jupiter:'expands and blesses this area',Rahu:'stirs ambition and change here',Ketu:'detaches you from this area',Mars:'adds energy and friction here',Sun:'puts a spotlight here this month'};
+const ADV={growth:'🌱 Opportunities flow here — apply, say yes, take initiative.',pressure:'⚡ Pressure and lessons here — stay disciplined, avoid rash moves, patience pays.',mixed:'⚖️ Mixed signals — progress comes with friction, so plan carefully.'};
+function calc(c,date){const hs=c.vargas.D1.houses,P=c.planets,asc=c.ascendant.sign,pts=Array(13).fill(0),why=Array.from({length:13},()=>[]),tb=Array(13).fill(0),tm=Array(13).fill(0),tj=Array(13).fill(0),ts=Array(13).fill(0);
+  const add=(h,w,t,src)=>{pts[h]+=w;why[h].push({t,src,w});(BEN.includes(src)?tb:tm)[h]+=w;},rules=n=>hs.filter(x=>x.signLord===n).map(x=>x.houseNum);
+  const act=findActiveDasha(c.dashaData.mahadashas,date);
+  if(act&&act.mahadasha)[[act.mahadasha,3,'Mahadasha'],[act.antardasha,2,'Antardasha'],[act.pratyantardasha,1,'Pratyantar']].forEach(([d,w,lab])=>{if(!d)return;const n=d.lord;rules(n).forEach(h=>add(h,w,`${n} (${lab}) rules this house`,n));add(P[n].house,w,`${n} (${lab}) sits in this house`,n);if(w>1)(P[n].aspectsHouses||[]).forEach(h=>add(h,1,`${n} (${lab}) aspects this house`,n));});
+  const jd=toJulianDay(date.getUTCFullYear(),date.getUTCMonth()+1,date.getUTCDate(),date.getUTCHours(),date.getUTCMinutes(),0),ay=lahiriAyanamsa(jd),tp={};
+  Object.keys(TR).forEach(n=>{const lon=n==='Sun'?sunLongitude(jd):n==='Rahu'?rahuLongitude(jd):n==='Ketu'?rahuLongitude(jd)+180:planetGeocentricLongitude(n.toLowerCase(),jd),s=Math.floor(normDeg(lon-ay)/30),h=(s-asc+12)%12+1,[ow,aw,offs]=TR[n];tp[n]={s,h};
+    add(h,ow,`${n} is transiting here — it ${VERB[n]}`,n);if(n==='Jupiter')tj[h]=1;if(n==='Saturn')ts[h]=1;
+    if(aw)offs.forEach(o=>{const t=(h+o-2)%12+1;add(t,aw,`${n} aspects this house from house ${h}`,n);if(n==='Jupiter')tj[t]=1;if(n==='Saturn')ts[t]=1;});});
+  for(let h=1;h<=12;h++)if(tj[h]&&ts[h]){pts[h]+=3;tb[h]+=1.5;tm[h]+=1.5;why[h].push({t:'Double transit: Jupiter AND Saturn both activate this house — a classic trigger for real events',src:'Jupiter',w:3,dbl:1});}
+  const tone=h=>tb[h]>tm[h]*1.3?'growth':tm[h]>tb[h]*1.3?'pressure':'mixed';
+  return {pts,why,tone,act,tp,max:Math.max(1,...pts.slice(1)),dbl:tj.map((v,h)=>h&&v&&ts[h])};}
+function heat(t){const S=[[0,[26,33,64]],[.3,[44,140,150]],[.6,[232,193,79]],[1,[255,107,74]]];for(let i=1;i<4;i++)if(t<=S[i][0]){const a=S[i-1],b=S[i],k=(t-a[0])/(b[0]-a[0]);return `rgb(${a[1].map((v,j)=>Math.round(v+(b[1][j]-v)*k))})`;}return 'rgb(255,107,74)';}
+const lab=t=>t>=.75?['Very active','b']:t>=.5?['Active','g']:t>=.28?['Warming','t']:['Quiet',''];
+function wheel(r,sel,rank){const cx=150,cy=150,R0=140,R1=76,pt=(q,a)=>[+(cx+q*Math.cos(a*Math.PI/180)).toFixed(1),+(cy+q*Math.sin(a*Math.PI/180)).toFixed(1)],mid=h=>180-30*(h-1)-15;
+  let s=`<svg class="ac-wheel" viewBox="0 0 300 300"><defs><radialGradient id="acb" cx="50%" cy="50%" r="70%"><stop offset="0" stop-color="#1c2242"/><stop offset="1" stop-color="#06070c"/></radialGradient></defs><circle cx="150" cy="150" r="148" fill="url(#acb)" stroke="#D4AF37" stroke-opacity=".5"/>`;
+  for(let h=1;h<=12;h++){const a2=180-30*(h-1),a1=a2-30,t=r.pts[h]/r.max,p1=pt(R0,a1),p2=pt(R0,a2),p3=pt(R1,a2),p4=pt(R1,a1),ic=pt(112,mid(h)),nm=pt(91,mid(h)),hot=rank.slice(0,3).includes(h);
+    s+=`<path class="ac-seg${sel===h?' sel':''}" data-h="${h}" d="M${p1} A${R0} ${R0} 0 0 1 ${p2} L${p3} A${R1} ${R1} 0 0 0 ${p4}Z" fill="${heat(t)}" fill-opacity="${.35+.65*t}" stroke="${hot?'#F9D976':'#0b0d14'}" stroke-width="${hot?2:1.2}"/><text x="${ic[0]}" y="${ic[1]}" text-anchor="middle" dominant-baseline="central" font-size="${14+8*t}" pointer-events="none">${IC[h-1]}</text><text x="${nm[0]}" y="${nm[1]}" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="700" fill="#fff" fill-opacity=".85" font-family="sans-serif" pointer-events="none">${h}</text>`;}
+  return s+`<circle cx="150" cy="150" r="70" fill="#0a0c14" stroke="#D4AF37" stroke-opacity=".4"/><text x="150" y="132" text-anchor="middle" font-size="8" letter-spacing="2" fill="#D4AF37" font-family="sans-serif" font-weight="700">LIFE NOW</text><text x="150" y="156" text-anchor="middle" font-size="26" fill="#fff" font-family="sans-serif">${IC[rank[0]-1]}</text><text x="150" y="176" text-anchor="middle" font-size="10" fill="#F4F1E8" font-family="sans-serif" font-weight="700">House ${rank[0]}</text></svg>`;}
+function render(root){const c=window.__acC,d=new Date(root.dataset.d+'T12:00:00'),r=calc(c,d),rank=Array.from({length:12},(_,i)=>i+1).sort((a,b)=>r.pts[b]-r.pts[a]),sel=+root.dataset.sel||rank[0],pr=window.__vgProf||{};
+  const fd=x=>x.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}),age=pr.dob?(d-new Date(pr.dob+'T00:00'))/31556952000:null,top=rank.slice(0,3);
+  const card=(h,full)=>{const t=r.pts[h]/r.max,tn=r.tone(h),L=lab(t);return `<div class="ac-card ${tn}"><header><span class="ac-ic">${IC[h-1]}</span><div><b>House ${h} · ${TH[h-1]}</b><small>${ord(h)} house</small></div><span class="vx-chip ${L[1]}">${L[0]}</span></header><div class="vx-bar" style="grid-template-columns:1fr"><i><u style="width:${Math.round(t*100)}%;background:${heat(t)}"></u></i></div><div class="ac-tone">${ADV[tn]}</div>${full?r.why[h].sort((a,b)=>b.w-a.w).map(w=>`<div class="rd-w ${w.dbl?'g':BEN.includes(w.src)?'g':'b'}">${w.dbl?'🔥':'•'} ${w.t}</div>`).join(''):''}</div>`;};
+  const mdl=r.act&&r.act.mahadasha,adl=r.act&&r.act.antardasha,pdl=r.act&&r.act.pratyantardasha;
+  const forces=(mdl?[[mdl,'MD'],[adl,'AD'],[pdl,'PD']].filter(x=>x[0]).map(([x,l])=>`<span class="vx-chip g">⏳ ${x.lord} ${l}</span>`).join(''):'<span class="vx-chip">No dasha data for this date</span>')+Object.keys(TR).filter(n=>n!=='Sun').map(n=>`<span class="vx-chip t">${PLANET_GLYPHS[n]} ${n} → H${r.tp[n].h}</span>`).join('');
+  const dbl=r.dbl.map((v,h)=>v?h:0).filter(Boolean);
+  root.innerHTML=`<div class="ac-date"><button data-s="-365">«1y</button><button data-s="-30">‹1m</button><input type="date" value="${root.dataset.d}"><button data-s="30">1m›</button><button data-s="365">1y»</button><button data-t="1" class="ac-today">Today</button></div>
+   <div class="ac-sub">${fd(d)}${age!=null&&age>=0?' · age '+Math.floor(age)+' y '+Math.floor((age%1)*12)+' mo':age!=null?' · before birth':''}</div>
+   <div class="vx-note g"><div>🌌 <b>The big picture:</b> life is centred on <b>${top.map(h=>TH[h-1]).join('</b>, <b>')}</b>. ${ADV[r.tone(top[0])]}${dbl.length?'<br>🔥 Double transit active on house'+(dbl.length>1?'s ':' ')+dbl.join(', ')+' — events here are likely to materialise.':''}</div></div>
+   ${wheel(r,sel,rank)}<div class="ac-leg"><span>Quiet</span><i></i><span>Very active</span></div>
+   <div class="rd-h">Forces at work</div><div>${forces}</div>
+   <div class="rd-h">Top 3 active areas</div>${top.map(h=>card(h,true)).join('')}
+   <div class="rd-h">All 12 houses — tap one</div>${rank.map(h=>{const t=r.pts[h]/r.max;return `<button type="button" class="ac-row${sel===h?' sel':''}" data-h="${h}"><span>${IC[h-1]}</span><b>${h}</b><i><u style="width:${Math.round(t*100)}%;background:${heat(t)}"></u></i><small>${TH[h-1]}</small></button>`}).join('')}
+   ${top.includes(sel)?'':'<div class="rd-h">House '+sel+' in detail</div>'+card(sel,true)}`;}
+window.buildActivationPanel=function(c){window.__acC=c;const t=new Date(),iso=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+  return `<div class="section-heading"><h3>Life Activation — what's lit up in your life</h3><div class="rule"></div></div><div class="vx-note"><div>Shows which of your 12 life houses are switched on at a given moment, using your running Dasha periods plus where Saturn, Jupiter, Rahu, Ketu, Mars and the Sun are transiting. Pick any date to travel in time.</div></div><div class="ac" data-d="${iso}" data-today="${iso}" data-sel="0"></div>`;};
+let mo=new MutationObserver(()=>{document.querySelectorAll('.ac:empty').forEach(r=>{try{render(r);}catch(e){console.warn('activation',e);r.innerHTML='<div class="vx-note b"><div>Could not compute activation for this date.</div></div>';}});});mo.observe(document.body,{childList:true,subtree:true});
+document.addEventListener('click',e=>{const r=e.target.closest('.ac');if(!r)return;const b=e.target.closest('[data-s],[data-t]'),h=e.target.closest('[data-h]');
+  if(b){const d=new Date(r.dataset.d+'T12:00:00');if(b.dataset.t)r.dataset.d=r.dataset.today;else{d.setDate(d.getDate()+ +b.dataset.s);r.dataset.d=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}r.dataset.sel=0;render(r);}
+  else if(h){r.dataset.sel=h.dataset.h;render(r);}});
+document.addEventListener('change',e=>{const r=e.target.closest&&e.target.closest('.ac');if(r&&e.target.type==='date'&&e.target.value){r.dataset.d=e.target.value;r.dataset.sel=0;render(r);}});
+})();
+</script>
+<script>
+/* ===== Bhava Bala: house strength (BPHS Ch.27) ===== */
+(function(){
+const IC=['🧍','💰','🦁','🏡','👶','🩺','💍','🔮','🙏','💼','🤝','🌙'],TH=['self & health','money & family','courage & effort','home & peace','children & creativity','work & health issues','marriage & partnership','change & the hidden','luck & guidance','career & status','gains & friends','loss, foreign lands & rest'];
+const SEV=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'],ord=n=>n+(['th','st','nd','rd'][(n%100>10&&n%100<14)?0:Math.min(n%10,4)%4]||'th');
+const TYPES={nara:['Human sign','East',1],jala:['Water sign','North',4],keeta:['Scorpion sign','West',7],chatus:['Four-legged sign','South',10]};
+const WEAK={nara:7,jala:10,keeta:1,chatus:4};
+const adiff=(a,b)=>{const d=(((a-b)%360)+360)%360;return d>180?d-360:d;};
+function signType(s,deg){if([2,5,6,10].includes(s)||(s===8&&deg<15))return 'nara';if(s===3||s===11||(s===9&&deg>=15))return 'jala';if(s===7)return 'keeta';return 'chatus';}
+function drishti(from,to,pl){const d=normDeg(to-from);let v=0;
+  if(d>=30&&d<60)v=(d-30)/2;else if(d>=60&&d<90)v=d-45;else if(d>=90&&d<120)v=(120-d)/2+30;else if(d>=120&&d<150)v=150-d;else if(d>=150&&d<180)v=(d-150)*2;else if(d>=180&&d<300)v=(300-d)/2;
+  const z=(a,b)=>d>=a&&d<b;if((pl==='Mars'&&(z(90,120)||z(210,240)))||(pl==='Jupiter'&&(z(120,150)||z(240,270)))||(pl==='Saturn'&&(z(60,90)||z(270,300))))v=60;return v;}
+window.computeBhavaBala=function(c,lat,lon){
+  const B=computeBhavaChalit(c,lat,lon),L=c.siderealLongitudes,m=B.houses.map(h=>h.madhya),waxing=normDeg(L.Moon-L.Sun)<180;
+  const ben=n=>n==='Moon'?waxing:['Jupiter','Venus','Mercury'].includes(n);
+  const rows=m.map((M,i)=>{const h=i+1,sign=Math.floor(M/30)%12,deg=M%30,lord=SIGNS[sign].lord,sb=c.shadbala.planets[lord],A=sb.totalVirupas;
+    const ty=signType(sign,deg),wk=m[WEAK[ty]-1],dist=Math.abs(adiff(M,wk)),D=dist/3;
+    const asp=SEV.filter(n=>n!=='Sun'||true).map(n=>{const v=drishti(L[n],M,n);if(v<=0)return null;const full=(n==='Jupiter'||n==='Mercury'),sg=ben(n)?1:-1,val=full?v:sg*v/4;return {n,v,val,full};}).filter(Boolean);
+    const R=asp.reduce((s,a)=>s+a.val,0);
+    return {h,sign,deg,madhya:M,lord,lordRupas:sb.totalRupas,lordStrong:sb.isStrong,A,type:ty,dist,D,asp,R,total:A+D+R,rupas:(A+D+R)/60};});
+  const mean=rows.reduce((s,r)=>s+r.total,0)/12;rows.forEach(r=>{const x=r.total/mean;r.tier=x>=1.2?['Very strong','vs']:x>=1.05?['Strong','g']:x>=.95?['Average','t']:x>=.8?['Below average','']:['Weak','w'];});
+  const order=rows.slice().sort((a,b)=>b.total-a.total);order.forEach((r,i)=>r.rank=i+1);return {rows,mean};};
+const heat=t=>{const S=[[0,[201,80,80]],[.5,[232,193,79]],[1,[94,196,183]]];for(let i=1;i<3;i++)if(t<=S[i][0]){const a=S[i-1],b=S[i],k=(t-a[0])/(b[0]-a[0]);return `rgb(${a[1].map((v,j)=>Math.round(v+(b[1][j]-v)*k))})`;}return 'rgb(94,196,183)';};
+const f1=x=>x.toFixed(1),sg=x=>(x>=0?'+':'−')+Math.abs(x).toFixed(1);
+function view(c,P,mode){const bb=window.computeBhavaBala(c,P.lat,P.lon),rows=bb.rows,mx=Math.max(...rows.map(r=>r.total)),mn=Math.min(...rows.map(r=>r.total)),best=rows.find(r=>r.rank===1),worst=rows.find(r=>r.rank===12);
+  const list=mode==='rank'?rows.slice().sort((a,b)=>a.rank-b.rank):rows;
+  const tile=(l,r)=>`<div class="vx-t"><label>${l}</label><b>${IC[r.h-1]} House ${r.h}</b><small>${TH[r.h-1]} · ${f1(r.rupas)} rupas</small></div>`;
+  const bars=list.map(r=>{const t=(r.total-mn*.6)/(mx-mn*.6);return `<a class="bb-row" href="#bb${r.h}" data-h="${r.h}"><span>${IC[r.h-1]}</span><b>${r.h}</b><i><u style="width:${Math.max(6,Math.round(t*100))}%;background:${heat((r.total-mn)/(mx-mn||1))}"></u></i><em>${f1(r.rupas)}</em></a>`}).join('');
+  const cards=list.map(r=>{const tp=TYPES[r.type],wkh=WEAK[r.type],S=SIGNS[r.sign];
+    const comp=(ic,name,val,max,col,txt)=>`<div class="bb-c"><div class="bb-ch"><span>${ic} ${name}</span><b style="color:${col}">${sg(val).replace('+','')}<small> virupas</small></b></div><div class="vx-bar" style="grid-template-columns:1fr"><i><u style="width:${Math.max(2,Math.min(100,Math.abs(val)/max*100))}%;background:${col}"></u></i></div><p>${txt}</p></div>`;
+    const net=r.asp.length?r.asp.map(a=>`<span class="vx-chip ${a.val>=0?'g':'b'}">${PLANET_GLYPHS[a.n]} ${a.n} ${sg(a.val)}</span>`).join(''):'<span class="vx-chip">No aspects on this house</span>';
+    const why=r.A>=r.D+r.R+120&&r.lordStrong?`Held up mostly by its strong lord ${r.lord}.`:!r.lordStrong?`Its lord ${r.lord} is below its required strength, which drags this house down.`:'Balanced support from lord, direction and aspects.';
+    return `<details class="vx-pl bb" id="bb${r.h}"><summary><span class="vx-gl">${IC[r.h-1]}</span><div><b>House ${r.h} · ${TH[r.h-1]}</b><small>#${r.rank} of 12 · ${f1(r.rupas)} rupas</small></div><span class="vx-chip ${r.tier[1]}">${r.tier[0]}</span></summary><div class="rd-b">
+      ${comp('👑','Lord strength (Bhavadhipati)',r.A,500,'#E8C14F',`${S.symbol} ${S.name} rules this house. Its lord <b>${r.lord}</b> has ${f1(r.lordRupas)} rupas of planetary strength (${r.lordStrong?'strong':'weak'}), so the house borrows that power.`)}
+      ${comp('🧭','Direction (Dig Bala)',r.D,60,'#5EC4B7',`${S.name} is a ${tp[0].toLowerCase()}, which is strongest facing ${tp[1]} (house ${tp[2]}) and weakest at house ${wkh}. This house centre sits ${Math.round(r.dist)}° from its weakest point.`)}
+      ${comp('🔭','Aspects (Drishti)',r.R,60,r.R>=0?'#7FA8FF':'#E25555',`Jupiter and Mercury count in full; other helpful planets add a quarter and harsh planets subtract a quarter. ${net}`)}
+      <div class="vx-note ${r.tier[1]==='vs'||r.tier[1]==='g'?'g':r.tier[1]==='w'?'b':''}"><div><b>In plain words:</b> ${why}</div></div></div></details>`;}).join('');
+  return `<div class="vx-grid">${tile('Strongest house',best)}${tile('Weakest house',worst)}<div class="vx-t"><label>Average</label><b>${f1(bb.mean/60)} rupas</b><small>${rows.filter(r=>r.tier[1]==='vs'||r.tier[1]==='g').length} strong · ${rows.filter(r=>r.tier[1]==='w'||r.tier[0]==='Below average').length} weak</small></div></div>
+   <div class="bb-sw"><button type="button" data-m="house" class="${mode==='house'?'on':''}">By house</button><button type="button" data-m="rank" class="${mode==='rank'?'on':''}">By strength</button></div>
+   <div class="bb-bars">${bars}</div><div class="rd-h">Tap a house for the full breakdown</div>${cards}
+   <details class="bb-how"><summary>How is this calculated?</summary><p>Bhava Bala = <b>Bhavadhipati Bala</b> (Shadbala of the house lord) + <b>Bhava Dig Bala</b> (0–60, from the house centre's angle to its weakest point) + <b>Bhava Drishti Bala</b> (aspects on the house centre; Jupiter and Mercury in full, other benefics +¼, malefics −¼), as in BPHS Chapter 27. House centres use the Sripati (Bhava Chalit) method. 60 virupas = 1 rupa. Compare houses with each other: higher means a life area that flows more easily.</p></details>`;}
+window.buildBhavaBalaPanel=function(c,P){window.__bbC=c;window.__bbP=P;let body;try{body=view(c,P,'house');}catch(e){console.warn('bhavabala',e);body='<div class="vx-note b"><div>Could not compute house strength for this chart.</div></div>';}
+  return `<div class="section-heading"><h3>Bhava Bala — strength of your 12 houses</h3><div class="rule"></div></div><div class="vx-note"><div>Shadbala tells you how strong each <b>planet</b> is. Bhava Bala tells you how strong each <b>life area</b> is: which parts of life get natural support and which need extra effort.</div></div><div class="bb" id="bbRoot">${body}</div>`;};
+document.addEventListener('click',e=>{const s=e.target.closest('.bb-sw button');if(s){const r=document.getElementById('bbRoot');r.innerHTML=view(window.__bbC,window.__bbP,s.dataset.m);return;}
+  const a=e.target.closest('.bb-row');if(a){e.preventDefault();const d=document.getElementById('bb'+a.dataset.h);if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'center'});}}});
+})();
+</script>
+<script>
+/* ===== Tithi Pravesh: yearly lunar-birthday chart ===== */
+(function(){
+const PL=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'],IC=['🧍','💰','🦁','🏡','👶','🩺','💍','🔮','🙏','💼','🤝','🌙'],TH=['self & health','money & family','courage & effort','home & peace','children & creativity','work & health issues','marriage & partnership','change & the hidden','luck & guidance','career & status','gains & friends','loss, foreign lands & rest'];
+const ord=n=>n+(['th','st','nd','rd'][(n%100>10&&n%100<14)?0:Math.min(n%10,4)%4]||'th'),sd=(a,b)=>{const d=(((a-b)%360)+360)%360;return d>180?d-360:d;};
+const sgn=s=>SIGNS[s].symbol+' '+SIGNS[s].name,gl=n=>PLANET_GLYPHS[n]+' '+n,esc=s=>String(s).replace(/</g,'&lt;');
+let S=null,cache={};
+function ctx(c,P){const prof=P||{},N=vbNatal(c,{dob:prof.dob,tob:(prof.tob||'').length===5?prof.tob+':00':prof.tob,lat:prof.lat,lon:prof.lon,tz:prof.tz});return {c,P:prof,N,D0:pnDiff(N.jd),loc:{lat:prof.lat,lon:prof.lon,tz:prof.tz}};}
+function solve(S,approx){let lo=approx-3,hi=approx+3;for(let i=0;i<60;i++){const m=(lo+hi)/2;if(sd(pnDiff(m),S.D0)<0)lo=m;else hi=m;}return (lo+hi)/2;}
+function scan(S,y){const y0=toJulianDay(y,1,1,0,0,0)-S.loc.tz/24,y1=toJulianDay(y+1,1,1,0,0,0)-S.loc.tz/24,out=[];let prev=sd(pnDiff(y0),S.D0);
+  for(let j=y0+0.1;j<y1;j+=0.1){const cur=sd(pnDiff(j),S.D0);if(prev<0&&cur>=0&&Math.abs(cur)<30){let lo=j-0.1,hi=j;for(let k=0;k<45;k++){const m=(lo+hi)/2;if(sd(pnDiff(m),S.D0)<0)lo=m;else hi=m;}const t=(lo+hi)/2,pa=panchangaAt(t,S.loc.lat,S.loc.lon,S.loc.tz);if(pa.masa.name===PN_MASA[S.N.masaIdx]&&!pa.masa.adhika)out.push(t);}prev=cur;}return out;}
+function pravesh(S,y){const k='p'+y;if(cache[k])return cache[k];let w=vbYear(S.N,y).tithi.map(t=>solve(S,(t.start+t.end)/2)).filter((j,i,a)=>a.indexOf(j)===i).sort((a,b)=>a-b);if(!w.length)w=scan(S,y);return cache[k]=w;}
+function at(S,jd){const k='c'+jd.toFixed(5)+S.loc.lat+S.loc.lon+S.loc.tz;if(cache[k])return cache[k];const lp=jdToLocalParts(jd,S.loc.tz),c=computeChart(lp.dateStr,lp.timeStr,S.loc.lat,S.loc.lon,S.loc.tz),pan=panchangaAt(jd,S.loc.lat,S.loc.lon,S.loc.tz),ac=computeVargaAspects?null:null;return cache[k]={jd,c,pan,lp,p:pnParts(jd,S.loc.tz)};}
+function months(S,j0,j1){const out=[j0];for(let k=1;k<=13;k++){const t=solve(S,j0+k*29.530589);if(t>=j1-3)break;out.push(t);}return out;}
+const fdt=(S,jd)=>{const p=pnParts(jd,S.loc.tz);return `${PN_VARA[pnWeekday(p.y,p.m,p.d)][1].slice(0,3)}, ${p.d} ${PN_MON[p.m-1]} ${p.y}`;},ftm=(S,jd)=>pnParts(jd,S.loc.tz).timeStr.slice(0,5);
+const hindu=pan=>`${pan.masa.name}${pan.masa.adhika?' (Adhika)':''} ${pan.tithi.paksha} ${pan.tithi.name}`;
+function span(d){d=Math.abs(d);return d<1?Math.max(1,Math.round(d*24))+' hours':d<45?Math.round(d)+' days':d<500?(d/30.44).toFixed(1)+' months':(d/365.25).toFixed(1)+' years';}
+function build(root){const y=+root.dataset.y,sel=+root.dataset.sel||0,sty=root.dataset.sty||'north',tab=+root.dataset.tab||0,N=S.N,natal=S.c,list=pravesh(S,y),mj=root.dataset.mj!==undefined&&root.dataset.mj!==''?+root.dataset.mj:null;
+  const fin=(a,b)=>`<div class="vx-note ${b||''}"><div>${a}</div></div>`;
+  if(y<=N.by)return fin('Tithi Pravesh starts the year after birth. Pick '+(N.by+1)+' or later.','b');
+  if(!list.length)return fin(`The birth tithi is not found inside the birth lunar month in ${y} (it can be skipped in some years). Try ${y-1} or ${y+1}.`,'b');
+  const idx=Math.min(sel,list.length-1),j0=list[idx],nextL=pravesh(S,y).concat(pravesh(S,y+1)),nextJ=(nextL.find(j=>j>j0+300)||j0+354.367),ml=months(S,j0,nextJ);
+  const jd=mj!==null&&ml[mj]?ml[mj]:j0,X=at(S,jd),c=X.c,pan=X.pan,age=y-N.by,now=Date.now(),ms=(jd-2440587.5)*864e5,diff=(ms-now)/864e5,asc=c.ascendant.sign,nasc=natal.ascendant.sign;
+  const nh=s=>((s-nasc+12)%12)+1,mu=(nasc+age)%12,muH=((mu-asc+12)%12)+1,muGood=![3,6,8,12].includes(muH),yl=SIGNS[asc].lord;
+  const cand=[['Annual Lagna lord',SIGNS[asc].lord],['Muntha lord',SIGNS[mu].lord],['Natal Lagna lord',SIGNS[nasc].lord],['Weekday lord',pan.vara.lord],['Annual Moon-sign lord',SIGNS[c.planets.Moon.sign].lord]];
+  const pct=n=>(c.shadbala.planets[n]||{}).percentOfRequired||0,lord=cand.slice().sort((a,b)=>pct(b[1])-pct(a[1]))[0];
+  const occ={};PL.forEach(n=>{const h=c.planets[n].house;(occ[h]=occ[h]||[]).push(n);});const busy=Object.keys(occ).sort((a,b)=>occ[b].length-occ[a].length).slice(0,3);
+  const mudL=calculateVimshottariDasha(c.siderealLongitudes.Moon,new Date()).mahadashas,scale=(nextJ-j0)/120;let cum=0;const mud=[];for(const m of mudL){if(cum*scale>=nextJ-j0)break;const d=Math.min(m.years,(nextJ-j0)/scale-cum);mud.push({lord:m.lord,s:j0+cum*scale,e:j0+(cum+d)*scale});cum+=d;}
+  const svg=buildInteractiveVargaSvg(c.vargas.D1,null,sty,null);
+  const tile=(l,b,s)=>`<div class="vx-t"><label>${l}</label><b>${b}</b><small>${s||''}</small></div>`;
+  const hero=`<div class="tp-hero"><small>${mj!==null?'MONTHLY PRAVESH · '+ml.length+' returns this year':'TITHI PRAVESH '+y+(list.length>1?' · '+(idx+1)+' of '+list.length:'')}</small><h3>${fdt(S,jd)}</h3><div class="tp-time">🕒 ${ftm(S,jd)}<span> local · ${new Date(ms).toUTCString().slice(17,22)} UTC</span></div><p>🌙 ${hindu(pan)}</p><div class="tp-cd ${diff>=0?'up':''}">${Math.abs(diff)<1&&diff>=0?'Today!':diff>=0?'in '+span(diff):span(diff)+' ago'}</div><div class="tp-meta"><span>Age ${age} → ${age+1}</span><span>${pan.vara.name}</span><span>${pan.nakshatra.name} p${pan.nakshatra.pada}</span></div></div>`;
+  const focus=[['Annual Lagna',`${sgn(asc)} falls in your natal <b>${ord(nh(asc))} house</b> — the stage of the year is ${TH[nh(asc)-1]}.`],['Annual Moon',`${sgn(c.planets.Moon.sign)} sits in your natal <b>${ord(nh(c.planets.Moon.sign))} house</b> — emotional focus: ${TH[nh(c.planets.Moon.sign)-1]}.`],['Muntha',`${sgn(mu)} → annual <b>${ord(muH)} house</b> (${TH[muH-1]}). ${muGood?'A supportive placement.':'A challenging house: slow down and be careful here.'}`],['Year lord',`<b>${gl(lord[1])}</b> (${lord[0].toLowerCase()}) is the strongest of the five candidates in the annual chart (${Math.round(pct(lord[1]))}% of required).`]];
+  const pane0=`<div class="vx-grid">${tile('Annual Lagna',sgn(asc),'natal house '+nh(asc))}${tile('Annual Moon',sgn(c.planets.Moon.sign),c.planets.Moon.nakshatra.name)}${tile('Muntha',sgn(mu),'house '+muH+(muGood?' ✓':' ⚠'))}${tile('Year lord',gl(lord[1]),'strongest candidate')}</div>${focus.map(f=>`<div class="vx-note ${f[0]==='Muntha'&&!muGood?'b':'g'}"><div><b>${f[0]}:</b> ${f[1]}</div></div>`).join('')}<div class="rd-h">Busiest houses in the annual chart</div><div>${busy.map(h=>`<span class="vx-chip g">${IC[h-1]} House ${h} · ${TH[h-1]} · ${occ[h].map(n=>PLANET_GLYPHS[n]).join(' ')}</span>`).join('')}</div><div class="rd-h">Year lord candidates</div>${cand.map(a=>`<div class="vx-row${a[1]===lord[1]?' vg':''}"><span class="vx-gl">${PLANET_GLYPHS[a[1]]}</span><span><b>${a[1]}</b><br><small style="color:var(--text-muted)">${a[0]}</small></span><b>${Math.round(pct(a[1]))}%</b></div>`).join('')}`;
+  const pane1=PL.map(n=>{const p=c.planets[n],q=natal.planets[n],ret=p.sign===q.sign;return `<details class="vx-pl"><summary><span class="vx-gl">${PLANET_GLYPHS[n]}</span><div><b>${n}${p.retrograde&&n!=='Rahu'&&n!=='Ketu'?' ℞':''}${ret?' ★':''}</b><small>${sgn(p.sign)} ${Math.floor(p.degInSign)}° · house ${p.house}</small></div><span class="vx-chip ${/Exalt|Own|Moola/i.test((p.dignity||{}).status||'')?'g':/Debil/i.test((p.dignity||{}).status||'')?'b':''}">${(p.dignity||{}).status||'—'}</span></summary><div class="vx-body"><div class="vx-kv"><label>Annual house</label><span>${p.house} · ${TH[p.house-1]}</span></div><div class="vx-kv"><label>Natal house (same sign)</label><span>${nh(p.sign)}</span></div><div class="vx-kv"><label>Nakshatra</label><span>${p.nakshatra.name} · pada ${p.nakshatra.pada}</span></div><div class="vx-kv"><label>Natal position</label><span>${sgn(q.sign)} house ${q.house}</span></div>${ret?'<div class="vx-kv w"><label>★ Return</label><span>Back in its birth sign — a theme from your birth chart is renewed this year.</span></div>':''}</div></details>`;}).join('');
+  const pane2=`<div class="vx-grid">${tile('Tithi',pan.tithi.paksha+' '+pan.tithi.name,'matches your birth tithi ✓')}${tile('Lunar month',pan.masa.name+(pan.masa.adhika?' (Adhika)':''),'Shaka '+pan.masa.shaka)}${tile('Weekday',pan.vara.name,pan.vara.sk+' · lord '+pan.vara.lord)}${tile('Nakshatra',pan.nakshatra.name,'pada '+pan.nakshatra.pada+' · lord '+pan.nakshatra.lord)}${tile('Yoga',pan.yoga.name,'#'+pan.yoga.num)}${tile('Karana',pan.karana.name,pan.karana.vishti?'Vishti (Bhadra) ⚠':'')}${tile('Sunrise',ftm(S,pan.sunrise),'')}${tile('Sunset',ftm(S,pan.sunset),'')}</div>${fin('The Tithi Pravesh moment is when the Moon–Sun angle returns to the exact value it had at your birth, in your birth lunar month. Natal: '+hindu(natal===c?pan:{masa:{name:PN_MASA[N.masaIdx],adhika:N.adhika},tithi:{paksha:N.P.tithi.paksha,name:N.P.tithi.name}}))}`;
+  const pane3=fin(`<b>Mudda (annual Vimshottari) Dasha.</b> The 120-year cycle is compressed into this lunar year (${Math.round(nextJ-j0)} days), starting from the annual Moon's nakshatra. Each year of a lord becomes ${(scale).toFixed(2)} days.`)+mud.map(m=>{const cur=now>=(m.s-2440587.5)*864e5&&now<(m.e-2440587.5)*864e5,p=c.planets[m.lord];return `<div class="vx-row${cur?' vg':''}"><span class="vx-gl">${PLANET_GLYPHS[m.lord]}</span><span><b>${m.lord}</b> · house ${p.house} · ${TH[p.house-1]}<br><small style="color:var(--text-muted)">${fdt(S,m.s)} → ${fdt(S,m.e)} · ${Math.round(m.e-m.s)} days</small></span><b>${cur?'NOW':''}</b></div>`;}).join('');
+  const pane4=fin(`<b>Monthly Pravesh.</b> Every lunar month the Moon–Sun angle returns to your birth value. Tap one to see that month's chart.`)+ml.map((t,k)=>{const x=at(S,t);return `<div class="vx-row tp-m${mj===k||(mj===null&&k===0)?' vg':''}" data-k="${k}"><span class="vx-gl">${k||'★'}</span><span><b>${fdt(S,t)} · ${ftm(S,t)}</b><br><small style="color:var(--text-muted)">${x.pan.masa.name}${x.pan.masa.adhika?' (Adhika)':''} · Lagna ${SIGNS[x.c.ascendant.sign].symbol} ${SIGNS[x.c.ascendant.sign].name} · Moon ${SIGNS[x.c.planets.Moon.sign].symbol} ${SIGNS[x.c.planets.Moon.sign].name}</small></span><b>${k?'':'YEAR'}</b></div>`;}).join('');
+  const pane5=`<div class="vx-row"><span class="vx-gl">⬆</span><span>Lagna: ${sgn(nasc)} → ${sgn(asc)}<br><small style="color:var(--text-muted)">house shifts to natal ${nh(asc)}</small></span><b></b></div>`+PL.map(n=>{const p=c.planets[n],q=natal.planets[n],sh=((p.house-q.house+12)%12);return `<div class="vx-row${p.sign===q.sign?' vg':''}"><span class="vx-gl">${PLANET_GLYPHS[n]}</span><span>${SIGNS[q.sign].symbol} ${SIGNS[q.sign].name} (H${q.house}) → ${SIGNS[p.sign].symbol} ${SIGNS[p.sign].name} (H${p.house})<br><small style="color:var(--text-muted)">${p.sign===q.sign?'back in birth sign ★':'moved '+sh+' house'+(sh===1?'':'s')+' forward'}</small></span><b>${p.sign===q.sign?'★':''}</b></div>`;}).join('');
+  const T=['✨ Focus','🪐 Planets','📜 Panchang','⏳ Mudda','📅 Months','⚖️ vs Natal','⭐ Sahams'],Pn=[pane0,pane1,pane2,pane3,pane4,pane5,tab===6&&window.__sahamHTML?window.__sahamHTML(c,'sht'):''];
+  return `${hero}${mj!==null?'<button type="button" class="tp-back" data-back="1">← Back to the yearly chart</button>':''}${list.length>1?`<div class="filter-row">${list.map((_,i)=>`<button type="button" class="filter-chip${i===idx?' active':''}" data-sel="${i}">Pravesh ${i+1}</button>`).join('')}</div>`:''}
+   <div class="tp-sty">${[['north','North'],['south','South'],['west','Wheel']].map(a=>`<button type="button" data-sty="${a[0]}" class="${sty===a[0]?'on':''}">${a[1]}</button>`).join('')}</div><div class="tp-chart">${svg}</div><div class="vc-leg"><span><i style="background:#D4AF37"></i>Kendra</span><span><i style="background:#5EC4B7"></i>Trikona</span><span><i style="background:#E25555"></i>Dusthana</span><span style="color:#FF8A8A">R Retrograde</span></div>
+   <div class="vx-tabs">${T.map((t,i)=>`<button type="button" data-t="${i}" class="${i===tab?'on':''}">${t}</button>`).join('')}</div>${Pn.map((p,i)=>`<div class="vx-pane${i===tab?' on':''}">${p}</div>`).join('')}`;}
+function render(root){try{root.innerHTML=build(root);}catch(e){console.warn('tithi',e);root.innerHTML='<div class="vx-note b"><div>Could not compute Tithi Pravesh for this year.</div></div>';}}
+window.buildTithiPraveshPanel=function(c,P){try{S=ctx(c,P);cache={};}catch(e){console.warn(e);return '<div class="vx-note b"><div>Tithi Pravesh needs complete birth details.</div></div>';}
+  const t=new Date(),y0=t.getFullYear();let upcoming=y0;for(let yy=y0;yy<=y0+3;yy++){const l=pravesh(S,yy);if(l.length&&(l[l.length-1]-2440587.5)*864e5>Date.now()-864e5){upcoming=yy;break;}}const y=Math.max(S.N.by+1,Math.min(2100,upcoming));
+  return `<div class="section-heading"><h3>Tithi Pravesh — your yearly lunar birthday</h3><div class="rule"></div></div><div class="vx-note"><div>Your <b>Tithi Pravesh</b> is the exact moment each year when the Moon returns to the same angle from the Sun as at your birth, in your birth lunar month. The chart cast for that moment shows the themes of your coming year.</div></div>
+   <div class="tp" data-y="${y}" data-sel="0" data-sty="north" data-tab="0"><div class="ac-date"><button data-ty="-1">‹ Year</button><input type="number" min="${S.N.by+1}" max="2100" value="${y}" inputmode="numeric"><button data-ty="1">Year ›</button></div><div class="tp-body"></div></div>`;};
+function refresh(root){render0(root);}
+function render0(root){const body=root.querySelector('.tp-body');body.dataset.y=root.dataset.y;['sel','sty','tab','mj'].forEach(k=>{if(root.dataset[k]!==undefined)body.dataset[k]=root.dataset[k];});if(root.dataset.mj===undefined)delete body.dataset.mj;render(body);root.querySelector('input').value=root.dataset.y;}
+const obs=new MutationObserver(()=>{document.querySelectorAll('.tp .tp-body:empty').forEach(b=>{if(S)render0(b.closest('.tp'));});});obs.observe(document.body,{childList:true,subtree:true});
+document.addEventListener('click',e=>{const r=e.target.closest('.tp');if(!r)return;let ch=false;const g=a=>e.target.closest(a);
+  if(g('.ac-date button[data-ty]')){r.dataset.y=Math.max(S.N.by+1,Math.min(2100,+r.dataset.y+ +g('.ac-date button[data-ty]').dataset.ty));r.dataset.sel=0;delete r.dataset.mj;ch=true;}
+  else if(g('.tp-sty button')){r.dataset.sty=g('.tp-sty button').dataset.sty;ch=true;}
+  else if(g('.filter-chip[data-sel]')){r.dataset.sel=g('.filter-chip[data-sel]').dataset.sel;delete r.dataset.mj;ch=true;}
+  else if(g('.vx-tabs [data-t]')){r.dataset.tab=g('.vx-tabs [data-t]').dataset.t;ch=true;}
+  else if(g('.tp-m')){const k=+g('.tp-m').dataset.k;if(k===0)delete r.dataset.mj;else r.dataset.mj=k;r.dataset.tab=4;ch=true;window.scrollTo&&r.scrollIntoView({behavior:'smooth',block:'start'});}
+  else if(g('.tp-back')){delete r.dataset.mj;ch=true;}
+  if(ch)render0(r);});
+document.addEventListener('change',e=>{const r=e.target.closest&&e.target.closest('.tp');if(r&&e.target.type==='number'){const v=parseInt(e.target.value,10);if(isFinite(v)){r.dataset.y=Math.max(S.N.by+1,Math.min(2100,v));r.dataset.sel=0;delete r.dataset.mj;render0(r);}}});
+window.__tp={pravesh:()=>S&&{S,pravesh,months,solve,at}};
+})();
+</script>
+<script>
+/* ===== Sahams (Tajika sensitive points) — 36 classical formulas ===== */
+(function(){
+const P7=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'],BEN=['Jupiter','Venus','Mercury','Moon'],MAL=['Saturn','Mars','Rahu','Ketu'],KEND=[1,4,7,10],TRI=[1,5,9],DUS=[6,8,12],UPA=[3,6,10,11];
+const GR={fort:['🍀','Fortune & Status','#F9D976'],fam:['👪','Family & Love','#F4A9D3'],work:['💼','Wealth & Work','#5EC4B7'],mind:['📚','Mind & Spirit','#A98BD6'],trav:['✈️','Travel','#7FA8FF'],hard:['⚠️','Challenges','#E25555']};
+const TH=['self & health','money & family','courage & effort','home & peace','children & creativity','work & health issues','marriage & partnership','change & the hidden','luck & guidance','career & status','gains & friends','loss, foreign lands & rest'];
+// key, name, group, negative-theme?, meaning, A, B, C, same-for-day-and-night?
+const SD=[['punya','Punya','fort',0,'Fortune, merit and the fruits of good deeds','Moon','Sun','Lagna',0],['vidya','Vidya','mind',0,'Education, learning and skills','Sun','Moon','Lagna',0],['yasas','Yasas','fort',0,'Fame, reputation and success','Jupiter','punya','Lagna',0],['mitra','Mitra','fam',0,'Friends, allies and well-wishers','Jupiter','punya','Venus',0],['mahatmya','Mahatmya','fort',0,'Greatness, high character and stature','punya','Mars','Lagna',0],['asha','Asha','mind',0,'Desires, hopes and aspirations','Saturn','Mars','Lagna',0],['samartha','Samartha','work',0,'Enterprise, ability and capacity to achieve','Mars','LL','Lagna',0],['bhratri','Bhratri','fam',0,'Brothers, sisters and co-borns','Jupiter','Saturn','Lagna',1],['gaurava','Gaurava','fort',0,'Respect, regard and honour from others','Jupiter','Moon','Sun',0],['pitri','Pitri','fam',0,'Father and paternal matters','Saturn','Sun','Lagna',0],['rajya','Rajya','fort',0,'Authority, power and recognition','Saturn','Sun','Lagna',0],['matri','Matri','fam',0,'Mother and maternal comfort','Moon','Venus','Lagna',0],['putra','Putra','fam',0,'Children and creative offspring','Jupiter','Moon','Lagna',0],['jeeva','Jeeva','fort',0,'Life force, vitality and longevity','Saturn','Jupiter','Lagna',0],['karma','Karma','work',0,'Action, career and the work you do','Mars','Mercury','Lagna',0],['roga','Roga','hard',1,'Disease and health troubles','Lagna','Moon','Lagna',1],['kali','Kali','hard',1,'Great misfortune, strife and quarrels','Jupiter','Mars','Lagna',0],['sastra','Sastra','mind',0,'Sciences, scriptures and higher knowledge','Jupiter','Saturn','Mercury',0],['bandhu','Bandhu','fam',0,'Relatives and kinsmen','Mercury','Moon','Lagna',0],['mrityu','Mrityu','hard',1,'Endings and death — a point of caution','H8','Moon','Lagna',1],['paradesa','Paradesa','trav',0,'Foreign lands and travel abroad','H9','L9','Lagna',1],['artha','Artha','work',0,'Money and wealth','H2','L2','Lagna',1],['paradara','Paradara','hard',1,'Illicit attachments and betrayal','Venus','Sun','Lagna',0],['vanik','Vanik','work',0,'Commerce and trade','Moon','Mercury','Lagna',0],['karyasiddhi','Karyasiddhi','work',0,'Success in your endeavours','Saturn','Sun','LSUN',0],['vivaha','Vivaha','fam',0,'Marriage','Venus','Saturn','Lagna',0],['santapa','Santapa','hard',1,'Sadness and grief','Saturn','Moon','H6',0],['sraddha','Sraddha','mind',0,'Devotion, faith and sincerity','Venus','Mars','Lagna',0],['preeti','Preeti','fam',0,'Love and emotional attachment','sastra','punya','Lagna',0],['jadya','Jadya','hard',1,'Chronic, lingering illness','Mars','Saturn','Mercury',0],['vyapara','Vyapara','work',0,'Business and trade ventures','Mars','Saturn','Lagna',1],['satru','Satru','hard',1,'Enemies and opposition','Mars','Saturn','Lagna',0],['jalapatana','Jalapatana','trav',0,'Crossing the ocean; long sea travel','CN15','Saturn','Lagna',0],['bandhana','Bandhana','hard',1,'Imprisonment and restriction','punya','Saturn','Lagna',0],['apamrityu','Apamrityu','hard',1,'Untimely or unnatural death — a point of caution','H8','Mars','Lagna',0],['labha','Labha','work',0,'Material gains and income','H11','L11','Lagna',1]];
+const NAMES={punya:'Punya Saham',sastra:'Sastra Saham',LL:'Lagna lord',CN15:'Cancer 15°',LSUN:'Sun-sign lord',LMOON:'Moon-sign lord'};
+const nm=t=>NAMES[t]||(/^H\d+$/.test(t)?t.slice(1)+'th house':/^L\d+$/.test(t)?t.slice(1)+'th lord':t),N=x=>((x%360)+360)%360,ord=n=>n+(['th','st','nd','rd'][(n%100>10&&n%100<14)?0:Math.min(n%10,4)%4]||'th');
+function calc(ch){const L=ch.siderealLongitudes,asc=ch.ascendant.longitude,as=ch.ascendant.sign,night=N(L.Sun-asc)<180,res={},out=[];
+  const lordLon=s=>L[SIGNS[s].lord],hp=n=>N(asc+(n-1)*30);
+  const val=t=>{if(res[t]!==undefined)return res[t];if(P7.includes(t))return L[t];if(t==='Lagna')return asc;if(t==='LL')return lordLon(as);if(t==='CN15')return 105;if(t==='LSUN')return lordLon(Math.floor(L.Sun/30));if(t==='LMOON')return lordLon(Math.floor(L.Moon/30));let m=t.match(/^H(\d+)$/);if(m)return hp(+m[1]);m=t.match(/^L(\d+)$/);return lordLon(Math.floor(hp(+m[1])/30));};
+  SD.forEach(([key,name,g,neg,meaning,A0,B0,C0,same])=>{let A=A0,B=B0,C=C0;
+    if(key==='samartha'&&SIGNS[as].lord==='Mars'){A='Jupiter';B='Mars';C='Lagna';}
+    if(key==='karyasiddhi'&&night){B='Moon';C='LMOON';}
+    else if(!same&&night&&key!=='karyasiddhi'){[A,B]=[B,A];}
+    const a=val(A),b=val(B),c=val(C);let lon=N(a-b+c);const d=N(a-b),e=N(c-b),adj=e>d;if(adj)lon=N(lon+30);
+    res[key]=lon;const sign=Math.floor(lon/30)%12,nk=NAKSHATRAS[Math.floor(lon/(360/27))%27];
+    out.push({key,name,g,neg,meaning,lon,sign,deg:lon%30,house:((sign-as+12)%12)+1,formula:`${nm(A)} − ${nm(B)} + ${nm(C)}`,adj,nak:nk.name,pada:Math.floor((lon%(360/27))/(360/108))+1,night});});
+  return {list:out,night};}
+function read(ch,x,dash){const P=ch.planets,lordN=SIGNS[x.sign].lord,lp=P[lordN],lh=lp.house,st=(lp.dignity||{}).status||'',L=[];let sc=50;
+  const add=(w,t,k)=>{sc+=w;L.push([k,t]);};
+  if(KEND.includes(x.house)||TRI.includes(x.house))add(5,`Sits in the ${ord(x.house)} house (${KEND.includes(x.house)?'Kendra':'Trikona'}), a strong position`,'g');else if(DUS.includes(x.house))add(-5,`Sits in the ${ord(x.house)} house (dusthana), a tough position`,'b');else L.push(['',`Sits in the ${ord(x.house)} house (${TH[x.house-1]})`]);
+  if(/Exalt|Own|Moola/i.test(st))add(10,`Its lord ${lordN} is strong (${st}) in house ${lh}`,'g');else if(/Debil/i.test(st))add(-10,`Its lord ${lordN} is weak (debilitated) in house ${lh}`,'b');else if(/Enemy/i.test(st))add(-4,`Its lord ${lordN} is uncomfortable (enemy sign) in house ${lh}`,'b');else if(/Friend/i.test(st))add(4,`Its lord ${lordN} is in a friendly sign, house ${lh}`,'g');else L.push(['',`Its lord ${lordN} sits in house ${lh}`]);
+  if(KEND.includes(lh)||TRI.includes(lh))add(6,'The lord is well placed (Kendra/Trikona)','g');else if(DUS.includes(lh))add(-6,'The lord is in a dusthana (6/8/12)','b');
+  PL9.forEach(n=>{if(P[n].sign===x.sign){if(BEN.includes(n))add(6,`${n} sits here and supports it`,'g');else if(UPA.includes(x.house))add(2,`${n} sits here (works well in this house)`,'');else add(-6,`${n} sits here and strains it`,'b');}});
+  PL9.forEach(n=>{if(P[n].sign!==x.sign&&(P[n].aspectsHouses||[]).includes(x.house)){if(n==='Jupiter')add(8,'Jupiter aspects it — protection and growth','g');else if(BEN.includes(n))add(4,`${n} aspects it kindly`,'g');else if(n==='Sun')add(-3,'Sun aspects it — some heat or ego','b');else add(-5,`${n} aspects it with pressure`,'b');}});
+  sc=Math.max(5,Math.min(97,Math.round(sc)));const v=x.neg?(sc>=65?['Well protected','g']:sc>=50?['Mostly safe','t']:sc>=38?['Sensitive','']:['Vulnerable','b']):(sc>=70?['Strong','g']:sc>=55?['Supported','t']:sc>=42?['Mixed','']:['Weak','b']);
+  const act=dash&&(dash.some(d=>d===lordN)||PL9.some(n=>dash.includes(n)&&P[n].sign===x.sign));
+  const sum=x.neg?(sc>=50?`${x.name} (${x.meaning.toLowerCase()}) is well guarded in this chart — troubles of this kind are cushioned.`:`${x.name} (${x.meaning.toLowerCase()}) is a sensitive spot here — take extra care and avoid risk in this area.`):(sc>=55?`${x.name} — ${x.meaning.toLowerCase()} — is supported in this chart and tends to deliver.`:sc>=42?`${x.name} — ${x.meaning.toLowerCase()} — gives mixed results; effort and good timing matter.`:`${x.name} — ${x.meaning.toLowerCase()} — is under strain here and needs patience and support.`);
+  return {sc,v,L,sum,lordN,act};}
+const PL9=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+const fd=l=>{const t=Math.round(l*3600),s=Math.floor(t/108000)%12,r=t%108000;return `${SIGNS[s].symbol} ${SIGNS[s].name} ${Math.floor(r/3600)}°${String(Math.floor(r%3600/60)).padStart(2,'0')}′`;};
+const reg={};
+function html(id,st){const R=reg[id],ch=R.ch,{list,night}=calc(ch),dash=R.dash,rows=list.map(x=>({x,r:read(ch,x,dash)}));
+  const g=st.g||'all',srt=st.s||'def',vis=rows.filter(o=>g==='all'||o.x.g===g);if(srt==='str')vis.sort((a,b)=>b.r.sc-a.r.sc);
+  const pos=rows.filter(o=>!o.x.neg).sort((a,b)=>b.r.sc-a.r.sc),neg=rows.filter(o=>o.x.neg).sort((a,b)=>a.r.sc-b.r.sc),tile=(l,o,sub)=>`<div class="vx-t"><label>${l}</label><b>${o.x.name}</b><small>${fd(o.x.lon)} · ${sub}</small></div>`;
+  const map=`<div class="vl-grid">${SIGNS.map((s,i)=>`<div class="vl-cell${i===ch.ascendant.sign?' ud':''}"><header><em>${s.symbol}</em><b>${s.name}</b><small>H${((i-ch.ascendant.sign+12)%12)+1}</small></header><div>${list.filter(x=>x.sign===i).map(x=>`<button type="button" class="vl-chip sh-chip" style="--gc:${GR[x.g][2]}" data-k="${x.key}">${x.name.slice(0,5)}</button>`).join('')}</div></div>`).join('')}</div>`;
+  const cards=vis.map(({x,r})=>`<details class="vx-pl sh-card" id="${id}-${x.key}"><summary><span class="vx-gl" style="color:${GR[x.g][2]}">${GR[x.g][0]}</span><div><b>${x.name} Saham</b><small>${fd(x.lon)} · ${ord(x.house)} house</small></div><span class="vx-chip ${r.v[1]}">${r.v[0]}${r.act?' ⭐':''}</span></summary><div class="rd-b"><div class="vx-bar" style="grid-template-columns:1fr"><i><u style="width:${r.sc}%"></u></i></div>
+    <div class="vx-note ${r.v[1]==='b'?'b':r.v[1]==='g'?'g':''}"><div><b>Reading:</b> ${r.sum}</div></div>${r.L.map(l=>`<div class="rd-w ${l[0]}">${l[0]==='g'?'✓':l[0]==='b'?'⚠':'•'} ${l[1]}</div>`).join('')}
+    <div class="rd-h">How it is found</div><div class="rd-w">${x.formula}${x.night?' (night chart)':' (day chart)'}${x.adj?' · +30° because Lagna was outside the arc':''}</div><div class="rd-w">Falls in ${x.nak} nakshatra, pada ${x.pada}. Watch ${r.lordN} (its sign lord) and planets that transit or aspect ${SIGNS[x.sign].name}.${r.act?' <b>Active now:</b> a running Dasha lord is connected to it.':''}</div></div></details>`).join('');
+  return `<div class="vx-grid">${tile('Strongest',pos[0],pos[0].r.v[0]+' '+pos[0].r.sc)}${tile('Most sensitive',neg[0],neg[0].r.v[0]+' '+neg[0].r.sc)}<div class="vx-t"><label>Chart</label><b>${night?'🌙 Night':'☀️ Day'}</b><small>formulas ${night?'reversed':'used as written'}</small></div></div>
+   <div class="rd-h">Where the sahams fall</div>${map}<div class="vxa-leg">${Object.values(GR).map(o=>`<span><i style="background:${o[2]}"></i>${o[1]}</span>`).join('')}</div>
+   <div class="filter-row" style="margin-top:12px"><button type="button" class="filter-chip sh-g${g==='all'?' active':''}" data-g="all">All ${list.length}</button>${Object.keys(GR).map(k=>`<button type="button" class="filter-chip sh-g${g===k?' active':''}" data-g="${k}">${GR[k][0]} ${GR[k][1]}</button>`).join('')}</div>
+   <div class="bb-sw"><button type="button" class="sh-s${srt==='def'?' on':''}" data-s="def">Classical order</button><button type="button" class="sh-s${srt==='str'?' on':''}" data-s="str">Strongest first</button></div>${cards}
+   <div class="vx-note"><div>Sahams are sensitive points worked out from planet positions (formulas of Tajika Neelakanthi as taught by PVR Narasimha Rao). A saham's sign lord and the planets touching it show how that life theme performs; it is triggered when its lord, or a Jupiter/Saturn transit, connects to it. Pitri and Rajya share one formula in the classical table.</div></div>`;}
+function mount(id,ch,dash){reg[id]={ch,dash};return `<div class="sh" data-id="${id}" data-g="all" data-s="def">${html(id,{})}</div>`;}
+window.__sahamHTML=(ch,id)=>{const d=ch.dashaData?(()=>{const a=findActiveDasha(ch.dashaData.mahadashas,new Date());return a&&a.mahadasha?[a.mahadasha.lord,a.antardasha&&a.antardasha.lord].filter(Boolean):null;})():null;return mount(id||'sh',ch,reg.__nat?reg.__nat.dash:d);};
+window.__sahamCalc=calc;window.__sahamRead=(ch,x)=>read(ch,x,null);
+window.buildSahamPanel=function(c){const a=findActiveDasha(c.dashaData.mahadashas,new Date()),dash=a&&a.mahadasha?[a.mahadasha.lord,a.antardasha&&a.antardasha.lord].filter(Boolean):null;reg.__nat={ch:c,dash};window.__shNat=c;
+  return `<div class="section-heading"><h3>Sahams — sensitive points &amp; their reading</h3><div class="rule"></div></div><div class="shp" data-mode="nat" data-y=""><div class="bb-sw"><button type="button" class="sh-m on" data-m="nat">Birth chart</button><button type="button" class="sh-m" data-m="ann">Annual (Tithi Pravesh)</button></div><div class="sh-yr ac-date" style="display:none"><button type="button" data-yy="-1">‹ Year</button><input type="number" inputmode="numeric"><button type="button" data-yy="1">Year ›</button></div><div class="sh-body">${mount('shn',c,dash)}</div></div>`;};
+function annual(shp,y){const T=window.__tp&&window.__tp.pravesh();if(!T){return '<div class="vx-note b"><div>Annual sahams need complete birth details.</div></div>';}
+  const S=T.S;const inp=shp.querySelector('.sh-yr input');if(!y)y=+(document.querySelector('.tp')&&document.querySelector('.tp').dataset.y)||new Date().getFullYear();y=Math.max(S.N.by+1,Math.min(2100,y));shp.dataset.y=y;inp.value=y;
+  const l=T.pravesh(S,y);if(!l.length)return `<div class="vx-note b"><div>No Tithi Pravesh found in ${y}. Try the next or previous year.</div></div>`;const X=T.at(S,l[0]);
+  return `<div class="vx-note g"><div>Annual chart for your Tithi Pravesh on <b>${new Date(Math.round((l[0]-2440587.5)*864e5)).toUTCString().slice(5,16)}</b>.</div></div>`+mount('sha'+y,X.c,reg.__nat.dash);}
+document.addEventListener('click',e=>{const sh=e.target.closest('.sh');const q=a=>e.target.closest(a);
+  if(sh){const id=sh.dataset.id;let ch=false;
+    if(q('.sh-g')){sh.dataset.g=q('.sh-g').dataset.g;ch=true;}else if(q('.sh-s')){sh.dataset.s=q('.sh-s').dataset.s;ch=true;}
+    else if(q('.sh-chip')){const d=document.getElementById(id+'-'+q('.sh-chip').dataset.k);if(!d){sh.dataset.g='all';sh.innerHTML=html(id,{g:'all',s:sh.dataset.s});}const d2=document.getElementById(id+'-'+q('.sh-chip').dataset.k);if(d2){d2.open=true;d2.scrollIntoView({behavior:'smooth',block:'center'});}return;}
+    if(ch){sh.innerHTML=html(id,{g:sh.dataset.g,s:sh.dataset.s});return;}}
+  const shp=e.target.closest('.shp');if(!shp)return;
+  if(q('.sh-m')){const m=q('.sh-m').dataset.m;shp.dataset.mode=m;shp.querySelectorAll('.sh-m').forEach(b=>b.classList.toggle('on',b===q('.sh-m')));shp.querySelector('.sh-yr').style.display=m==='ann'?'':'none';shp.querySelector('.sh-body').innerHTML=m==='ann'?annual(shp,+shp.dataset.y||0):mount('shn',window.__shNat,reg.__nat.dash);}
+  else if(q('.sh-yr button')){const y=(+shp.dataset.y||new Date().getFullYear())+ +q('.sh-yr button').dataset.yy;shp.querySelector('.sh-body').innerHTML=annual(shp,y);}});
+document.addEventListener('change',e=>{const shp=e.target.closest&&e.target.closest('.shp');if(shp&&e.target.type==='number'){const v=parseInt(e.target.value,10);if(isFinite(v))shp.querySelector('.sh-body').innerHTML=annual(shp,v);}});
+})();
+</script>
+<script>
+/* ===== Fate Meter: what is written vs what is in your control ===== */
+(function(){
+const PL7=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'],IC=['🧍','💰','⚔️','🏠','👶','⚕️','💍','🔮','🍀','💼','🎁','🌙'],TH=['self & body','wealth & family','effort & siblings','home & mother','children & creativity','health & enemies','marriage & partner','change & transformation','luck & dharma','career & status','gains & income','loss & release'];
+const MEAN=['how fated your identity is','how fated your money is','how fated your courage is','how fated your peace is','how fated your creativity is','how fated your struggle is','how fated your partner is','how fated your change is','how fated your fortune is','how fated your status is','how fated your income is','how fated your release is'];
+const PUSH=['Build health habits and self-confidence on purpose — your body and identity respond to discipline.','Budget, save and build income deliberately; family harmony needs conscious effort.','This is where effort pays: practise, ask, initiate. Courage grows by acting.','Create peace on purpose: home routines, honest family talks, a calm space.','Study, create and mentor actively; ideas come from practice, not waiting.','Face problems early: health routines, debt discipline, handling rivals head-on.','Invest in partnership: communicate, show up and choose partners consciously.','Meet change with preparation: savings, insurance, research and inner work.','Create your own luck: learn, find mentors and keep faith through action.','Career responds to skills, consistency and visibility — build, apply, persist.','Grow your network and goals deliberately; gains follow steady outreach.','Make rest and release a practice: sleep, retreat, letting go, mindful spending.'];
+const FLOW=['Your identity and health tend to carry you — trust your instincts.','Money and family support tend to arrive — stay open and grateful.','Courage comes naturally; use it, but do not coast.','Peace and home life tend to settle by themselves — protect them.','Creativity and children bring joy with little force — enjoy it.','Health and rivals tend to resolve on their own — keep basic care.','A partner tends to come into your life — stay receptive.','Change tends to arrive and teach you — flow with it.','Fortune tends to find you — be ready when doors open.','Status tends to rise with the right timing — stay visible.','Gains tend to flow — do not block them with doubt.','Release comes easily — let go when life asks you to.'];
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),map=r=>clamp(65+(r-112)*2,3,97),mapH=r=>clamp(65+(r-115)*1.5,3,97),avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0,ord=n=>n+(['th','st','nd','rd'][(n%100>10&&n%100<14)?0:Math.min(n%10,4)%4]||'th');
+const W=[1,1,.5,1,1,.5,1,.5,1,1,1,.5];
+function yogas(c){const y=c.yogas||{},a=k=>Array.isArray(y[k])?y[k]:(y[k]?[y[k]]:[]),o=[];
+  a('panchaMahapurusha').forEach(e=>o.push({name:e.yoga,pl:[e.planet],h:[e.house]}));a('gajaKesari').forEach(e=>o.push({name:e.yoga,pl:['Jupiter','Moon'],h:[e.jupiterHouse,e.moonHouse]}));
+  a('rajaYogas').forEach(e=>o.push({name:e.yoga,pl:[e.kendraLord,e.trikonaLord],h:[c.planets[e.kendraLord].house,c.planets[e.trikonaLord].house]}));a('parivartana').forEach(e=>o.push({name:e.yoga,pl:[e.lordA,e.lordB],h:[e.houseA,e.houseB]}));
+  a('viparitaRaja').forEach(e=>o.push({name:e.yoga,pl:[e.lordA],h:[e.houseB]}));a('neechaBhanga').forEach(e=>o.push({name:e.yoga,pl:[e.planet],h:[c.planets[e.planet].house]}));return o;}
+window.computeFate=function(c,P){
+  const sb=c.shadbala.planets,pct=n=>clamp((sb[n]||{}).percentOfRequired||100,20,200),rup=n=>sb[n].totalRupas,bb=computeBhavaBala(c,P.lat,P.lon),rows=bb.rows,avgB=bb.mean,hs=c.vargas.D1.houses,sav=c.ashtakavarga.sav,bt=c.ashtakavarga.bavTables;
+  const bhS=h=>{const r=rows[h-1];return clamp(r.total/(REQUIRED_RUPAS[r.lord]*60+30)*100,20,200);},savS=h=>clamp(sav[hs[h-1].sign]/28*100,20,200);
+  const PF=avg(PL7.map(pct)),HF=avg(Array.from({length:12},(_,i)=>bhS(i+1))),WS=W.reduce((s,x)=>s+x,0),FFsav=Array.from({length:12},(_,i)=>W[i]*savS(i+1)).reduce((s,x)=>s+x,0)/WS,
+  bavS=v=>clamp(v/4*100,25,200),bavOwn=PL7.map(n=>({n,sg:c.planets[n].sign,h:c.planets[n].house,v:bt[n][c.planets[n].sign]})),FFown=avg(bavOwn.map(o=>bavS(o.v))),
+  lordBav=h=>{const l=hs[h-1].signLord;return PL7.includes(l)?bt[l][hs[h-1].sign]:4;},
+  KAR=['Sun','Jupiter','Mars','Moon','Jupiter','Saturn','Venus','Saturn','Jupiter','Mercury','Jupiter','Saturn'],karBav=h=>bt[KAR[h-1]][hs[h-1].sign],
+  FFlord=Array.from({length:12},(_,i)=>W[i]*bavS(lordBav(i+1))).reduce((s,x)=>s+x,0)/WS,
+  grp=a=>avg(a.map(h=>sav[hs[h-1].sign])),kt=grp([1,4,7,10,5,9]),dus=grp([6,8,12]),upa=grp([3,6,10,11]),
+  FFpat=clamp(100+(kt-dus)*4+(sav[hs[10].sign]-sav[hs[11].sign])*2,50,150),
+  FF=.45*FFsav+.20*FFown+.20*FFlord+.15*FFpat;
+  const Y=yogas(c).map(y=>{const a=avg(y.pl.map(n=>sb[n]?pct(n):100))/100,b=avg(y.h.map(h=>clamp(rows[h-1].total/avgB,.2,2)));return {...y,del:clamp(a*b*100,10,250)};}),YS=Y.length?avg(Y.map(y=>y.del)):70;
+  const trSign=(ms,pn)=>{const d=new Date(ms),jd=toJulianDay(d.getUTCFullYear(),d.getUTCMonth()+1,d.getUTCDate(),d.getUTCHours(),d.getUTCMinutes(),0),l=normDeg(planetGeocentricLongitude(pn.toLowerCase(),jd)-lahiriAyanamsa(jd));return Math.floor(l/30)%12;},
+  gScore=ms=>avg(['Jupiter','Saturn'].map(p=>{const sg=trSign(ms,p);return clamp((sav[sg]/28*.5+bt[p][sg]/4*.5)*100,40,160);})),
+  gWin=(t0,t1,n)=>avg(Array.from({length:n},(_,i)=>gScore(t0+(t1-t0)*(i+.5)/n))),
+  bf=n=>PL7.includes(n)?clamp(bt[n][c.planets[n].sign]/4*100,40,160):100,
+  avgR=avg(PL7.map(rup)),lw=n=>rup(PL7.includes(n)?n:SIGNS[c.planets[n].sign].lord)/avgR,tS=(m,a)=>.5*clamp(lw(m)*lw(a)*100,40,160)+.5*avg([bf(m),bf(a)]);
+  const MD=c.dashaData.mahadashas,now=Date.now(),act=findActiveDasha(MD,new Date()),curM=act&&act.mahadasha,curA=act&&act.antardasha,TWnow=curM&&curA?tS(curM.lord,curA.lord):100;
+  const slices=(t0,t1)=>{const o=[];MD.forEach(m=>{if(m.endDate<t0||m.startDate>t1)return;calculateAntardashas(m).forEach(a=>{const s=Math.max(+a.startDate,t0),e=Math.min(+a.endDate,t1);if(e>s)o.push({m:m.lord,a:a.lord,w:e-s,s,e});});});return o;};
+  const winTW=(t0,t1)=>{const sl=slices(t0,t1);if(!sl.length)return {tw:100,sl,top:null};const tot=sl.reduce((s,x)=>s+x.w,0);return {tw:sl.reduce((s,x)=>s+tS(x.m,x.a)*x.w,0)/tot,sl,top:sl.slice().sort((a,b)=>b.w-a.w)[0]};};
+  const raw=(tw,g)=>.22*PF+.18*HF+.22*FF+.12*YS+.16*tw+.10*g,GTnow=gScore(now),fate=map(raw(TWnow,GTnow)),D=864e5,per=[['Today',now,now+D,1],['Next 1 year',now,now+365.25*D,4],['Next 5 years',now,now+5*365.25*D,10],['Next 20 years',now,now+20*365.25*D,20]].map(([n,a,b,k])=>{const w=winTW(a,b),g=gWin(a,b,k);return {n,tw:w.tw,g,fate:map(raw(w.tw,g)),top:w.top};});
+  per[0].tw=TWnow;per[0].g=GTnow;per[0].fate=fate;per[0].top=curM&&{m:curM.lord,a:curA.lord};
+  const years=Array.from({length:12},(_,k)=>{const a=now+k*365.25*D,w=winTW(a,a+365.25*D),g=gWin(a,a+365.25*D,3);return {y:new Date(a).getFullYear(),tw:w.tw,g,fate:map(raw(w.tw,g)),top:w.top};});
+  const houses=Array.from({length:12},(_,i)=>{const h=i+1,lord=hs[i].signLord,yh=Y.filter(y=>y.h.includes(h)),ys=yh.length?avg(yh.map(y=>y.del)):100,avh=avg([bavS(lordBav(h)),bavS(karBav(h))]),r=.30*bhS(h)+.25*savS(h)+.15*pct(lord)+.10*ys+.20*avh,f=mapH(r);return {h,fate:f,avh,lb:lordBav(h),kb:karBav(h),kar:KAR[h-1],bh:bhS(h),sv:sav[hs[i].sign],svp:savS(h),lord,lp:pct(lord),ys,yn:yh.map(y=>y.name),zone:f>=65?'flow':f>=45?'mix':'push'};});
+  const key=[1,4,7,10,5,9],kHB=avg([1,4,7,10].map(bhS)),tHB=avg([1,5,9].map(bhS)),keyHB=avg(key.map(bhS)),effHB=avg([3,6,11].map(bhS)),ll=SIGNS[c.ascendant.sign].lord,llp=c.planets[ll],llst=(llp.dignity||{}).status||'';
+  const mdPct=curM&&PL7.includes(curM.lord)?pct(curM.lord):100,savHi=hs.filter(h=>sav[h.sign]>=28).length,savLo=hs.filter(h=>sav[h.sign]<25).length,sixth=hs[5].signLord;
+  const fm=[['Planets strong on average (110%+)',PF>=110],['Key houses strong in Bhava Bala',keyHB>=105],['SAV 28+ in most signs ('+savHi+'/12)',savHi>=8],['Running Mahadasha lord is strong',mdPct>=100],['Several powerful yogas',Y.filter(y=>y.del>=100).length>=3],['Strong Kendras (1, 4, 7, 10)',kHB>=105],['Strong Trikonas (1, 5, 9)',tHB>=105],['Lagna lord in a Kendra or Trikona',[1,4,5,7,9,10].includes(llp.house)],['Gains beat expenses: 11th SAV ('+sav[hs[10].sign]+') above 12th ('+sav[hs[11].sign]+')',sav[hs[10].sign]>sav[hs[11].sign]],['Kendra + Trikona SAV avg ('+kt.toFixed(1)+') above 6/8/12 avg ('+dus.toFixed(1)+')',kt>dus+1],['Most planets hold 4+ points in their own sign ('+bavOwn.filter(o=>o.v>=4).length+'/7)',bavOwn.filter(o=>o.v>=4).length>=5],['Jupiter & Saturn transits are in high-point signs now',GTnow>=105]];
+  const wm=[['Planets weak on average (below 90%)',PF<90],['Key houses weak in Bhava Bala',keyHB<95],['Low SAV (<25) in many signs ('+savLo+'/12)',savLo>=4],['Running Mahadasha lord is weak',mdPct<90],['Few or weak yogas',!Y.length||avg(Y.map(y=>y.del))<90],['Afflicted Lagna lord',[6,8,12].includes(llp.house)||/Debil|Enemy/i.test(llst)],['Strong 3rd, 6th, 11th (effort houses)',effHB>=105],['Strong 6th lord (you fight for things)',pct(sixth)>=110],['Expenses beat gains: 12th SAV above 11th',sav[hs[11].sign]>=sav[hs[10].sign]],['Dusthana SAV avg above Kendra/Trikona avg',dus>=kt],['Most planets hold under 4 points in their own sign ('+bavOwn.filter(o=>o.v<4).length+'/7)',bavOwn.filter(o=>o.v<4).length>=5],['Jupiter & Saturn transits are in low-point signs now',GTnow<95]];
+  return {PF,HF,FF,FFsav,FFown,FFlord,FFpat,bavOwn,kt,dus,upa,GT:GTnow,YS,TWnow,raw:raw(TWnow,GTnow),fate,free:100-fate,Y,houses,per,years,fm,wm,cur:curM&&{m:curM.lord,a:curA.lord},tw:TWnow,mdPct,ll,llp,savHi,savLo};}
+const lab=f=>f>=80?['Heavily fated','Life unfolds largely on its own.','🔮']:f>=65?['Mostly fated','Go with the flow; most doors open when you move toward them.','🕉️']:f>=50?['Balanced','Fate and effort both matter — about equal partners.','⚖️']:f>=35?['Mostly free will','You forge your path; results track your effort.','🔥']:['Heavily free will','You build almost everything yourself.','⚡'];
+const zc={flow:'#5EC4B7',mix:'#E8C14F',push:'#FF8A4A'},zl={flow:'Surrender zone',mix:'Shared zone',push:'Free-will zone'};
+function gauge(f){const fr=f/100,x=130-100*Math.cos(Math.PI*fr),y=130-100*Math.sin(Math.PI*fr);return `<svg class="fm-g" viewBox="0 0 260 150"><defs><linearGradient id="fmg" x1="0" x2="1"><stop offset="0" stop-color="#FF8A4A"/><stop offset=".5" stop-color="#E8C14F"/><stop offset="1" stop-color="#5EC4B7"/></linearGradient></defs><path d="M30 130 A100 100 0 0 1 230 130" fill="none" stroke="#1a2140" stroke-width="20" stroke-linecap="round"/><path d="M30 130 A100 100 0 0 1 230 130" fill="none" stroke="url(#fmg)" stroke-width="20" stroke-linecap="round" stroke-dasharray="${(314.16*fr).toFixed(1)} 400"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="9" fill="#fff" stroke="#0b0d14" stroke-width="3"/><text x="130" y="108" text-anchor="middle" font-size="40" font-weight="700" fill="#fff" font-family="sans-serif">${Math.round(f)}%</text><text x="130" y="128" text-anchor="middle" font-size="10" letter-spacing="2" fill="#D4AF37" font-family="sans-serif" font-weight="700">FATE</text><text x="22" y="148" font-size="9" fill="#FF8A4A" font-family="sans-serif" font-weight="700">FREE WILL</text><text x="238" y="148" text-anchor="end" font-size="9" fill="#5EC4B7" font-family="sans-serif" font-weight="700">FATE</text></svg>`;}
+function build(F,sel){const L=lab(F.fate),bar=(v,m)=>`<div class="vx-bar" style="grid-template-columns:1fr"><i><u style="width:${clamp(v/(m||150)*100,3,100)}%"></u></i></div>`;
+  const layers=[['🪐','Planetary Fate',F.PF,'22%','How strong your planets are against what they need (Shadbala). Above 100% = planets deliver on their own.'],['🏠','House Fate',F.HF,'18%','Potency of your 12 life areas (Bhava Bala) against the strength each needs. High = areas flow naturally.'],['🌊','Flow Fate (Ashtakavarga)',F.FF,'22%','Blends four Ashtakavarga checks: house SAV points vs the 28 average (45%), each planet\'s own points in the sign it sits (20%), house-lord points in its house (20%), and Kendra/Trikona vs 6-8-12 balance plus gains vs expenses (15%). High = doors open easily.'],['🧿','Yoga Delivery',F.YS,'12%',F.Y.length?`${F.Y.length} yoga${F.Y.length>1?'s':''} found; scored by the strength of their planets and houses.`:'No major yogas found, so this layer is set slightly low (70%).'],['⏳','Timing Weight (Dasha)',F.TWnow,'16%',F.cur?`Running ${F.cur.m} › ${F.cur.a}: Shadbala of both period lords (half) plus their Ashtakavarga points in their natal signs (half). Above 100 = fate is active now.`:'Current period strength.'],['🌍','Transit Weight (Gochara)',F.GT,'10%','Jupiter and Saturn today: points of the sign each is crossing (SAV and its own BAV). Above 100 = the big slow transits are supporting you.']];
+  const flow=F.houses.filter(h=>h.zone==='flow').sort((a,b)=>b.fate-a.fate),push=F.houses.filter(h=>h.zone==='push').sort((a,b)=>a.fate-b.fate),H=F.houses[sel-1];
+  const chip=h=>`<span class="vx-chip" style="border-color:${zc[h.zone]};color:${zc[h.zone]}">${IC[h.h-1]} ${h.h} · ${Math.round(h.fate)}%</span>`;
+  const tiles=F.houses.map(h=>`<button type="button" class="fm-h${sel===h.h?' sel':''}" data-h="${h.h}" style="--c:${zc[h.zone]}"><em>${h.h}</em><i>${IC[h.h-1]}</i><b>${Math.round(h.fate)}%</b><small>${TH[h.h-1].split(' ')[0]}</small><u style="width:${h.fate}%"></u></button>`).join('');
+  const per=F.per.map(p=>`<div class="vx-t"><label>${p.n}</label><b style="color:${p.fate>=65?zc.flow:p.fate>=45?zc.mix:zc.push}">${Math.round(p.fate)}% fate</b><small>${p.top?p.top.m+' › '+p.top.a+' · weight '+Math.round(p.tw):''}</small></div>`).join('');
+  const yrs=F.years.map(y=>`<div class="fm-y"><b>${Math.round(y.fate)}</b><i style="height:${clamp((y.fate-30)*1.2,6,100)}px;background:${y.fate>=65?zc.flow:y.fate>=45?zc.mix:zc.push}"></i><small>${String(y.y).slice(2)}</small><em>${y.top?y.top.a.slice(0,2):''}</em></div>`).join('');
+  const sk=F.layers=layers;
+  const strongest=layers.slice().sort((a,b)=>b[2]-a[2])[0],weakest=layers.slice().sort((a,b)=>a[2]-b[2])[0];
+  const reading=`<p><b>Overall.</b> About <b>${Math.round(F.fate)}%</b> of the patterns in your chart look pre-set and about <b>${Math.round(F.free)}%</b> respond to your choices. That reads as <b>${L[0].toLowerCase()}</b>: ${L[1].toLowerCase()}</p>
+   <p><b>What stands out.</b> Your strongest layer is <b>${strongest[1]}</b> (${Math.round(strongest[2])}), and your weakest is <b>${weakest[1]}</b> (${Math.round(weakest[2])}). ${F.PF>=100&&F.HF<95?'Your planets are capable, but some life areas still need building by hand.':F.PF<95&&F.HF>=100?'Your life areas have natural support even though individual planets are modest, so circumstances help more than talent alone.':F.PF>=100?'Both talent and circumstances are on your side.':'Neither talent nor circumstances hand you much, so steady effort carries you.'}</p>
+   <p><b>What is written (surrender zone).</b> ${flow.length?flow.slice(0,3).map(h=>`<b>${ord(h.h)} house — ${TH[h.h-1]}</b> (${Math.round(h.fate)}%)`).join(', ')+': '+FLOW[flow[0].h-1]+' Do not fight these areas — receive them well.':'No house is strongly pre-set; most areas respond to what you do.'}</p>
+   <p><b>What you can rewrite (free-will zone).</b> ${push.length?push.slice(0,3).map(h=>`<b>${ord(h.h)} house — ${TH[h.h-1]}</b> (${Math.round(h.fate)}%)`).join(', ')+': '+PUSH[push[0].h-1]+' Effort here changes the outcome more than waiting.':'No house is strongly free-will; your chart supports you broadly.'}</p>
+   <p><b>Timing now.</b> ${F.cur?`You are in <b>${F.cur.m} › ${F.cur.a}</b> with a timing weight of <b>${Math.round(F.tw)}</b>. ${F.tw>=100?'Fate is active now: favourable currents are running, so move with them.':'Your effort matters more right now: the running period is not carrying you, so act deliberately.'}`:'Dasha timing is unavailable for this chart.'}</p>`;
+  return `<div class="fm-hero">${gauge(F.fate)}<div class="fm-lab">${L[2]} ${L[0]}</div><p>${L[1]}</p><div class="fm-split"><span style="color:#5EC4B7">Fate ${Math.round(F.fate)}%</span><span style="color:#FF8A4A">Free will ${Math.round(F.free)}%</span></div></div>
+   <div class="vx-note"><div>This shows your <b>starting position</b>, not your ending. The number is built from your own Shadbala, Bhava Bala, Ashtakavarga, Dasha and Yogas. It is an interpretive index, not a classical rule, and it is calibrated so that typical charts land around 55–75%. Sadhana, grace and conscious choice can shift it.</div></div>
+   <div class="rd-h">Your full reading</div><div class="fm-read">${reading}</div>
+   <div class="rd-h">The 5 layers behind the number</div>${layers.map(l=>`<div class="fm-l"><div class="fm-lh"><span>${l[0]} ${l[1]}</span><b>${Math.round(l[2])}</b><em>weight ${l[3]}</em></div>${bar(l[2],160)}<p>${l[4]}</p></div>`).join('')}
+   <div class="rd-h">Ashtakavarga behind the flow</div><div class="vx-grid"><div class="vx-t"><label>Kendra + Trikona SAV avg</label><b>${F.kt.toFixed(1)}</b><small>vs 28 average</small></div><div class="vx-t"><label>Dusthana (6/8/12) avg</label><b>${F.dus.toFixed(1)}</b><small>lower is easier</small></div><div class="vx-t"><label>Upachaya (3/6/10/11) avg</label><b>${F.upa.toFixed(1)}</b><small>growth over time</small></div><div class="vx-t"><label>Jupiter + Saturn transit</label><b>${Math.round(F.GT)}</b><small>100 = neutral</small></div></div><div class="fm-own">${F.bavOwn.map(o=>`<span class="vx-chip" style="border-color:${o.v>=4?zc.flow:zc.push};color:${o.v>=4?zc.flow:zc.push}">${o.n} ${o.v} pts · house ${o.h}</span>`).join('')}</div><div class="vx-note"><div>Each planet's own Ashtakavarga points in the sign it sits (4 is average; 5 or more is strong, 3 or fewer is weak) show whether that planet can deliver what its house promises.</div></div><div class="fm-zones"><div class="fm-z flow"><h4>🌊 Surrender zone</h4><small>Flow, receive, do not force</small><div>${flow.length?flow.map(chip).join(''):'<span class="vx-chip">None strongly fated</span>'}</div></div><div class="fm-z push"><h4>🔥 Free-will zone</h4><small>Push, build, take charge</small><div>${push.length?push.map(chip).join(''):'<span class="vx-chip">None strongly free-will</span>'}</div></div></div>
+   <div class="rd-h">Fate % in each of your 12 houses · tap one</div><div class="fm-hs">${tiles}</div>
+   <div class="fm-d" style="border-color:${zc[H.zone]}"><div class="fm-dh"><span>${IC[H.h-1]} House ${H.h} · ${TH[H.h-1]}</span><b style="color:${zc[H.zone]}">${Math.round(H.fate)}%</b></div><div class="vx-chip" style="border-color:${zc[H.zone]};color:${zc[H.zone]}">${zl[H.zone]}</div><p>${MEAN[H.h-1][0].toUpperCase()+MEAN[H.h-1].slice(1)}: ${Math.round(H.fate)}% of this area looks pre-set.</p>
+     <div class="rd-w">House potency (Bhava Bala): ${Math.round(H.bh)}% of what the house needs</div><div class="rd-w">Ashtakavarga: ${H.sv} points (${Math.round(H.svp)}% of the 28 average)</div><div class="rd-w">House lord ${H.lord}: ${Math.round(H.lp)}% of its required strength</div><div class="rd-w">Ashtakavarga of the lord: ${H.lb} points in this house's sign · karaka ${H.kar}: ${H.kb} points (4 is average)</div>${H.yn.length?`<div class="rd-w g">Yoga support: ${H.yn.join(', ')}</div>`:''}
+     <div class="vx-note ${H.zone==='flow'?'g':H.zone==='push'?'b':''}"><div><b>${H.zone==='flow'?'How to use it':'What to do'}:</b> ${H.zone==='flow'?FLOW[H.h-1]:H.zone==='push'?PUSH[H.h-1]:'A mix of both: stay open to what comes and keep working at it. '+PUSH[H.h-1]}</div></div></div>
+   <div class="rd-h">Fate % by time</div><div class="vx-grid">${per}</div><div class="fm-yrs"><div class="fm-yh">Next 12 years · fate % · antardasha lord</div><div class="fm-yb">${yrs}</div></div>
+   <div class="rd-h">Markers in your chart</div><div class="fm-mk"><div><h4>Fate-heavy markers · ${F.fm.filter(x=>x[1]).length}/${F.fm.length}</h4>${F.fm.map(x=>`<div class="rd-w ${x[1]?'g':''}">${x[1]?'✓':'—'} ${x[0]}</div>`).join('')}</div><div><h4>Free-will markers · ${F.wm.filter(x=>x[1]).length}/${F.wm.length}</h4>${F.wm.map(x=>`<div class="rd-w ${x[1]?'b':''}">${x[1]?'⚠':'—'} ${x[0]}</div>`).join('')}</div></div>
+   <div class="rd-h">The honest limits</div><div class="vx-note"><div>The number cannot capture spiritual practice, sudden awakening, a guru's grace, radical transformation, or the choices you make inside your free-will zone. It shows where you start. <i>Your chart tells you how much of your life is written; your sadhana tells you how much you can rewrite.</i></div></div>`;}
+window.buildFatePanel=function(c,P){let F;try{F=window.computeFate(c,P);}catch(e){console.warn('fate',e);return '<div class="vx-note b"><div>Could not compute the Fate Meter for this chart.</div></div>';}
+  const sel=F.houses.slice().sort((a,b)=>a.fate-b.fate)[0].h;window.__fm={F};return `<div class="section-heading"><h3>Fate Meter — written vs in your control</h3><div class="rule"></div></div><div class="fm" data-sel="${sel}">${build(F,sel)}</div>`;};
+document.addEventListener('click',e=>{const t=e.target.closest('.fm-h');if(!t)return;const r=t.closest('.fm');r.dataset.sel=t.dataset.h;r.innerHTML=build(window.__fm.F,+t.dataset.h);const d=r.querySelector('.fm-d');if(d)d.scrollIntoView({behavior:'smooth',block:'center'});});
+})();
+</script>
+<script>
+/* =============================================================================
+   VEDIC ASTRO SUITE — EXPORT + COPY ADD-ON  (v1.0)
+   One self-contained file. Works in BOTH apps, auto-detects which one it is in:
+     • Birth Chart app  (has buildFullReportText)  -> srcB
+     • 3D Sky app       (has generateExportData)   -> srcA
+
+   HOW TO MERGE (give this to the other chat):
+     In the main HTML there are two embedded apps: the text/plain blocks with
+     id="srcA" (3D Sky) and id="srcB" (Birth Chart). Near the END of each one,
+     right before its closing body tag, add a new inline script element whose
+     content is this whole file. Because it sits inside a text/plain wrapper,
+     its closing script tag must be written with a backslash before the slash
+     (exactly like every other inner script in the file already is).
+     Do NOT paste this file anywhere else, and do not edit it - it wraps the
+     existing functions at runtime, so the original code stays untouched.
+
+   WHAT IT ADDS
+     1. Copy button on EVERY page, EVERY section heading, EVERY table and card
+        (reads what is on screen, so any panel/chart added later is covered too).
+     2. Floating ⧉ button (bottom-right): copy this page / full report / raw JSON.
+     3. Birth Chart export window: ~25 new sections (every panel in the app:
+        Reading, Bhava Chalit, Lagnas, Panchanga, Sahams, Fate, Numerology,
+        Bhava Bala, Tithi Pravesh, Transits, Relationships ...), a House-by-House
+        summary, full Raw JSON, and an optional "instructions for AI" header.
+        Extra buttons: Copy JSON / Download .json.
+     4. 3D Sky export dropdown: un-capped transits & conjunctions (the old one
+        stopped at 75 rows), detailed sky, every tab, and "Everything".
+   ============================================================================= */
+(function(){
+  if (window.__VAX_LOADED) return; window.__VAX_LOADED = true;
+  var IS_B = typeof buildFullReportText === 'function';
+  var IS_A = !IS_B && typeof generateExportData === 'function';
+  if (!IS_A && !IS_B) return;
+
+  var $ = function(s, r){ return (r || document).querySelector(s); };
+  var $$ = function(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  /* ---------- styles ---------- */
+  var st = document.createElement('style');
+  st.textContent =
+  '.vax-btn{font:600 11px/1 system-ui,-apple-system,sans-serif;color:#D4AF37;background:rgba(212,175,55,.10);border:1px solid rgba(212,175,55,.45);border-radius:999px;padding:6px 11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;vertical-align:middle;margin-left:8px;white-space:nowrap;min-height:26px}' +
+  '.vax-btn:active{transform:scale(.95)}.vax-btn.ok{color:#4ADE80;border-color:#4ADE80;background:rgba(74,222,128,.12)}' +
+  '.vax-bar{display:flex;justify-content:flex-end;margin:2px 0 6px}.vax-bar .vax-btn{margin:0}' +
+  '.vax-corner{position:absolute;top:6px;right:6px;margin:0;z-index:3;opacity:.9}' +
+  '#vaxFab{position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + var(--vax-b,92px));z-index:90;font-family:system-ui,sans-serif}' +
+  '#vaxFab .vax-fb{width:46px;height:46px;border-radius:50%;border:1px solid rgba(212,175,55,.6);background:rgba(11,17,32,.88);color:#D4AF37;font-size:20px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}' +
+  '#vaxFab .vax-menu{position:absolute;right:0;bottom:54px;min-width:220px;padding:6px;border-radius:14px;background:#0e1527;border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 34px rgba(0,0,0,.6);display:none}' +
+  '#vaxFab.open .vax-menu{display:block}' +
+  '#vaxFab .vax-menu button{display:block;width:100%;text-align:left;background:none;border:0;color:#e8edf7;font:600 13px/1.2 system-ui,sans-serif;padding:11px 12px;border-radius:9px;cursor:pointer}' +
+  '#vaxFab .vax-menu button:active{background:rgba(255,255,255,.1)}' +
+  '#vaxToast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 150px);transform:translateX(-50%);z-index:300;background:#0e1527;color:#e8edf7;border:1px solid rgba(74,222,128,.6);border-radius:999px;padding:9px 16px;font:600 12.5px system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s;max-width:88vw;text-align:center}' +
+  '#vaxToast.show{opacity:1}#vaxToast.err{border-color:#ff6b6b}';
+  document.head.appendChild(st);
+
+  /* ---------- copy + toast ---------- */
+  var tt;
+  function toast(msg, err){
+    var t = $('#vaxToast'); if (!t){ t = document.createElement('div'); t.id = 'vaxToast'; document.body.appendChild(t); }
+    t.textContent = msg; t.className = (err ? 'err ' : '') + 'show'; clearTimeout(tt);
+    tt = setTimeout(function(){ t.className = err ? 'err' : ''; }, 2200);
+  }
+  function fallbackCopy(txt){
+    return new Promise(function(res, rej){
+      try{
+        var ta = document.createElement('textarea'); ta.value = txt;
+        ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0'; document.body.appendChild(ta);
+        ta.focus(); ta.select(); var ok = document.execCommand('copy'); ta.remove();
+        ok ? res() : rej(new Error('blocked'));
+      }catch(e){ rej(e); }
+    });
+  }
+  function copyText(txt){
+    if (navigator.clipboard && window.isSecureContext)
+      return navigator.clipboard.writeText(txt).catch(function(){ return fallbackCopy(txt); });
+    return fallbackCopy(txt);
+  }
+  function doCopy(txt, label){
+    return copyText(txt).then(function(){ toast('✓ Copied ' + (label || '') + ' (' + txt.length.toLocaleString() + ' chars)'); return true; },
+      function(){ toast('Copy blocked by browser — use Download instead', true); return false; });
+  }
+
+  /* ---------- DOM -> clean text (works on hidden panels too) ---------- */
+  var SKIP = /^(SCRIPT|STYLE|NOSCRIPT|BUTTON|CANVAS|TEMPLATE|OPTION|IFRAME|SELECT)$/;
+  var BLOCK = /^(DIV|P|SECTION|ARTICLE|UL|OL|LI|TR|H[1-6]|HEADER|FOOTER|TABLE|FORM|LABEL|DETAILS|SUMMARY|PRE|BLOCKQUOTE|DL|DT|DD|FIGURE|FIGCAPTION|ASIDE|NAV)$/;
+  function walk(n, o){
+    if (n.nodeType === 3){ o.push(n.nodeValue.replace(/\s+/g, ' ')); return; }
+    if (n.nodeType !== 1) return;
+    var t = n.tagName.toUpperCase(), c = n.classList;
+    if (SKIP.test(t) || c.contains('vax-btn') || c.contains('vax-bar') || c.contains('vax-skip') || n.hasAttribute('hidden')) return;
+    if (t === 'BR'){ o.push('\n'); return; }
+    if (t === 'SVG'){
+      var tx = $$('text', n).map(function(e){ return e.textContent.trim(); }).filter(Boolean);
+      if (tx.length) o.push('\n[Chart graphic: ' + tx.join(' ') + ']\n'); return;
+    }
+    if (t === 'INPUT'){ if (/text|number|date|time|search/.test(n.type) && n.value) o.push(' [' + n.value + '] '); return; }
+    if (t === 'TEXTAREA'){ if (n.value) o.push('\n' + n.value + '\n'); return; }
+    if (t === 'TABLE'){
+      o.push('\n');
+      $$('tr', n).forEach(function(tr){
+        var cells = Array.prototype.slice.call(tr.children).map(function(td){
+          var b = []; walk(td, b); return b.join('').replace(/\s+/g, ' ').trim();
+        });
+        if (cells.join('')) o.push(cells.join(' | ') + '\n');
+      });
+      return;
+    }
+    if (/^H[1-6]$/.test(t)){ o.push('\n\n## '); Array.prototype.forEach.call(n.childNodes, function(k){ walk(k, o); }); o.push('\n'); return; }
+    var blk = BLOCK.test(t);
+    o.push(blk ? (t === 'LI' ? '\n- ' : '\n') : ' ');   // inline elements get a space so label/value pairs don't glue together
+    Array.prototype.forEach.call(n.childNodes, function(k){ walk(k, o); });
+    o.push(blk ? '\n' : ' ');
+  }
+  function domToText(el){
+    if (!el) return '';
+    var o = []; walk(el, o);
+    return o.join('').replace(/[ \t]+\n/g, '\n').replace(/\n[ \t]+/g, '\n').replace(/[ \t]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+  }
+  function siblingsText(h, headSel){
+    var o = [domToText(h)], n = h.nextElementSibling, any = false;
+    while (n && !(n.matches && n.matches(headSel))){ var t = domToText(n); if (t){ o.push(t); any = true; } n = n.nextElementSibling; }
+    return any ? o.join('\n') : '';
+  }
+
+  /* ---------- context line so an AI knows whose data this is ---------- */
+  function ctxLine(){
+    try{
+      if (IS_B && typeof currentProfileForExport !== 'undefined' && currentProfileForExport){
+        var p = currentProfileForExport;
+        return 'Chart: ' + p.name + ' | DOB ' + p.dob + ' ' + p.tob + ' | ' + p.place + ' (' + Number(p.lat).toFixed(4) + ', ' + Number(p.lon).toFixed(4) + ') | Sidereal / Lahiri';
+      }
+    }catch(e){}
+    return 'Source: Vedic Astro Suite | Sidereal / Lahiri | exported ' + new Date().toString();
+  }
+  function withHead(title, body){ return '# ' + title + '\n' + ctxLine() + '\n\n' + body; }
+
+  /* ---------- injected copy buttons ---------- */
+  function mk(label, getter, cls, what){
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'vax-btn ' + (cls || ''); b.textContent = '⧉ ' + label;
+    b.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      var txt = ''; try{ txt = getter(); }catch(err){ txt = ''; }
+      if (!txt){ toast('Nothing to copy here yet', true); return; }
+      doCopy(txt, what || '').then(function(ok){
+        if (!ok) return; var old = b.textContent; b.textContent = '✓ Copied'; b.classList.add('ok');
+        setTimeout(function(){ b.textContent = old; b.classList.remove('ok'); }, 1400);
+      });
+    });
+    return b;
+  }
+  var LIVE = '#skyTable,#transitFeed,#conjunctionFeed,#aspectList,#signAspectList,#houseTable'; // re-rendered every frame in 3D Sky
+  var PANEL_SEL = IS_B ? '.app-panel' : '.panel-section';
+  var HEAD_SEL = IS_B ? '.section-heading' : '.panel-heading';
+  var CARD_SEL = '.pl-card,.vb-card,.mt-card,.tr-card,.rel-pair-card,.varga-card,.ov-chartcard,.tt-panel-card,.lagna-summary-card,.transit-live-card,.rect-panel-card';
+  function titleOf(panel){
+    if (IS_B && typeof HOME_ITEMS !== 'undefined'){ var r = HOME_ITEMS.filter(function(i){ return i[0] === panel.id; })[0]; if (r) return r[2]; }
+    var h = $(HEAD_SEL, panel) || $('h3', panel); return h ? h.textContent.trim() : (panel.id || 'Page');
+  }
+  function inject(){
+    $$(PANEL_SEL).forEach(function(p){
+      if (/^(panel-home|panel-export|panel-contact|tab-export)$/.test(p.id)) return;
+      if (!p.querySelector(':scope > .vax-bar')){
+        var bar = document.createElement('div'); bar.className = 'vax-bar vax-skip';
+        bar.appendChild(mk('Copy this page', function(){ return withHead(titleOf(p), domToText(p)); }, '', titleOf(p)));
+        p.insertBefore(bar, p.firstChild);
+      }
+    });
+    $$(HEAD_SEL).forEach(function(h){
+      if (h.querySelector(':scope > .vax-btn') || h.closest(LIVE)) return;
+      if (!siblingsText(h, HEAD_SEL)) return;
+      h.appendChild(mk('Copy', function(){ return withHead(h.textContent.replace(/⧉.*$/, '').trim(), siblingsText(h, HEAD_SEL)); }, '', 'section'));
+    });
+    $$('table').forEach(function(t){
+      if (t.closest(LIVE) || t.closest('.vax-skip') || t.rows.length < 3) return;
+      var prev = t.previousElementSibling; if (prev && prev.classList.contains('vax-bar')) return;
+      var bar = document.createElement('div'); bar.className = 'vax-bar vax-skip';
+      bar.appendChild(mk('Copy table', function(){ return domToText(t); }, '', 'table'));
+      t.parentNode.insertBefore(bar, t);
+    });
+    $$(CARD_SEL).forEach(function(c){
+      if (c.closest(LIVE) || c.querySelector(':scope > .vax-corner') || c.offsetHeight < 70 || c.textContent.length < 60) return;
+      if (getComputedStyle(c).position === 'static') c.style.position = 'relative';
+      c.appendChild(mk('Copy', function(){ return domToText(c); }, 'vax-corner', 'card'));
+    });
+  }
+  var injT; function schedule(){ clearTimeout(injT); injT = setTimeout(function(){ try{ inject(); }catch(e){} }, 350); }
+  new MutationObserver(function(ms){
+    for (var i = 0; i < ms.length; i++){
+      var a = ms[i].addedNodes;
+      for (var j = 0; j < a.length; j++){
+        var n = a[j]; if (n.nodeType === 1 && !(n.classList.contains('vax-bar') || n.classList.contains('vax-btn') || n.id === 'vaxToast' || n.id === 'vaxFab')){ schedule(); return; }
+      }
+    }
+  }).observe(document.body, { childList: true, subtree: true });
+
+  ['click', 'popstate', 'hashchange', 'resize'].forEach(function(ev){ window.addEventListener(ev, schedule, true); }); // panels are shown/hidden by class, so re-scan when the user navigates
+
+  /* ===========================================================================
+     BIRTH CHART APP (B)
+     =========================================================================== */
+  var XP = []; // [key, title, description, defaultChecked, panelId|null]
+  function safeJSON(o){
+    var stack = [];
+    return JSON.stringify(o, function(k, v){
+      if (typeof v === 'function') return undefined;
+      if (typeof v === 'number') return isFinite(v) ? Math.round(v * 1e5) / 1e5 : null;
+      if (v instanceof Date) return v.toISOString();
+      if (v && typeof v === 'object'){
+        while (stack.length && stack[stack.length - 1] !== this) stack.pop();
+        if (stack.indexOf(v) > -1) return '[circular]';
+        stack.push(v);
+      }
+      return v;
+    });
+  }
+  function housesText(chart){
+    var asc = chart.ascendant.sign, L = [], occ = {}, asp = {}, rules = {};
+    PLANET_LIST.forEach(function(n){
+      var p = chart.planets[n];
+      (occ[p.house] = occ[p.house] || []).push(n + (p.retrograde ? ' (R)' : ''));
+      (p.aspectsHouses || []).forEach(function(h){ (asp[h] = asp[h] || []).push(n); });
+    });
+    for (var i = 1; i <= 12; i++){
+      var si = (asc + i - 1) % 12, s = SIGNS[si], lp = chart.planets[s.lord];
+      (rules[s.lord] = rules[s.lord] || []).push('H' + i);
+      L.push('H' + i + ' ' + s.name + ' (' + s.sk + ')  | Lord ' + s.lord + (lp ? ' sits in H' + lp.house + ' ' + SIGNS[lp.sign].name : '') +
+        '  | Occupants: ' + (occ[i] ? occ[i].join(', ') : 'empty') + '  | Aspected by: ' + (asp[i] ? asp[i].join(', ') : 'none'));
+    }
+    L.push('', 'House rulership: ' + Object.keys(rules).map(function(k){ return k + ' rules ' + rules[k].join('+'); }).join(' ; '));
+    return L.join('\n');
+  }
+  var AI_PROMPT = 'INSTRUCTIONS FOR THE AI READING THIS:\n' +
+    'Below is a complete Vedic (Jyotish) birth-chart export from the Vedic Astro Suite: sidereal zodiac, Lahiri ayanamsa, whole-sign houses, Vimshottari dasha. ' +
+    'Treat every number as computed, authoritative data - do not recalculate positions. Please: (1) summarise the chart (lagna, Moon sign, nakshatra, strongest and weakest planets); ' +
+    '(2) analyse houses, yogas, Shadbala, Ashtakavarga and the divisional charts; (3) explain the running Mahadasha/Antardasha and the upcoming transits; ' +
+    '(4) give practical, balanced guidance and flag any uncertainty. Ask me if you need more detail.';
+  function buildXP(chart, profile, S){
+    var out = [];
+    if (S.xp_houses === true){ out.push('=' .repeat(78) + '\n' + 'HOUSE-BY-HOUSE SUMMARY (D1, whole-sign)\n' + '='.repeat(78) + '\n\n' + housesText(chart)); }
+    XP.forEach(function(x){
+      if (!x[4] || S[x[0]] !== true) return;
+      var el = document.getElementById(x[4]), t = domToText(el);
+      if (t.length < 30) return;
+      out.push('='.repeat(78) + '\n' + x[1].toUpperCase() + '  (as shown in the app)\n' + '='.repeat(78) + '\n\n' + t);
+    });
+    if (S.xp_json === true){ out.push('='.repeat(78) + '\nRAW DATA (JSON) - every computed value for this chart\n' + '='.repeat(78) + '\n\n' + safeJSON({ profile: profile, chart: chart })); }
+    return out.length ? '\n\n' + out.join('\n\n\n') + '\n\n' : '';
+  }
+  function installB(){
+    var COVERED = { 'panel-overview': 1, 'panel-planets': 1, 'panel-yogas': 1, 'panel-shadbala': 1, 'panel-ashtakavarga': 1, 'panel-dasha': 1, 'panel-transit': 1 };
+    var SKIPP = { 'panel-export': 1, 'panel-contact': 1, 'panel-rectification': 1, 'panel-vargatimeline': 1, 'panel-transittimer': 1 };
+    XP.push(['xp_aiPrompt', 'Instructions for AI (top of file)', 'Short prompt so any AI knows how to read and analyse this export', true, null]);
+    XP.push(['xp_houses', 'House-by-House Summary', 'Each house: sign, lord and where it sits, occupants, aspects received, rulerships', true, null]);
+    HOME_ITEMS.forEach(function(i){
+      if (SKIPP[i[0]]) return;
+      XP.push(['xp_' + i[0], i[2] + ' (full page)', i[3] + (COVERED[i[0]] ? ' - already in the report as data; tick to add the readings too' : ''), !COVERED[i[0]], i[0]]);
+    });
+    XP.push(['xp_json', 'Raw Data (JSON)', 'Entire computed chart object - best for AI or other software', true, null]);
+
+    var prev = window.buildFullReportText;
+    window.buildFullReportText = function(chart, profile, sections){
+      var t = prev.apply(this, arguments), S = sections || {}, extra = '';
+      try{ extra = buildXP(chart, profile, S); }catch(e){ extra = '\n\n[Extra sections failed: ' + e.message + ']\n\n'; }
+      if (extra){
+        var e1 = t.lastIndexOf('END OF REPORT'), cut = e1 > -1 ? t.lastIndexOf('='.repeat(78), e1) : -1;
+        t = cut > -1 ? t.slice(0, cut) + extra.trim() + '\n\n' + t.slice(cut) : t + extra;
+      }
+      if (S.xp_aiPrompt === true) t = AI_PROMPT + '\n\n' + t;
+      return t;
+    };
+
+    var body = $('#exportModal .export-modal-body');
+    if (body && !$('#vaxExtra')){
+      var w = document.createElement('div'); w.id = 'vaxExtra';
+      w.innerHTML = '<div class="export-check-label" style="margin:20px 0 4px;color:var(--gold-bright)">More data — everything in the app</div>' +
+        XP.map(function(x){
+          return '<label class="export-check-item"><input type="checkbox" class="export-section-check" data-section="' + x[0] + '"' + (x[3] ? ' checked' : '') + '>' +
+            '<div><div class="export-check-label">' + x[1] + '</div><div class="export-check-desc">' + x[2] + '</div></div></label>';
+        }).join('');
+      var anchor = $('.export-location-section', body); body.insertBefore(w, anchor || null);
+      $$('input', w).forEach(function(cb){
+        cb.addEventListener('change', function(){
+          if (typeof updateExportCountLabel === 'function') updateExportCountLabel();
+          $('#exportSelectAll').checked = $$('.export-section-check').every(function(c){ return c.checked; });
+        });
+      });
+      if (typeof updateExportCountLabel === 'function') updateExportCountLabel();
+      var acts = $('#exportModal .export-actions');
+      if (acts){
+        var b1 = document.createElement('button'); b1.id = 'vaxJsonCopy'; b1.type = 'button'; b1.className = 'export-download-btn export-ghost'; b1.textContent = '{ } Copy JSON';
+        var b2 = document.createElement('button'); b2.id = 'vaxJsonDl'; b2.type = 'button'; b2.className = 'export-download-btn export-ghost'; b2.textContent = '⬇ .json';
+        b1.onclick = function(){ var j = rawJSON(); if (j) doCopy(j, 'JSON'); };
+        b2.onclick = function(){
+          var j = rawJSON(); if (!j) return;
+          var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([j], { type: 'application/json' }));
+          a.download = ((currentProfileForExport.name || 'chart').replace(/[^a-z0-9]/gi, '_')) + '_vedic_chart.json';
+          document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+        };
+        acts.insertBefore(b2, acts.firstChild); acts.insertBefore(b1, acts.firstChild);
+      }
+    }
+    try{ designModal(); }catch(e){ console.error('[VAX] modal design', e); }
+  }
+  /* ===========================================================================
+     EXPORT WINDOW REDESIGN (Birth Chart app) - restyles + regroups the existing
+     modal. All original ids/handlers are kept, so nothing in the app breaks.
+     =========================================================================== */
+  var VX_CSS = `
+#exportModal.export-modal-overlay{background:radial-gradient(90% 60% at 50% 110%,rgba(66,135,126,.22),transparent 70%),rgba(3,6,13,.74);-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);padding:20px}
+#exportModal.show{animation:xwFade .3s ease both}
+#exportModal .export-modal-box{max-width:660px;max-height:90vh;border-radius:28px;background:linear-gradient(180deg,#151b2e 0%,#0c111f 100%);border:1px solid rgba(255,255,255,.09);box-shadow:0 34px 90px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.07);overflow:hidden}
+#exportModal.show .export-modal-box{animation:xwSheet .55s cubic-bezier(.2,.9,.25,1) both}
+#exportModal .export-modal-close{top:16px;right:16px;width:36px;height:36px;z-index:8;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);transition:.25s}
+#exportModal .export-modal-close:hover{transform:rotate(90deg);background:rgba(255,255,255,.14)}
+#exportModal .export-modal-header{padding:22px 24px 14px;border:0;background:linear-gradient(135deg,rgba(212,175,55,.14),rgba(66,135,126,.09) 55%,transparent)}
+.xw-grab{display:none;width:42px;height:4px;border-radius:4px;background:rgba(255,255,255,.22);margin:-8px auto 14px}
+.xw-head{display:flex;gap:14px;align-items:center;padding-right:44px}
+.xw-logo{flex:0 0 auto;width:50px;height:50px;border-radius:16px;display:grid;place-items:center;font-size:25px;font-weight:700;background:linear-gradient(135deg,#f6dc85,#b98a1e);color:#1a1405;box-shadow:0 8px 26px rgba(212,175,55,.38)}
+#exportModal .export-modal-title{font-size:23px;margin:0 0 6px;letter-spacing:.02em}
+.xw-sub{display:flex;flex-wrap:wrap;gap:6px}
+.xw-sub span{font:500 11.5px/1 system-ui,sans-serif;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.07);color:#c3cde0;border:1px solid rgba(255,255,255,.06)}
+.xw-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 20px 12px}
+.xw-stat{padding:10px 12px;border-radius:15px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+.xw-stat b{display:block;font:700 19px/1.1 var(--font-display,serif);color:#fff;font-variant-numeric:tabular-nums;transition:opacity .2s}
+.xw-stat b.calc{opacity:.35}.xw-stat span{display:block;margin-top:4px;font:600 10px/1 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted,#8a97b3)}
+.xw-bar2{height:3px;margin:0 20px 2px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;flex-shrink:0}
+.xw-bar2 i{display:block;height:100%;width:0;border-radius:3px;background:linear-gradient(90deg,#42877E,#D4AF37);transition:width .6s cubic-bezier(.2,.9,.3,1)}
+#exportModal .export-modal-body{padding:0 18px 10px;scroll-behavior:smooth;overscroll-behavior:contain}
+.xw-tools{position:sticky;top:0;z-index:6;padding:12px 2px 10px;background:linear-gradient(#0f1525 78%,rgba(15,21,37,0))}
+.xw-presets{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0}.xw-presets::-webkit-scrollbar{display:none}
+.xw-chip{flex:0 0 auto;padding:9px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.045);color:#e8edf7;font:600 12.5px/1 system-ui,sans-serif;cursor:pointer;transition:.22s;white-space:nowrap}
+.xw-chip:hover{border-color:rgba(212,175,55,.6)}.xw-chip:active{transform:scale(.94)}
+.xw-chip.on{background:linear-gradient(135deg,rgba(212,175,55,.28),rgba(66,135,126,.22));border-color:#D4AF37;color:#fff;box-shadow:0 0 0 3px rgba(212,175,55,.12)}
+.xw-search{position:relative;margin-top:10px}.xw-search::before{content:"⌕";position:absolute;left:14px;top:50%;transform:translateY(-52%);font-size:18px;color:#8a97b3}
+.xw-search input{width:100%;padding:12px 14px 12px 40px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#fff;font:500 14px system-ui,sans-serif;transition:.25s}
+.xw-search input:focus{outline:none;border-color:#D4AF37;box-shadow:0 0 0 4px rgba(212,175,55,.14);background:rgba(255,255,255,.07)}
+#exportModal .export-select-all-row,#exportModal .export-modal-footer .export-count-label{display:none}
+.xw-group{margin:10px 0;border-radius:20px;background:rgba(255,255,255,.028);border:1px solid rgba(255,255,255,.065);overflow:hidden;animation:xwIn .55s cubic-bezier(.2,.9,.3,1) both;animation-delay:calc(var(--i,0)*70ms)}
+.xw-gh{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.xw-gi{flex:0 0 auto;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font-size:18px;background:rgba(212,175,55,.13)}
+.xw-gt{flex:1;min-width:0}.xw-gt b{display:block;font:600 14.5px/1.2 system-ui,sans-serif;color:#fff}.xw-gt small{display:block;margin-top:3px;font:500 12px/1 system-ui,sans-serif;color:var(--text-muted,#8a97b3)}
+.xw-gall{padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#D4AF37;font:700 11.5px/1 system-ui,sans-serif;cursor:pointer;transition:.2s}.xw-gall:active{transform:scale(.93)}
+.xw-chev{width:18px;height:18px;flex:0 0 auto;color:#8a97b3;transition:transform .35s cubic-bezier(.2,.9,.3,1)}.xw-group:not(.open) .xw-chev{transform:rotate(-90deg)}
+.xw-gbw{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.2,.9,.3,1)}.xw-group.open .xw-gbw{grid-template-rows:1fr}
+.xw-gb{overflow:hidden;min-height:0;padding:0 10px}.xw-group.open .xw-gb{padding-bottom:10px}
+#exportModal .export-check-item{display:flex;align-items:center;gap:12px;padding:11px 12px;margin:6px 0 0;border-radius:15px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:background .25s,border-color .25s,transform .15s}
+#exportModal .export-check-item:active{transform:scale(.985)}
+#exportModal .export-check-item.on{background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(66,135,126,.11));border-color:rgba(212,175,55,.5)}
+#exportModal .export-check-item .xw-ic{order:0;flex:0 0 auto;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:17px;background:rgba(255,255,255,.06);transition:.25s}
+#exportModal .export-check-item.on .xw-ic{background:rgba(212,175,55,.2)}
+#exportModal .export-check-item>div{order:1;flex:1;min-width:0}
+#exportModal .export-check-label{font:600 14px/1.25 system-ui,sans-serif;color:#fff}
+#exportModal .export-check-desc{margin-top:3px;font:400 12px/1.4 system-ui,sans-serif;color:var(--text-muted,#8a97b3);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#exportModal .export-check-item input[type=checkbox]{order:2;flex:0 0 auto;margin:0;width:44px;height:26px;border-radius:26px;border:0;background:rgba(255,255,255,.14);position:relative;transition:background .3s;-webkit-appearance:none;appearance:none}
+#exportModal .export-check-item input[type=checkbox]::after,#exportModal .export-check-item input[type=checkbox]:checked::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border:0;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.4);transform:translateX(0);transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+#exportModal .export-check-item input[type=checkbox]:checked{background:linear-gradient(135deg,#42877E,#D4AF37);border:0}
+#exportModal .export-check-item input[type=checkbox]:checked::after{transform:translateX(18px)}
+#exportModal .export-vargas-group{margin:6px 0 0;border-radius:15px}
+#exportModal .export-varga-chip{border-radius:999px;transition:.2s}
+#exportModal .export-location-section{margin:0;padding:0;border:0}
+#exportModal #exportLocationPicker{margin:8px 2px 0!important}
+#exportModal .export-dev{margin:14px 0 6px;padding:12px 14px;border:1px solid rgba(255,255,255,.07);border-radius:16px;background:rgba(255,255,255,.025)}
+#exportModal .export-modal-footer{display:block;padding:14px 18px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(12,17,31,.7),#0c111f)}
+#exportModal .export-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.xw-bi{font-size:17px;line-height:1}
+.xw-prim{grid-column:1/-1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;border-radius:17px;border:0;cursor:pointer;background:linear-gradient(135deg,#f6dc85,#d4af37 55%,#b98a1e);color:#1a1405;font:700 15.5px/1 var(--font-display,serif);letter-spacing:.02em;box-shadow:0 12px 30px rgba(212,175,55,.35);transition:transform .15s,box-shadow .25s,background .4s}
+.xw-prim::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.6) 50%,transparent 70%);transform:translateX(-130%);animation:xwShine 4.5s ease-in-out infinite;pointer-events:none}
+.xw-prim:active{transform:scale(.975)}.xw-prim.xw-done{background:linear-gradient(135deg,#7bf0b4,#2fb67a);box-shadow:0 12px 30px rgba(74,222,128,.35)}
+.xw-sec{display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 6px;border-radius:15px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:#e8edf7;font:600 11.5px/1.1 system-ui,sans-serif;cursor:pointer;transition:.2s}
+.xw-sec:hover{border-color:rgba(212,175,55,.6);background:rgba(212,175,55,.08)}.xw-sec:active{transform:scale(.95)}
+.xw-prim:disabled,.xw-sec:disabled{opacity:.4;pointer-events:none}
+@keyframes xwFade{from{opacity:0}to{opacity:1}}
+@keyframes xwSheet{from{opacity:0;transform:translateY(46px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes xwIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes xwShine{0%,60%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+@media (max-width:640px){
+ #exportModal.export-modal-overlay{padding:0;align-items:flex-end}
+ #exportModal .export-modal-box{max-width:100%;max-height:94vh;border-radius:28px 28px 0 0;border-bottom:0}
+ #exportModal.show .export-modal-box{animation-name:xwSheetM}.xw-grab{display:block}
+ #exportModal .export-modal-header{padding:14px 20px 12px}
+}
+@keyframes xwSheetM{from{transform:translateY(100%)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){#exportModal *,#exportModal{animation:none!important;transition:none!important}}`;
+
+  function designModal(){
+    var modal = $('#exportModal'); if (!modal || modal.dataset.vx) return; modal.dataset.vx = '1';
+    var s = document.createElement('style'); s.textContent = VX_CSS; document.head.appendChild(s);
+    var box = $('.export-modal-box', modal), head = $('.export-modal-header', modal), body = $('.export-modal-body', modal), dev = $('.export-dev', modal);
+    var closeB = $('#exportModalClose');
+    head.innerHTML = '<div class="xw-grab"></div><div class="xw-head"><div class="xw-logo">⇪</div><div style="min-width:0"><div class="export-modal-title">Export &amp; Share</div><div class="xw-sub" id="xwSub"></div></div></div>';
+    if (closeB) head.appendChild(closeB);
+    var stats = document.createElement('div'); stats.className = 'xw-stats';
+    stats.innerHTML = '<div class="xw-stat"><b id="xwN">0</b><span>Sections</span></div><div class="xw-stat"><b id="xwChars" class="calc">–</b><span>Characters</span></div><div class="xw-stat"><b id="xwTok" class="calc">–</b><span>≈ AI tokens</span></div>';
+    var prog = document.createElement('div'); prog.className = 'xw-bar2'; prog.innerHTML = '<i id="xwBar"></i>';
+    head.after(stats); stats.after(prog);
+
+    var ICON = { birthDetails: '🪪', chartSummary: '✨', karakas: '👑', planetTable: '🪐', aspects: '🔭', yogas: '🧿', shadbala: '💪', ashtakavarga: '🔢', dasha: '⏳', vargas: '🗂️', rawLongitudes: '📐', liveSky: '🌍', xp_aiPrompt: '🤖', xp_houses: '🏠', xp_json: '{ }' };
+    if (typeof HOME_ITEMS !== 'undefined') HOME_ITEMS.forEach(function(i){ ICON['xp_' + i[0]] = i[1]; });
+    var GROUPS = [
+      ['Foundation', '🪐', ['birthDetails', 'chartSummary', 'karakas', 'planetTable', 'aspects', 'xp_houses', 'rawLongitudes', 'xp_panel-overview', 'xp_panel-planets', 'xp_panel-lagnas', 'xp_panel-bhava']],
+      ['Strength & Yogas', '⚖️', ['yogas', 'shadbala', 'ashtakavarga', 'xp_panel-yogas', 'xp_panel-shadbala', 'xp_panel-bhavabala', 'xp_panel-ashtakavarga']],
+      ['Time & Cycles', '⏳', ['dasha', 'xp_panel-dasha', 'xp_panel-panchanga', 'xp_panel-vbday', 'xp_panel-active', 'xp_panel-tithi', 'xp_panel-transits', 'xp_panel-transit', 'liveSky']],
+      ['Divisional Charts', '🗂️', ['vargas', 'xp_panel-vargas', 'xp_panel-sandhi']],
+      ['Readings & Insights', '📖', ['xp_panel-reading', 'xp_panel-fate', 'xp_panel-sahams', 'xp_panel-numerology', 'xp_panel-relationships', 'xp_panel-match']],
+      ['Data & AI', '🤖', ['xp_aiPrompt', 'xp_json']]];
+    var byKey = {}, used = {};
+    $$('.export-section-check', modal).forEach(function(c){
+      byKey[c.dataset.section] = c.closest('label');
+      var lab = c.closest('label'), ic = document.createElement('span'); ic.className = 'xw-ic'; ic.textContent = ICON[c.dataset.section] || '•'; lab.insertBefore(ic, lab.firstChild);
+    });
+    var xwExtra = $('#vaxExtra'), tools = document.createElement('div'); tools.className = 'xw-tools';
+    var PRESETS = [
+      ['✨ Everything', function(){ return true; }],
+      ['🤖 AI-ready', ['birthDetails', 'chartSummary', 'karakas', 'planetTable', 'aspects', 'yogas', 'shadbala', 'ashtakavarga', 'dasha', 'vargas', 'xp_houses', 'xp_aiPrompt']],
+      ['⚡ Essentials', ['birthDetails', 'chartSummary', 'planetTable', 'xp_houses', 'yogas', 'dasha']],
+      ['📖 Readings', ['chartSummary', 'xp_panel-reading', 'xp_panel-fate', 'xp_panel-sahams', 'xp_panel-numerology', 'xp_panel-relationships']],
+      ['⌫ Clear', []]];
+    tools.innerHTML = '<div class="xw-presets"></div><div class="xw-search"><input id="xwSearch" type="search" placeholder="Search sections…" autocomplete="off"></div>';
+    body.insertBefore(tools, body.firstChild);
+    var presetEl = $('.xw-presets', tools);
+    PRESETS.forEach(function(p){
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'xw-chip'; b.textContent = p[0]; b._set = p[1];
+      b.addEventListener('click', function(){
+        $$('.export-section-check', modal).forEach(function(c){
+          var want = typeof p[1] === 'function' ? true : p[1].indexOf(c.dataset.section) > -1;
+          if (c.checked !== want){ c.checked = want; c.dispatchEvent(new Event('change', { bubbles: true })); }
+        });
+      });
+      presetEl.appendChild(b);
+    });
+
+    var CHEV = '<svg class="xw-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+    var groupEls = [], anchor = tools.nextSibling;
+    function mkGroup(name, icon, keys, idx){
+      keys = keys.filter(function(k){ return byKey[k] && !used[k]; }); if (!keys.length) return;
+      var g = document.createElement('section'); g.className = 'xw-group' + (idx < 2 ? ' open' : ''); g.style.setProperty('--i', idx);
+      g.innerHTML = '<div class="xw-gh"><div class="xw-gi">' + icon + '</div><div class="xw-gt"><b>' + name + '</b><small></small></div><button type="button" class="xw-gall">All</button>' + CHEV + '</div><div class="xw-gbw"><div class="xw-gb"></div></div>';
+      var gb = $('.xw-gb', g);
+      keys.forEach(function(k){
+        used[k] = 1;
+        if (k === 'liveSky'){ gb.appendChild(byKey[k].closest('.export-location-section')); return; }
+        gb.appendChild(byKey[k]); if (k === 'vargas' && $('#exportVargasGroup')) gb.appendChild($('#exportVargasGroup'));
+      });
+      $('.xw-gh', g).addEventListener('click', function(e){ if (e.target.closest('.xw-gall')) return; g.classList.toggle('open'); });
+      $('.xw-gall', g).addEventListener('click', function(){
+        var cbs = $$('.export-section-check', g), all = cbs.every(function(c){ return c.checked; });
+        cbs.forEach(function(c){ if (c.checked === all){ c.checked = !all; c.dispatchEvent(new Event('change', { bubbles: true })); } });
+      });
+      body.insertBefore(g, anchor); groupEls.push(g);
+    }
+    GROUPS.forEach(function(g, i){ mkGroup(g[0], g[1], g[2], i); });
+    var rest = Object.keys(byKey).filter(function(k){ return !used[k]; }); if (rest.length) mkGroup('More', '➕', rest, groupEls.length);
+    if (xwExtra) xwExtra.remove();
+    body.appendChild(dev);
+
+    var copyB = $('#exportCopyBtn'), dlB = $('#exportDownloadBtn'), jc = $('#vaxJsonCopy'), jd = $('#vaxJsonDl'), acts = $('.export-actions', modal);
+    function btn(el, cls, ico, txt){ if (!el) return; el.className = cls; el.innerHTML = '<span class="xw-bi">' + ico + '</span><span>' + txt + '</span>'; acts.appendChild(el); }
+    btn(copyB, 'xw-prim', '📋', 'Copy for AI'); btn(dlB, 'xw-sec', '⬇', 'Download .txt'); btn(jc, 'xw-sec', '{ }', 'Copy JSON'); btn(jd, 'xw-sec', '🗎', '.json file');
+
+    /* live counters + size estimate */
+    var estT, shown = {};
+    function tween(id, to, fmt){
+      var el = document.getElementById(id), from = shown[id] || 0, t0 = performance.now(); shown[id] = to;
+      (function f(t){ var k = Math.min(1, (t - t0) / 500), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(Math.round(from + (to - from) * e)); if (k < 1) requestAnimationFrame(f); })(t0);
+    }
+    var K = function(n){ return n >= 1e6 ? (n / 1e6).toFixed(2) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(n); };
+    function estimate(){
+      $('#xwChars').classList.add('calc'); $('#xwTok').classList.add('calc'); clearTimeout(estT);
+      estT = setTimeout(function(){
+        var n = 0;
+        try{
+          var S = {}; $$('.export-section-check', modal).forEach(function(c){ S[c.dataset.section] = c.checked; });
+          S.vargaKeys = Array.from(exportSelectedVargas); S.liveSky = false;
+          if (Object.keys(S).some(function(k){ return S[k] === true; })) n = buildFullReportText(currentChartForModal, currentProfileForExport, S, null).length;
+        }catch(e){}
+        tween('xwChars', n, K); tween('xwTok', Math.round(n / 4), K);
+        $('#xwChars').classList.remove('calc'); $('#xwTok').classList.remove('calc');
+      }, 380);
+    }
+    function refresh(){
+      var all = $$('.export-section-check', modal), on = all.filter(function(c){ return c.checked; }).length;
+      all.forEach(function(c){ c.closest('label').classList.toggle('on', c.checked); });
+      groupEls.forEach(function(g){
+        var cs = $$('.export-section-check', g), n = cs.filter(function(c){ return c.checked; }).length;
+        $('small', g).textContent = n + ' of ' + cs.length + ' selected'; $('.xw-gall', g).textContent = n === cs.length ? 'None' : 'All';
+      });
+      tween('xwN', on, String); $('#xwBar').style.width = (all.length ? on / all.length * 100 : 0) + '%';
+      var cur = all.filter(function(c){ return c.checked; }).map(function(c){ return c.dataset.section; });
+      $$('.xw-chip', tools).forEach(function(b){
+        var want = typeof b._set === 'function' ? all.map(function(c){ return c.dataset.section; }) : b._set;
+        b.classList.toggle('on', want.length === cur.length && want.every(function(k){ return cur.indexOf(k) > -1; }));
+      });
+      [copyB, dlB, jc, jd].forEach(function(b){ if (b) b.disabled = !on && b !== jc && b !== jd; });
+      estimate();
+    }
+    modal.addEventListener('change', function(e){ if (e.target.classList.contains('export-section-check')) refresh(); });
+
+    /* search */
+    $('#xwSearch').addEventListener('input', function(){
+      var q = this.value.trim().toLowerCase();
+      groupEls.forEach(function(g){
+        var any = false;
+        $$('.export-check-item', g).forEach(function(l){ var m = !q || l.textContent.toLowerCase().indexOf(q) > -1; l.style.display = m ? '' : 'none'; if (m) any = true; });
+        g.style.display = any ? '' : 'none'; if (q && any) g.classList.add('open');
+      });
+    });
+
+    /* header identity + refresh each time it opens */
+    new MutationObserver(function(){
+      if (!modal.classList.contains('show')) return;
+      var p = typeof currentProfileForExport !== 'undefined' ? currentProfileForExport : null;
+      if (p) $('#xwSub').innerHTML = [p.name, p.dob + ' · ' + String(p.tob || '').slice(0, 5), p.place].filter(Boolean).map(function(x){ return '<span>' + String(x).replace(/</g, '&lt;') + '</span>'; }).join('');
+      body.scrollTop = 0; refresh();
+    }).observe(modal, { attributes: true, attributeFilter: ['class'] });
+
+    /* feedback on the main button (the app reports results through the hidden hint) */
+    var hint = $('#exportModalHint'), bt;
+    if (hint) new MutationObserver(function(){
+      var t = hint.textContent || '';
+      if (/Copied/.test(t) && copyB){
+        copyB.classList.add('xw-done'); copyB.lastChild.textContent = 'Copied!'; copyB.firstChild.textContent = '✓';
+        clearTimeout(bt); bt = setTimeout(function(){ copyB.classList.remove('xw-done'); copyB.lastChild.textContent = 'Copy for AI'; copyB.firstChild.textContent = '📋'; }, 1900);
+      } else if (/downloaded/.test(t)) toast('✓ File downloaded');
+      else if (/Could not/.test(t)) toast('Copy blocked - use Download instead', true);
+    }).observe(hint, { childList: true, characterData: true, subtree: true });
+
+    /* Esc closes, swipe the header down to close on phones */
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && modal.classList.contains('show') && typeof closeExportModal === 'function') closeExportModal(); });
+    var y0 = null, dy = 0;
+    head.addEventListener('touchstart', function(e){ y0 = e.touches[0].clientY; dy = 0; box.style.transition = 'none'; }, { passive: true });
+    head.addEventListener('touchmove', function(e){ if (y0 === null) return; dy = Math.max(0, e.touches[0].clientY - y0); box.style.transform = 'translateY(' + dy + 'px)'; }, { passive: true });
+    head.addEventListener('touchend', function(){
+      if (y0 === null) return; box.style.transition = 'transform .3s cubic-bezier(.2,.9,.3,1)';
+      if (dy > 110 && typeof closeExportModal === 'function'){ closeExportModal(); }
+      box.style.transform = ''; y0 = null; setTimeout(function(){ box.style.transition = ''; }, 320);
+    });
+    refresh();
+  }
+
+  function haveChart(){ return typeof currentChartForModal !== 'undefined' && currentChartForModal && typeof currentProfileForExport !== 'undefined' && currentProfileForExport; }
+  function rawJSON(){
+    if (!haveChart()){ toast('Generate a chart first', true); return ''; }
+    return safeJSON({ profile: currentProfileForExport, chart: currentChartForModal });
+  }
+  function fullReport(){
+    if (!haveChart()){ toast('Generate a chart first', true); return ''; }
+    var S = { vargaKeys: Object.keys(VARGAS) };
+    ['birthDetails', 'chartSummary', 'karakas', 'planetTable', 'aspects', 'yogas', 'shadbala', 'ashtakavarga', 'dasha', 'vargas', 'rawLongitudes'].forEach(function(k){ S[k] = true; });
+    XP.forEach(function(x){ S[x[0]] = true; });
+    return buildFullReportText(currentChartForModal, currentProfileForExport, S, null);
+  }
+
+  /* ===========================================================================
+     3D SKY APP (A)
+     =========================================================================== */
+  var TABS = [['sky', 'Sky Positions tab'], ['transits', 'Transits tab'], ['conjunctions', 'Meetings tab'], ['degree', 'Degree Finder tab'],
+              ['natal', 'Natal tab'], ['returns', 'Returns tab'], ['retro', 'Retrograde Planner tab'], ['chart', 'Chart & Houses tab'], ['view', 'View settings tab']];
+  function aSkyFull(){
+    var snap = snapshotPositions(currentJD), ctx = getChartContext(), ls = getSignIndex(ctx.lagnaLon), t = '--- DETAILED SKY ---\nDate: ' + formatFullDate(snap.jd) + '\nChart basis: ' + ctx.label + '\n\n';
+    PLANET_LIST.forEach(function(n){
+      var lon = snap.sidereal[n], si = getSignIndex(lon), d = degreeInSign(lon), nk = NAKSHATRAS[getNakshatraIndex(lon)], dg = '', rx = '';
+      try{ var r = dignityOf(n, si); dg = typeof r === 'string' ? r : (r && (r.label || r.status || r.name)) || ''; }catch(e){}
+      try{ rx = isRetrograde(n, currentJD) ? 'RETROGRADE' : 'direct'; }catch(e){}
+      t += n + ': ' + SIGNS[si].name + ' ' + d.deg + '°' + d.min + "'" + d.sec + '" | abs ' + lon.toFixed(6) + '° | ' + nk + ' pada ' + (getPadaIndex(lon) + 1) +
+        ' | house ' + (((si - ls + 12) % 12) + 1) + ' from lagna' + (dg ? ' | ' + dg : '') + (rx ? ' | ' + rx : '') + ' | speed ' + planetSpeed(n, currentJD).toFixed(4) + '°/d\n';
+    });
+    return t + '\n';
+  }
+  function aTransitsAll(){
+    var r = getTransitResults(currentJD), t = '--- ALL TRANSITS / SIGN INGRESSES (' + r.length + ' events, no filter, no limit) ---\n\n';
+    r.forEach(function(e){ t += formatHudDate(e.jd) + ': ' + e.planet + ' enters ' + SIGNS[e.toSign].name + ' (from ' + SIGNS[e.fromSign].name + ')\n'; });
+    return t + '\n';
+  }
+  function aConjAll(){
+    var r = getConjResults(currentJD), t = '--- ALL CONJUNCTIONS incl. Moon (' + r.length + ' events, no limit) ---\n\n';
+    r.forEach(function(e){ t += formatHudDate(e.jd) + ': ' + e.planetA + ' & ' + e.planetB + ' in ' + SIGNS[e.sign].name + '\n'; });
+    return t + '\n';
+  }
+  function aTab(id, label){
+    var el = document.getElementById('tab-' + id), tx = domToText(el);
+    return tx.length > 25 ? '--- ' + label.toUpperCase() + ' (as shown) ---\n' + tx + '\n\n' : '';
+  }
+  function aText(type){
+    var t = '';
+    try{
+      if (type === 'vax_skyfull') t = aSkyFull();
+      else if (type === 'vax_transits_all') t = aTransitsAll();
+      else if (type === 'vax_conj_all') t = aConjAll();
+      else if (type === 'vax_everything'){
+        t = prevGen('all') + '\n\n' + aSkyFull() + aTransitsAll() + aConjAll();
+        TABS.forEach(function(x){ if (x[0] !== 'sky' && x[0] !== 'transits' && x[0] !== 'conjunctions') t += aTab(x[0], x[1]); });
+      } else if (type.indexOf('vax_tab_') === 0){
+        var id = type.slice(8), f = TABS.filter(function(x){ return x[0] === id; })[0]; t = aTab(id, f ? f[1] : id);
+        if (!t) t = 'Nothing to export on this tab yet - open it and run it first.';
+      }
+    }catch(e){ t = 'Export failed: ' + e.message; }
+    return t.trim();
+  }
+  var prevGen = null;
+  function installA(){
+    prevGen = window.generateExportData;
+    window.generateExportData = function(type){ return String(type).indexOf('vax_') === 0 ? aText(type) : prevGen(type); };
+    var sel = $('#exportSelect');
+    if (sel && !$('#vaxOpts')){
+      var g = document.createElement('optgroup'); g.id = 'vaxOpts'; g.label = 'More data (new)';
+      var opts = [['vax_everything', 'EVERYTHING (all of the above + all tabs)'], ['vax_skyfull', 'Detailed Sky (dignity, retro, houses, abs. degrees)'],
+        ['vax_transits_all', 'ALL Transits - no limit, all planets'], ['vax_conj_all', 'ALL Conjunctions incl. Moon - no limit']]
+        .concat(TABS.map(function(x){ return ['vax_tab_' + x[0], x[1] + ' (as shown)']; }));
+      opts.forEach(function(o){ var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; g.appendChild(op); });
+      sel.appendChild(g);
+    }
+  }
+
+  /* ---------- floating copy button ---------- */
+  function activePanel(){ return $((IS_B ? '.app-panel.active' : '.panel-section.active')); }
+  function installFab(){
+    if ($('#vaxFab')) return;
+    var w = document.createElement('div'); w.id = 'vaxFab'; w.className = 'vax-skip';
+    w.innerHTML = '<div class="vax-menu"></div><button type="button" class="vax-fb" aria-label="Copy data">⧉</button>';
+    var menu = $('.vax-menu', w);
+    var items = IS_B ? [
+      ['Copy this page', function(){ var p = activePanel(); return p && p.id !== 'panel-home' ? withHead(titleOf(p), domToText(p)) : fullReport(); }],
+      ['Copy FULL report (everything)', fullReport],
+      ['Copy raw JSON', rawJSON],
+      ['Open export options…', function(){ if (typeof openExportModal === 'function') openExportModal(); return ''; }]
+    ] : [
+      ['Copy this tab', function(){ var p = activePanel(); return p ? withHead(titleOf(p), domToText(p)) : ''; }],
+      ['Copy EVERYTHING', function(){ return window.generateExportData('vax_everything'); }],
+      ['Copy detailed sky', function(){ return aSkyFull(); }]
+    ];
+    items.forEach(function(it){
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = it[0];
+      b.addEventListener('click', function(){ w.classList.remove('open'); var tx = it[1](); if (tx) doCopy(tx, ''); });
+      menu.appendChild(b);
+    });
+    $('.vax-fb', w).addEventListener('click', function(e){ e.stopPropagation(); w.classList.toggle('open'); });
+    document.addEventListener('click', function(){ w.classList.remove('open'); });
+    document.body.appendChild(w);
+  }
+
+  function boot(){
+    try{ IS_B ? installB() : installA(); }catch(e){ console.error('[VAX]', e); }
+    try{ installFab(); inject(); }catch(e){ console.error('[VAX]', e); }
+  }
+  window.VAX = { domToText: domToText, copyText: copyText, fullReport: IS_B ? fullReport : null, rawJSON: IS_B ? rawJSON : null, aText: IS_A ? aText : null };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+
+</script>
+</body>
+</html>

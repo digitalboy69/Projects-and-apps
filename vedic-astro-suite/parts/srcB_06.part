@@ -1,0 +1,1571 @@
+      <label class="mt-place">Place of birth<input type="text" data-mt-place="${i}" value="${escapeHtml(d.place)}" placeholder="Search a city…" autocomplete="off"><div class="mt-res" id="mtRes${i}"></div></label>
+      <div class="lp-tools"><button type="button" data-mt-loc="${i}:map">🗺️ Pick on map</button><button type="button" data-mt-loc="${i}:coords">⌖ Enter coordinates</button></div>
+      <div class="mt-coord ${d.lat !== null ? 'ok' : ''}" id="mtCoord${i}">${d.lat !== null ? `✓ ${(+d.lat).toFixed(3)}°, ${(+d.lon).toFixed(3)}°` : 'Location not selected yet'}</div>
+      <label>Timezone<select data-mt-f="tz">${TZ_OPTIONS.map(v => `<option value="${v}" ${+d.tz === v ? 'selected' : ''}>${fmtTz(v)}</option>`).join('')}</select></label>
+      <details><summary>Enter coordinates manually</summary><div class="mt-row"><label>Latitude<input type="number" step="any" data-mt-f="lat" value="${d.lat === null ? '' : d.lat}"></label><label>Longitude<input type="number" step="any" data-mt-f="lon" value="${d.lon === null ? '' : d.lon}"></label></div></details>
+      <label class="mt-save"><input type="checkbox" data-mt-f="save" ${d.save ? 'checked' : ''}> Save to my profiles</label>
+    </div>`;
+  }
+  el.innerHTML = head + body;
+}
+function mtUpdateGo(){
+  const b = document.getElementById('mtGo'); if (!b) return;
+  const ok = !!(mtResolve(1) && mtResolve(2));
+  b.disabled = !ok; b.textContent = ok ? '✨ Check compatibility' : 'Choose both people to continue';
+}
+async function mtSearch(i, q){
+  const box = document.getElementById('mtRes' + i); if (!box) return;
+  if (q.trim().length < 3){ box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="mt-r-msg">Searching…</div>';
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&q=${encodeURIComponent(q)}&email=contact@yourdomain.com`);
+    const arr = await r.json(); MT.results[i] = arr;
+    box.innerHTML = arr.length ? arr.map((x, n) => `<button type="button" data-mt-rpick="${i}:${n}">${escapeHtml(x.display_name)}</button>`).join('') : '<div class="mt-r-msg">No places found — try another spelling.</div>';
+  } catch(e){ box.innerHTML = '<div class="mt-r-msg">Search unavailable — use “Enter coordinates manually”.</div>'; }
+}
+function mtRun(){
+  const p1 = mtResolve(1), p2 = mtResolve(2); if (!p1 || !p2) return;
+  let G, B; try { G = kmPerson(p1); B = kmPerson(p2); } catch(e){ console.error(e); APP.toast('Could not read one of the charts — check the birth details.', 'error'); return; }
+  [1, 2].forEach(i => { const S = MT[i]; if (S.mode === 'new' && S.draft.save){ try { const ps = loadProfiles(); const pr = mtResolve(i); if (!ps.some(x => mtKey(x) === mtKey(pr))){ saveProfiles(ps.concat([{ ...pr, savedAt: Date.now() }])); refreshProfileSelect(); } S.draft.save = false; } catch(e){} } });
+  MT.list = mtSaved(); MT.last = kmMatch(G, B);
+  if (mtKey(p1) === mtKey(p2)) APP.toast('Both people are the same profile — pick someone else for a real match.', 'info', 4500);
+  document.getElementById('mtResult').innerHTML = mtResultHtml(MT.last);
+  const r = document.getElementById('mtResult'); if (r.scrollIntoView) r.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function mtResultHtml(R){
+  const nm = R.G.profile.name || 'Person 1', nf = R.B.profile.name || 'Person 2', pct = R.total / 36, C = 2 * Math.PI * 52;
+  const col = R.verdict[1];
+  const person = (P, c) => `<div class="mt-pp" style="--pc:${c}">${mtAvatar(P.profile.name, c)}<span><b>${escapeHtml(P.profile.name || '')}</b><small>${SIGNS[P.moonSign].symbol} ${SIGNS[P.moonSign].name} · ${NAKSHATRAS[P.nak].name} ${P.pada}</small></span></div>`;
+  const cards = R.k.map(x => {
+    const cls = x.score === x.max ? 'full' : (x.score === 0 ? 'zero' : 'part');
+    return `<div class="mt-k ${cls}"><div class="mt-kh"><b>${x.key}</b><span>${x.score % 1 ? x.score.toFixed(1) : x.score}<small>/${x.max}</small></span></div>
+      <small class="mt-kd">${KM_INFO[x.key]}</small>
+      <div class="mt-kbar"><i style="width:${x.score / x.max * 100}%"></i></div>
+      <div class="mt-kv"><span style="--pc:${KM_COL[1]}">${escapeHtml(x.a)}</span><span style="--pc:${KM_COL[2]}">${escapeHtml(x.b)}</span></div>${x.note ? `<small class="mt-kn">${x.note}</small>` : ''}</div>`;
+  }).join('');
+  const D = R.dosha, mg = D.manglik.g, mb = D.manglik.b;
+  const card = (ok, title, text) => `<div class="mt-d ${ok ? 'ok' : 'warn'}"><span class="mt-di">${ok ? '✓' : '!'}</span><div><b>${title}</b><p>${text}</p></div></div>`;
+  const mline = (name, m, c) => `<div class="mt-ml" style="--pc:${c}"><b>${escapeHtml(name)}</b><span class="mt-lvl ${m.level === 'None' ? 'none' : ''}">${m.level === 'None' ? 'No dosha' : m.level}</span><small>Mars in house ${m.hL} from Lagna · ${m.hM} from Moon${m.cancel.length ? ' · ' + m.cancel.join('; ') : ''}</small></div>`;
+  const mVerdict = !mg.present && !mb.present ? 'Neither chart has Manglik dosha.' : (mg.present && mb.present ? 'Both charts carry Manglik dosha — traditionally this balances out.' : `Only ${escapeHtml(mg.present ? nm : nf)} has Manglik dosha${(mg.present ? mg : mb).cancelled ? ', with a cancellation condition present' : ''} — check this with care.`);
+  const dos = `<div class="mt-d ${(mg.present !== mb.present) && !(mg.present ? mg : mb).cancelled ? 'warn' : 'ok'} wide"><span class="mt-di">${(mg.present !== mb.present) && !(mg.present ? mg : mb).cancelled ? '!' : '✓'}</span><div><b>Manglik (Kuja) dosha</b>${mline(nm, mg, KM_COL[1])}${mline(nf, mb, KM_COL[2])}<p>${mVerdict}</p></div></div>`
+    + card(!D.nadi.present, 'Nadi', D.nadi.present ? `Both share the same Nadi (${R.k[7].a}).${D.nadi.cancel.length ? ' Possible cancellation: ' + D.nadi.cancel.join(' / ') + '.' : ''}` : `Different Nadis (${R.k[7].a} · ${R.k[7].b}) — full 8 points.`)
+    + card(!D.bhakoot.present, 'Bhakoot', D.bhakoot.present ? `${R.k[6].note} between the Moon signs.${D.bhakoot.cancel.length ? ' Possible cancellation: ' + D.bhakoot.cancel[0] + '.' : ''}` : `${R.k[6].note} — no Bhakoot dosha.`)
+    + card(!D.gana.present, 'Gana', D.gana.present ? `Temperament mismatch: ${D.gana.a} with ${D.gana.b}.` : `${D.gana.a} with ${D.gana.b} — compatible.`);
+  const B = R.bonus;
+  const bonus = card(B.rajju.ok, 'Rajju', B.rajju.ok ? `Different Rajju (${B.rajju.a} · ${B.rajju.b}).` : `Same Rajju (${B.rajju.a}) — traditionally unfavourable.`)
+    + card(B.mahendra.ok, 'Mahendra', B.mahendra.ok ? `Bride's nakshatra counts ${B.mahendra.count} to the groom's — favourable.` : `Count ${B.mahendra.count} — not in the favourable set (4, 7, 10, 13, 16, 19, 22, 25).`);
+  return `<div class="mt-res-wrap">
+    <div class="mt-score" style="--vc:${col}">
+      <div class="mt-ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" class="bg"/><circle cx="60" cy="60" r="52" class="fg" stroke-dasharray="${(pct * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 60 60)"/></svg>
+        <div class="mt-rt"><b>${R.total % 1 ? R.total.toFixed(1) : R.total}</b><small>out of 36</small></div></div>
+      <div class="mt-vd"><h4>${R.verdict[0]}</h4><span>${Math.round(pct * 100)}% compatibility</span>
+        <div class="mt-pair">${person(R.G, KM_COL[1])}<span class="mt-amp">&amp;</span>${person(R.B, KM_COL[2])}</div></div>
+    </div>
+    <div class="mt-sec"><h5>Ashtakoota <span>8 factors · 36 points</span></h5><div class="mt-kgrid">${cards}</div></div>
+    <div class="mt-sec"><h5>Dosha check <span>things worth a closer look</span></h5><div class="mt-dgrid">${dos}</div></div>
+    <div class="mt-sec"><h5>Bonus checks <span>commonly used in South Indian matching</span></h5><div class="mt-dgrid">${bonus}</div></div>
+    <div class="mt-actions"><button type="button" class="export-download-btn export-ghost" data-mt-copy>📋 Copy summary</button></div>
+    <div class="pn-note">Guideline: 33–36 excellent, 25–32 very good, 18–24 acceptable, below 18 low. Scores use the Moon sign and nakshatra of each chart (Lahiri). Person 1 is treated as the groom side and Person 2 as the bride side for the factors that are direction-dependent (Varna, Vashya, Tara, Yoni, Gana, Bhakoot) — use ⇄ to swap. Traditions differ on some tables and cancellation rules; this follows the commonly published standard.</div>
+  </div>`;
+}
+function mtCopyText(R){
+  const nm = R.G.profile.name || 'Person 1', nf = R.B.profile.name || 'Person 2';
+  return [`Kundali Matching — ${nm} & ${nf}`, `Total: ${R.total} / 36 (${R.verdict[0]})`, '', ...R.k.map(x => `${x.key}: ${x.score}/${x.max}  (${x.a} | ${x.b})`), '',
+    `Manglik: ${nm} ${R.dosha.manglik.g.level}, ${nf} ${R.dosha.manglik.b.level}`, `Nadi dosha: ${R.dosha.nadi.present ? 'yes' : 'no'}  Bhakoot dosha: ${R.dosha.bhakoot.present ? 'yes' : 'no'}  Gana mismatch: ${R.dosha.gana.present ? 'yes' : 'no'}`,
+    `Rajju: ${R.bonus.rajju.ok ? 'ok' : 'same'}  Mahendra: ${R.bonus.mahendra.ok ? 'ok' : 'no'}`].join('\n');
+}
+document.addEventListener('click', (e) => {
+  if (!MT) return;
+  const mode = e.target.closest('[data-mt-mode]');
+  if (mode){ const [i, m] = mode.dataset.mtMode.split(':'); MT[i].mode = m; mtRenderCard(+i); mtUpdateGo(); return; }
+  const pick = e.target.closest('[data-mt-pick]');
+  if (pick){ const [i, idx] = pick.dataset.mtPick.split(':'); MT[i].profile = MT.list[+idx]; mtRenderCard(+i); mtUpdateGo(); return; }
+  const ml = e.target.closest('[data-mt-loc]');
+  if (ml){
+    const [i, mode] = ml.dataset.mtLoc.split(':'), d = MT[i].draft, LPk = (window.parent && window.parent!==window) ? window.parent.LocPicker : null;
+    if (!LPk){ APP.toast('Map picker is available in the full app', 'info'); return; }
+    LPk.open({mode, lat:d.lat, lon:d.lon, name:d.place, title:'Place of birth', onPick: r => { d.lat = parseFloat(r.lat); d.lon = parseFloat(r.lon); d.place = r.display_name; d.tz = estimateTz(d.lat, d.lon, r); mtRenderCard(+i); mtUpdateGo(); }});
+    return;
+  }
+  const rp = e.target.closest('[data-mt-rpick]');
+  if (rp){
+    const [i, n] = rp.dataset.mtRpick.split(':'), x = MT.results[i][+n], d = MT[i].draft;
+    d.lat = parseFloat(x.lat); d.lon = parseFloat(x.lon); d.place = x.display_name; d.tz = estimateTz(d.lat, d.lon, x);
+    mtRenderCard(+i); mtUpdateGo(); return;
+  }
+  if (e.target.closest('[data-mt-swap]')){ const t = MT[1]; MT[1] = MT[2]; MT[2] = t; mtRenderCard(1); mtRenderCard(2); mtUpdateGo(); if (MT.last) mtRun(); return; }
+  if (e.target.closest('[data-mt-go]')){ mtRun(); return; }
+  if (e.target.closest('[data-mt-copy]') && MT.last){ APP.copy(mtCopyText(MT.last)).then(ok => APP.toast(ok ? 'Summary copied ✓' : 'Could not copy', ok ? 'success' : 'error')); }
+});
+function mtOnField(e){
+  if (!MT) return;
+  const t = e.target, card = t.closest && t.closest('.mt-card'); if (!card) return;
+  const i = +card.id.replace('mtCard', ''), d = MT[i].draft;
+  if (t.dataset.mtPlace !== undefined){
+    d.place = t.value; d.lat = null; d.lon = null; mtUpdateGo();
+    const c = document.getElementById('mtCoord' + i); if (c){ c.textContent = 'Location not selected yet'; c.classList.remove('ok'); }
+    clearTimeout(MT.timers[i]); MT.timers[i] = setTimeout(() => mtSearch(i, t.value), 450); return;
+  }
+  const f = t.dataset.mtF; if (!f) return;
+  if (f === 'save') d.save = t.checked;
+  else if (f === 'lat' || f === 'lon'){ d[f] = t.value === '' ? null : parseFloat(t.value); const c = document.getElementById('mtCoord' + i); if (c){ const ok = d.lat !== null && d.lon !== null; c.textContent = ok ? `✓ ${(+d.lat).toFixed(3)}°, ${(+d.lon).toFixed(3)}°` : 'Location not selected yet'; c.classList.toggle('ok', ok); } }
+  else if (f === 'tz') d.tz = parseFloat(t.value);
+  else d[f] = t.value;
+  mtUpdateGo();
+}
+document.addEventListener('input', mtOnField); document.addEventListener('change', mtOnField);
+
+/* =============================================================================
+   VEDIC BIRTHDAY ENGINE — Tithi birthday · Nakshatra birthday · Solar return
+   ============================================================================= */
+function vbJD(y, m, d, tz){ return toJulianDay(y, m, d, 0, 0, 0) - tz / 24; }
+function vbNatal(chart, profile){
+  const jd = chart.julianDay, P = panchangaAt(jd, profile.lat, profile.lon, profile.tz), lp = pnParts(jd, profile.tz);
+  return { jd, P, masaIdx: PN_MASA.indexOf(P.masa.name), adhika: P.masa.adhika, tn: P.tithi.num, nak: P.nakshatra.num - 1, pada: P.nakshatra.pada,
+    sunSid: getSiderealLongitudeAt('Sun', jd), by: lp.y, bm: lp.m, bd: lp.d, lat: profile.lat, lon: profile.lon, tz: profile.tz };
+}
+/* the day a span [a,b) is observed: the first local date whose sunrise falls inside it (Hindu rule); else the date at the span's middle (kshaya) */
+function vbDayFor(a, b, N){
+  const s = pnParts(a, N.tz), e = pnParts(b, N.tz);
+  let [y, m, d] = pnAddDay(s.y, s.m, s.d, -1);
+  for (let i = 0; i < 6; i++){
+    const rs = pnRiseSet(y, m, d, N.lat, N.lon, N.tz);
+    if (rs.rise !== null && rs.rise >= a && rs.rise < b) return { y, m, d, jd: rs.rise, sunrise: true };
+    [y, m, d] = pnAddDay(y, m, d, 1);
+    if (y > e.y || (y === e.y && m > e.m) || (y === e.y && m === e.m && d > e.d + 1)) break;
+  }
+  const mid = pnParts((a + b) / 2, N.tz); return { y: mid.y, m: mid.m, d: mid.d, jd: (a + b) / 2, sunrise: false };
+}
+function vbMoons(y, tz){
+  const start = vbJD(y, 1, 1, tz) - 45, end = vbJD(y, 12, 31, tz) + 45;
+  let nm = pnBoundary(pnDiff, start, 360, -1, 0.25); const out = [nm];
+  while (nm < end){ nm = pnBoundary(pnDiff, nm + 1, 360, +1, 0.25); out.push(nm); }
+  return out;
+}
+function vbMonths(nms){
+  return nms.slice(0, -1).map((a, k) => { const b = nms[k + 1], s1 = getSignIndex(getSiderealLongitudeAt('Sun', a)), s2 = getSignIndex(getSiderealLongitudeAt('Sun', b));
+    return { a, b, idx: (s1 + 1) % 12, adhika: s1 === s2 }; });
+}
+function vbTithi(N, y, months){
+  const out = [];
+  months.forEach(M => {
+    if (M.idx !== N.masaIdx || M.adhika) return;
+    const u = t => { let v = pnDiff(t); if (t < M.a + 0.3 && v > 300) v -= 360; if (t > M.b - 0.3 && v < 60) v += 360; return v; };
+    const at = deg => { let lo = M.a, hi = M.b; for (let i = 0; i < 45; i++){ const m = (lo + hi) / 2; if (u(m) >= deg) hi = m; else lo = m; } return (lo + hi) / 2; };
+    const start = N.tn === 1 ? M.a : at((N.tn - 1) * 12), end = N.tn === 30 ? M.b : at(N.tn * 12);
+    const day = vbDayFor(start, end, N);
+    if (day.y === y) out.push({ start, end, day, month: M });
+  });
+  return out;
+}
+function vbNak(N, y, months){
+  const out = [], endJD = vbJD(y, 12, 31, N.tz) + 2;
+  let cur = pnBoundary(pnMoon, vbJD(y, 1, 1, N.tz) - 2, PN_NAK, -1);
+  while (cur < endJD){
+    const nxt = pnBoundary(pnMoon, cur + 0.01, PN_NAK, +1);
+    if (Math.floor(pnMoon((cur + nxt) / 2) / PN_NAK) === N.nak){
+      const day = vbDayFor(cur, nxt, N);
+      if (day.y === y){ const M = months.find(m => cur >= m.a && cur < m.b);
+        out.push({ start: cur, end: nxt, day, birthMonth: !!M && M.idx === N.masaIdx && !M.adhika, masa: M ? PN_MASA[M.idx] + (M.adhika ? ' (Adhika)' : '') : '' }); }
+    }
+    cur = nxt;
+  }
+  return out;
+}
+function vbSolar(N, y){
+  const sunAt = t => getSiderealLongitudeAt('Sun', t), target = N.sunSid;
+  const find = c => { let lo = c - 3, hi = c + 3; const f = t => { const d = normDeg(sunAt(t) - target); return d > 180 ? d - 360 : d; };
+    for (let i = 0; i < 50; i++){ const m = (lo + hi) / 2; if (f(m) >= 0) hi = m; else lo = m; } return (lo + hi) / 2; };
+  for (const n of [y - N.by, y - N.by + 1, y - N.by - 1]){
+    const jd = find(N.jd + n * 365.25636), p = pnParts(jd, N.tz);
+    if (p.y === y){
+      const asc = getSignIndex(normDeg(ascendantLongitude(jd, N.lat, N.lon) - lahiriAyanamsa(jd)));
+      return { jd, day: { y: p.y, m: p.m, d: p.d }, time: p.timeStr.slice(0, 5), age: y - N.by, lagna: asc, moon: getSignIndex(getSiderealLongitudeAt('Moon', jd)) };
+    }
+  }
+  return null;
+}
+function vbYear(N, y){
+  const months = vbMonths(vbMoons(y, N.tz));
+  return { y, tithi: vbTithi(N, y, months), nak: vbNak(N, y, months), solar: vbSolar(N, y) };
+}
+
+/* ---------------------------------- VEDIC BIRTHDAY UI ---------------------------------- */
+let VB = null;
+const VB_COL = { tithi: '#D4AF37', nak: '#5EC4B7', solar: '#8A6FB8' };
+const VB_MIN = 1900, VB_MAX = 2100;
+const vbWd = d => PN_VARA[pnWeekday(d.y, d.m, d.d)][1];
+const vbLong = d => `${vbWd(d).slice(0, 3)}, ${d.d} ${PN_MON[d.m - 1]} ${d.y}`;
+const vbShort = d => `${d.d} ${PN_MON[d.m - 1]}`;
+const vbDays = d => Math.round((Date.UTC(d.y, d.m - 1, d.d) - Date.UTC(VB.today.y, VB.today.m - 1, VB.today.d)) / 86400000);
+function vbRel(d){ const n = vbDays(d); return n === 0 ? 'Today 🎉' : n > 0 ? `in ${n === 1 ? '1 day' : n < 60 ? n + ' days' : n < 500 ? Math.round(n / 30.44) + ' months' : (n / 365.25).toFixed(1) + ' years'}` : `${-n === 1 ? '1 day' : -n < 60 ? -n + ' days' : -n < 500 ? Math.round(-n / 30.44) + ' months' : (-n / 365.25).toFixed(1) + ' years'} ago`; }
+function vbGreg(d, y){ const n = Math.round((Date.UTC(d.y, d.m - 1, d.d) - Date.UTC(y, VB.N.bm - 1, VB.N.bd)) / 86400000);
+  return n === 0 ? 'Same day as your Gregorian birthday' : `${Math.abs(n)} day${Math.abs(n) === 1 ? '' : 's'} ${n > 0 ? 'after' : 'before'} your Gregorian birthday (${VB.N.bd} ${PN_MON[VB.N.bm - 1]})`; }
+
+function buildVedicBirthdayPanel(chart, profile){
+  const N = vbNatal(chart, profile), now = new Date();
+  VB = { N, cache: {}, profile, y: now.getFullYear(), today: { y: now.getFullYear(), m: now.getMonth() + 1, d: now.getDate() } };
+  VB.y = Math.min(VB_MAX, Math.max(VB_MIN, VB.y));
+  const P = N.P;
+  setTimeout(() => vbRender(), 0);
+  return `<div class="vb">
+    <div class="vb-hero">
+      <div class="vb-cake" aria-hidden="true">🎂</div>
+      <h3>Your Vedic Birthday</h3>
+      <p>In the Hindu calendar your birthday is not a fixed date — it follows the Moon and Sun. Pick any year to see when your birth <b>Tithi</b>, <b>Nakshatra</b> and <b>Sun position</b> return.</p>
+      <div class="vb-born">
+        <span>🌙 ${PN_MASA[N.masaIdx]}${N.adhika ? ' (Adhika)' : ''} · ${P.tithi.paksha} ${P.tithi.name}</span>
+        <span>★ ${NAKSHATRAS[N.nak].name} · pada ${N.pada}</span>
+        <span>☀ Sun ${nvDeg(N.sunSid)}</span>
+        <span>📅 Born ${vbLong({ y: N.by, m: N.bm, d: N.bd })}</span>
+      </div>
+    </div>
+    <div class="vb-year">
+      <button type="button" data-vb-step="-1" aria-label="Previous year">‹</button>
+      <label><span>Year</span><input type="number" id="vbYear" min="${VB_MIN}" max="${VB_MAX}" value="${VB.y}" inputmode="numeric"></label>
+      <button type="button" data-vb-step="1" aria-label="Next year">›</button>
+      <button type="button" class="vb-now" data-vb-this>This year</button>
+    </div>
+    <div id="vbBody"></div>
+  </div>`;
+}
+function vbGet(y){ if (!VB.cache[y]) VB.cache[y] = vbYear(VB.N, y); return VB.cache[y]; }
+function vbRender(){
+  const body = document.getElementById('vbBody'); if (!body || !VB) return;
+  const y = VB.y; body.innerHTML = '<div class="vb-loading"><i></i> Calculating the sky for ' + y + '…</div>';
+  setTimeout(() => {
+    let Y; try { Y = vbGet(y); } catch(e){ console.error(e); body.innerHTML = '<div class="meta-err">Could not compute this year.</div>'; return; }
+    VB.last = Y; body.innerHTML = vbBodyHtml(Y);
+    vbNextUp();
+  }, 20);
+}
+function vbDateBlock(label, day, sub, extra, y){
+  const rel = vbRel(day), today = vbDays(day) === 0;
+  return `<div class="vb-d ${today ? 'today' : ''}"><div class="vb-dl">${label}</div><b>${vbLong(day)}</b><span class="vb-rel">${rel}</span>
+    <small>${sub}</small>${extra || ''}<em>${vbGreg(day, y)}</em></div>`;
+}
+function vbBodyHtml(Y){
+  const N = VB.N, y = Y.y, tz = N.tz;
+  const tCards = Y.tithi.length ? Y.tithi.map((t, i) => vbDateBlock(Y.tithi.length > 1 ? `Occurrence ${i + 1}` : 'Observed on', t.day,
+    `${PN_MASA[N.masaIdx]} ${N.P.tithi.paksha} ${N.P.tithi.name}`,
+    `<div class="vb-t">Tithi runs ${nvDate(t.start, tz, true)} → ${nvDate(t.end, tz, true)}</div>${t.day.sunrise ? '' : '<div class="vb-warn">⚠ This tithi begins and ends between two sunrises (kshaya). Many families observe it on this date regardless.</div>'}`, y)).join('') : '<div class="pl-empty">This tithi does not fall in this calendar year.</div>';
+  const nb = Y.nak.filter(x => x.birthMonth);
+  const nCards = nb.length ? nb.map((t, i) => vbDateBlock(nb.length > 1 ? `Occurrence ${i + 1}` : 'Observed on', t.day, `${NAKSHATRAS[N.nak].name} · in ${t.masa}`,
+    `<div class="vb-t">Moon in ${NAKSHATRAS[N.nak].name}: ${nvDate(t.start, tz, true)} → ${nvDate(t.end, tz, true)}</div>`, y)).join('') : '<div class="pl-empty">No birth-month Nakshatra day found in this calendar year.</div>';
+  const sr = Y.solar;
+  const sCard = sr ? `<div class="vb-d ${vbDays(sr.day) === 0 ? 'today' : ''}"><div class="vb-dl">Exact moment</div><b>${vbLong(sr.day)}</b><span class="vb-rel">${vbRel(sr.day)}</span>
+      <small>${sr.time} local time at the birth place · turning ${sr.age}</small>
+      <div class="vb-t">Sun returns to ${nvDeg(N.sunSid)} (sidereal) · Varsha Lagna ${SIGNS[sr.lagna].symbol} ${SIGNS[sr.lagna].name} · Moon in ${SIGNS[sr.moon].symbol} ${SIGNS[sr.moon].name}</div><em>${vbGreg(sr.day, y)}</em></div>` : '<div class="pl-empty">Not available for this year.</div>';
+
+  // year bar
+  const dim = ((y % 4 === 0 && y % 100 !== 0) || y % 400 === 0) ? 366 : 365, doy = d => (Date.UTC(d.y, d.m - 1, d.d) - Date.UTC(y, 0, 1)) / 86400000;
+  const pos = d => (doy(d) / dim * 100).toFixed(2);
+  const mons = PN_MON.map(m => `<span>${m[0]}</span>`).join('');
+  const lane = (lbl, col, items) => `<div class="vb-lane"><b style="color:${col}">${lbl}</b><div class="vb-ltrack">${items.map(d => `<i style="left:${pos(d)}%;background:${col}" title="${vbShort(d)}"></i>`).join('')}</div></div>`;
+  const greg = `<div class="vb-gl"><u style="left:${pos({ y, m: N.bm, d: N.bd })}%"></u></div>`;
+  const tn = Y.today || null;
+  const bar = `<div class="vb-bar"><div class="vb-months">${mons}</div><div class="vb-lanes">${greg}
+    ${lane('Tithi', VB_COL.tithi, Y.tithi.map(t => t.day))}${lane('Nakshatra', VB_COL.nak, nb.map(t => t.day))}${lane('Solar', VB_COL.solar, sr ? [sr.day] : [])}</div>
+    <div class="vb-legend"><span><u></u> Gregorian birthday</span></div></div>`;
+
+  const nakAll = Y.nak.map(x => `<div class="vb-nr ${x.birthMonth ? 'on' : ''}"><b>${vbLong(x.day)}</b><span>${x.masa}</span>${x.birthMonth ? '<em>birth month</em>' : ''}</div>`).join('');
+
+  const P = N.P, main = Y.tithi;
+  const hero = main.length ? `<div class="vb-main">
+      <div class="vb-main-k">🎂 Your Vedic Birthday in ${y}</div>
+      ${main.map(t => `<div class="vb-main-d ${vbDays(t.day) === 0 ? 'today' : ''}"><b>${vbLong(t.day)}</b><span class="vb-rel">${vbRel(t.day)}</span></div>`).join('')}
+      <div class="vb-main-why"><span>🌙</span><p><b>${PN_MASA[N.masaIdx]} ${P.tithi.paksha} ${P.tithi.name}</b> — the day your birth Tithi comes back in your birth lunar month. This is the traditional Hindu birthday; your Gregorian date does not apply.</p></div>
+      <div class="vb-main-g">${vbGreg(main[0].day, y)}</div>
+      <div id="vbHeroNext"></div>
+    </div>` : `<div class="vb-main"><div class="vb-main-k">🎂 Your Vedic Birthday in ${y}</div><div class="vb-main-why"><span>🌙</span><p>Your birth Tithi in ${PN_MASA[N.masaIdx]} does not fall inside calendar year ${y} — try the previous or next year.</p></div></div>`;
+  return `${hero}
+    <div id="vbNext"></div>
+    <div class="vb-sec"><h5>${y} at a glance</h5>${bar}</div>
+    <div class="vb-sec"><h5>All the ways to mark your day <span>the first is your main Vedic birthday</span></h5></div>
+    <div class="vb-cards">
+      <div class="vb-card main" style="--pc:${VB_COL.tithi}"><div class="vb-badge">★ Your Vedic birthday</div><div class="vb-ch"><span>🌙</span><div><b>Tithi Birthday</b><small>Janma Tithi · the traditional Hindu birthday</small></div></div>${tCards}</div>
+      <div class="vb-card" style="--pc:${VB_COL.nak}"><div class="vb-badge soft">Also observed</div><div class="vb-ch"><span>★</span><div><b>Nakshatra Birthday</b><small>Moon returns to your birth star, in your birth month</small></div></div>${nCards}</div>
+      <div class="vb-card" style="--pc:${VB_COL.solar}"><div class="vb-badge soft">Also observed</div><div class="vb-ch"><span>☀</span><div><b>Solar Return</b><small>Surya Varsha · Sun back at its birth degree</small></div></div>${sCard}</div>
+    </div>
+    <details class="sb-note vb-det"><summary>All ${Y.nak.length} Janma Nakshatra days in ${y}</summary><p>Your Moon passes through ${NAKSHATRAS[N.nak].name} about every 27 days. Many families also mark the star day each month.</p><div class="vb-nlist">${nakAll}</div></details>
+    <div class="vb-actions"><button type="button" class="export-download-btn export-ghost" data-vb-decade>📆 Show next 10 years</button><button type="button" class="export-download-btn export-ghost" data-vb-copy>📋 Copy ${y} dates</button></div>
+    <div id="vbDecade"></div>
+    <div class="pn-note">Tithi and Nakshatra birthdays are observed on the day the Tithi or star is present at sunrise at your birth place; the lunar month is Amanta, and Adhika (leap) months are skipped. The Solar Return uses the sidereal Sun (Lahiri) in the birth-place time zone, so it can fall a day away from your Gregorian birthday. Reliable for 1900–2100.</div>`;
+}
+function vbNextUp(){
+  const box = document.getElementById('vbNext'); if (!box || !VB) return;
+  setTimeout(() => {
+    let ev = [];
+    [VB.today.y, VB.today.y + 1].forEach(y => { try { const Y = vbGet(y);
+      Y.tithi.forEach(t => ev.push(['Tithi birthday', VB_COL.tithi, '🌙', t.day])); Y.nak.filter(x => x.birthMonth).forEach(t => ev.push(['Nakshatra birthday', VB_COL.nak, '★', t.day]));
+      if (Y.solar) ev.push(['Solar return', VB_COL.solar, '☀', Y.solar.day]); } catch(e){} });
+    ev = ev.filter(e => vbDays(e[3]) >= 0).sort((a, b) => vbDays(a[3]) - vbDays(b[3]));
+    const hn = document.getElementById('vbHeroNext');
+    if (hn && VB.last && VB.last.y === VB.today.y){
+      const cur = VB.last.tithi.filter(t => vbDays(t.day) >= 0)[0];
+      let nx = cur ? null : (vbGet(VB.today.y + 1).tithi[0] || null);
+      if (nx) hn.innerHTML = `<div class="vb-main-next">Next Vedic birthday: <b>${vbLong(nx.day)}</b> <em>${vbRel(nx.day)}</em></div>`;
+    }
+    const el = document.getElementById('vbNext'); if (!el) return;
+    el.innerHTML = ev.length ? `<div class="vb-next"><small>Coming up next</small><div>${ev.slice(0, 3).map(e => `<span style="--pc:${e[1]}">${e[2]} <b>${e[0]}</b> ${vbLong(e[3])} <em>${vbRel(e[3])}</em></span>`).join('')}</div></div>` : '';
+  }, 30);
+}
+function vbSetYear(y){
+  y = parseInt(y); if (isNaN(y)) return;
+  if (y < VB_MIN || y > VB_MAX){ APP.toast(`Please choose a year between ${VB_MIN} and ${VB_MAX}.`, 'error'); y = Math.min(VB_MAX, Math.max(VB_MIN, y)); }
+  VB.y = y; const inp = document.getElementById('vbYear'); if (inp) inp.value = y; vbRender();
+}
+async function vbDecade(){
+  const box = document.getElementById('vbDecade'); if (!box) return;
+  const y0 = VB.y, rows = [];
+  for (let i = 0; i < 10 && y0 + i <= VB_MAX; i++){
+    box.innerHTML = `<div class="vb-loading"><i></i> Calculating ${y0 + i}…</div>`; await new Promise(r => setTimeout(r, 15));
+    const Y = vbGet(y0 + i), nb = Y.nak.filter(x => x.birthMonth);
+    rows.push(`<div class="vb-row"><b>${Y.y}</b><span style="--pc:${VB_COL.tithi}">${Y.tithi.map(t => vbShort(t.day)).join(' · ') || '—'}</span><span style="--pc:${VB_COL.nak}">${nb.map(t => vbShort(t.day)).join(' · ') || '—'}</span><span style="--pc:${VB_COL.solar}">${Y.solar ? vbShort(Y.solar.day) + ' ' + Y.solar.time : '—'}</span></div>`);
+  }
+  box.innerHTML = `<div class="vb-table"><div class="vb-row head"><b>Year</b><span>🌙 Tithi</span><span>★ Nakshatra</span><span>☀ Solar return</span></div>${rows.join('')}</div>`;
+}
+document.addEventListener('click', (e) => {
+  if (!VB) return;
+  const st = e.target.closest('[data-vb-step]'); if (st){ vbSetYear(VB.y + parseInt(st.dataset.vbStep)); return; }
+  if (e.target.closest('[data-vb-this]')){ vbSetYear(VB.today.y); return; }
+  if (e.target.closest('[data-vb-decade]')){ vbDecade(); return; }
+  if (e.target.closest('[data-vb-copy]') && VB.last){
+    const Y = VB.last, N = VB.N, nb = Y.nak.filter(x => x.birthMonth);
+    const txt = [`Vedic birthday dates for ${Y.y}`, `Born under: ${PN_MASA[N.masaIdx]} ${N.P.tithi.paksha} ${N.P.tithi.name}, ${NAKSHATRAS[N.nak].name}`,
+      `Tithi birthday: ${Y.tithi.map(t => vbLong(t.day)).join(' / ') || '—'}`, `Nakshatra birthday: ${nb.map(t => vbLong(t.day)).join(' / ') || '—'}`,
+      `Solar return: ${Y.solar ? vbLong(Y.solar.day) + ' ' + Y.solar.time : '—'}`].join('\n');
+    APP.copy(txt).then(ok => APP.toast(ok ? 'Dates copied ✓' : 'Could not copy', ok ? 'success' : 'error'));
+  }
+});
+document.addEventListener('change', (e) => { if (VB && e.target.id === 'vbYear') vbSetYear(e.target.value); });
+document.addEventListener('keydown', (e) => { if (VB && e.target.id === 'vbYear' && e.key === 'Enter') vbSetYear(e.target.value); });
+
+/* =============================================================================
+   NUMEROLOGY — Name number (Chaldean / Pythagorean) + Date-of-birth numbers + Lo Shu grid
+   ============================================================================= */
+const NM_CHALDEAN = {A:1,I:1,J:1,Q:1,Y:1,B:2,K:2,R:2,C:3,G:3,L:3,S:3,D:4,M:4,T:4,E:5,H:5,N:5,X:5,U:6,V:6,W:6,O:7,Z:7,F:8,P:8};
+const NM_PYTH = {A:1,J:1,S:1,B:2,K:2,T:2,C:3,L:3,U:3,D:4,M:4,V:4,E:5,N:5,W:5,F:6,O:6,X:6,G:7,P:7,Y:7,H:8,Q:8,Z:8,I:9,R:9};
+const NM_PCOL = { Sun:'#E0A64A', Moon:'#C9C3AE', Jupiter:'#E0C34A', Rahu:'#6B7FA3', Mercury:'#5EC4B7', Venus:'#D96C9B', Ketu:'#8A6FB8', Saturn:'#5B7FD6', Mars:'#C95050' };
+const NM_INFO = {
+ 1:{t:'The Pioneer',k:'Leadership · Independence · Willpower',p:'Sun',col:'Gold, orange',gem:'Ruby',d:'A natural starter with a strong will and a need to lead and stand on your own feet. You do best when you are free to decide and take the first step.',s:['Self-reliant','Decisive','Original thinker'],w:['Pride or stubbornness','Impatience with a slower pace','Reluctance to ask for help'],soul:'Wants independence, achievement and to be recognised for it.',out:'Comes across as confident, direct and in charge.'},
+ 2:{t:'The Peacemaker',k:'Cooperation · Sensitivity · Intuition',p:'Moon',col:'White, cream, silver',gem:'Pearl',d:'Gentle and tuned in to other people’s feelings. You thrive in partnerships and bring calm and harmony wherever you go.',s:['Empathetic','Tactful','Supportive team player'],w:['Over-sensitivity','Indecision','Absorbing other people’s moods'],soul:'Wants love, peace and a trusted partner.',out:'Comes across as kind, approachable and diplomatic.'},
+ 3:{t:'The Communicator',k:'Creativity · Expression · Optimism',p:'Jupiter',col:'Yellow',gem:'Yellow sapphire',d:'Expressive, social and naturally optimistic, with a gift for words, ideas and the arts. You lift the mood of a room.',s:['Creative','Sociable','Optimistic'],w:['Scattered energy','Exaggeration or too much talk','Avoiding depth'],soul:'Wants to express, enjoy life and be heard.',out:'Comes across as charming, witty and lively.'},
+ 4:{t:'The Builder',k:'Discipline · Structure · Hard work',p:'Rahu',col:'Blue, grey, earthy tones',gem:'Hessonite (gomed)',d:'Methodical and dependable, you build things that last through steady effort. There is often an unconventional streak beneath the practical surface.',s:['Organised','Dependable','Determined'],w:['Rigidity','Stubbornness','Worry about security and sudden upsets'],soul:'Wants stability, order and visible results.',out:'Comes across as serious, reliable and grounded.'},
+ 5:{t:'The Adventurer',k:'Freedom · Change · Curiosity',p:'Mercury',col:'Green',gem:'Emerald',d:'A quick, curious mind that loves variety, movement and new experiences. You adapt fast and communicate well.',s:['Versatile','Quick learner','Persuasive'],w:['Restlessness','Inconsistency','Impulsiveness'],soul:'Wants freedom, adventure and mental stimulation.',out:'Comes across as energetic, clever and magnetic.'},
+ 6:{t:'The Nurturer',k:'Love · Responsibility · Harmony',p:'Venus',col:'White, pink',gem:'Diamond / white sapphire',d:'Caring, family-minded and drawn to beauty. You create comfort and balance and carry responsibility for the people you love.',s:['Loving','Responsible','Artistic'],w:['Over-giving','Perfectionism','Controlling “for others’ good”'],soul:'Wants a harmonious home and to care for others.',out:'Comes across as warm, dependable and gracious.'},
+ 7:{t:'The Seeker',k:'Analysis · Spirituality · Introspection',p:'Ketu',col:'Smoky grey, soft violet',gem:'Cat’s eye',d:'Thoughtful and private, drawn to deep questions, study and the inner life. You need quiet time to recharge and to find the truth for yourself.',s:['Analytical','Intuitive','Independent thinker'],w:['Aloofness','Isolating yourself','Skepticism or moodiness'],soul:'Wants understanding, solitude and inner truth.',out:'Comes across as reserved, wise and a little mysterious.'},
+ 8:{t:'The Achiever',k:'Power · Discipline · Material success',p:'Saturn',col:'Dark blue, black',gem:'Blue sapphire',d:'Serious and persistent, you build authority slowly through effort. You understand money, responsibility and the long game.',s:['Resilient','Strategic','Patient'],w:['Workaholic tendencies','Appearing cold or rigid','Fear of loss'],soul:'Wants achievement, security and respect.',out:'Comes across as capable, authoritative and driven.'},
+ 9:{t:'The Humanitarian',k:'Compassion · Courage · Completion',p:'Mars',col:'Red',gem:'Red coral',d:'A generous, energetic idealist who wants to make a difference. You fight for causes and are often at your best when serving something bigger.',s:['Compassionate','Courageous','Generous'],w:['Anger or impatience','Over-sacrificing','Difficulty letting go'],soul:'Wants to serve, to inspire and to finish what matters.',out:'Comes across as passionate, warm and larger than life.'},
+ 11:{t:'The Master Intuitive',k:'Inspiration · Intuition · Illumination',p:'Moon',col:'Silver, white',gem:'Pearl',d:'A master number that carries the 2’s sensitivity at a higher pitch — strong intuition, inspiration and the ability to uplift others.',s:['Visionary','Inspiring','Highly intuitive'],w:['Nervous tension','Self-doubt','Unrealistic expectations'],soul:'Wants to inspire and to follow a higher calling.',out:'Comes across as luminous, sensitive and idealistic.',base:2},
+ 22:{t:'The Master Builder',k:'Vision · Practicality · Large-scale results',p:'Rahu',col:'Blue, grey',gem:'Hessonite (gomed)',d:'A master number that joins the 4’s practicality to a big vision — the potential to turn large ideas into lasting structures.',s:['Practical visionary','Organised on a grand scale','Determined'],w:['Pressure and perfectionism','Overwhelm','Stubbornness'],soul:'Wants to build something that outlasts them.',out:'Comes across as capable, steady and quietly powerful.',base:4},
+ 33:{t:'The Master Teacher',k:'Compassion · Service · Guidance',p:'Venus',col:'Pink, white',gem:'Diamond / white sapphire',d:'A master number that lifts the 6’s love and care into service of many — healing, teaching and guiding others.',s:['Selfless','Nurturing','Inspiring teacher'],w:['Carrying everyone’s burdens','Self-neglect','Idealism'],soul:'Wants to heal, teach and uplift.',out:'Comes across as gentle, wise and deeply caring.',base:6}
+};
+const NM_YEAR = {1:'New beginnings — start, decide, take the lead.',2:'Patience and partnership — cooperate and let things grow.',3:'Creativity and social expansion — express yourself.',4:'Foundations and hard work — organise, build, be practical.',5:'Change and freedom — travel, variety, unexpected turns.',6:'Home, love and responsibility — family and relationships.',7:'Reflection and learning — slow down, study, look within.',8:'Achievement and money — career, power, results.',9:'Completion and release — finish, let go, forgive.'};
+const NM_LOSHU = [[4,9,2],[3,5,7],[8,1,6]];
+const NM_MISS = {1:'self-expression and assertiveness',2:'sensitivity and cooperation',3:'creative communication',4:'discipline and structure',5:'balance and adaptability',6:'care and domestic harmony',7:'reflection and faith',8:'drive and handling money',9:'idealism and follow-through'};
+const NM_LINES = [['Mental plane',[4,9,2]],['Emotional plane',[3,5,7]],['Practical plane',[8,1,6]],['Thought',[4,3,8]],['Will',[9,5,1]],['Action',[2,7,6]],['Determination',[4,5,6]],['Compassion',[2,5,8]]];
+
+function nmReduce(n, masters){ const steps = [n]; while (n > 9){ if (masters && (n === 11 || n === 22 || n === 33)) break; n = String(n).split('').reduce((a, c) => a + (+c), 0); steps.push(n); } return { n, steps }; }
+function nmStepsTxt(r){ return r.steps.map((v, i) => i === 0 ? `${v}` : `${r.steps[i-1]}`.split('').join('+') + ` = ${v}`).slice(1).join(' → ') || `${r.steps[0]}`; }
+function nmName(name, sys){
+  const map = sys === 'chaldean' ? NM_CHALDEAN : NM_PYTH, masters = sys !== 'chaldean';
+  const words = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().split(/[^A-Z]+/).filter(Boolean);
+  if (!words.length) return null;
+  let tot = 0, vow = 0, con = 0;
+  const wl = words.map(w => {
+    const hasV = /[AEIOU]/.test(w);
+    const letters = [...w].map(ch => ({ ch, v: map[ch], vowel: 'AEIOU'.includes(ch) || (ch === 'Y' && !hasV) }));
+    const sum = letters.reduce((a, l) => a + l.v, 0);
+    letters.forEach(l => { tot += l.v; if (l.vowel) vow += l.v; else con += l.v; });
+    return { w, letters, sum };
+  });
+  return { words: wl, total: tot, vowels: vow, cons: con, name: nmReduce(tot, masters), soul: vow ? nmReduce(vow, masters) : null, pers: con ? nmReduce(con, masters) : null };
+}
+function nmDob(ds, sys, year){
+  const [y, m, d] = ds.split('-').map(Number); if (!y || !m || !d) return null;
+  const masters = sys !== 'chaldean', ds2 = n => String(n).split('').reduce((a, c) => a + (+c), 0);
+  const day = nmReduce(d, masters), mulank = nmReduce(d, false);
+  const rd = nmReduce(d, masters).n, rm = nmReduce(m, masters).n, ry = nmReduce(ds2(y), masters).n;
+  const life = masters ? nmReduce(rd + rm + ry, true) : nmReduce(ds2(d) + ds2(m) + ds2(y), false);
+  const attitude = nmReduce(d + m, false), py = nmReduce(nmReduce(d, false).n + nmReduce(m, false).n + nmReduce(ds2(year), false).n, false);
+  const digits = (`${String(d).padStart(2, '0')}${String(m).padStart(2, '0')}${y}`).split('').map(Number).filter(x => x > 0).concat([mulank.n, nmReduce(ds2(d) + ds2(m) + ds2(y), false).n]);
+  const counts = {}; for (let i = 1; i <= 9; i++) counts[i] = digits.filter(x => x === i).length;
+  return { y, m, d, day, mulank, life, attitude, py, counts, lifeParts: [rd, rm, ry] };
+}
+
+/* ---------------------------------- NUMEROLOGY UI ---------------------------------- */
+let NM = null;
+function buildNumerologyPanel(chart, profile){
+  NM = { sys: 'chaldean', mode: 'name', name: '', name2: '', dob: profile.dob, year: new Date().getFullYear(), pick: 'life', profName: profile.name || '' };
+  setTimeout(nmRender, 0);
+  return `<div class="nm">
+    <div class="nm-top">
+      <div class="nm-seg nm-modes"><button type="button" class="on" data-nm-mode="name">✍ Name only</button><button type="button" data-nm-mode="dob">📅 Birth date + name</button></div>
+      <div class="nm-seg nm-sys" title="Numbering system"><button type="button" class="on" data-nm-sys="chaldean">Chaldean</button><button type="button" data-nm-sys="pythagorean">Pythagorean</button></div>
+    </div>
+    <div class="nm-sysnote" id="nmSysNote"></div>
+    <div class="nm-inputs">
+      <div id="nmInName" class="nm-in"><label>Full name <small>(English letters)</small><input type="text" id="nmName" placeholder="e.g. Ananya Sharma" autocomplete="off"></label>
+        <button type="button" class="nm-use" data-nm-use="name">Use “${escapeHtml((profile.name || '').split(' ')[0] || 'my name')}”</button></div>
+      <div id="nmInDob" class="nm-in" hidden>
+        <div class="nm-row"><label>Date of birth<input type="date" id="nmDob" value="${profile.dob}"></label>
+        <label>Name <small>(optional)</small><input type="text" id="nmName2" placeholder="Add a name for more" autocomplete="off"></label></div>
+        <button type="button" class="nm-use" data-nm-use="name2">Use “${escapeHtml((profile.name || '').split(' ')[0] || 'my name')}”</button></div>
+    </div>
+    <div id="nmBody"></div>
+  </div>`;
+}
+function nmMeaningCard(n, label, opts){
+  const info = NM_INFO[n]; if (!info) return '';
+  const pc = NM_PCOL[info.p], base = info.base ? ` · reduces to ${info.base}` : '';
+  return `<div class="nm-mean" style="--pc:${pc}">
+    <div class="nm-mean-h"><span class="nm-bign">${n}</span><div><small>${label}</small><h4>${info.t}</h4><span>${info.k}</span></div></div>
+    <p>${info.d}</p>
+    <div class="nm-two"><div class="nm-good"><b>Strengths</b>${info.s.map(x => `<span>${x}</span>`).join('')}</div><div class="nm-warn"><b>Watch-outs</b>${info.w.map(x => `<span>${x}</span>`).join('')}</div></div>
+    <div class="nm-facts"><div><small>Ruling planet</small><b>${info.p}</b></div><div><small>Colours</small><b>${info.col}</b></div><div><small>Gemstone</small><b>${info.gem}</b></div></div>
+    ${opts && opts.inner ? `<div class="nm-ino"><div><b>Inner motivation</b><span>${info.soul}</span></div><div><b>Outer impression</b><span>${info.out}</span></div></div>` : ''}
+    <small class="nm-base">${base ? 'Master number' + base : ''}</small></div>`;
+}
+function nmTrio(R){
+  const one = (lbl, sub, r, comp) => r ? `<div class="nm-t" style="--pc:${NM_PCOL[NM_INFO[r.n].p]}"><small>${lbl}</small><b>${r.n}</b><span>${NM_INFO[r.n].t}</span><em>${comp > 9 ? comp + ' → ' + r.n + ' · ' : ''}${sub}</em></div>` : `<div class="nm-t"><small>${lbl}</small><b>—</b><span>no letters</span></div>`;
+  return `<div class="nm-trio">${one('Expression · all letters', 'how you act', R.name, R.total)}${one('Soul urge · vowels', 'what you want', R.soul, R.vowels)}${one('Personality · consonants', 'how you appear', R.pers, R.cons)}</div>`;
+}
+function nmNameHtml(){
+  const R = nmName(NM.name, NM.sys);
+  if (!NM.name.trim()) return `<div class="nm-empty">✍ Type a name above to see its numbers, the final number and what it means.</div>`;
+  if (!R) return `<div class="nm-empty">Please write the name using English (Latin) letters, for example “Ananya”.</div>`;
+  const n = R.name.n, info = NM_INFO[n], pc = NM_PCOL[info.p], chal = NM.sys === 'chaldean';
+  const words = R.words.map(w => `<div class="nm-word"><div class="nm-wl"><b>${w.w}</b><span>= ${w.sum}</span></div><div class="nm-tiles">${w.letters.map(l => `<span class="${l.vowel ? 'v' : 'c'}"><i>${l.ch}</i><b>${l.v}</b></span>`).join('')}</div></div>`).join('');
+  const letterEq = R.words.map(w => w.letters.map(l => l.v).join('+')).join(' + ');
+  const comp = R.total > 9 ? `Compound number <b>${R.total}</b>${chal ? ' (traditional “compound” before the final number)' : ''}` : 'Single-digit total';
+  return `<div class="nm-hero" style="--pc:${pc}">
+      <div class="nm-ring"><b>${n}</b></div>
+      <div class="nm-hero-t"><small>Your ${chal ? 'Chaldean' : 'Pythagorean'} name number</small><h4>${info.t}</h4><span>${info.k}</span>
+        <div class="nm-chips"><span>${comp}</span><span>Ruled by ${info.p}</span></div></div>
+    </div>
+    <div class="nm-sec"><h5>① Number of every letter <span>teal = vowel · gold = consonant</span></h5>${words}</div>
+    <div class="nm-sec"><h5>② Adding it up</h5>
+      <div class="nm-calc"><div class="nm-step"><small>All letters</small><code>${letterEq}</code><b>= ${R.total}</b></div>
+      <div class="nm-step"><small>Reduce to the end number</small><code>${R.total > 9 ? nmStepsTxt(R.name) : 'already a single digit'}</code><b>→ ${n}</b></div></div></div>
+    <div class="nm-sec"><h5>③ What the end number ${n} means</h5>${nmMeaningCard(n, 'Name number', { inner: true })}</div>
+    <div class="nm-sec"><h5>④ Three views of your name</h5>${nmTrio(R)}</div>
+    <div class="nm-actions"><button type="button" class="export-download-btn export-ghost" data-nm-copy>📋 Copy result</button></div>
+    <div class="pn-note">${chal ? 'Chaldean numbers run 1–8 (9 is held sacred and never assigned to a letter). The compound total is shown first, then reduced to the final single digit.' : 'Pythagorean numbers run 1–9. Master numbers 11, 22 and 33 are kept unreduced.'} Y counts as a consonant unless the word has no other vowel. Numerology is a traditional symbolic system, not a scientific one.</div>`;
+}
+function nmDobHtml(){
+  const D = nmDob(NM.dob, NM.sys, NM.year);
+  if (!D) return `<div class="nm-empty">📅 Choose a date of birth to see your numbers.</div>`;
+  const chal = NM.sys === 'chaldean', N = NM.name2.trim() ? nmName(NM.name2, NM.sys) : null;
+  const cards = [
+    { key: 'life', lbl: chal ? 'Bhagyank · Destiny' : 'Life Path', r: D.life, note: chal ? 'all digits of birth date' : 'day + month + year' },
+    { key: 'day', lbl: chal ? 'Mulank · Psychic' : 'Birthday number', r: chal ? D.mulank : D.day, note: `born on the ${D.d}${[11,12,13].includes(D.d % 100) ? 'th' : ['th','st','nd','rd'][D.d % 10 > 3 ? 0 : D.d % 10]}` },
+    { key: 'att', lbl: 'Attitude', r: D.attitude, note: 'day + month' }
+  ];
+  if (N) cards.push({ key: 'name', lbl: 'Name number', r: N.name, note: NM.name2.trim().split(/\s+/)[0] });
+  if (!cards.some(c => c.key === NM.pick)) NM.pick = 'life';
+  const tiles = cards.map(c => `<button type="button" class="nm-card ${NM.pick === c.key ? 'on' : ''}" style="--pc:${NM_PCOL[NM_INFO[c.r.n].p]}" data-nm-pick="${c.key}"><small>${c.lbl}</small><b>${c.r.n}</b><span>${NM_INFO[c.r.n].t}</span><em>${c.note}</em></button>`).join('');
+  const sel = cards.find(c => c.key === NM.pick);
+  const dayTxt = D.d > 9 ? `${String(D.d).split('').join('+')} = ${D.mulank.steps[1]}${D.mulank.steps.length > 2 ? ' → ' + D.mulank.n : ''}` : `${D.d}`;
+  const lifeCalc = chal ? `${[...String(D.d), ...String(D.m), ...String(D.y)].join('+')} = ${[...String(D.d), ...String(D.m), ...String(D.y)].reduce((a, c) => a + (+c), 0)}${D.life.steps.length > 1 ? ' → ' + nmStepsTxt(D.life) : ''}`
+    : `${D.lifeParts.join(' + ')} = ${D.lifeParts.reduce((a, b) => a + b, 0)}${D.life.steps.length > 1 ? ' → ' + nmStepsTxt(D.life) : ''}`;
+  const py = D.py.n, years = [NM.year - 1, NM.year, NM.year + 1];
+  const grid = NM_LOSHU.map(r => `<div class="nm-gr">${r.map(v => `<div class="nm-gc ${D.counts[v] ? 'has' : 'miss'}"><small>${v}</small><b>${D.counts[v] ? String(v).repeat(D.counts[v]) : '·'}</b></div>`).join('')}</div>`).join('');
+  const missing = [1,2,3,4,5,6,7,8,9].filter(v => !D.counts[v]), lines = NM_LINES.filter(l => l[1].every(v => D.counts[v]));
+  const info = NM_INFO[sel.r.n];
+  return `<div class="nm-cards">${tiles}</div>
+    ${nmMeaningCard(sel.r.n, sel.lbl, { inner: sel.key === 'name' })}
+    ${N ? `<div class="nm-sec"><h5>Name · ${escapeHtml(NM.name2.trim())}</h5>${nmTrio(N)}</div>` : '<div class="nm-hint">💡 Add a name above to unlock the Name, Soul-urge and Personality numbers.</div>'}
+    <div class="nm-sec"><h5>How these were worked out</h5><div class="nm-calc">
+      <div class="nm-step"><small>${chal ? 'Mulank (day of birth)' : 'Birthday number'}</small><code>${dayTxt}</code><b>→ ${(chal ? D.mulank : D.day).n}</b></div>
+      <div class="nm-step"><small>${chal ? 'Bhagyank (full date)' : 'Life Path'}</small><code>${lifeCalc}</code><b>→ ${D.life.n}</b></div>
+      <div class="nm-step"><small>Attitude</small><code>${D.d} + ${D.m} = ${D.d + D.m}${D.attitude.steps.length > 1 ? ' → ' + nmStepsTxt(D.attitude) : ''}</code><b>→ ${D.attitude.n}</b></div></div></div>
+    <div class="nm-sec"><h5>Personal year <span>a 9-year cycle</span></h5>
+      <div class="nm-py"><div class="nm-pyn" style="--pc:${NM_PCOL[NM_INFO[py].p]}"><small>${NM.year}</small><b>${py}</b></div><div><b>${NM_YEAR[py]}</b><span>${D.d} + ${D.m} + ${NM.year} → ${py}</span>
+        <div class="nm-yr"><button type="button" data-nm-year="-1">‹ ${NM.year - 1}</button><button type="button" data-nm-year="0">This year</button><button type="button" data-nm-year="1">${NM.year + 1} ›</button></div></div></div></div>
+    <div class="nm-sec"><h5>Lo Shu grid <span>digits of your birth date + Mulank + Bhagyank</span></h5>
+      <div class="nm-lo"><div class="nm-grid">${grid}</div><div class="nm-lo-s">
+        <div><b>Present</b><p>${[1,2,3,4,5,6,7,8,9].filter(v => D.counts[v]).map(v => `<span class="ok">${v}${D.counts[v] > 1 ? '×' + D.counts[v] : ''}</span>`).join('') || '—'}</p></div>
+        <div><b>Missing</b><p>${missing.length ? missing.map(v => `<span class="no" title="${NM_MISS[v]}">${v}</span>`).join('') : '<em>none — all nine present</em>'}</p>${missing.length ? `<small>Missing numbers point to areas to consciously develop: ${missing.slice(0, 3).map(v => v + ' (' + NM_MISS[v] + ')').join('; ')}${missing.length > 3 ? '…' : ''}.</small>` : ''}</div>
+        <div><b>Complete lines</b><p>${lines.length ? lines.map(l => `<span class="ln">${l[0]} ${l[1].join('-')}</span>`).join('') : '<em>no full line</em>'}</p></div></div></div></div>
+    <div class="nm-actions"><button type="button" class="export-download-btn export-ghost" data-nm-copy>📋 Copy result</button></div>
+    <div class="pn-note">${chal ? 'Indian method: Mulank is the day of birth reduced to 1–9, Bhagyank is every digit of the birth date added and reduced to 1–9.' : 'Western method: Life Path adds the reduced day, month and year; master numbers 11, 22 and 33 are kept.'} Numerology is a traditional symbolic system, not a scientific one.</div>`;
+}
+function nmRender(){
+  const b = document.getElementById('nmBody'); if (!b || !NM) return;
+  document.getElementById('nmInName').hidden = NM.mode !== 'name'; document.getElementById('nmInDob').hidden = NM.mode !== 'dob';
+  document.getElementById('nmSysNote').textContent = NM.sys === 'chaldean' ? 'Chaldean — the traditional system used in Indian numerology (numbers 1–8 on letters).' : 'Pythagorean — the Western system (numbers 1–9, master numbers 11/22/33 kept).';
+  b.innerHTML = NM.mode === 'name' ? nmNameHtml() : nmDobHtml();
+}
+function nmCopyText(){
+  if (NM.mode === 'name'){ const R = nmName(NM.name, NM.sys); if (!R) return ''; const n = R.name.n;
+    return `Name numerology (${NM.sys}) — ${NM.name.trim()}\nTotal: ${R.total} → end number ${n} (${NM_INFO[n].t})\nSoul urge: ${R.soul ? R.soul.n : '—'}  Personality: ${R.pers ? R.pers.n : '—'}\n${NM_INFO[n].d}`; }
+  const D = nmDob(NM.dob, NM.sys, NM.year); if (!D) return '';
+  return `Numerology (${NM.sys}) — born ${NM.dob}\n${NM.sys === 'chaldean' ? 'Mulank' : 'Birthday'}: ${(NM.sys === 'chaldean' ? D.mulank : D.day).n}  ${NM.sys === 'chaldean' ? 'Bhagyank' : 'Life Path'}: ${D.life.n} (${NM_INFO[D.life.n].t})\nAttitude: ${D.attitude.n}  Personal year ${NM.year}: ${D.py.n}`;
+}
+document.addEventListener('click', (e) => {
+  if (!NM) return;
+  const mode = e.target.closest('[data-nm-mode]'); if (mode){ NM.mode = mode.dataset.nmMode; document.querySelectorAll('[data-nm-mode]').forEach(b => b.classList.toggle('on', b === mode)); nmRender(); return; }
+  const sys = e.target.closest('[data-nm-sys]'); if (sys){ NM.sys = sys.dataset.nmSys; document.querySelectorAll('[data-nm-sys]').forEach(b => b.classList.toggle('on', b === sys)); nmRender(); return; }
+  const use = e.target.closest('[data-nm-use]'); if (use){ const k = use.dataset.nmUse; NM[k] = NM.profName; document.getElementById(k === 'name' ? 'nmName' : 'nmName2').value = NM.profName; nmRender(); return; }
+  const pick = e.target.closest('[data-nm-pick]'); if (pick){ NM.pick = pick.dataset.nmPick; nmRender(); return; }
+  const yr = e.target.closest('[data-nm-year]'); if (yr){ const v = parseInt(yr.dataset.nmYear); NM.year = v === 0 ? new Date().getFullYear() : NM.year + v; nmRender(); return; }
+  if (e.target.closest('[data-nm-copy]')){ const t = nmCopyText(); if (t) APP.copy(t).then(ok => APP.toast(ok ? 'Result copied ✓' : 'Could not copy', ok ? 'success' : 'error')); }
+});
+document.addEventListener('input', (e) => {
+  if (!NM) return;
+  if (e.target.id === 'nmName'){ NM.name = e.target.value; nmRender(); }
+  else if (e.target.id === 'nmName2'){ NM.name2 = e.target.value; nmRender(); }
+  else if (e.target.id === 'nmDob'){ NM.dob = e.target.value; nmRender(); }
+});
+
+/* ===== My Chart / Overview (redesigned) ===== */
+const OV_EL_COLORS = {fire:'#E0744A',earth:'#8FB36B',air:'#6FB7D9',water:'#5B7FD6'};
+let ovStyle = 'north';
+function ovChartSvg(chart){
+  try { return buildInteractiveVargaSvg(chart.vargas.D1, VARGAS.D1, ovStyle, null); }
+  catch(e){ return '<div class="ov-empty">Chart could not be drawn.</div>'; }
+}
+function buildOverviewPanel(chart, profile){
+  const asc = SIGNS[chart.ascendant.sign], moon = SIGNS[chart.planets.Moon.sign], sun = SIGNS[chart.planets.Sun.sign];
+  const moonNak = chart.planets.Moon.nakshatra;
+  const initial = escapeHtml((profile.name||'?').trim().charAt(0).toUpperCase());
+
+  // element balance (7 planets + lagna)
+  const els = {fire:0,earth:0,air:0,water:0};
+  ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'].forEach(n=>{ const e=(SIGNS[chart.planets[n].sign].element||'').toLowerCase(); if(e in els) els[e]++; });
+  { const e=(asc.element||'').toLowerCase(); if(e in els) els[e]++; }
+  const totEl = Object.values(els).reduce((a,b)=>a+b,0)||1;
+  const domEl = Object.keys(els).sort((a,b)=>els[b]-els[a])[0];
+  const elBar = Object.keys(els).map(k=>`<i style="width:${els[k]/totEl*100}%;background:${OV_EL_COLORS[k]}" title="${k}: ${els[k]}"></i>`).join('');
+  const elLeg = Object.keys(els).map(k=>`<span><i style="background:${OV_EL_COLORS[k]}"></i>${k[0].toUpperCase()+k.slice(1)} ${els[k]}</span>`).join('');
+
+  // planet rows
+  const rows = [['Lagna',chart.ascendant,true]].concat(PLANET_LIST.map(n=>[n,chart.planets[n],false])).map(([n,p,isAsc])=>{
+    const sg = SIGNS[p.sign], col = isAsc ? '#D4AF37' : (DASHA_PLANET_COLORS[n]||'#888');
+    const nak = p.nakshatra ? p.nakshatra.name : '';
+    const dig = (!isAsc && p.dignity && p.dignity.label) ? p.dignity.label : '';
+    return `<div class="ov-prow" ${isAsc?'':`data-planet-click="${n}"`} style="--pc:${col}">
+      <span class="ov-pdot" style="background:${col}">${isAsc?'↑':PLANET_GLYPHS[n]}</span>
+      <span class="ov-pname"><b>${n}${p.retrograde?' <em>℞</em>':''}</b><small>${nak}</small></span>
+      <span class="ov-psign">${sg.symbol} ${sg.name}<small>${formatDeg(p.degInSign)}</small></span>
+      <span class="ov-phouse">${isAsc?'H1':'H'+p.house}${dig?`<small>${dig}</small>`:''}</span>
+    </div>`;
+  }).join('');
+
+  const karakas = KARAKA_NAMES.map(name=>{
+    const k = chart.charaKarakas[name], prim = name==='Atmakaraka'||name==='Darakaraka', c = DASHA_PLANET_COLORS[k.planet];
+    return `<div class="karaka-card ov-kcard ${prim?'karaka-primary':''}" style="--pc:${c}">
+      <div class="ov-ktop"><span class="ov-pdot" style="background:${c}">${PLANET_GLYPHS[k.planet]}</span>
+      <span><b class="karaka-card-planet-name planet-clickable" data-planet-click="${k.planet}">${k.planet}</b><small>${name}</small></span></div>
+      <div class="ov-kdesc">${KARAKA_SIGNIFICANCE[name]}</div><div class="ov-kdeg">${formatDeg(k.degree)} traversed</div></div>`;
+  }).join('');
+
+  const big = (label, sg, deg, planet) => `<div class="ov-big">
+      <small>${label}</small><div class="ov-sym">${sg.symbol}</div>
+      <b ${planet?`class="planet-clickable" data-planet-click="${planet}"`:''}>${sg.name}</b>
+      <span>${sg.sk} · Lord ${sg.lord}</span><em>${formatDeg(deg)}</em></div>`;
+
+  return `<div class="ov">
+    <div class="ov-hero">
+      <div class="ov-av">${initial}</div>
+      <div class="ov-id"><h3>${escapeHtml(profile.name)}</h3>
+        <div class="ov-chips"><span>📅 ${formatDateHuman(profile.dob)}</span><span>🕒 ${profile.tob}</span><span>📍 ${escapeHtml(profile.place.split(',')[0])}</span><span>🌐 ${fmtTz(profile.tz)}</span></div>
+      </div>
+    </div>
+
+    <div class="ov-big3">${big('Lagna · Ascendant',asc,chart.ascendant.degInSign,null)}${big('Rashi · Moon sign',moon,chart.planets.Moon.degInSign,'Moon')}${big('Surya · Sun sign',sun,chart.planets.Sun.degInSign,'Sun')}</div>
+
+    <div class="ov-sec"><h5>Birth chart (D1)</h5>
+      <div class="ov-chartgrid">
+        <div class="ov-chartcard">
+          <div class="ov-toggle"><button type="button" class="on" data-ov-style="north">North Indian</button><button type="button" data-ov-style="south">South Indian</button></div>
+          <div id="ovChartSvg" class="ov-svg">${ovChartSvg(chart)}</div>
+        </div>
+        <div class="ov-plist"><div class="ov-plist-h"><span style="width:30px"></span><span>Planet</span><span>Sign</span><span>House</span></div>${rows}</div>
+      </div>
+    </div>
+
+    <div class="ov-sec"><h5>Moon's nakshatra</h5>
+      <div class="ov-nak">
+        <div class="ov-nak-main"><span class="ov-sym sm">☽</span><div><b>${moonNak.name}</b><small>Pada ${moonNak.pada} · Janma Nakshatra</small></div></div>
+        <div class="ov-nak-grid">
+          <div><small>Nakshatra lord</small><b>${moonNak.lord}</b></div>
+          <div><small>Ruling deity</small><b>${moonNak.deity}</b></div>
+          <div><small>Lagna nakshatra</small><b>${chart.ascendant.nakshatra.name} · ${chart.ascendant.nakshatra.pada}</b></div>
+          <div><small>Moon element</small><b>${moon.element} · ${moon.modality}</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ov-sec"><h5>Element balance <span>Mostly ${domEl}</span></h5>
+      <div class="ov-elbar">${elBar}</div><div class="ov-ellegend">${elLeg}</div>
+    </div>
+
+    <div class="ov-sec"><h5>Chara Karakas <span>Jaimini soul significators · ranked by degree</span></h5>
+      <div class="ov-kscroll">${karakas}</div>
+    </div>
+
+    <details class="ov-tech"><summary>Calculation details</summary>
+      <div class="ov-techgrid"><div><small>Ayanamsa</small><b>Lahiri ${chart.ayanamsa.toFixed(4)}°</b></div><div><small>House system</small><b>Whole Sign</b></div>
+      <div><small>Coordinates</small><b>${profile.lat.toFixed(2)}°, ${profile.lon.toFixed(2)}°</b></div><div><small>Julian Day (UT)</small><b>${chart.julianDay.toFixed(4)}</b></div></div>
+    </details>
+  </div>`;
+}
+document.addEventListener('click',(e)=>{
+  const b = e.target.closest('[data-ov-style]'); if(!b || !currentChartForModal) return;
+  ovStyle = b.dataset.ovStyle;
+  document.querySelectorAll('[data-ov-style]').forEach(x=>x.classList.toggle('on', x===b));
+  document.getElementById('ovChartSvg').innerHTML = ovChartSvg(currentChartForModal);
+});
+
+function renderResults(profile){
+  window.__vgProf = profile;
+  const chart = computeChart(profile.dob, profile.tob, profile.lat, profile.lon, profile.tz);
+  currentChartForModal = chart;
+  currentProfileForExport = profile;
+  const results = document.getElementById('results');
+
+  const ascSign = SIGNS[chart.ascendant.sign];
+  const moonSign = SIGNS[chart.planets.Moon.sign];
+  const sunSign = SIGNS[chart.planets.Sun.sign];
+  const moonNak = chart.planets.Moon.nakshatra;
+
+  let html = "";
+
+  html += `<div class="app-panel active" id="panel-overview">`;
+  html += buildOverviewPanel(chart, profile);
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-dasha">`;
+  html += buildDashaSection(chart, profile);
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-yogas">`;
+  html += buildYogaSection(chart);
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-transit">`;
+  html += `
+  <div class="section-heading"><h3>Gochara — Live Transit Comparison</h3><div class="rule"></div></div>
+  <div class="transit-live-card" id="transitLiveCard">
+    <div class="transit-live-intro">
+      Compare real-time planetary positions against this natal chart. Enter where you are right now (it doesn't need to match the birth place) to see which natal house each transiting planet currently occupies.
+    </div>
+    <form id="transitLocationForm" class="transit-location-form">
+      <div class="field location-wrap" style="flex:1;">
+        <label for="transitPlaceInput">Current Location</label>
+        <input type="text" id="transitPlaceInput" placeholder="Start typing a city…" autocomplete="off">
+        <div class="location-results" id="transitLocationResults"></div>
+      </div>
+      <div class="field" style="max-width:200px;">
+        <label for="transitTzInput">Timezone (UTC)</label>
+        <select id="transitTzInput"></select>
+      </div>
+      <button type="submit" class="btn btn-primary" style="align-self:flex-end;">Check Live Transits</button>
+    </form>
+    <div id="transitLiveResults"></div>
+  </div>`;
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-rectification">`;
+  html += `
+  <div class="section-heading"><h3>Birth Time Rectification</h3><div class="rule"></div><span class="section-sub">Dial in any time and calculate the complete chart</span></div>
+  <div class="rect-panel-card">
+    <p class="rect-intro">
+      Dial the exact date and time with the Hour · Minute · Second controls below, then hit
+      <strong>Calculate Full Chart</strong> to recompute the <strong>entire chart</strong> — every
+      tab (Overview, Dasha, Yogas, Ashtakavarga, Shadbala, Planets, Divisions D1–D60, Lagnas) —
+      exactly like generating a fresh chart, for that exact instant. You'll be taken straight to
+      Overview to see it. Nothing is saved to your stored profile unless you choose to apply it —
+      come back to Rectify any time to dial a different second and recalculate again.
+    </p>
+
+    <div class="rect-time-dial-card">
+      <div class="rect-field" style="max-width:220px; margin-bottom:16px;">
+        <label for="rectDate">Date</label>
+        <input type="date" id="rectDate" value="${profile.dob}">
+      </div>
+      <div class="hms-stepper-row" id="rectHmsRow">
+        <div class="hms-unit">
+          <div class="hms-unit-controls">
+            <button type="button" class="hms-btn" data-unit="h" data-dir="-1">◀</button>
+            <div class="hms-value" id="rectHmsH">00</div>
+            <button type="button" class="hms-btn" data-unit="h" data-dir="1">▶</button>
+          </div>
+          <span class="hms-unit-label">Hour</span>
+        </div>
+        <div class="hms-sep">:</div>
+        <div class="hms-unit">
+          <div class="hms-unit-controls">
+            <button type="button" class="hms-btn" data-unit="m" data-dir="-1">◀</button>
+            <div class="hms-value" id="rectHmsM">00</div>
+            <button type="button" class="hms-btn" data-unit="m" data-dir="1">▶</button>
+          </div>
+          <span class="hms-unit-label">Minute</span>
+        </div>
+        <div class="hms-sep">:</div>
+        <div class="hms-unit">
+          <div class="hms-unit-controls">
+            <button type="button" class="hms-btn" data-unit="s" data-dir="-1">◀</button>
+            <div class="hms-value" id="rectHmsS">00</div>
+            <button type="button" class="hms-btn" data-unit="s" data-dir="1">▶</button>
+          </div>
+          <span class="hms-unit-label">Second</span>
+        </div>
+      </div>
+      <div class="hms-hint">Tap to step by one · press and hold to fly through faster</div>
+      <input type="hidden" id="rectCenterTime" value="${profile.tob && profile.tob.length===5 ? profile.tob+':00' : profile.tob}">
+    </div>
+
+    <div class="rect-action-row">
+      <button type="button" class="btn btn-primary rect-fullcalc-btn" id="rectFullCalcBtn">🔬 Calculate Full Chart at This Exact Time</button>
+    </div>
+    <div id="rectFullChartResults"></div>
+
+    <div class="section-heading" style="margin-top:36px;"><h3 style="font-size:19px;">Second-by-Second Ascendant Scan</h3><div class="rule"></div><span class="section-sub">Narrow down a window, watch D60 &amp; Nakshatra shift</span></div>
+    <div class="rect-controls">
+      <div class="rect-field">
+        <label for="rectWindow">Scan Window (± minutes, centered on the dial above)</label>
+        <select id="rectWindow">
+          <option value="1">1 min</option>
+          <option value="2" selected>2 min</option>
+          <option value="5">5 min</option>
+          <option value="10">10 min</option>
+          <option value="20">20 min</option>
+          <option value="30">30 min</option>
+        </select>
+      </div>
+      <div class="rect-field">
+        <label for="rectStep">Step Precision</label>
+        <select id="rectStep">
+          <option value="1" selected>1 second</option>
+          <option value="2">2 seconds</option>
+          <option value="5">5 seconds</option>
+          <option value="10">10 seconds</option>
+          <option value="30">30 seconds</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-ghost rect-scan-btn" id="rectScanBtn">🎯 Run Second-by-Second Scan</button>
+    </div>
+
+    <div id="rectResultsWrap"></div>
+    <div class="rect-detail" id="rectDetail"></div>
+  </div>`;
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-transittimer">`;
+  html += `
+  <div class="section-heading"><h3>Transit Timer</h3><div class="rule"></div><span class="section-sub">When any planet — or the Ascendant — changes house in any D-chart</span></div>
+  <div class="tt-panel-card">
+    <p class="tt-intro">
+      Pick a body and a divisional chart (D1–D60). This finds, using the body's real evaluated
+      motion (not a flat average), exactly <strong>when it entered</strong> its current division,
+      <strong>when it will move</strong> into the next one, and the live countdown between now
+      and then. Retrograde bodies are handled correctly — the countdown reflects them moving
+      backward into the previous division, not forward.
+    </p>
+
+    <div class="tt-controls">
+      <div class="tt-field">
+        <label for="ttBody">Body</label>
+        <select id="ttBody">
+          <option value="Ascendant">🌅 Ascendant (Lagna)</option>
+          <option value="Sun">☉ Sun</option>
+          <option value="Moon">☽ Moon</option>
+          <option value="Mars">♂ Mars</option>
+          <option value="Mercury">☿ Mercury</option>
+          <option value="Jupiter">♃ Jupiter</option>
+          <option value="Venus">♀ Venus</option>
+          <option value="Saturn">♄ Saturn</option>
+          <option value="Rahu">☊ Rahu</option>
+          <option value="Ketu">☋ Ketu</option>
+        </select>
+      </div>
+      <div class="tt-field">
+        <label for="ttVarga">Divisional Chart</label>
+        <select id="ttVarga"></select>
+      </div>
+      <button type="button" class="btn btn-primary tt-check-btn" id="ttCheckBtn">⏳ Check Transit Timing</button>
+    </div>
+
+    <div id="ttResults"></div>
+  </div>`;
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-sandhi">`;
+  html += `
+  <div class="section-heading"><h3>Sandhi Table</h3><div class="rule"></div><span class="section-sub">The Ascendant's D1 window, sliced across every varga</span></div>
+  <div class="tt-panel-card">
+    <p class="tt-intro">
+      The D1 Ascendant sign holds for roughly <strong>2 hours</strong> — its real entry and exit
+      moment, computed precisely for the loaded profile's birth location. That same window is what
+      every divisional chart slices up: D9 into 9 pieces (~13 min each), D60 into 60 (~2 min each),
+      and so on. For each chart below: when the <strong>previous</strong> division started, when the
+      <strong>current</strong> one started, when the <strong>next</strong> one begins, and time left.
+      This is the classic rectification "sandhi" technique — match a known life event to the exact
+      slice that was live at that moment.
+    </p>
+    <div class="rect-action-row">
+      <button type="button" class="btn btn-primary rect-fullcalc-btn" id="sandhiCalcBtn">⏱ Calculate Sandhi Table Now</button>
+    </div>
+    <div id="sandhiResults"></div>
+  </div>`;
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-vargatimeline">`;
+  html += `
+  <div class="section-heading"><h3>Varga Timeline</h3><div class="rule"></div><span class="section-sub">Map the birth's D1 Ascendant window across any chart</span></div>
+  <div class="tt-panel-card">
+    <p class="tt-intro">
+      Anchored to the <strong>birth time</strong> from the loaded profile — not live "now". First
+      finds exactly when the birth's D1 Ascendant sign started and ended (e.g. Leo rising from
+      1:00 to 3:00). Pick a divisional chart and it maps out <strong>every single division</strong>
+      inside that entire window in order — for D9, all 9 slices from D1-start to D1-end, each with
+      its own start time, end time, and resulting sign — and marks exactly which slice the birth
+      moment itself falls into.
+    </p>
+    <div id="vtBirthInfo"></div>
+    <div class="tt-controls" style="margin-top:20px;">
+      <div class="tt-field">
+        <label for="vtVarga">Divisional Chart</label>
+        <select id="vtVarga"></select>
+      </div>
+      <div class="tt-field"></div>
+      <button type="button" class="btn btn-primary tt-check-btn" id="vtMapBtn">🗺️ Map Out Timeline</button>
+    </div>
+    <div id="vtResults"></div>
+  </div>`;
+  html += `</div>`;
+
+
+  html += `<div class="app-panel" id="panel-planets">`;
+  html += buildPlanetsPanel(chart);
+
+  if (chart.wars.length){
+    html += `<div class="war-note">⚔ Planetary War (Graha Yuddha) detected: ${chart.wars.map(w=>`${w.planetA} vs ${w.planetB} (${w.separation.toFixed(2)}° apart, ${w.winner} wins)`).join('; ')}. Winner determination uses the simplified longitude-based rule; classical texts also weigh ecliptic latitude.</div>`;
+  }
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-reading">${window.buildReadingPanel(chart)}</div>`;
+  html += `<div class="app-panel" id="panel-fate">${window.buildFatePanel(chart, profile)}</div>`;
+  html += `<div class="app-panel" id="panel-sahams">${window.buildSahamPanel(chart)}</div>`;
+  html += `<div class="app-panel" id="panel-tithi">${window.buildTithiPraveshPanel(chart, profile)}</div>`;
+  html += `<div class="app-panel" id="panel-bhavabala">${window.buildBhavaBalaPanel(chart, profile)}</div>`;
+  html += `<div class="app-panel" id="panel-active">${window.buildActivationPanel(chart)}</div>`;
+  html += `<div class="app-panel" id="panel-ashtakavarga">`;
+  html += buildAshtakavargaSection(chart);
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-shadbala">`;
+  html += buildShadbalaSection(chart);
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-relationships">`;
+  html += buildRelationshipsSection(chart);
+  html += `</div>`;
+
+  const activeDashaNow = findActiveDasha(chart.dashaData.mahadashas, new Date());
+  const currentDashaLabel = activeDashaNow
+    ? `${activeDashaNow.mahadasha.lord} / ${activeDashaNow.antardasha ? activeDashaNow.antardasha.lord : '—'}`
+    : 'Active';
+
+  html += `<div class="app-panel" id="panel-match">`;
+  html += buildMatchPanel(chart, profile);
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-vbday">`;
+  html += buildVedicBirthdayPanel(chart, profile);
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-numerology">`;
+  html += buildNumerologyPanel(chart, profile);
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-bhava">`;
+  html += buildBhavaPanel(chart, profile);
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-panchanga">`;
+  html += buildPanchangaPanel(chart, profile);
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-transits">`;
+  html += buildTransitsPanel(chart, profile);
+  html += `</div>`;
+
+  html += `<div class="app-panel" id="panel-vargas">`;
+  html += `
+  <div class="section-heading"><h3>Shodasa Varga — Divisional Charts (D1–D60)</h3><div class="rule"></div><span class="section-sub">Interactive chart viewer</span></div>
+  
+  <div class="varga-toolbar">
+    <div class="varga-control-group">
+      <span class="varga-control-label">Select Chart:</span>
+      <select id="vargaSelect" class="varga-select">`;
+  Object.keys(VARGAS).forEach(key => {
+    const meta = VARGAS[key];
+    html += `<option value="${key}">${key} — ${meta.name} (${meta.full})</option>`;
+  });
+  html += `  </select>
+    </div>
+
+    <div class="varga-control-group">
+      <span class="varga-control-label">Chart Style:</span>
+      <div class="varga-style-toggle" id="vargaStyleToggle">
+        <button type="button" class="varga-style-btn active" data-style="north"><span>◇</span> North Indian</button>
+        <button type="button" class="varga-style-btn" data-style="west"><span>◯</span> Western Wheel</button>
+        <button type="button" class="varga-style-btn" data-style="south"><span>▦</span> South Indian</button>
+      </div>
+    </div>
+
+    <div class="varga-control-group">
+      <label class="varga-aspect-toggle-label" for="vargaAspectToggle">
+        <input type="checkbox" id="vargaAspectToggle" class="varga-aspect-checkbox">
+        <span class="varga-aspect-toggle-track"><span class="varga-aspect-toggle-thumb"></span></span>
+        <span class="varga-control-label" style="text-transform:none; font-weight:600;">✦ Show Planetary Aspects (Drishti)</span>
+      </label>
+    </div>
+
+    <div class="varga-quick-chips">
+      <span style="font-size:11px; text-transform:uppercase; color:var(--text-subtle); align-self:center; margin-right:4px;">Quick Jump:</span>`;
+  ["D1","D9","D10","D2","D3","D7","D12","D60"].forEach(key => {
+    html += `<button type="button" class="varga-chip ${key==='D1'?'active':''}" data-varga-quick="${key}">${key}</button>`;
+  });
+  html += `</div>
+  </div>
+
+  <div class="varga-single-display" id="vargaDisplayContainer">
+    <!-- Populated by updateVargaDisplay() -->
+  </div>`;
+  html += `</div>`; 
+
+  html += `<div class="app-panel" id="panel-lagnas">`;
+  html += `
+  <div class="section-heading lagna-section-heading">
+    <div>
+      <h3>Special Lagnas — Alternate Ascendants</h3><div class="rule"></div><span class="section-sub">23 classical lagna points, viewable as full divisional charts</span>
+    </div>
+    <button type="button" class="chart-dl-btn-single aspect-copy-btn" id="copyAllLagnasBtn"><span>📋</span> Copy All Lagnas</button>
+  </div>
+
+  <div class="varga-toolbar">
+    <div class="varga-control-group">
+      <span class="varga-control-label">Select Lagna:</span>
+      <select id="lagnaSelect" class="varga-select">`;
+  const lagnaGroupLabels = { core: "Core Ascendants", arudha: "Arudha Padas", karaka: "Karaka-Based", kala: "Time-Based (Kala)" };
+  ["core","arudha","karaka","kala"].forEach(group => {
+    html += `<optgroup label="${lagnaGroupLabels[group]}">`;
+    SPECIAL_LAGNAS_ORDER.filter(k => SPECIAL_LAGNAS_META[k].group === group).forEach(k => {
+      const m = SPECIAL_LAGNAS_META[k];
+      html += `<option value="${k}">${m.name} (${m.sanskrit})</option>`;
+    });
+    html += `</optgroup>`;
+  });
+  html += `  </select>
+    </div>
+
+    <div class="varga-control-group">
+      <span class="varga-control-label">Divisional Chart:</span>
+      <select id="lagnaVargaSelect" class="varga-select">`;
+  Object.keys(VARGAS).forEach(key => {
+    const meta = VARGAS[key];
+    html += `<option value="${key}">${key} — ${meta.name} (${meta.full})</option>`;
+  });
+  html += `  </select>
+    </div>
+
+    <div class="varga-control-group">
+      <span class="varga-control-label">Chart Style:</span>
+      <div class="varga-style-toggle" id="lagnaStyleToggle">
+        <button type="button" class="varga-style-btn active" data-style="north"><span>◇</span> North Indian</button>
+        <button type="button" class="varga-style-btn" data-style="west"><span>◯</span> Western Wheel</button>
+        <button type="button" class="varga-style-btn" data-style="south"><span>▦</span> South Indian</button>
+      </div>
+    </div>
+
+    <div class="varga-control-group">
+      <label class="varga-aspect-toggle-label" for="lagnaAspectToggle">
+        <input type="checkbox" id="lagnaAspectToggle" class="varga-aspect-checkbox">
+        <span class="varga-aspect-toggle-track"><span class="varga-aspect-toggle-thumb"></span></span>
+        <span class="varga-control-label" style="text-transform:none; font-weight:600;">✦ Show Planetary Aspects (Drishti)</span>
+      </label>
+    </div>
+
+    <div class="varga-quick-chips">
+      <span style="font-size:11px; text-transform:uppercase; color:var(--text-subtle); align-self:center; margin-right:4px;">Quick Jump:</span>`;
+  ["UL_LAGNA","AL","KL","UL","HL","GL","BL","BB","INDU","SL","PAKA"].forEach(key => {
+    html += `<button type="button" class="varga-chip ${key==='UL_LAGNA'?'active':''}" data-lagna-quick="${key}">${SPECIAL_LAGNAS_META[key].sanskrit.split(' ')[0].split('/')[0]}</button>`;
+  });
+  html += `</div>
+  </div>
+
+  <div class="lagna-summary-strip" id="lagnaSummaryStrip"></div>
+
+  <div class="varga-single-display" id="lagnaDisplayContainer">
+    <!-- Populated by updateLagnaDisplay() -->
+  </div>`;
+  html += `</div>`;
+
+  results.innerHTML = html;
+  results.classList.add('show');
+  document.getElementById('appTabbar').classList.add('show');
+  document.body.classList.add('app-mode');
+  buildHomePanel(typeof profile!=='undefined' && profile ? profile.name : '');
+  switchAppTab('panel-home');
+  wireRectificationPanel();
+  wireTransitTimerPanel();
+  wireSandhiPanel();
+  wireVargaTimelinePanel();
+
+  let currentSelectedVarga = 'D1';
+  let currentChartStyle = 'north';
+  let showAspects = false;
+
+  function updateVargaDisplay() {
+    const key = currentSelectedVarga;
+    const meta = VARGAS[key];
+    const vdata = chart.vargas[key];
+    const ascVSign = SIGNS[vdata.ascendantSign];
+    const aspectRows = showAspects ? computeVargaAspects(chart, vdata) : null;
+
+    let singleHtml = `<div class="varga-card">
+      <div class="varga-card-head">
+        <div>
+          <div class="varga-card-title">
+            <span class="varga-code">${key}</span>
+            <span class="varga-name">${meta.name}</span>
+          </div>
+          <div class="varga-sanskrit">${meta.full}</div>
+          <div class="varga-desc">${meta.desc}</div>
+        </div>
+        <div class="varga-asc-tag">Lagna (Ascendant)<br><strong>${ascVSign.symbol} ${ascVSign.name} (${ascVSign.sk})</strong></div>
+      </div>
+      <div class="varga-body-full">
+        <div class="varga-chart-container">
+          <div id="vargaSvgWrapper" style="width:100%; display:flex; justify-content:center;">
+            ${buildInteractiveVargaSvg(vdata, meta, currentChartStyle, aspectRows)}
+          </div>
+          <div style="font-size:11px; color:var(--gold-dim); margin-top:10px; font-family:var(--font-display); letter-spacing:0.05em; text-align:center;">
+            ${currentChartStyle === 'north' ? 'North Indian Diamond Chart (Fixed Houses)' : currentChartStyle === 'west' ? 'Western Wheel Chart (360° Circular)' : 'South Indian Square Chart (Fixed Signs)'}${showAspects ? ' · Aspect Lines Shown' : ''}
+          </div>
+          <div class="chart-download-actions">
+            <button type="button" class="chart-dl-btn-single" id="downloadChartBtn" title="Download High-Resolution Chart Image">
+              <span>📥</span> Download Chart
+            </button>
+          </div>
+        </div>
+        <div class="varga-house-table-wrap">
+          <table class="varga-house-table">
+            <thead><tr><th>House</th><th>Sign</th><th>Lord</th><th>Occupants</th></tr></thead>
+            <tbody>`;
+    vdata.houses.forEach(h => {
+      const occupantsHtml = h.isEmpty
+        ? `<span class="house-empty-tag">Empty</span>`
+        : h.planets.map(p => {
+            const digClass = p.dignity.status==="Exalted"||p.dignity.status==="OwnSign"||p.dignity.status==="Moolatrikona" ? "dig-good" : p.dignity.status==="Debilitated" ? "dig-bad" : "";
+            return `<span class="occupant-chip"><span class="planet-glyph">${PLANET_GLYPHS[p.name]}</span>${p.name}${p.retrograde?'<sup class="retro-tag-sm">R</sup>':''}${key==="D1"?` <span class="${digClass} tiny">${p.dignity.status!=="Neutral"&&p.dignity.status!=="Friend"&&p.dignity.status!=="Enemy"?p.dignity.status:''}</span>`:''}</span>`;
+          }).join(' ');
+      singleHtml += `<tr class="${h.isEmpty?'house-row-empty':''}">
+        <td class="house-num-cell">H${h.houseNum}</td>
+        <td>${h.signSymbol} ${h.signName} <span class="sign-sk">(${h.signSanskrit})</span></td>
+        <td>${h.signLord}</td>
+        <td>${occupantsHtml}</td>
+      </tr>`;
+    });
+    singleHtml += `</tbody></table></div>
+      </div>
+      <div class="varga-footer">
+        <span>Harmonic Division: <strong>1/${meta.n} (${meta.n} parts)</strong></span>
+        <span><strong>${vdata.houses.filter(h=>!h.isEmpty).length}</strong> of 12 houses occupied</span>
+      </div>
+      ${aspectRows ? buildAspectsTableHtml(aspectRows, 'varga') : ''}
+    </div>`;
+
+    document.getElementById('vargaDisplayContainer').innerHTML = singleHtml;
+
+    // Attach Single Chart Download Listener
+    const dlBtn = document.getElementById('downloadChartBtn');
+    if (dlBtn) {
+      dlBtn.addEventListener('click', () => {
+        downloadActiveChartImage('png', key, currentChartStyle, profile.name);
+      });
+    }
+
+    // Attach Aspect Table Copy Listener
+    const copyBtn = document.getElementById('vargaCopyAspectTableBtn');
+    if (copyBtn && aspectRows) {
+      copyBtn.addEventListener('click', () => {
+        copyTextToClipboard(aspectRowsToPlainText(aspectRows, key), copyBtn, '<span>📋</span> Copy Table');
+      });
+    }
+  }
+
+  // Initial render of selected chart
+  updateVargaDisplay();
+
+  const vargaAspectToggleEl = document.getElementById('vargaAspectToggle');
+  if (vargaAspectToggleEl) {
+    vargaAspectToggleEl.checked = showAspects;
+    vargaAspectToggleEl.addEventListener('change', (e) => {
+      showAspects = e.target.checked;
+      updateVargaDisplay();
+    });
+  }
+
+  const vargaSelEl = document.getElementById('vargaSelect');
+  if (vargaSelEl) {
+    vargaSelEl.addEventListener('change', (e) => {
+      currentSelectedVarga = e.target.value;
+      document.querySelectorAll('#panel-vargas .varga-chip').forEach(c => {
+        c.classList.toggle('active', c.dataset.vargaQuick === currentSelectedVarga);
+      });
+      updateVargaDisplay();
+    });
+  }
+
+  document.querySelectorAll('#panel-vargas .varga-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      currentSelectedVarga = chip.dataset.vargaQuick;
+      if (vargaSelEl) vargaSelEl.value = currentSelectedVarga;
+      document.querySelectorAll('#panel-vargas .varga-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      updateVargaDisplay();
+    });
+  });
+
+  document.querySelectorAll('#vargaStyleToggle .varga-style-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentChartStyle = btn.dataset.style;
+      document.querySelectorAll('#vargaStyleToggle .varga-style-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateVargaDisplay();
+    });
+  });
+
+  /* ============================================================================
+     SPECIAL LAGNAS TAB LOGIC
+     ============================================================================ */
+  const specialLagnaSigns = computeAllSpecialLagnaSigns(chart);
+  let currentSelectedLagna = 'UL_LAGNA';
+  let currentLagnaVarga = 'D1';
+  let currentLagnaStyle = 'north';
+  let showLagnaAspects = false;
+
+  function buildLagnaSummaryHtml(lagnaKey){
+    const meta = SPECIAL_LAGNAS_META[lagnaKey];
+    const signIdx = specialLagnaSigns[lagnaKey];
+    const sign = SIGNS[signIdx];
+    return `<div class="lagna-summary-card">
+      <div class="lagna-summary-head">
+        <div class="lagna-summary-title">${meta.name} <span class="lagna-summary-sk">(${meta.sanskrit})</span></div>
+        <div class="lagna-summary-sign">${sign.symbol} ${sign.name} <span class="sign-sk">(${sign.sk})</span></div>
+      </div>
+      <div class="lagna-summary-desc">${meta.desc}</div>
+    </div>`;
+  }
+
+  function updateLagnaDisplay(){
+    const lagnaKey = currentSelectedLagna;
+    const vargaKey = currentLagnaVarga;
+    const meta = VARGAS[vargaKey];
+    const lagnaMeta = SPECIAL_LAGNAS_META[lagnaKey];
+    const lagnaSignIdx = specialLagnaSigns[lagnaKey];
+    const vdata = buildVargaFromLagna(chart, lagnaSignIdx, vargaKey);
+    const ascVSign = SIGNS[vdata.ascendantSign];
+    const aspectRows = showLagnaAspects ? computeVargaAspects(chart, vdata) : null;
+
+    document.getElementById('lagnaSummaryStrip').innerHTML = buildLagnaSummaryHtml(lagnaKey);
+
+    let singleHtml = `<div class="varga-card">
+      <div class="varga-card-head">
+        <div>
+          <div class="varga-card-title">
+            <span class="varga-code">${vargaKey}</span>
+            <span class="varga-name">${meta.name}</span>
+          </div>
+          <div class="varga-sanskrit">${meta.full} — cast from ${lagnaMeta.name}</div>
+          <div class="varga-desc">${meta.desc}</div>
+        </div>
+        <div class="varga-asc-tag">${lagnaMeta.name}<br><strong>${ascVSign.symbol} ${ascVSign.name} (${ascVSign.sk})</strong></div>
+      </div>
+      <div class="varga-body-full">
+        <div class="varga-chart-container">
+          <div id="lagnaSvgWrapper" style="width:100%; display:flex; justify-content:center;">
+            ${buildInteractiveVargaSvg(vdata, meta, currentLagnaStyle, aspectRows)}
+          </div>
+          <div style="font-size:11px; color:var(--gold-dim); margin-top:10px; font-family:var(--font-display); letter-spacing:0.05em; text-align:center;">
+            ${currentLagnaStyle === 'north' ? 'North Indian Diamond Chart (Fixed Houses)' : currentLagnaStyle === 'west' ? 'Western Wheel Chart (360° Circular)' : 'South Indian Square Chart (Fixed Signs)'}${showLagnaAspects ? ' · Aspect Lines Shown' : ''}
+          </div>
+          <div class="chart-download-actions">
+            <button type="button" class="chart-dl-btn-single" id="downloadLagnaChartBtn" title="Download High-Resolution Chart Image">
+              <span>📥</span> Download Chart
+            </button>
+            <button type="button" class="chart-dl-btn-single chart-dl-btn-secondary" id="copyLagnaChartBtn" title="Copy this lagna's chart data as text">
+              <span>📋</span> Copy Current Chart
+            </button>
+          </div>
+        </div>
+        <div class="varga-house-table-wrap">
+          <table class="varga-house-table">
+            <thead><tr><th>House</th><th>Sign</th><th>Lord</th><th>Occupants</th></tr></thead>
+            <tbody>`;
+    vdata.houses.forEach(h => {
+      const occupantsHtml = h.isEmpty
+        ? `<span class="house-empty-tag">Empty</span>`
+        : h.planets.map(p => {
+            const digClass = p.dignity.status==="Exalted"||p.dignity.status==="OwnSign"||p.dignity.status==="Moolatrikona" ? "dig-good" : p.dignity.status==="Debilitated" ? "dig-bad" : "";
+            return `<span class="occupant-chip"><span class="planet-glyph">${PLANET_GLYPHS[p.name]}</span>${p.name}${p.retrograde?'<sup class="retro-tag-sm">R</sup>':''}${vargaKey==="D1"?` <span class="${digClass} tiny">${p.dignity.status!=="Neutral"&&p.dignity.status!=="Friend"&&p.dignity.status!=="Enemy"?p.dignity.status:''}</span>`:''}</span>`;
+          }).join(' ');
+      singleHtml += `<tr class="${h.isEmpty?'house-row-empty':''}">
+        <td class="house-num-cell">H${h.houseNum}</td>
+        <td>${h.signSymbol} ${h.signName} <span class="sign-sk">(${h.signSanskrit})</span></td>
+        <td>${h.signLord}</td>
+        <td>${occupantsHtml}</td>
+      </tr>`;
+    });
+    singleHtml += `</tbody></table></div>
+      </div>
+      <div class="varga-footer">
+        <span>Harmonic Division: <strong>1/${meta.n} (${meta.n} parts)</strong></span>
+        <span><strong>${vdata.houses.filter(h=>!h.isEmpty).length}</strong> of 12 houses occupied</span>
+      </div>
+      ${aspectRows ? buildAspectsTableHtml(aspectRows, 'lagna') : ''}
+    </div>`;
+
+    document.getElementById('lagnaDisplayContainer').innerHTML = singleHtml;
+
+    const dlBtn = document.getElementById('downloadLagnaChartBtn');
+    if (dlBtn) {
+      dlBtn.addEventListener('click', () => {
+        downloadActiveChartImageFromWrapper('lagnaSvgWrapper', 'png', `${lagnaKey}_${vargaKey}`, currentLagnaStyle, profile.name);
+      });
+    }
+
+    const copyChartBtn = document.getElementById('copyLagnaChartBtn');
+    if (copyChartBtn) {
+      copyChartBtn.addEventListener('click', () => {
+        const text = lagnaChartToPlainText(chart, lagnaKey, vargaKey, vdata, aspectRows);
+        copyTextToClipboard(text, copyChartBtn, '<span>📋</span> Copy Current Chart');
+      });
+    }
+
+    const copyBtn = document.getElementById('lagnaCopyAspectTableBtn');
+    if (copyBtn && aspectRows) {
+      copyBtn.addEventListener('click', () => {
+        copyTextToClipboard(aspectRowsToPlainText(aspectRows, `${lagnaKey} · ${vargaKey}`), copyBtn, '<span>📋</span> Copy Table');
+      });
+    }
+  }
+
+  updateLagnaDisplay();
+
+  const copyAllLagnasBtn = document.getElementById('copyAllLagnasBtn');
+  if (copyAllLagnasBtn) {
+    copyAllLagnasBtn.addEventListener('click', () => {
+      const text = allLagnasToPlainText(chart, specialLagnaSigns, currentLagnaVarga);
+      copyTextToClipboard(text, copyAllLagnasBtn, '<span>📋</span> Copy All Lagnas');
+    });
+  }
+
+  const lagnaSelEl = document.getElementById('lagnaSelect');
+  if (lagnaSelEl) {
+    lagnaSelEl.addEventListener('change', (e) => {
+      currentSelectedLagna = e.target.value;
+      document.querySelectorAll('#panel-lagnas .varga-chip').forEach(c => {
+        c.classList.toggle('active', c.dataset.lagnaQuick === currentSelectedLagna);
+      });
+      updateLagnaDisplay();
+    });
+  }
+
+  const lagnaVargaSelEl = document.getElementById('lagnaVargaSelect');
+  if (lagnaVargaSelEl) {
+    lagnaVargaSelEl.addEventListener('change', (e) => {
+      currentLagnaVarga = e.target.value;
+      updateLagnaDisplay();
+    });
+  }
+
+  document.querySelectorAll('#panel-lagnas .varga-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      currentSelectedLagna = chip.dataset.lagnaQuick;
+      if (lagnaSelEl) lagnaSelEl.value = currentSelectedLagna;
+      document.querySelectorAll('#panel-lagnas .varga-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      updateLagnaDisplay();
+    });
+  });
+
+  document.querySelectorAll('#lagnaStyleToggle .varga-style-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentLagnaStyle = btn.dataset.style;
+      document.querySelectorAll('#lagnaStyleToggle .varga-style-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateLagnaDisplay();
+    });
+  });
+
+  const lagnaAspectToggleEl = document.getElementById('lagnaAspectToggle');
+  if (lagnaAspectToggleEl) {
+    lagnaAspectToggleEl.checked = showLagnaAspects;
+    lagnaAspectToggleEl.addEventListener('change', (e) => {
+      showLagnaAspects = e.target.checked;
+      updateLagnaDisplay();
+    });
+  }
+
+  setupTransitLiveForm(chart, profile);
+
+  document.querySelectorAll('.dasha-antardasha-toggle').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const row = document.getElementById('dasha-ad-'+btn.dataset.dashaIdx);
+      const isOpen = row.style.display !== 'none';
+      row.style.display = isOpen ? 'none' : '';
+      btn.textContent = isOpen ? 'Sub-periods' : 'Hide sub-periods';
+    });
+  });
+
+  if (!window.__dashaDrillListenerAttached){
+    window.__dashaDrillListenerAttached = true;
+    document.addEventListener('click', (e)=>{
+      const chip = e.target.closest('.dasha-drill-chip');
+      if (!chip) return;
+      expandDashaLevel(chip.dataset.drillKey, chip.dataset.drillLevel);
+    });
+  }
+
+  document.querySelectorAll('.dasha-segment').forEach((seg, idx)=>{
+    seg.addEventListener('click', ()=>{
+      const row = document.getElementById('dasha-ad-'+idx);
+      if (!row) return;
+      row.style.display = '';
+      const toggleBtn = document.querySelector(`.dasha-antardasha-toggle[data-dasha-idx="${idx}"]`);
+      if (toggleBtn) toggleBtn.textContent = 'Hide sub-periods';
+      row.scrollIntoView({behavior:'smooth', block:'center'});
+    });
+  });
+
+  document.querySelectorAll('.ashtaka-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.ashtaka-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.ashtaka-panel').forEach(p=> p.style.display='none');
+      tab.classList.add('active');
+      document.getElementById('av-panel-'+tab.dataset.avTarget).style.display = '';
+    });
+  });
+
+  window.scrollTo({top: 0, behavior: 'instant'});
+}
+
+function setupTransitLiveForm(natalChart, profile){
+  populateTzSelect(document.getElementById('transitTzInput'));
+  const browserTzOffset = -new Date().getTimezoneOffset()/60;
+  const tzSel = document.getElementById('transitTzInput');
+  let closest = TZ_OPTIONS.reduce((a,b)=> Math.abs(b-browserTzOffset)<Math.abs(a-browserTzOffset)?b:a);
+  [...tzSel.options].forEach(o=>{ if (parseFloat(o.value)===closest) o.selected = true; });
+
+  let transitLat=null, transitLon=null;
+  const transitPlaceInput = document.getElementById('transitPlaceInput');
+  const transitLocationResults = document.getElementById('transitLocationResults');
+  let transitDebounce = null;
+  try{ if (window.parent && window.parent!==window && window.parent.LocPicker) window.parent.LocPicker.attach(document, transitPlaceInput, r=>{
+    transitPlaceInput.value = r.display_name; transitLat = parseFloat(r.lat); transitLon = parseFloat(r.lon);
+    transitLocationResults.classList.remove('open'); setTzSelect(tzSel, estimateTz(transitLat, transitLon, r));
+  }, {title:'Where are you now?', get:()=> transitLat!=null ? {lat:transitLat, lon:transitLon} : null}); }catch(e){}
+
+  transitPlaceInput.addEventListener('input', ()=>{
+    const q = transitPlaceInput.value.trim();
+    transitLat=null; transitLon=null;
+    clearTimeout(transitDebounce);
+    if (q.length<3){ transitLocationResults.classList.remove('open'); return; }
+    transitDebounce = setTimeout(async ()=>{
+      try{
+        const appEmail = "contact@yourdomain.com"; // Replace with your actual email
+        const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&q=${encodeURIComponent(q)}&email=${appEmail}`;
+        const res = await fetch(url, { headers:{'Accept-Language':'en'} });
+        const data = await res.json();
+        transitLocationResults.innerHTML = "";
+        data.forEach(r=>{
+          const div = document.createElement('div');
+          div.className = 'location-item';
+          const main = r.display_name.split(',')[0];
+          div.innerHTML = `<span class="lname">${main}</span><span class="lsub">${r.display_name}</span>`;
+          div.addEventListener('click', ()=>{
+            transitPlaceInput.value = r.display_name;
+            transitLat = parseFloat(r.lat); transitLon = parseFloat(r.lon);
+            transitLocationResults.classList.remove('open');
+            setTzSelect(tzSel, estimateTz(transitLat, transitLon, r));
+          });
+          transitLocationResults.appendChild(div);
+        });
+        if (data.length) transitLocationResults.classList.add('open');
+      }catch(e){ }
+    }, 1000); // 1000ms delay to enforce 1 req/sec limit
+  });
+  if (!window.__transitDropdownListenerAttached){
+    window.__transitDropdownListenerAttached = true;
+    document.addEventListener('click', (e)=>{
+      const el = document.getElementById('transitLocationResults');
+      if (el && !e.target.closest('#transitLocationForm .location-wrap')) el.classList.remove('open');
+    });
+  }
+
+  document.getElementById('transitLocationForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    if (transitLat===null || transitLon===null){
+      alert("Please select your current location from the suggestions list.");
+      return;
+    }
+    const tz = parseFloat(tzSel.value);
+    renderLiveTransitComparison(natalChart, profile, transitLat, transitLon, tz);
+  });
+}
+
+const HOUSE_THEMES = ["Self, body, personality","Wealth, family, speech","Courage, siblings, effort","Home, mother, comfort","Children, intellect, creativity","Health, service, obstacles","Partnership, marriage","Transformation, longevity","Fortune, dharma, father","Career, status, action","Gains, aspirations, community","Loss, expenditure, liberation"];
+
+function computeLiveSky(lat, lon, natalAscSign){
+  const now = new Date();
+  const jd = toJulianDay(now.getUTCFullYear(), now.getUTCMonth()+1, now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), 0);
+  const ayanamsa = lahiriAyanamsa(jd);
+
+  const tropical = {
+    Sun: sunLongitude(jd), Moon: moonLongitude(jd),
+    Mercury: planetGeocentricLongitude("mercury",jd), Venus: planetGeocentricLongitude("venus",jd),
+    Mars: planetGeocentricLongitude("mars",jd), Jupiter: planetGeocentricLongitude("jupiter",jd),
+    Saturn: planetGeocentricLongitude("saturn",jd)
+  };
+  const rahuTropical = rahuLongitude(jd);
+  const transitSidereal = {};
+  for (const p in tropical) transitSidereal[p] = normDeg(tropical[p]-ayanamsa);
+  transitSidereal.Rahu = normDeg(rahuTropical-ayanamsa);
+  transitSidereal.Ketu = normDeg(transitSidereal.Rahu+180);
+  const transitRetro = {
+    Mercury:isRetrograde("mercury",jd), Venus:isRetrograde("venus",jd), Mars:isRetrograde("mars",jd),
+    Jupiter:isRetrograde("jupiter",jd), Saturn:isRetrograde("saturn",jd),
+    Sun:false, Moon:false, Rahu:true, Ketu:true
+  };
+
+  const planets = {};
+  PLANET_LIST.forEach(name=>{
+    const lonT = transitSidereal[name];
+    const signIdx = getSignIndex(lonT);
+    const degInSign = getDegInSign(lonT);
+    const nak = getNakshatra(lonT);
+    const speed = getPlanetSpeed(name, jd);
+    let natalHouse = null;
+    if (natalAscSign !== null && natalAscSign !== undefined){
+      natalHouse = ((signIdx - natalAscSign + 12) % 12) + 1;
+    }
+    planets[name] = {
+      name, sign: signIdx, degInSign, degRemainingInSign: 30-degInSign,
+      nakshatra: nak, retrograde: transitRetro[name], speed,
+      natalHouse, natalHouseTheme: natalHouse!==null ? HOUSE_THEMES[natalHouse-1] : null
+    };
+  });
+
+  return { jd, ayanamsa, now, lat, lon, planets };
+}
+
+function renderLiveTransitComparison(natalChart, profile, lat, lon, tz){
+  const natalAscSign = natalChart.ascendant.sign;
+  const sky = computeLiveSky(lat, lon, natalAscSign);
+
+  let html = `<div class="transit-live-meta">Sky as of <span class="mono">${sky.now.toUTCString()}</span> · Observed from your entered location (${lat.toFixed(2)}°, ${lon.toFixed(2)}°) · Local UTC offset ${fmtTz(tz)}</div>
+  <div class="planet-table-wrap" style="margin-top:14px;">
+    <table class="planet-table">
+      <thead><tr><th>Planet</th><th>Transit Sign</th><th>Degree</th><th>Nakshatra</th><th>Speed</th><th>Falls in Natal House</th><th>Natal House Theme</th></tr></thead>
+      <tbody>`;
+
+  PLANET_LIST.forEach(name=>{
+    const p = sky.planets[name];
+    const sign = SIGNS[p.sign];
+    html += `<tr>
+      <td class="planet-name-cell"><span class="planet-glyph">${PLANET_GLYPHS[name]}</span>${name}${p.retrograde?'<span class="retro-tag">Retro</span>':''}</td>
+      <td>${sign.symbol} ${sign.name}</td>
+      <td class="mono">${formatDeg(p.degInSign)}</td>
+      <td>${p.nakshatra.name} (Pada ${p.nakshatra.pada})</td>
+      <td class="mono">${Math.abs(p.speed).toFixed(2)}°/day</td>
+      <td><span class="dig-good">House ${p.natalHouse}</span></td>
+      <td>${p.natalHouseTheme}</td>
+    </tr>`;
+  });
+  html += `</tbody></table></div>
+  <div class="transit-note">This compares today's real sky against the whole-sign houses of the natal chart above — a simplified but classically valid approach to gochara (transit) analysis. Retrograde status is reflected. Refresh the check periodically since positions shift daily (Moon) or over months/years (outer planets).</div>`;
+
+  document.getElementById('transitLiveResults').innerHTML = html;
+  window.lastLiveSkyResult = { sky, lat, lon, tz }; 
+}
+
+function populateTzSelect(sel){
+  sel.innerHTML = "";
+  TZ_OPTIONS.forEach(v=>{
+    const opt = document.createElement('option');
+    opt.value = v; opt.textContent = fmtTz(v);
+    if (v===5.5) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function buildInteractiveVargaSvg(vdata, meta, style, aspectData){
+  if (style === "north") {
+    return buildNorthIndianSvg(vdata, aspectData);
+  } else if (style === "west") {
+    return buildWesternWheelSvg(vdata, aspectData);
+  } else {
+    return buildSouthIndianSvg(vdata, aspectData);
+  }
+}
+
+/* ============================================================================
+   PLANETARY ASPECTS (DRISHTI) FOR ANY DIVISIONAL CHART
+   ============================================================================
+   For a given varga chart, works out — for every planet — which house/sign it
+   sits in, which planets/houses/signs it aspects (drishti), and contextual
+   info (nakshatra, pada, degree) sourced from the real (D1) sidereal
+   longitude, since nakshatra is always reckoned from the true longitude
+   regardless of which divisional chart is being viewed.
+*/
+function computeVargaAspects(chart, vdata){
+  const ascSign = vdata.ascendantSign;
+  const houseOfSign = {}; // signIdx -> house number in this varga
+  for (let h=1; h<=12; h++){
+    houseOfSign[(ascSign + h - 1) % 12] = h;
+  }
+
+  // Build planet -> {sign, house} for this varga
+  const placement = {};
+  PLANET_LIST.forEach(name => {
+    const sign = vdata.planetVargaSign[name];
+    placement[name] = { sign, house: houseOfSign[sign] };
+  });
+
+  const results = [];
+  PLANET_LIST.forEach(fromName => {
+    const from = placement[fromName];
+    const aspectedHouseNums = getAspectedHouses(fromName, from.house); // houses (1-12) this planet aspects
+    const aspectedSignIdxs = aspectedHouseNums.map(h => (ascSign + h - 1) % 12);
+
+    const aspectOffsetLabel = (houseNum) => {
+      const diff = ((houseNum - from.house + 12) % 12) + 1; // 1..12, e.g. 7 = opposition
+      if (diff === 7) return "7th aspect (opposition)";
+      if (SPECIAL_ASPECTS[fromName] && SPECIAL_ASPECTS[fromName].includes(diff)) return `${diff}th aspect (special)`;
+      return `${diff}th aspect`;
+    };
+
+    const targets = [];
+    aspectedHouseNums.forEach(houseNum => {
+      const signIdx = (ascSign + houseNum - 1) % 12;
+      const sign = SIGNS[signIdx];
+      const occupants = PLANET_LIST.filter(p => p !== fromName && placement[p].sign === signIdx);
+      occupants.forEach(toName => {
+        targets.push({
+          toPlanet: toName,
+          toHouse: houseNum,
+          toSign: sign.name,
+          toSignSanskrit: sign.sk,
+          label: aspectOffsetLabel(houseNum)
+        });
+      });
+      if (occupants.length === 0) {
+        targets.push({
+          toPlanet: null,
