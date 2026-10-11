@@ -1780,3 +1780,9 @@ body.app-mode main.wrap{padding-left:14px;padding-right:14px}
 .sb-h span{font:12px var(--font-mono);color:var(--text-muted)}
 .sb-h.strong{border-top:3px solid var(--teal-bright)}.sb-h.weak{border-top:3px solid #C95050}
 .sb-h small{margin:0}
+.yg-intro,.sb-intro{color:var(--text-muted);font-size:14px;line-height:1.6;margin-bottom:14px}
+.yg-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 14px;-webkit-overflow-scrolling:touch}
+.yg-chip{flex:none;background:transparent;border:1px solid var(--border-light);color:var(--text-muted);border-radius:999px;padding:8px 14px;font:600 12px var(--font-sans);cursor:pointer;white-space:nowrap;transition:all .2s}
+.yg-chip b{margin-left:4px;opacity:.7}
+.yg-chip.on{background:var(--cc,var(--gold));border-color:transparent;color:#111}
+.yg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}

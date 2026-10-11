@@ -1,3 +1,4 @@
+        <thead><tr><th>Planet</th><th>Position</th><th>Nakshatra</th><th>Aspects Houses</th><th>Aspects Planets</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>
