@@ -1,21 +1,3 @@
-  INDU:       { key:"INDU",       name:"Indu Lagna",         sanskrit:"Indu Lagna",         group:"karaka", desc:"Financial prosperity and accumulated wealth (a special money-point)." },
-  SL:         { key:"SL",         name:"Shree Lagna",        sanskrit:"SL",                 group:"karaka", desc:"General auspiciousness, prosperity, and good fortune." },
-  PRANAPADA:  { key:"PRANAPADA",  name:"Pranapada Lagna",    sanskrit:"Pranapada",          group:"kala",   desc:"Vitality, life-force, and how one meets fated events." },
-  SWAMSHA:    { key:"SWAMSHA",    name:"Swamsha Lagna",      sanskrit:"Swamsha / Lagnamsa", group:"karaka", desc:"The Navamsa chart's own Ascendant (Lagnamsa) — inner self and dharmic path, distinct from the Karakamsha." },
-  PADANADHAMSA:{key:"PADANADHAMSA",name:"Padanadhamsa Lagna",sanskrit:"Padanadhamsa",       group:"arudha", desc:"The Navamsa sign of the Arudha Lagna's own lord — a refinement of public image at the soul-division level." },
-  BB:         { key:"BB",         name:"Bhrigu Bindu",       sanskrit:"BB / Destiny Point", group:"karaka", desc:"The midpoint of Moon and Rahu — a sensitive karmic 'destiny point' activated by transits and dashas." },
-  PAKA:       { key:"PAKA",       name:"Paka Lagna",         sanskrit:"Paka Lagna",         group:"arudha", desc:"The sign occupied by the Lagna Lord — what a person actually gravitates toward, versus raw Lagna potential." },
-  CHANDRA:    { key:"CHANDRA",    name:"Chandra Lagna",      sanskrit:"Moon Sign",          group:"core",   desc:"The Moon's own sign, used as an alternate ascendant for mind and emotion." },
-  SURYA:      { key:"SURYA",      name:"Surya Lagna",        sanskrit:"Sun Sign",           group:"core",   desc:"The Sun's own sign, used as an alternate ascendant for soul and vitality." },
-  A2:         { key:"A2",         name:"Dhana Pada",         sanskrit:"A2",                 group:"arudha", desc: ARUDHA_HOUSE_META.A2.desc },
-  A3:         { key:"A3",         name:"Bhatru Pada",        sanskrit:"A3",                 group:"arudha", desc: ARUDHA_HOUSE_META.A3.desc },
-  A4:         { key:"A4",         name:"Matru Pada",         sanskrit:"A4",                 group:"arudha", desc: ARUDHA_HOUSE_META.A4.desc },
-  A5:         { key:"A5",         name:"Mantra Pada",        sanskrit:"A5",                 group:"arudha", desc: ARUDHA_HOUSE_META.A5.desc },
-  A6:         { key:"A6",         name:"Roga Pada",          sanskrit:"A6",                 group:"arudha", desc: ARUDHA_HOUSE_META.A6.desc },
-  A8:         { key:"A8",         name:"Mrityu Pada",        sanskrit:"A8",                 group:"arudha", desc: ARUDHA_HOUSE_META.A8.desc },
-  A9:         { key:"A9",         name:"Pitri Pada",         sanskrit:"A9",                 group:"arudha", desc: ARUDHA_HOUSE_META.A9.desc },
-  A10:        { key:"A10",        name:"Rajya Pada",         sanskrit:"A10",                group:"arudha", desc: ARUDHA_HOUSE_META.A10.desc },
-  A11:        { key:"A11",        name:"Labha Pada",         sanskrit:"A11",                group:"arudha", desc: ARUDHA_HOUSE_META.A11.desc }
 };
 const SPECIAL_LAGNAS_ORDER = ["UL_LAGNA","AL","KL","UL","HL","GL","BL","VGL","VL","INDU","SL","PRANAPADA","SWAMSHA","PADANADHAMSA","BB","PAKA","CHANDRA","SURYA","A2","A3","A4","A5","A6","A8","A9","A10","A11"];
 
@@ -1716,3 +1698,27 @@ document.addEventListener('click', e=>{
 }, true);
 
 /* ---------- Ask-AI: topic → small box of focused questions → Google AI mode ---------- */
+const SRCH_STYLE = 'RULES: (1) Use ONLY the CHART DATA below. It is exact and authoritative: never invent, change or guess any sign, house, degree, aspect or planet; if something is not listed, do not claim it; if your memory disagrees with the data, the data wins. (2) Be PRECISE, not generic: every point must be a specific, checkable behaviour, habit, event, body area, relationship scenario or age window that a person can test against their own life. Forbidden: statements that fit almost anyone (e.g. "you value...", "sometimes you...", "deep down...", "you can be both..."). Prefer concrete contrasts and numbers. (3) BLEND, do not list: combine Lagna + Sun + Moon signs, conjunctions and aspects from the data into one picture, and say how each aspect or conjunction modifies the trait or event (example style: Saturn+Ketu together in a fire sign -> a specific accident/injury or detachment pattern). (4) End every bullet with a tiny tag: 🔎 Because: <exact combination from the data>. (5) FORMAT: bold headline with an emoji verdict; 3-5 sections with emoji + CAPS headline; tight ranked bullets; ✅ strengths, ⚠️ cautions, ⏳ timing; finish with 🎯 Bottom line in one sentence. Plain words, no jargon. Health topics: one-line not-medical-advice note.';
+const SRCH_TOPICS = [
+ {id:'me',ico:'🪞',t:'This is me — precise self-check',kw:'verify my chart is mine personality blend aspects conjunction accuracy relatable self reflect barnum',h:[1],s:[5,9],k:['Sun','Moon'],ck:'Atmakaraka',v:'D1',ar:['AL'],subs:[
+  ['✅ Verify: is this chart mine? (10 checks)','Give 10 very specific, hard-to-fake statements about my PAST and everyday life that I can mark ✔ or ✖: childhood or family situation, a recurring health/injury/body-mark pattern, a relationship scenario that repeats, a school or work turning point with an approximate age window, habits, living situation, parents/siblings facts. Rank from most to least confident. End with: how many ✔ out of 10 would confirm this chart is mine, and which of the 10 depend on the exact birth time (Lagna/house based) versus Sun/Moon-sign based ones that survive a time error.'],
+  ['🧬 My personality blend (Lagna + Sun + Moon)','Explain my personality as ONE blend. Three short blocks: Outer me (Lagna sign + planets in/aspecting Lagna), Core me (Sun sign + what conjoins/aspects Sun), Inner me (Moon sign + what conjoins/aspects Moon). Then say precisely where these three clash or reinforce, and how each aspect/conjunction in the data shifts the behaviour. Give 10 relatable but non-generic behaviours I can recognise in myself.'],
+  ['🔗 What each aspect & conjunction does to me','Go through EVERY conjunction and EVERY aspect in the data. For each: one line on exactly how it changes my behaviour or life events (be concrete: situations, reactions, accident/health/relationship patterns, ages), plus its 🔎 Because tag. Rank from strongest effect to weakest.'],
+  ['🔒 10 private things only I would know','Give 10 specific private habits, thoughts or reactions that I can easily self-reflect on but that are NOT generic: how I react under stress, spending/sleep/food habits, texting or arguing style, what I do when ignored, what I hide, what triggers me. Each must be checkable ✔/✖.'],
+  ['👪 Childhood & family snapshot','Give 10 specific, checkable statements about my childhood, parents, siblings, home environment and early school years, with approximate age windows.'],
+  ['🔁 Relationship scenarios I keep repeating','Give 8 specific repeating scenarios in my close relationships (who I attract, what goes wrong, how it ends or restarts) that I can recognise, with an age window where the pattern began.'],
+  ['⚙️ How I really work & handle money','Give 10 specific, checkable work-style and money habits (how I start tasks, deadlines, bargains, savings, impulse spending, risk) — nothing generic.'],
+  ['🩹 Body & health quirks to verify','Give 8 specific body/health tendencies I can verify in my own history (areas, injuries, digestion, sleep, energy dips, skin/hair, accident-prone situations). Traditional astrology only, not medical advice.'],
+  ['⏱️ Birth-time sanity check','Using only the data: which 5 claims about me depend on the Lagna/houses (change if my birth time is off), and which 5 depend only on Sun/Moon/planet signs? Suggest 3 life events I should ask family about to confirm the birth time.']]},
+ {id:'career',ico:'💼',t:'Career & profession',kw:'job work profession promotion success',h:[10],s:[6,2,11],k:['Sun','Saturn','Mercury','Jupiter'],ck:'Amatyakaraka',v:'D10',ar:['A10','AL'],subs:[
+  ['Top 20 careers for me','List 20 specific careers/professions ranked from most to least likely for me (like artist, scientist, doctor, advocate, engineer, teacher). One line each: the job + a 4-6 word reason in plain words.'],
+  ['Job or business?','Say clearly: job, business, or both, with one line why. Then list 5 job roles and 5 business types that fit me.'],
+  ['Best industries & work style','List my 10 best industries, then my ideal work style (solo or team, desk or field, own boss or not) in 5 short bullets.'],
+  ['Next 5 years of career','Give a year-by-year list for the next 5 years: rise / stable / change / risk, one line each, with the best months or quarters to move.'],
+  ['Blockers & fixes','List my 5 biggest career blockers and one practical fix for each.'],
+  ['Skills to build','List my 8 strongest professional strengths and the 3 skills I should develop most.']]},
+ {id:'job',ico:'🧑‍💻',t:'Job vs business',kw:'employment self employed entrepreneur startup',h:[10,7],s:[6,3,11],k:['Mercury','Saturn','Mars'],ck:'Amatyakaraka',v:'D10',ar:['A10'],subs:[
+  ['Job or business: decide','Give a direct verdict (job / business / both) with a percentage split and one reason.'],
+  ['15 business ideas','List 15 specific business ideas ranked by fit for me, with 4-word reasons.'],
+  ['Best time to switch or start','List the 3 best years/windows to change jobs or start a business, and 2 periods to avoid.'],
+  ['Solo or partners?','Should I work alone or with partners? Describe the type of partner to trust and the type to avoid.']]},

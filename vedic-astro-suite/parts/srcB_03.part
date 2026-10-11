@@ -1,15 +1,3 @@
-  }
-  return E;
-}
-function heliocentricPos(elements, T){
-  const a=elements.a, e=elements.e, i=elements.i*DEG;
-  const L = normDeg(elements.L + elements.Lrate*T)*DEG;
-  const peri = normDeg(elements.peri + elements.periRate*T)*DEG;
-  const node = normDeg(elements.node + elements.nodeRate*T)*DEG;
-  const M = L - peri;
-  const E = solveKepler(normDeg(M*RAD)*DEG, e);
-  const xv = a*(Math.cos(E)-e);
-  const yv = a*(Math.sqrt(1-e*e)*Math.sin(E));
   const v = Math.atan2(yv,xv);
   const r = Math.sqrt(xv*xv+yv*yv);
   const omega = peri - node;
@@ -1716,3 +1704,21 @@ const SPECIAL_LAGNAS_META = {
   BL:         { key:"BL",         name:"Bhava Lagna",        sanskrit:"BL",                 group:"kala",   desc:"General nature, mentality, and physical/mental constitution — the slowest of the sunrise-anchored lagnas." },
   VGL:        { key:"VGL",        name:"Vighati Lagna",      sanskrit:"VGL / Pal Lagna",    group:"kala",   desc:"An extremely fine-grained timing point, classically used to distinguish near-simultaneous births (e.g. twins)." },
   VL:         { key:"VL",         name:"Varnada Lagna",      sanskrit:"VL",                 group:"kala",   desc:"Social standing, class, and reputation." },
+  INDU:       { key:"INDU",       name:"Indu Lagna",         sanskrit:"Indu Lagna",         group:"karaka", desc:"Financial prosperity and accumulated wealth (a special money-point)." },
+  SL:         { key:"SL",         name:"Shree Lagna",        sanskrit:"SL",                 group:"karaka", desc:"General auspiciousness, prosperity, and good fortune." },
+  PRANAPADA:  { key:"PRANAPADA",  name:"Pranapada Lagna",    sanskrit:"Pranapada",          group:"kala",   desc:"Vitality, life-force, and how one meets fated events." },
+  SWAMSHA:    { key:"SWAMSHA",    name:"Swamsha Lagna",      sanskrit:"Swamsha / Lagnamsa", group:"karaka", desc:"The Navamsa chart's own Ascendant (Lagnamsa) — inner self and dharmic path, distinct from the Karakamsha." },
+  PADANADHAMSA:{key:"PADANADHAMSA",name:"Padanadhamsa Lagna",sanskrit:"Padanadhamsa",       group:"arudha", desc:"The Navamsa sign of the Arudha Lagna's own lord — a refinement of public image at the soul-division level." },
+  BB:         { key:"BB",         name:"Bhrigu Bindu",       sanskrit:"BB / Destiny Point", group:"karaka", desc:"The midpoint of Moon and Rahu — a sensitive karmic 'destiny point' activated by transits and dashas." },
+  PAKA:       { key:"PAKA",       name:"Paka Lagna",         sanskrit:"Paka Lagna",         group:"arudha", desc:"The sign occupied by the Lagna Lord — what a person actually gravitates toward, versus raw Lagna potential." },
+  CHANDRA:    { key:"CHANDRA",    name:"Chandra Lagna",      sanskrit:"Moon Sign",          group:"core",   desc:"The Moon's own sign, used as an alternate ascendant for mind and emotion." },
+  SURYA:      { key:"SURYA",      name:"Surya Lagna",        sanskrit:"Sun Sign",           group:"core",   desc:"The Sun's own sign, used as an alternate ascendant for soul and vitality." },
+  A2:         { key:"A2",         name:"Dhana Pada",         sanskrit:"A2",                 group:"arudha", desc: ARUDHA_HOUSE_META.A2.desc },
+  A3:         { key:"A3",         name:"Bhatru Pada",        sanskrit:"A3",                 group:"arudha", desc: ARUDHA_HOUSE_META.A3.desc },
+  A4:         { key:"A4",         name:"Matru Pada",         sanskrit:"A4",                 group:"arudha", desc: ARUDHA_HOUSE_META.A4.desc },
+  A5:         { key:"A5",         name:"Mantra Pada",        sanskrit:"A5",                 group:"arudha", desc: ARUDHA_HOUSE_META.A5.desc },
+  A6:         { key:"A6",         name:"Roga Pada",          sanskrit:"A6",                 group:"arudha", desc: ARUDHA_HOUSE_META.A6.desc },
+  A8:         { key:"A8",         name:"Mrityu Pada",        sanskrit:"A8",                 group:"arudha", desc: ARUDHA_HOUSE_META.A8.desc },
+  A9:         { key:"A9",         name:"Pitri Pada",         sanskrit:"A9",                 group:"arudha", desc: ARUDHA_HOUSE_META.A9.desc },
+  A10:        { key:"A10",        name:"Rajya Pada",         sanskrit:"A10",                group:"arudha", desc: ARUDHA_HOUSE_META.A10.desc },
+  A11:        { key:"A11",        name:"Labha Pada",         sanskrit:"A11",                group:"arudha", desc: ARUDHA_HOUSE_META.A11.desc }

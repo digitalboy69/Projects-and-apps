@@ -1,3 +1,8 @@
+  const now = new Date();
+  const jd = toJulianDay(now.getUTCFullYear(), now.getUTCMonth()+1, now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), 0);
+  const ayanamsa = lahiriAyanamsa(jd);
+
+  const tropical = {
     Sun: sunLongitude(jd), Moon: moonLongitude(jd),
     Mercury: planetGeocentricLongitude("mercury",jd), Venus: planetGeocentricLongitude("venus",jd),
     Mars: planetGeocentricLongitude("mars",jd), Jupiter: planetGeocentricLongitude("jupiter",jd),

@@ -1,3 +1,14 @@
+    const marks = segs.map(([n, r, col]) => `<i title="${n}" style="left:${pos(r[0]).toFixed(2)}%;width:${((r[1] - r[0]) / dl * 100).toFixed(2)}%;background:${col}"></i>`).join('');
+    const now = jd >= P.sunrise && jd <= P.sunset ? `<u style="left:${pos(jd).toFixed(2)}%"></u>` : '';
+    const rows = segs.map(([n, r, col, tag]) => `<div class="pn-prow" style="--pc:${col}"><span class="pn-dot"></span><b>${n}</b><span>${nvTime(r[0], c.tz, ref)} – ${nvTime(r[1], c.tz, ref)}</span><em>${tag}</em></div>`).join('') +
+      `<div class="pn-prow" style="--pc:#6B7FA3"><span class="pn-dot"></span><b>Brahma Muhurta</b><span>${nvTime(P.brahma[0], c.tz, ref)} – ${nvTime(P.brahma[1], c.tz, ref)}</span><em>Before sunrise</em></div>`;
+    day = `<div class="pn-sec"><h5>Day timeline <span>sunrise → sunset · ${P.vara.name}</span></h5>
+      <div class="pn-track">${marks}${now}</div>
+      <div class="pn-tl"><span>${nvTime(P.sunrise, c.tz, ref)}</span><span>Midday</span><span>${nvTime(P.sunset, c.tz, ref)}</span></div>
+      <div class="pn-plist">${rows}</div></div>`;
+  } else day = `<div class="pn-sec"><div class="pl-empty">The Sun does not rise and set normally at this latitude and date, so day-based timings are unavailable.</div></div>`;
+
+  body.innerHTML = `<div class="pn-for">Computed for <b>${nvDate(jd, c.tz, true)}</b> · ${escapeHtml(c.place)} · ${fmtTz(c.tz)}</div>
     <div class="pn-limbs">${limbs}</div>
     <div class="pn-facts">${facts}</div>
     <div class="pn-chips">${calChips}</div>
@@ -1711,8 +1722,3 @@ function setupTransitLiveForm(natalChart, profile){
 const HOUSE_THEMES = ["Self, body, personality","Wealth, family, speech","Courage, siblings, effort","Home, mother, comfort","Children, intellect, creativity","Health, service, obstacles","Partnership, marriage","Transformation, longevity","Fortune, dharma, father","Career, status, action","Gains, aspirations, community","Loss, expenditure, liberation"];
 
 function computeLiveSky(lat, lon, natalAscSign){
-  const now = new Date();
-  const jd = toJulianDay(now.getUTCFullYear(), now.getUTCMonth()+1, now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), 0);
-  const ayanamsa = lahiriAyanamsa(jd);
-
-  const tropical = {

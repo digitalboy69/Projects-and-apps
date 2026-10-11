@@ -1716,3 +1716,9 @@ body.app-mode main.wrap{padding-left:14px;padding-right:14px}
 .dx-bar-lbl{display:flex;justify-content:space-between;font:11px var(--font-mono);color:var(--text-subtle);margin:6px 0 16px}
 .dx-ladder{display:grid;gap:6px}
 .dx-step{display:grid;grid-template-columns:92px 1fr auto;gap:10px;align-items:center;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:10px;font-size:13px}
+.dx-step-l{color:var(--text-subtle);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.dx-step-p{color:var(--text-main);font-weight:500;display:flex;align-items:center;gap:8px}
+.dx-step-p i{width:4px;height:16px;border-radius:2px}
+.dx-step-e{color:var(--teal-bright);font:11px var(--font-mono);text-align:right}
+.dx-sec{margin-bottom:28px}
+.dx-sec h5{margin:0 0 12px;font:600 13px var(--font-sans);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright)}
