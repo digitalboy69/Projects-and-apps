@@ -1,3 +1,214 @@
+      </div>`;
+    }).join('')}
+    <div class="rs-note">${close?'⚖️ <b>Close call.</b> The top signs are within 10%. Add more events or check the Sandhi / Varga tools. ':''}Times are in your birth timezone and are approximate to a few minutes. Use <b>"use ➜"</b> to load a window into the Time Dial. This ranking supports your judgement, it does not replace it.</div>`;
+  requestAnimationFrame(()=> requestAnimationFrame(()=> out.querySelectorAll('.rs-bar i').forEach(b=> b.style.width = b.dataset.w+'%')));
+  rsToast('Done ✨ Top fit: ' + SIGNS[ranked[0].L].name);
+}
+
+/* Hooks: keep old panel ids working + keep clock/pill live */
+(function rsInstallHooks(){
+  if (window.__rsHooks) return; window.__rsHooks = 1;
+  const _sw = switchAppTab;
+  switchAppTab = function(id){
+    if (RS_ROUTE[id] && document.getElementById('rsRoot')){
+      _sw('panel-rectification'); rsShow(RS_ROUTE[id]); return;
+    }
+    _sw(id); if (id==='panel-rectification' && document.getElementById('rsRoot')) rsRefresh();
+  };
+  const _up = updateHmsDisplay;
+  updateHmsDisplay = function(){ _up(); try{ rsRefresh(); }catch(e){} };
+})();
+
+/* ============================================================================
+   QUICK SEARCH — click any placement in the chart to Google it
+   ============================================================================ */
+let qsearchActive = false;
+let qsearchEngine = 'google'; // 'google' | 'google-ai'
+
+(function initQuickSearch(){
+  const btn = document.getElementById('quickSearchBtn');
+  const popover = document.getElementById('quickSearchPopover');
+  const toggle = document.getElementById('qsearchToggle');
+  const engineGoogleBtn = document.getElementById('qsearchEngineGoogle');
+  const engineAiBtn = document.getElementById('qsearchEngineAi');
+  const liveBadge = document.getElementById('qsearchLiveBadge');
+  const liveBadgeText = document.getElementById('qsearchLiveBadgeText');
+  const liveBadgeOff = document.getElementById('qsearchLiveBadgeOff');
+
+  function engineLabel(){ return qsearchEngine === 'google-ai' ? 'Google AI Search' : 'Google Search'; }
+
+  function refreshUI(){
+    btn.classList.toggle('qsearch-active', qsearchActive);
+    toggle.classList.toggle('on', qsearchActive);
+    engineGoogleBtn.classList.toggle('active', qsearchEngine === 'google');
+    engineAiBtn.classList.toggle('active', qsearchEngine === 'google-ai');
+    document.body.classList.toggle('qsearch-mode-on', qsearchActive);
+    liveBadge.classList.toggle('show', qsearchActive);
+    liveBadgeText.textContent = `🔍 Quick Search active (${engineLabel()}) — click anything in the chart`;
+  }
+
+  // Restore saved preference
+  try {
+    const saved = JSON.parse(localStorage.getItem('VedicAstrology_quickSearch') || 'null');
+    if (saved){ qsearchActive = !!saved.active; qsearchEngine = saved.engine || 'google'; }
+  } catch(e){}
+  refreshUI();
+
+  function persist(){
+    try { localStorage.setItem('VedicAstrology_quickSearch', JSON.stringify({active: qsearchActive, engine: qsearchEngine})); } catch(e){}
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    popover.classList.toggle('show');
+  });
+  document.addEventListener('click', (e) => {
+    if (popover.classList.contains('show') && !popover.contains(e.target) && e.target !== btn && !btn.contains(e.target)){
+      popover.classList.remove('show');
+    }
+  });
+
+  toggle.addEventListener('click', () => {
+    qsearchActive = !qsearchActive;
+    refreshUI(); persist();
+  });
+  engineGoogleBtn.addEventListener('click', () => { qsearchEngine = 'google'; refreshUI(); persist(); });
+  engineAiBtn.addEventListener('click', () => { qsearchEngine = 'google-ai'; refreshUI(); persist(); });
+  liveBadgeOff.addEventListener('click', () => { qsearchActive = false; refreshUI(); persist(); });
+
+  // Elements inside the chart that should never trigger a search themselves
+  // (their own click behaviour — buttons, inputs, links, tabs, dropdowns — stays intact).
+  const IGNORE_SELECTOR = 'button, a, input, select, textarea, label, .app-tab, .btn';
+  // Preferred "unit of meaning" to grab text from, most specific first.
+  const UNIT_SELECTOR = [
+    '.detail-chip', '.planet-clickable', '.big3-value', '.badge', '.karaka-card',
+    '.house-card', '.yoga-card', '.varga-house', '.shadbala-card', '.dasha-period-row',
+    'td', 'th', 'li', '.rd-value'
+  ].join(', ');
+
+  function buildQueryText(target){
+    const unit = target.closest(UNIT_SELECTOR);
+    const el = unit || target;
+    let text = (el.innerText || el.textContent || '').replace(/\s+/g,' ').trim();
+    if (text.length > 140) text = text.slice(0,140);
+    return text;
+  }
+
+  function openSearch(query){
+    const q = encodeURIComponent(query + ' vedic astrology meaning');
+    const url = qsearchEngine === 'google-ai'
+      ? `https://www.google.com/search?q=${q}&udm=50`
+      : `https://www.google.com/search?q=${q}`;
+    window.open(url, '_blank', 'noopener');
+  }
+
+  // Capture phase so this runs before any chart element's own click handler.
+  document.addEventListener('click', (e) => {
+    if (!qsearchActive) return;
+    const panel = e.target.closest('.app-panel');
+    if (!panel) return; // only intercept clicks on chart content, not header/nav/modals
+    if (e.target.closest(IGNORE_SELECTOR)) return; // let real controls keep working
+    const text = buildQueryText(e.target);
+    if (!text) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    openSearch(text);
+  }, true);
+})();
+
+/* ============================================================================
+   RELATIONSHIPS TAB
+   ============================================================================ */
+let relSelectedPlanets = new Set();
+let relSystem = "vedic";
+
+document.addEventListener('click', (e)=>{
+  const chip = e.target.closest('[data-rel-planet]');
+  if (chip){
+    const name = chip.dataset.relPlanet;
+    if (relSelectedPlanets.has(name)){ relSelectedPlanets.delete(name); chip.classList.remove('selected'); }
+    else { relSelectedPlanets.add(name); chip.classList.add('selected'); }
+    return;
+  }
+  const sysBtn = e.target.closest('[data-rel-system]');
+  if (sysBtn){
+    relSystem = sysBtn.dataset.relSystem;
+    document.querySelectorAll('#relSystemToggle .rel-system-btn').forEach(b=>b.classList.remove('active'));
+    sysBtn.classList.add('active');
+    return;
+  }
+  if (e.target.id === 'relFindBtn'){
+    runRelationshipScan();
+  }
+});
+
+function runRelationshipScan(){
+  const resultsDiv = document.getElementById('relResults');
+  if (!resultsDiv) return;
+  const selected = [...relSelectedPlanets];
+  if (selected.length < 2){
+    resultsDiv.innerHTML = `<div class="rel-empty-state">Select at least two planets above, then click "Find Relationships".</div>`;
+    return;
+  }
+  resultsDiv.innerHTML = `<div class="rel-loading">Scanning planetary motion across time — this searches up to 10 years in each direction…</div>`;
+
+  setTimeout(()=>{
+    const nowJD = toJulianDay(new Date().getUTCFullYear(), new Date().getUTCMonth()+1, new Date().getUTCDate(), new Date().getUTCHours(), new Date().getUTCMinutes(), 0);
+    let html = "";
+    for (let i=0; i<selected.length; i++){
+      for (let j=i+1; j<selected.length; j++){
+        const a = selected[i], b = selected[j];
+        html += buildRelPairCard(a, b, nowJD);
+      }
+    }
+    resultsDiv.innerHTML = html;
+  }, 30);
+}
+
+function buildRelPairCard(bodyA, bodyB, nowJD){
+  const lonA = getSiderealLongitudeAt(bodyA, nowJD);
+  const lonB = getSiderealLongitudeAt(bodyB, nowJD);
+  const currentSep = angDiffLocal(lonA, lonB);
+
+  let rowsHtml = "";
+
+  if (relSystem === "vedic"){
+    const vedicTargets = [
+      { name:"Conjunction (same sign)", angle:0 },
+      { name:"Opposition (7th aspect)", angle:180 }
+    ];
+    vedicTargets.forEach(t=>{
+      const result = findNearestAspectForPair(bodyA, bodyB, t.angle, nowJD, 3650);
+      const isActiveNow = Math.abs(angleErrorForTarget(lonA, lonB, t.angle)) <= 3;
+      rowsHtml += buildAspectRow(t.name, result, isActiveNow);
+    });
+  } else {
+    WESTERN_ASPECTS.forEach(asp=>{
+      const result = findNearestAspectForPair(bodyA, bodyB, asp.angle, nowJD, 3650);
+      const isActiveNow = Math.abs(angleErrorForTarget(lonA, lonB, asp.angle)) <= asp.orb;
+      rowsHtml += buildAspectRow(`${asp.symbol} ${asp.name} (${asp.angle}°)`, result, isActiveNow);
+    });
+  }
+
+  return `
+  <div class="rel-pair-card">
+    <div class="rel-pair-head">
+      <div class="rel-pair-planets">
+        <span>${PLANET_GLYPHS[bodyA]} ${bodyA}</span>
+        <span class="rel-pair-symbol">⟷</span>
+        <span>${PLANET_GLYPHS[bodyB]} ${bodyB}</span>
+      </div>
+      <div class="rel-pair-current">Currently ${currentSep.toFixed(1)}° apart</div>
+    </div>
+    ${rowsHtml}
+  </div>`;
+}
+
+function buildAspectRow(label, result, isActiveNow){
+  const prevText = result.previous ? formatRelDate(result.previous.jd) : "Not found in the last 10 years";
+  const nextText = result.next ? formatRelDate(result.next.jd) : "Not found in the next 10 years";
+  return `
   <div class="rel-aspect-row">
     <div class="rel-aspect-name">${label}${isActiveNow ? '<span class="rel-aspect-active-badge">Active now</span>' : ''}</div>
     <div class="rel-aspect-dates">
@@ -1448,144 +1659,3 @@ function buildBhavaPanel(chart, profile){
     </div>
     ${moved.length ? `<div class="tr-sec"><h5>Shifted planets <span>whole-sign → Bhava Chalit</span></h5><div class="dx-list">${shiftRows}</div></div>` : ''}
     <div class="tr-sec"><h5>The 12 bhavas <span>tap a planet for details</span></h5><div class="bh-grid">${cards}</div></div>
-    <div class="pn-note">Sripati method: the Lagna and Midheaven are the centres of houses 1 and 10; the arcs between them are divided into equal thirds to place the other centres; each house ends at the midpoint between neighbouring centres. Positions are sidereal (Lahiri).</div>
-  </div>`;
-}
-
-/* =============================================================================
-   KUNDALI MATCHING — Ashtakoota (36 gunas) + Manglik + bonus checks
-   Groom = Person 1 (Vara), Bride = Person 2 (Kanya). Asymmetric tables use these roles.
-   ============================================================================= */
-const KM_VARNA = ['Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin'];
-const KM_VARNA_RANK = { Brahmin: 4, Kshatriya: 3, Vaishya: 2, Shudra: 1 };
-const KM_VASHYA_SIGN = ['Chatushpada','Chatushpada','Manava','Jalachara','Vanachara','Manava','Manava','Keeta','*','*','Manava','Jalachara'];
-const KM_VASHYA_ORDER = ['Chatushpada','Manava','Jalachara','Vanachara','Keeta'];
-const KM_VASHYA = [[2,1,1,0.5,1],[1,2,0.5,0,1],[1,0.5,2,1,1],[0,0,0,2,0],[1,1,1,0,2]];   // [groom][bride]
-const KM_GANA = ['Deva','Manushya','Rakshasa','Manushya','Deva','Manushya','Deva','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva','Rakshasa','Deva','Rakshasa','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva'];
-const KM_GANA_SCORE = { Deva: { Deva: 6, Manushya: 6, Rakshasa: 1 }, Manushya: { Deva: 5, Manushya: 6, Rakshasa: 0 }, Rakshasa: { Deva: 0, Manushya: 0, Rakshasa: 6 } };
-const KM_NADI_NAMES = ['Aadi (Vata)', 'Madhya (Pitta)', 'Antya (Kapha)'];
-const KM_NADI = [0,1,2,2,1,0];                        // by nakshatra index % 6
-const KM_YONI_ORDER = ['Horse','Elephant','Sheep','Serpent','Dog','Cat','Rat','Cow','Buffalo','Tiger','Deer','Monkey','Lion','Mongoose'];
-const KM_YONI_NAK = ['Horse','Elephant','Sheep','Serpent','Serpent','Dog','Cat','Sheep','Cat','Rat','Rat','Cow','Buffalo','Tiger','Buffalo','Tiger','Deer','Deer','Dog','Monkey','Mongoose','Monkey','Lion','Horse','Lion','Cow','Elephant'];
-const KM_YONI = [
- [4,2,2,3,2,2,2,1,0,1,3,3,1,2],[2,4,3,3,2,2,2,2,3,1,2,3,0,2],[2,3,4,2,1,2,1,3,3,1,2,0,1,2],[3,3,2,4,2,1,1,1,1,2,2,2,1,0],
- [2,2,1,2,4,2,1,2,2,1,0,2,1,1],[2,2,2,1,2,4,0,2,2,1,3,3,1,2],[2,2,1,1,1,0,4,2,2,2,2,2,1,3],[1,2,3,1,2,2,2,4,3,0,3,2,1,2],
- [0,3,3,1,2,2,2,3,4,1,2,2,1,2],[1,1,1,2,1,1,2,0,1,4,1,1,2,2],[3,2,2,2,0,3,2,3,2,1,4,2,2,2],[3,3,0,2,2,3,2,2,2,1,2,4,3,2],
- [1,0,1,1,1,1,1,1,1,2,2,3,4,2],[2,2,2,0,1,2,3,2,2,2,2,2,2,4]];
-const KM_FRIEND = {
-  Sun: { F: ['Moon','Mars','Jupiter'], E: ['Venus','Saturn'] }, Moon: { F: ['Sun','Mercury'], E: [] },
-  Mars: { F: ['Sun','Moon','Jupiter'], E: ['Mercury'] }, Mercury: { F: ['Sun','Venus'], E: ['Moon'] },
-  Jupiter: { F: ['Sun','Moon','Mars'], E: ['Mercury','Venus'] }, Venus: { F: ['Mercury','Saturn'], E: ['Sun','Moon'] },
-  Saturn: { F: ['Mercury','Venus'], E: ['Sun','Moon','Mars'] }
-};
-const KM_RAJJU_NAMES = ['Pada (feet)','Kati (waist)','Nabhi (navel)','Kantha (neck)','Siro (head)'];
-const KM_RAJJU = [0,1,2,3,4,3,2,1,0,0,1,2,3,4,3,2,1,0,0,1,2,3,4,3,2,1,0];   // zig-zag by nakshatra index
-
-function kmRel(a, b){ return KM_FRIEND[a].F.includes(b) ? 'F' : (KM_FRIEND[a].E.includes(b) ? 'E' : 'N'); }
-function kmPerson(profile){
-  const chart = computeChart(profile.dob, profile.tob.length === 5 ? profile.tob + ':00' : profile.tob, profile.lat, profile.lon, profile.tz);
-  const moon = chart.planets.Moon;
-  return { profile, chart, moonSign: moon.sign, nak: Math.floor(normDeg(moon.longitude) / (360 / 27)), pada: moon.nakshatra.pada, deg: moon.degInSign, lagna: chart.ascendant.sign };
-}
-function kmManglik(P){
-  const c = P.chart, mars = c.planets.Mars, jup = c.planets.Jupiter;
-  const hL = mars.house, hM = (mars.sign - P.moonSign + 12) % 12 + 1, strong = [1, 4, 7, 8, 12];
-  const inL = strong.includes(hL), inM = strong.includes(hM), mild = (hL === 2 || hM === 2) && !inL && !inM;
-  const cancel = [];
-  if ([0, 7, 9].includes(mars.sign)) cancel.push('Mars is in its own or exalted sign');
-  if (jup.sign === mars.sign) cancel.push('Jupiter is with Mars');
-  else if (jup.aspectsHouses && jup.aspectsHouses.includes(mars.house)) cancel.push('Jupiter aspects Mars');
-  const level = (inL && inM) ? 'High' : (inL || inM) ? 'Moderate' : mild ? 'Mild' : 'None';
-  return { hL, hM, level, present: level !== 'None', cancel, cancelled: cancel.length > 0 && level !== 'None' };
-}
-function kmMatch(G, B){
-  const k = [];
-  // 1 Varna
-  const vg = KM_VARNA[G.moonSign], vb = KM_VARNA[B.moonSign];
-  k.push({ key: 'Varna', max: 1, score: KM_VARNA_RANK[vg] >= KM_VARNA_RANK[vb] ? 1 : 0, a: vg, b: vb });
-  // 2 Vashya
-  const vsh = (s, d) => s === 8 ? (d < 15 ? 'Manava' : 'Chatushpada') : s === 9 ? (d < 15 ? 'Chatushpada' : 'Jalachara') : KM_VASHYA_SIGN[s];
-  const wg = vsh(G.moonSign, G.deg), wb = vsh(B.moonSign, B.deg);
-  k.push({ key: 'Vashya', max: 2, score: KM_VASHYA[KM_VASHYA_ORDER.indexOf(wg)][KM_VASHYA_ORDER.indexOf(wb)], a: wg, b: wb });
-  // 3 Tara (counted both ways, remainder of 9; 3, 5, 7 are unfavourable)
-  const rem = n => n % 9 === 0 ? 9 : n % 9;
-  const t1 = rem((G.nak - B.nak + 27) % 27 + 1), t2 = rem((B.nak - G.nak + 27) % 27 + 1), bad = [3, 5, 7];
-  const TN = ['Janma','Sampat','Vipat','Kshema','Pratyak','Sadhana','Naidhana','Mitra','Parama Mitra'];
-  k.push({ key: 'Tara', max: 3, score: 3 - 1.5 * ([t1, t2].filter(x => bad.includes(x)).length), a: TN[t1 - 1], b: TN[t2 - 1], note: 'from bride → groom / groom → bride' });
-  // 4 Yoni
-  const yg = KM_YONI_NAK[G.nak], yb = KM_YONI_NAK[B.nak];
-  k.push({ key: 'Yoni', max: 4, score: KM_YONI[KM_YONI_ORDER.indexOf(yg)][KM_YONI_ORDER.indexOf(yb)], a: yg, b: yb });
-  // 5 Graha Maitri
-  const lg = SIGNS[G.moonSign].lord, lb = SIGNS[B.moonSign].lord;
-  let gm; if (lg === lb) gm = 5; else { const r = [kmRel(lg, lb), kmRel(lb, lg)].sort().join('');
-    gm = { FF: 5, FN: 4, NN: 3, EF: 1, EN: 0.5, EE: 0 }[r]; }
-  k.push({ key: 'Graha Maitri', max: 5, score: gm, a: lg, b: lb });
-  // 6 Gana
-  const gg = KM_GANA[G.nak], gb = KM_GANA[B.nak];
-  k.push({ key: 'Gana', max: 6, score: KM_GANA_SCORE[gg][gb], a: gg, b: gb });
-  // 7 Bhakoot
-  const d1 = (B.moonSign - G.moonSign + 12) % 12 + 1, d2 = (G.moonSign - B.moonSign + 12) % 12 + 1;
-  const badB = [[2, 12], [12, 2], [5, 9], [9, 5], [6, 8], [8, 6]].some(p => p[0] === d1 && p[1] === d2);
-  k.push({ key: 'Bhakoot', max: 7, score: badB ? 0 : 7, a: SIGNS[G.moonSign].name, b: SIGNS[B.moonSign].name, note: `${d1}/${d2} relationship` });
-  // 8 Nadi
-  const ng = KM_NADI[G.nak % 6], nb = KM_NADI[B.nak % 6];
-  k.push({ key: 'Nadi', max: 8, score: ng !== nb ? 8 : 0, a: KM_NADI_NAMES[ng], b: KM_NADI_NAMES[nb] });
-
-  const total = k.reduce((s, x) => s + x.score, 0);
-  const verdict = total >= 33 ? ['Excellent match', '#5EC4B7'] : total >= 25 ? ['Very good match', '#8FB36B'] : total >= 18 ? ['Acceptable match', '#E0A64A'] : ['Low match', '#C95050'];
-  // doshas
-  const lordsOk = lg === lb || (kmRel(lg, lb) === 'F' && kmRel(lb, lg) === 'F');
-  const sameNadi = ng === nb;
-  const nadiCancel = []; if (sameNadi){ if (G.moonSign === B.moonSign && G.nak !== B.nak) nadiCancel.push('same Moon sign but different nakshatra'); if (G.nak === B.nak && G.pada !== B.pada) nadiCancel.push('same nakshatra but different pada'); }
-  const mg = kmManglik(G), mb = kmManglik(B);
-  const rg = KM_RAJJU[G.nak], rb = KM_RAJJU[B.nak], cnt = (G.nak - B.nak + 27) % 27 + 1;
-  return { k, total, verdict, G, B,
-    dosha: { nadi: { present: sameNadi, cancel: nadiCancel }, bhakoot: { present: badB, cancel: badB && lordsOk ? ['Moon-sign lords are the same or mutual friends'] : [] },
-             gana: { present: k[5].score <= 1, a: gg, b: gb }, manglik: { g: mg, b: mb } },
-    bonus: { rajju: { ok: rg !== rb, a: KM_RAJJU_NAMES[rg], b: KM_RAJJU_NAMES[rb] }, mahendra: { ok: [4, 7, 10, 13, 16, 19, 22, 25].includes(cnt), count: cnt } } };
-}
-
-/* ---------------------------------- MATCHING UI ---------------------------------- */
-const KM_INFO = {
-  'Varna': 'Ego & spiritual outlook', 'Vashya': 'Mutual attraction & influence', 'Tara': 'Health & luck through the nakshatras',
-  'Yoni': 'Physical & instinctive fit', 'Graha Maitri': 'Mental wavelength & friendship', 'Gana': 'Temperament & nature',
-  'Bhakoot': 'Emotional bond & family harmony', 'Nadi': 'Health & constitution'
-};
-const KM_COL = { 1: '#5B7FD6', 2: '#D96C9B' };
-let MT = null;
-const mtKey = p => `${p.name}|${p.dob}|${p.tob}`;
-const mtBlank = tz => ({ name: '', dob: '', tob: '', place: '', lat: null, lon: null, tz, save: false });
-function mtSaved(){
-  let list = []; try { list = loadProfiles(); } catch(e){}
-  const cur = currentProfileForExport;
-  if (cur && !list.some(p => mtKey(p) === mtKey(cur))) list = [cur].concat(list);
-  return list;
-}
-function buildMatchPanel(chart, profile){
-  MT = { 1: { mode: 'saved', profile, draft: mtBlank(profile.tz) }, 2: { mode: 'saved', profile: null, draft: mtBlank(profile.tz) }, list: mtSaved(), results: {}, timers: {}, last: null };
-  setTimeout(() => { mtRenderCard(1); mtRenderCard(2); mtUpdateGo(); }, 0);
-  return `<div class="mt">
-    <div class="mt-hero">
-      <div class="mt-hearts" aria-hidden="true">💞</div>
-      <h3>Kundali Matching</h3>
-      <p>Compare two birth charts with the traditional <b>Ashtakoota</b> system — 8 factors worth 36 points — plus a Manglik check.</p>
-      <ol class="mt-steps"><li><b>1</b>Choose two people</li><li><b>2</b>Tap check</li><li><b>3</b>See the score</li></ol>
-    </div>
-    <div class="mt-people"><div id="mtCard1" class="mt-card" style="--pc:${KM_COL[1]}"></div>
-      <button type="button" class="mt-swap" data-mt-swap title="Swap roles" aria-label="Swap groom and bride roles">⇄</button>
-      <div id="mtCard2" class="mt-card" style="--pc:${KM_COL[2]}"></div></div>
-    <button type="button" class="mt-go" id="mtGo" data-mt-go disabled>Choose both people to continue</button>
-    <div id="mtResult"></div>
-  </div>`;
-}
-function mtResolve(i){
-  const S = MT[i];
-  if (S.mode === 'saved') return S.profile;
-  const d = S.draft;
-  if (!d.dob || !d.tob || d.lat === null || d.lon === null || isNaN(d.lat) || isNaN(d.lon) || isNaN(d.tz)) return null;
-  return { name: d.name.trim() || `Person ${i}`, dob: d.dob, tob: d.tob.slice(0, 5), place: d.place || `${(+d.lat).toFixed(2)}, ${(+d.lon).toFixed(2)}`, lat: +d.lat, lon: +d.lon, tz: +d.tz };
-}
-function mtAvatar(name, col){ return `<span class="mt-av" style="background:${col}">${escapeHtml((name || '?').trim().charAt(0).toUpperCase())}</span>`; }
-const MT_COLS = ['#D4AF37', '#5EC4B7', '#8A6FB8', '#E0A64A', '#6B7FA3', '#C95050', '#5B8A9E'];
-function mtColor(name){ return MT_COLS[[...(name || '?')].reduce((a, c) => a + c.charCodeAt(0), 0) % MT_COLS.length]; }
-function mtSummary(p){

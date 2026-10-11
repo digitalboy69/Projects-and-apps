@@ -9031,6 +9031,114 @@ img,svg{max-width:100%}
 .fm-yrs{padding:12px;border-radius:16px;border:1px solid var(--border-light);background:#0e1119}.fm-yh{font-size:11px;color:var(--text-muted);margin-bottom:8px}.fm-yb{display:flex;gap:4px;align-items:flex-end;height:150px}.fm-y{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;min-width:0}.fm-y i{display:block;width:100%;border-radius:6px 6px 2px 2px}.fm-y b{font-size:9.5px;color:var(--text-main)}.fm-y small{font-size:9px;color:var(--text-muted)}.fm-y em{font-style:normal;font-size:8.5px;color:var(--gold-dim)}
 .fm-mk{display:grid;grid-template-columns:1fr;gap:12px}.fm-mk h4{margin:0 0 6px;font-size:13px;color:var(--gold-bright)}.fm-mk .rd-w{margin-bottom:5px}
 @media(min-width:560px){.fm-mk{grid-template-columns:1fr 1fr}}
+
+/* ===== Rectification Studio ===== */
+#panel-rectification .rs{max-width:1080px;margin:0 auto}
+.rs-hero{position:relative;display:grid;grid-template-columns:230px 1fr;gap:30px;align-items:center;padding:34px 36px;border-radius:28px;overflow:hidden;
+  background:linear-gradient(135deg,rgba(212,175,55,.10),rgba(94,196,183,.06) 60%,rgba(11,13,20,.9));border:1px solid var(--border-light);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.rs-aura{position:absolute;inset:-40%;background:radial-gradient(circle at 20% 30%,rgba(249,217,118,.16),transparent 40%),radial-gradient(circle at 85% 80%,rgba(94,196,183,.13),transparent 40%);animation:rsAura 14s ease-in-out infinite alternate;pointer-events:none}
+@keyframes rsAura{to{transform:translate(3%,2%) scale(1.06)}}
+.rs-clockwrap{position:relative;z-index:1}
+.rs-clock{width:100%;height:auto;filter:drop-shadow(0 8px 28px rgba(212,175,55,.25))}
+.rs-ring{transform-origin:100px 100px;animation:rsSpin 160s linear infinite;opacity:.8}
+@keyframes rsSpin{to{transform:rotate(360deg)}}
+.rs-hero-txt{position:relative;z-index:1;min-width:0}
+.rs-eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:8px}
+.rs-hero h2{font-family:var(--font-display);font-weight:500;font-size:clamp(24px,3.4vw,36px);line-height:1.15;margin:0 0 8px;color:var(--text-main)}
+.rs-hero h2 em{font-style:normal;color:var(--gold-bright)}
+.rs-hero p{margin:0 0 14px;color:var(--text-muted);font-size:14.5px;line-height:1.55;font-weight:300}
+.rs-pill{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;min-height:34px}
+.rs-pill>span{padding:7px 13px;border-radius:999px;background:rgba(0,0,0,.35);border:1px solid var(--border-light);font-size:13px;color:var(--text-main);animation:rsPop .4s both}
+.rs-pill-t{font-family:var(--font-mono);color:var(--gold-bright)!important;letter-spacing:.04em}
+.rs-pill-dim{color:var(--text-muted)!important}
+@keyframes rsPop{from{opacity:0;transform:translateY(4px) scale(.96)}}
+.rs-ask{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);font-weight:600;margin-bottom:10px}
+.rs-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.rs-chip{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px 13px;border-radius:16px;cursor:pointer;color:var(--text-main);font-family:inherit;
+  background:rgba(255,255,255,.035);border:1px solid var(--border-light);transition:transform .18s,border-color .18s,background .18s,box-shadow .18s}
+.rs-chip span{font-size:20px}.rs-chip b{font-size:13px;font-weight:600}.rs-chip i{font-style:normal;font-size:11px;color:var(--text-muted)}
+.rs-chip:hover{transform:translateY(-3px);border-color:var(--gold);background:rgba(212,175,55,.09);box-shadow:0 10px 24px rgba(0,0,0,.35)}
+.rs-chip.active{border-color:var(--gold-bright);background:rgba(212,175,55,.16);box-shadow:0 0 0 2px rgba(249,217,118,.18)}
+.rs-hint{min-height:20px;margin-top:12px;font-size:13px;color:var(--teal-bright);animation:rsPop .4s both}
+
+.rs-rail{position:relative;display:flex;justify-content:space-between;margin:26px 8% 14px}
+.rs-rail-line{position:absolute;left:6%;right:6%;top:15px;height:3px;border-radius:3px;background:rgba(255,255,255,.08)}
+.rs-rail-fill{height:100%;width:0;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--teal-bright));transition:width .6s cubic-bezier(.3,1,.4,1)}
+.rs-step{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;cursor:pointer;color:var(--text-muted);font-family:inherit;padding:0 4px}
+.rs-dot{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:#0B0D14;border:2px solid var(--border-light);transition:all .3s}
+.rs-step em{font-style:normal;font-size:12px;letter-spacing:.04em}
+.rs-step.active{color:var(--gold-bright)}
+.rs-step.active .rs-dot{border-color:var(--gold-bright);background:var(--gold);color:#000;box-shadow:0 0 0 6px rgba(212,175,55,.15)}
+.rs-step.done .rs-dot{border-color:var(--teal-bright);background:var(--teal-bright);color:#06110f}
+.rs-step.done .rs-dot::before{content:'✓'}.rs-step.done .rs-dot{font-size:0}.rs-step.done .rs-dot::before{font-size:14px}
+
+.rs-tabs{display:flex;gap:8px;overflow-x:auto;padding:6px 2px 10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.rs-tabs::-webkit-scrollbar{display:none}
+.rs-tab{flex:0 0 auto;scroll-snap-align:center;display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:500;white-space:nowrap;
+  color:var(--text-muted);background:rgba(255,255,255,.03);border:1px solid var(--border-light);transition:all .2s}
+.rs-tab span{font-size:16px}
+.rs-tab:hover{color:var(--text-main);border-color:var(--gold-dim)}
+.rs-tab.seen{border-color:rgba(94,196,183,.4)}
+.rs-tab.active{color:#000;font-weight:600;background:linear-gradient(135deg,var(--gold-bright),var(--gold));border-color:transparent;box-shadow:0 6px 20px rgba(212,175,55,.3)}
+
+.rs-panes{margin-top:8px}
+.rs-pane{display:none;padding:26px 28px;border-radius:24px;background:var(--bg-card);border:1px solid var(--border-light);box-shadow:var(--shadow-glass)}
+.rs-pane.active{display:block;animation:rsIn .45s cubic-bezier(.2,.8,.3,1) both}
+@keyframes rsIn{from{opacity:0;transform:translateY(14px)}}
+.rs-pane-head{margin-bottom:16px}.rs-pane-head h3{font-family:var(--font-display);font-size:21px;font-weight:500;margin:0 0 4px;color:var(--gold-bright)}
+.rs-pane-head p{margin:0;color:var(--text-muted);font-size:13.5px}
+.rs-how{margin:0 0 16px;border:1px dashed var(--border-light);border-radius:14px;padding:0 14px;background:rgba(255,255,255,.02)}
+.rs-how summary{cursor:pointer;padding:11px 0;font-size:13px;color:var(--teal-bright);font-weight:500;list-style:none}
+.rs-how summary::-webkit-details-marker{display:none}
+.rs-how[open]{background:rgba(94,196,183,.05)}.rs-how>p,.rs-how .rect-intro,.rs-how .tt-intro{font-size:13px;line-height:1.65;color:var(--text-muted);margin:0 0 12px}
+.rs-sub{display:block!important}.rs-sub>.section-heading{display:none}
+.rs-sub .tt-panel-card,.rs-pane .tt-panel-card{background:none;border:0;box-shadow:none;padding:0;max-width:none}
+.rs-pane .rect-time-dial-card{background:linear-gradient(160deg,rgba(212,175,55,.07),rgba(0,0,0,.25));border-radius:20px;padding:26px 18px}
+.rs-pane .hms-value{font-size:38px;min-width:64px;color:var(--gold-bright)}
+.rs-pane .hms-btn{width:40px;height:40px;transition:transform .15s,background .15s}
+.rs-pane .rect-fullcalc-btn{border-radius:999px;padding:15px 30px;font-size:14.5px;box-shadow:0 10px 30px rgba(94,196,183,.25);transition:transform .2s}
+.rs-pane .rect-fullcalc-btn:hover{transform:translateY(-2px)}
+.rs-pane .rect-controls{margin-top:0}
+.rs-next{display:flex;justify-content:space-between;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid var(--border-subtle);flex-wrap:wrap}
+.rs-next .btn{border-radius:999px}
+
+.rs-ev-form,.rs-ev-opts{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:14px}
+.rs-ev-form label,.rs-ev-opts label{display:flex;flex-direction:column;gap:5px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.rs-ev-form label.grow{flex:1;min-width:150px}
+.rs-ev-form select,.rs-ev-form input,.rs-ev-opts select{background:rgba(0,0,0,.3);border:1px solid var(--border-light);color:var(--text-main);border-radius:12px;padding:10px 12px;font-size:14px;font-family:inherit;text-transform:none;letter-spacing:0}
+.rs-ev-form select:focus,.rs-ev-form input:focus,.rs-ev-opts select:focus{outline:none;border-color:var(--gold)}
+.rs-ev-form .btn,.rs-ev-opts .btn{border-radius:999px}
+.rs-ev-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.rs-evchip{display:inline-flex;align-items:center;gap:6px;padding:7px 8px 7px 13px;border-radius:999px;background:rgba(212,175,55,.09);border:1px solid var(--border-light);font-size:12.5px;animation:rsPop .35s both}
+.rs-evchip button{width:22px;height:22px;border-radius:50%;border:0;cursor:pointer;background:rgba(255,255,255,.08);color:var(--text-muted)}
+.rs-evchip button:hover{background:#c0392b;color:#fff}
+.rs-empty{width:100%;padding:16px;border-radius:14px;border:1px dashed var(--border-light);color:var(--text-muted);font-size:13px;text-align:center}
+.rs-res-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:24px 0 12px;font-family:var(--font-display);font-size:18px;color:var(--gold-bright)}
+.rs-res-head span{font-family:var(--font-sans);font-size:12px;color:var(--text-muted)}
+.rs-rank{padding:14px 16px;margin-bottom:10px;border-radius:18px;background:rgba(255,255,255,.025);border:1px solid var(--border-subtle);animation:rsIn .5s both}
+.rs-rank.top{border-color:var(--gold);background:linear-gradient(135deg,rgba(212,175,55,.13),rgba(94,196,183,.05));box-shadow:0 10px 30px rgba(212,175,55,.12)}
+.rs-rank-row{display:flex;align-items:center;gap:12px}.rs-rank-row b{min-width:112px;font-size:15px}.rs-rank-row em{font-style:normal;font-family:var(--font-mono);font-size:13px;color:var(--gold-bright);min-width:42px;text-align:right}
+.rs-rank-n{width:26px;text-align:center;color:var(--text-muted);font-size:15px}
+.rs-bar{flex:1;height:10px;border-radius:10px;background:rgba(255,255,255,.07);overflow:hidden}
+.rs-bar i{display:block;height:100%;width:0;border-radius:10px;background:linear-gradient(90deg,var(--teal-bright),var(--gold-bright));transition:width 1.1s cubic-bezier(.2,.9,.3,1)}
+.rs-rank-segs{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 2px 38px}
+.rs-seg{padding:6px 12px;border-radius:999px;background:rgba(0,0,0,.3);border:1px solid var(--border-light);color:var(--text-main);font-size:12px;cursor:pointer;font-family:var(--font-mono);transition:all .18s}
+.rs-seg u{text-decoration:none;color:var(--teal-bright);font-family:var(--font-sans);margin-left:4px}
+.rs-seg:hover{border-color:var(--gold-bright);transform:translateY(-1px);background:rgba(212,175,55,.12)}
+.rs-why{margin:8px 0 0 38px}.rs-why summary{cursor:pointer;font-size:12px;color:var(--text-muted)}
+.rs-why-ev{margin-top:8px;font-size:12.5px}.rs-why-ev ul{margin:4px 0 0;padding-left:18px;color:var(--text-muted);line-height:1.6}
+.rs-note{margin-top:14px;padding:13px 15px;border-radius:14px;background:rgba(94,196,183,.07);border:1px solid rgba(94,196,183,.25);font-size:12.5px;line-height:1.6;color:var(--text-muted)}
+.rs-toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,30px);opacity:0;z-index:9999;padding:11px 20px;border-radius:999px;background:#12141d;border:1px solid var(--gold);color:var(--gold-bright);font-size:13.5px;box-shadow:0 12px 40px rgba(0,0,0,.5);transition:all .35s cubic-bezier(.2,1,.3,1);pointer-events:none}
+.rs-toast.show{opacity:1;transform:translate(-50%,0)}
+@media (max-width:860px){
+  .rs-hero{grid-template-columns:1fr;padding:24px 18px;gap:14px;text-align:center}
+  .rs-clockwrap{width:150px;margin:0 auto}.rs-pill{justify-content:center}
+  .rs-chips{grid-template-columns:repeat(2,1fr);text-align:left}
+  .rs-pane{padding:18px 14px;border-radius:20px}
+  .rs-rail{margin:20px 2% 10px}.rs-step em{font-size:10.5px;text-align:center}
+  .rs-rank-row b{min-width:92px;font-size:14px}.rs-rank-segs,.rs-why{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){.rs-ring,.rs-aura{animation:none}.rs-pane.active,.rs-rank{animation:none}}
 </style>
 
 
@@ -12390,10 +12498,11 @@ const HOME_ITEMS=[
  ['panel-bhava','⌂','Bhava Chalit','Sripati house cusps & shifted planets','Your Chart','chart'],
  ['panel-vargas','◫','Divisional Charts','D1 to D60 chart viewer','Your Chart','chart'],
  ['panel-lagnas','✧','Special Lagnas','23 alternate ascendants','Your Chart','chart'],
- ['panel-rectification','🎯','Rectify Birth Time','Test times & compare charts','Fix Birth Time','rectify'],
+ ['panel-rectification','🎯','Rectification Studio','Dial, scan & confirm the time','Fix Birth Time','rectify'],
  ['panel-sandhi','⏱','Sandhi Table','Ascendant window across all charts','Fix Birth Time','rectify'],
  ['panel-vargatimeline','🗺️','Varga Timeline','Map the birth window on any chart','Fix Birth Time','rectify'],
  ['panel-transittimer','⏳','Transit Timer','When a planet changes house','Fix Birth Time','rectify'],
+ ['panel-lifeevents','🌟','Life-Event Checker','Confirm the time with real events','Fix Birth Time','rectify'],
  ['panel-panchanga','🌙','Panchanga','Tithi, nakshatra, yoga, karana & day timings','Time & Cycles','home'],
  ['panel-vbday','🎂','Vedic Birthday','Tithi, Nakshatra & solar birthday for any year','Time & Cycles','home'],
  ['panel-active','🔥','Life Activation','Houses lit up now · pick any date','Time & Cycles','home'],
@@ -12477,6 +12586,388 @@ function switchAppTab(panelId){
 document.querySelectorAll('.app-tab').forEach(tab=>{
   tab.addEventListener('click', ()=> switchAppTab(tab.dataset.panel));
 });
+
+/* ============================================================================
+   RECTIFICATION STUDIO — one calm place for every birth-time tool
+   Tabs: Time Dial · Second Scan · Sandhi Table · Varga Timeline · Transit Timer · Life Events
+   initRectStudio() runs after the old panels are wired; it MOVES the existing nodes
+   (IDs + listeners survive) into tab panes. Old panel ids still work via switchAppTab.
+   ============================================================================ */
+const RS_TABS = [
+  ['dial',  '🕰️', 'Time Dial',      1],
+  ['scan',  '🎯', 'Second Scan',    2],
+  ['sandhi','⏱️', 'Sandhi Table',   2],
+  ['vt',    '🗺️', 'Varga Timeline', 2],
+  ['tt',    '⏳', 'Transit Timer',  2],
+  ['life',  '🌟', 'Life Events',    3]
+];
+const RS_STEPS = [[1,'Set the time'],[2,'Narrow it down'],[3,'Confirm with life']];
+const RS_SUBS = { sandhi:'panel-sandhi', vt:'panel-vargatimeline', tt:'panel-transittimer' };
+const RS_ROUTE = { 'panel-sandhi':'sandhi', 'panel-vargatimeline':'vt', 'panel-transittimer':'tt', 'panel-lifeevents':'life' };
+const RS_CATS = {
+  marriage:{label:'💍 Marriage / partnership', p:[7], s:[2,11], k:['Venus']},
+  child:   {label:'👶 Child birth',            p:[5], s:[2,9,11], k:['Jupiter']},
+  career:  {label:'💼 Job start / promotion',  p:[10], s:[6,11], k:['Sun','Saturn']},
+  edu:     {label:'🎓 Higher education',       p:[4,9], s:[5], k:['Jupiter','Mercury']},
+  foreign: {label:'✈️ Foreign travel / move',  p:[12], s:[3,9], k:['Rahu']},
+  property:{label:'🏠 Property / vehicle',     p:[4], s:[2,11], k:['Mars','Venus']},
+  gain:    {label:'💰 Big gain / wealth',      p:[2,11], s:[5,9], k:['Jupiter']},
+  father:  {label:'👨 Father: major event',    p:[9], s:[3,8], k:['Sun']},
+  mother:  {label:'👩 Mother: major event',    p:[4], s:[8,10], k:['Moon']},
+  health:  {label:'🩺 Illness / surgery',      p:[6,8], s:[1,12], k:['Mars','Saturn']}
+};
+let rsState = { tab:'dial', visited:{dial:1}, conf:null, events:[], hand:{h:0,m:0,s:0} };
+
+function rsEvKey(){
+  const p = currentProfileForExport || {};
+  return 'vax_rs_events:' + (p.name||'') + '|' + (p.dob||'') + '|' + (p.tob||'');
+}
+function rsLoadEvents(){
+  try { const v = JSON.parse(localStorage.getItem(rsEvKey())||'[]'); return Array.isArray(v) ? v : []; } catch(e){ return []; }
+}
+function rsSaveEvents(){ try { localStorage.setItem(rsEvKey(), JSON.stringify(rsState.events)); } catch(e){} }
+function rsEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function rsToast(msg){
+  let t = document.getElementById('rsToast');
+  if (!t){ t = document.createElement('div'); t.id = 'rsToast'; t.className = 'rs-toast'; document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(rsToast._t); rsToast._t = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+
+function rsClockSVG(){
+  let ring = '', ticks = '';
+  for (let i=0;i<12;i++){
+    const a = i*30*Math.PI/180;
+    ring += `<text x="${(100+90*Math.sin(a)).toFixed(1)}" y="${(100-90*Math.cos(a)+3.5).toFixed(1)}" text-anchor="middle" font-size="10" fill="currentColor">${SIGNS[i].symbol}</text>`;
+    const r1 = i%3===0 ? 58 : 62, r2 = 68;
+    ticks += `<line x1="${(100+r1*Math.sin(a)).toFixed(1)}" y1="${(100-r1*Math.cos(a)).toFixed(1)}" x2="${(100+r2*Math.sin(a)).toFixed(1)}" y2="${(100-r2*Math.cos(a)).toFixed(1)}" stroke="currentColor" stroke-width="${i%3===0?2:1}" opacity="${i%3===0?.9:.5}"/>`;
+  }
+  return `<svg viewBox="0 0 200 200" class="rs-clock" aria-hidden="true">
+    <defs><radialGradient id="rsFace" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="#2a2410"/><stop offset="1" stop-color="#0a0b10"/></radialGradient></defs>
+    <g class="rs-ring" style="color:var(--gold)">${ring}</g>
+    <circle cx="100" cy="100" r="76" fill="url(#rsFace)" stroke="var(--gold)" stroke-width="1.2" opacity=".95"/>
+    <g style="color:var(--gold-bright)">${ticks}</g>
+    <line id="rsHandH" x1="100" y1="100" x2="100" y2="64" stroke="var(--gold-bright)" stroke-width="4" stroke-linecap="round"/>
+    <line id="rsHandM" x1="100" y1="100" x2="100" y2="48" stroke="#EAE6DF" stroke-width="3" stroke-linecap="round"/>
+    <line id="rsHandS" x1="100" y1="112" x2="100" y2="42" stroke="var(--teal-bright)" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="100" cy="100" r="4.5" fill="var(--gold)"/><circle cx="100" cy="100" r="1.8" fill="#000"/>
+  </svg>`;
+}
+function rsSetHands(){
+  const h = rectHms.h, m = rectHms.m, s = rectHms.s;
+  const tgt = { h:((h%12)+m/60)*30, m:(m+s/60)*6, s:s*6 };
+  const cur = rsState.hand, from = { h:cur.h, m:cur.m, s:cur.s }, t0 = performance.now();
+  const sh = (a,b)=> { let d = ((b-a)%360+540)%360-180; return d; };
+  const dh = sh(from.h,tgt.h), dm = sh(from.m,tgt.m), ds = sh(from.s,tgt.s);
+  const ease = x=> 1-Math.pow(1-x,3);
+  cancelAnimationFrame(rsSetHands._r);
+  const step = now=>{
+    const k = Math.min(1,(now-t0)/380), e = ease(k);
+    cur.h = from.h+dh*e; cur.m = from.m+dm*e; cur.s = from.s+ds*e;
+    [['rsHandH',cur.h],['rsHandM',cur.m],['rsHandS',cur.s]].forEach(([id,a])=>{
+      const el = document.getElementById(id); if (el) el.setAttribute('transform', `rotate(${a.toFixed(2)} 100 100)`);
+    });
+    if (k<1) rsSetHands._r = requestAnimationFrame(step);
+  };
+  rsSetHands._r = requestAnimationFrame(step);
+}
+
+function rsRefresh(){
+  const pill = document.getElementById('rsPill'); if (!pill) return;
+  rsSetHands();
+  const p = currentProfileForExport, dEl = document.getElementById('rectDate');
+  if (!p || !dEl || !dEl.value){ pill.innerHTML = `<span class="rs-pill-dim">Generate a chart first to begin ✨</span>`; return; }
+  const ts = `${padHms(rectHms.h)}:${padHms(rectHms.m)}:${padHms(rectHms.s)}`;
+  try {
+    const r = rectifyPoint(dEl.value, ts, p.lat, p.lon, p.tz);
+    const sg = SIGNS[r.asc.sign];
+    pill.innerHTML = `<span class="rs-pill-t">${ts}</span><span class="rs-pill-i"><b>${sg.symbol} ${sg.name}</b> rising ${r.asc.degInSign.toFixed(1)}°</span><span class="rs-pill-i">🌙 ${r.moon.nak.name} · pada ${r.moon.nak.pada}</span>`;
+  } catch(e){ pill.innerHTML = `<span class="rs-pill-dim">${ts}</span>`; }
+}
+
+function rsShow(id, scroll){
+  const root = document.getElementById('rsRoot'); if (!root) return;
+  rsState.tab = id; rsState.visited[id] = 1;
+  root.querySelectorAll('.rs-tab').forEach(b=>{
+    const on = b.dataset.rsTab===id; b.classList.toggle('active', on);
+    b.classList.toggle('seen', !!rsState.visited[b.dataset.rsTab] && !on);
+    if (on){ const bar = b.parentElement; bar.scrollTo({ left: b.offsetLeft - (bar.clientWidth-b.offsetWidth)/2, behavior:'smooth' }); }
+  });
+  root.querySelectorAll('.rs-pane').forEach(p=> p.classList.toggle('active', p.dataset.rsPane===id));
+  const grp = RS_TABS.find(t=>t[0]===id)[3];
+  root.querySelectorAll('.rs-step').forEach(s=>{
+    const n = +s.dataset.step; s.classList.toggle('active', n===grp); s.classList.toggle('done', n<grp);
+  });
+  const line = root.querySelector('.rs-rail-fill'); if (line) line.style.width = ((grp-1)/2*100)+'%';
+  if (scroll){ const top = root.querySelector('.rs-tabs').getBoundingClientRect().top + window.pageYOffset - 70; window.scrollTo({ top:Math.max(0,top), behavior:'smooth' }); }
+  if (id==='life') rsRenderEvents();
+}
+
+function rsHow(el, title){
+  if (!el || el.closest('details')) return;
+  const d = document.createElement('details'); d.className = 'rs-how';
+  d.innerHTML = `<summary>💡 ${title||'How it works'}</summary>`;
+  el.parentNode.insertBefore(d, el); d.appendChild(el);
+}
+
+function initRectStudio(){
+  const panel = document.getElementById('panel-rectification');
+  if (!panel || panel.dataset.rs) return;
+  const card = panel.querySelector('.rect-panel-card'); if (!card) return;
+  panel.dataset.rs = '1';
+  const q = s=> card.querySelector(s);
+  const dialCard = q('.rect-time-dial-card'), actRow = q('.rect-action-row'), fullRes = q('#rectFullChartResults'), intro = q('.rect-intro');
+  const ctrls = q('.rect-controls'), resWrap = q('#rectResultsWrap'), detail = q('#rectDetail');
+  rsState.events = rsLoadEvents(); rsState.visited = { dial:1 }; rsState.conf = null;
+
+  const chips = [
+    ['exact','🎯','To the minute','I trust it closely'],
+    ['half','🕐','Within ~30 min','Pretty close'],
+    ['hours','🌓','Within a few hours','Rough idea'],
+    ['unk','❔','Not sure at all','Use life events']
+  ];
+  panel.innerHTML = `
+  <div class="rs" id="rsRoot">
+    <div class="rs-hero">
+      <div class="rs-aura"></div>
+      <div class="rs-clockwrap">${rsClockSVG()}</div>
+      <div class="rs-hero-txt">
+        <div class="rs-eyebrow">✦ Rectification Studio</div>
+        <h2>Find the <em>true</em> moment of birth</h2>
+        <p>Every tool in one calm place. Tell us how sure you are and we'll point you to the right one.</p>
+        <div class="rs-pill" id="rsPill"></div>
+        <div class="rs-ask">How sure are you of the birth time?</div>
+        <div class="rs-chips">${chips.map(c=>`<button type="button" class="rs-chip" data-rs-chip="${c[0]}"><span>${c[1]}</span><b>${c[2]}</b><i>${c[3]}</i></button>`).join('')}</div>
+        <div class="rs-hint" id="rsHint"></div>
+      </div>
+    </div>
+    <div class="rs-rail">
+      <div class="rs-rail-line"><div class="rs-rail-fill"></div></div>
+      ${RS_STEPS.map(s=>`<button type="button" class="rs-step" data-step="${s[0]}"><span class="rs-dot">${s[0]}</span><em>${s[1]}</em></button>`).join('')}
+    </div>
+    <div class="rs-tabs" role="tablist">
+      ${RS_TABS.map(t=>`<button type="button" class="rs-tab" role="tab" data-rs-tab="${t[0]}" data-g="${t[3]}"><span>${t[1]}</span>${t[2]}</button>`).join('')}
+    </div>
+    <div class="rs-panes">
+      ${RS_TABS.map(t=>`<section class="rs-pane" data-rs-pane="${t[0]}"></section>`).join('')}
+    </div>
+  </div>`;
+  const pane = id=> panel.querySelector(`.rs-pane[data-rs-pane="${id}"]`);
+
+  // Dial
+  const pd = pane('dial');
+  pd.innerHTML = `<div class="rs-pane-head"><h3>🕰️ Time Dial</h3><p>Dial an exact moment and see the whole chart for it.</p></div>`;
+  if (intro){ rsHow(intro, 'How the dial works'); pd.appendChild(intro.closest('details') || intro); }
+  pd.appendChild(dialCard); pd.appendChild(actRow); pd.appendChild(fullRes);
+  // Scan
+  const ps = pane('scan');
+  ps.innerHTML = `<div class="rs-pane-head"><h3>🎯 Second-by-Second Scan</h3><p>Slide through a window of time and watch the Ascendant, D60 and nakshatra shift.</p></div>`;
+  ps.appendChild(ctrls); ps.appendChild(resWrap); ps.appendChild(detail);
+  // Sub panels (nodes keep their ids so Export still finds them)
+  Object.keys(RS_SUBS).forEach(k=>{
+    const el = document.getElementById(RS_SUBS[k]); const p = pane(k); if (!el) return;
+    el.classList.remove('app-panel'); el.classList.add('rs-sub');
+    const intro2 = el.querySelector('.tt-intro'); if (intro2) rsHow(intro2, 'What this does');
+    p.appendChild(el);
+  });
+  // Life
+  rsBuildLife(pane('life'));
+  // Next / Back
+  RS_TABS.forEach((t,i)=>{
+    const nx = RS_TABS[i+1], pv = RS_TABS[i-1];
+    const d = document.createElement('div'); d.className = 'rs-next';
+    d.innerHTML = (pv?`<button type="button" class="btn btn-ghost" data-rs-go="${pv[0]}">← ${pv[2]}</button>`:'<span></span>') +
+      (nx?`<button type="button" class="btn btn-primary" data-rs-go="${nx[0]}">Next: ${nx[2]} ➜</button>`:`<button type="button" class="btn btn-ghost" data-rs-go="dial">↺ Start over</button>`);
+    pane(t[0]).appendChild(d);
+  });
+
+  const root = document.getElementById('rsRoot');
+  root.addEventListener('click', e=>{
+    const tb = e.target.closest('[data-rs-tab]'); if (tb){ rsShow(tb.dataset.rsTab); return; }
+    const go = e.target.closest('[data-rs-go]'); if (go){ rsShow(go.dataset.rsGo, true); return; }
+    const st = e.target.closest('.rs-step'); if (st){ const f = RS_TABS.find(t=>t[3]===+st.dataset.step); rsShow(f[0]); return; }
+    const ch = e.target.closest('[data-rs-chip]'); if (ch) rsChip(ch.dataset.rsChip);
+  });
+  const dEl = document.getElementById('rectDate'); if (dEl) dEl.addEventListener('change', rsRefresh);
+  rsShow('dial'); rsRefresh();
+}
+
+function rsChip(key){
+  const root = document.getElementById('rsRoot'); if (!root) return;
+  root.querySelectorAll('.rs-chip').forEach(c=> c.classList.toggle('active', c.dataset.rsChip===key));
+  const w = document.getElementById('rectWindow'), st = document.getElementById('rectStep'), hint = document.getElementById('rsHint');
+  const set = (el,v)=>{ if (el) el.value = v; };
+  const M = {
+    exact:{ tab:'dial',  msg:'Lovely. Check the full chart for your time, then do a ±2 minute scan to be sure.', w:'2', s:'1' },
+    half: { tab:'scan',  msg:'Scan window set to ±30 min in 10-second steps. Press Run and look for the Ascendant sign changes.', w:'30', s:'10' },
+    hours:{ tab:'sandhi',msg:'Start with the Sandhi Table. It shows when the rising sign changes, so you can cut the hours down.' },
+    unk:  { tab:'life',  msg:'No problem. Add 3 or more real life events and we will rank the likely rising signs.' }
+  }[key];
+  if (M.w) set(w, M.w); if (M.s) set(st, M.s);
+  if (hint) hint.textContent = '→ ' + M.msg;
+  rsState.conf = key;
+  rsShow(M.tab, true);
+}
+
+/* ---------------------------- Life-Event checker ---------------------------- */
+function rsBuildLife(p){
+  p.innerHTML = `
+  <div class="rs-pane-head"><h3>🌟 Life-Event Checker</h3><p>Real events are the best proof. We test every possible rising sign against your dashas and slow transits.</p></div>
+  <details class="rs-how"><summary>💡 How it works (and how far to trust it)</summary>
+    <p>For each possible rising sign we ask: <em>at the date of each event, were the running Mahadasha / Antardasha / Pratyantardasha lords linked to the houses that rule that kind of event?</em>
+    Houses a planet is linked to = the house it sits in plus the houses it rules. Jupiter and Saturn transits to those houses add a bonus. Scores are relative, a ranking and not a proof.
+    Add <b>3 or more</b> dated events (marriage, job, child, move…) for a meaningful result. Treat the answer as a clue to confirm with the other tools.</p></details>
+  <div class="rs-ev-form">
+    <label>Event<select id="rsEvCat">${Object.keys(RS_CATS).map(k=>`<option value="${k}">${RS_CATS[k].label}</option>`).join('')}</select></label>
+    <label>Date<input type="date" id="rsEvDate"></label>
+    <label class="grow">Note (optional)<input type="text" id="rsEvNote" maxlength="40" placeholder="e.g. first job"></label>
+    <button type="button" class="btn btn-ghost" id="rsEvAdd">＋ Add event</button>
+  </div>
+  <div id="rsEvList" class="rs-ev-list"></div>
+  <div class="rs-ev-opts">
+    <label>Search around your working time<select id="rsEvWin">
+      <option value="12">Whole day · all 12 signs</option><option value="6">± 6 hours</option><option value="3" selected>± 3 hours</option><option value="1.5">± 90 minutes</option></select></label>
+    <button type="button" class="btn btn-primary" id="rsEvRun">✨ Find the best-fitting rising sign</button>
+  </div>
+  <div id="rsEvOut"></div>`;
+  p.querySelector('#rsEvAdd').addEventListener('click', ()=>{
+    const d = document.getElementById('rsEvDate').value, c = document.getElementById('rsEvCat').value, n = document.getElementById('rsEvNote').value.trim();
+    if (!d){ rsToast('Pick the event date first 📅'); return; }
+    const p0 = currentProfileForExport;
+    if (p0 && d < p0.dob){ rsToast('That date is before the birth date'); return; }
+    rsState.events.push({ c, d, n }); rsState.events.sort((a,b)=> a.d<b.d?-1:1);
+    rsSaveEvents(); rsRenderEvents(); document.getElementById('rsEvDate').value=''; document.getElementById('rsEvNote').value='';
+    rsToast('Event added ✓');
+  });
+  p.querySelector('#rsEvList').addEventListener('click', e=>{
+    const b = e.target.closest('[data-rs-del]'); if (!b) return;
+    rsState.events.splice(+b.dataset.rsDel,1); rsSaveEvents(); rsRenderEvents();
+  });
+  p.querySelector('#rsEvRun').addEventListener('click', rsRunLife);
+  p.addEventListener('click', e=>{
+    const b = e.target.closest('[data-rs-use]'); if (!b) return;
+    const off = +b.dataset.rsUse, dEl = document.getElementById('rectDate');
+    const base = shiftLocalDateTime(dEl.value, document.getElementById('rectCenterTime').value, off);
+    dEl.value = base.dateStr;
+    const pr = base.timeStr.split(':').map(Number); rectHms = { h:pr[0], m:pr[1], s:pr[2]||0 }; updateHmsDisplay();
+    rsToast('Dial set to ' + base.timeStr.slice(0,5) + ' ✓'); rsShow('dial', true);
+  });
+}
+function rsRenderEvents(){
+  const el = document.getElementById('rsEvList'); if (!el) return;
+  if (!rsState.events.length){ el.innerHTML = `<div class="rs-empty">No events yet. Add your first one above. Marriage, a job, a child, a big move all work well.</div>`; return; }
+  el.innerHTML = rsState.events.map((e,i)=>`<span class="rs-evchip"><b>${RS_CATS[e.c]?RS_CATS[e.c].label:rsEsc(e.c)}</b> · ${rsEsc(e.d)}${e.n?` · ${rsEsc(e.n)}`:''}<button type="button" data-rs-del="${i}" aria-label="Remove">✕</button></span>`).join('') +
+    (rsState.events.length<3 ? `<div class="rs-empty" style="margin-top:8px">Tip: ${3-rsState.events.length} more event${3-rsState.events.length>1?'s':''} will make the ranking much more reliable.</div>` : '');
+}
+
+function rsHouseOf(sign, L){ return ((sign - L + 12) % 12) + 1; }
+function rsLinks(P, L, chart){
+  // houses planet P is linked to from lagna L: occupied + owned (nodes also act through their sign lord)
+  const out = {};
+  const add = (h, why)=>{ if (!out[h]) out[h] = why; };
+  const pl = chart.planets[P]; if (!pl) return out;
+  add(rsHouseOf(pl.sign, L), 'sits in H'+rsHouseOf(pl.sign, L));
+  const owner = (P==='Rahu'||P==='Ketu') ? SIGNS[pl.sign].lord : P;
+  for (let s=0;s<12;s++) if (SIGNS[s].lord===owner) add(rsHouseOf(s,L), (owner===P?'rules':'via '+owner+' rules')+' H'+rsHouseOf(s,L));
+  if (owner!==P && chart.planets[owner]) add(rsHouseOf(chart.planets[owner].sign, L), 'via '+owner+' in H'+rsHouseOf(chart.planets[owner].sign, L));
+  return out;
+}
+function rsScore(P, L, cat, chart){
+  const links = rsLinks(P, L, chart); let sc = 0; const hits = [];
+  Object.keys(links).forEach(h=>{
+    h = +h;
+    if (cat.p.indexOf(h)>-1){ sc += 2; hits.push(links[h]+' ★'); }
+    else if (cat.s.indexOf(h)>-1){ sc += 1; hits.push(links[h]); }
+  });
+  if (cat.k.indexOf(P)>-1) sc += 0.5;
+  return { sc, hits };
+}
+function rsEvalLagna(L, chart, evs){
+  let total = 0; const detail = [];
+  evs.forEach(ev=>{
+    const cat = RS_CATS[ev.c]; if (!cat) return;
+    let s = 0; const lines = [];
+    [['Mahadasha', ev.md, 1],['Antardasha', ev.ad, 1],['Pratyantardasha', ev.pd, .5]].forEach(([nm,P,w])=>{
+      if (!P) return; const r = rsScore(P, L, cat, chart); s += r.sc*w;
+      lines.push(`${nm} ${P}${r.hits.length?': '+r.hits.join(', '):': no link'}`);
+    });
+    // slow transits
+    let tHit = 0;
+    [['Jupiter',[0,4,6,8]],['Saturn',[0,2,6,9]]].forEach(([P,offs])=>{
+      const hs = rsHouseOf(ev.tr[P], L); const set = offs.map(o=> ((hs-1+o)%12)+1);
+      const pm = set.filter(h=> cat.p.indexOf(h)>-1).length>0, sm = set.filter(h=> cat.s.indexOf(h)>-1).length>0;
+      if (pm){ s += 1; tHit++; lines.push(`${P} transit reaches H${cat.p.filter(h=>set.indexOf(h)>-1).join('/H')} ★`); }
+      else if (sm){ s += .4; }
+    });
+    if (tHit===2){ s += 1; lines.push('Double transit ✨'); }
+    total += s; detail.push({ ev, s, lines });
+  });
+  return { total, detail };
+}
+
+function rsRunLife(){
+  const out = document.getElementById('rsEvOut'); if (!out) return;
+  const chart = currentChartForModal, prof = currentProfileForExport;
+  if (!chart || !prof){ out.innerHTML = `<div class="rs-empty">Generate a chart first.</div>`; return; }
+  if (!rsState.events.length){ rsToast('Add at least one event first'); out.innerHTML = `<div class="rs-empty">Add some dated events above, then press the button again.</div>`; return; }
+  const tz = prof.tz || 0;
+  const evs = rsState.events.map(e=>{
+    const [y,m,d] = e.d.split('-').map(Number);
+    const dt = new Date(Date.UTC(y, m-1, d, 12) - tz*3600000);
+    const jd = dt.getTime()/86400000 + 2440587.5;
+    const act = findActiveDasha(chart.dashaData.mahadashas, dt) || {};
+    return { c:e.c, d:e.d, n:e.n, md: act.mahadasha&&act.mahadasha.lord, ad: act.antardasha&&act.antardasha.lord, pd: act.pratyantardasha&&act.pratyantardasha.lord,
+      tr:{ Jupiter: Math.floor(getSiderealLongitudeAt('Jupiter', jd)/30), Saturn: Math.floor(getSiderealLongitudeAt('Saturn', jd)/30) } };
+  });
+  // which rising signs occur in the chosen window, and when
+  const dEl = document.getElementById('rectDate'), tStr = document.getElementById('rectCenterTime').value;
+  const half = parseFloat(document.getElementById('rsEvWin').value)*3600, step = half>14000 ? 240 : 120;
+  const segs = []; let cur = null;
+  for (let off=-half; off<=half; off+=step){
+    const sh = shiftLocalDateTime(dEl.value, tStr, off);
+    const sg = rectifyPoint(sh.dateStr, sh.timeStr, prof.lat, prof.lon, tz).asc.sign;
+    if (cur && cur.sign===sg) cur.end = off+step; else { cur = { sign:sg, start:off, end:off+step }; segs.push(cur); }
+  }
+  const bySign = {};
+  segs.forEach(s=>{ (bySign[s.sign] = bySign[s.sign] || []).push(s); });
+  const ranked = Object.keys(bySign).map(k=>{ const L=+k, r = rsEvalLagna(L, chart, evs); return { L, total:r.total, detail:r.detail, segs:bySign[k] }; })
+    .sort((a,b)=> b.total-a.total);
+  const best = ranked[0].total || 1;
+  const fmt = off=>{
+    const sh = shiftLocalDateTime(dEl.value, tStr, off); const day = sh.dateStr===dEl.value ? '' : (sh.dateStr>dEl.value?' +1d':' −1d');
+    return sh.timeStr.slice(0,5)+day;
+  };
+  const close = ranked.length>1 && ranked[1].total >= ranked[0].total*0.9;
+  out.innerHTML = `
+    <div class="rs-res-head">Ranking of possible rising signs <span>${evs.length} event${evs.length>1?'s':''} tested</span></div>
+    ${ranked.map((r,i)=>{
+      const pct = Math.round(r.total/best*100), sg = SIGNS[r.L];
+      return `<div class="rs-rank ${i===0?'top':''}">
+        <div class="rs-rank-row"><span class="rs-rank-n">${i===0?'👑':i+1}</span><b>${sg.symbol} ${sg.name}</b>
+          <div class="rs-bar"><i data-w="${pct}"></i></div><em>${pct}%</em></div>
+        <div class="rs-rank-segs">${r.segs.map(s=>`<button type="button" class="rs-seg" data-rs-use="${Math.round((s.start+s.end)/2)}" title="Set the dial to the middle of this window">🕰️ ${fmt(s.start)} – ${fmt(s.end)} <u>use ➜</u></button>`).join('')}</div>
+        <details class="rs-why"><summary>Why this score?</summary>${r.detail.map(x=>`<div class="rs-why-ev"><b>${RS_CATS[x.ev.c]?RS_CATS[x.ev.c].label:''} · ${rsEsc(x.ev.d)}</b><ul>${x.lines.map(l=>`<li>${rsEsc(l)}</li>`).join('')}</ul></div>`).join('')}</details>
+      </div>`;
+    }).join('')}
+    <div class="rs-note">${close?'⚖️ <b>Close call.</b> The top signs are within 10%. Add more events or check the Sandhi / Varga tools. ':''}Times are in your birth timezone and are approximate to a few minutes. Use <b>"use ➜"</b> to load a window into the Time Dial. This ranking supports your judgement, it does not replace it.</div>`;
+  requestAnimationFrame(()=> requestAnimationFrame(()=> out.querySelectorAll('.rs-bar i').forEach(b=> b.style.width = b.dataset.w+'%')));
+  rsToast('Done ✨ Top fit: ' + SIGNS[ranked[0].L].name);
+}
+
+/* Hooks: keep old panel ids working + keep clock/pill live */
+(function rsInstallHooks(){
+  if (window.__rsHooks) return; window.__rsHooks = 1;
+  const _sw = switchAppTab;
+  switchAppTab = function(id){
+    if (RS_ROUTE[id] && document.getElementById('rsRoot')){
+      _sw('panel-rectification'); rsShow(RS_ROUTE[id]); return;
+    }
+    _sw(id); if (id==='panel-rectification' && document.getElementById('rsRoot')) rsRefresh();
+  };
+  const _up = updateHmsDisplay;
+  updateHmsDisplay = function(){ _up(); try{ rsRefresh(); }catch(e){} };
+})();
 
 /* ============================================================================
    QUICK SEARCH — click any placement in the chart to Google it
@@ -15305,6 +15796,7 @@ function renderResults(profile){
   wireTransitTimerPanel();
   wireSandhiPanel();
   wireVargaTimelinePanel();
+  try{ initRectStudio(); }catch(e){ console.error('Rect Studio', e); }
 
   let currentSelectedVarga = 'D1';
   let currentChartStyle = 'north';
@@ -17035,7 +17527,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('.fm-h');if(!t)re
   }
   function installB(){
     var COVERED = { 'panel-overview': 1, 'panel-planets': 1, 'panel-yogas': 1, 'panel-shadbala': 1, 'panel-ashtakavarga': 1, 'panel-dasha': 1, 'panel-transit': 1 };
-    var SKIPP = { 'panel-export': 1, 'panel-contact': 1, 'panel-rectification': 1, 'panel-vargatimeline': 1, 'panel-transittimer': 1 };
+    var SKIPP = { 'panel-export': 1, 'panel-contact': 1, 'panel-rectification': 1, 'panel-vargatimeline': 1, 'panel-transittimer': 1, 'panel-lifeevents': 1 };
     XP.push(['xp_aiPrompt', 'Instructions for AI (top of file)', 'Short prompt so any AI knows how to read and analyse this export', true, null]);
     XP.push(['xp_houses', 'House-by-House Summary', 'Each house: sign, lord and where it sits, occupants, aspects received, rulerships', true, null]);
     HOME_ITEMS.forEach(function(i){

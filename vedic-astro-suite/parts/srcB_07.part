@@ -1,3 +1,75 @@
+  html += `</tbody></table></div>
+  <div class="transit-note">This compares today's real sky against the whole-sign houses of the natal chart above — a simplified but classically valid approach to gochara (transit) analysis. Retrograde status is reflected. Refresh the check periodically since positions shift daily (Moon) or over months/years (outer planets).</div>`;
+
+  document.getElementById('transitLiveResults').innerHTML = html;
+  window.lastLiveSkyResult = { sky, lat, lon, tz }; 
+}
+
+function populateTzSelect(sel){
+  sel.innerHTML = "";
+  TZ_OPTIONS.forEach(v=>{
+    const opt = document.createElement('option');
+    opt.value = v; opt.textContent = fmtTz(v);
+    if (v===5.5) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function buildInteractiveVargaSvg(vdata, meta, style, aspectData){
+  if (style === "north") {
+    return buildNorthIndianSvg(vdata, aspectData);
+  } else if (style === "west") {
+    return buildWesternWheelSvg(vdata, aspectData);
+  } else {
+    return buildSouthIndianSvg(vdata, aspectData);
+  }
+}
+
+/* ============================================================================
+   PLANETARY ASPECTS (DRISHTI) FOR ANY DIVISIONAL CHART
+   ============================================================================
+   For a given varga chart, works out — for every planet — which house/sign it
+   sits in, which planets/houses/signs it aspects (drishti), and contextual
+   info (nakshatra, pada, degree) sourced from the real (D1) sidereal
+   longitude, since nakshatra is always reckoned from the true longitude
+   regardless of which divisional chart is being viewed.
+*/
+function computeVargaAspects(chart, vdata){
+  const ascSign = vdata.ascendantSign;
+  const houseOfSign = {}; // signIdx -> house number in this varga
+  for (let h=1; h<=12; h++){
+    houseOfSign[(ascSign + h - 1) % 12] = h;
+  }
+
+  // Build planet -> {sign, house} for this varga
+  const placement = {};
+  PLANET_LIST.forEach(name => {
+    const sign = vdata.planetVargaSign[name];
+    placement[name] = { sign, house: houseOfSign[sign] };
+  });
+
+  const results = [];
+  PLANET_LIST.forEach(fromName => {
+    const from = placement[fromName];
+    const aspectedHouseNums = getAspectedHouses(fromName, from.house); // houses (1-12) this planet aspects
+    const aspectedSignIdxs = aspectedHouseNums.map(h => (ascSign + h - 1) % 12);
+
+    const aspectOffsetLabel = (houseNum) => {
+      const diff = ((houseNum - from.house + 12) % 12) + 1; // 1..12, e.g. 7 = opposition
+      if (diff === 7) return "7th aspect (opposition)";
+      if (SPECIAL_ASPECTS[fromName] && SPECIAL_ASPECTS[fromName].includes(diff)) return `${diff}th aspect (special)`;
+      return `${diff}th aspect`;
+    };
+
+    const targets = [];
+    aspectedHouseNums.forEach(houseNum => {
+      const signIdx = (ascSign + houseNum - 1) % 12;
+      const sign = SIGNS[signIdx];
+      const occupants = PLANET_LIST.filter(p => p !== fromName && placement[p].sign === signIdx);
+      occupants.forEach(toName => {
+        targets.push({
+          toPlanet: toName,
+          toHouse: houseNum,
           toSign: sign.name,
           toSignSanskrit: sign.sk,
           label: aspectOffsetLabel(houseNum)
@@ -1183,7 +1255,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('.fm-h');if(!t)re
   }
   function installB(){
     var COVERED = { 'panel-overview': 1, 'panel-planets': 1, 'panel-yogas': 1, 'panel-shadbala': 1, 'panel-ashtakavarga': 1, 'panel-dasha': 1, 'panel-transit': 1 };
-    var SKIPP = { 'panel-export': 1, 'panel-contact': 1, 'panel-rectification': 1, 'panel-vargatimeline': 1, 'panel-transittimer': 1 };
+    var SKIPP = { 'panel-export': 1, 'panel-contact': 1, 'panel-rectification': 1, 'panel-vargatimeline': 1, 'panel-transittimer': 1, 'panel-lifeevents': 1 };
     XP.push(['xp_aiPrompt', 'Instructions for AI (top of file)', 'Short prompt so any AI knows how to read and analyse this export', true, null]);
     XP.push(['xp_houses', 'House-by-House Summary', 'Each house: sign, lord and where it sits, occupants, aspects received, rulerships', true, null]);
     HOME_ITEMS.forEach(function(i){

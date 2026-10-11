@@ -1,35 +1,3 @@
-  }
-  function debounce(fn, ms = 250){ let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
-  return { name: 'Vedic Astrology', version: '2.0.0', store, toast, report, safe, copy, debounce, debug: /debug/.test(location.hash) };
-})();
-
-/* global safety nets: nothing fails silently any more */
-window.addEventListener('error', (e) => {
-  if (!e.message || /ResizeObserver|Script error/i.test(e.message)) return;
-  console.error(e.error || e.message); APP.report('', e.error);
-});
-window.addEventListener('unhandledrejection', (e) => {
-  const m = String((e.reason && e.reason.message) || e.reason || '');
-  if (/Failed to fetch|NetworkError|Load failed/i.test(m)) APP.toast('Network problem — check your connection.', 'error');
-  else { console.error(e.reason); APP.report('', e.reason); }
-});
-window.addEventListener('offline', () => APP.toast('You are offline — place search needs internet.', 'error', 4500));
-window.addEventListener('online', () => APP.toast('Back online ✓', 'success', 2000));
-
-/* ============================================================================
-   ENGINE (embedded) — Sidereal Lahiri Vedic calculations
-   ============================================================================ */
-const DEG = Math.PI / 180, RAD = 180 / Math.PI, J2000 = 2451545.0;
-function normDeg(d){ d = d % 360; return d < 0 ? d + 360 : d; }
-
-function toJulianDay(year, month, day, hour, minute, second){
-  let Y = year, M = month;
-  if (M <= 2) { Y -= 1; M += 12; }
-  const A = Math.floor(Y / 100);
-  const B = 2 - A + Math.floor(A / 4);
-  const dayFrac = day + (hour + minute/60 + second/3600) / 24;
-  return Math.floor(365.25*(Y+4716)) + Math.floor(30.6001*(M+1)) + dayFrac + B - 1524.5;
-}
 
 function lahiriAyanamsa(jd){
   const ayan1900 = 22 + 27/60 + 54.33/3600;
@@ -1589,3 +1557,105 @@ const ARUDHA_HOUSE_META = {
 // house, then count the same number of houses again from the lord's house.
 // If the result would fall in the same house or the 7th from the house
 // itself (i.e. the Pada would be identical to, or in opposition to, the
+// house it represents), the CORRECTED rule (BPHS 29.4-29.5, cross-verified
+// against multiple translations) is to take the 10th house FROM THAT
+// INTERMEDIATE RESULT — i.e. add 9 signs (0-indexed), not 10.
+function calcArudhaPadaSign(houseSignIdx, ascSignIdx, planets){
+  const houseLordName = SIGNS[houseSignIdx].lord;
+  const lordSignIdx = planets[houseLordName].sign;
+  let distance = ((lordSignIdx - houseSignIdx + 12) % 12); // houses counted from the house to its lord (0-11)
+  let padaSignIdx = (lordSignIdx + distance) % 12;
+  // Check: is padaSignIdx the same as houseSignIdx (1st) or opposite (7th)?
+  const diffFromHouse = ((padaSignIdx - houseSignIdx + 12) % 12); // 0 = same sign, 6 = opposite
+  if (diffFromHouse === 0 || diffFromHouse === 6){
+    padaSignIdx = (padaSignIdx + 9) % 12; // 10th FROM the intermediate result = +9 offset
+  }
+  return padaSignIdx;
+}
+
+function calcAllArudhaPadas(chart, ascSignIdx){
+  const result = {};
+  for (const key in ARUDHA_HOUSE_META){
+    const meta = ARUDHA_HOUSE_META[key];
+    const houseSignIdx = (ascSignIdx + meta.fromHouse - 1) % 12;
+    result[key] = calcArudhaPadaSign(houseSignIdx, ascSignIdx, chart.planets);
+  }
+  return result;
+}
+
+// Sun's sidereal longitude at the most recent sunrise before birth (the anchor of Hora/Ghati/Bhava/Vighati lagnas).
+// (Earlier these used the Sun's longitude AT BIRTH, which drifts up to ~1° from the sunrise position.)
+function lastSunriseInfo(chart){
+  let sr = chart.sunriseJD; if (chart.julianDay < sr) sr -= 1;
+  return { jd: sr, sun: getSiderealLongitudeAt('Sun', sr) };
+}
+// Hora Lagna (BPHS Ch.5, cross-checked against multiple worked examples):
+// starts at the Sun's longitude at sunrise and advances 1 full sign (30°)
+// per 2.5 ghatis (= 1 hour) of elapsed time since the most recent sunrise.
+// Computed at full degree precision, then reduced to a sign.
+function calcHoraLagnaLongitude(chart){
+  let elapsedDays = chart.julianDay - chart.sunriseJD;
+  if (elapsedDays < 0) elapsedDays += 1; // birth was before today's sunrise -> measure from previous sunrise
+  const elapsedGhatis = elapsedDays * 60; // 60 ghatis in a full day
+  const degreesTravelled = (elapsedGhatis / 2.5) * 30; // 1 rashi (30°) per 2.5 ghatis
+  return normDeg(lastSunriseInfo(chart).sun + degreesTravelled);
+}
+function calcHoraLagnaSign(chart){
+  return getSignIndex(calcHoraLagnaLongitude(chart));
+}
+
+// Ghati Lagna (BPHS Ch.5): starts at the SUN'S longitude at sunrise (not the
+// Ascendant) and advances 1 full sign (30°) per ghati (24 min) elapsed since
+// the most recent sunrise.
+function calcGhatiLagnaLongitude(chart){
+  let elapsedDays = chart.julianDay - chart.sunriseJD;
+  if (elapsedDays < 0) elapsedDays += 1;
+  const elapsedGhatis = elapsedDays * 60;
+  const degreesTravelled = elapsedGhatis * 30; // 1 rashi (30°) per ghati
+  return normDeg(lastSunriseInfo(chart).sun + degreesTravelled);
+}
+function calcGhatiLagnaSign(chart){
+  return getSignIndex(calcGhatiLagnaLongitude(chart));
+}
+
+// Varnada Lagna (BPHS + cross-verified worked examples from multiple Jaimini
+// sources): for the Lagna and separately for the Hora Lagna, count signs
+// directly from Aries if the sign is odd, or in reverse from Pisces if the
+// sign is even. If both counts share the same odd/even parity, add them;
+// otherwise take their absolute difference (treating a result of 0 as 12).
+// Reduce that total to the 1-12 range, then count it out from Aries (if the
+// natal Lagna is odd) or in reverse from Pisces (if the natal Lagna is even).
+function countFromAriesOrPisces(signIdx){
+  const oneIndexed = signIdx + 1;
+  const isOdd = (oneIndexed % 2) === 1;
+  return isOdd ? oneIndexed : (12 - signIdx);
+}
+function calcVarnadaLagnaSign(ascSignIdx, horaSignIdx){
+  const nLagna = countFromAriesOrPisces(ascSignIdx);
+  const nHora = countFromAriesOrPisces(horaSignIdx);
+  const lagnaOdd = (ascSignIdx % 2) === 0; // 0-indexed even sign == 1-indexed odd sign
+  const horaOdd = (horaSignIdx % 2) === 0;
+  let result;
+  if (lagnaOdd === horaOdd){
+    result = nLagna + nHora;
+  } else {
+    result = Math.abs(nLagna - nHora);
+    if (result === 0) result = 12;
+  }
+  result = result % 12;
+  if (result === 0) result = 12;
+  return lagnaOdd ? (result - 1) % 12 : (12 - result) % 12;
+}
+
+// Indu Lagna: uses the "Kalas" assigned to the lord of the 9th house counted
+// from the Moon, and the lord of the 9th house counted from the Lagna. Their
+// Kala values are added; the sum (reduced mod 12, with 0 treated as 12) is
+// counted forward from the Moon's own sign (Moon's sign = count 1).
+const INDU_LAGNA_KALAS = { Sun:30, Moon:16, Mars:6, Mercury:8, Jupiter:10, Venus:12, Saturn:1 };
+function calcInduLagnaSign(chart, ascSignIdx){
+  const moonSignIdx = getSignIndex(chart.siderealLongitudes.Moon);
+  const ninthFromMoonSignIdx = (moonSignIdx + 8) % 12;
+  const ninthFromLagnaSignIdx = (ascSignIdx + 8) % 12;
+  const lordOfNinthFromMoon = SIGNS[ninthFromMoonSignIdx].lord;
+  const lordOfNinthFromLagna = SIGNS[ninthFromLagnaSignIdx].lord;
+  const totalKalas = (INDU_LAGNA_KALAS[lordOfNinthFromMoon] || 0) + (INDU_LAGNA_KALAS[lordOfNinthFromLagna] || 0);

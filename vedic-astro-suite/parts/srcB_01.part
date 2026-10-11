@@ -1589,3 +1589,73 @@ body.qsearch-mode-on .app-panel { cursor: crosshair; }
   transition: border-color 0.2s;
 }
 .ai-chat-input:focus { border-color: var(--gold); box-shadow: 0 0 8px rgba(212,175,55,0.2); }
+.ai-send-btn {
+  background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color: #000;
+  border: none; border-radius: var(--radius-md); padding: 12px 20px; font-weight: 600;
+  font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+}
+.ai-send-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.ai-send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+@media (max-width: 900px) {
+  .varga-grid { grid-template-columns: 1fr; }
+  .detail-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .big3-grid { grid-template-columns: 1fr; }
+  .ashtaka-grid { grid-template-columns: repeat(3, 1fr); }
+  .intake-card { padding: 32px 24px; }
+  .summary-hero { padding: 32px 24px; }
+  .summary-top { flex-direction: column; }
+  .dasha-panel, .yoga-card, .shadbala-card, .varga-card, .rel-picker, .rel-pair-card, .transit-live-card, .ashtaka-grid-wrap { padding: 24px; }
+  .dasha-strip { flex-direction: column; height: auto; border-radius: var(--radius-sm); }
+  .dasha-segment { min-height: 40px; border-right: none; border-bottom: 1px solid rgba(0,0,0,0.3); }
+  .dasha-segment-label { display: block; font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: rgba(0,0,0,0.7); }
+  .dasha-now-marker { display: none; }
+  .rel-aspect-dates { flex-direction: column; gap: 8px; align-items: flex-end; }
+  .varga-body-full { grid-template-columns: 1fr; }
+  .varga-chart-svg { max-width: 280px; margin: 0 auto; }
+  .pd-stat-grid { grid-template-columns: 1fr; }
+  .export-modal-box { max-height: 94vh; }
+  .export-modal-header, .export-modal-body, .export-modal-footer { padding-left: 24px; padding-right: 24px; }
+  .export-vargas-group { margin-left: 0; }
+  .export-coord-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .detail-grid { grid-template-columns: 1fr; }
+  .header-actions { flex-direction: column; width: 100%; align-items: stretch; }
+  .profile-select { width: 100%; }
+  .ashtaka-grid { grid-template-columns: repeat(2, 1fr); }
+  .transit-location-form .field { max-width: none; }
+  .transit-location-form button { width: 100%; }
+  .qsearch-wrap, #quickSearchBtn { width: 100%; justify-content: center; }
+  .qsearch-popover { left: 0; right: 0; width: auto; }
+  .rect-controls { grid-template-columns: 1fr; }
+  .rect-panel-card { padding: 18px 14px; }
+  .rect-intro { font-size: 13px; }
+  .section-heading { flex-wrap: wrap; }
+  .section-heading .rule { display: none; }
+  .section-heading .section-sub { white-space: normal; flex: 1 1 100%; }
+  .rect-time-dial-card { padding: 16px 10px; }
+  .hms-stepper-row { gap: 6px; flex-wrap: wrap; justify-content: center; row-gap: 12px; }
+  .hms-unit-controls { gap: 6px; }
+  .hms-btn { width: 30px; height: 30px; font-size: 12px; }
+  .hms-value { min-width: 40px; font-size: 22px; }
+  .hms-sep { font-size: 20px; padding-bottom: 14px; }
+  .rect-action-row { width: 100%; }
+  .rect-fullcalc-btn { width: 100%; text-align: center; }
+  .rect-scan-btn { white-space: normal; text-align: center; }
+  .rect-preview-badge { padding: 10px 14px; font-size: 10px; }
+  .rect-preview-badge button { width: 100%; justify-content: center; }
+  .rect-preview-body { padding: 16px; }
+  .rect-preview-big3 { grid-template-columns: 1fr; }
+  .rect-preview-dasha { gap: 10px; }
+  .rect-preview-dasha-card { min-width: 0; width: 100%; }
+  .rect-detail { padding: 14px 16px; }
+  .rect-detail-actions button { width: 100%; justify-content: center; }
+  .tt-panel-card { padding: 16px 12px; }
+  .tt-intro { font-size: 13px; }
