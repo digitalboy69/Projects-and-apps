@@ -96,6 +96,7 @@ Cross-app messages: Notepad → wrapper `postMessage('vedic-open-chart')`; wrapp
 ## 7. State & changelog (newest last; keep ≤ 25 lines, merge old ones)
 - Done: 3D sky (degree finder, returns, retrograde planner), D-charts + images (North/South/Western wheel), aspects, special lagnas, Home dashboard, Ashtakavarga, Chart Reading, Life Activation, Bhava Bala, Tithi Pravesh, 36 Tajika sahams, Fate Meter (Ashtakavarga + transits), Notepad (Jyotish Notebook), LocPicker everywhere, Export/Copy add-on, Uranus/Neptune/Pluto (3D + charts + popups + Western aspects + report), 3D Solar System view (Easy fit / True scale, Solar tab).
 - Rectification Studio (hero clock + confidence chips, 3-step rail, 6 tabs; sandhi/vt/tt panels are MOVED into panes keeping ids; Life-Event checker scores 12 lagnas by dasha lords + Jup/Sat transit, events saved in localStorage). Code in srcB part 04/05 (JS) and style block end.
+- Welcome loader (wrapper_template.html: .wel, .zring, `welHi`; greeting by time of day, min 2.4s on first start only, then `.compact`).
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 

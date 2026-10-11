@@ -34,6 +34,20 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
 .load .bar{position:relative;width:120px;height:2px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
 .load .bar::after{content:"";position:absolute;inset:0;width:40%;background:linear-gradient(90deg,transparent,#00F0D5,#7B6EF6,transparent);animation:slide 1.3s ease-in-out infinite}
 @keyframes slide{from{transform:translateX(-100%)}to{transform:translateX(300%)}}
+/* welcome screen */
+.load{gap:22px}
+.zring{position:absolute;inset:-46px;border-radius:50%;animation:spin 90s linear infinite;pointer-events:none}
+.zring s{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px;text-decoration:none;text-align:center;font:14px/20px system-ui,"Segoe UI Symbol",sans-serif;color:#D4AF37;opacity:0;animation:zin .6s ease forwards}
+@keyframes zin{to{opacity:.8}}
+.wel{position:relative;text-align:center;margin-top:38px;animation:welUp .9s .15s cubic-bezier(.2,.8,.3,1) both}
+.wel-hi{font:600 clamp(28px,7vw,44px)/1.1 Georgia,"Times New Roman",serif;background:linear-gradient(90deg,#F9D976,#fff 50%,#9fe9df);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 40px rgba(212,175,55,.25)}
+.pray{font-size:30px;margin-bottom:6px;display:block;animation:wave 2.4s ease-in-out infinite}
+@keyframes wave{50%{transform:translateY(-3px) rotate(-6deg)}}
+.wel-sub{margin-top:10px;font:300 clamp(13px,3.4vw,16px)/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.06em;color:#b9c3d9;min-height:1.4em;transition:opacity .4s}
+@keyframes welUp{from{opacity:0;transform:translateY(14px)}}
+.load.hide .wel{transform:translateY(-8px);transition:transform .6s}
+.load.compact .wel{display:none}
+@media (prefers-reduced-motion:reduce){.zring,.wel,.zring s{animation:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.load::before,.orb b,.orb em,.load .bar::after,.load span{animation:none}}
 /* developer card overlay (its own document, does not touch the current view) */
 #devFrame{position:fixed;inset:0;width:100%;height:100%;border:0;background:transparent;z-index:40;display:none;color-scheme:normal}
@@ -62,7 +76,7 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
 </head>
 <body>
 <div class="shell">
-  <div class="stage" id="stage"><div class="load" id="load"><div class="orb"><i class="o1"></i><i class="o2"></i><i class="o3"></i><b class="p1"></b><b class="p2"></b><b class="p3"></b><em></em></div><h1>VEDIC ASTRO SUITE</h1><span id="loadTxt">LOADING…</span><div class="bar"></div></div></div>
+  <div class="stage" id="stage"><div class="load" id="load"><div class="orb"><div class="zring" id="zring"></div><i class="o1"></i><i class="o2"></i><i class="o3"></i><b class="p1"></b><b class="p2"></b><b class="p3"></b><em></em></div><div class="wel" id="wel"><div class="pray">🙏</div><div class="wel-hi" id="welHi">Namaste 🙏</div><div class="wel-sub" id="welSub">Welcome to your sky</div></div><h1>VEDIC ASTRO SUITE</h1><span id="loadTxt">LOADING…</span><div class="bar"></div></div></div>
 </div>
 <div class="sw-back" id="swBack"></div>
 <div class="sw" id="sw" data-x="r" data-y="t">
@@ -18616,6 +18630,17 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
   const stage = document.getElementById('stage'), load = document.getElementById('load'), txt = document.getElementById('loadTxt');
   const NAME = { A:'3D Sky', B:'Birth Chart', N:'Notepad' }, frames = {};
   const decode = id => document.getElementById(id).textContent.replace(/<\\\/script/gi,'</script').replace(/<\\!--/g,'<!--').replace(/^\n/,'');
+
+  /* welcome greeting (first start only) */
+  const T0 = performance.now(); let firstDone = false;
+  (function(){
+    const hr = new Date().getHours(), g = hr < 5 ? 'Shubh Ratri' : hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : hr < 21 ? 'Good evening' : 'Shubh Ratri';
+    document.getElementById('welHi').textContent = 'Namaste, ' + g.toLowerCase();
+    const z = document.getElementById('zring'), G = '\u2648\u2649\u264A\u264B\u264C\u264D\u264E\u264F\u2650\u2651\u2652\u2653';
+    for (let i = 0; i < 12; i++){ const e = document.createElement('s'); e.textContent = G[i] + '\uFE0E'; e.style.transform = 'rotate(' + i*30 + 'deg) translateY(-86px) rotate(' + (-i*30) + 'deg)'; e.style.animationDelay = (0.2 + i*0.07) + 's'; z.appendChild(e); }
+    const L = ['Welcome to your sky', 'Charts, planets and time, in one place', 'Preparing the heavens\u2026', 'Aligning the planets\u2026'], sub = document.getElementById('welSub'); let k = 0;
+    const t = setInterval(()=>{ if (firstDone){ clearInterval(t); return; } sub.style.opacity = 0; setTimeout(()=>{ k = (k+1) % L.length; sub.textContent = L[k]; sub.style.opacity = 1; }, 380); }, 1700);
+  })();
   function mount(k){
     if (frames[k]) return frames[k];
     load.classList.remove('hide'); txt.textContent = 'LOADING ' + NAME[k].toUpperCase() + '…';
@@ -18623,7 +18648,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
     f.addEventListener('load', ()=>{
       try{ f.contentWindow.dispatchEvent(new Event('resize')); }catch(e){}
       /* one loader only: stay until the inner app has finished its own start-up (max 9s) */
-      let n = 0; const done = ()=>{ if (cur === k) load.classList.add('hide'); };
+      let n = 0; const done = ()=>{ if (cur !== k) return; const wait0 = firstDone ? 0 : Math.max(0, 2400 - (performance.now() - T0)); setTimeout(()=>{ if (cur === k){ load.classList.add('hide'); firstDone = true; setTimeout(()=>load.classList.add('compact'), 800); } }, wait0); };
       (function wait(){ let ready = true; try{ const m = f.contentDocument.getElementById('loadingMask'); ready = !m || m.classList.contains('hide'); }catch(e){}
         if (ready || ++n > 90) done(); else setTimeout(wait, 100); })();
     });
