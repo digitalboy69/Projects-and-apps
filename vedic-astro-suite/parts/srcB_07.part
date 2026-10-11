@@ -1,32 +1,3 @@
-    if (v===5.5) opt.selected = true;
-    sel.appendChild(opt);
-  });
-}
-
-function buildInteractiveVargaSvg(vdata, meta, style, aspectData){
-  if (style === "north") {
-    return buildNorthIndianSvg(vdata, aspectData);
-  } else if (style === "west") {
-    return buildWesternWheelSvg(vdata, aspectData);
-  } else {
-    return buildSouthIndianSvg(vdata, aspectData);
-  }
-}
-
-/* ============================================================================
-   PLANETARY ASPECTS (DRISHTI) FOR ANY DIVISIONAL CHART
-   ============================================================================
-   For a given varga chart, works out — for every planet — which house/sign it
-   sits in, which planets/houses/signs it aspects (drishti), and contextual
-   info (nakshatra, pada, degree) sourced from the real (D1) sidereal
-   longitude, since nakshatra is always reckoned from the true longitude
-   regardless of which divisional chart is being viewed.
-*/
-function computeVargaAspects(chart, vdata){
-  const ascSign = vdata.ascendantSign;
-  const houseOfSign = {}; // signIdx -> house number in this varga
-  for (let h=1; h<=12; h++){
-    houseOfSign[(ascSign + h - 1) % 12] = h;
   }
 
   // Build planet -> {sign, house} for this varga
@@ -357,6 +328,7 @@ function renderProfileCards(){
       <span class="prof-av" style="background:${col}">${escapeHtml((p.name||'?').trim().charAt(0).toUpperCase())}</span>
       <span class="prof-info"><b>${escapeHtml(p.name||'Unnamed')}${String(i)===cur?'<span class="prof-badge">Active</span>':''}</b>
       <small>${formatDateHuman(p.dob)} · ${p.tob||''}${place?' · '+escapeHtml(place):''}</small></span>
+      <button type="button" class="prof-edit" data-prof-edit="${i}" title="Edit birth date &amp; time" aria-label="Edit birth date and time">✏️</button>
       <button type="button" class="prof-del" data-prof-del="${i}" title="Delete profile" aria-label="Delete profile">🗑️</button>
     </div>`;
   }).join('');
@@ -364,11 +336,44 @@ function renderProfileCards(){
 document.getElementById('profileCards').addEventListener('click',(e)=>{
   const sel=document.getElementById('profileSelect');
   const del=e.target.closest('[data-prof-del]');
+  const ed=e.target.closest('[data-prof-edit]');
+  if(ed){ e.stopPropagation(); openProfEdit(+ed.dataset.profEdit); return; }
   if(del){ e.stopPropagation(); sel.value=del.dataset.profDel; document.getElementById('deleteProfileBtn').click(); return; }
   const card=e.target.closest('[data-prof]');
   if(card){ sel.value=card.dataset.prof; sel.dispatchEvent(new Event('change')); }
 });
 (function(){ const orig=refreshProfileSelect; refreshProfileSelect=function(){ orig.apply(this,arguments); renderProfileCards(); }; })();
+
+/* ---- Edit a saved profile's name / birth date / birth time (menu -> profile card -> ✏️) ---- */
+function openProfEdit(idx){
+  const list=loadProfiles(), p=list[idx]; if(!p) return;
+  let m=document.getElementById('profEditModal');
+  if(!m){
+    m=document.createElement('div'); m.className='modal-overlay'; m.id='profEditModal';
+    m.innerHTML='<div class="modal-box pe-box"><h4>✏️ Edit birth details</h4>'
+      +'<label class="pe-l">Name<input type="text" id="peName" maxlength="60"></label>'
+      +'<label class="pe-l">Date of birth<input type="date" id="peDob"></label>'
+      +'<label class="pe-l">Time of birth<input type="time" id="peTob" step="60"></label>'
+      +'<p class="pe-note">Place stays the same. To change the place, create a new profile. The chart is recalculated when you save.</p>'
+      +'<div class="pe-err" id="peErr" hidden></div>'
+      +'<div class="modal-actions"><button type="button" class="btn btn-ghost btn-sm" id="peCancel">Cancel</button><button type="button" class="btn btn-primary btn-sm" id="peSave">Save &amp; recalculate</button></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('show'); });
+    m.querySelector('#peCancel').addEventListener('click',()=>m.classList.remove('show'));
+    m.querySelector('#peSave').addEventListener('click',()=>{
+      const i=+m.dataset.idx, L=loadProfiles(), q=L[i]; if(!q) return;
+      const nm=m.querySelector('#peName').value.trim(), d=m.querySelector('#peDob').value, t=m.querySelector('#peTob').value, er=m.querySelector('#peErr');
+      if(!nm||!d||!t){ er.textContent='Please fill in the name, date and time.'; er.hidden=false; return; }
+      q.name=nm; q.dob=d; q.tob=t; L[i]=q; saveProfiles(L); m.classList.remove('show');
+      refreshProfileSelect();
+      const sel=document.getElementById('profileSelect'); sel.value=String(i); sel.dispatchEvent(new Event('change'));
+    });
+  }
+  m.dataset.idx=idx;
+  m.querySelector('#peName').value=p.name||''; m.querySelector('#peDob').value=p.dob||''; m.querySelector('#peTob').value=(p.tob||'').slice(0,5);
+  m.querySelector('#peErr').hidden=true;
+  m.classList.add('show');
+}
 document.getElementById('openMenuBtn').addEventListener('click', renderProfileCards);
 /* ---- META: error boundaries around every panel builder ---- */
 const SAFE_BUILDERS = {
@@ -466,6 +471,8 @@ function inBuildFriendly(){
     const h24 = (h % 12) + (ap.ap === 'PM' ? 12 : 0);
     tob.value = `${String(h24).padStart(2,'0')}:${String(+m2).padStart(2,'0')}`; fire(tob);
   }
+  // the native 'input' event bubbles to the form and re-syncs the controls from the OLD hidden values (undoing the pick) -> stop it
+  ['inDay','inMon','inYear','inHr','inMin'].forEach(i=> $(i).addEventListener('input', e=>e.stopPropagation()));
   ['inDay','inMon','inYear'].forEach(i=> $(i).addEventListener('change', pushDate));
   ['inHr','inMin'].forEach(i=> $(i).addEventListener('change', ()=>{ $('inGuess').hidden = true; $('inChips').querySelectorAll('.on').forEach(b=>b.classList.remove('on')); pushTime(); }));
   $('inAp').addEventListener('click', e=>{ const b = e.target.closest('[data-ap]'); if (!b) return; $('inAp').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x===b)); $('inGuess').hidden = true; pushTime(); });

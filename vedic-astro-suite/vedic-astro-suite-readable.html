@@ -8180,6 +8180,13 @@ body.app-mode main.wrap{padding-left:14px;padding-right:14px}
 .prof-info b{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--text-main)}
 .prof-info small{display:block;font:11px var(--font-mono);color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .prof-badge{font:600 9px var(--font-sans);letter-spacing:.08em;text-transform:uppercase;background:var(--gold);color:#111;border-radius:999px;padding:2px 7px}
+.prof-edit{background:transparent;border:none;cursor:pointer;font-size:15px;opacity:.6;padding:6px;border-radius:8px}
+.prof-edit:hover{opacity:1;background:rgba(212,175,55,.15)}
+.pe-box{max-width:380px;width:100%;display:flex;flex-direction:column;gap:12px}
+.pe-l{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--text-dim,#aaa);text-align:left}
+.pe-l input{padding:11px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:inherit;font-size:16px;font-family:inherit}
+.pe-note{font-size:12px;opacity:.7;margin:0;text-align:left}
+.pe-err{color:#ff8a8a;font-size:13px;text-align:left}
 .prof-del{background:transparent;border:none;cursor:pointer;font-size:16px;opacity:.55;padding:6px;border-radius:8px}
 .prof-del:hover{opacity:1;background:rgba(201,80,80,.15)}
 .prof-empty{text-align:center;color:var(--text-muted);font-size:13px;padding:18px;border:1px dashed var(--border-light);border-radius:14px;line-height:1.5}
@@ -17147,6 +17154,7 @@ function renderProfileCards(){
       <span class="prof-av" style="background:${col}">${escapeHtml((p.name||'?').trim().charAt(0).toUpperCase())}</span>
       <span class="prof-info"><b>${escapeHtml(p.name||'Unnamed')}${String(i)===cur?'<span class="prof-badge">Active</span>':''}</b>
       <small>${formatDateHuman(p.dob)} · ${p.tob||''}${place?' · '+escapeHtml(place):''}</small></span>
+      <button type="button" class="prof-edit" data-prof-edit="${i}" title="Edit birth date &amp; time" aria-label="Edit birth date and time">✏️</button>
       <button type="button" class="prof-del" data-prof-del="${i}" title="Delete profile" aria-label="Delete profile">🗑️</button>
     </div>`;
   }).join('');
@@ -17154,11 +17162,44 @@ function renderProfileCards(){
 document.getElementById('profileCards').addEventListener('click',(e)=>{
   const sel=document.getElementById('profileSelect');
   const del=e.target.closest('[data-prof-del]');
+  const ed=e.target.closest('[data-prof-edit]');
+  if(ed){ e.stopPropagation(); openProfEdit(+ed.dataset.profEdit); return; }
   if(del){ e.stopPropagation(); sel.value=del.dataset.profDel; document.getElementById('deleteProfileBtn').click(); return; }
   const card=e.target.closest('[data-prof]');
   if(card){ sel.value=card.dataset.prof; sel.dispatchEvent(new Event('change')); }
 });
 (function(){ const orig=refreshProfileSelect; refreshProfileSelect=function(){ orig.apply(this,arguments); renderProfileCards(); }; })();
+
+/* ---- Edit a saved profile's name / birth date / birth time (menu -> profile card -> ✏️) ---- */
+function openProfEdit(idx){
+  const list=loadProfiles(), p=list[idx]; if(!p) return;
+  let m=document.getElementById('profEditModal');
+  if(!m){
+    m=document.createElement('div'); m.className='modal-overlay'; m.id='profEditModal';
+    m.innerHTML='<div class="modal-box pe-box"><h4>✏️ Edit birth details</h4>'
+      +'<label class="pe-l">Name<input type="text" id="peName" maxlength="60"></label>'
+      +'<label class="pe-l">Date of birth<input type="date" id="peDob"></label>'
+      +'<label class="pe-l">Time of birth<input type="time" id="peTob" step="60"></label>'
+      +'<p class="pe-note">Place stays the same. To change the place, create a new profile. The chart is recalculated when you save.</p>'
+      +'<div class="pe-err" id="peErr" hidden></div>'
+      +'<div class="modal-actions"><button type="button" class="btn btn-ghost btn-sm" id="peCancel">Cancel</button><button type="button" class="btn btn-primary btn-sm" id="peSave">Save &amp; recalculate</button></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('show'); });
+    m.querySelector('#peCancel').addEventListener('click',()=>m.classList.remove('show'));
+    m.querySelector('#peSave').addEventListener('click',()=>{
+      const i=+m.dataset.idx, L=loadProfiles(), q=L[i]; if(!q) return;
+      const nm=m.querySelector('#peName').value.trim(), d=m.querySelector('#peDob').value, t=m.querySelector('#peTob').value, er=m.querySelector('#peErr');
+      if(!nm||!d||!t){ er.textContent='Please fill in the name, date and time.'; er.hidden=false; return; }
+      q.name=nm; q.dob=d; q.tob=t; L[i]=q; saveProfiles(L); m.classList.remove('show');
+      refreshProfileSelect();
+      const sel=document.getElementById('profileSelect'); sel.value=String(i); sel.dispatchEvent(new Event('change'));
+    });
+  }
+  m.dataset.idx=idx;
+  m.querySelector('#peName').value=p.name||''; m.querySelector('#peDob').value=p.dob||''; m.querySelector('#peTob').value=(p.tob||'').slice(0,5);
+  m.querySelector('#peErr').hidden=true;
+  m.classList.add('show');
+}
 document.getElementById('openMenuBtn').addEventListener('click', renderProfileCards);
 /* ---- META: error boundaries around every panel builder ---- */
 const SAFE_BUILDERS = {
@@ -17256,6 +17297,8 @@ function inBuildFriendly(){
     const h24 = (h % 12) + (ap.ap === 'PM' ? 12 : 0);
     tob.value = `${String(h24).padStart(2,'0')}:${String(+m2).padStart(2,'0')}`; fire(tob);
   }
+  // the native 'input' event bubbles to the form and re-syncs the controls from the OLD hidden values (undoing the pick) -> stop it
+  ['inDay','inMon','inYear','inHr','inMin'].forEach(i=> $(i).addEventListener('input', e=>e.stopPropagation()));
   ['inDay','inMon','inYear'].forEach(i=> $(i).addEventListener('change', pushDate));
   ['inHr','inMin'].forEach(i=> $(i).addEventListener('change', ()=>{ $('inGuess').hidden = true; $('inChips').querySelectorAll('.on').forEach(b=>b.classList.remove('on')); pushTime(); }));
   $('inAp').addEventListener('click', e=>{ const b = e.target.closest('[data-ap]'); if (!b) return; $('inAp').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x===b)); $('inGuess').hidden = true; pushTime(); });

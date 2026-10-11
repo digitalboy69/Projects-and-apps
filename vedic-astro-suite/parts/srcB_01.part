@@ -1743,3 +1743,9 @@ body.app-mode main.wrap{padding-left:14px;padding-right:14px}
 .dx-nav{background:transparent;border:1px solid var(--border-light);color:var(--gold-bright);border-radius:999px;padding:8px 12px;font:600 12px var(--font-sans);cursor:pointer;white-space:nowrap;flex:none}
 .dx-nav:disabled{opacity:.25;cursor:default}
 .dx-hint{font-size:12px;color:var(--text-subtle);margin:0 0 10px}
+.dx-list,.dx-children{display:grid;gap:8px}
+.dx-children{margin:8px 0 2px 14px;padding-left:12px;border-left:2px solid var(--border-light)}
+.dx-children[hidden]{display:none}
+.dx-row{background:rgba(255,255,255,.025);border:1px solid var(--border-subtle);border-radius:12px;overflow:hidden;padding-bottom:0}
+.dx-row.now{border-color:var(--gold);background:rgba(212,175,55,.07)}
+.dx-row.past{opacity:.6}

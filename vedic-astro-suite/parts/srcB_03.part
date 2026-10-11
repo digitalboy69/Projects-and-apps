@@ -1,8 +1,3 @@
-  const node = normDeg(elements.node + elements.nodeRate*T)*DEG;
-  const M = L - peri;
-  const E = solveKepler(normDeg(M*RAD)*DEG, e);
-  const xv = a*(Math.cos(E)-e);
-  const yv = a*(Math.sqrt(1-e*e)*Math.sin(E));
   const v = Math.atan2(yv,xv);
   const r = Math.sqrt(xv*xv+yv*yv);
   const omega = peri - node;
@@ -1743,3 +1738,14 @@ function computeAllSpecialLagnaSigns(chart){
     UL: arudhaPadas.UL,
     HL: horaSignIdx,
     GL: calcGhatiLagnaSign(chart),
+    BL: calcBhavaLagnaSign(chart),
+    VGL: calcVighatiLagnaSign(chart),
+    VL: calcVarnadaLagnaSign(ascSignIdx, horaSignIdx),
+    INDU: calcInduLagnaSign(chart, ascSignIdx),
+    SL: calcShreeLagnaSign(chart),
+    PRANAPADA: calcPranapadaLagnaSign(chart),
+    SWAMSHA: calcSwamshaLagnaSign(chart),
+    PADANADHAMSA: calcPadanadhamsaLagnaSign(chart, arudhaPadas.AL),
+    BB: calcBhriguBinduSign(chart),
+    PAKA: calcPakaLagnaSign(chart, ascSignIdx),
+    CHANDRA: getSignIndex(chart.siderealLongitudes.Moon),

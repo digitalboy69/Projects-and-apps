@@ -1,14 +1,3 @@
-    BL: calcBhavaLagnaSign(chart),
-    VGL: calcVighatiLagnaSign(chart),
-    VL: calcVarnadaLagnaSign(ascSignIdx, horaSignIdx),
-    INDU: calcInduLagnaSign(chart, ascSignIdx),
-    SL: calcShreeLagnaSign(chart),
-    PRANAPADA: calcPranapadaLagnaSign(chart),
-    SWAMSHA: calcSwamshaLagnaSign(chart),
-    PADANADHAMSA: calcPadanadhamsaLagnaSign(chart, arudhaPadas.AL),
-    BB: calcBhriguBinduSign(chart),
-    PAKA: calcPakaLagnaSign(chart, ascSignIdx),
-    CHANDRA: getSignIndex(chart.siderealLongitudes.Moon),
     SURYA: getSignIndex(chart.siderealLongitudes.Sun),
     A2: arudhaPadas.A2, A3: arudhaPadas.A3, A4: arudhaPadas.A4, A5: arudhaPadas.A5,
     A6: arudhaPadas.A6, A8: arudhaPadas.A8, A9: arudhaPadas.A9, A10: arudhaPadas.A10, A11: arudhaPadas.A11
@@ -1743,3 +1732,20 @@ const SRCH_TOPICS = [
   ['How I learn best','Give 8 specific, checkable learning habits: best time of day, format, memory style, subjects I struggle with, how I react to exams.'],
   ['Exam & degree timing','List the best years/windows for exams, admissions or a new course.'],
   ['Study abroad chance','Give a direct verdict on studying abroad, best regions, and best timing.']]},
+ {id:'health',ico:'🩺',t:'Health & vitality',kw:'disease illness body fitness immunity',h:[1,6],s:[8,12],k:['Sun','Moon','Mars'],ck:'Atmakaraka',v:'D30',ar:['A6'],subs:[
+  ['Strong & sensitive areas','List my body areas from strongest to most sensitive, one line each (traditional astrology, not medical advice).'],
+  ['Habits that suit me','List 8 daily habits, foods and exercise types that suit me.'],
+  ['Care periods','List the periods that need extra care and the periods of strong vitality (balanced, non-fearful).'],
+  ['Stress & sleep','Give 5 tips for my stress and sleep pattern.']]},
+ {id:'mind',ico:'🧠',t:'Mind & emotional peace',kw:'stress anxiety depression mood happiness',h:[4,1],s:[5,12],k:['Moon','Mercury'],ck:'Atmakaraka',v:'D1',ar:[],subs:[
+  ['My stress triggers','List 8 very specific situations that spike my stress (types of people, settings, deadlines, noise, money, health) that I can verify from my own past.'],
+  ['Mood pattern','Give 8 specific, checkable mood patterns: times of day/month/year I dip or peak, what triggers a swing, how long it lasts, what I do when low.'],
+  ['Habits for peace','List 8 daily practices that bring me peace.'],
+  ['Best calming practices','Rank 8 practices (meditation, music, nature, prayer, exercise...) by how well they suit me.']]},
+ {id:'longevity',ico:'⏳',t:'Resilience & sudden changes',kw:'life span accidents surgery transformation 8th house',h:[8,1],s:[3,6,12],k:['Saturn'],ck:'Atmakaraka',v:'D30',ar:['A8'],subs:[
+  ['Sudden-change areas','List the life areas where sudden change is most likely, ranked, with a calm tone.'],
+  ['Sensitive periods','List the next 3 sensitive periods and how to handle each (balanced, no fear).'],
+  ['Protective habits','List 6 habits that protect me.']]},
+ {id:'father',ico:'👨',t:'Father & mentors',kw:'dad guru teacher blessings',h:[9],s:[10,3],k:['Sun','Jupiter'],ck:'',v:'D12',ar:['A9'],subs:[
+  ['Bond with father','Give 8 specific, checkable facts about my relationship with my father: closeness/distance phases with ages, conflict style, how he shaped my career, health or support issues.'],
+  ['Father\'s nature & work','Describe my father\'s likely nature and 5 likely professions.'],

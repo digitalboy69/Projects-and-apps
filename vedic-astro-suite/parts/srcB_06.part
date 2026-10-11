@@ -1,26 +1,3 @@
-  // cycles
-  const cyc = T.sadeSati.map((c, i) => {
-    const st = trStatus(c.start, c.end, now), s0 = c.start === null ? birth - 3 * 365.25 : c.start, e0 = c.end === null ? birth + 100 * 365.25 : c.end, tot = e0 - s0;
-    const segs = c.phases.map(p => { const a = p.start === null ? s0 : p.start, b = p.end === null ? e0 : p.end; return `<div class="tr-seg" style="flex:${Math.max(0.01, b - a)};background:${TR_COL[p.rel]}"><span>${TR_PHASE[p.rel]}</span></div>`; }).join('');
-    const nowMark = st === 'now' ? `<u style="left:${Math.max(0, Math.min(100, (now - s0) / tot * 100)).toFixed(1)}%"></u>` : '';
-    const rows = c.phases.map(p => `<div class="tr-ph" style="--pc:${TR_COL[p.rel]}"><i></i><b>${TR_PHASE[p.rel]}</b><span>${SIGNS[p.sign].symbol} ${SIGNS[p.sign].name} · ${dt(p.start)} → ${p.end === null ? 'beyond 100 yrs' : dt(p.end)}</span></div>`).join('');
-    const ages = `${c.start === null ? 'began before birth' : 'Age ' + Math.max(0, age(c.start)).toFixed(0)}${c.end === null ? '' : ' – ' + age(c.end).toFixed(0)}`;
-    return `<div class="tr-cyc ${st}"><div class="tr-cyc-h"><b>Cycle ${i + 1}</b><span>${ages}</span>${trPill(st)}</div>
-      <div class="tr-cbar">${segs}${nowMark}</div><div class="tr-phs">${rows}</div></div>`;
-  }).join('') || '<div class="pl-empty">No Sade Sati cycle found in this period.</div>';
-
-  const dhRows = (arr, label, col) => arr.map(c => { const st = trStatus(c.start, c.end, now); return `<div class="dx-row ${st}"><div class="dx-row-h" style="cursor:default"><span class="dx-dot" style="background:${col}">♄</span><span class="dx-row-main"><b>${label}</b><small>${dt(c.start)} → ${c.end === null ? '—' : dt(c.end)}</small></span><span class="dx-row-side"><span class="dx-age">Age ${c.start === null ? '0' : Math.max(0, age(c.start)).toFixed(0)}–${c.end === null ? '—' : age(c.end).toFixed(0)}</span>${trPill(st)}</span></div></div>`; }).join('');
-
-  // ingress tables
-  const tabs = ['Saturn', 'Jupiter', 'Rahu', 'Ketu'];
-  const lists = tabs.map((n, ti) => {
-    const arr = T.stays[n].filter(s => s.end === null || s.end > birth);
-    const idxNow = arr.findIndex(s => trStatus(s.start, s.end, now) === 'now');
-    const rows = arr.map((s, i) => {
-      const st = trStatus(s.start, s.end, now), prev = arr[i - 1];
-      const retro = (n === 'Saturn' || n === 'Jupiter') && prev && prev.sign === (s.sign + 1) % 12;
-      const hidden = idxNow >= 0 && (i < idxNow - 2 || i > idxNow + 7) ? ' tr-more' : '';
-      return `<div class="dx-row ${st}${hidden}"><div class="dx-row-h" style="cursor:default"><span class="dx-dot" style="background:${DASHA_PLANET_COLORS[n]}">${SIGNS[s.sign].symbol}</span>
         <span class="dx-row-main"><b>${SIGNS[s.sign].name}${retro ? ' <em class="tr-retro">↺ retrograde return</em>' : ''}</b><small>${dt(s.start)} → ${s.end === null ? '—' : dt(s.end)}</small></span>
         <span class="dx-row-side"><span class="dx-age">H${hL(s.sign)} Lagna · H${hM(s.sign)} Moon</span>${trPill(st)}</span></div></div>`;
     }).join('');
@@ -1743,3 +1720,32 @@ function populateTzSelect(sel){
   TZ_OPTIONS.forEach(v=>{
     const opt = document.createElement('option');
     opt.value = v; opt.textContent = fmtTz(v);
+    if (v===5.5) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function buildInteractiveVargaSvg(vdata, meta, style, aspectData){
+  if (style === "north") {
+    return buildNorthIndianSvg(vdata, aspectData);
+  } else if (style === "west") {
+    return buildWesternWheelSvg(vdata, aspectData);
+  } else {
+    return buildSouthIndianSvg(vdata, aspectData);
+  }
+}
+
+/* ============================================================================
+   PLANETARY ASPECTS (DRISHTI) FOR ANY DIVISIONAL CHART
+   ============================================================================
+   For a given varga chart, works out — for every planet — which house/sign it
+   sits in, which planets/houses/signs it aspects (drishti), and contextual
+   info (nakshatra, pada, degree) sourced from the real (D1) sidereal
+   longitude, since nakshatra is always reckoned from the true longitude
+   regardless of which divisional chart is being viewed.
+*/
+function computeVargaAspects(chart, vdata){
+  const ascSign = vdata.ascendantSign;
+  const houseOfSign = {}; // signIdx -> house number in this varga
+  for (let h=1; h<=12; h++){
+    houseOfSign[(ascSign + h - 1) % 12] = h;
