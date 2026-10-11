@@ -31944,7 +31944,18 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
       /* one loader only: stay until the inner app has finished its own start-up (max 9s) */
       let n = 0; const done = ()=>{ if (cur !== k) return; const wait0 = firstDone ? 0 : Math.max(0, 2400 - (performance.now() - T0)); setTimeout(()=>{ if (cur === k){ load.classList.add('hide'); firstDone = true; setTimeout(()=>load.classList.add('compact'), 800); } }, wait0); };
       (function wait(){ let ready = true; try{ const m = f.contentDocument.getElementById('loadingMask'); ready = !m || m.classList.contains('hide'); }catch(e){}
-        if (ready || ++n > 90) done(); else setTimeout(wait, 100); })();
+        if (ready || ++n > 90) settle(); else setTimeout(wait, 100); })();
+      /* keep the loader up until the heavy scene is rendering smoothly (10 quick frames in a row, max 6s) */
+      function settle(){
+        if (k !== 'A'){ done(); return; }
+        txt.textContent = 'WARMING UP THE SKY\u2026';
+        let good = 0, last = 0; const t0 = performance.now(); let w; try{ w = f.contentWindow; }catch(e){ done(); return; }
+        (function f1(ts){
+          if (cur !== k){ done(); return; }
+          if (last){ good = (ts - last) < 45 ? good + 1 : 0; } last = ts;
+          if (good >= 10 || performance.now() - t0 > 6000) done(); else w.requestAnimationFrame(f1);
+        })(0);
+      }
     });
     f.srcdoc = decode('src' + k); stage.appendChild(f); frames[k] = f; return f;
   }
