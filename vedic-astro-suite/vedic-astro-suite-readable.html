@@ -31839,15 +31839,40 @@ a:hover,button:hover{transform:translateY(-2px);filter:brightness(1.1)}
 a:focus-visible,button:focus-visible{outline:2px solid #D4AF37;outline-offset:3px}
 body{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* ===== awe layer ===== */
+.dc-stars{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.dc-stars b{position:absolute;width:var(--s);height:var(--s);border-radius:50%;background:#fff;opacity:.15;animation:dcTw var(--d) ease-in-out infinite;animation-delay:var(--l);box-shadow:0 0 6px rgba(255,236,170,.8)}
+@keyframes dcTw{50%{opacity:.95;transform:scale(1.6)}}
+.modal-overlay{perspective:1000px;background:radial-gradient(70% 60% at 50% 30%,rgba(60,44,100,.55),rgba(3,4,10,.94))!important}
+.modal-overlay.show .dev-card{animation:dcPop .7s cubic-bezier(.2,.9,.3,1.15) backwards!important;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .18s ease-out;will-change:transform}
+.contact-modal-box.dev-card{box-shadow:0 0 0 1px rgba(212,175,55,.5),0 30px 90px rgba(0,0,0,.8),0 0 80px rgba(212,175,55,.18),0 0 140px rgba(138,111,184,.12)!important}
+.dev-card::after{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;background:conic-gradient(from var(--ang,0deg),transparent 0 70%,rgba(249,217,118,.9) 85%,transparent);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:dcAng 5s linear infinite}
+@property --ang{syntax:'<angle>';initial-value:0deg;inherits:false}
+@keyframes dcAng{to{--ang:360deg}}
+.dc-avatar{width:104px;height:104px;margin:14px auto 40px;cursor:pointer}
+.contact-modal-box.dev-card{background-color:#0d1020!important}
+.dc-avatar::before{content:'';position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,rgba(249,217,118,.35),transparent 68%);animation:dcPulse 3s ease-in-out infinite}
+@keyframes dcPulse{50%{transform:scale(1.18);opacity:.6}}
+.dc-orbit{position:absolute;inset:-22px;animation:dcSpin 40s linear infinite;pointer-events:none}
+.dc-orbit span{position:absolute;left:50%;top:50%;font-size:13px;color:var(--gold-bright);opacity:.8;text-shadow:0 0 8px rgba(249,217,118,.7);transform:rotate(var(--a)) translateY(-72px) rotate(calc(var(--a) * -1))}
+.dc-initials{width:88px;height:88px;font-size:30px}
+.dc-status{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:5px 12px;border-radius:99px;font-size:11.5px;color:#aef3e6;background:rgba(66,135,126,.18);border:1px solid rgba(94,196,183,.35)}
+.dc-status i{width:8px;height:8px;border-radius:50%;background:#5EC4B7;box-shadow:0 0 0 0 rgba(94,196,183,.7);animation:dcPing 1.8s infinite}
+@keyframes dcPing{70%{box-shadow:0 0 0 9px rgba(94,196,183,0)}100%{box-shadow:0 0 0 0 rgba(94,196,183,0)}}
+.dc-role{min-height:1.3em}.dc-role::after{content:'|';margin-left:2px;animation:dcBl 1s steps(1) infinite;color:var(--gold-bright)}
+@keyframes dcBl{50%{opacity:0}}
+.dc-topics a{background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.03))!important;backdrop-filter:blur(6px)}
+.dc-spark{position:absolute;pointer-events:none;z-index:5;font-size:14px;animation:dcSp .9s ease-out forwards}
+@keyframes dcSp{to{transform:translate(var(--x),var(--y)) scale(.3) rotate(240deg);opacity:0}}
 </style></head><body>
-<div class="modal-overlay show" id="contactModal">
+<div class="modal-overlay show" id="contactModal"><div class="dc-stars" id="dcStars"></div>
   <div class="contact-modal-box dev-card">
     <button type="button" class="pd-modal-close" id="contactModalClose">✕</button>
     <div class="dc-orbs"><i></i><i></i><i></i></div>
     <div class="dc-hero">
-      <div class="dc-avatar dc-in" style="--i:0"><span class="dc-ring"></span><span class="dc-initials">MY</span><em class="dc-badge">✓</em></div>
+      <div class="dc-avatar dc-in" style="--i:0"><span class="dc-orbit"></span><span class="dc-ring"></span><span class="dc-initials">MY</span><em class="dc-badge">✓</em></div>
       <div class="dc-name dc-in" style="--i:1">Madhu Yadav</div>
-      <div class="dc-role dc-in" style="--i:2">Creator · Developer · Jyotish Enthusiast</div>
+      <div class="dc-role dc-in" style="--i:2" id="dcRole">Creator</div><div class="dc-status dc-in" style="--i:2"><i></i>Open to ideas &amp; feedback</div>
       <p class="dc-bio dc-in" style="--i:3">I built this app with love for Vedic astrology. Found a bug or have a big idea? I read every message.</p>
     </div>
     <div class="dc-label dc-in" style="--i:4">What can I help with?</div>
@@ -31875,6 +31900,19 @@ function copyDevNumber(btn){
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(n).then(done,done);
   else{const a=document.createElement('textarea');a.value=n;document.body.appendChild(a);a.select();try{document.execCommand('copy');}catch(e){}a.remove();done();}
 }
+
+(function(){
+  const st=document.getElementById('dcStars');for(let i=0;i<70;i++){const b=document.createElement('b');b.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;--s:'+(1+Math.random()*2).toFixed(1)+'px;--d:'+(2+Math.random()*4).toFixed(1)+'s;--l:-'+(Math.random()*5).toFixed(1)+'s';st.appendChild(b);}
+  const G='♈♉♊♋♌♍♎♏♐♑♒♓',o=document.querySelector('.dc-orbit');[...G].forEach((g,i)=>{const s=document.createElement('span');s.textContent=g;s.style.setProperty('--a',i*30+'deg');o.appendChild(s);});
+  const R=['Creator','Developer','Jyotish Enthusiast','Builder of this app'],el=document.getElementById('dcRole');let ri=0,ci=0,del=false;
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches){el.textContent=R.join(' · ');}else(function tick(){const w=R[ri];ci+=del?-1:1;el.textContent=w.slice(0,ci);let t=del?35:70;if(!del&&ci===w.length){del=true;t=1400;}else if(del&&ci===0){del=false;ri=(ri+1)%R.length;t=350;}setTimeout(tick,t);})();
+  const card=document.querySelector('.dev-card');
+  function tilt(x,y){card.style.setProperty('--ry',(x*5).toFixed(1)+'deg');card.style.setProperty('--rx',(-y*5).toFixed(1)+'deg');}
+  document.addEventListener('pointermove',e=>{tilt((e.clientX/innerWidth-.5)*2,(e.clientY/innerHeight-.5)*2);});
+  document.addEventListener('pointerleave',()=>tilt(0,0));
+  addEventListener('deviceorientation',e=>{if(e.gamma==null)return;tilt(Math.max(-1,Math.min(1,e.gamma/30)),Math.max(-1,Math.min(1,(e.beta-45)/30)));});
+  document.querySelector('.dc-avatar').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect(),cr=card.getBoundingClientRect();for(let i=0;i<14;i++){const s=document.createElement('span');s.className='dc-spark';s.textContent=['✨','⭐','✦','💫'][i%4];s.style.left=(r.left-cr.left+r.width/2)+'px';s.style.top=(r.top-cr.top+r.height/2)+'px';const a=Math.random()*6.28,d=50+Math.random()*70;s.style.setProperty('--x',Math.cos(a)*d+'px');s.style.setProperty('--y',Math.sin(a)*d+'px');card.appendChild(s);setTimeout(()=>s.remove(),950);}});
+})();
 const close=()=>parent.postMessage('vedic-dev-close','*');
 document.getElementById('contactModalClose').addEventListener('click',close);
 document.getElementById('contactModal').addEventListener('click',e=>{if(e.target.id==='contactModal')close();});

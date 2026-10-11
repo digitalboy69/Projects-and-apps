@@ -100,6 +100,7 @@ Cross-app messages: Notepad → wrapper `postMessage('vedic-open-chart')`; wrapp
 - Smart Search (replaces old Quick Search popover; button `#quickSearchBtn` now opens `srchOpen()`; Ctrl/Cmd+K or `/`): index built by `srchBuild()` = tools (HOME_ITEMS) + your chart facts + signs/nakshatras/planet meanings; Google/Google AI fallback; click-to-Google toggle kept in footer. Code: srcB "SMART SEARCH" banner.
 - Ask-AI in Smart Search: `SRCH_TOPICS` = 27 areas (first = 🪞 'This is me' verify/personality blend/aspects) × ~128 questions (`subs`: [label, instruction]); every non-'me' topic auto-gets a '🪞 10 precise checks' sub. `srchBrief(tp,sub,cap)` = instruction + universal `SRCH_STYLE` (anti-hallucination, anti-generic, blend, 'Because' tags, emoji format) + CHART DATA by priority (planet table, conjunctions, aspects always kept; extras dropped to fit cap 2700 for the URL; clipboard gets full). `srchAsk` opens Google AI (udm=50). BUG FIXED: `p.combustion` is an object — use `.combustion.combust`. Change tone/format of ALL answers by editing `SRCH_STYLE` only.
 - Friendly intake page (NT-simple): `intake.css`/`intake.js` blocks in srcB. `inBuildFriendly()` hides the native date/time inputs and adds dropdowns `#inDay/#inMon/#inYear/#inHr/#inMin`, AM/PM `#inAp`, quick-time chips `#inChips` (Morning/Afternoon/Evening/Night/No idea). They write the HIDDEN `#dobInput`/`#tobInput` (so tests must set those via evaluate, not fill). `inSyncFriendly()` syncs controls from hidden inputs (called by `loadProfileIntoForm`); `inFoundUpdate()` shows the found-place box; `#inEx` fills an example (Mumbai); tz/coords live in a collapsed `<details class=in-adv>`.
+- Developer card "awe layer" (srcDev.html): twinkling stars, 3D pointer/gyro tilt, rotating gold border (@property --ang), zodiac orbit around avatar, typewriter role, status pill, tap-avatar sparkles. Test standalone by opening parts/srcDev.html.
 - Share/QR UI v2: restyled input-page box (`.in-share*`) and modals (`.sh-*`: gold QR frame, 3 steps, option tiles, scan-frame animation); CSS blocks "share / QR UI v2" near .prof-del.
 - UI polish layer: CSS block "UI polish layer" in srcB (panel entrance stagger, card hover lift, button shine, glass tabbar/header, modal pop, focus rings, ambient background). Pure CSS; remove the block to undo.
 - Share by link/QR: block at END of srcB (`share.js` source) — URL hash `#c=` = base64url JSON [1,name,dob,tob,lat,lon,tz,place]. `/*QRLIBS*/` placeholder (own <script>) is replaced by build.py/build2.py with `parts/qrlibs.js` (qrcode-generator MIT + jsQR Apache-2.0; do not edit). `qrCanvas`, `showShare(p)`, `showScan()` (camera via getUserMedia, upload image, paste link), `openShared(p)` = loadProfileIntoForm + submit. UI: `#inShare` box under the intake form + 📤 on profile cards. Wrapper saves the original hash to `window.__vaxHash` (wrapper rewrites location.hash to #chart) and iframes get `allow=camera`. Base URL = parent page URL (http/https) else FALLBACK_BASE in share.js.
@@ -111,7 +112,7 @@ Cross-app messages: Notepad → wrapper `postMessage('vedic-open-chart')`; wrapp
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-11 - 1052 symbols in `symbols.idx`._
+_Generated 2026-10-11 - 1053 symbols in `symbols.idx`._
 
 ### File sizes (read only what you need)
 | App | Lines | KB | Files |
@@ -119,7 +120,7 @@ _Generated 2026-10-11 - 1052 symbols in `symbols.idx`._
 | srcA | 6025 | 369 | srcA.html |
 | srcB | 12474 | 918 | srcB_01.part, srcB_02.part, srcB_03.part, srcB_04.part, srcB_05.part, srcB_06.part, srcB_07.part |
 | srcN | 530 | 93 | srcN.html |
-| srcDev | 157 | 12 | srcDev.html |
+| srcDev | 195 | 18 | srcDev.html |
 | locpicker | 202 | 34 | locpicker.js |
 | export_addon | 647 | 47 | export_addon.js |
 
