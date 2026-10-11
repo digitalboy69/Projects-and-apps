@@ -100,6 +100,7 @@ Cross-app messages: Notepad → wrapper `postMessage('vedic-open-chart')`; wrapp
 - Smart Search (replaces old Quick Search popover; button `#quickSearchBtn` now opens `srchOpen()`; Ctrl/Cmd+K or `/`): index built by `srchBuild()` = tools (HOME_ITEMS) + your chart facts + signs/nakshatras/planet meanings; Google/Google AI fallback; click-to-Google toggle kept in footer. Code: srcB "SMART SEARCH" banner.
 - Ask-AI in Smart Search: `SRCH_TOPICS` = 38 areas, + moneyblocks, wealthboost, remedies, karma, karmarel (incl. love set: love, lovers, soulmate, chemistry, breakup, partnerfit, marriedlife) (first = 🪞 'This is me' verify/personality blend/aspects) × ~128 questions (`subs`: [label, instruction]); every non-'me' topic auto-gets a '🪞 10 precise checks' sub. `srchBrief(tp,sub,cap)` = instruction + universal `SRCH_STYLE` (anti-hallucination, anti-generic, blend, 'Because' tags, emoji format) + CHART DATA by priority (planet table, conjunctions, aspects always kept; extras dropped to fit cap 2700 for the URL; clipboard gets full). `srchAsk` opens Google AI (udm=50). BUG FIXED: `p.combustion` is an object — use `.combustion.combust`. Change tone/format of ALL answers by editing `SRCH_STYLE` only.
 - Friendly intake page (NT-simple): `intake.css`/`intake.js` blocks in srcB. `inBuildFriendly()` hides the native date/time inputs and adds dropdowns `#inDay/#inMon/#inYear/#inHr/#inMin`, AM/PM `#inAp`, quick-time chips `#inChips` (Morning/Afternoon/Evening/Night/No idea). They write the HIDDEN `#dobInput`/`#tobInput` (so tests must set those via evaluate, not fill). `inSyncFriendly()` syncs controls from hidden inputs (called by `loadProfileIntoForm`); `inFoundUpdate()` shows the found-place box; `#inEx` fills an example (Mumbai); tz/coords live in a collapsed `<details class=in-adv>`.
+- Dev card made calm again: removed 3D tilt/stars/orbit/typewriter; added WhatsApp community card (`.dc-community`) linking the group invite.
 - Search UI v2: grouped topic tiles (`SRCH_GROUPS`, `srchGroupsHTML`), mobile bottom-sheet (<=640px), clear/Done buttons, sticky topic header; CSS block "Search UI v2". Duplicate id fixed: new karmic topic id is `karmapat`.
 - 3D loader: wrapper `mount()` -> `settle()` keeps the loading screen ("WARMING UP THE SKY…") until the 3D iframe renders 10 consecutive frames <45ms (cap 6s) so the heavy first build is not visible.
 - Dev card perf fix: removed animated conic border/blur/drop-shadow, 28 stars, tilt via rAF lerp (no CSS transition), touch ignored, zodiac glyphs centered with negative margins.
@@ -115,7 +116,7 @@ Cross-app messages: Notepad → wrapper `postMessage('vedic-open-chart')`; wrapp
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-11 - 1056 symbols in `symbols.idx`._
+_Generated 2026-10-12 - 1054 symbols in `symbols.idx`._
 
 ### File sizes (read only what you need)
 | App | Lines | KB | Files |
@@ -123,7 +124,7 @@ _Generated 2026-10-11 - 1056 symbols in `symbols.idx`._
 | srcA | 6025 | 369 | srcA.html |
 | srcB | 12625 | 936 | srcB_01.part, srcB_02.part, srcB_03.part, srcB_04.part, srcB_05.part, srcB_06.part, srcB_07.part |
 | srcN | 530 | 93 | srcN.html |
-| srcDev | 196 | 18 | srcDev.html |
+| srcDev | 174 | 14 | srcDev.html |
 | locpicker | 202 | 34 | locpicker.js |
 | export_addon | 647 | 47 | export_addon.js |
 

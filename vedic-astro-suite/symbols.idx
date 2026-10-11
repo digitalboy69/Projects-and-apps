@@ -199,7 +199,7 @@ CONTRIBUTION_TABLE	const	parts/srcB_03.part:842	srcB
 CONTRIBUTORS	const	parts/srcB_03.part:852	srcB
 copy	fn	parts/srcB_02.part:1710	srcB
 copyDevNumber	fn	parts/srcB_02.part:1655	srcB
-copyDevNumber	fn	parts/srcDev.html:171	srcDev
+copyDevNumber	fn	parts/srcDev.html:164	srcDev
 copyText	fn	parts/srcA.html:5447	srcA
 copyText	fn	parts/srcB_07.part:1092	srcB
 copyText	fn	parts/export_addon.js:72	export_addon
@@ -509,7 +509,6 @@ loadNatalProfiles	fn	parts/srcA.html:3436	srcA
 loadProfileIntoForm	fn	parts/srcB_05.part:441	srcB
 loadProfiles	fn	parts/srcB_04.part:170	srcB
 lockNow	fn	parts/srcN.html:406	srcN
-loop	fn	parts/srcDev.html:184	srcDev
 makeSphere	fn	parts/srcA.html:2380	srcA
 MALE_PLANETS	const	parts/srcB_03.part:1049	srcB
 Map2	fn	parts/locpicker.js:31	locpicker
@@ -956,7 +955,6 @@ tab-view	id	parts/srcA.html:1220	srcA
 tasksAll	fn	parts/srcN.html:273	srcN
 tasksHTML	fn	parts/srcN.html:326	srcN
 TCSS	const	parts/locpicker.js:127	locpicker
-tilt	fn	parts/srcDev.html:185	srcDev
 titleOf	fn	parts/srcA.html:5529	srcA
 titleOf	fn	parts/srcB_07.part:1174	srcB
 titleOf	fn	parts/export_addon.js:154	export_addon
