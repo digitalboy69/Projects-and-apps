@@ -1,48 +1,3 @@
-  return I;
-}
-function srchRank(q){
-  const items = srchBuild(), toks = q.toLowerCase().split(/\s+/).filter(Boolean);
-  const W = { page:2, planet:3, house:3, chart:3, dasha:3.5, yoga:2.5, term:1 };
-  const out = [];
-  items.forEach(it=>{
-    const hay = (it.t+' '+it.kw+' '+it.s).toLowerCase(), tl = it.t.toLowerCase(); let sc = 0, ok = true;
-    for (const t of toks){
-      if (hay.indexOf(t) < 0){ ok = false; break; }
-      sc += tl.indexOf(t)===0 ? 6 : tl.indexOf(t)>0 ? 4 : (' '+it.kw.toLowerCase()).indexOf(' '+t)>=0 ? 2.5 : 1;
-    }
-    if (ok) out.push({it, sc: sc + (W[it.k]||1)});
-  });
-  return out.sort((a,b)=> b.sc-a.sc).slice(0,30).map(x=>x.it);
-}
-function srchRecent(){ try { const v = JSON.parse(localStorage.getItem('vax_srch_recent')||'[]'); return Array.isArray(v)?v:[]; } catch(e){ return []; } }
-function srchRemember(q){ q = q.trim(); if (!q) return; try { const r = [q].concat(srchRecent().filter(x=>x!==q)).slice(0,6); localStorage.setItem('vax_srch_recent', JSON.stringify(r)); } catch(e){} }
-function srchGoogle(q, ai){ const u = 'https://www.google.com/search?q='+encodeURIComponent(q+' vedic astrology')+(ai?'&udm=50':''); window.open(u,'_blank','noopener'); }
-
-function srchOpen(prefill){
-  let ov = document.getElementById('srchOv');
-  if (!ov){
-    ov = document.createElement('div'); ov.id = 'srchOv'; ov.className = 'srch-ov';
-    ov.innerHTML = `<div class="srch-box" role="dialog" aria-label="Search">
-      <div class="srch-top"><span>🔍</span><input id="srchIn" type="search" autocomplete="off" spellcheck="false" placeholder="Search tools, planets, houses, yogas, meanings…"><kbd>Esc</kbd></div>
-      <div class="srch-list" id="srchList"></div>
-      <div class="srch-foot"><span>↑↓ move · Enter open · 🌐 Google it</span>
-        <button type="button" class="srch-click" id="srchClick" title="When on, click anything in a chart to Google it">🖱️ Click-to-Google <b id="srchClickState">off</b></button></div></div>`;
-    document.body.appendChild(ov);
-    ov.addEventListener('mousedown', e=>{ if (e.target===ov) srchClose(); });
-    const inp = ov.querySelector('#srchIn');
-    inp.addEventListener('input', ()=> srchRender(inp.value));
-    inp.addEventListener('keydown', e=>{
-      if (e.key==='ArrowDown'){ e.preventDefault(); srchMove(1); }
-      else if (e.key==='ArrowUp'){ e.preventDefault(); srchMove(-1); }
-      else if (e.key==='Enter'){ e.preventDefault(); srchAct(srchSel, e.shiftKey || e.ctrlKey || e.metaKey); }
-      else if (e.key==='Escape'){ srchClose(); }
-    });
-    ov.querySelector('#srchList').addEventListener('click', e=>{
-      const g = e.target.closest('[data-g]'); if (g){ srchRemember(inp.value); srchGoogle(srchRows[+g.dataset.g].q, false); return; }
-      const r = e.target.closest('[data-i]'); if (r) srchAct(+r.dataset.i);
-      const c = e.target.closest('[data-chip]'); if (c){ inp.value = c.dataset.chip; srchRender(inp.value); inp.focus(); }
-    });
-    ov.querySelector('#srchClick').addEventListener('click', ()=>{ const t = document.getElementById('qsearchToggle'); if (t) t.click(); srchClickState(); });
   }
   ov.classList.add('show'); document.body.classList.add('srch-lock');
   const inp = ov.querySelector('#srchIn'); inp.value = prefill || ''; srchRender(inp.value); srchClickState(); setTimeout(()=> inp.focus(), 30);
@@ -57,6 +12,7 @@ function srchMove(d){
 }
 function srchAct(i, google){
   const r = srchRows[i]; if (!r) return; const q = document.getElementById('srchIn').value;
+  if (r.k==='ask'){ srchRemember(q || r.t); srchAsk(r.tp, !!google); return; }
   if (r.k==='google' || r.k==='ai'){ srchRemember(q); srchGoogle(q, r.k==='ai'); return; }
   srchRemember(q || r.t);
   if (google || !r.go){ srchGoogle(r.q, false); if (r.go) {} return; }
@@ -72,6 +28,7 @@ function srchRender(q){
     ['panel-rectification','panel-dasha','panel-transit','panel-vargas','panel-yogas','panel-reading'].forEach(id=>{
       const it = HOME_ITEMS.find(h=>h[0]===id); if (it) srchRows.push({k:'page',ico:it[1],t:it[2],s:it[3],go:id,q:it[2]});
     });
+    if (hasChart){ html += `<div class="srch-h">✨ Ask AI about your chart <span class="srch-sub">builds a full brief and opens Google AI</span></div><div class="srch-topics">${SRCH_TOPICS.map((tp,i)=>`<button type="button" data-ask="${i}">${tp.ico} ${tp.t}</button>`).join('')}</div>`; }
     html += `<div class="srch-h">${hasChart?'Right now & popular':'Popular tools'}</div>`;
     if (rec.length) html = `<div class="srch-h">Recent</div><div class="srch-chips">${rec.map(r=>`<button type="button" data-chip="${rsEsc(r)}">${rsEsc(r)}</button>`).join('')}</div>` + html;
     html += srchRows.map((r,i)=> srchRowHTML(r,i)).join('');
@@ -88,8 +45,8 @@ function srchRender(q){
   const first = list.querySelector('.srch-row'); if (first) first.classList.add('sel');
 }
 function srchRowHTML(r,i){
-  const tag = { page:'Open', planet:'Your chart', house:'Your chart', chart:'Your chart', dasha:'Your chart', yoga:'Your chart', term:'Learn', google:'Web', ai:'Web' }[r.k] || '';
-  return `<div class="srch-row ${i===0?'sel':''}" data-i="${i}" data-k="${r.k}"><span class="srch-ico">${r.ico}</span><div class="srch-txt"><b>${rsEsc(r.t)}</b><small>${rsEsc((r.s||'').slice(0,150))}</small></div><span class="srch-tag">${tag}</span>${r.k!=='google'&&r.k!=='ai'?`<button type="button" class="srch-g" data-g="${i}" title="Google this">🌐</button>`:''}</div>`;
+  const tag = { page:'Open', planet:'Your chart', house:'Your chart', chart:'Your chart', dasha:'Your chart', yoga:'Your chart', term:'Learn', ask:'Ask AI', google:'Web', ai:'Web' }[r.k] || '';
+  return `<div class="srch-row ${i===0?'sel':''}" data-i="${i}" data-k="${r.k}"><span class="srch-ico">${r.ico}</span><div class="srch-txt"><b>${rsEsc(r.t)}</b><small>${rsEsc((r.s||'').slice(0,150))}</small></div><span class="srch-tag">${tag}</span>${r.k!=='google'&&r.k!=='ai'?`<button type="button" class="srch-g" data-g="${i}" title="${r.k==='ask'?'Copy the full brief':'Google this'}">${r.k==='ask'?'📋':'🌐'}</button>`:''}</div>`;
 }
 document.addEventListener('keydown', e=>{
   const typing = /^(INPUT|TEXTAREA|SELECT)$/.test((e.target||{}).tagName) || (e.target && e.target.isContentEditable);
@@ -100,6 +57,89 @@ document.addEventListener('keydown', e=>{
 document.addEventListener('click', e=>{
   if (e.target.closest && e.target.closest('#quickSearchBtn')){ e.preventDefault(); e.stopImmediatePropagation(); srchOpen(); }
 }, true);
+
+/* ---------- Ask-AI topics: builds a rich chart brief for one life area, then opens Google AI mode ---------- */
+const SRCH_TOPICS = [
+ {id:'career',ico:'💼',t:'Career & profession',kw:'job work profession promotion success',h:[10],s:[6,2,11],k:['Sun','Saturn','Mercury','Jupiter'],ck:'Amatyakaraka',v:'D10',ar:['A10','AL'],q:'What does my chart say about my career path, suitable fields, strengths, obstacles, and when growth or change is likely?'},
+ {id:'job',ico:'🧑‍💻',t:'Job vs business',kw:'employment self employed entrepreneur startup',h:[10,7],s:[6,3,11],k:['Mercury','Saturn','Mars'],ck:'Amatyakaraka',v:'D10',ar:['A10'],q:'Am I better suited to a job or my own business? What kind, and when are favourable windows to switch or start?'},
+ {id:'money',ico:'💰',t:'Wealth & finances',kw:'money income savings rich dhana',h:[2,11],s:[5,9,8],k:['Jupiter','Venus'],ck:'',v:'D2',ar:['A2','A11'],q:'What does my chart say about earning, saving and accumulating wealth, and which periods favour money gains or losses?'},
+ {id:'fame',ico:'🌟',t:'Fame, status & recognition',kw:'reputation name public image authority',h:[10,1],s:[11,5],k:['Sun','Moon'],ck:'Atmakaraka',v:'D10',ar:['AL','A10'],q:'What does my chart say about reputation, public image and recognition, and when is visibility likely to rise?'},
+ {id:'spouse',ico:'💍',t:'Spouse & marriage',kw:'wife husband partner relationship spouse details',h:[7],s:[2,11,12],k:['Venus','Jupiter'],ck:'Darakaraka',v:'D9',ar:['UL','A7'],q:'Describe my likely spouse (nature, background, appearance tendencies), the quality of marriage, and any challenges or remedies.'},
+ {id:'marriagetime',ico:'📅',t:'Marriage timing',kw:'when will i marry wedding delay',h:[7,2,11],s:[5,12],k:['Venus','Jupiter'],ck:'Darakaraka',v:'D9',ar:['UL'],q:'When is marriage most likely according to my dashas and transits? Mention any delays and favourable windows.'},
+ {id:'love',ico:'❤️',t:'Love & romance',kw:'dating affair crush relationship attraction',h:[5,7],s:[11,2],k:['Venus','Moon'],ck:'Darakaraka',v:'D9',ar:['UL'],q:'What does my chart say about romance and love relationships, their pattern, and the best periods for them?'},
+ {id:'children',ico:'👶',t:'Children & progeny',kw:'kids baby child birth pregnancy fertility',h:[5],s:[2,9,11],k:['Jupiter'],ck:'Putrakaraka',v:'D7',ar:['A5'],q:'What does my chart say about having children, number/timing tendencies, and relationship with children?'},
+ {id:'education',ico:'🎓',t:'Education & learning',kw:'study college exams degree knowledge',h:[4,5],s:[9,2],k:['Mercury','Jupiter'],ck:'Putrakaraka',v:'D24',ar:[],q:'What does my chart say about studies, learning style, suitable subjects, and exam/higher-education timing?'},
+ {id:'health',ico:'🩺',t:'Health & vitality',kw:'disease illness body fitness immunity',h:[1,6],s:[8,12],k:['Sun','Moon','Mars'],ck:'Atmakaraka',v:'D30',ar:['A6'],q:'What are the health strengths and sensitive areas in my chart, and which periods need extra care?'},
+ {id:'mind',ico:'🧠',t:'Mind & emotional peace',kw:'stress anxiety depression mood happiness',h:[4,1],s:[5,12],k:['Moon','Mercury'],ck:'Atmakaraka',v:'D1',ar:[],q:'What does my chart say about my mental and emotional nature, stress patterns, and ways to find peace?'},
+ {id:'longevity',ico:'⏳',t:'Longevity & sudden events',kw:'life span accidents surgery transformation 8th house',h:[8,1],s:[3,6,12],k:['Saturn'],ck:'Atmakaraka',v:'D30',ar:['A8'],q:'What does my chart indicate about resilience, sudden changes and critical periods? Keep it balanced and non-fearful.'},
+ {id:'father',ico:'👨',t:'Father & mentors',kw:'dad guru teacher blessings',h:[9],s:[10,3],k:['Sun','Jupiter'],ck:'',v:'D12',ar:['A9'],q:'What does my chart say about my father, mentors and paternal support, and any timing highlights?'},
+ {id:'mother',ico:'👩',t:'Mother & home life',kw:'mom family happiness domestic',h:[4],s:[10,9],k:['Moon'],ck:'Matrikaraka',v:'D12',ar:['A4'],q:'What does my chart say about my mother, home life and domestic happiness?'},
+ {id:'siblings',ico:'🧑‍🤝‍🧑',t:'Siblings & courage',kw:'brother sister effort initiative',h:[3],s:[11,1],k:['Mars'],ck:'Bhratrikaraka',v:'D3',ar:['A3'],q:'What does my chart say about siblings, courage and self-effort?'},
+ {id:'property',ico:'🏠',t:'Property, home & vehicles',kw:'house land real estate car buy flat',h:[4],s:[2,11,12],k:['Mars','Venus','Saturn'],ck:'Matrikaraka',v:'D4',ar:['A4'],q:'What does my chart say about buying property, vehicles and a stable home, and favourable timing?'},
+ {id:'foreign',ico:'✈️',t:'Foreign travel & settlement',kw:'abroad visa immigration relocate overseas',h:[12,9],s:[3,7,4],k:['Rahu','Moon'],ck:'',v:'D1',ar:[],q:'What does my chart say about living or working abroad, travel and relocation, and when it is most likely?'},
+ {id:'enemies',ico:'⚔️',t:'Enemies, debts & disputes',kw:'litigation court competition loans conflict',h:[6],s:[8,12,3],k:['Mars','Saturn'],ck:'Gnatikaraka',v:'D1',ar:['A6'],q:'What does my chart say about opponents, debts, legal disputes and how to handle them?'},
+ {id:'spiritual',ico:'🕉️',t:'Spirituality & moksha',kw:'meditation dharma karma purpose inner growth',h:[9,12],s:[5,8],k:['Ketu','Jupiter'],ck:'Atmakaraka',v:'D20',ar:[],q:'What does my chart say about spiritual inclination, suitable practices and soul purpose?'},
+ {id:'purpose',ico:'🧭',t:'Personality & life purpose',kw:'nature character soul atmakaraka self',h:[1],s:[5,9],k:['Sun','Moon'],ck:'Atmakaraka',v:'D9',ar:['AL'],q:'Describe my personality, core strengths, weaknesses and likely life purpose.'},
+ {id:'friends',ico:'🤝',t:'Friends, networks & gains',kw:'social circle allies fulfilment desires',h:[11],s:[3,7,5],k:['Jupiter','Mercury'],ck:'',v:'D1',ar:['A11'],q:'What does my chart say about friendships, networking and fulfilment of desires?'},
+ {id:'losses',ico:'📉',t:'Expenses, losses & sleep',kw:'spending waste hospital isolation bed pleasures',h:[12],s:[2,6,8],k:['Saturn','Ketu'],ck:'',v:'D1',ar:[],q:'What does my chart say about expenses, losses, sleep and hidden drains — and how to manage them?'},
+ {id:'talent',ico:'🎨',t:'Talent, creativity & arts',kw:'music art writing skill hobby entertainment',h:[5,3],s:[10,11],k:['Venus','Mercury','Moon'],ck:'Putrakaraka',v:'D9',ar:[],q:'What natural talents and creative strengths does my chart show, and how can I use them?'},
+ {id:'inherit',ico:'🏦',t:'Inheritance & hidden wealth',kw:'will insurance partner money legacy 8th 2nd',h:[8,2],s:[11,7],k:['Saturn','Jupiter'],ck:'',v:'D1',ar:['A8'],q:'What does my chart say about inheritance, insurance and money from partners or hidden sources?'},
+ {id:'thisyear',ico:'🗓️',t:'This year & next 12 months',kw:'forecast prediction timing dasha transit now upcoming',h:[1,10,7,2,11],s:[4,5,9],k:['Jupiter','Saturn'],ck:'',v:'D1',ar:[],q:'Give a practical forecast for the next 12 months across career, money, relationships and health, using my current dasha and transits.'}
+];
+function srchHouseLine(ch, L, h){
+  const pr = ch.planets, si = (L+h-1)%12, s = SIGNS[si], lp = pr[s.lord];
+  const occ = PLANET_LIST.filter(n=> pr[n] && pr[n].house===h);
+  const asp = PLANET_LIST.filter(n=> pr[n] && pr[n].house!==h && (pr[n].aspectsHouses||[]).indexOf(h)>-1);
+  return `H${h} ${s.name}: lord ${s.lord}${lp?` in H${lp.house} ${SIGNS[lp.sign].name}${lp.dignity&&lp.dignity.status&&lp.dignity.status!=='Neutral'?' ('+lp.dignity.status+')':''}${lp.retrograde?' R':''}`:''}; occupants ${occ.length?occ.join(','):'none'}; aspected by ${asp.length?asp.join(','):'none'}`;
+}
+function srchPlanetLine(ch, n){
+  const p = ch.planets[n]; if (!p) return '';
+  return `${n} in ${SIGNS[p.sign].name} H${p.house}${p.dignity&&p.dignity.status&&p.dignity.status!=='Neutral'?' ('+p.dignity.status+')':''}${p.retrograde?' R':''}${p.combustion?' combust':''}${p.nakshatra?', '+p.nakshatra.name+' p'+p.nakshatra.pada:''}`;
+}
+function srchVargaPos(ch, vk, name){
+  try { const v = ch.vargas[vk]; for (const hh of v.houses){ if (hh.planets.some(x=>x.name===name)) return `${name} ${hh.signName} H${hh.houseNum}`; } } catch(e){} return '';
+}
+function srchBrief(tp){
+  const ch = currentChartForModal, prof = currentProfileForExport; if (!ch) return '';
+  const L = ch.ascendant.sign, pr = ch.planets, out = [];
+  out.push('Act as an expert Vedic astrologer (Jyotish: sidereal Lahiri, whole-sign houses, Vimshottari dasha). Use ONLY the chart facts below; do not recalculate.');
+  out.push(`CHART: Lagna ${SIGNS[L].name} ${ch.ascendant.degInSign.toFixed(1)}° (lord ${SIGNS[L].lord} in H${pr[SIGNS[L].lord]?pr[SIGNS[L].lord].house:'?'}). ${srchPlanetLine(ch,'Moon')}. ${srchPlanetLine(ch,'Sun')}.`);
+  out.push(`TOPIC: ${tp.t}.`);
+  out.push('KEY HOUSES: ' + tp.h.concat(tp.s.slice(0,2)).map(h=>srchHouseLine(ch,L,h)).join(' | '));
+  out.push('KARAKAS: ' + tp.k.map(n=>srchPlanetLine(ch,n)).filter(Boolean).join('; '));
+  if (tp.ck && ch.charaKarakas && ch.charaKarakas[tp.ck]){ const n = ch.charaKarakas[tp.ck].planet; out.push(`${tp.ck} (${tp.ck==='Amatyakaraka'?'AmK':tp.ck==='Darakaraka'?'DK':tp.ck==='Atmakaraka'?'AK':tp.ck==='Putrakaraka'?'PK':tp.ck==='Matrikaraka'?'MK':tp.ck==='Bhratrikaraka'?'BK':'GK'}): ${srchPlanetLine(ch,n)}${srchVargaPos(ch,'D9',n)?'; Navamsa '+srchVargaPos(ch,'D9',n):''}`); }
+  if (tp.v && tp.v!=='D1' && ch.vargas[tp.v]){
+    const vv = ch.vargas[tp.v], lord = SIGNS[vv.ascendantSign].lord, kp = tp.k.map(n=>srchVargaPos(ch,tp.v,n)).filter(Boolean);
+    out.push(`${tp.v}: lagna ${SIGNS[vv.ascendantSign].name} (lord ${lord}${srchVargaPos(ch,tp.v,lord)?', '+srchVargaPos(ch,tp.v,lord).replace(lord+' ',''):''})${kp.length?'; '+kp.join(', '):''}`);
+  }
+  try {
+    const ar = calcAllArudhaPadas(ch, L), a = (tp.ar||[]).filter(k=>ar[k]!==undefined).map(k=>`${k} ${SIGNS[ar[k]].name} (H${((ar[k]-L+12)%12)+1})`);
+    if (a.length) out.push('ARUDHA: ' + a.join(', '));
+  } catch(e){}
+  try {
+    const act = findActiveDasha(ch.dashaData.mahadashas, new Date());
+    if (act && act.mahadasha){
+      const ds = [['MD',act.mahadasha],['AD',act.antardasha],['PD',act.pratyantardasha]].filter(x=>x[1]).map(([nm,d])=>{
+        const lk = rsLinks(d.lord, L, ch), hit = Object.keys(lk).filter(h=> tp.h.indexOf(+h)>-1 || tp.s.indexOf(+h)>-1).map(h=>lk[h]);
+        return `${nm} ${d.lord}${hit.length?' ('+hit.join(', ')+')':' (no direct link)'}`; });
+      out.push(`RUNNING DASHA: ${ds.join(' / ')}${act.antardasha?` until ${act.antardasha.endDate.toISOString().slice(0,10)}`:''}`);
+    }
+  } catch(e){}
+  try {
+    const jd = nowJulianDay(), mo = pr.Moon.sign, T = ['Saturn','Jupiter','Rahu','Mars'].map(n=>{ const sg = Math.floor(getSiderealLongitudeAt(n, jd)/30); return `${n} in ${SIGNS[sg].name} (H${rsHouseOf(sg,L)} from lagna, H${rsHouseOf(sg,mo)} from Moon)`; });
+    out.push(`TRANSITS NOW (${new Date().toISOString().slice(0,10)}): ${T.join('; ')}`);
+  } catch(e){}
+  out.push(`QUESTION: ${tp.q} Cover: (1) natal promise, (2) current dasha + transit effect, (3) best timing windows, (4) practical advice and remedies, (5) what is uncertain. Keep it clear and balanced.`);
+  return out.join('\n');
+}
+function srchAsk(tp, copyOnly){
+  const text = srchBrief(tp); if (!text){ rsToast('Generate a chart first'); return; }
+  try { if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function(){}); } catch(e){}
+  if (copyOnly){ rsToast('Full AI brief copied ✓ — paste it into any AI'); return; }
+  const short = text.length > 1700 ? text.slice(0,1700) + ' …' : text;
+  window.open('https://www.google.com/search?q=' + encodeURIComponent(short) + '&udm=50', '_blank', 'noopener');
+  rsToast('Opening Google AI · full brief also copied 📋');
+}
 
 /* ============================================================================
    QUICK SEARCH — click any placement in the chart to Google it
@@ -1659,30 +1699,3 @@ function buildTransitsPanel(chart, profile){
   let ssHero;
   if (act){
     const ph = rel(satS) === 11 ? 'Rising' : rel(satS) === 0 ? 'Peak' : rel(satS) === 1 ? 'Setting' : 'between phases';
-    ssHero = `<div class="tr-card on" style="--pc:#C95050"><small>Sade Sati</small><b>Active · ${ph} phase</b><span>Saturn in ${SIGNS[satS].name} · ends ${dt(act.end)}</span></div>`;
-  } else {
-    ssHero = `<div class="tr-card" style="--pc:#5EC4B7"><small>Sade Sati</small><b>Not active</b><span>${nextC ? 'Next begins ' + dt(nextC.start) + ' (in ' + nvSpan(nextC.start - now) + ')' : 'No further cycle in the next 100 years'}</span></div>`;
-  }
-  const actK = T.kantaka.find(c => trStatus(c.start, c.end, now) === 'now'), actA = T.ashtama.find(c => trStatus(c.start, c.end, now) === 'now');
-  const nK = T.kantaka.find(c => c.start !== null && c.start > now), nA = T.ashtama.find(c => c.start !== null && c.start > now);
-  const dh = (title, a, n, col) => a ? `<div class="tr-card on" style="--pc:${col}"><small>${title}</small><b>Active</b><span>Ends ${dt(a.end)}</span></div>`
-    : `<div class="tr-card" style="--pc:${col}"><small>${title}</small><b>Not active</b><span>${n ? 'Next ' + dt(n.start) : '—'}</span></div>`;
-  const pos = (n, s) => `<div class="tr-card" style="--pc:${DASHA_PLANET_COLORS[n]}"><small>${n} now</small><b>${PLANET_GLYPHS[n]} ${SIGNS[s].symbol} ${SIGNS[s].name}</b><span>House ${hL(s)} from Lagna · ${hM(s)} from Moon</span></div>`;
-
-  // cycles
-  const cyc = T.sadeSati.map((c, i) => {
-    const st = trStatus(c.start, c.end, now), s0 = c.start === null ? birth - 3 * 365.25 : c.start, e0 = c.end === null ? birth + 100 * 365.25 : c.end, tot = e0 - s0;
-    const segs = c.phases.map(p => { const a = p.start === null ? s0 : p.start, b = p.end === null ? e0 : p.end; return `<div class="tr-seg" style="flex:${Math.max(0.01, b - a)};background:${TR_COL[p.rel]}"><span>${TR_PHASE[p.rel]}</span></div>`; }).join('');
-    const nowMark = st === 'now' ? `<u style="left:${Math.max(0, Math.min(100, (now - s0) / tot * 100)).toFixed(1)}%"></u>` : '';
-    const rows = c.phases.map(p => `<div class="tr-ph" style="--pc:${TR_COL[p.rel]}"><i></i><b>${TR_PHASE[p.rel]}</b><span>${SIGNS[p.sign].symbol} ${SIGNS[p.sign].name} · ${dt(p.start)} → ${p.end === null ? 'beyond 100 yrs' : dt(p.end)}</span></div>`).join('');
-    const ages = `${c.start === null ? 'began before birth' : 'Age ' + Math.max(0, age(c.start)).toFixed(0)}${c.end === null ? '' : ' – ' + age(c.end).toFixed(0)}`;
-    return `<div class="tr-cyc ${st}"><div class="tr-cyc-h"><b>Cycle ${i + 1}</b><span>${ages}</span>${trPill(st)}</div>
-      <div class="tr-cbar">${segs}${nowMark}</div><div class="tr-phs">${rows}</div></div>`;
-  }).join('') || '<div class="pl-empty">No Sade Sati cycle found in this period.</div>';
-
-  const dhRows = (arr, label, col) => arr.map(c => { const st = trStatus(c.start, c.end, now); return `<div class="dx-row ${st}"><div class="dx-row-h" style="cursor:default"><span class="dx-dot" style="background:${col}">♄</span><span class="dx-row-main"><b>${label}</b><small>${dt(c.start)} → ${c.end === null ? '—' : dt(c.end)}</small></span><span class="dx-row-side"><span class="dx-age">Age ${c.start === null ? '0' : Math.max(0, age(c.start)).toFixed(0)}–${c.end === null ? '—' : age(c.end).toFixed(0)}</span>${trPill(st)}</span></div></div>`; }).join('');
-
-  // ingress tables
-  const tabs = ['Saturn', 'Jupiter', 'Rahu', 'Ketu'];
-  const lists = tabs.map((n, ti) => {
-    const arr = T.stays[n].filter(s => s.end === null || s.end > birth);

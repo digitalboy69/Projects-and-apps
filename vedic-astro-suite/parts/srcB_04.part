@@ -1,37 +1,3 @@
-// texts group both under the umbrella term "Svamsa" when a shared rule
-// applies to them, but as a standalone point Swamsha = the D9 Lagna itself.
-function calcSwamshaLagnaSign(chart){
-  return chart.vargas.D9.ascendantSign;
-}
-
-// Padanadhamsa Lagna (per Jaimini Sutramritam / Krishna Mishra's Phaladeepika
-// Ratnamala, and multiple cross-checked commentaries): the Navamsa (D9) sign
-// occupied by the LORD of the Arudha Lagna (AL) — i.e. find AL in the Rashi
-// chart, find its ruling planet, and see which sign that planet falls in
-// within the D9 chart.
-function calcPadanadhamsaLagnaSign(chart, alSignIdx){
-  const alLord = SIGNS[alSignIdx].lord;
-  return chart.vargas.D9.planetVargaSign[alLord];
-}
-
-// Bhava Lagna (BPHS Ch.5, same family as Hora/Ghati Lagna): starts at the
-// Sun's longitude at sunrise and advances 1 full sign (30°) per 5 ghatis
-// (2 hours) elapsed since the most recent sunrise — this is the slowest of
-// the three "sunrise-anchored" special lagnas, moving at roughly the same
-// average pace as the true Ascendant itself.
-function calcBhavaLagnaLongitude(chart){
-  let elapsedDays = chart.julianDay - chart.sunriseJD;
-  if (elapsedDays < 0) elapsedDays += 1;
-  const elapsedGhatis = elapsedDays * 60;
-  const degreesTravelled = (elapsedGhatis / 5) * 30; // 1 rashi (30°) per 5 ghatis
-  return normDeg(lastSunriseInfo(chart).sun + degreesTravelled);
-}
-function calcBhavaLagnaSign(chart){
-  return getSignIndex(calcBhavaLagnaLongitude(chart));
-}
-
-// Vighati Lagna: the fourth and fastest member of the sunrise-anchored
-// family (Bhava: 5 ghati/rashi, Hora: 2.5 ghati/rashi, Ghati: 1 ghati/rashi),
 // completing the same "1 rashi per unit" pattern one level finer — 1 full
 // sign (30°) per Vighati (24 seconds) elapsed since the most recent sunrise.
 // This makes it extremely time-sensitive, useful chiefly for disambiguating
@@ -1683,6 +1649,53 @@ function srchBuild(){
       });
     } catch(e){}
   }
+  if (ch) SRCH_TOPICS.forEach((tp,i)=>{ const x = {k:'ask',ico:tp.ico,t:'Ask AI: '+tp.t,s:tp.q,kw:'ask ai '+tp.t+' '+tp.kw+' about my chart google ai mode',go:null,q:tp.t,tp}; I.push(x); });
   SIGNS.forEach((s,i)=> add('term',s.symbol,`${s.name} (${s.sk})`,`${s.element} · ${s.modality} · ruled by ${s.lord}`,`sign rashi ${s.name} ${s.sk} ${s.element} ${s.modality} ${s.lord}`,null,`${s.name} rashi ${s.sk} meaning`));
   NAKSHATRAS.forEach((n,i)=> add('term','🌟',`${n.name} nakshatra`,`#${i+1} · lord ${n.lord} · deity ${n.deity}`,`nakshatra star ${n.name} ${n.lord} ${n.deity}`,null,`${n.name} nakshatra characteristics`));
   Object.keys(SRCH_PLANET).forEach(n=> add('term','📖',`${n} — what it signifies`,SRCH_PLANET[n],`graha planet meaning karaka ${n} ${SRCH_PLANET[n]}`,null,`${n} in vedic astrology significations`));
+  return I;
+}
+function srchRank(q){
+  const items = srchBuild(), toks = q.toLowerCase().split(/\s+/).filter(Boolean);
+  const W = { page:2, ask:3.2, planet:3, house:3, chart:3, dasha:3.5, yoga:2.5, term:1 };
+  const out = [];
+  items.forEach(it=>{
+    const hay = (it.t+' '+it.kw+' '+it.s).toLowerCase(), tl = it.t.toLowerCase(); let sc = 0, ok = true;
+    for (const t of toks){
+      if (hay.indexOf(t) < 0){ ok = false; break; }
+      sc += tl.indexOf(t)===0 ? 6 : tl.indexOf(t)>0 ? 4 : (' '+it.kw.toLowerCase()).indexOf(' '+t)>=0 ? 2.5 : 1;
+    }
+    if (ok) out.push({it, sc: sc + (W[it.k]||1)});
+  });
+  return out.sort((a,b)=> b.sc-a.sc).slice(0,30).map(x=>x.it);
+}
+function srchRecent(){ try { const v = JSON.parse(localStorage.getItem('vax_srch_recent')||'[]'); return Array.isArray(v)?v:[]; } catch(e){ return []; } }
+function srchRemember(q){ q = q.trim(); if (!q) return; try { const r = [q].concat(srchRecent().filter(x=>x!==q)).slice(0,6); localStorage.setItem('vax_srch_recent', JSON.stringify(r)); } catch(e){} }
+function srchGoogle(q, ai){ const u = 'https://www.google.com/search?q='+encodeURIComponent(q+' vedic astrology')+(ai?'&udm=50':''); window.open(u,'_blank','noopener'); }
+
+function srchOpen(prefill){
+  let ov = document.getElementById('srchOv');
+  if (!ov){
+    ov = document.createElement('div'); ov.id = 'srchOv'; ov.className = 'srch-ov';
+    ov.innerHTML = `<div class="srch-box" role="dialog" aria-label="Search">
+      <div class="srch-top"><span>🔍</span><input id="srchIn" type="search" autocomplete="off" spellcheck="false" placeholder="Search tools, planets, houses, yogas, meanings…"><kbd>Esc</kbd></div>
+      <div class="srch-list" id="srchList"></div>
+      <div class="srch-foot"><span>↑↓ move · Enter open · 🌐 Google it</span>
+        <button type="button" class="srch-click" id="srchClick" title="When on, click anything in a chart to Google it">🖱️ Click-to-Google <b id="srchClickState">off</b></button></div></div>`;
+    document.body.appendChild(ov);
+    ov.addEventListener('mousedown', e=>{ if (e.target===ov) srchClose(); });
+    const inp = ov.querySelector('#srchIn');
+    inp.addEventListener('input', ()=> srchRender(inp.value));
+    inp.addEventListener('keydown', e=>{
+      if (e.key==='ArrowDown'){ e.preventDefault(); srchMove(1); }
+      else if (e.key==='ArrowUp'){ e.preventDefault(); srchMove(-1); }
+      else if (e.key==='Enter'){ e.preventDefault(); srchAct(srchSel, e.shiftKey || e.ctrlKey || e.metaKey); }
+      else if (e.key==='Escape'){ srchClose(); }
+    });
+    ov.querySelector('#srchList').addEventListener('click', e=>{
+      const g = e.target.closest('[data-g]'); if (g){ const rr = srchRows[+g.dataset.g]; srchRemember(inp.value); if (rr.k==='ask') srchAsk(rr.tp, true); else srchGoogle(rr.q, false); return; }
+      const r = e.target.closest('[data-i]'); if (r) srchAct(+r.dataset.i);
+      const a = e.target.closest('[data-ask]'); if (a){ srchAsk(SRCH_TOPICS[+a.dataset.ask], e.shiftKey || e.ctrlKey || e.metaKey); return; }
+      const c = e.target.closest('[data-chip]'); if (c){ inp.value = c.dataset.chip; srchRender(inp.value); inp.focus(); }
+    });
+    ov.querySelector('#srchClick').addEventListener('click', ()=>{ const t = document.getElementById('qsearchToggle'); if (t) t.click(); srchClickState(); });

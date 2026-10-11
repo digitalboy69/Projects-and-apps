@@ -1,3 +1,30 @@
+    ssHero = `<div class="tr-card on" style="--pc:#C95050"><small>Sade Sati</small><b>Active · ${ph} phase</b><span>Saturn in ${SIGNS[satS].name} · ends ${dt(act.end)}</span></div>`;
+  } else {
+    ssHero = `<div class="tr-card" style="--pc:#5EC4B7"><small>Sade Sati</small><b>Not active</b><span>${nextC ? 'Next begins ' + dt(nextC.start) + ' (in ' + nvSpan(nextC.start - now) + ')' : 'No further cycle in the next 100 years'}</span></div>`;
+  }
+  const actK = T.kantaka.find(c => trStatus(c.start, c.end, now) === 'now'), actA = T.ashtama.find(c => trStatus(c.start, c.end, now) === 'now');
+  const nK = T.kantaka.find(c => c.start !== null && c.start > now), nA = T.ashtama.find(c => c.start !== null && c.start > now);
+  const dh = (title, a, n, col) => a ? `<div class="tr-card on" style="--pc:${col}"><small>${title}</small><b>Active</b><span>Ends ${dt(a.end)}</span></div>`
+    : `<div class="tr-card" style="--pc:${col}"><small>${title}</small><b>Not active</b><span>${n ? 'Next ' + dt(n.start) : '—'}</span></div>`;
+  const pos = (n, s) => `<div class="tr-card" style="--pc:${DASHA_PLANET_COLORS[n]}"><small>${n} now</small><b>${PLANET_GLYPHS[n]} ${SIGNS[s].symbol} ${SIGNS[s].name}</b><span>House ${hL(s)} from Lagna · ${hM(s)} from Moon</span></div>`;
+
+  // cycles
+  const cyc = T.sadeSati.map((c, i) => {
+    const st = trStatus(c.start, c.end, now), s0 = c.start === null ? birth - 3 * 365.25 : c.start, e0 = c.end === null ? birth + 100 * 365.25 : c.end, tot = e0 - s0;
+    const segs = c.phases.map(p => { const a = p.start === null ? s0 : p.start, b = p.end === null ? e0 : p.end; return `<div class="tr-seg" style="flex:${Math.max(0.01, b - a)};background:${TR_COL[p.rel]}"><span>${TR_PHASE[p.rel]}</span></div>`; }).join('');
+    const nowMark = st === 'now' ? `<u style="left:${Math.max(0, Math.min(100, (now - s0) / tot * 100)).toFixed(1)}%"></u>` : '';
+    const rows = c.phases.map(p => `<div class="tr-ph" style="--pc:${TR_COL[p.rel]}"><i></i><b>${TR_PHASE[p.rel]}</b><span>${SIGNS[p.sign].symbol} ${SIGNS[p.sign].name} · ${dt(p.start)} → ${p.end === null ? 'beyond 100 yrs' : dt(p.end)}</span></div>`).join('');
+    const ages = `${c.start === null ? 'began before birth' : 'Age ' + Math.max(0, age(c.start)).toFixed(0)}${c.end === null ? '' : ' – ' + age(c.end).toFixed(0)}`;
+    return `<div class="tr-cyc ${st}"><div class="tr-cyc-h"><b>Cycle ${i + 1}</b><span>${ages}</span>${trPill(st)}</div>
+      <div class="tr-cbar">${segs}${nowMark}</div><div class="tr-phs">${rows}</div></div>`;
+  }).join('') || '<div class="pl-empty">No Sade Sati cycle found in this period.</div>';
+
+  const dhRows = (arr, label, col) => arr.map(c => { const st = trStatus(c.start, c.end, now); return `<div class="dx-row ${st}"><div class="dx-row-h" style="cursor:default"><span class="dx-dot" style="background:${col}">♄</span><span class="dx-row-main"><b>${label}</b><small>${dt(c.start)} → ${c.end === null ? '—' : dt(c.end)}</small></span><span class="dx-row-side"><span class="dx-age">Age ${c.start === null ? '0' : Math.max(0, age(c.start)).toFixed(0)}–${c.end === null ? '—' : age(c.end).toFixed(0)}</span>${trPill(st)}</span></div></div>`; }).join('');
+
+  // ingress tables
+  const tabs = ['Saturn', 'Jupiter', 'Rahu', 'Ketu'];
+  const lists = tabs.map((n, ti) => {
+    const arr = T.stays[n].filter(s => s.end === null || s.end > birth);
     const idxNow = arr.findIndex(s => trStatus(s.start, s.end, now) === 'now');
     const rows = arr.map((s, i) => {
       const st = trStatus(s.start, s.end, now), prev = arr[i - 1];
@@ -1672,17 +1699,3 @@ function computeLiveSky(lat, lon, natalAscSign){
 
   const planets = {};
   PLANET_LIST.forEach(name=>{
-    const lonT = transitSidereal[name];
-    const signIdx = getSignIndex(lonT);
-    const degInSign = getDegInSign(lonT);
-    const nak = getNakshatra(lonT);
-    const speed = getPlanetSpeed(name, jd);
-    let natalHouse = null;
-    if (natalAscSign !== null && natalAscSign !== undefined){
-      natalHouse = ((signIdx - natalAscSign + 12) % 12) + 1;
-    }
-    planets[name] = {
-      name, sign: signIdx, degInSign, degRemainingInSign: 30-degInSign,
-      nakshatra: nak, retrograde: transitRetro[name], speed,
-      natalHouse, natalHouseTheme: natalHouse!==null ? HOUSE_THEMES[natalHouse-1] : null
-    };

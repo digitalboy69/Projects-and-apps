@@ -1,3 +1,17 @@
+    const lonT = transitSidereal[name];
+    const signIdx = getSignIndex(lonT);
+    const degInSign = getDegInSign(lonT);
+    const nak = getNakshatra(lonT);
+    const speed = getPlanetSpeed(name, jd);
+    let natalHouse = null;
+    if (natalAscSign !== null && natalAscSign !== undefined){
+      natalHouse = ((signIdx - natalAscSign + 12) % 12) + 1;
+    }
+    planets[name] = {
+      name, sign: signIdx, degInSign, degRemainingInSign: 30-degInSign,
+      nakshatra: nak, retrograde: transitRetro[name], speed,
+      natalHouse, natalHouseTheme: natalHouse!==null ? HOUSE_THEMES[natalHouse-1] : null
+    };
   });
 
   return { jd, ayanamsa, now, lat, lon, planets };
