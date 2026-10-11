@@ -1,23 +1,105 @@
-      </div>`;
-    }).join('')}
-    <div class="rs-note">${close?'⚖️ <b>Close call.</b> The top signs are within 10%. Add more events or check the Sandhi / Varga tools. ':''}Times are in your birth timezone and are approximate to a few minutes. Use <b>"use ➜"</b> to load a window into the Time Dial. This ranking supports your judgement, it does not replace it.</div>`;
-  requestAnimationFrame(()=> requestAnimationFrame(()=> out.querySelectorAll('.rs-bar i').forEach(b=> b.style.width = b.dataset.w+'%')));
-  rsToast('Done ✨ Top fit: ' + SIGNS[ranked[0].L].name);
+  return I;
 }
-
-/* Hooks: keep old panel ids working + keep clock/pill live */
-(function rsInstallHooks(){
-  if (window.__rsHooks) return; window.__rsHooks = 1;
-  const _sw = switchAppTab;
-  switchAppTab = function(id){
-    if (RS_ROUTE[id] && document.getElementById('rsRoot')){
-      _sw('panel-rectification'); rsShow(RS_ROUTE[id]); return;
+function srchRank(q){
+  const items = srchBuild(), toks = q.toLowerCase().split(/\s+/).filter(Boolean);
+  const W = { page:2, planet:3, house:3, chart:3, dasha:3.5, yoga:2.5, term:1 };
+  const out = [];
+  items.forEach(it=>{
+    const hay = (it.t+' '+it.kw+' '+it.s).toLowerCase(), tl = it.t.toLowerCase(); let sc = 0, ok = true;
+    for (const t of toks){
+      if (hay.indexOf(t) < 0){ ok = false; break; }
+      sc += tl.indexOf(t)===0 ? 6 : tl.indexOf(t)>0 ? 4 : (' '+it.kw.toLowerCase()).indexOf(' '+t)>=0 ? 2.5 : 1;
     }
-    _sw(id); if (id==='panel-rectification' && document.getElementById('rsRoot')) rsRefresh();
-  };
-  const _up = updateHmsDisplay;
-  updateHmsDisplay = function(){ _up(); try{ rsRefresh(); }catch(e){} };
-})();
+    if (ok) out.push({it, sc: sc + (W[it.k]||1)});
+  });
+  return out.sort((a,b)=> b.sc-a.sc).slice(0,30).map(x=>x.it);
+}
+function srchRecent(){ try { const v = JSON.parse(localStorage.getItem('vax_srch_recent')||'[]'); return Array.isArray(v)?v:[]; } catch(e){ return []; } }
+function srchRemember(q){ q = q.trim(); if (!q) return; try { const r = [q].concat(srchRecent().filter(x=>x!==q)).slice(0,6); localStorage.setItem('vax_srch_recent', JSON.stringify(r)); } catch(e){} }
+function srchGoogle(q, ai){ const u = 'https://www.google.com/search?q='+encodeURIComponent(q+' vedic astrology')+(ai?'&udm=50':''); window.open(u,'_blank','noopener'); }
+
+function srchOpen(prefill){
+  let ov = document.getElementById('srchOv');
+  if (!ov){
+    ov = document.createElement('div'); ov.id = 'srchOv'; ov.className = 'srch-ov';
+    ov.innerHTML = `<div class="srch-box" role="dialog" aria-label="Search">
+      <div class="srch-top"><span>🔍</span><input id="srchIn" type="search" autocomplete="off" spellcheck="false" placeholder="Search tools, planets, houses, yogas, meanings…"><kbd>Esc</kbd></div>
+      <div class="srch-list" id="srchList"></div>
+      <div class="srch-foot"><span>↑↓ move · Enter open · 🌐 Google it</span>
+        <button type="button" class="srch-click" id="srchClick" title="When on, click anything in a chart to Google it">🖱️ Click-to-Google <b id="srchClickState">off</b></button></div></div>`;
+    document.body.appendChild(ov);
+    ov.addEventListener('mousedown', e=>{ if (e.target===ov) srchClose(); });
+    const inp = ov.querySelector('#srchIn');
+    inp.addEventListener('input', ()=> srchRender(inp.value));
+    inp.addEventListener('keydown', e=>{
+      if (e.key==='ArrowDown'){ e.preventDefault(); srchMove(1); }
+      else if (e.key==='ArrowUp'){ e.preventDefault(); srchMove(-1); }
+      else if (e.key==='Enter'){ e.preventDefault(); srchAct(srchSel, e.shiftKey || e.ctrlKey || e.metaKey); }
+      else if (e.key==='Escape'){ srchClose(); }
+    });
+    ov.querySelector('#srchList').addEventListener('click', e=>{
+      const g = e.target.closest('[data-g]'); if (g){ srchRemember(inp.value); srchGoogle(srchRows[+g.dataset.g].q, false); return; }
+      const r = e.target.closest('[data-i]'); if (r) srchAct(+r.dataset.i);
+      const c = e.target.closest('[data-chip]'); if (c){ inp.value = c.dataset.chip; srchRender(inp.value); inp.focus(); }
+    });
+    ov.querySelector('#srchClick').addEventListener('click', ()=>{ const t = document.getElementById('qsearchToggle'); if (t) t.click(); srchClickState(); });
+  }
+  ov.classList.add('show'); document.body.classList.add('srch-lock');
+  const inp = ov.querySelector('#srchIn'); inp.value = prefill || ''; srchRender(inp.value); srchClickState(); setTimeout(()=> inp.focus(), 30);
+}
+function srchClickState(){ const s = document.getElementById('srchClickState'); if (s) s.textContent = (typeof qsearchActive!=='undefined' && qsearchActive) ? 'ON' : 'off'; const b = document.getElementById('srchClick'); if (b) b.classList.toggle('on', typeof qsearchActive!=='undefined' && qsearchActive); }
+function srchClose(){ const ov = document.getElementById('srchOv'); if (ov) ov.classList.remove('show'); document.body.classList.remove('srch-lock'); }
+function srchMove(d){
+  if (!srchRows.length) return; srchSel = (srchSel + d + srchRows.length) % srchRows.length;
+  const list = document.getElementById('srchList');
+  list.querySelectorAll('.srch-row').forEach((r,i)=> r.classList.toggle('sel', i===srchSel));
+  const el = list.querySelector('.srch-row.sel'); if (el) el.scrollIntoView({ block:'nearest' });
+}
+function srchAct(i, google){
+  const r = srchRows[i]; if (!r) return; const q = document.getElementById('srchIn').value;
+  if (r.k==='google' || r.k==='ai'){ srchRemember(q); srchGoogle(q, r.k==='ai'); return; }
+  srchRemember(q || r.t);
+  if (google || !r.go){ srchGoogle(r.q, false); if (r.go) {} return; }
+  srchClose(); switchAppTab(r.go);
+}
+function srchRender(q){
+  const list = document.getElementById('srchList'); if (!list) return;
+  q = (q||'').trim(); let html = '';
+  if (!q){
+    const hasChart = typeof currentChartForModal !== 'undefined' && currentChartForModal;
+    const rec = srchRecent();
+    srchRows = srchBuild().filter(x=> x.k==='dasha').concat(HOME_ITEMS.slice(0,0).map(()=>null)).filter(Boolean);
+    ['panel-rectification','panel-dasha','panel-transit','panel-vargas','panel-yogas','panel-reading'].forEach(id=>{
+      const it = HOME_ITEMS.find(h=>h[0]===id); if (it) srchRows.push({k:'page',ico:it[1],t:it[2],s:it[3],go:id,q:it[2]});
+    });
+    html += `<div class="srch-h">${hasChart?'Right now & popular':'Popular tools'}</div>`;
+    if (rec.length) html = `<div class="srch-h">Recent</div><div class="srch-chips">${rec.map(r=>`<button type="button" data-chip="${rsEsc(r)}">${rsEsc(r)}</button>`).join('')}</div>` + html;
+    html += srchRows.map((r,i)=> srchRowHTML(r,i)).join('');
+    html += `<div class="srch-tip">Try: <button data-chip="mars">mars</button> <button data-chip="7th house">7th house</button> <button data-chip="dasha">dasha</button> <button data-chip="rectify">rectify</button> <button data-chip="rohini">rohini</button> <button data-chip="gaja">gaja kesari</button></div>`;
+  } else {
+    srchRows = srchRank(q);
+    html += srchRows.length ? '' : `<div class="srch-none">No match inside the app for “${rsEsc(q)}”. Try Google below 👇</div>`;
+    html += srchRows.map((r,i)=> srchRowHTML(r,i)).join('');
+    const base = srchRows.length;
+    srchRows.push({k:'google',ico:'🌐',t:`Google “${q}”`,s:'Search the web with “vedic astrology” added',q}); html += srchRowHTML(srchRows[base], base);
+    srchRows.push({k:'ai',ico:'🤖',t:`Ask Google AI about “${q}”`,s:'AI answer with sources',q}); html += srchRowHTML(srchRows[base+1], base+1);
+  }
+  srchSel = 0; list.innerHTML = html;
+  const first = list.querySelector('.srch-row'); if (first) first.classList.add('sel');
+}
+function srchRowHTML(r,i){
+  const tag = { page:'Open', planet:'Your chart', house:'Your chart', chart:'Your chart', dasha:'Your chart', yoga:'Your chart', term:'Learn', google:'Web', ai:'Web' }[r.k] || '';
+  return `<div class="srch-row ${i===0?'sel':''}" data-i="${i}" data-k="${r.k}"><span class="srch-ico">${r.ico}</span><div class="srch-txt"><b>${rsEsc(r.t)}</b><small>${rsEsc((r.s||'').slice(0,150))}</small></div><span class="srch-tag">${tag}</span>${r.k!=='google'&&r.k!=='ai'?`<button type="button" class="srch-g" data-g="${i}" title="Google this">🌐</button>`:''}</div>`;
+}
+document.addEventListener('keydown', e=>{
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test((e.target||{}).tagName) || (e.target && e.target.isContentEditable);
+  if ((e.key==='k' || e.key==='K') && (e.ctrlKey || e.metaKey)){ e.preventDefault(); srchOpen(); }
+  else if (e.key==='/' && !typing && document.getElementById('appTabbar') && document.getElementById('appTabbar').classList.contains('show')){ e.preventDefault(); srchOpen(); }
+  else if (e.key==='Escape') srchClose();
+});
+document.addEventListener('click', e=>{
+  if (e.target.closest && e.target.closest('#quickSearchBtn')){ e.preventDefault(); e.stopImmediatePropagation(); srchOpen(); }
+}, true);
 
 /* ============================================================================
    QUICK SEARCH — click any placement in the chart to Google it
@@ -1604,58 +1686,3 @@ function buildTransitsPanel(chart, profile){
   const tabs = ['Saturn', 'Jupiter', 'Rahu', 'Ketu'];
   const lists = tabs.map((n, ti) => {
     const arr = T.stays[n].filter(s => s.end === null || s.end > birth);
-    const idxNow = arr.findIndex(s => trStatus(s.start, s.end, now) === 'now');
-    const rows = arr.map((s, i) => {
-      const st = trStatus(s.start, s.end, now), prev = arr[i - 1];
-      const retro = (n === 'Saturn' || n === 'Jupiter') && prev && prev.sign === (s.sign + 1) % 12;
-      const hidden = idxNow >= 0 && (i < idxNow - 2 || i > idxNow + 7) ? ' tr-more' : '';
-      return `<div class="dx-row ${st}${hidden}"><div class="dx-row-h" style="cursor:default"><span class="dx-dot" style="background:${DASHA_PLANET_COLORS[n]}">${SIGNS[s.sign].symbol}</span>
-        <span class="dx-row-main"><b>${SIGNS[s.sign].name}${retro ? ' <em class="tr-retro">↺ retrograde return</em>' : ''}</b><small>${dt(s.start)} → ${s.end === null ? '—' : dt(s.end)}</small></span>
-        <span class="dx-row-side"><span class="dx-age">H${hL(s.sign)} Lagna · H${hM(s.sign)} Moon</span>${trPill(st)}</span></div></div>`;
-    }).join('');
-    const hiddenN = (rows.match(/tr-more/g) || []).length;
-    return `<div class="tr-list" data-tr-body="${n}" ${ti ? 'hidden' : ''}>${rows}${hiddenN ? `<button type="button" class="tr-showall" data-tr-all>Show full timeline (${hiddenN} more)</button>` : ''}</div>`;
-  }).join('');
-
-  return `<div class="tr">
-    <div class="tr-intro">Saturn and Jupiter transit signs relative to your <b>Moon</b> (${SIGNS[T.moonSign].name}) and <b>Lagna</b> (${SIGNS[T.asc].name}). Sade Sati is Saturn in the 12th, 1st and 2nd sign from the Moon.</div>
-    <div class="tr-hero">${ssHero}${dh('Kantaka Shani (4th)', actK, nK, TR_COL[3])}${dh('Ashtama Shani (8th)', actA, nA, TR_COL[7])}${pos('Saturn', satS)}${pos('Jupiter', jupS)}</div>
-    <div class="tr-sec"><h5>Sade Sati cycles <span>7½ years each</span></h5><div class="tr-cycles">${cyc}</div></div>
-    <div class="tr-sec"><h5>Dhaiya <span>Saturn 4th &amp; 8th from Moon</span></h5><div class="dx-list">${dhRows(T.kantaka, 'Kantaka Shani · 4th from Moon', TR_COL[3])}${dhRows(T.ashtama, 'Ashtama Shani · 8th from Moon', TR_COL[7])}</div></div>
-    <div class="tr-sec"><h5>Ingress timeline <span>when each planet changes sign</span></h5>
-      <div class="pl-chips tr-tabs">${tabs.map((n, i) => `<button type="button" class="pl-chip ${i ? '' : 'on'}" data-tr-tab="${n}">${PLANET_GLYPHS[n]} ${n}</button>`).join('')}</div>${lists}</div>
-    <div class="pn-note">Ingress dates come from the app's compact built-in ephemeris and can differ from published almanacs by a few days for Saturn and Jupiter (Rahu/Ketu use the mean node). Sade Sati dates merge brief retrograde re-entries into one phase. Window: 3 years before birth to 100 years after.</div>
-  </div>`;
-}
-document.addEventListener('click', (e) => {
-  const tab = e.target.closest('[data-tr-tab]');
-  if (tab){ document.querySelectorAll('[data-tr-tab]').forEach(b => b.classList.toggle('on', b === tab)); document.querySelectorAll('[data-tr-body]').forEach(l => l.hidden = l.dataset.trBody !== tab.dataset.trTab); return; }
-  const all = e.target.closest('[data-tr-all]');
-  if (all){ all.parentElement.querySelectorAll('.tr-more').forEach(r => r.classList.remove('tr-more')); all.remove(); }
-});
-
-/* --------------------------------- BHAVA CHALIT --------------------------------- */
-function buildBhavaPanel(chart, profile){
-  const B = computeBhavaChalit(chart, profile.lat, profile.lon);
-  const moved = PLANET_LIST.filter(n => B.place[n].shifted);
-  const cards = B.houses.map(h => {
-    const ws = (chart.ascendant.sign + h.n - 1) % 12;
-    const chips = h.planets.map(n => { const p = B.place[n]; const c = DASHA_PLANET_COLORS[n];
-      return `<span class="bh-p ${p.shifted ? 'moved' : ''}" style="--pc:${c}" data-planet-click="${n}">${PLANET_GLYPHS[n]} ${n}${p.shifted ? `<em>from H${p.whole}</em>` : ''}</span>`; }).join('') || '<span class="bh-empty">empty</span>';
-    return `<div class="bh-card ${h.planets.length ? 'has' : ''}">
-      <div class="bh-top"><span class="bh-n">${h.n}</span><span class="bh-sign">${SIGNS[ws].symbol} ${SIGNS[ws].name}<small>whole-sign house</small></span></div>
-      <div class="bh-mid"><small>Madhya (centre)</small><b>${nvDeg(h.madhya)}</b></div>
-      <div class="bh-span"><small>Spans</small><span>${nvDeg(h.begin)}</span><span>→ ${nvDeg(h.end)}</span></div>
-      <div class="bh-pl">${chips}</div></div>`;
-  }).join('');
-  const shiftRows = moved.map(n => { const p = B.place[n], c = DASHA_PLANET_COLORS[n];
-    return `<div class="dx-row"><div class="dx-row-h" style="cursor:default"><span class="dx-dot" style="background:${c}">${PLANET_GLYPHS[n]}</span><span class="dx-row-main"><b>${n}: House ${p.whole} → House ${p.chalit}</b><small>${nvDeg(p.lon)} · ${Math.abs(p.fromMadhya).toFixed(1)}° ${p.fromMadhya < 0 ? 'before' : 'past'} the house centre</small></span></div></div>`; }).join('');
-  return `<div class="bh">
-    <div class="tr-intro">Whole-sign houses give each planet the house of its sign. <b>Bhava Chalit</b> (Sripati) instead centres each house on its madhya and ends it halfway to the next, so a planet near a sign edge can shift to the neighbouring house.</div>
-    <div class="tr-hero">
-      <div class="tr-card" style="--pc:#D4AF37"><small>Lagna · Bhava 1 centre</small><b>${nvDeg(B.asc)}</b></div>
-      <div class="tr-card" style="--pc:#5EC4B7"><small>Midheaven · Bhava 10 centre</small><b>${nvDeg(B.mc)}</b></div>
-      <div class="tr-card ${moved.length ? 'on' : ''}" style="--pc:#E0A64A"><small>Planets changing house</small><b>${moved.length} of ${PLANET_LIST.length}</b><span>${moved.length ? moved.join(', ') : 'Chalit matches whole-sign'}</span></div>
-    </div>
-    ${moved.length ? `<div class="tr-sec"><h5>Shifted planets <span>whole-sign → Bhava Chalit</span></h5><div class="dx-list">${shiftRows}</div></div>` : ''}
-    <div class="tr-sec"><h5>The 12 bhavas <span>tap a planet for details</span></h5><div class="bh-grid">${cards}</div></div>

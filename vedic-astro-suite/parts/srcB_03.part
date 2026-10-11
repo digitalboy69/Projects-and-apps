@@ -1,28 +1,3 @@
-
-function lahiriAyanamsa(jd){
-  const ayan1900 = 22 + 27/60 + 54.33/3600;
-  const precessionRate = 50.2564 / 3600;
-  const years = (jd - 2415020.0) / 365.25;
-  let ayan = ayan1900 + precessionRate * years;
-  const correction = 0.000139 * Math.sin((jd - 2415020.0) / 365.25 * 0.98565 * DEG);
-  ayan += correction;
-  return ayan;
-}
-
-function sunLongitude(jd){
-  const T = (jd - J2000) / 36525.0;
-  const L0 = normDeg(280.46646 + 36000.76983*T + 0.0003032*T*T);
-  const M = normDeg(357.52911 + 35999.05029*T - 0.0001537*T*T);
-  const Mrad = M*DEG;
-  const C = (1.914602-0.004817*T-0.000014*T*T)*Math.sin(Mrad) + (0.019993-0.000101*T)*Math.sin(2*Mrad) + 0.000289*Math.sin(3*Mrad);
-  const trueLong = L0 + C;
-  const omega = 125.04 - 1934.136*T;
-  const lambda = trueLong - 0.00569 - 0.00478*Math.sin(omega*DEG);
-  return normDeg(lambda);
-}
-
-function moonLongitude(jd){
-  const T = (jd - J2000) / 36525.0;
   const Lp = normDeg(218.3164477 + 481267.88123421*T - 0.0015786*T*T + T*T*T/538841 - T*T*T*T/65194000);
   const D = normDeg(297.8501921 + 445267.1114034*T - 0.0018819*T*T + T*T*T/545868 - T*T*T*T/113065000);
   const M = normDeg(357.5291092 + 35999.0502909*T - 0.0001536*T*T + T*T*T/24490000);
@@ -1659,3 +1634,55 @@ function calcInduLagnaSign(chart, ascSignIdx){
   const lordOfNinthFromMoon = SIGNS[ninthFromMoonSignIdx].lord;
   const lordOfNinthFromLagna = SIGNS[ninthFromLagnaSignIdx].lord;
   const totalKalas = (INDU_LAGNA_KALAS[lordOfNinthFromMoon] || 0) + (INDU_LAGNA_KALAS[lordOfNinthFromLagna] || 0);
+  let remainder = totalKalas % 12;
+  if (remainder === 0) remainder = 12;
+  return (moonSignIdx + remainder - 1) % 12;
+}
+
+// Shree Lagna: the fraction of the Moon's current Nakshatra already crossed
+// is scaled across the full 360° zodiac and added to the Ascendant's exact
+// longitude (not merely its sign — precision matters near sign boundaries).
+function calcShreeLagnaLongitude(chart){
+  const moonLon = chart.siderealLongitudes.Moon;
+  const nakSpanDeg = 360/27;
+  const posInNak = normDeg(moonLon) % nakSpanDeg;
+  const fraction = posInNak / nakSpanDeg; // 0..1 through the current nakshatra
+  const mappedDeg = fraction * 360; // stretched across a full sign-wheel
+  return normDeg(chart.ascendant.longitude + mappedDeg);
+}
+function calcShreeLagnaSign(chart){
+  return getSignIndex(calcShreeLagnaLongitude(chart));
+}
+
+// Pranapada Lagna (BPHS Ch.6 v.71-74, verified against the text's own three
+// worked examples): time elapsed since the most recent sunrise, in vighatis,
+// is converted at 2° per vighati (i.e. divide by 15 to get rashis directly)
+// and added to the SUN'S OWN LONGITUDE. If the Sun is in a fixed sign, add a
+// further 240°; if in a dual sign, add a further 120° (movable signs: no
+// further addition).
+function calcPranapadaLagnaLongitude(chart){
+  const sunLon = chart.siderealLongitudes.Sun;
+  const sunSignIdx = getSignIndex(sunLon);
+  let elapsedDays = chart.julianDay - chart.sunriseJD;
+  if (elapsedDays < 0) elapsedDays += 1;
+  const elapsedVighatis = elapsedDays * 3600; // 1 day = 60 ghatis * 60 vighatis = 3600 vighatis
+  const xDeg = normDeg(elapsedVighatis * 2); // 30 deg per 15 vighatis = 2 deg/vighati
+  const modality = sunSignIdx % 3; // 0 = movable, 1 = fixed, 2 = dual
+  let offsetDeg = 0;
+  if (modality === 1) offsetDeg = 240;
+  else if (modality === 2) offsetDeg = 120;
+  return normDeg(sunLon + xDeg + offsetDeg);
+}
+function calcPranapadaLagnaSign(chart){
+  return getSignIndex(calcPranapadaLagnaLongitude(chart));
+}
+
+// Karakamsha Lagna: the Navamsa (D9) sign occupied by the Atmakaraka planet
+// (the planet with the highest degree among the 7 classical grahas).
+function calcKarakamshaSign(chart){
+  const atmakaraka = chart.charaKarakas.Atmakaraka.planet;
+  return chart.vargas.D9.planetVargaSign[atmakaraka];
+}
+
+// Swamsha Lagna (Lagnamsa): the Navamsa chart's own Ascendant (the D9 Lagna
+// sign) — distinct from the Karakamsha (the Atmakaraka's D9 sign). Classical

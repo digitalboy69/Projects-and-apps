@@ -1,3 +1,58 @@
+    const idxNow = arr.findIndex(s => trStatus(s.start, s.end, now) === 'now');
+    const rows = arr.map((s, i) => {
+      const st = trStatus(s.start, s.end, now), prev = arr[i - 1];
+      const retro = (n === 'Saturn' || n === 'Jupiter') && prev && prev.sign === (s.sign + 1) % 12;
+      const hidden = idxNow >= 0 && (i < idxNow - 2 || i > idxNow + 7) ? ' tr-more' : '';
+      return `<div class="dx-row ${st}${hidden}"><div class="dx-row-h" style="cursor:default"><span class="dx-dot" style="background:${DASHA_PLANET_COLORS[n]}">${SIGNS[s.sign].symbol}</span>
+        <span class="dx-row-main"><b>${SIGNS[s.sign].name}${retro ? ' <em class="tr-retro">↺ retrograde return</em>' : ''}</b><small>${dt(s.start)} → ${s.end === null ? '—' : dt(s.end)}</small></span>
+        <span class="dx-row-side"><span class="dx-age">H${hL(s.sign)} Lagna · H${hM(s.sign)} Moon</span>${trPill(st)}</span></div></div>`;
+    }).join('');
+    const hiddenN = (rows.match(/tr-more/g) || []).length;
+    return `<div class="tr-list" data-tr-body="${n}" ${ti ? 'hidden' : ''}>${rows}${hiddenN ? `<button type="button" class="tr-showall" data-tr-all>Show full timeline (${hiddenN} more)</button>` : ''}</div>`;
+  }).join('');
+
+  return `<div class="tr">
+    <div class="tr-intro">Saturn and Jupiter transit signs relative to your <b>Moon</b> (${SIGNS[T.moonSign].name}) and <b>Lagna</b> (${SIGNS[T.asc].name}). Sade Sati is Saturn in the 12th, 1st and 2nd sign from the Moon.</div>
+    <div class="tr-hero">${ssHero}${dh('Kantaka Shani (4th)', actK, nK, TR_COL[3])}${dh('Ashtama Shani (8th)', actA, nA, TR_COL[7])}${pos('Saturn', satS)}${pos('Jupiter', jupS)}</div>
+    <div class="tr-sec"><h5>Sade Sati cycles <span>7½ years each</span></h5><div class="tr-cycles">${cyc}</div></div>
+    <div class="tr-sec"><h5>Dhaiya <span>Saturn 4th &amp; 8th from Moon</span></h5><div class="dx-list">${dhRows(T.kantaka, 'Kantaka Shani · 4th from Moon', TR_COL[3])}${dhRows(T.ashtama, 'Ashtama Shani · 8th from Moon', TR_COL[7])}</div></div>
+    <div class="tr-sec"><h5>Ingress timeline <span>when each planet changes sign</span></h5>
+      <div class="pl-chips tr-tabs">${tabs.map((n, i) => `<button type="button" class="pl-chip ${i ? '' : 'on'}" data-tr-tab="${n}">${PLANET_GLYPHS[n]} ${n}</button>`).join('')}</div>${lists}</div>
+    <div class="pn-note">Ingress dates come from the app's compact built-in ephemeris and can differ from published almanacs by a few days for Saturn and Jupiter (Rahu/Ketu use the mean node). Sade Sati dates merge brief retrograde re-entries into one phase. Window: 3 years before birth to 100 years after.</div>
+  </div>`;
+}
+document.addEventListener('click', (e) => {
+  const tab = e.target.closest('[data-tr-tab]');
+  if (tab){ document.querySelectorAll('[data-tr-tab]').forEach(b => b.classList.toggle('on', b === tab)); document.querySelectorAll('[data-tr-body]').forEach(l => l.hidden = l.dataset.trBody !== tab.dataset.trTab); return; }
+  const all = e.target.closest('[data-tr-all]');
+  if (all){ all.parentElement.querySelectorAll('.tr-more').forEach(r => r.classList.remove('tr-more')); all.remove(); }
+});
+
+/* --------------------------------- BHAVA CHALIT --------------------------------- */
+function buildBhavaPanel(chart, profile){
+  const B = computeBhavaChalit(chart, profile.lat, profile.lon);
+  const moved = PLANET_LIST.filter(n => B.place[n].shifted);
+  const cards = B.houses.map(h => {
+    const ws = (chart.ascendant.sign + h.n - 1) % 12;
+    const chips = h.planets.map(n => { const p = B.place[n]; const c = DASHA_PLANET_COLORS[n];
+      return `<span class="bh-p ${p.shifted ? 'moved' : ''}" style="--pc:${c}" data-planet-click="${n}">${PLANET_GLYPHS[n]} ${n}${p.shifted ? `<em>from H${p.whole}</em>` : ''}</span>`; }).join('') || '<span class="bh-empty">empty</span>';
+    return `<div class="bh-card ${h.planets.length ? 'has' : ''}">
+      <div class="bh-top"><span class="bh-n">${h.n}</span><span class="bh-sign">${SIGNS[ws].symbol} ${SIGNS[ws].name}<small>whole-sign house</small></span></div>
+      <div class="bh-mid"><small>Madhya (centre)</small><b>${nvDeg(h.madhya)}</b></div>
+      <div class="bh-span"><small>Spans</small><span>${nvDeg(h.begin)}</span><span>→ ${nvDeg(h.end)}</span></div>
+      <div class="bh-pl">${chips}</div></div>`;
+  }).join('');
+  const shiftRows = moved.map(n => { const p = B.place[n], c = DASHA_PLANET_COLORS[n];
+    return `<div class="dx-row"><div class="dx-row-h" style="cursor:default"><span class="dx-dot" style="background:${c}">${PLANET_GLYPHS[n]}</span><span class="dx-row-main"><b>${n}: House ${p.whole} → House ${p.chalit}</b><small>${nvDeg(p.lon)} · ${Math.abs(p.fromMadhya).toFixed(1)}° ${p.fromMadhya < 0 ? 'before' : 'past'} the house centre</small></span></div></div>`; }).join('');
+  return `<div class="bh">
+    <div class="tr-intro">Whole-sign houses give each planet the house of its sign. <b>Bhava Chalit</b> (Sripati) instead centres each house on its madhya and ends it halfway to the next, so a planet near a sign edge can shift to the neighbouring house.</div>
+    <div class="tr-hero">
+      <div class="tr-card" style="--pc:#D4AF37"><small>Lagna · Bhava 1 centre</small><b>${nvDeg(B.asc)}</b></div>
+      <div class="tr-card" style="--pc:#5EC4B7"><small>Midheaven · Bhava 10 centre</small><b>${nvDeg(B.mc)}</b></div>
+      <div class="tr-card ${moved.length ? 'on' : ''}" style="--pc:#E0A64A"><small>Planets changing house</small><b>${moved.length} of ${PLANET_LIST.length}</b><span>${moved.length ? moved.join(', ') : 'Chalit matches whole-sign'}</span></div>
+    </div>
+    ${moved.length ? `<div class="tr-sec"><h5>Shifted planets <span>whole-sign → Bhava Chalit</span></h5><div class="dx-list">${shiftRows}</div></div>` : ''}
+    <div class="tr-sec"><h5>The 12 bhavas <span>tap a planet for details</span></h5><div class="bh-grid">${cards}</div></div>
     <div class="pn-note">Sripati method: the Lagna and Midheaven are the centres of houses 1 and 10; the arcs between them are divided into equal thirds to place the other centres; each house ends at the midpoint between neighbouring centres. Positions are sidereal (Lahiri).</div>
   </div>`;
 }
@@ -1631,31 +1686,3 @@ function computeLiveSky(lat, lon, natalAscSign){
       nakshatra: nak, retrograde: transitRetro[name], speed,
       natalHouse, natalHouseTheme: natalHouse!==null ? HOUSE_THEMES[natalHouse-1] : null
     };
-  });
-
-  return { jd, ayanamsa, now, lat, lon, planets };
-}
-
-function renderLiveTransitComparison(natalChart, profile, lat, lon, tz){
-  const natalAscSign = natalChart.ascendant.sign;
-  const sky = computeLiveSky(lat, lon, natalAscSign);
-
-  let html = `<div class="transit-live-meta">Sky as of <span class="mono">${sky.now.toUTCString()}</span> · Observed from your entered location (${lat.toFixed(2)}°, ${lon.toFixed(2)}°) · Local UTC offset ${fmtTz(tz)}</div>
-  <div class="planet-table-wrap" style="margin-top:14px;">
-    <table class="planet-table">
-      <thead><tr><th>Planet</th><th>Transit Sign</th><th>Degree</th><th>Nakshatra</th><th>Speed</th><th>Falls in Natal House</th><th>Natal House Theme</th></tr></thead>
-      <tbody>`;
-
-  PLANET_LIST.forEach(name=>{
-    const p = sky.planets[name];
-    const sign = SIGNS[p.sign];
-    html += `<tr>
-      <td class="planet-name-cell"><span class="planet-glyph">${PLANET_GLYPHS[name]}</span>${name}${p.retrograde?'<span class="retro-tag">Retro</span>':''}</td>
-      <td>${sign.symbol} ${sign.name}</td>
-      <td class="mono">${formatDeg(p.degInSign)}</td>
-      <td>${p.nakshatra.name} (Pada ${p.nakshatra.pada})</td>
-      <td class="mono">${Math.abs(p.speed).toFixed(2)}°/day</td>
-      <td><span class="dig-good">House ${p.natalHouse}</span></td>
-      <td>${p.natalHouseTheme}</td>
-    </tr>`;
-  });

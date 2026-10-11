@@ -1,3 +1,31 @@
+  });
+
+  return { jd, ayanamsa, now, lat, lon, planets };
+}
+
+function renderLiveTransitComparison(natalChart, profile, lat, lon, tz){
+  const natalAscSign = natalChart.ascendant.sign;
+  const sky = computeLiveSky(lat, lon, natalAscSign);
+
+  let html = `<div class="transit-live-meta">Sky as of <span class="mono">${sky.now.toUTCString()}</span> · Observed from your entered location (${lat.toFixed(2)}°, ${lon.toFixed(2)}°) · Local UTC offset ${fmtTz(tz)}</div>
+  <div class="planet-table-wrap" style="margin-top:14px;">
+    <table class="planet-table">
+      <thead><tr><th>Planet</th><th>Transit Sign</th><th>Degree</th><th>Nakshatra</th><th>Speed</th><th>Falls in Natal House</th><th>Natal House Theme</th></tr></thead>
+      <tbody>`;
+
+  PLANET_LIST.forEach(name=>{
+    const p = sky.planets[name];
+    const sign = SIGNS[p.sign];
+    html += `<tr>
+      <td class="planet-name-cell"><span class="planet-glyph">${PLANET_GLYPHS[name]}</span>${name}${p.retrograde?'<span class="retro-tag">Retro</span>':''}</td>
+      <td>${sign.symbol} ${sign.name}</td>
+      <td class="mono">${formatDeg(p.degInSign)}</td>
+      <td>${p.nakshatra.name} (Pada ${p.nakshatra.pada})</td>
+      <td class="mono">${Math.abs(p.speed).toFixed(2)}°/day</td>
+      <td><span class="dig-good">House ${p.natalHouse}</span></td>
+      <td>${p.natalHouseTheme}</td>
+    </tr>`;
+  });
   html += `</tbody></table></div>
   <div class="transit-note">This compares today's real sky against the whole-sign houses of the natal chart above — a simplified but classically valid approach to gochara (transit) analysis. Retrograde status is reflected. Refresh the check periodically since positions shift daily (Moon) or over months/years (outer planets).</div>`;
 

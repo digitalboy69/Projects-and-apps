@@ -1659,3 +1659,30 @@ body.qsearch-mode-on .app-panel { cursor: crosshair; }
   .rect-detail-actions button { width: 100%; justify-content: center; }
   .tt-panel-card { padding: 16px 12px; }
   .tt-intro { font-size: 13px; }
+  .tt-controls { padding: 14px; }
+  .tt-result-body { padding: 14px; }
+  .tt-grid { grid-template-columns: 1fr; }
+  .tt-result-badge { padding: 10px 14px; font-size: 11px; }
+  .tt-countdown-card .tt-value { font-size: 20px; }
+  .sandhi-meta { font-size: 11.5px; }
+}
+
+/* ---- Home launcher ---- */
+.home-wrap{max-width:1000px;margin:0 auto;padding:8px 4px 24px}
+.home-hello{font:600 22px var(--font-serif,var(--font-sans));color:var(--text-main);margin:0 0 4px}
+.home-sub{color:var(--text-muted);font-size:14px;margin:0 0 24px}
+.home-sec{margin:0 0 26px}
+.home-sec h3{font:600 12px var(--font-sans);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-bright);margin:0 0 10px}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.home-card{display:flex;align-items:center;gap:12px;text-align:left;background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:14px;cursor:pointer;color:var(--text-main);font-family:var(--font-sans);transition:border-color .2s,transform .15s}
+.home-card:hover{border-color:var(--gold)}
+.home-card:active{transform:scale(.98)}
+.home-card .hc-i{font-size:22px;width:36px;text-align:center;flex:none}
+.home-card b{display:block;font-size:15px;font-weight:600}
+.home-card small{display:block;color:var(--text-muted);font-size:12px;margin-top:2px}
+.panel-back{display:flex;align-items:center;gap:10px;max-width:1080px;margin:0 auto 14px}
+.panel-back button{background:transparent;border:1px solid var(--border-light);color:var(--gold-bright);border-radius:999px;padding:7px 14px;font:600 13px var(--font-sans);cursor:pointer}
+.panel-back span{color:var(--text-muted);font-size:13px}
+@media (max-width:880px){.home-grid{grid-template-columns:1fr}}
+
+/* ---- Full-screen app mode: slim header, no footer ---- */
