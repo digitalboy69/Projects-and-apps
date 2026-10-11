@@ -1,3 +1,11 @@
+
+  return `<div class="varga-aspect-table-wrap" id="${prefix}AspectTableWrap">
+    <div class="aspect-table-head">
+      <span class="section-sub" style="margin:0;">Full Aspects (Drishti) Table</span>
+      <button type="button" class="chart-dl-btn-single aspect-copy-btn" id="${prefix}CopyAspectTableBtn"><span>📋</span> Copy Table</button>
+    </div>
+    <div class="aspect-table-scroll">
+      <table class="varga-house-table aspect-table">
         <thead><tr><th>Planet</th><th>Position</th><th>Nakshatra</th><th>Aspects Houses</th><th>Aspects Planets</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>

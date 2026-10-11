@@ -1,3 +1,14 @@
+    <div class="tr-sec"><h5>The 12 bhavas <span>tap a planet for details</span></h5><div class="bh-grid">${cards}</div></div>
+    <div class="pn-note">Sripati method: the Lagna and Midheaven are the centres of houses 1 and 10; the arcs between them are divided into equal thirds to place the other centres; each house ends at the midpoint between neighbouring centres. Positions are sidereal (Lahiri).</div>
+  </div>`;
+}
+
+/* =============================================================================
+   KUNDALI MATCHING — Ashtakoota (36 gunas) + Manglik + bonus checks
+   Groom = Person 1 (Vara), Bride = Person 2 (Kanya). Asymmetric tables use these roles.
+   ============================================================================= */
+const KM_VARNA = ['Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin'];
+const KM_VARNA_RANK = { Brahmin: 4, Kshatriya: 3, Vaishya: 2, Shudra: 1 };
 const KM_VASHYA_SIGN = ['Chatushpada','Chatushpada','Manava','Jalachara','Vanachara','Manava','Manava','Keeta','*','*','Manava','Jalachara'];
 const KM_VASHYA_ORDER = ['Chatushpada','Manava','Jalachara','Vanachara','Keeta'];
 const KM_VASHYA = [[2,1,1,0.5,1],[1,2,0.5,0,1],[1,0.5,2,1,1],[0,0,0,2,0],[1,1,1,0,2]];   // [groom][bride]
@@ -1778,11 +1789,3 @@ function buildAspectsTableHtml(aspectRows, idPrefix){
       <td>${targetHtml}</td>
     </tr>`;
   });
-
-  return `<div class="varga-aspect-table-wrap" id="${prefix}AspectTableWrap">
-    <div class="aspect-table-head">
-      <span class="section-sub" style="margin:0;">Full Aspects (Drishti) Table</span>
-      <button type="button" class="chart-dl-btn-single aspect-copy-btn" id="${prefix}CopyAspectTableBtn"><span>📋</span> Copy Table</button>
-    </div>
-    <div class="aspect-table-scroll">
-      <table class="varga-house-table aspect-table">

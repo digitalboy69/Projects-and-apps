@@ -1,3 +1,17 @@
+  ['Will I own property?','Give a direct verdict and the likely age/year range.'],
+  ['What suits me','Rank: house, flat, land, farm, commercial, vehicle, with a one-line reason each.'],
+  ['Where to buy','Describe the best type of location/direction and city style for me.'],
+  ['Best years to buy','List the best 3 years/windows to buy property or a vehicle.']]},
+ {id:'foreign',ico:'✈️',t:'Foreign travel & settlement',kw:'abroad visa immigration relocate overseas',h:[12,9],s:[3,7,4],k:['Rahu','Moon'],ck:'',v:'D1',ar:[],subs:[
+  ['Will I go abroad?','Give a direct verdict with a percentage and the type: study, work, settle, or travel.'],
+  ['10 best countries/regions','List 10 countries or regions ranked by fit for me.'],
+  ['Best years to go','List the best 3 years/windows to travel, move or study abroad.']]},
+ {id:'enemies',ico:'⚔️',t:'Rivals, debts & disputes',kw:'enemies litigation court competition loans conflict',h:[6],s:[8,12,3],k:['Mars','Saturn'],ck:'Gnatikaraka',v:'D1',ar:['A6'],subs:[
+  ['Types of rivals','Describe the kind of rivals/opponents I face in 6 bullets.'],
+  ['Debt & legal risk','Give a calm verdict on debt and legal-dispute risk and 5 ways to stay safe.'],
+  ['How I win','List 6 strategies that work best for me in conflicts.']]},
+ {id:'spiritual',ico:'🕉️',t:'Spirituality & moksha',kw:'meditation dharma purpose inner growth',h:[9,12],s:[5,8],k:['Ketu','Jupiter'],ck:'Atmakaraka',v:'D20',ar:[],subs:[
+  ['8 paths that suit me','List 8 spiritual paths/practices (bhakti, meditation, yoga, service, study...) ranked.'],
   ['Traditional mantra / deity leaning','Name the traditional deities or mantras that match my chart (3-5) and a simple daily practice.'],
   ['When spirituality deepens','List the best periods for spiritual growth.']]},
  {id:'karma',ico:'🔮',t:'Karma & past life',kw:'karmic lessons rahu ketu dosha pitru kala sarpa mangal past life debt',h:[5,9,12,8],s:[1],k:['Rahu','Ketu','Saturn'],ck:'Atmakaraka',v:'D60',ar:[],subs:[
@@ -1775,14 +1789,3 @@ function buildBhavaPanel(chart, profile){
       <div class="tr-card ${moved.length ? 'on' : ''}" style="--pc:#E0A64A"><small>Planets changing house</small><b>${moved.length} of ${PLANET_LIST.length}</b><span>${moved.length ? moved.join(', ') : 'Chalit matches whole-sign'}</span></div>
     </div>
     ${moved.length ? `<div class="tr-sec"><h5>Shifted planets <span>whole-sign → Bhava Chalit</span></h5><div class="dx-list">${shiftRows}</div></div>` : ''}
-    <div class="tr-sec"><h5>The 12 bhavas <span>tap a planet for details</span></h5><div class="bh-grid">${cards}</div></div>
-    <div class="pn-note">Sripati method: the Lagna and Midheaven are the centres of houses 1 and 10; the arcs between them are divided into equal thirds to place the other centres; each house ends at the midpoint between neighbouring centres. Positions are sidereal (Lahiri).</div>
-  </div>`;
-}
-
-/* =============================================================================
-   KUNDALI MATCHING — Ashtakoota (36 gunas) + Manglik + bonus checks
-   Groom = Person 1 (Vara), Bride = Person 2 (Kanya). Asymmetric tables use these roles.
-   ============================================================================= */
-const KM_VARNA = ['Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin'];
-const KM_VARNA_RANK = { Brahmin: 4, Kshatriya: 3, Vaishya: 2, Shudra: 1 };

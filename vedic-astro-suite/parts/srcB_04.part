@@ -1,12 +1,3 @@
-      name, retrograde: chart.planets[name].retrograde,
-      dignity: vargaKey === "D1" ? chart.planets[name].dignity : getDignity(name, signIdx, 15)
-    }));
-    houses.push({
-      houseNum: h, sign: signIdx, signName: sign.name, signSanskrit: sign.sk,
-      signLord: sign.lord, signSymbol: sign.symbol, element: sign.element, modality: sign.modality,
-      planets: planetsHere, isEmpty: planetsHere.length === 0
-    });
-  }
   const V0 = chart.vargas[vargaKey];
   return { ascendantSign: lagnaSignIdx, houses, planetVargaSign, outerSign: V0.outerSign, outerRx: V0.outerRx };
 }
@@ -1678,7 +1669,33 @@ const SRCH_TOPICS = [
   ['Money habits','Give 8 specific, checkable money behaviours: what I do right after income, impulse-spend categories, saving style, lending/borrowing habit, risk appetite, with an example each.'],
   ['Wealth years ahead','Year-by-year for the next 5 years: income up/down, best years to invest, buy or save.'],
   ['Where to invest','List 8 asset types that suit my nature ranked, and 4 to avoid (general idea only, not financial advice).'],
-  ['Money leaks & fixes','List my 5 biggest money leaks and a fix for each.']]},
+  ['Money leaks & fixes','List my 5 biggest money leaks and a fix for each.'],
+  ['Best age to build wealth','Give the 3 age windows when I build the most wealth, and what I should do in each.'],
+  ['Good & bad money days','List the weekdays and 3 conditions that are good for money decisions for me and which to avoid.']]},
+ {id:'moneyblocks',ico:'🚧',t:'Money blocks & delays',kw:'money block stuck poor debt loan loss not saving financial problem scarcity obstacle',h:[2,11,6,8,12],s:[5,9,10],k:['Saturn','Rahu','Ketu','Jupiter'],ck:'',v:'D2',ar:['A2','A11'],subs:[
+  ['My top 7 money blocks','List my 7 most likely money blocks, tied to specific placements, each with a checkable real-life sign (no generic lines).'],
+  ['Why money leaves me','List 6 specific ways money leaves me (loans, trust, impulse, family, health, fines, scams, lending) ranked, with a fix for each.'],
+  ['Debt & loans','Give a direct view on debt and loan risk (low / medium / high), 4 reasons, and the safest way I should borrow or avoid it.'],
+  ['Mindset blocks','Give 6 specific beliefs or habits about money that my chart suggests I hold, and a replacement habit for each.'],
+  ['Blocked years & when it eases','List the next 3 tight financial periods (with years) and the first window when money flow clearly improves.'],
+  ['Unexpected loss risks','List 5 types of sudden financial loss to guard against (theft, fraud, partners, speculation, health) and a precaution for each.']]},
+ {id:'wealthboost',ico:'📈',t:'Wealth growth & luck',kw:'rich millionaire business profit investment property lottery speculation windfall gains',h:[2,5,9,11],s:[8,10],k:['Jupiter','Venus','Mercury'],ck:'',v:'D2',ar:['A2','A11'],subs:[
+  ['Rich or comfortable?','Give a direct verdict (struggle / comfortable / wealthy / very wealthy) with a percentage and 5 chart reasons.'],
+  ['Salary, business or both','Rank salary, business, freelance, investments and family money for me with a percentage and reason.'],
+  ['Windfalls & speculation','Say whether sudden gains (inheritance, gifts, stocks, lottery) are likely, with 4 reasons and how careful I should be.'],
+  ['Property, gold or stocks','Rank property, gold, stocks, business and savings for my nature, 1 line each (general idea only, not financial advice).'],
+  ['My 5 best money years','List the 5 best years ahead for income growth, each with one action to take.'],
+  ['Multiple income streams','List 8 income stream ideas that fit my chart, ranked, with the planet behind each.']]},
+ {id:'remedies',ico:'🪔',t:'Remedies & what to do',kw:'remedy remedies upay mantra gemstone puja charity fasting donate fix dosha solution',h:[1,6,8,12],s:[9,5],k:['Jupiter','Saturn','Sun','Moon'],ck:'',v:'D1',ar:[],subs:[
+  ['My top 5 remedies','Pick the 5 most useful traditional remedies for MY chart, ranked by importance, with the exact planet and reason for each.'],
+  ['Weak planets & how to strengthen','List my 3 weakest planets and, for each: a simple mantra, a day to fast or donate, a colour and a daily habit.'],
+  ['Gemstones: wear or avoid','Say which gemstones may suit me and which to avoid, with the reason and a caution to consult a trusted astrologer before wearing.'],
+  ['Mantras & daily routine','Build a 10-minute daily routine: mantras, timing and simple actions matched to my chart.'],
+  ['Charity & seva that helps','List 7 specific charity or service actions (what to give, on which day, to whom) matched to my planets.'],
+  ['Habits that matter more than rituals','List 8 practical, non-ritual habits that work as remedies for my chart in everyday life.'],
+  ['Money-focused remedies','Give 8 traditional remedies and 4 practical habits specifically to improve money flow in my chart.'],
+  ['Love-focused remedies','Give 8 traditional remedies and 4 practical habits specifically for love, marriage and relationships in my chart.'],
+  ['Remedies for the running period','Based on my current dasha and antardasha, list 6 targeted remedies and what to avoid until it ends.']]},
  {id:'fame',ico:'🌟',t:'Fame, status & recognition',kw:'reputation name public image authority',h:[10,1],s:[11,5],k:['Sun','Moon'],ck:'Atmakaraka',v:'D10',ar:['AL','A10'],subs:[
   ['Will I become well known?','Give a direct verdict with a percentage and the fields where it is most likely.'],
   ['My public image','In 6 bullets: how people see me, and how to sharpen it.'],
@@ -1772,17 +1789,3 @@ const SRCH_TOPICS = [
   ['Siblings','Give 8 specific, checkable facts about my siblings situation (number tendency, birth order feel, age gaps, closeness, rivalry, who helps whom).'],
   ['My courage & effort style','Give 8 specific, checkable ways I take initiative, handle risk, react to dares or competition, and where I hold back.']]},
  {id:'property',ico:'🏠',t:'Property, home & vehicles',kw:'house land real estate car buy flat',h:[4],s:[2,11,12],k:['Mars','Venus','Saturn'],ck:'Matrikaraka',v:'D4',ar:['A4'],subs:[
-  ['Will I own property?','Give a direct verdict and the likely age/year range.'],
-  ['What suits me','Rank: house, flat, land, farm, commercial, vehicle, with a one-line reason each.'],
-  ['Where to buy','Describe the best type of location/direction and city style for me.'],
-  ['Best years to buy','List the best 3 years/windows to buy property or a vehicle.']]},
- {id:'foreign',ico:'✈️',t:'Foreign travel & settlement',kw:'abroad visa immigration relocate overseas',h:[12,9],s:[3,7,4],k:['Rahu','Moon'],ck:'',v:'D1',ar:[],subs:[
-  ['Will I go abroad?','Give a direct verdict with a percentage and the type: study, work, settle, or travel.'],
-  ['10 best countries/regions','List 10 countries or regions ranked by fit for me.'],
-  ['Best years to go','List the best 3 years/windows to travel, move or study abroad.']]},
- {id:'enemies',ico:'⚔️',t:'Rivals, debts & disputes',kw:'enemies litigation court competition loans conflict',h:[6],s:[8,12,3],k:['Mars','Saturn'],ck:'Gnatikaraka',v:'D1',ar:['A6'],subs:[
-  ['Types of rivals','Describe the kind of rivals/opponents I face in 6 bullets.'],
-  ['Debt & legal risk','Give a calm verdict on debt and legal-dispute risk and 5 ways to stay safe.'],
-  ['How I win','List 6 strategies that work best for me in conflicts.']]},
- {id:'spiritual',ico:'🕉️',t:'Spirituality & moksha',kw:'meditation dharma purpose inner growth',h:[9,12],s:[5,8],k:['Ketu','Jupiter'],ck:'Atmakaraka',v:'D20',ar:[],subs:[
-  ['8 paths that suit me','List 8 spiritual paths/practices (bhakti, meditation, yoga, service, study...) ranked.'],

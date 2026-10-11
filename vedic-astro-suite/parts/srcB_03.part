@@ -1,9 +1,3 @@
-    const dE = (E - e*Math.sin(E) - M) / (1 - e*Math.cos(E));
-    E -= dE;
-    if (Math.abs(dE) < 1e-10) break;
-  }
-  return E;
-}
 function heliocentricPos(elements, T){
   const a=elements.a, e=elements.e, i=elements.i*DEG;
   const L = normDeg(elements.L + elements.Lrate*T)*DEG;
@@ -1786,3 +1780,12 @@ function buildVargaFromLagna(chart, lagnaSignIdx, vargaKey){
     const signIdx = (lagnaSignIdx + h - 1) % 12;
     const sign = SIGNS[signIdx];
     const planetsHere = PLANET_LIST.filter(name => planetVargaSign[name] === signIdx).map(name => ({
+      name, retrograde: chart.planets[name].retrograde,
+      dignity: vargaKey === "D1" ? chart.planets[name].dignity : getDignity(name, signIdx, 15)
+    }));
+    houses.push({
+      houseNum: h, sign: signIdx, signName: sign.name, signSanskrit: sign.sk,
+      signLord: sign.lord, signSymbol: sign.symbol, element: sign.element, modality: sign.modality,
+      planets: planetsHere, isEmpty: planetsHere.length === 0
+    });
+  }
