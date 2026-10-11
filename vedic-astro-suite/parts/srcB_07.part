@@ -1,3 +1,5 @@
+        <tbody>${rows}</tbody>
+      </table>
     </div>
   </div>`;
 }
@@ -1700,10 +1702,11 @@ document.addEventListener('click',e=>{const t=e.target.closest('.fm-h');if(!t)re
     ensureModal(); stopCam();
     const url=linkFor(p), cv=qrCanvas(url,300); cv.className='sh-qr';
     const body=$('shBody');
-    body.innerHTML='<h4>📤 Share '+escapeHtml(p.name)+'’s chart</h4><p class="sh-sub">Anyone who scans this QR or opens the link sees the chart instantly.</p><div class="sh-qrwrap"></div>'
-      +'<div class="sh-row"><button type="button" class="btn btn-primary btn-sm" id="shCopy">🔗 Copy link</button><button type="button" class="btn btn-ghost btn-sm" id="shDl">⬇️ Download QR</button>'+(navigator.share?'<button type="button" class="btn btn-ghost btn-sm" id="shNative">📲 Share…</button>':'')+'</div>'
-      +'<div class="sh-warn">🔒 The link contains the birth details. Share only with people you trust.</div>';
-    body.querySelector('.sh-qrwrap').appendChild(cv);
+    body.innerHTML='<div class="sh-badge">📤 Ready to share</div><h4>'+escapeHtml(p.name)+'\u2019s chart</h4><div class="sh-qrwrap"><div class="sh-frame"></div></div><p class="sh-sub">Ask your friend to scan this with their phone camera</p>'
+      +'<div class="sh-steps"><span><i>1</i>Show QR</span><span><i>2</i>Friend scans</span><span><i>3</i>Chart opens ✨</span></div>'
+      +'<div class="sh-row"><button type="button" class="btn btn-primary btn-sm" id="shCopy">🔗 Copy link</button><button type="button" class="btn btn-ghost btn-sm" id="shDl">⬇️ Save QR image</button>'+(navigator.share?'<button type="button" class="btn btn-ghost btn-sm" id="shNative">📲 Send…</button>':'')+'</div>'
+      +'<div class="sh-warn">🔒 This link has the birth details inside. Share only with people you trust.</div>';
+    body.querySelector('.sh-frame').appendChild(cv);
     $('shCopy').onclick=function(){ const b=this; (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(()=>toast(b,'✅ Copied'),()=>{ window.prompt('Copy this link:',url); }); };
     $('shDl').onclick=()=>{ const a=document.createElement('a'); a.download=(p.name||'chart').replace(/[^\w-]+/g,'_')+'-chart-qr.png'; a.href=cv.toDataURL('image/png'); document.body.appendChild(a); a.click(); a.remove(); };
     if($('shNative')) $('shNative').onclick=()=>navigator.share({title:p.name+'’s birth chart',url:url}).catch(()=>{});
@@ -1722,9 +1725,11 @@ document.addEventListener('click',e=>{const t=e.target.closest('.fm-h');if(!t)re
   }
   function showScan(){
     ensureModal(); stopCam();
-    $('shBody').innerHTML='<h4>📷 Open a shared chart</h4><div class="sh-vid" id="shVidBox" hidden><video id="shVid" playsinline muted></video></div>'
-      +'<div class="sh-row"><button type="button" class="btn btn-primary btn-sm" id="shCam">📷 Scan with camera</button><label class="btn btn-ghost btn-sm sh-up">🖼️ Upload QR image<input type="file" id="shFile" accept="image/*" hidden></label></div>'
-      +'<div class="sh-or">or paste a link</div><div class="sh-row sh-paste"><input type="text" id="shPaste" placeholder="Paste the chart link here"><button type="button" class="btn btn-ghost btn-sm" id="shGo">Open</button></div>'
+    $('shBody').innerHTML='<div class="sh-badge">📥 Open a chart</div><h4>Got a chart from a friend?</h4><p class="sh-sub">Pick any one way below</p>'
+      +'<div class="sh-vid" id="shVidBox" hidden><video id="shVid" playsinline muted></video><div class="sh-scanbox"><i></i></div><div class="sh-vhint">Point at the QR code</div></div>'
+      +'<div class="sh-opts"><button type="button" class="sh-opt" id="shCam"><span>📷</span><b>Scan with camera</b><small>Point your camera at their QR</small></button>'
+      +'<label class="sh-opt sh-up"><span>🖼️</span><b>Upload QR picture</b><small>Photo or screenshot of the QR</small><input type="file" id="shFile" accept="image/*" hidden></label>'
+      +'<div class="sh-opt sh-pst"><span>🔗</span><b>Paste the link</b><div class="sh-paste"><input type="text" id="shPaste" placeholder="Paste link here"><button type="button" class="btn btn-primary btn-sm" id="shGo">Open</button></div></div></div>'
       +'<div class="sh-msg" id="shMsg" hidden></div>';
     const msg=$('shMsg');
     $('shFile').onchange=function(){ const f=this.files[0]; if(!f) return; msg.hidden=true; decodeFile(f,t=>{ if(t) handleText(t,msg); else { msg.textContent='😕 Could not find a QR code in that image. Try a clearer, closer picture.'; msg.hidden=false; } }); this.value=''; };
@@ -1751,7 +1756,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('.fm-h');if(!t)re
   function build(){
     const form=$('birthForm'); if(!form||$('inShare')) return;
     const box=document.createElement('div'); box.className='in-share'; box.id='inShare';
-    box.innerHTML='<div class="in-share-t">📲 Share or open a chart</div><div class="in-share-b"><button type="button" class="in-sh-btn" id="inShareBtn">🔗 Share this chart<small>link &amp; QR code</small></button><button type="button" class="in-sh-btn" id="inScanBtn">📷 Open a shared chart<small>scan or upload QR, paste link</small></button></div><div class="in-share-n" id="inShareN" hidden></div>';
+    box.innerHTML='<div class="in-share-h"><span class="in-share-ic">📲</span><div><b>Share or open a chart</b><small>Send a chart to anyone, or open one you received. No sign-up.</small></div></div><div class="in-share-b"><button type="button" class="in-sh-btn" id="inShareBtn"><span class="in-sh-ic">🔗</span><b>Share my chart</b><small>Get a link + QR code</small></button><button type="button" class="in-sh-btn alt" id="inScanBtn"><span class="in-sh-ic">📷</span><b>Open a chart</b><small>Scan QR, upload or paste</small></button></div><div class="in-share-n" id="inShareN" hidden></div>';
     form.parentNode.insertBefore(box,form.nextSibling);
     $('inScanBtn').onclick=showScan;
     $('inShareBtn').onclick=()=>{ const p=formProfile(), n=$('inShareN'); if(!p){ n.textContent='Fill in your name, birth date, time and place first (steps above), then tap Share.'; n.hidden=false; return; } n.hidden=true; showShare(p); };

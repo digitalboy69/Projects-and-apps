@@ -1,3 +1,23 @@
+  return signs;
+}
+
+// Builds a full varga-shaped dataset (ascendantSign, houses, planetVargaSign)
+// for a chosen special lagna acting as the new Ascendant, for a given
+// divisional chart (D1..D60). Planets keep their own divisional placement;
+// only the reference point (Lagna) changes, exactly as classical Jyotish
+// treats these special points as alternate ascendants for house-counting.
+function buildVargaFromLagna(chart, lagnaSignIdx, vargaKey){
+  const planetVargaSign = {};
+  PLANET_LIST.forEach(name => {
+    planetVargaSign[name] = chart.vargas[vargaKey].planetVargaSign[name];
+  });
+  const houses = [];
+  for (let h=1; h<=12; h++){
+    const signIdx = (lagnaSignIdx + h - 1) % 12;
+    const sign = SIGNS[signIdx];
+    const planetsHere = PLANET_LIST.filter(name => planetVargaSign[name] === signIdx).map(name => ({
+      name, retrograde: chart.planets[name].retrograde,
+      dignity: vargaKey === "D1" ? chart.planets[name].dignity : getDignity(name, signIdx, 15)
     }));
     houses.push({
       houseNum: h, sign: signIdx, signName: sign.name, signSanskrit: sign.sk,
@@ -1760,17 +1780,3 @@ const SRCH_TOPICS = [
   ['5 weaknesses & fixes','List 5 weaknesses as concrete recurring mistakes (with the typical situation where each happens), each with one practical fix.'],
   ['Life purpose','State my life direction in 3 lines using specific themes from the data (no motivational clichés) and name 3 concrete fields or life areas where it plays out.'],
   ['Traditional lucky aids','List my traditional lucky colour, day, number, direction and gem (for fun, traditional).']]},
- {id:'friends',ico:'🤝',t:'Friends, networks & gains',kw:'social circle allies fulfilment desires',h:[11],s:[3,7,5],k:['Jupiter','Mercury'],ck:'',v:'D1',ar:['A11'],subs:[
-  ['My friend types','Give 8 specific traits of the friends I attract: age gap, profession types, how friendships start and end, who supports me and who lets me down.'],
-  ['Networking strengths','List how I gain from networks and 5 ways to use it.']]},
- {id:'losses',ico:'📉',t:'Expenses, losses & sleep',kw:'spending waste hospital isolation bed',h:[12],s:[2,6,8],k:['Saturn','Ketu'],ck:'',v:'D1',ar:[],subs:[
-  ['Where money leaks','List my top 6 spending leaks and a fix each.'],
-  ['Sleep & rest','Describe my sleep pattern and 5 tips.'],
-  ['Hidden fears','List 5 hidden fears or blocks and how to ease them.']]},
- {id:'talent',ico:'🎨',t:'Talent, creativity & arts',kw:'music art writing skill hobby entertainment',h:[5,3],s:[10,11],k:['Venus','Mercury','Moon'],ck:'Putrakaraka',v:'D9',ar:[],subs:[
-  ['15 creative fields','List 15 creative fields ranked by fit for me.'],
-  ['Natural talents','List 8 natural talents as concrete things I picked up fast without training, with the age or situation where it showed.'],
-  ['Hobbies that suit me','List 8 hobbies that recharge me.']]},
- {id:'inherit',ico:'🏦',t:'Inheritance & hidden wealth',kw:'will insurance partner money legacy',h:[8,2],s:[11,7],k:['Saturn','Jupiter'],ck:'',v:'D1',ar:['A8'],subs:[
-  ['Inheritance outlook','Give a direct outlook on inheritance and family wealth.'],
-  ['Partner / insurance money','Describe money from partners, insurance or sudden sources in 5 bullets.']]},

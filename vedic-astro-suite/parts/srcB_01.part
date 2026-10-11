@@ -1774,3 +1774,9 @@ body.app-mode main.wrap{padding-left:14px;padding-right:14px}
 .yg,.sb{max-width:1000px;margin:0 auto}
 .yg-hero,.sb-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
 .yg-big,.sb-h{background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border:1px solid var(--border-light);border-radius:16px;padding:14px;text-align:center}
+.yg-big span{display:block;font:600 30px var(--font-display);color:var(--gold-bright);line-height:1.1}
+.yg-big small,.sb-h small{display:block;font:600 10px var(--font-sans);letter-spacing:.1em;text-transform:uppercase;color:var(--text-subtle);margin-top:4px}
+.sb-h b{display:block;font:500 18px var(--font-display);color:var(--text-main);margin:4px 0 2px}
+.sb-h span{font:12px var(--font-mono);color:var(--text-muted)}
+.sb-h.strong{border-top:3px solid var(--teal-bright)}.sb-h.weak{border-top:3px solid #C95050}
+.sb-h small{margin:0}

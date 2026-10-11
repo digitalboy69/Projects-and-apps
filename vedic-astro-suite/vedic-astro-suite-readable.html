@@ -8239,6 +8239,44 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none;box
 .in-sh-btn:first-child{border-color:rgba(212,175,55,.4)}
 .ov-kcard,.home-card{background-image:linear-gradient(160deg,rgba(255,255,255,.05),transparent 60%)}
 @media (prefers-reduced-motion:reduce){.app-panel.active,.app-panel.active>*,.modal-overlay.show .modal-box{animation:none!important}html{scroll-behavior:auto}}
+/* --- share / QR UI v2 --- */
+.in-share{padding:18px;border-radius:24px;border:1px solid rgba(212,175,55,.35);background:radial-gradient(120% 140% at 0% 0%,rgba(212,175,55,.16),transparent 55%),rgba(255,255,255,.04)}
+.in-share-h{display:flex;gap:12px;align-items:center;margin-bottom:14px;text-align:left}
+.in-share-ic{width:44px;height:44px;flex:none;display:grid;place-items:center;font-size:22px;border-radius:14px;background:linear-gradient(135deg,#e7c766,#b8902b);box-shadow:0 6px 18px rgba(212,175,55,.35)}
+.in-share-h b{display:block;font-size:16px}.in-share-h small{opacity:.7;font-size:12.5px;line-height:1.35;display:block}
+.in-sh-btn{align-items:flex-start;text-align:left;padding:14px;gap:2px;border-radius:18px}
+.in-sh-ic{width:38px;height:38px;display:grid;place-items:center;font-size:19px;border-radius:12px;background:rgba(212,175,55,.18);margin-bottom:6px}
+.in-sh-btn.alt .in-sh-ic{background:rgba(94,196,183,.18)}
+.in-sh-btn b{font-size:14.5px}.in-sh-btn small{font-size:11.5px;opacity:.65}
+.in-sh-btn:first-child{background:linear-gradient(160deg,rgba(212,175,55,.2),rgba(255,255,255,.03))}
+.sh-box{padding:26px 20px 20px;border-radius:26px;background:linear-gradient(180deg,#141a2c,#0d1220)!important;border:1px solid rgba(212,175,55,.3)}
+.sh-badge{align-self:center;padding:4px 12px;border-radius:99px;font-size:12px;font-weight:600;background:rgba(212,175,55,.15);color:#e7c766;border:1px solid rgba(212,175,55,.3)}
+.sh-box h4{font-size:20px;margin:0}
+.sh-frame{padding:14px;border-radius:24px;background:linear-gradient(135deg,#f2d675,#b8902b 55%,#e7c766);box-shadow:0 12px 40px rgba(212,175,55,.3),0 0 0 6px rgba(212,175,55,.08)}
+.sh-qr{display:block;width:min(240px,62vw);border-radius:12px}
+.sh-sub{font-size:13.5px;opacity:.8}
+.sh-steps{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;font-size:12px}
+.sh-steps span{display:flex;align-items:center;gap:6px;padding:5px 10px 5px 5px;border-radius:99px;background:rgba(255,255,255,.06)}
+.sh-steps i{font-style:normal;width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:#d4af37;color:#1a1405;font-weight:700;font-size:11px}
+.sh-opts{display:flex;flex-direction:column;gap:10px;text-align:left}
+.sh-opt{display:grid;grid-template-columns:44px 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;padding:13px 14px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:inherit;font:inherit;cursor:pointer;text-align:left;transition:transform .2s,background .2s,border-color .2s}
+.sh-opt:hover{transform:translateY(-2px);border-color:rgba(212,175,55,.5);background:rgba(212,175,55,.1)}
+.sh-opt>span{grid-row:1/3;width:44px;height:44px;display:grid;place-items:center;font-size:21px;border-radius:14px;background:rgba(212,175,55,.16)}
+.sh-opt b{font-size:14.5px;align-self:end}.sh-opt small{font-size:12px;opacity:.65;align-self:start}
+.sh-pst{cursor:default}.sh-pst:hover{transform:none}
+.sh-pst .sh-paste{grid-column:2;margin-top:8px;display:flex;gap:8px}
+.sh-vid{position:relative;border-radius:20px;overflow:hidden;border:2px solid rgba(212,175,55,.5)}
+.sh-scanbox{position:absolute;inset:18%;border-radius:18px;border:2px solid rgba(255,255,255,.85);box-shadow:0 0 0 999px rgba(0,0,0,.45);overflow:hidden}
+.sh-scanbox i{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#e7c766,transparent);animation:shScan 1.8s ease-in-out infinite}
+@keyframes shScan{0%,100%{top:4%}50%{top:94%}}
+.sh-vhint{position:absolute;bottom:8px;left:0;right:0;font-size:12px;text-shadow:0 1px 4px #000}
+.sh-msg{padding:10px 12px;border-radius:12px;background:rgba(255,120,120,.12);border:1px solid rgba(255,120,120,.3);font-size:13px;color:#ffb0b0}
+#shBody{display:flex;flex-direction:column;gap:13px;align-items:stretch}
+.sh-badge{align-self:center!important;width:fit-content;margin:0 auto}
+.sh-steps{flex-wrap:nowrap;gap:4px;font-size:11px}.sh-steps span{padding:4px 8px 4px 4px;white-space:nowrap}
+.sh-pst .sh-paste{grid-column:1/3;display:grid;grid-template-columns:minmax(0,1fr) auto;margin-top:10px}
+.sh-pst .sh-paste input{min-width:0;width:100%}
+.sh-row .btn{margin:0}
 .prof-del{background:transparent;border:none;cursor:pointer;font-size:16px;opacity:.55;padding:6px;border-radius:8px}
 .prof-del:hover{opacity:1;background:rgba(201,80,80,.15)}
 .prof-empty{text-align:center;color:var(--text-muted);font-size:13px;padding:18px;border:1px dashed var(--border-light);border-radius:14px;line-height:1.5}
@@ -31075,10 +31113,11 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
     ensureModal(); stopCam();
     const url=linkFor(p), cv=qrCanvas(url,300); cv.className='sh-qr';
     const body=$('shBody');
-    body.innerHTML='<h4>📤 Share '+escapeHtml(p.name)+'’s chart</h4><p class="sh-sub">Anyone who scans this QR or opens the link sees the chart instantly.</p><div class="sh-qrwrap"></div>'
-      +'<div class="sh-row"><button type="button" class="btn btn-primary btn-sm" id="shCopy">🔗 Copy link</button><button type="button" class="btn btn-ghost btn-sm" id="shDl">⬇️ Download QR</button>'+(navigator.share?'<button type="button" class="btn btn-ghost btn-sm" id="shNative">📲 Share…</button>':'')+'</div>'
-      +'<div class="sh-warn">🔒 The link contains the birth details. Share only with people you trust.</div>';
-    body.querySelector('.sh-qrwrap').appendChild(cv);
+    body.innerHTML='<div class="sh-badge">📤 Ready to share</div><h4>'+escapeHtml(p.name)+'\u2019s chart</h4><div class="sh-qrwrap"><div class="sh-frame"></div></div><p class="sh-sub">Ask your friend to scan this with their phone camera</p>'
+      +'<div class="sh-steps"><span><i>1</i>Show QR</span><span><i>2</i>Friend scans</span><span><i>3</i>Chart opens ✨</span></div>'
+      +'<div class="sh-row"><button type="button" class="btn btn-primary btn-sm" id="shCopy">🔗 Copy link</button><button type="button" class="btn btn-ghost btn-sm" id="shDl">⬇️ Save QR image</button>'+(navigator.share?'<button type="button" class="btn btn-ghost btn-sm" id="shNative">📲 Send…</button>':'')+'</div>'
+      +'<div class="sh-warn">🔒 This link has the birth details inside. Share only with people you trust.</div>';
+    body.querySelector('.sh-frame').appendChild(cv);
     $('shCopy').onclick=function(){ const b=this; (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(()=>toast(b,'✅ Copied'),()=>{ window.prompt('Copy this link:',url); }); };
     $('shDl').onclick=()=>{ const a=document.createElement('a'); a.download=(p.name||'chart').replace(/[^\w-]+/g,'_')+'-chart-qr.png'; a.href=cv.toDataURL('image/png'); document.body.appendChild(a); a.click(); a.remove(); };
     if($('shNative')) $('shNative').onclick=()=>navigator.share({title:p.name+'’s birth chart',url:url}).catch(()=>{});
@@ -31097,9 +31136,11 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
   }
   function showScan(){
     ensureModal(); stopCam();
-    $('shBody').innerHTML='<h4>📷 Open a shared chart</h4><div class="sh-vid" id="shVidBox" hidden><video id="shVid" playsinline muted></video></div>'
-      +'<div class="sh-row"><button type="button" class="btn btn-primary btn-sm" id="shCam">📷 Scan with camera</button><label class="btn btn-ghost btn-sm sh-up">🖼️ Upload QR image<input type="file" id="shFile" accept="image/*" hidden></label></div>'
-      +'<div class="sh-or">or paste a link</div><div class="sh-row sh-paste"><input type="text" id="shPaste" placeholder="Paste the chart link here"><button type="button" class="btn btn-ghost btn-sm" id="shGo">Open</button></div>'
+    $('shBody').innerHTML='<div class="sh-badge">📥 Open a chart</div><h4>Got a chart from a friend?</h4><p class="sh-sub">Pick any one way below</p>'
+      +'<div class="sh-vid" id="shVidBox" hidden><video id="shVid" playsinline muted></video><div class="sh-scanbox"><i></i></div><div class="sh-vhint">Point at the QR code</div></div>'
+      +'<div class="sh-opts"><button type="button" class="sh-opt" id="shCam"><span>📷</span><b>Scan with camera</b><small>Point your camera at their QR</small></button>'
+      +'<label class="sh-opt sh-up"><span>🖼️</span><b>Upload QR picture</b><small>Photo or screenshot of the QR</small><input type="file" id="shFile" accept="image/*" hidden></label>'
+      +'<div class="sh-opt sh-pst"><span>🔗</span><b>Paste the link</b><div class="sh-paste"><input type="text" id="shPaste" placeholder="Paste link here"><button type="button" class="btn btn-primary btn-sm" id="shGo">Open</button></div></div></div>'
       +'<div class="sh-msg" id="shMsg" hidden></div>';
     const msg=$('shMsg');
     $('shFile').onchange=function(){ const f=this.files[0]; if(!f) return; msg.hidden=true; decodeFile(f,t=>{ if(t) handleText(t,msg); else { msg.textContent='😕 Could not find a QR code in that image. Try a clearer, closer picture.'; msg.hidden=false; } }); this.value=''; };
@@ -31126,7 +31167,7 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
   function build(){
     const form=$('birthForm'); if(!form||$('inShare')) return;
     const box=document.createElement('div'); box.className='in-share'; box.id='inShare';
-    box.innerHTML='<div class="in-share-t">📲 Share or open a chart</div><div class="in-share-b"><button type="button" class="in-sh-btn" id="inShareBtn">🔗 Share this chart<small>link &amp; QR code</small></button><button type="button" class="in-sh-btn" id="inScanBtn">📷 Open a shared chart<small>scan or upload QR, paste link</small></button></div><div class="in-share-n" id="inShareN" hidden></div>';
+    box.innerHTML='<div class="in-share-h"><span class="in-share-ic">📲</span><div><b>Share or open a chart</b><small>Send a chart to anyone, or open one you received. No sign-up.</small></div></div><div class="in-share-b"><button type="button" class="in-sh-btn" id="inShareBtn"><span class="in-sh-ic">🔗</span><b>Share my chart</b><small>Get a link + QR code</small></button><button type="button" class="in-sh-btn alt" id="inScanBtn"><span class="in-sh-ic">📷</span><b>Open a chart</b><small>Scan QR, upload or paste</small></button></div><div class="in-share-n" id="inShareN" hidden></div>';
     form.parentNode.insertBefore(box,form.nextSibling);
     $('inScanBtn').onclick=showScan;
     $('inShareBtn').onclick=()=>{ const p=formProfile(), n=$('inShareN'); if(!p){ n.textContent='Fill in your name, birth date, time and place first (steps above), then tap Share.'; n.hidden=false; return; } n.hidden=true; showShare(p); };
