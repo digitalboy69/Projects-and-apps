@@ -1,22 +1,3 @@
-  if(asp)s+=chAspects(asp,h=>pt(R3+7,mid(h)));
-  s+=`<circle cx="${cx}" cy="${cy}" r="${R3}" fill="url(#wb)" stroke="url(#wg)" stroke-width="1.4"/><text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="6" letter-spacing="1" fill="#D4AF37" font-family="sans-serif" font-weight="700">LAGNA</text><text x="${cx}" y="${cy+6}" text-anchor="middle" font-size="9.5" fill="#F4F1E8" font-weight="700" font-family="sans-serif">${SIGNS[asc].name.slice(0,3)}</text>`;
-  for(let h=1;h<=12;h++){const L2=hp[h],n=L2.length;if(!n)continue;const pr=n>6?3:2,rb=n<=2?8:n<=4?7.5:6.5;
-    L2.forEach((p,i)=>{const row=Math.floor(i/pr),k=Math.min(pr,n-row*pr),j=i%pr,r=R2-15-row*19,sp=Math.min(24,(2*rb+3)/r*57.3),q=pt(r,mid(h)+(j-(k-1)/2)*sp);s+=chBadge(p,q[0],q[1],rb,inf[p],false);});}
-  const e1=pt(R0+3,180),e2=pt(R3,180);
-  s+=`<line x1="${e1[0]}" y1="${e1[1]}" x2="${e2[0]}" y2="${e2[1]}" stroke="#FF8A8A" stroke-width="2" stroke-linecap="round"/><rect x="2" y="136" width="9" height="28" rx="3" fill="#FF8A8A"/><text transform="translate(8,150) rotate(-90)" font-size="6.5" fill="#1a0a0a" font-weight="800" font-family="sans-serif" text-anchor="middle">ASC</text></svg>`;
-  return s;}
-
-function buildSouthIndianSvg(v,asp){
-  const asc=v.ascendantSign,inf=chMeta(v),cell=[[1,0],[2,0],[3,0],[3,1],[3,2],[3,3],[2,3],[1,3],[0,3],[0,2],[0,1],[0,0]],hp={};for(let i=0;i<12;i++)hp[i]=[];PLANET_LIST.forEach(n=>hp[v.planetVargaSign[n]].push(n));chOuter(v).forEach(n=>hp[v.outerSign[n]].push(n));
-  const xy=si=>[10+cell[si][0]*70,10+cell[si][1]*70],ctr=h=>{const p=xy((asc+h-1)%12);return [p[0]+35,p[1]+35];};
-  let s=`<svg class="varga-chart-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">${chDefs('s')}`;
-  s+=`<g opacity=".9"><circle cx="150" cy="150" r="58" fill="none" stroke="#D4AF37" stroke-opacity=".22"/><circle cx="150" cy="150" r="40" fill="none" stroke="#5EC4B7" stroke-opacity=".25" stroke-dasharray="3 4"/><circle cx="150" cy="150" r="3" fill="url(#sg)"/></g>`;
-  for(let si=0;si<12;si++){const [x,y]=xy(si),h=((si-asc+12)%12)+1,el=SIGNS[si].element,ec=ELC[el];
-    s+=`<rect x="${x}" y="${y}" width="70" height="70" fill="${ec}" fill-opacity="${si===asc?.2:.09}" stroke="url(#sg)" stroke-width="${si===asc?2:1.1}"><title>${SIGNS[si].name} · ${el}</title></rect>`
-     +`<text x="${si===asc?x+31:x+5}" y="${y+10}" font-size="7.5" font-weight="700" fill="${ec}" font-family="sans-serif">${SIGNS[si].name.slice(0,3)}</text>`
-     +`<circle cx="${x+60}" cy="${y+10}" r="6.5" fill="${HTc(h)}" fill-opacity=".2" stroke="${HTc(h)}" stroke-width=".9"/><text x="${x+60}" y="${y+10.5}" font-size="7.5" font-weight="700" fill="${HTc(h)}" font-family="sans-serif" text-anchor="middle" dominant-baseline="central">${h}</text>`;
-    if(si===asc)s+=`<path d="M${x} ${y} L${x+26} ${y} L${x} ${y+26}Z" fill="#D4AF37" fill-opacity=".85"/><text x="${x+4.5}" y="${y+10}" font-size="6.5" font-weight="800" fill="#1a1405" font-family="sans-serif">ASC</text>`;}
-  if(asp)s+=chAspects(asp,h=>ctr(h));
   for(let si=0;si<12;si++){const [x,y]=xy(si);s+=chPlanets(hp[si],inf,x+35,y+41,3);}
   s+=`<text x="150" y="146" text-anchor="middle" font-size="7" letter-spacing="1.5" fill="#D4AF37" font-family="sans-serif" font-weight="700">LAGNA</text><text x="150" y="160" text-anchor="middle" font-size="11" font-weight="700" fill="#F4F1E8" font-family="sans-serif">${SIGNS[asc].name}</text></svg>`;
   return s;}
@@ -1705,7 +1686,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('.fm-h');if(!t)re
 (function(){
   const SB_URL='https://pbnfpbugxcndmrgpuved.supabase.co', SB_KEY='sb_publishable_dpTL2lYOd1qirgYXR2P-9Q_WK18oZIV', SK='vax_sb_session';
   const $=id=>document.getElementById(id);
-  let sess=null, syncing=false, status='', member=null;
+  let sess=null, syncing=false, status='', member=null, isAdm=false;
   try{ sess=JSON.parse(localStorage.getItem(SK)||'null'); }catch(e){}
   const saveSess=s=>{ sess=s; try{ s?localStorage.setItem(SK,JSON.stringify(s)):localStorage.removeItem(SK); }catch(e){} };
   function normSess(j){ if(!j||!j.access_token) return null; return {access_token:j.access_token,refresh_token:j.refresh_token,expires_at:j.expires_at||Math.floor(Date.now()/1000)+(j.expires_in||3600),email:(j.user&&j.user.email)||(sess&&sess.email)||'',uid:(j.user&&j.user.id)||(sess&&sess.uid)||''}; }
@@ -1751,12 +1732,12 @@ document.addEventListener('click',e=>{const t=e.target.closest('.fm-h');if(!t)re
     const gone=prev.filter(p=>!nk[cid(p)]), add=list.filter(p=>!pk[cid(p)]||JSON.stringify(pk[cid(p)])!==JSON.stringify(p));
     (async()=>{ try{ if(gone.length) await remove(gone); if(add.length) await upsert(add); setStatus('Synced ✓'); }catch(e){ setStatus('⚠️ Offline: will sync next time'); } })();
   };
-  async function loadMember(){ try{ const r=await rest('member_access?select=status,plan,expires_at'); member=r&&r[0]||null; }catch(e){} renderAcct(); }
+  async function loadMember(){ try{ const r=await rest('member_access?select=status,plan,expires_at'); member=r&&r[0]||null; }catch(e){} try{ isAdm=(await rest('rpc/is_admin',{method:'POST',body:'{}'}))===true; }catch(e){ isAdm=false; } renderAcct(); }
   // ---- auth actions ----
   async function signIn(email,pw){ const j=await raw('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password:pw})}); saveSess(normSess(j)); }
   async function signUp(email,pw){ const j=await raw('/auth/v1/signup',{method:'POST',body:JSON.stringify({email,password:pw})}); if(j&&j.access_token){ saveSess(normSess(j)); return true; } return false; }
   async function recover(email){ await raw('/auth/v1/recover',{method:'POST',body:JSON.stringify({email})}); }
-  async function signOut(){ try{ const t=sess&&sess.access_token; if(t) await raw('/auth/v1/logout',{method:'POST',headers:{Authorization:'Bearer '+t}}); }catch(e){} saveSess(null); member=null; status=''; renderAcct(); }
+  async function signOut(){ try{ const t=sess&&sess.access_token; if(t) await raw('/auth/v1/logout',{method:'POST',headers:{Authorization:'Bearer '+t}}); }catch(e){} saveSess(null); member=null; isAdm=false; status=''; renderAcct(); }
   const friendly=e=>{ const m=String(e.message||e); if(/invalid login/i.test(m)) return 'Wrong email or password.'; if(/already/i.test(m)) return 'This email already has an account. Try signing in.'; if(/password/i.test(m)&&/6|short|weak/i.test(m)) return 'Password must be at least 6 characters.'; if(/rate|too many|seconds/i.test(m)) return 'Too many tries. Please wait a minute and try again.'; if(/Failed to fetch|NetworkError|load failed/i.test(m)) return 'No internet connection. Please try again.'; if(/confirm/i.test(m)) return 'Please confirm your email first (check your inbox).'; return m; };
   // ---- UI ----
   function setStatus(s){ status=s; renderAcct(); }
@@ -1764,7 +1745,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('.fm-h');if(!t)re
     document.querySelectorAll('.cl-acct').forEach(el=>{
       if(sess){
         const plan=member?(member.status==='active'?'⭐ Member':member.status==='blocked'?'⛔ Blocked':'🎁 Free trial'):'';
-        el.innerHTML='<div class="cl-row"><span class="cl-ic">☁️</span><div class="cl-tx"><b>'+escapeHtml(sess.email||'Signed in')+'</b><small>'+escapeHtml(status||'Your profiles are saved to your account')+(plan?' · '+plan:'')+'</small></div><button type="button" class="cl-btn ghost" data-cl="out">Sign out</button></div>';
+        el.innerHTML='<div class="cl-row"><span class="cl-ic">☁️</span><div class="cl-tx"><b>'+escapeHtml(sess.email||'Signed in')+'</b><small>'+escapeHtml(status||'Your profiles are saved to your account')+(plan?' · '+plan:'')+'</small></div>'+(isAdm?'<button type="button" class="cl-btn" data-cl="admin">🛠 Admin</button>':'')+'<button type="button" class="cl-btn ghost" data-cl="out">Sign out</button></div>';
       } else {
         el.innerHTML='<div class="cl-row"><span class="cl-ic">☁️</span><div class="cl-tx"><b>Save your charts to the cloud</b><small>Sign in to keep profiles on every device</small></div><button type="button" class="cl-btn" data-cl="in">Sign in</button></div>';
       }
@@ -1800,7 +1781,36 @@ document.addEventListener('click',e=>{const t=e.target.closest('.fm-h');if(!t)re
     go.disabled=false; go.textContent=old;
   }
   async function doForgot(){ const em=$('clEmail').value.trim(); if(!/^\S+@\S+\.\S+$/.test(em)){ msg('Type your email above first, then tap Forgot password.'); return; } try{ await recover(em); msg('Reset link sent. Check your email.',true); }catch(e){ msg(friendly(e)); } }
-  document.addEventListener('click',e=>{ const a=e.target.closest&&e.target.closest('.cl-acct [data-cl]'); if(!a) return; const k=a.dataset.cl; if(k==='in') open('in'); else if(k==='out') signOut(); });
+  document.addEventListener('click',e=>{ const a=e.target.closest&&e.target.closest('.cl-acct [data-cl]'); if(!a) return; const k=a.dataset.cl; if(k==='in') open('in'); else if(k==='out') signOut(); else if(k==='admin') openAdmin(); });
+
+  // ---- admin panel (visible only to admins; the server re-checks every call) ----
+  let adm=null, admRows=[], admQ='';
+  const eff=m=>m.status==='active'&&m.expires_at&&new Date(m.expires_at)<new Date()?'expired':m.status;
+  const fmt=d=>d?new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'No expiry';
+  function admRender(){
+    const q=admQ.toLowerCase(), rows=admRows.filter(m=>!q||String(m.email||'').toLowerCase().includes(q));
+    const c={active:0,trial:0,expired:0,blocked:0}; admRows.forEach(m=>c[eff(m)]=(c[eff(m)]||0)+1);
+    $('admStats').innerHTML=[['⭐','Active',c.active],['🎁','Trial',c.trial],['⌛','Expired',c.expired],['⛔','Blocked',c.blocked]].map(x=>'<div><b>'+x[2]+'</b><small>'+x[0]+' '+x[1]+'</small></div>').join('');
+    $('admList').innerHTML=rows.length?rows.map(m=>{ const e=eff(m); return '<div class="adm-card" data-u="'+m.user_id+'"><div class="adm-top"><div><b>'+escapeHtml(m.email||'(no email)')+'</b><small>Joined '+fmt(m.created_at)+' · '+m.profile_count+' chart'+(m.profile_count==1?'':'s')+'</small></div><span class="adm-chip '+e+'">'+e+'</span></div>'
+      +'<div class="adm-exp">'+(m.status==='active'?'Access until: <b>'+fmt(m.expires_at)+'</b>':'')+(m.plan?' · plan: '+escapeHtml(m.plan):'')+'</div>'
+      +'<div class="adm-btns"><button data-a="30">+30 days</button><button data-a="90">+90 days</button><button data-a="365">+1 year</button><button data-a="0">Lifetime</button><button data-a="trial" class="ghost">Set trial</button><button data-a="blocked" class="danger">Block</button></div></div>'; }).join(''):'<p class="sh-sub">No members found.</p>';
+  }
+  async function admLoad(){ $('admList').innerHTML='<p class="sh-sub">Loading…</p>'; try{ admRows=await rest('rpc/admin_list_members',{method:'POST',body:'{}'}); admRender(); }catch(e){ $('admList').innerHTML='<div class="cl-msg">'+escapeHtml(friendly(e))+'</div>'; } }
+  function openAdmin(){
+    if(!adm){
+      adm=document.createElement('div'); adm.className='modal-overlay'; adm.id='admModal';
+      adm.innerHTML='<div class="modal-box adm-box"><button type="button" class="sh-x" id="admX" aria-label="Close">✕</button><h4>🛠 Admin · members</h4><div class="adm-stats" id="admStats"></div><input type="search" id="admSearch" placeholder="Search by email…"><div id="admList"></div><button type="button" class="cl-btn ghost" id="admRefresh">↻ Refresh</button></div>';
+      document.body.appendChild(adm);
+      adm.addEventListener('click',e=>{ if(e.target===adm||e.target.id==='admX'){ adm.classList.remove('show'); return; } if(e.target.id==='admRefresh'){ admLoad(); return; }
+        const b=e.target.closest('[data-a]'); if(!b) return; const card=b.closest('.adm-card'), u=card.dataset.u, a=b.dataset.a, m=admRows.find(x=>x.user_id===u);
+        let st='active', days=0, plan=null; if(a==='trial'){ st='trial'; } else if(a==='blocked'){ st='blocked'; } else { days=+a; plan=days===0?'lifetime':days>=365?'yearly':'monthly'; }
+        if(st==='blocked' && !confirm('Block '+(m&&m.email)+'?')) return;
+        b.disabled=true; rest('rpc/admin_set_access',{method:'POST',body:JSON.stringify({p_user:u,p_status:st,p_plan:plan,p_days:days,p_note:null})}).then(admLoad).catch(er=>{ alert(friendly(er)); b.disabled=false; });
+      });
+      adm.querySelector('#admSearch').addEventListener('input',e=>{ admQ=e.target.value; admRender(); });
+    }
+    adm.classList.add('show'); admLoad();
+  }
   window.vaxCloudOpen=open;
   // mount account cards: top of the menu profile list + intake page
   function mount(){

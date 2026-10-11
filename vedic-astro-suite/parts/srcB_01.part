@@ -1821,3 +1821,8 @@ body.app-mode main.wrap{padding-left:14px;padding-right:14px}
 .sb-body[hidden]{display:none}
 .sb-comp{display:grid;grid-template-columns:92px 1fr 54px;gap:10px;align-items:center;font-size:12px;color:var(--text-muted)}
 .sb-comp:first-child{margin-top:12px}
+.sb-comp b{font:600 12px var(--font-mono);color:var(--text-main);text-align:right}
+.sb-ctrack{height:6px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
+.sb-ctrack i{display:block;height:100%;border-radius:4px}
+.sb-more{background:transparent;border:1px solid var(--border-light);color:var(--gold-bright);border-radius:999px;padding:8px 14px;font:600 12px var(--font-sans);cursor:pointer;justify-self:start;margin-top:4px}
+.sb-note{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;padding:12px 14px;margin-bottom:8px;font-size:13px;color:var(--text-muted)}

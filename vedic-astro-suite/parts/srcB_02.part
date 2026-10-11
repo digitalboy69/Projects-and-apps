@@ -1,8 +1,3 @@
-.sb-comp b{font:600 12px var(--font-mono);color:var(--text-main);text-align:right}
-.sb-ctrack{height:6px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
-.sb-ctrack i{display:block;height:100%;border-radius:4px}
-.sb-more{background:transparent;border:1px solid var(--border-light);color:var(--gold-bright);border-radius:999px;padding:8px 14px;font:600 12px var(--font-sans);cursor:pointer;justify-self:start;margin-top:4px}
-.sb-note{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;padding:12px 14px;margin-bottom:8px;font-size:13px;color:var(--text-muted)}
 .sb-note summary{cursor:pointer;font-weight:600;color:var(--text-main)}
 .sb-note p{margin:10px 0 0;line-height:1.6}
 @media (max-width:880px){.yg-big span{font-size:24px}.sb-h b{font-size:15px}.yg-hero,.sb-hero{gap:8px}.yg-grid{grid-template-columns:1fr}.sb-comp{grid-template-columns:80px 1fr 50px}}
@@ -202,6 +197,17 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none;box
 .cl-msg{padding:9px 12px;border-radius:12px;font-size:13px;background:rgba(255,120,120,.12);border:1px solid rgba(255,120,120,.3);color:#ffb0b0}.cl-msg.ok{background:rgba(94,196,183,.12);border-color:rgba(94,196,183,.4);color:#aef3e6}
 .cl-link{border:0;background:none;color:#e7c766;font:13px inherit;font-family:inherit;cursor:pointer;text-decoration:underline}
 .cl-priv{font-size:12px;opacity:.65;margin:0}
+.adm-box{max-width:560px;width:100%;position:relative;display:flex;flex-direction:column;gap:12px;max-height:92vh;overflow:auto;padding:24px 16px 16px;border-radius:26px;background:linear-gradient(180deg,#141a2c,#0d1220)!important;border:1px solid rgba(212,175,55,.3)}
+.adm-box h4{margin:0 24px 0 4px;font-size:19px}
+.adm-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.adm-stats div{padding:10px 6px;border-radius:14px;background:rgba(255,255,255,.06);text-align:center}.adm-stats b{display:block;font-size:20px;color:#f9d976}.adm-stats small{font-size:10.5px;opacity:.7}
+#admSearch{padding:11px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:inherit;font-size:16px}
+.adm-card{padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);margin-bottom:10px}
+.adm-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.adm-top b{font-size:14px;word-break:break-all}.adm-top small{display:block;font-size:11.5px;opacity:.65;margin-top:2px}
+.adm-chip{flex:none;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:rgba(255,255,255,.1)}
+.adm-chip.active{background:rgba(94,196,183,.2);color:#aef3e6}.adm-chip.trial{background:rgba(212,175,55,.2);color:#f9d976}.adm-chip.expired{background:rgba(255,160,90,.2);color:#ffc08a}.adm-chip.blocked{background:rgba(255,100,100,.2);color:#ffb0b0}
+.adm-exp{font-size:12px;opacity:.8;margin:8px 0}
+.adm-btns{display:flex;flex-wrap:wrap;gap:6px}.adm-btns button{border:1px solid rgba(212,175,55,.45);background:rgba(212,175,55,.12);color:#f9d976;border-radius:10px;padding:8px 11px;font:600 12px inherit;font-family:inherit;cursor:pointer}
+.adm-btns button.ghost{border-color:rgba(255,255,255,.2);background:transparent;color:inherit}.adm-btns button.danger{border-color:rgba(255,100,100,.5);background:rgba(255,100,100,.1);color:#ffb0b0}.adm-btns button:disabled{opacity:.5}
 .prof-del{background:transparent;border:none;cursor:pointer;font-size:16px;opacity:.55;padding:6px;border-radius:8px}
 .prof-del:hover{opacity:1;background:rgba(201,80,80,.15)}
 .prof-empty{text-align:center;color:var(--text-muted);font-size:13px;padding:18px;border:1px dashed var(--border-light);border-radius:14px;line-height:1.5}
@@ -1820,4 +1826,3 @@ const EARTH_ELEMENTS = {a:1.000001,e:0.016709,i:0.0,L:100.4664,Lrate:35999.3729,
 function solveKepler(M, e){
   let E = M;
   for (let i=0;i<50;i++){
-    const dE = (E - e*Math.sin(E) - M) / (1 - e*Math.cos(E));

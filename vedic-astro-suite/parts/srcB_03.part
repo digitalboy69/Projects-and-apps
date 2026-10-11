@@ -1,3 +1,4 @@
+    const dE = (E - e*Math.sin(E) - M) / (1 - e*Math.cos(E));
     E -= dE;
     if (Math.abs(dE) < 1e-10) break;
   }
@@ -1821,3 +1822,7 @@ function lagnaChartToPlainText(chart, lagnaKey, vargaKey, vdata, aspectRows){
 
 // Plain-text render of ALL 23 special lagnas at once (their sign placements
 // and a full D1 house breakdown for each) — used by "Copy All Lagnas".
+function allLagnasToPlainText(chart, specialLagnaSigns, vargaKey){
+  const vargaMeta = VARGAS[vargaKey];
+  let out = `SPECIAL LAGNAS — FULL EXPORT (cast on ${vargaKey} ${vargaMeta.name})\n`;
+  out += '='.repeat(70) + '\n\n';

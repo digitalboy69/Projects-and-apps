@@ -1,12 +1,3 @@
- {id:'purpose',ico:'🧭',t:'Personality & life purpose',kw:'nature character soul atmakaraka self',h:[1],s:[5,9],k:['Sun','Moon'],ck:'Atmakaraka',v:'D9',ar:['AL'],subs:[
-  ['My top 10 strengths','Give 10 specific strengths shown as concrete behaviours that others have actually noticed in me, with the situation where each shows.'],
-  ['5 weaknesses & fixes','List 5 weaknesses as concrete recurring mistakes (with the typical situation where each happens), each with one practical fix.'],
-  ['Life purpose','State my life direction in 3 lines using specific themes from the data (no motivational clichés) and name 3 concrete fields or life areas where it plays out.'],
-  ['Traditional lucky aids','List my traditional lucky colour, day, number, direction and gem (for fun, traditional).']]},
- {id:'friends',ico:'🤝',t:'Friends, networks & gains',kw:'social circle allies fulfilment desires',h:[11],s:[3,7,5],k:['Jupiter','Mercury'],ck:'',v:'D1',ar:['A11'],subs:[
-  ['My friend types','Give 8 specific traits of the friends I attract: age gap, profession types, how friendships start and end, who supports me and who lets me down.'],
-  ['Networking strengths','List how I gain from networks and 5 ways to use it.']]},
- {id:'losses',ico:'📉',t:'Expenses, losses & sleep',kw:'spending waste hospital isolation bed',h:[12],s:[2,6,8],k:['Saturn','Ketu'],ck:'',v:'D1',ar:[],subs:[
   ['Where money leaks','List my top 6 spending leaks and a fix each.'],
   ['Sleep & rest','Describe my sleep pattern and 5 tips.'],
   ['Hidden fears','List 5 hidden fears or blocks and how to ease them.']]},
@@ -1821,3 +1812,17 @@ function kmManglik(P){
 function kmMatch(G, B){
   const k = [];
   // 1 Varna
+  const vg = KM_VARNA[G.moonSign], vb = KM_VARNA[B.moonSign];
+  k.push({ key: 'Varna', max: 1, score: KM_VARNA_RANK[vg] >= KM_VARNA_RANK[vb] ? 1 : 0, a: vg, b: vb });
+  // 2 Vashya
+  const vsh = (s, d) => s === 8 ? (d < 15 ? 'Manava' : 'Chatushpada') : s === 9 ? (d < 15 ? 'Chatushpada' : 'Jalachara') : KM_VASHYA_SIGN[s];
+  const wg = vsh(G.moonSign, G.deg), wb = vsh(B.moonSign, B.deg);
+  k.push({ key: 'Vashya', max: 2, score: KM_VASHYA[KM_VASHYA_ORDER.indexOf(wg)][KM_VASHYA_ORDER.indexOf(wb)], a: wg, b: wb });
+  // 3 Tara (counted both ways, remainder of 9; 3, 5, 7 are unfavourable)
+  const rem = n => n % 9 === 0 ? 9 : n % 9;
+  const t1 = rem((G.nak - B.nak + 27) % 27 + 1), t2 = rem((B.nak - G.nak + 27) % 27 + 1), bad = [3, 5, 7];
+  const TN = ['Janma','Sampat','Vipat','Kshema','Pratyak','Sadhana','Naidhana','Mitra','Parama Mitra'];
+  k.push({ key: 'Tara', max: 3, score: 3 - 1.5 * ([t1, t2].filter(x => bad.includes(x)).length), a: TN[t1 - 1], b: TN[t2 - 1], note: 'from bride → groom / groom → bride' });
+  // 4 Yoni
+  const yg = KM_YONI_NAK[G.nak], yb = KM_YONI_NAK[B.nak];
+  k.push({ key: 'Yoni', max: 4, score: KM_YONI[KM_YONI_ORDER.indexOf(yg)][KM_YONI_ORDER.indexOf(yb)], a: yg, b: yb });

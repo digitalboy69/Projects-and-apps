@@ -15,3 +15,7 @@ Authentication > URL Configuration: set Site URL to your live app URL, add it to
 
 ## Give someone access manually (until the admin page exists)
 SQL editor: `update public.member_access set status='active', plan='monthly', expires_at=now()+interval '30 days' where email='their@email.com';`
+
+## Admin panel
+Sign in with an admin account > Menu > account card > "Admin". Lists members, lets you add +30/+90/+365 days, lifetime, trial or block. All checks run on the server (functions `admin_list_members`, `admin_set_access`, `is_admin`).
+Make another admin (SQL editor): `insert into private.app_admins(user_id) select id from auth.users where email='them@example.com';`
