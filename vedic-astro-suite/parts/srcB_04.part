@@ -1,19 +1,3 @@
-};
-const SPECIAL_LAGNAS_ORDER = ["UL_LAGNA","AL","KL","UL","HL","GL","BL","VGL","VL","INDU","SL","PRANAPADA","SWAMSHA","PADANADHAMSA","BB","PAKA","CHANDRA","SURYA","A2","A3","A4","A5","A6","A8","A9","A10","A11"];
-
-// Computes the sign index (0-11, Aries=0) for every special lagna.
-function computeAllSpecialLagnaSigns(chart){
-  const ascSignIdx = chart.ascendant.sign;
-  const arudhaPadas = calcAllArudhaPadas(chart, ascSignIdx);
-  const horaSignIdx = calcHoraLagnaSign(chart);
-
-  const signs = {
-    UL_LAGNA: ascSignIdx,
-    AL: arudhaPadas.AL,
-    KL: calcKarakamshaSign(chart),
-    UL: arudhaPadas.UL,
-    HL: horaSignIdx,
-    GL: calcGhatiLagnaSign(chart),
     BL: calcBhavaLagnaSign(chart),
     VGL: calcVighatiLagnaSign(chart),
     VL: calcVarnadaLagnaSign(ascSignIdx, horaSignIdx),
@@ -1722,3 +1706,40 @@ const SRCH_TOPICS = [
   ['15 business ideas','List 15 specific business ideas ranked by fit for me, with 4-word reasons.'],
   ['Best time to switch or start','List the 3 best years/windows to change jobs or start a business, and 2 periods to avoid.'],
   ['Solo or partners?','Should I work alone or with partners? Describe the type of partner to trust and the type to avoid.']]},
+ {id:'money',ico:'💰',t:'Wealth & finances',kw:'money income savings rich dhana',h:[2,11],s:[5,9,8],k:['Jupiter','Venus'],ck:'',v:'D2',ar:['A2','A11'],subs:[
+  ['10 income sources','List my 10 most likely sources of income, ranked, one line each.'],
+  ['Money habits','Give 8 specific, checkable money behaviours: what I do right after income, impulse-spend categories, saving style, lending/borrowing habit, risk appetite, with an example each.'],
+  ['Wealth years ahead','Year-by-year for the next 5 years: income up/down, best years to invest, buy or save.'],
+  ['Where to invest','List 8 asset types that suit my nature ranked, and 4 to avoid (general idea only, not financial advice).'],
+  ['Money leaks & fixes','List my 5 biggest money leaks and a fix for each.']]},
+ {id:'fame',ico:'🌟',t:'Fame, status & recognition',kw:'reputation name public image authority',h:[10,1],s:[11,5],k:['Sun','Moon'],ck:'Atmakaraka',v:'D10',ar:['AL','A10'],subs:[
+  ['Will I become well known?','Give a direct verdict with a percentage and the fields where it is most likely.'],
+  ['My public image','In 6 bullets: how people see me, and how to sharpen it.'],
+  ['10 best fields for recognition','List 10 fields or platforms where I can get recognised, ranked.'],
+  ['When recognition peaks','List the 3 best years/windows for visibility and 1 to avoid.']]},
+ {id:'spouse',ico:'💍',t:'Spouse & marriage',kw:'wife husband partner relationship spouse details',h:[7],s:[2,11,12],k:['Venus','Jupiter'],ck:'Darakaraka',v:'D9',ar:['UL','A7'],subs:[
+  ['Who is my likely spouse','Describe my likely spouse in bullets: personality, looks tendency, 8 most likely professions, family background, age gap tendency and how close our culture will be.'],
+  ['Where & how will I meet','List the 10 most likely places or ways I meet my partner, ranked (work, college, friends, family introduction, online, travel, neighbourhood...). One line each.'],
+  ['Love or arranged?','Give a direct verdict with a percentage split between love and arranged.'],
+  ['Where is my partner from','Rank where my partner is likely from: same city, another city, another state, abroad, other culture. One line each.'],
+  ['Marriage quality','List my marriage strengths (5) and challenges (5) in plain words.'],
+  ['Making marriage smoother','Give 6 practical habits and traditional remedies for a smoother marriage.']]},
+ {id:'marriagetime',ico:'📅',t:'Marriage timing',kw:'when will i marry wedding delay',h:[7,2,11],s:[5,12],k:['Venus','Jupiter'],ck:'Darakaraka',v:'D9',ar:['UL'],subs:[
+  ['Likely marriage years','List the 3 most likely years/age windows for marriage, ranked, one line each.'],
+  ['Any delay and why','Is there a delay? Say yes/no, give 3 plain reasons, and the first window when it eases.'],
+  ['Best months next 12 months','List the best 3 months in the next 12 for engagement/marriage steps and any to avoid.']]},
+ {id:'love',ico:'❤️',t:'Love & romance',kw:'dating affair crush relationship attraction',h:[5,7],s:[11,2],k:['Venus','Moon'],ck:'Darakaraka',v:'D9',ar:['UL'],subs:[
+  ['My romance pattern','Give 8 specific, checkable things about how I behave in love (who initiates, how I act in the first 3 months, what I do when jealous or hurt, what I secretly need). Nothing generic.'],
+  ['Types of people I attract','List 8 types of partner I am attracted to or attract.'],
+  ['Heartbreak risks & how to avoid','List 5 relationship traps for me and how to avoid each.'],
+  ['Best time for new love','List the best 3 windows for new love in the next 3 years.']]},
+ {id:'children',ico:'👶',t:'Children & progeny',kw:'kids baby child birth pregnancy fertility',h:[5],s:[2,9,11],k:['Jupiter'],ck:'Putrakaraka',v:'D7',ar:['A5'],subs:[
+  ['Children: outlook','Give a direct outlook on having children (easy / some delay / needs care) with a one-line reason.'],
+  ['Best years for children','List the 3 most favourable years/windows.'],
+  ['My child\'s nature','Describe the kind of child(ren) I am likely to have in 6 bullets and my parenting style.'],
+  ['Support & remedies','List 5 practical supports or traditional remedies that help.']]},
+ {id:'education',ico:'🎓',t:'Education & learning',kw:'study college exams degree knowledge',h:[4,5],s:[9,2],k:['Mercury','Jupiter'],ck:'Putrakaraka',v:'D24',ar:[],subs:[
+  ['15 best subjects/degrees','List 15 subjects or degrees ranked by fit.'],
+  ['How I learn best','Give 8 specific, checkable learning habits: best time of day, format, memory style, subjects I struggle with, how I react to exams.'],
+  ['Exam & degree timing','List the best years/windows for exams, admissions or a new course.'],
+  ['Study abroad chance','Give a direct verdict on studying abroad, best regions, and best timing.']]},

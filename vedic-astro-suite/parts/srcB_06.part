@@ -1,59 +1,3 @@
-    const marks = segs.map(([n, r, col]) => `<i title="${n}" style="left:${pos(r[0]).toFixed(2)}%;width:${((r[1] - r[0]) / dl * 100).toFixed(2)}%;background:${col}"></i>`).join('');
-    const now = jd >= P.sunrise && jd <= P.sunset ? `<u style="left:${pos(jd).toFixed(2)}%"></u>` : '';
-    const rows = segs.map(([n, r, col, tag]) => `<div class="pn-prow" style="--pc:${col}"><span class="pn-dot"></span><b>${n}</b><span>${nvTime(r[0], c.tz, ref)} – ${nvTime(r[1], c.tz, ref)}</span><em>${tag}</em></div>`).join('') +
-      `<div class="pn-prow" style="--pc:#6B7FA3"><span class="pn-dot"></span><b>Brahma Muhurta</b><span>${nvTime(P.brahma[0], c.tz, ref)} – ${nvTime(P.brahma[1], c.tz, ref)}</span><em>Before sunrise</em></div>`;
-    day = `<div class="pn-sec"><h5>Day timeline <span>sunrise → sunset · ${P.vara.name}</span></h5>
-      <div class="pn-track">${marks}${now}</div>
-      <div class="pn-tl"><span>${nvTime(P.sunrise, c.tz, ref)}</span><span>Midday</span><span>${nvTime(P.sunset, c.tz, ref)}</span></div>
-      <div class="pn-plist">${rows}</div></div>`;
-  } else day = `<div class="pn-sec"><div class="pl-empty">The Sun does not rise and set normally at this latitude and date, so day-based timings are unavailable.</div></div>`;
-
-  body.innerHTML = `<div class="pn-for">Computed for <b>${nvDate(jd, c.tz, true)}</b> · ${escapeHtml(c.place)} · ${fmtTz(c.tz)}</div>
-    <div class="pn-limbs">${limbs}</div>
-    <div class="pn-facts">${facts}</div>
-    <div class="pn-chips">${calChips}</div>
-    ${day}
-    <div class="pn-note">Vedic day runs sunrise to sunrise, so births before sunrise take the previous weekday. Sunrise uses the upper limb with standard refraction (−0.833°). Lunar month is the Amanta (new-moon to new-moon) system; Purnimanta calendars name the Krishna fortnight one month later. Vishti karana is traditionally avoided for new beginnings.</div>`;
-}
-document.addEventListener('input', (e) => { if (e.target.id === 'pnDate' || e.target.id === 'pnTime') { document.querySelectorAll('[data-pn-set]').forEach(b => b.classList.remove('on')); pnRender(); } });
-document.addEventListener('click', (e) => {
-  const b = e.target.closest('[data-pn-set]'); if (!b || !PN_CTX) return;
-  document.querySelectorAll('[data-pn-set]').forEach(x => x.classList.toggle('on', x === b));
-  if (b.dataset.pnSet === 'birth'){ document.getElementById('pnDate').value = PN_CTX.birthDate; document.getElementById('pnTime').value = PN_CTX.birthTime; }
-  else { const p = jdToLocalParts(nowJulianDay(), PN_CTX.tz); document.getElementById('pnDate').value = p.dateStr; document.getElementById('pnTime').value = p.timeStr.slice(0, 5); }
-  pnRender();
-});
-
-/* ------------------------------ TRANSITS & SADE SATI ------------------------------ */
-const TR_COL = { 11: '#E0A64A', 0: '#C95050', 1: '#8A6FB8', 3: '#6B7FA3', 7: '#5B8A9E' };
-const TR_PHASE = { 11: 'Rising', 0: 'Peak', 1: 'Setting' };
-function trStatus(s, e, now){ if (e !== null && e <= now) return 'past'; if (s !== null && s > now) return 'next'; return 'now'; }
-function trPill(st){ return st === 'now' ? '<span class="dx-pill now">Now</span>' : (st === 'next' ? '<span class="dx-pill">Upcoming</span>' : '<span class="dx-pill past">Past</span>'); }
-let TR_DATA = null;
-function buildTransitsPanel(chart, profile){
-  const T = computeTransits(chart, profile), tz = profile.tz, now = nowJulianDay(), birth = chart.julianDay;
-  TR_DATA = { T, tz, now, birth };
-  const age = jd => (jd - birth) / 365.25, dt = jd => jd === null ? 'before birth' : nvDate(jd, tz);
-  const curSign = n => { const s = T.stays[n].find(x => trStatus(x.start, x.end, now) === 'now'); return s ? s.sign : getSignIndex(getSiderealLongitudeAt(n, now)); };
-  const rel = s => (s - T.moonSign + 12) % 12, hM = s => rel(s) + 1, hL = s => (s - T.asc + 12) % 12 + 1;
-  const satS = curSign('Saturn'), jupS = curSign('Jupiter');
-
-  // active cycle status
-  const act = T.sadeSati.find(c => trStatus(c.start, c.end, now) === 'now');
-  const nextC = T.sadeSati.find(c => c.start !== null && c.start > now);
-  let ssHero;
-  if (act){
-    const ph = rel(satS) === 11 ? 'Rising' : rel(satS) === 0 ? 'Peak' : rel(satS) === 1 ? 'Setting' : 'between phases';
-    ssHero = `<div class="tr-card on" style="--pc:#C95050"><small>Sade Sati</small><b>Active · ${ph} phase</b><span>Saturn in ${SIGNS[satS].name} · ends ${dt(act.end)}</span></div>`;
-  } else {
-    ssHero = `<div class="tr-card" style="--pc:#5EC4B7"><small>Sade Sati</small><b>Not active</b><span>${nextC ? 'Next begins ' + dt(nextC.start) + ' (in ' + nvSpan(nextC.start - now) + ')' : 'No further cycle in the next 100 years'}</span></div>`;
-  }
-  const actK = T.kantaka.find(c => trStatus(c.start, c.end, now) === 'now'), actA = T.ashtama.find(c => trStatus(c.start, c.end, now) === 'now');
-  const nK = T.kantaka.find(c => c.start !== null && c.start > now), nA = T.ashtama.find(c => c.start !== null && c.start > now);
-  const dh = (title, a, n, col) => a ? `<div class="tr-card on" style="--pc:${col}"><small>${title}</small><b>Active</b><span>Ends ${dt(a.end)}</span></div>`
-    : `<div class="tr-card" style="--pc:${col}"><small>${title}</small><b>Not active</b><span>${n ? 'Next ' + dt(n.start) : '—'}</span></div>`;
-  const pos = (n, s) => `<div class="tr-card" style="--pc:${DASHA_PLANET_COLORS[n]}"><small>${n} now</small><b>${PLANET_GLYPHS[n]} ${SIGNS[s].symbol} ${SIGNS[s].name}</b><span>House ${hL(s)} from Lagna · ${hM(s)} from Moon</span></div>`;
-
   // cycles
   const cyc = T.sadeSati.map((c, i) => {
     const st = trStatus(c.start, c.end, now), s0 = c.start === null ? birth - 3 * 365.25 : c.start, e0 = c.end === null ? birth + 100 * 365.25 : c.end, tot = e0 - s0;
@@ -1722,3 +1666,80 @@ function setupTransitLiveForm(natalChart, profile){
 const HOUSE_THEMES = ["Self, body, personality","Wealth, family, speech","Courage, siblings, effort","Home, mother, comfort","Children, intellect, creativity","Health, service, obstacles","Partnership, marriage","Transformation, longevity","Fortune, dharma, father","Career, status, action","Gains, aspirations, community","Loss, expenditure, liberation"];
 
 function computeLiveSky(lat, lon, natalAscSign){
+  const now = new Date();
+  const jd = toJulianDay(now.getUTCFullYear(), now.getUTCMonth()+1, now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), 0);
+  const ayanamsa = lahiriAyanamsa(jd);
+
+  const tropical = {
+    Sun: sunLongitude(jd), Moon: moonLongitude(jd),
+    Mercury: planetGeocentricLongitude("mercury",jd), Venus: planetGeocentricLongitude("venus",jd),
+    Mars: planetGeocentricLongitude("mars",jd), Jupiter: planetGeocentricLongitude("jupiter",jd),
+    Saturn: planetGeocentricLongitude("saturn",jd)
+  };
+  const rahuTropical = rahuLongitude(jd);
+  const transitSidereal = {};
+  for (const p in tropical) transitSidereal[p] = normDeg(tropical[p]-ayanamsa);
+  transitSidereal.Rahu = normDeg(rahuTropical-ayanamsa);
+  transitSidereal.Ketu = normDeg(transitSidereal.Rahu+180);
+  const transitRetro = {
+    Mercury:isRetrograde("mercury",jd), Venus:isRetrograde("venus",jd), Mars:isRetrograde("mars",jd),
+    Jupiter:isRetrograde("jupiter",jd), Saturn:isRetrograde("saturn",jd),
+    Sun:false, Moon:false, Rahu:true, Ketu:true
+  };
+
+  const planets = {};
+  PLANET_LIST.forEach(name=>{
+    const lonT = transitSidereal[name];
+    const signIdx = getSignIndex(lonT);
+    const degInSign = getDegInSign(lonT);
+    const nak = getNakshatra(lonT);
+    const speed = getPlanetSpeed(name, jd);
+    let natalHouse = null;
+    if (natalAscSign !== null && natalAscSign !== undefined){
+      natalHouse = ((signIdx - natalAscSign + 12) % 12) + 1;
+    }
+    planets[name] = {
+      name, sign: signIdx, degInSign, degRemainingInSign: 30-degInSign,
+      nakshatra: nak, retrograde: transitRetro[name], speed,
+      natalHouse, natalHouseTheme: natalHouse!==null ? HOUSE_THEMES[natalHouse-1] : null
+    };
+  });
+
+  return { jd, ayanamsa, now, lat, lon, planets };
+}
+
+function renderLiveTransitComparison(natalChart, profile, lat, lon, tz){
+  const natalAscSign = natalChart.ascendant.sign;
+  const sky = computeLiveSky(lat, lon, natalAscSign);
+
+  let html = `<div class="transit-live-meta">Sky as of <span class="mono">${sky.now.toUTCString()}</span> · Observed from your entered location (${lat.toFixed(2)}°, ${lon.toFixed(2)}°) · Local UTC offset ${fmtTz(tz)}</div>
+  <div class="planet-table-wrap" style="margin-top:14px;">
+    <table class="planet-table">
+      <thead><tr><th>Planet</th><th>Transit Sign</th><th>Degree</th><th>Nakshatra</th><th>Speed</th><th>Falls in Natal House</th><th>Natal House Theme</th></tr></thead>
+      <tbody>`;
+
+  PLANET_LIST.forEach(name=>{
+    const p = sky.planets[name];
+    const sign = SIGNS[p.sign];
+    html += `<tr>
+      <td class="planet-name-cell"><span class="planet-glyph">${PLANET_GLYPHS[name]}</span>${name}${p.retrograde?'<span class="retro-tag">Retro</span>':''}</td>
+      <td>${sign.symbol} ${sign.name}</td>
+      <td class="mono">${formatDeg(p.degInSign)}</td>
+      <td>${p.nakshatra.name} (Pada ${p.nakshatra.pada})</td>
+      <td class="mono">${Math.abs(p.speed).toFixed(2)}°/day</td>
+      <td><span class="dig-good">House ${p.natalHouse}</span></td>
+      <td>${p.natalHouseTheme}</td>
+    </tr>`;
+  });
+  html += `</tbody></table></div>
+  <div class="transit-note">This compares today's real sky against the whole-sign houses of the natal chart above — a simplified but classically valid approach to gochara (transit) analysis. Retrograde status is reflected. Refresh the check periodically since positions shift daily (Moon) or over months/years (outer planets).</div>`;
+
+  document.getElementById('transitLiveResults').innerHTML = html;
+  window.lastLiveSkyResult = { sky, lat, lon, tz }; 
+}
+
+function populateTzSelect(sel){
+  sel.innerHTML = "";
+  TZ_OPTIONS.forEach(v=>{
+    const opt = document.createElement('option');
+    opt.value = v; opt.textContent = fmtTz(v);

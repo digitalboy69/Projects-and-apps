@@ -22,7 +22,7 @@ with sync_playwright() as p:
     ok('birth chart frame loads', fr)
     if fr:
         fr = fr[0]
-        fr.fill('#profileName', 'Test'); fr.fill('#dobInput', '1990-05-15')
+        fr.fill('#profileName', 'Test'); fr.evaluate("()=>{const d=document.getElementById('dobInput');d.value='1990-05-15';d.dispatchEvent(new Event('input',{bubbles:true}));}")
         fr.evaluate("()=>{const t=document.querySelector('#birthForm input[type=time]');if(t){t.value='10:30';t.dispatchEvent(new Event('input',{bubbles:true}));}}")
         # place: use the shared LocPicker (search is mocked above)
         fr.click('.lp-tools [data-m=map]'); pg.wait_for_timeout(400); pg.fill('#lpQ', 'Mumbai'); pg.wait_for_timeout(900); pg.keyboard.press('Enter'); pg.wait_for_timeout(500); pg.click('#lpUse'); pg.wait_for_timeout(300)

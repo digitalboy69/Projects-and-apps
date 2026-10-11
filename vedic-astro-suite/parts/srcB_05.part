@@ -1,40 +1,3 @@
- {id:'money',ico:'💰',t:'Wealth & finances',kw:'money income savings rich dhana',h:[2,11],s:[5,9,8],k:['Jupiter','Venus'],ck:'',v:'D2',ar:['A2','A11'],subs:[
-  ['10 income sources','List my 10 most likely sources of income, ranked, one line each.'],
-  ['Money habits','Give 8 specific, checkable money behaviours: what I do right after income, impulse-spend categories, saving style, lending/borrowing habit, risk appetite, with an example each.'],
-  ['Wealth years ahead','Year-by-year for the next 5 years: income up/down, best years to invest, buy or save.'],
-  ['Where to invest','List 8 asset types that suit my nature ranked, and 4 to avoid (general idea only, not financial advice).'],
-  ['Money leaks & fixes','List my 5 biggest money leaks and a fix for each.']]},
- {id:'fame',ico:'🌟',t:'Fame, status & recognition',kw:'reputation name public image authority',h:[10,1],s:[11,5],k:['Sun','Moon'],ck:'Atmakaraka',v:'D10',ar:['AL','A10'],subs:[
-  ['Will I become well known?','Give a direct verdict with a percentage and the fields where it is most likely.'],
-  ['My public image','In 6 bullets: how people see me, and how to sharpen it.'],
-  ['10 best fields for recognition','List 10 fields or platforms where I can get recognised, ranked.'],
-  ['When recognition peaks','List the 3 best years/windows for visibility and 1 to avoid.']]},
- {id:'spouse',ico:'💍',t:'Spouse & marriage',kw:'wife husband partner relationship spouse details',h:[7],s:[2,11,12],k:['Venus','Jupiter'],ck:'Darakaraka',v:'D9',ar:['UL','A7'],subs:[
-  ['Who is my likely spouse','Describe my likely spouse in bullets: personality, looks tendency, 8 most likely professions, family background, age gap tendency and how close our culture will be.'],
-  ['Where & how will I meet','List the 10 most likely places or ways I meet my partner, ranked (work, college, friends, family introduction, online, travel, neighbourhood...). One line each.'],
-  ['Love or arranged?','Give a direct verdict with a percentage split between love and arranged.'],
-  ['Where is my partner from','Rank where my partner is likely from: same city, another city, another state, abroad, other culture. One line each.'],
-  ['Marriage quality','List my marriage strengths (5) and challenges (5) in plain words.'],
-  ['Making marriage smoother','Give 6 practical habits and traditional remedies for a smoother marriage.']]},
- {id:'marriagetime',ico:'📅',t:'Marriage timing',kw:'when will i marry wedding delay',h:[7,2,11],s:[5,12],k:['Venus','Jupiter'],ck:'Darakaraka',v:'D9',ar:['UL'],subs:[
-  ['Likely marriage years','List the 3 most likely years/age windows for marriage, ranked, one line each.'],
-  ['Any delay and why','Is there a delay? Say yes/no, give 3 plain reasons, and the first window when it eases.'],
-  ['Best months next 12 months','List the best 3 months in the next 12 for engagement/marriage steps and any to avoid.']]},
- {id:'love',ico:'❤️',t:'Love & romance',kw:'dating affair crush relationship attraction',h:[5,7],s:[11,2],k:['Venus','Moon'],ck:'Darakaraka',v:'D9',ar:['UL'],subs:[
-  ['My romance pattern','Give 8 specific, checkable things about how I behave in love (who initiates, how I act in the first 3 months, what I do when jealous or hurt, what I secretly need). Nothing generic.'],
-  ['Types of people I attract','List 8 types of partner I am attracted to or attract.'],
-  ['Heartbreak risks & how to avoid','List 5 relationship traps for me and how to avoid each.'],
-  ['Best time for new love','List the best 3 windows for new love in the next 3 years.']]},
- {id:'children',ico:'👶',t:'Children & progeny',kw:'kids baby child birth pregnancy fertility',h:[5],s:[2,9,11],k:['Jupiter'],ck:'Putrakaraka',v:'D7',ar:['A5'],subs:[
-  ['Children: outlook','Give a direct outlook on having children (easy / some delay / needs care) with a one-line reason.'],
-  ['Best years for children','List the 3 most favourable years/windows.'],
-  ['My child\'s nature','Describe the kind of child(ren) I am likely to have in 6 bullets and my parenting style.'],
-  ['Support & remedies','List 5 practical supports or traditional remedies that help.']]},
- {id:'education',ico:'🎓',t:'Education & learning',kw:'study college exams degree knowledge',h:[4,5],s:[9,2],k:['Mercury','Jupiter'],ck:'Putrakaraka',v:'D24',ar:[],subs:[
-  ['15 best subjects/degrees','List 15 subjects or degrees ranked by fit.'],
-  ['How I learn best','Give 8 specific, checkable learning habits: best time of day, format, memory style, subjects I struggle with, how I react to exams.'],
-  ['Exam & degree timing','List the best years/windows for exams, admissions or a new course.'],
-  ['Study abroad chance','Give a direct verdict on studying abroad, best regions, and best timing.']]},
  {id:'health',ico:'🩺',t:'Health & vitality',kw:'disease illness body fitness immunity',h:[1,6],s:[8,12],k:['Sun','Moon','Mars'],ck:'Atmakaraka',v:'D30',ar:['A6'],subs:[
   ['Strong & sensitive areas','List my body areas from strongest to most sensitive, one line each (traditional astrology, not medical advice).'],
   ['Habits that suit me','List 8 daily habits, foods and exercise types that suit me.'],
@@ -474,6 +437,7 @@ function loadProfileIntoForm(p){
   coordReadout.textContent = (p.lat !== null && p.lon !== null) ? `${p.lat.toFixed(4)}°, ${p.lon.toFixed(4)}°` : "— not yet selected —";
   const sel = document.getElementById('tzInput');
   [...sel.options].forEach(o=>{ if (parseFloat(o.value)===p.tz) o.selected = true; });
+  try{ inSyncFriendly(); inUpdate(); }catch(e){}
 }
 
 document.getElementById('newProfileBtn').addEventListener('click', ()=>{
@@ -530,12 +494,13 @@ document.getElementById('birthForm').addEventListener('submit', (e)=>{
   const tz = parseFloat(document.getElementById('tzInput').value);
 
   if (!name || !dob || !tob){
-    errorBanner.textContent = "Please fill in name, date of birth, and time of birth.";
+    const miss = [!name?'your name':'', !dob?'the date you were born':'', !tob?'the time you were born (tap "No idea" if unsure)':''].filter(Boolean).join(', ');
+    errorBanner.textContent = "Almost there! Please add: " + miss + ".";
     errorBanner.classList.add('show');
     return;
   }
   if (selectedLat === null || selectedLon === null){
-    errorBanner.textContent = "Please select a place of birth from the dropdown suggestions so coordinates can be determined.";
+    errorBanner.textContent = "Please tap your city in the list that appears under the box (or use the map pin) so we know where you were born.";
     errorBanner.classList.add('show');
     return;
   }
@@ -1722,3 +1687,59 @@ function pnRender(){
   if (P.rahu){
     const dl = P.sunset - P.sunrise, pos = t => ((t - P.sunrise) / dl * 100);
     const segs = [['Abhijit', P.abhijit, '#5EC4B7', 'Auspicious'], ['Rahu Kalam', P.rahu, '#C95050', 'Avoid new starts'], ['Yamaganda', P.yama, '#E0A64A', 'Inauspicious'], ['Gulika Kalam', P.gulika, '#8A6FB8', 'Inauspicious']];
+    const marks = segs.map(([n, r, col]) => `<i title="${n}" style="left:${pos(r[0]).toFixed(2)}%;width:${((r[1] - r[0]) / dl * 100).toFixed(2)}%;background:${col}"></i>`).join('');
+    const now = jd >= P.sunrise && jd <= P.sunset ? `<u style="left:${pos(jd).toFixed(2)}%"></u>` : '';
+    const rows = segs.map(([n, r, col, tag]) => `<div class="pn-prow" style="--pc:${col}"><span class="pn-dot"></span><b>${n}</b><span>${nvTime(r[0], c.tz, ref)} – ${nvTime(r[1], c.tz, ref)}</span><em>${tag}</em></div>`).join('') +
+      `<div class="pn-prow" style="--pc:#6B7FA3"><span class="pn-dot"></span><b>Brahma Muhurta</b><span>${nvTime(P.brahma[0], c.tz, ref)} – ${nvTime(P.brahma[1], c.tz, ref)}</span><em>Before sunrise</em></div>`;
+    day = `<div class="pn-sec"><h5>Day timeline <span>sunrise → sunset · ${P.vara.name}</span></h5>
+      <div class="pn-track">${marks}${now}</div>
+      <div class="pn-tl"><span>${nvTime(P.sunrise, c.tz, ref)}</span><span>Midday</span><span>${nvTime(P.sunset, c.tz, ref)}</span></div>
+      <div class="pn-plist">${rows}</div></div>`;
+  } else day = `<div class="pn-sec"><div class="pl-empty">The Sun does not rise and set normally at this latitude and date, so day-based timings are unavailable.</div></div>`;
+
+  body.innerHTML = `<div class="pn-for">Computed for <b>${nvDate(jd, c.tz, true)}</b> · ${escapeHtml(c.place)} · ${fmtTz(c.tz)}</div>
+    <div class="pn-limbs">${limbs}</div>
+    <div class="pn-facts">${facts}</div>
+    <div class="pn-chips">${calChips}</div>
+    ${day}
+    <div class="pn-note">Vedic day runs sunrise to sunrise, so births before sunrise take the previous weekday. Sunrise uses the upper limb with standard refraction (−0.833°). Lunar month is the Amanta (new-moon to new-moon) system; Purnimanta calendars name the Krishna fortnight one month later. Vishti karana is traditionally avoided for new beginnings.</div>`;
+}
+document.addEventListener('input', (e) => { if (e.target.id === 'pnDate' || e.target.id === 'pnTime') { document.querySelectorAll('[data-pn-set]').forEach(b => b.classList.remove('on')); pnRender(); } });
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-pn-set]'); if (!b || !PN_CTX) return;
+  document.querySelectorAll('[data-pn-set]').forEach(x => x.classList.toggle('on', x === b));
+  if (b.dataset.pnSet === 'birth'){ document.getElementById('pnDate').value = PN_CTX.birthDate; document.getElementById('pnTime').value = PN_CTX.birthTime; }
+  else { const p = jdToLocalParts(nowJulianDay(), PN_CTX.tz); document.getElementById('pnDate').value = p.dateStr; document.getElementById('pnTime').value = p.timeStr.slice(0, 5); }
+  pnRender();
+});
+
+/* ------------------------------ TRANSITS & SADE SATI ------------------------------ */
+const TR_COL = { 11: '#E0A64A', 0: '#C95050', 1: '#8A6FB8', 3: '#6B7FA3', 7: '#5B8A9E' };
+const TR_PHASE = { 11: 'Rising', 0: 'Peak', 1: 'Setting' };
+function trStatus(s, e, now){ if (e !== null && e <= now) return 'past'; if (s !== null && s > now) return 'next'; return 'now'; }
+function trPill(st){ return st === 'now' ? '<span class="dx-pill now">Now</span>' : (st === 'next' ? '<span class="dx-pill">Upcoming</span>' : '<span class="dx-pill past">Past</span>'); }
+let TR_DATA = null;
+function buildTransitsPanel(chart, profile){
+  const T = computeTransits(chart, profile), tz = profile.tz, now = nowJulianDay(), birth = chart.julianDay;
+  TR_DATA = { T, tz, now, birth };
+  const age = jd => (jd - birth) / 365.25, dt = jd => jd === null ? 'before birth' : nvDate(jd, tz);
+  const curSign = n => { const s = T.stays[n].find(x => trStatus(x.start, x.end, now) === 'now'); return s ? s.sign : getSignIndex(getSiderealLongitudeAt(n, now)); };
+  const rel = s => (s - T.moonSign + 12) % 12, hM = s => rel(s) + 1, hL = s => (s - T.asc + 12) % 12 + 1;
+  const satS = curSign('Saturn'), jupS = curSign('Jupiter');
+
+  // active cycle status
+  const act = T.sadeSati.find(c => trStatus(c.start, c.end, now) === 'now');
+  const nextC = T.sadeSati.find(c => c.start !== null && c.start > now);
+  let ssHero;
+  if (act){
+    const ph = rel(satS) === 11 ? 'Rising' : rel(satS) === 0 ? 'Peak' : rel(satS) === 1 ? 'Setting' : 'between phases';
+    ssHero = `<div class="tr-card on" style="--pc:#C95050"><small>Sade Sati</small><b>Active · ${ph} phase</b><span>Saturn in ${SIGNS[satS].name} · ends ${dt(act.end)}</span></div>`;
+  } else {
+    ssHero = `<div class="tr-card" style="--pc:#5EC4B7"><small>Sade Sati</small><b>Not active</b><span>${nextC ? 'Next begins ' + dt(nextC.start) + ' (in ' + nvSpan(nextC.start - now) + ')' : 'No further cycle in the next 100 years'}</span></div>`;
+  }
+  const actK = T.kantaka.find(c => trStatus(c.start, c.end, now) === 'now'), actA = T.ashtama.find(c => trStatus(c.start, c.end, now) === 'now');
+  const nK = T.kantaka.find(c => c.start !== null && c.start > now), nA = T.ashtama.find(c => c.start !== null && c.start > now);
+  const dh = (title, a, n, col) => a ? `<div class="tr-card on" style="--pc:${col}"><small>${title}</small><b>Active</b><span>Ends ${dt(a.end)}</span></div>`
+    : `<div class="tr-card" style="--pc:${col}"><small>${title}</small><b>Not active</b><span>${n ? 'Next ' + dt(n.start) : '—'}</span></div>`;
+  const pos = (n, s) => `<div class="tr-card" style="--pc:${DASHA_PLANET_COLORS[n]}"><small>${n} now</small><b>${PLANET_GLYPHS[n]} ${SIGNS[s].symbol} ${SIGNS[s].name}</b><span>House ${hL(s)} from Lagna · ${hM(s)} from Moon</span></div>`;
+

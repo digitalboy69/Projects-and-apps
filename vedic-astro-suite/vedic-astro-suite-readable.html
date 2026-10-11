@@ -9162,6 +9162,52 @@ img,svg{max-width:100%}
 .srch-back{border:1px solid var(--border-light);background:transparent;color:var(--teal-bright);border-radius:999px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit}
 .srch-h2{font-family:var(--font-display);font-size:16px;color:var(--gold-bright)}
 .srch-row[data-k=topic] .srch-tag{color:#f3c9ff;border-color:rgba(200,140,255,.4)}
+/* ===== Friendly input page ===== */
+.in-wrap{position:relative;max-width:620px}
+.in-wrap::before{content:"";position:absolute;left:50%;top:-40px;width:140%;height:420px;transform:translateX(-50%);background:radial-gradient(40% 50% at 30% 30%,rgba(212,175,55,.16),transparent 70%),radial-gradient(40% 50% at 75% 40%,rgba(94,196,183,.12),transparent 70%);pointer-events:none;z-index:-1;animation:inAura 12s ease-in-out infinite alternate}
+@keyframes inAura{to{transform:translateX(-50%) translateY(14px) scale(1.05)}}
+.in-hero h2{font-size:34px}
+.in-hero p{font-size:16px}
+.in-trust{display:inline-flex;gap:8px;align-items:center;margin-top:14px;padding:6px 14px;border-radius:999px;border:1px solid var(--border-light);background:rgba(255,255,255,.03);font-size:12px;color:var(--text-muted)}
+.in-card{border-radius:28px;padding:24px;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01)),var(--bg-card);box-shadow:0 24px 70px rgba(0,0,0,.45),0 0 0 1px rgba(212,175,55,.08)}
+.in-step{border-radius:20px;padding:18px;transition:border-color .3s,box-shadow .3s,background .3s}
+.in-step.current{border-color:var(--gold);box-shadow:0 0 0 4px rgba(212,175,55,.10)}
+.in-step.done .in-num{animation:inPop .45s cubic-bezier(.2,1.6,.4,1)}
+@keyframes inPop{from{transform:scale(.4)}}
+.in-step-h b{font-size:18px}
+.in-step input[type=text],.in-friendly select,#placeInput{min-height:50px;border-radius:14px;font-size:16px}
+.in-friendly{display:flex;flex-direction:column;gap:10px}
+.in-q{font:600 13px var(--font-sans);color:var(--gold-bright);margin-top:4px}
+.in-q2{font-size:12.5px;color:var(--text-muted);margin-top:8px}
+.in-row3{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:10px}
+.in-row3.t{grid-template-columns:1fr 1fr 1.2fr}
+.in-friendly select{width:100%;padding:0 12px;background:rgba(0,0,0,.28);border:1px solid var(--border-light);color:var(--text-main);font-family:inherit;appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:calc(100% - 18px) 22px,calc(100% - 13px) 22px;background-size:5px 5px;background-repeat:no-repeat;transition:border-color .2s,box-shadow .2s}
+.in-friendly select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.18)}
+.in-friendly select.ok{border-color:rgba(94,196,183,.6)}
+.in-ampm{display:flex;border:1px solid var(--border-light);border-radius:14px;overflow:hidden;min-height:50px}
+.in-ampm button{flex:1;border:0;background:rgba(0,0,0,.28);color:var(--text-muted);font:600 14px var(--font-sans);cursor:pointer;transition:all .2s}
+.in-ampm button.on{background:linear-gradient(135deg,var(--gold-bright),var(--gold));color:#111}
+.in-chips{display:flex;flex-wrap:wrap;gap:8px}
+.in-chips button{border:1px solid var(--border-light);background:rgba(255,255,255,.04);color:var(--text-main);border-radius:999px;padding:9px 14px;font:500 13px var(--font-sans);cursor:pointer;transition:all .18s}
+.in-chips button:hover{border-color:var(--gold);transform:translateY(-1px);background:rgba(212,175,55,.12)}
+.in-chips button.on{border-color:var(--gold-bright);background:rgba(212,175,55,.2)}
+.in-guess{padding:10px 12px;border-radius:12px;background:rgba(94,196,183,.08);border:1px solid rgba(94,196,183,.3);font-size:12.5px;line-height:1.5;color:var(--text-muted)}
+.in-guess[hidden]{display:none}
+.in-bad{color:#ff9a8a;font-size:12.5px}.in-bad[hidden]{display:none}
+.in-found{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(94,196,183,.1);border:1px solid rgba(94,196,183,.35);font-size:13px;color:var(--teal-bright);animation:rsPop .35s both}
+.in-found[hidden]{display:none}
+.in-adv{grid-column:1/-1;margin-top:6px;border:1px dashed var(--border-light);border-radius:14px;padding:0 14px}
+.in-adv summary{cursor:pointer;list-style:none;padding:11px 0;font-size:12.5px;color:var(--text-muted)}
+.in-adv summary::-webkit-details-marker{display:none}
+.in-adv[open]{background:rgba(255,255,255,.02)}
+.in-adv .form-grid{padding-bottom:14px}
+.in-card .btn-cast{position:relative;overflow:hidden;min-height:56px;font-size:17px;box-shadow:0 14px 34px rgba(212,175,55,.3)}
+.in-card .btn-cast::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);animation:inShine 3.6s ease-in-out infinite}
+@keyframes inShine{0%,60%{left:-60%}100%{left:130%}}
+.in-ex{display:block;margin:12px auto 0;background:none;border:1px dashed var(--border-light);color:var(--gold-bright);border-radius:999px;padding:9px 18px;font:500 13px var(--font-sans);cursor:pointer;transition:all .2s}
+.in-ex:hover{border-color:var(--gold);background:rgba(212,175,55,.1)}
+@media (max-width:640px){.in-hero h2{font-size:26px}.in-row3{gap:8px}.in-card{padding:16px;border-radius:22px}}
+@media (prefers-reduced-motion:reduce){.in-wrap::before,.in-card .btn-cast::after{animation:none}}
 /* ===== Smart Search ===== */
 .srch-ov{position:fixed;inset:0;z-index:9000;display:none;align-items:flex-start;justify-content:center;padding:9vh 14px 14px;background:rgba(3,5,10,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .srch-ov.show{display:flex;animation:rsPop .2s both}
@@ -9270,13 +9316,14 @@ body.srch-lock{overflow:hidden}
         <div class="in-om">ॐ</div>
       </div>
       <div class="in-eyebrow">Jyotiṣa · Vedic Astrology</div>
-      <h2>Your birth chart, <em>decoded</em> in seconds</h2>
-      <p>Tell us when and where you were born. We map the sky at that exact moment — your signs, planets, life periods and more.</p>
-      <div class="in-get">
-        <div><span>◈</span>Birth chart<small>+ 20 divisional charts</small></div>
-        <div><span>◷</span>Life timeline<small>120-year Dasha</small></div>
-        <div><span>✦</span>Yogas &amp; strength<small>Planet power</small></div>
-        <div><span>🎯</span>Time rectification<small>Unsure of your time?</small></div>
+      <h2>See your birth chart in <em>3 easy steps</em></h2>
+      <p>No astrology knowledge needed. Just tell us when and where you were born. We do the rest and explain it in plain words.</p>
+      <div class="in-trust">🔒 Saved only on this device · Free · No sign-up</div>
+      <div class="in-get" style="margin-top:16px">
+        <div><span>◈</span>Your chart<small>Map of the sky at your birth</small></div>
+        <div><span>◷</span>Life timeline<small>Which phase you are in now</small></div>
+        <div><span>✦</span>Your strengths<small>Explained simply</small></div>
+        <div><span>🎯</span>Fix your time<small>Not sure? We help</small></div>
       </div>
     </div>
 
@@ -9286,7 +9333,7 @@ body.srch-lock{overflow:hidden}
       <div class="in-progress"><div class="in-progress-top"><b id="inStepLbl">Step 1 of 3</b><span id="inStepHint">Let's start with your name</span></div><div class="in-bar"><i id="inBarFill"></i></div></div>
 
       <div class="in-step" data-step="1">
-        <div class="in-step-h"><span class="in-num">1</span><div><b>Who are you?</b><small>Used to label your chart</small></div></div>
+        <div class="in-step-h"><span class="in-num">1</span><div><b>👤 What should we call you?</b><small>Just so we can label your chart</small></div></div>
         <div class="form-grid"><div class="field full">
           <label for="profileName">Your name</label>
           <input type="text" id="profileName" placeholder="e.g. Ananya Sharma" required>
@@ -9294,7 +9341,7 @@ body.srch-lock{overflow:hidden}
       </div>
 
       <div class="in-step" data-step="2">
-        <div class="in-step-h"><span class="in-num">2</span><div><b>When were you born?</b><small>The more exact, the more accurate</small></div></div>
+        <div class="in-step-h"><span class="in-num">2</span><div><b>🎂 When were you born?</b><small>Pick the date and time from the lists</small></div></div>
         <div class="form-grid">
           <div class="field">
             <label for="dobInput">Date of birth</label>
@@ -9309,7 +9356,7 @@ body.srch-lock{overflow:hidden}
       </div>
 
       <div class="in-step" data-step="3">
-        <div class="in-step-h"><span class="in-num">3</span><div><b>Where were you born?</b><small>Search your city — we fill in the rest</small></div></div>
+        <div class="in-step-h"><span class="in-num">3</span><div><b>📍 Where were you born?</b><small>Type your city, we fill in the rest</small></div></div>
         <div class="form-grid">
           <div class="field full location-wrap">
             <label for="placeInput">Place of birth</label>
@@ -9332,8 +9379,8 @@ body.srch-lock{overflow:hidden}
       <div class="error-banner" id="errorBanner"></div>
 
       <div class="submit-row">
-        <button type="submit" class="btn-cast" id="castBtn">✨ Reveal my chart</button>
-        <div class="in-micro">Takes a few seconds · You can edit anything later</div>
+        <button type="submit" class="btn-cast" id="castBtn">✨ Show my chart</button>
+        <div class="in-micro">Takes a few seconds · You can change anything later</div>
       </div>
     </form>
   </section>
@@ -13690,6 +13737,7 @@ function loadProfileIntoForm(p){
   coordReadout.textContent = (p.lat !== null && p.lon !== null) ? `${p.lat.toFixed(4)}°, ${p.lon.toFixed(4)}°` : "— not yet selected —";
   const sel = document.getElementById('tzInput');
   [...sel.options].forEach(o=>{ if (parseFloat(o.value)===p.tz) o.selected = true; });
+  try{ inSyncFriendly(); inUpdate(); }catch(e){}
 }
 
 document.getElementById('newProfileBtn').addEventListener('click', ()=>{
@@ -13746,12 +13794,13 @@ document.getElementById('birthForm').addEventListener('submit', (e)=>{
   const tz = parseFloat(document.getElementById('tzInput').value);
 
   if (!name || !dob || !tob){
-    errorBanner.textContent = "Please fill in name, date of birth, and time of birth.";
+    const miss = [!name?'your name':'', !dob?'the date you were born':'', !tob?'the time you were born (tap "No idea" if unsure)':''].filter(Boolean).join(', ');
+    errorBanner.textContent = "Almost there! Please add: " + miss + ".";
     errorBanner.classList.add('show');
     return;
   }
   if (selectedLat === null || selectedLon === null){
-    errorBanner.textContent = "Please select a place of birth from the dropdown suggestions so coordinates can be determined.";
+    errorBanner.textContent = "Please tap your city in the list that appears under the box (or use the map pin) so we know where you were born.";
     errorBanner.classList.add('show');
     return;
   }
@@ -17164,15 +17213,108 @@ Object.keys(SAFE_BUILDERS).forEach(name => {
 
 populateTz();
 refreshProfileSelect();
+/* ---- Friendly input page: dropdown date/time, quick time guesses, tidy place step, example ---- */
+const IN_MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function inBuildFriendly(){
+  const dob = document.getElementById('dobInput'), tob = document.getElementById('tobInput');
+  if (!dob || !tob || document.getElementById('inDay')) return;
+  dob.required = false; tob.required = false;
+  const grid = dob.closest('.form-grid'); grid.style.display = 'none';
+  const yr = new Date().getFullYear();
+  const opt = (a)=> a.map(x=>`<option value="${x[0]}">${x[1]}</option>`).join('');
+  const days = opt(Array.from({length:31},(_,i)=>[i+1,i+1])), mons = opt(IN_MON.map((m,i)=>[i+1,m]));
+  const yrs = opt(Array.from({length:yr-1899},(_,i)=>[yr-i,yr-i]));
+  const hrs = opt(Array.from({length:12},(_,i)=>[i+1,i+1])), mins = opt(Array.from({length:60},(_,i)=>[i,String(i).padStart(2,'0')]));
+  const box = document.createElement('div'); box.className = 'in-friendly';
+  box.innerHTML = `
+    <div class="in-q">🎂 Date you were born</div>
+    <div class="in-row3"><select id="inDay" aria-label="Day"><option value="">Day</option>${days}</select><select id="inMon" aria-label="Month"><option value="">Month</option>${mons}</select><select id="inYear" aria-label="Year"><option value="">Year</option>${yrs}</select></div>
+    <div class="in-bad" id="inBadDate" hidden>That date does not exist. Please check the day and month.</div>
+    <div class="in-q">⏰ Time you were born</div>
+    <div class="in-row3 t"><select id="inHr" aria-label="Hour"><option value="">Hour</option>${hrs}</select><select id="inMin" aria-label="Minute"><option value="">Minute</option>${mins}</select><div class="in-ampm" id="inAp"><button type="button" data-ap="AM">AM</button><button type="button" data-ap="PM">PM</button></div></div>
+    <div class="in-q2">Don't know the exact time? Tap the closest:</div>
+    <div class="in-chips" id="inChips"><button type="button" data-t="08:00">🌅 Morning</button><button type="button" data-t="13:00">☀️ Afternoon</button><button type="button" data-t="18:00">🌇 Evening</button><button type="button" data-t="22:00">🌙 Night</button><button type="button" data-t="12:00">🤷 No idea</button></div>
+    <div class="in-guess" id="inGuess" hidden></div>`;
+  grid.parentNode.insertBefore(box, grid);
+  const tip = document.querySelector('.in-step[data-step="2"] .in-tip span');
+  if (tip) tip.innerHTML = 'Birth time is on your <b>birth certificate</b>, or ask your parents. A close guess is fine. You can fix it later in <b>Rectify</b>.';
+  const $ = id => document.getElementById(id);
+  const fire = el => el.dispatchEvent(new Event('input', {bubbles:true}));
+  function pushDate(){
+    const d = +$('inDay').value, m = +$('inMon').value, y = +$('inYear').value;
+    ['inDay','inMon','inYear'].forEach(i=> $(i).classList.toggle('ok', !!$(i).value));
+    if (!(d && m && y)) { if (dob.value){ dob.value = ''; fire(dob); } return; }
+    const ok = new Date(Date.UTC(y, m-1, d)).getUTCMonth() === m-1; $('inBadDate').hidden = ok;
+    dob.value = ok ? `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}` : ''; fire(dob);
+  }
+  function pushTime(){
+    const h = +$('inHr').value, mi = $('inMin').value, ap = ($('inAp').querySelector('.on')||{}).dataset;
+    if (h && mi === ''){ $('inMin').value = '0'; }
+    ['inHr','inMin'].forEach(i=> $(i).classList.toggle('ok', !!$(i).value));
+    const m2 = $('inMin').value;
+    if (!(h && m2 !== '' && ap)) { if (tob.value){ tob.value = ''; fire(tob); } return; }
+    const h24 = (h % 12) + (ap.ap === 'PM' ? 12 : 0);
+    tob.value = `${String(h24).padStart(2,'0')}:${String(+m2).padStart(2,'0')}`; fire(tob);
+  }
+  ['inDay','inMon','inYear'].forEach(i=> $(i).addEventListener('change', pushDate));
+  ['inHr','inMin'].forEach(i=> $(i).addEventListener('change', ()=>{ $('inGuess').hidden = true; $('inChips').querySelectorAll('.on').forEach(b=>b.classList.remove('on')); pushTime(); }));
+  $('inAp').addEventListener('click', e=>{ const b = e.target.closest('[data-ap]'); if (!b) return; $('inAp').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x===b)); $('inGuess').hidden = true; pushTime(); });
+  $('inChips').addEventListener('click', e=>{
+    const b = e.target.closest('[data-t]'); if (!b) return;
+    const [H,M] = b.dataset.t.split(':').map(Number); inSetTime(H, M);
+    $('inChips').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x===b));
+    const g = $('inGuess'); g.hidden = false;
+    g.innerHTML = `We will use about <b>${$('inHr').value}:${String($('inMin').value).padStart(2,'0')} ${H>=12?'PM':'AM'}</b>. Your Sun and Moon sign will still be right. Open <b>Rectify</b> later to find your exact time.`;
+  });
+  window.inSetTime = function(H, M){
+    $('inHr').value = (H % 12) || 12; $('inMin').value = M; $('inAp').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x.dataset.ap === (H>=12?'PM':'AM'))); pushTime();
+  };
+  document.getElementById('birthForm').addEventListener('reset', ()=> setTimeout(()=>{ ['inDay','inMon','inYear','inHr','inMin'].forEach(i=>{ $(i).value=''; $(i).classList.remove('ok'); }); $('inAp').querySelectorAll('button').forEach(x=>x.classList.remove('on')); $('inGuess').hidden=true; $('inChips').querySelectorAll('.on').forEach(x=>x.classList.remove('on')); },0));
+  window.inSyncFriendly = function(){
+    const dv = (dob.value||'').split('-').map(Number), tv = (tob.value||'').split(':').map(Number);
+    if (dv.length>=3 && dv[0]){ $('inYear').value = dv[0]; $('inMon').value = dv[1]; $('inDay').value = dv[2]; }
+    if (tv.length>=2 && !isNaN(tv[0]) && tob.value){ const H = tv[0], M = tv[1]; $('inHr').value = (H%12)||12; $('inMin').value = M; $('inAp').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x.dataset.ap === (H>=12?'PM':'AM'))); }
+    ['inDay','inMon','inYear','inHr','inMin'].forEach(i=> $(i).classList.toggle('ok', !!$(i).value));
+  };
+  // place step: tuck timezone + coordinates away, show a friendly confirmation
+  const tz = document.getElementById('tzInput'), co = document.getElementById('coordReadout');
+  const f1 = tz.closest('.field'), f2 = co.closest('.field'), pw = document.querySelector('#placeInput').closest('.field');
+  const det = document.createElement('details'); det.className = 'in-adv';
+  det.innerHTML = '<summary>⚙️ Timezone &amp; coordinates (filled in for you, usually no need to touch)</summary><div class="form-grid"></div>';
+  det.querySelector('.form-grid').append(f1, f2); pw.parentNode.appendChild(det);
+  const found = document.createElement('div'); found.className = 'in-found'; found.id = 'inFound'; found.hidden = true; pw.appendChild(found);
+  const lab = pw.querySelector('label'); if (lab) lab.textContent = 'City or town where you were born';
+  const pin = document.getElementById('placeInput'); pin.placeholder = 'Type your city, e.g. Pune, India';
+  const nameLab = document.querySelector('label[for="profileName"]'); if (nameLab) nameLab.textContent = 'Your name or nickname';
+  // example button
+  const sub = document.querySelector('.in-card .submit-row');
+  const ex = document.createElement('button'); ex.type = 'button'; ex.className = 'in-ex'; ex.id = 'inEx'; ex.textContent = '👀 Just looking? Try an example first'; sub.appendChild(ex);
+  ex.addEventListener('click', ()=>{
+    document.getElementById('profileName').value = 'Example Person'; dob.value = '1990-05-15'; fire(dob); inSyncFriendly(); inSetTime(10, 30);
+    selectLocation({display_name:'Mumbai, Maharashtra, India', lat:'19.0760', lon:'72.8777', address:{country_code:'in'}});
+    fire(document.getElementById('profileName')); inUpdate();
+  });
+}
+function inFoundUpdate(){
+  const f = document.getElementById('inFound'); if (!f) return;
+  const ok = typeof selectedLat==='number' && !isNaN(selectedLat), tz = document.getElementById('tzInput');
+  if (!ok){ f.hidden = true; return; }
+  const place = (document.getElementById('placeInput').value||'').split(',').slice(0,2).join(',');
+  const t = tz && tz.selectedOptions && tz.selectedOptions[0] ? tz.selectedOptions[0].textContent.split(' ')[0] : '';
+  f.hidden = false; f.textContent = '✅ Found: ' + place + (t ? ' · time zone set automatically (' + t + ')' : '');
+}
+
 /* ---- Intake: progress + welcome-back chips ---- */
 function inUpdate(){
   const v = id => (document.getElementById(id).value||'').trim();
   const d1 = v('profileName').length>0, d2 = !!(v('dobInput') && v('tobInput')), d3 = (typeof selectedLat==='number' && !isNaN(selectedLat));
   [d1,d2,d3].forEach((d,i)=> document.querySelector(`.in-step[data-step="${i+1}"]`).classList.toggle('done', d));
-  const n=[d1,d2,d3].filter(Boolean).length, hints=["Let's start with your name","Now your birth date and time","Last step — where were you born?"];
+  const n=[d1,d2,d3].filter(Boolean).length, hints=["First, tell us your name","Now, when were you born?","Last one: where were you born?"];
   document.getElementById('inBarFill').style.width = (n/3*100)+'%';
+  try{ inSyncFriendly(); inFoundUpdate(); }catch(e){}
+  document.querySelectorAll('.in-step').forEach(x=> x.classList.remove('current')); const cur = document.querySelector(`.in-step[data-step="${Math.min(3, [d1,d2,d3].findIndex(x=>!x)+1 || 3)}"]`); if (cur && n<3) cur.classList.add('current');
   document.getElementById('inStepLbl').textContent = n===3 ? 'All set ✓' : `Step ${n+1} of 3`;
-  document.getElementById('inStepHint').textContent = n===3 ? 'Tap “Reveal my chart” below' : (!d1?hints[0]:!d2?hints[1]:hints[2]);
+  document.getElementById('inStepHint').textContent = n===3 ? 'Tap “Show my chart” below' : (!d1?hints[0]:!d2?hints[1]:hints[2]);
 }
 function renderIntakeSaved(){
   const box=document.getElementById('inSaved'); if(!box) return;
@@ -17191,6 +17333,7 @@ document.getElementById('inSaved').addEventListener('click',(e)=>{
   form.addEventListener('reset',()=>setTimeout(inUpdate,0));
   new MutationObserver(inUpdate).observe(document.getElementById('coordReadout'),{childList:true,characterData:true,subtree:true});
   const o=refreshProfileSelect; refreshProfileSelect=function(){ o.apply(this,arguments); renderIntakeSaved(); };
+  try{ inBuildFriendly(); }catch(e){ console.error('intake', e); }
   renderIntakeSaved(); inUpdate();
 })();
 

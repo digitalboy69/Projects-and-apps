@@ -1,3 +1,8 @@
+  const node = normDeg(elements.node + elements.nodeRate*T)*DEG;
+  const M = L - peri;
+  const E = solveKepler(normDeg(M*RAD)*DEG, e);
+  const xv = a*(Math.cos(E)-e);
+  const yv = a*(Math.sqrt(1-e*e)*Math.sin(E));
   const v = Math.atan2(yv,xv);
   const r = Math.sqrt(xv*xv+yv*yv);
   const omega = peri - node;
@@ -1722,3 +1727,19 @@ const SPECIAL_LAGNAS_META = {
   A9:         { key:"A9",         name:"Pitri Pada",         sanskrit:"A9",                 group:"arudha", desc: ARUDHA_HOUSE_META.A9.desc },
   A10:        { key:"A10",        name:"Rajya Pada",         sanskrit:"A10",                group:"arudha", desc: ARUDHA_HOUSE_META.A10.desc },
   A11:        { key:"A11",        name:"Labha Pada",         sanskrit:"A11",                group:"arudha", desc: ARUDHA_HOUSE_META.A11.desc }
+};
+const SPECIAL_LAGNAS_ORDER = ["UL_LAGNA","AL","KL","UL","HL","GL","BL","VGL","VL","INDU","SL","PRANAPADA","SWAMSHA","PADANADHAMSA","BB","PAKA","CHANDRA","SURYA","A2","A3","A4","A5","A6","A8","A9","A10","A11"];
+
+// Computes the sign index (0-11, Aries=0) for every special lagna.
+function computeAllSpecialLagnaSigns(chart){
+  const ascSignIdx = chart.ascendant.sign;
+  const arudhaPadas = calcAllArudhaPadas(chart, ascSignIdx);
+  const horaSignIdx = calcHoraLagnaSign(chart);
+
+  const signs = {
+    UL_LAGNA: ascSignIdx,
+    AL: arudhaPadas.AL,
+    KL: calcKarakamshaSign(chart),
+    UL: arudhaPadas.UL,
+    HL: horaSignIdx,
+    GL: calcGhatiLagnaSign(chart),
