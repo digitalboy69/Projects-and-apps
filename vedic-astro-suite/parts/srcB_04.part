@@ -1,42 +1,3 @@
-    const signIdx = (lagnaSignIdx + h - 1) % 12;
-    const sign = SIGNS[signIdx];
-    const planetsHere = PLANET_LIST.filter(name => planetVargaSign[name] === signIdx).map(name => ({
-      name, retrograde: chart.planets[name].retrograde,
-      dignity: vargaKey === "D1" ? chart.planets[name].dignity : getDignity(name, signIdx, 15)
-    }));
-    houses.push({
-      houseNum: h, sign: signIdx, signName: sign.name, signSanskrit: sign.sk,
-      signLord: sign.lord, signSymbol: sign.symbol, element: sign.element, modality: sign.modality,
-      planets: planetsHere, isEmpty: planetsHere.length === 0
-    });
-  }
-  const V0 = chart.vargas[vargaKey];
-  return { ascendantSign: lagnaSignIdx, houses, planetVargaSign, outerSign: V0.outerSign, outerRx: V0.outerRx };
-}
-
-// Plain-text render of one lagna's chart (for a chosen divisional chart) —
-// used by the "Copy Current Chart" button in the Lagnas tab.
-function lagnaChartToPlainText(chart, lagnaKey, vargaKey, vdata, aspectRows){
-  const lagnaMeta = SPECIAL_LAGNAS_META[lagnaKey];
-  const vargaMeta = VARGAS[vargaKey];
-  const ascSign = SIGNS[vdata.ascendantSign];
-  let out = `${lagnaMeta.name} (${lagnaMeta.sanskrit}) — ${vargaKey} ${vargaMeta.name}\n`;
-  out += '='.repeat(60) + '\n';
-  out += `${lagnaMeta.desc}\n`;
-  out += `Ascendant (this Lagna): ${ascSign.name} (${ascSign.sk})\n\n`;
-  out += `HOUSES\n${'-'.repeat(60)}\n`;
-  vdata.houses.forEach(h => {
-    const occupants = h.isEmpty ? 'Empty' : h.planets.map(p => `${p.name}${p.retrograde ? ' (R)' : ''}`).join(', ');
-    out += `H${h.houseNum} — ${h.signName} (${h.signSanskrit}), Lord: ${h.signLord} :: ${occupants}\n`;
-  });
-  if (aspectRows){
-    out += `\n${aspectRowsToPlainText(aspectRows, `${lagnaKey} · ${vargaKey}`)}`;
-  }
-  return out;
-}
-
-// Plain-text render of ALL 23 special lagnas at once (their sign placements
-// and a full D1 house breakdown for each) — used by "Copy All Lagnas".
 function allLagnasToPlainText(chart, specialLagnaSigns, vargaKey){
   const vargaMeta = VARGAS[vargaKey];
   let out = `SPECIAL LAGNAS — FULL EXPORT (cast on ${vargaKey} ${vargaMeta.name})\n`;
@@ -1802,3 +1763,61 @@ const SRCH_TOPICS = [
   ['In-laws & family','Give 6 bullets on my relationship with in-laws and joint-family dynamics.'],
   ['Common fights & solutions','List my 6 most likely arguments and a solution for each.'],
   ['Spouse\'s support & career','How will my spouse help or affect my career and money? 6 bullets.'],
+  ['Marriage strong years','List the 3 strongest and 2 testing phases of my marriage by age window.']]},
+ {id:'children',ico:'👶',t:'Children & progeny',kw:'kids baby child birth pregnancy fertility',h:[5],s:[2,9,11],k:['Jupiter'],ck:'Putrakaraka',v:'D7',ar:['A5'],subs:[
+  ['Children: outlook','Give a direct outlook on having children (easy / some delay / needs care) with a one-line reason.'],
+  ['Best years for children','List the 3 most favourable years/windows.'],
+  ['My child\'s nature','Describe the kind of child(ren) I am likely to have in 6 bullets and my parenting style.'],
+  ['Support & remedies','List 5 practical supports or traditional remedies that help.']]},
+ {id:'education',ico:'🎓',t:'Education & learning',kw:'study college exams degree knowledge',h:[4,5],s:[9,2],k:['Mercury','Jupiter'],ck:'Putrakaraka',v:'D24',ar:[],subs:[
+  ['15 best subjects/degrees','List 15 subjects or degrees ranked by fit.'],
+  ['How I learn best','Give 8 specific, checkable learning habits: best time of day, format, memory style, subjects I struggle with, how I react to exams.'],
+  ['Exam & degree timing','List the best years/windows for exams, admissions or a new course.'],
+  ['Study abroad chance','Give a direct verdict on studying abroad, best regions, and best timing.']]},
+ {id:'health',ico:'🩺',t:'Health & vitality',kw:'disease illness body fitness immunity',h:[1,6],s:[8,12],k:['Sun','Moon','Mars'],ck:'Atmakaraka',v:'D30',ar:['A6'],subs:[
+  ['Strong & sensitive areas','List my body areas from strongest to most sensitive, one line each (traditional astrology, not medical advice).'],
+  ['Habits that suit me','List 8 daily habits, foods and exercise types that suit me.'],
+  ['Care periods','List the periods that need extra care and the periods of strong vitality (balanced, non-fearful).'],
+  ['Stress & sleep','Give 5 tips for my stress and sleep pattern.']]},
+ {id:'mind',ico:'🧠',t:'Mind & emotional peace',kw:'stress anxiety depression mood happiness',h:[4,1],s:[5,12],k:['Moon','Mercury'],ck:'Atmakaraka',v:'D1',ar:[],subs:[
+  ['My stress triggers','List 8 very specific situations that spike my stress (types of people, settings, deadlines, noise, money, health) that I can verify from my own past.'],
+  ['Mood pattern','Give 8 specific, checkable mood patterns: times of day/month/year I dip or peak, what triggers a swing, how long it lasts, what I do when low.'],
+  ['Habits for peace','List 8 daily practices that bring me peace.'],
+  ['Best calming practices','Rank 8 practices (meditation, music, nature, prayer, exercise...) by how well they suit me.']]},
+ {id:'longevity',ico:'⏳',t:'Resilience & sudden changes',kw:'life span accidents surgery transformation 8th house',h:[8,1],s:[3,6,12],k:['Saturn'],ck:'Atmakaraka',v:'D30',ar:['A8'],subs:[
+  ['Sudden-change areas','List the life areas where sudden change is most likely, ranked, with a calm tone.'],
+  ['Sensitive periods','List the next 3 sensitive periods and how to handle each (balanced, no fear).'],
+  ['Protective habits','List 6 habits that protect me.']]},
+ {id:'father',ico:'👨',t:'Father & mentors',kw:'dad guru teacher blessings',h:[9],s:[10,3],k:['Sun','Jupiter'],ck:'',v:'D12',ar:['A9'],subs:[
+  ['Bond with father','Give 8 specific, checkable facts about my relationship with my father: closeness/distance phases with ages, conflict style, how he shaped my career, health or support issues.'],
+  ['Father\'s nature & work','Describe my father\'s likely nature and 5 likely professions.'],
+  ['Mentors & gurus','Describe the type of mentor/teacher who helps me and when they appear.']]},
+ {id:'mother',ico:'👩',t:'Mother & home life',kw:'mom family happiness domestic',h:[4],s:[10,9],k:['Moon'],ck:'Matrikaraka',v:'D12',ar:['A4'],subs:[
+  ['Bond with mother','Give 8 specific, checkable facts about my relationship with my mother: closeness/distance phases with ages, conflict style, her health or role at home, what I got or missed from her.'],
+  ['Home happiness','Give 8 specific, checkable facts about my home life (moves, property disputes, noise/peace, who dominates, mother\'s role) and 3 fixes.']]},
+ {id:'siblings',ico:'🧑‍🤝‍🧑',t:'Siblings & courage',kw:'brother sister effort initiative',h:[3],s:[11,1],k:['Mars'],ck:'Bhratrikaraka',v:'D3',ar:['A3'],subs:[
+  ['Siblings','Give 8 specific, checkable facts about my siblings situation (number tendency, birth order feel, age gaps, closeness, rivalry, who helps whom).'],
+  ['My courage & effort style','Give 8 specific, checkable ways I take initiative, handle risk, react to dares or competition, and where I hold back.']]},
+ {id:'property',ico:'🏠',t:'Property, home & vehicles',kw:'house land real estate car buy flat',h:[4],s:[2,11,12],k:['Mars','Venus','Saturn'],ck:'Matrikaraka',v:'D4',ar:['A4'],subs:[
+  ['Will I own property?','Give a direct verdict and the likely age/year range.'],
+  ['What suits me','Rank: house, flat, land, farm, commercial, vehicle, with a one-line reason each.'],
+  ['Where to buy','Describe the best type of location/direction and city style for me.'],
+  ['Best years to buy','List the best 3 years/windows to buy property or a vehicle.']]},
+ {id:'foreign',ico:'✈️',t:'Foreign travel & settlement',kw:'abroad visa immigration relocate overseas',h:[12,9],s:[3,7,4],k:['Rahu','Moon'],ck:'',v:'D1',ar:[],subs:[
+  ['Will I go abroad?','Give a direct verdict with a percentage and the type: study, work, settle, or travel.'],
+  ['10 best countries/regions','List 10 countries or regions ranked by fit for me.'],
+  ['Best years to go','List the best 3 years/windows to travel, move or study abroad.']]},
+ {id:'enemies',ico:'⚔️',t:'Rivals, debts & disputes',kw:'enemies litigation court competition loans conflict',h:[6],s:[8,12,3],k:['Mars','Saturn'],ck:'Gnatikaraka',v:'D1',ar:['A6'],subs:[
+  ['Types of rivals','Describe the kind of rivals/opponents I face in 6 bullets.'],
+  ['Debt & legal risk','Give a calm verdict on debt and legal-dispute risk and 5 ways to stay safe.'],
+  ['How I win','List 6 strategies that work best for me in conflicts.']]},
+ {id:'spiritual',ico:'🕉️',t:'Spirituality & moksha',kw:'meditation dharma purpose inner growth',h:[9,12],s:[5,8],k:['Ketu','Jupiter'],ck:'Atmakaraka',v:'D20',ar:[],subs:[
+  ['8 paths that suit me','List 8 spiritual paths/practices (bhakti, meditation, yoga, service, study...) ranked.'],
+  ['Traditional mantra / deity leaning','Name the traditional deities or mantras that match my chart (3-5) and a simple daily practice.'],
+  ['When spirituality deepens','List the best periods for spiritual growth.']]},
+ {id:'karma',ico:'🔮',t:'Karma & past life',kw:'karmic lessons rahu ketu dosha pitru kala sarpa mangal past life debt',h:[5,9,12,8],s:[1],k:['Rahu','Ketu','Saturn'],ck:'Atmakaraka',v:'D60',ar:[],subs:[
+  ['My karmic lessons','List my top 6 karmic lessons in this life in plain words, one line each.'],
+  ['Past-life gifts','List 8 talents or instincts that feel naturally mine (likely carried from the past).'],
+  ['Repeating patterns','List 5 relationship/life patterns that repeat for me and how to break each.'],
+  ['Doshas explained simply','Using DOSHA FACTS, say which doshas apply (Mangal, Kala Sarpa, Pitru, Shani), in plain words, with how serious each is and 3 traditional remedies.'],
+  ['Soul\'s mission','In 3 short lines, say my soul\'s mission and what to focus on.']]},

@@ -1,80 +1,3 @@
-function buildBhavaPanel(chart, profile){
-  const B = computeBhavaChalit(chart, profile.lat, profile.lon);
-  const moved = PLANET_LIST.filter(n => B.place[n].shifted);
-  const cards = B.houses.map(h => {
-    const ws = (chart.ascendant.sign + h.n - 1) % 12;
-    const chips = h.planets.map(n => { const p = B.place[n]; const c = DASHA_PLANET_COLORS[n];
-      return `<span class="bh-p ${p.shifted ? 'moved' : ''}" style="--pc:${c}" data-planet-click="${n}">${PLANET_GLYPHS[n]} ${n}${p.shifted ? `<em>from H${p.whole}</em>` : ''}</span>`; }).join('') || '<span class="bh-empty">empty</span>';
-    return `<div class="bh-card ${h.planets.length ? 'has' : ''}">
-      <div class="bh-top"><span class="bh-n">${h.n}</span><span class="bh-sign">${SIGNS[ws].symbol} ${SIGNS[ws].name}<small>whole-sign house</small></span></div>
-      <div class="bh-mid"><small>Madhya (centre)</small><b>${nvDeg(h.madhya)}</b></div>
-      <div class="bh-span"><small>Spans</small><span>${nvDeg(h.begin)}</span><span>→ ${nvDeg(h.end)}</span></div>
-      <div class="bh-pl">${chips}</div></div>`;
-  }).join('');
-  const shiftRows = moved.map(n => { const p = B.place[n], c = DASHA_PLANET_COLORS[n];
-    return `<div class="dx-row"><div class="dx-row-h" style="cursor:default"><span class="dx-dot" style="background:${c}">${PLANET_GLYPHS[n]}</span><span class="dx-row-main"><b>${n}: House ${p.whole} → House ${p.chalit}</b><small>${nvDeg(p.lon)} · ${Math.abs(p.fromMadhya).toFixed(1)}° ${p.fromMadhya < 0 ? 'before' : 'past'} the house centre</small></span></div></div>`; }).join('');
-  return `<div class="bh">
-    <div class="tr-intro">Whole-sign houses give each planet the house of its sign. <b>Bhava Chalit</b> (Sripati) instead centres each house on its madhya and ends it halfway to the next, so a planet near a sign edge can shift to the neighbouring house.</div>
-    <div class="tr-hero">
-      <div class="tr-card" style="--pc:#D4AF37"><small>Lagna · Bhava 1 centre</small><b>${nvDeg(B.asc)}</b></div>
-      <div class="tr-card" style="--pc:#5EC4B7"><small>Midheaven · Bhava 10 centre</small><b>${nvDeg(B.mc)}</b></div>
-      <div class="tr-card ${moved.length ? 'on' : ''}" style="--pc:#E0A64A"><small>Planets changing house</small><b>${moved.length} of ${PLANET_LIST.length}</b><span>${moved.length ? moved.join(', ') : 'Chalit matches whole-sign'}</span></div>
-    </div>
-    ${moved.length ? `<div class="tr-sec"><h5>Shifted planets <span>whole-sign → Bhava Chalit</span></h5><div class="dx-list">${shiftRows}</div></div>` : ''}
-    <div class="tr-sec"><h5>The 12 bhavas <span>tap a planet for details</span></h5><div class="bh-grid">${cards}</div></div>
-    <div class="pn-note">Sripati method: the Lagna and Midheaven are the centres of houses 1 and 10; the arcs between them are divided into equal thirds to place the other centres; each house ends at the midpoint between neighbouring centres. Positions are sidereal (Lahiri).</div>
-  </div>`;
-}
-
-/* =============================================================================
-   KUNDALI MATCHING — Ashtakoota (36 gunas) + Manglik + bonus checks
-   Groom = Person 1 (Vara), Bride = Person 2 (Kanya). Asymmetric tables use these roles.
-   ============================================================================= */
-const KM_VARNA = ['Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin'];
-const KM_VARNA_RANK = { Brahmin: 4, Kshatriya: 3, Vaishya: 2, Shudra: 1 };
-const KM_VASHYA_SIGN = ['Chatushpada','Chatushpada','Manava','Jalachara','Vanachara','Manava','Manava','Keeta','*','*','Manava','Jalachara'];
-const KM_VASHYA_ORDER = ['Chatushpada','Manava','Jalachara','Vanachara','Keeta'];
-const KM_VASHYA = [[2,1,1,0.5,1],[1,2,0.5,0,1],[1,0.5,2,1,1],[0,0,0,2,0],[1,1,1,0,2]];   // [groom][bride]
-const KM_GANA = ['Deva','Manushya','Rakshasa','Manushya','Deva','Manushya','Deva','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva','Rakshasa','Deva','Rakshasa','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva'];
-const KM_GANA_SCORE = { Deva: { Deva: 6, Manushya: 6, Rakshasa: 1 }, Manushya: { Deva: 5, Manushya: 6, Rakshasa: 0 }, Rakshasa: { Deva: 0, Manushya: 0, Rakshasa: 6 } };
-const KM_NADI_NAMES = ['Aadi (Vata)', 'Madhya (Pitta)', 'Antya (Kapha)'];
-const KM_NADI = [0,1,2,2,1,0];                        // by nakshatra index % 6
-const KM_YONI_ORDER = ['Horse','Elephant','Sheep','Serpent','Dog','Cat','Rat','Cow','Buffalo','Tiger','Deer','Monkey','Lion','Mongoose'];
-const KM_YONI_NAK = ['Horse','Elephant','Sheep','Serpent','Serpent','Dog','Cat','Sheep','Cat','Rat','Rat','Cow','Buffalo','Tiger','Buffalo','Tiger','Deer','Deer','Dog','Monkey','Mongoose','Monkey','Lion','Horse','Lion','Cow','Elephant'];
-const KM_YONI = [
- [4,2,2,3,2,2,2,1,0,1,3,3,1,2],[2,4,3,3,2,2,2,2,3,1,2,3,0,2],[2,3,4,2,1,2,1,3,3,1,2,0,1,2],[3,3,2,4,2,1,1,1,1,2,2,2,1,0],
- [2,2,1,2,4,2,1,2,2,1,0,2,1,1],[2,2,2,1,2,4,0,2,2,1,3,3,1,2],[2,2,1,1,1,0,4,2,2,2,2,2,1,3],[1,2,3,1,2,2,2,4,3,0,3,2,1,2],
- [0,3,3,1,2,2,2,3,4,1,2,2,1,2],[1,1,1,2,1,1,2,0,1,4,1,1,2,2],[3,2,2,2,0,3,2,3,2,1,4,2,2,2],[3,3,0,2,2,3,2,2,2,1,2,4,3,2],
- [1,0,1,1,1,1,1,1,1,2,2,3,4,2],[2,2,2,0,1,2,3,2,2,2,2,2,2,4]];
-const KM_FRIEND = {
-  Sun: { F: ['Moon','Mars','Jupiter'], E: ['Venus','Saturn'] }, Moon: { F: ['Sun','Mercury'], E: [] },
-  Mars: { F: ['Sun','Moon','Jupiter'], E: ['Mercury'] }, Mercury: { F: ['Sun','Venus'], E: ['Moon'] },
-  Jupiter: { F: ['Sun','Moon','Mars'], E: ['Mercury','Venus'] }, Venus: { F: ['Mercury','Saturn'], E: ['Sun','Moon'] },
-  Saturn: { F: ['Mercury','Venus'], E: ['Sun','Moon','Mars'] }
-};
-const KM_RAJJU_NAMES = ['Pada (feet)','Kati (waist)','Nabhi (navel)','Kantha (neck)','Siro (head)'];
-const KM_RAJJU = [0,1,2,3,4,3,2,1,0,0,1,2,3,4,3,2,1,0,0,1,2,3,4,3,2,1,0];   // zig-zag by nakshatra index
-
-function kmRel(a, b){ return KM_FRIEND[a].F.includes(b) ? 'F' : (KM_FRIEND[a].E.includes(b) ? 'E' : 'N'); }
-function kmPerson(profile){
-  const chart = computeChart(profile.dob, profile.tob.length === 5 ? profile.tob + ':00' : profile.tob, profile.lat, profile.lon, profile.tz);
-  const moon = chart.planets.Moon;
-  return { profile, chart, moonSign: moon.sign, nak: Math.floor(normDeg(moon.longitude) / (360 / 27)), pada: moon.nakshatra.pada, deg: moon.degInSign, lagna: chart.ascendant.sign };
-}
-function kmManglik(P){
-  const c = P.chart, mars = c.planets.Mars, jup = c.planets.Jupiter;
-  const hL = mars.house, hM = (mars.sign - P.moonSign + 12) % 12 + 1, strong = [1, 4, 7, 8, 12];
-  const inL = strong.includes(hL), inM = strong.includes(hM), mild = (hL === 2 || hM === 2) && !inL && !inM;
-  const cancel = [];
-  if ([0, 7, 9].includes(mars.sign)) cancel.push('Mars is in its own or exalted sign');
-  if (jup.sign === mars.sign) cancel.push('Jupiter is with Mars');
-  else if (jup.aspectsHouses && jup.aspectsHouses.includes(mars.house)) cancel.push('Jupiter aspects Mars');
-  const level = (inL && inM) ? 'High' : (inL || inM) ? 'Moderate' : mild ? 'Mild' : 'None';
-  return { hL, hM, level, present: level !== 'None', cancel, cancelled: cancel.length > 0 && level !== 'None' };
-}
-function kmMatch(G, B){
-  const k = [];
-  // 1 Varna
   const vg = KM_VARNA[G.moonSign], vb = KM_VARNA[B.moonSign];
   k.push({ key: 'Varna', max: 1, score: KM_VARNA_RANK[vg] >= KM_VARNA_RANK[vb] ? 1 : 0, a: vg, b: vb });
   // 2 Vashya
@@ -1802,3 +1725,99 @@ function buildAspectsTableHtml(aspectRows, idPrefix){
     const targetHtml = planetTargets.length
       ? planetTargets.map(t => `<span class="occupant-chip aspect-target-chip"><span class="planet-glyph">${PLANET_GLYPHS[t.toPlanet]}</span>${t.toPlanet} <span class="tiny">(H${t.toHouse} ${t.toSign})</span></span>`).join(' ')
       : `<span class="house-empty-tag">No planets aspected</span>`;
+    const housesHtml = r.aspectedHouses.map(h => `H${h}`).join(', ');
+
+    rows += `<tr>
+      <td class="planet-name-cell"><span class="planet-glyph">${r.glyph}</span>${r.planet}${r.retrograde ? '<sup class="retro-tag-sm">R</sup>' : ''}</td>
+      <td>H${r.fromHouse} — ${r.fromSign} <span class="sign-sk">(${r.fromSignSanskrit})</span></td>
+      <td>${r.nakshatra} <span class="sign-sk">(Pada ${r.pada})</span><br><span class="tiny">Lord: ${r.nakshatraLord} · ${r.degree}</span></td>
+      <td class="mono">${housesHtml}</td>
+      <td>${targetHtml}</td>
+    </tr>`;
+  });
+
+  return `<div class="varga-aspect-table-wrap" id="${prefix}AspectTableWrap">
+    <div class="aspect-table-head">
+      <span class="section-sub" style="margin:0;">Full Aspects (Drishti) Table</span>
+      <button type="button" class="chart-dl-btn-single aspect-copy-btn" id="${prefix}CopyAspectTableBtn"><span>📋</span> Copy Table</button>
+    </div>
+    <div class="aspect-table-scroll">
+      <table class="varga-house-table aspect-table">
+        <thead><tr><th>Planet</th><th>Position</th><th>Nakshatra</th><th>Aspects Houses</th><th>Aspects Planets</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function aspectRowsToPlainText(aspectRows, vargaKey){
+  let out = `PLANETARY ASPECTS (DRISHTI) — ${vargaKey}\n`;
+  out += '='.repeat(60) + '\n\n';
+  aspectRows.forEach(r => {
+    out += `${r.planet}${r.retrograde ? ' (R)' : ''} — House ${r.fromHouse}, ${r.fromSign} (${r.fromSignSanskrit})\n`;
+    out += `  Nakshatra: ${r.nakshatra}, Pada ${r.pada}, Lord ${r.nakshatraLord}, ${r.degree}\n`;
+    out += `  Aspects Houses: ${r.aspectedHouses.map(h=>'H'+h).join(', ')}\n`;
+    const planetTargets = r.targets.filter(t => t.toPlanet);
+    if (planetTargets.length){
+      out += `  Aspects Planets:\n`;
+      planetTargets.forEach(t => {
+        out += `    -> ${t.toPlanet} in House ${t.toHouse} (${t.toSign}) — ${t.label}\n`;
+      });
+    } else {
+      out += `  Aspects Planets: none\n`;
+    }
+    out += '\n';
+  });
+  return out;
+}
+
+// 1. NORTH INDIAN DIAMOND CHART (Kendra-centric diamond layout)
+const PCOL={Uranus:'#7DE3E0',Neptune:'#5B7CFA',Pluto:'#C9A38A',Sun:'#F4A340',Moon:'#E6EBF5',Mars:'#E2625F',Mercury:'#6FCF97',Jupiter:'#F9D976',Venus:'#F4A9D3',Saturn:'#8EA2D6',Rahu:'#B393E0',Ketu:'#C4A484'};
+const ELC={Fire:'#F26B4F',Earth:'#79B868',Air:'#E7C95A',Water:'#5BA7E0'};
+const HTc=h=>[1,4,7,10].includes(h)?'#D4AF37':[5,9].includes(h)?'#5EC4B7':[6,8,12].includes(h)?'#E25555':'#8C93A8';
+const HAl=h=>h===1?.26:[4,7,10].includes(h)?.13:[5,9].includes(h)?.11:[6,8,12].includes(h)?.10:.04;
+const dRing=s=>/Exalt/i.test(s)?'#F9D976':/Own|Moola/i.test(s)?'#5EC4B7':/Debil/i.test(s)?'#E25555':/Enemy/i.test(s)?'#C26B45':/Friend/i.test(s)?'#7FC8A9':'#6B7390';
+document.addEventListener('change',e=>{
+  if(!e.target.classList||!e.target.classList.contains('outer-chk-input'))return;
+  window.__showOuter=e.target.checked;
+  document.querySelectorAll('.outer-chk-input').forEach(c=>c.checked=window.__showOuter);
+  document.querySelectorAll('.varga-style-toggle .varga-style-btn.active').forEach(b=>b.click());
+});
+function chOuter(v){return (window.__showOuter!==false&&v&&v.outerSign)?OUTER_LIST:[];}
+function chMeta(v){const inf={},c=window.__vgC;v.houses.forEach(h=>h.planets.forEach(p=>{inf[p.name]={st:(p.dignity||{}).status||'',rx:!!p.retrograde};}));
+  chOuter(v).forEach(n=>{inf[n]={st:'',rx:!!(v.outerRx&&v.outerRx[n]),vg:false};});
+  PLANET_LIST.forEach(n=>{inf[n]=inf[n]||{st:'',rx:false};inf[n].vg=!!(c&&c.planets&&c.planets[n]&&v!==c.vargas.D1&&v.planetVargaSign[n]===c.planets[n].sign);});return inf;}
+function chBadge(n,x,y,r,i,lab){const c=PCOL[n],f=(r*1.3).toFixed(1);
+  return `<g><title>${n}${i.rx?' (retrograde)':''}${i.st?' · '+i.st:''}${i.vg?' · Vargottama':''}</title><circle cx="${x}" cy="${y}" r="${r}" fill="${c}" fill-opacity=".17" stroke="${dRing(i.st)}" stroke-width="1.5"/><text x="${x}" y="${y+.5}" text-anchor="middle" dominant-baseline="central" font-size="${f}" fill="${c}" font-family="sans-serif" font-weight="700">${PLANET_GLYPHS[n]||OUTER_GLYPHS[n]}</text>${i.rx?`<text x="${x+r*.95}" y="${y-r*.6}" font-size="${(r*.85).toFixed(1)}" fill="#FF8A8A" font-weight="800" font-family="sans-serif" text-anchor="middle">R</text>`:''}${i.vg?`<text x="${x-r*.95}" y="${y-r*.5}" font-size="${(r*.95).toFixed(1)}" fill="#F9D976" text-anchor="middle">★</text>`:''}${lab?`<text x="${x}" y="${y+r+6}" font-size="5.6" fill="${c}" fill-opacity=".85" font-family="sans-serif" text-anchor="middle">${n.slice(0,2)}</text>`:''}</g>`;}
+function chPlanets(list,inf,cx,cy,maxCols){const n=list.length;if(!n)return '';const r=n<=2?9:n<=4?8:6.5,cols=n<=2?n:(n>4&&maxCols?maxCols:2),gap=2*r+(n<=4?8:3),rows=Math.ceil(n/cols);
+  return list.map((p,i)=>{const ro=Math.floor(i/cols),k=Math.min(cols,n-ro*cols),j=i%cols;return chBadge(p,+(cx+(j-(k-1)/2)*gap).toFixed(1),+(cy+(ro-(rows-1)/2)*gap).toFixed(1),r,inf[p],n<=4);}).join('');}
+function chDefs(id){return `<defs><radialGradient id="${id}b" cx="50%" cy="45%" r="75%"><stop offset="0" stop-color="#1c2242"/><stop offset=".6" stop-color="#0d1020"/><stop offset="1" stop-color="#05060b"/></radialGradient><linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F9D976"/><stop offset=".5" stop-color="#D4AF37"/><stop offset="1" stop-color="#8C7323"/></linearGradient></defs><rect x="1.5" y="1.5" width="297" height="297" rx="16" fill="url(#${id}b)" stroke="url(#${id}g)" stroke-width="1.2"/>`+[[22,40],[270,26],[40,270],[262,262],[120,16],[285,150],[180,285],[14,150]].map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="${i%3?.6:.9}" fill="#fff" opacity=".3"/>`).join('');}
+function chSignDot(x,y,si,r){const el=SIGNS[si].element,c=ELC[el];return `<g><title>${SIGNS[si].name} · ${el}</title><circle cx="${x}" cy="${y}" r="${r}" fill="${c}" fill-opacity=".22" stroke="${c}" stroke-width="1"/><text x="${x}" y="${y+.5}" text-anchor="middle" dominant-baseline="central" font-size="${r*1.1}" fill="${c}" font-family="sans-serif" font-weight="700">${si+1}</text></g>`;}
+function chAspects(rows,pos){let s='<g class="aspect-lines-layer">';rows.forEach(r=>{const f=pos(r.fromHouse);[...new Set(r.targets.filter(t=>t.toPlanet).map(t=>t.toHouse))].forEach(h=>{const t=pos(h);s+=`<line x1="${f[0]}" y1="${f[1]}" x2="${t[0]}" y2="${t[1]}" class="aspect-line aspect-line-${r.planet.toLowerCase()}"><title>${r.planet} aspects H${h}</title></line>`;});});return s+'</g>';}
+
+function buildNorthIndianSvg(v,asp){
+  const asc=v.ascendantSign,inf=chMeta(v),hp={};for(let h=1;h<=12;h++)hp[h]=[];PLANET_LIST.forEach(n=>hp[((v.planetVargaSign[n]-asc+12)%12)+1].push(n));chOuter(v).forEach(n=>hp[((v.outerSign[n]-asc+12)%12)+1].push(n));
+  const A=[10,10],B=[290,10],C=[290,290],D=[10,290],T=[150,10],R=[290,150],Bo=[150,290],L=[10,150],O=[150,150],Q1=[80,80],Q2=[220,80],Q3=[220,220],Q4=[80,220];
+  const poly={1:[T,Q2,O,Q1],2:[A,T,Q1],3:[A,Q1,L],4:[L,Q1,O,Q4],5:[L,Q4,D],6:[D,Q4,Bo],7:[Bo,Q4,O,Q3],8:[Bo,Q3,C],9:[C,Q3,R],10:[R,Q3,O,Q2],11:[R,Q2,B],12:[B,Q2,T]};
+  const an={1:[150,76],2:[78,46],3:[46,78],4:[74,150],5:[46,222],6:[78,254],7:[150,224],8:[222,254],9:[254,222],10:[226,150],11:[254,78],12:[222,46]};
+  const sd={1:[150,28],2:[104,20],3:[20,104],4:[28,150],5:[20,196],6:[104,280],7:[150,272],8:[196,280],9:[280,196],10:[272,150],11:[280,104],12:[196,20]};
+  let s=`<svg class="varga-chart-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">${chDefs('n')}`;
+  for(let h=1;h<=12;h++)s+=`<polygon points="${poly[h].map(p=>p.join(',')).join(' ')}" fill="${HTc(h)}" fill-opacity="${HAl(h)}" stroke="url(#ng)" stroke-width="${h===1?1.8:1.2}" stroke-linejoin="round"/>`;
+  s+=`<circle cx="150" cy="150" r="13" fill="none" stroke="#D4AF37" stroke-opacity=".3"/><circle cx="150" cy="150" r="3" fill="url(#ng)"/>`;
+  if(asp)s+=chAspects(asp,h=>an[h]);
+  for(let h=1;h<=12;h++){s+=chSignDot(sd[h][0],sd[h][1],(asc+h-1)%12,7.5)+chPlanets(hp[h],inf,an[h][0],an[h][1]+(h===1?4:0),3);}
+  s+=`<rect x="137" y="40" width="26" height="11" rx="5.5" fill="#D4AF37"/><text x="150" y="45.8" font-size="7" fill="#1a1405" font-weight="800" font-family="sans-serif" text-anchor="middle" dominant-baseline="central">ASC</text></svg>`;
+  return s;}
+
+function buildWesternWheelSvg(v,asp){
+  const asc=v.ascendantSign,inf=chMeta(v),hp={},cx=150,cy=150,R0=136,R1=112,R2=92,R3=30;for(let h=1;h<=12;h++)hp[h]=[];PLANET_LIST.forEach(n=>hp[((v.planetVargaSign[n]-asc+12)%12)+1].push(n));chOuter(v).forEach(n=>hp[((v.outerSign[n]-asc+12)%12)+1].push(n));
+  const pt=(r,a)=>[+(cx+r*Math.cos(a*Math.PI/180)).toFixed(1),+(cy+r*Math.sin(a*Math.PI/180)).toFixed(1)];
+  const sec=(r1,r2,a1,a2)=>{const p1=pt(r2,a1),p2=pt(r2,a2),p3=pt(r1,a2),p4=pt(r1,a1);return `M${p1} A${r2} ${r2} 0 0 1 ${p2} L${p3} A${r1} ${r1} 0 0 0 ${p4}Z`;};
+  const mid=h=>180-30*(h-1)-15;
+  let s=`<svg class="varga-chart-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">${chDefs('w')}`;
+  for(let h=1;h<=12;h++){const a2=180-30*(h-1),a1=a2-30,si=(asc+h-1)%12,el=SIGNS[si].element,ec=ELC[el];
+    s+=`<path d="${sec(R1,R0,a1,a2)}" fill="${ec}" fill-opacity=".2" stroke="url(#wg)" stroke-width=".9"><title>${SIGNS[si].name} · ${el}</title></path>`
+     +`<path d="${sec(R2,R1,a1,a2)}" fill="${HTc(h)}" fill-opacity="${HAl(h)+.06}" stroke="url(#wg)" stroke-width=".7"/>`
+     +`<path d="${sec(R3,R2,a1,a2)}" fill="${HTc(h)}" fill-opacity="${HAl(h)*.45}" stroke="url(#wg)" stroke-opacity=".5" stroke-width=".6"/>`;
+    const sp=pt((R0+R1)/2,mid(h)),hp2=pt((R1+R2)/2,mid(h));
+    s+=`<text x="${sp[0]}" y="${sp[1]}" text-anchor="middle" dominant-baseline="central" font-size="8.5" font-weight="700" fill="${ec}" font-family="sans-serif">${SIGNS[si].name.slice(0,3)}</text><text x="${hp2[0]}" y="${hp2[1]}" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="700" fill="${HTc(h)}" font-family="sans-serif">${h}</text>`;}

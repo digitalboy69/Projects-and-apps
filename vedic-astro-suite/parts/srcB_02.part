@@ -1,22 +1,3 @@
-.sb-row.weak{border-color:rgba(201,80,80,.35)}
-.sb-head{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;font-family:var(--font-sans)}
-.sb-rank{font:600 12px var(--font-mono);color:var(--text-subtle);width:14px;text-align:center}
-.sb-glyph{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:21px;color:rgba(0,0,0,.8);flex:none}
-.sb-main{flex:1;min-width:0;display:block}
-.sb-top{display:flex;justify-content:space-between;align-items:baseline}
-.sb-top b{font:500 17px var(--font-display);color:var(--text-main)}
-.sb-num{font:600 14px var(--font-mono);color:var(--text-main)}.sb-num small{color:var(--text-subtle);font-weight:400;font-size:11px}
-.sb-track{display:block;position:relative;height:10px;background:rgba(255,255,255,.08);border-radius:6px;margin:8px 0 6px}
-.sb-track i{display:block;height:100%;border-radius:6px}
-.sb-track u{position:absolute;top:-3px;width:2px;height:16px;background:#fff;opacity:.85;border-radius:1px}
-.sb-sub{display:flex;justify-content:space-between;align-items:center;font:11px var(--font-mono);color:var(--text-muted)}
-.sb-badge{font:600 10px var(--font-sans);letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px}
-.sb-badge.ok{background:rgba(94,196,183,.15);color:var(--teal-bright)}.sb-badge.low{background:rgba(201,80,80,.15);color:#E07070}
-.sb-chev{color:var(--text-subtle);transition:transform .2s}.sb-row.open .sb-chev{transform:rotate(90deg)}
-.sb-body{padding:4px 16px 16px;border-top:1px solid var(--border-subtle);display:grid;gap:10px}
-.sb-body[hidden]{display:none}
-.sb-comp{display:grid;grid-template-columns:92px 1fr 54px;gap:10px;align-items:center;font-size:12px;color:var(--text-muted)}
-.sb-comp:first-child{margin-top:12px}
 .sb-comp b{font:600 12px var(--font-mono);color:var(--text-main);text-align:right}
 .sb-ctrack{height:6px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
 .sb-ctrack i{display:block;height:100%;border-radius:4px}
@@ -203,6 +184,24 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none;box
 }
 @media (min-width:1100px){.srch-tiles{grid-template-columns:repeat(4,1fr)}}
 @media (prefers-reduced-motion:reduce){.srch-tile,.srch-ov.show .srch-box{animation:none!important;opacity:1}}
+/* ===== cloud account UI ===== */
+.cl-acct{margin:0 0 12px}
+.cl-acct.intake{max-width:640px;margin:18px auto 0}
+.cl-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;border:1px solid rgba(94,196,183,.35);background:linear-gradient(135deg,rgba(94,196,183,.12),rgba(255,255,255,.03))}
+.cl-ic{flex:none;width:40px;height:40px;display:grid;place-items:center;font-size:20px;border-radius:13px;background:rgba(94,196,183,.18)}
+.cl-tx{flex:1;min-width:0;display:flex;flex-direction:column;text-align:left}.cl-tx b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cl-tx small{font-size:11.5px;opacity:.7;line-height:1.35}
+.cl-btn{flex:none;border:0;border-radius:12px;padding:9px 15px;font:600 13px inherit;font-family:inherit;cursor:pointer;color:#1a1405;background:linear-gradient(135deg,#f2d675,#d4af37);box-shadow:0 4px 14px rgba(212,175,55,.3);transition:transform .2s}
+.cl-btn:active{transform:scale(.95)}.cl-btn.ghost{background:rgba(255,255,255,.08);color:inherit;box-shadow:none;border:1px solid rgba(255,255,255,.15)}
+.cl-box{max-width:380px;width:100%;position:relative;text-align:center;display:flex;flex-direction:column;gap:12px;max-height:94vh;overflow:auto;padding:26px 20px 18px;border-radius:26px;background:linear-gradient(180deg,#141a2c,#0d1220)!important;border:1px solid rgba(212,175,55,.3)}
+.cl-hero{font-size:34px;width:64px;height:64px;margin:0 auto;display:grid;place-items:center;border-radius:20px;background:linear-gradient(135deg,rgba(94,196,183,.25),rgba(212,175,55,.2))}
+.cl-box h4{margin:0;font-size:20px}
+.cl-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:rgba(255,255,255,.06)}
+.cl-tabs button{border:0;background:transparent;color:inherit;padding:9px;border-radius:11px;font:600 13px inherit;font-family:inherit;cursor:pointer;opacity:.65;transition:all .2s}
+.cl-tabs button.on{background:linear-gradient(135deg,#f2d675,#d4af37);color:#1a1405;opacity:1}
+#clForm{display:flex;flex-direction:column;gap:11px;text-align:left}
+.cl-msg{padding:9px 12px;border-radius:12px;font-size:13px;background:rgba(255,120,120,.12);border:1px solid rgba(255,120,120,.3);color:#ffb0b0}.cl-msg.ok{background:rgba(94,196,183,.12);border-color:rgba(94,196,183,.4);color:#aef3e6}
+.cl-link{border:0;background:none;color:#e7c766;font:13px inherit;font-family:inherit;cursor:pointer;text-decoration:underline}
+.cl-priv{font-size:12px;opacity:.65;margin:0}
 .prof-del{background:transparent;border:none;cursor:pointer;font-size:16px;opacity:.55;padding:6px;border-radius:8px}
 .prof-del:hover{opacity:1;background:rgba(201,80,80,.15)}
 .prof-empty{text-align:center;color:var(--text-muted);font-size:13px;padding:18px;border:1px dashed var(--border-light);border-radius:14px;line-height:1.5}
@@ -1802,3 +1801,23 @@ function moonLongitude(jd){
     sumL += coef * Math.sin(arg);
   }
   return normDeg(Lp + sumL/1000000);
+}
+
+const PLANET_ELEMENTS = {
+  mercury:{a:0.387098,e:0.205635,i:7.0047,L:252.2503,Lrate:149472.6746,peri:77.4561,periRate:0.1588,node:48.3308,nodeRate:-0.1254},
+  venus:{a:0.723330,e:0.006773,i:3.3946,L:181.9791,Lrate:58517.8156,peri:131.5637,periRate:0.0048,node:76.6799,nodeRate:-0.2780},
+  mars:{a:1.523688,e:0.093405,i:1.8497,L:355.4330,Lrate:19140.2993,peri:336.0602,periRate:0.4438,node:49.5581,nodeRate:-0.2910},
+  jupiter:{a:5.202561,e:0.048498,i:1.3033,L:34.3515,Lrate:3034.9057,peri:14.3312,periRate:0.2155,node:100.4644,nodeRate:0.1767},
+  saturn:{a:9.554747,e:0.055546,i:2.4886,L:50.0774,Lrate:1222.1138,peri:93.0572,periRate:0.5150,node:113.6634,nodeRate:-0.2566}
+};
+Object.assign(PLANET_ELEMENTS,{
+  uranus:{a:19.18797948,e:0.04685740,i:0.77298127,L:313.23810451,Lrate:428.48202785,peri:170.95427630,periRate:0.40805281,node:74.01692503,nodeRate:0.04240589},
+  neptune:{a:30.06952752,e:0.00895439,i:1.77005520,L:-55.12002969,Lrate:218.45945325,peri:44.96476227,periRate:-0.32241464,node:131.78422574,nodeRate:-0.00508664},
+  pluto:{a:39.48686035,e:0.24885238,i:17.14104260,L:238.96535011,Lrate:145.18042903,peri:224.09702598,periRate:-0.04062942,node:110.30167986,nodeRate:-0.01183482}
+});
+const EARTH_ELEMENTS = {a:1.000001,e:0.016709,i:0.0,L:100.4664,Lrate:35999.3729,peri:102.9373,periRate:0.3225,node:0,nodeRate:0};
+
+function solveKepler(M, e){
+  let E = M;
+  for (let i=0;i<50;i++){
+    const dE = (E - e*Math.sin(E) - M) / (1 - e*Math.cos(E));
