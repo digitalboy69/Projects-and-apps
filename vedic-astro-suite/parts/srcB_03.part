@@ -1,3 +1,25 @@
+  const yv = a*(Math.sqrt(1-e*e)*Math.sin(E));
+  const v = Math.atan2(yv,xv);
+  const r = Math.sqrt(xv*xv+yv*yv);
+  const omega = peri - node;
+  const xh = r*(Math.cos(node)*Math.cos(v+omega) - Math.sin(node)*Math.sin(v+omega)*Math.cos(i));
+  const yh = r*(Math.sin(node)*Math.cos(v+omega) + Math.cos(node)*Math.sin(v+omega)*Math.cos(i));
+  return {x:xh,y:yh};
+}
+function planetGeocentricLongitude(name, jd){
+  const T = (jd-J2000)/36525.0;
+  const earth = heliocentricPos(EARTH_ELEMENTS,T);
+  const planet = heliocentricPos(PLANET_ELEMENTS[name],T);
+  const xg = planet.x-earth.x, yg = planet.y-earth.y;
+  // Elements are referred to the fixed J2000 equinox; the ayanamsa is subtracted from tropical-of-DATE longitudes
+  // (as for Sun/Moon/Rahu), so add the general precession since J2000 to put all bodies in the same frame.
+  return normDeg(Math.atan2(yg,xg)*RAD + 1.3969713*T + 0.0003086*T*T);
+}
+function isRetrograde(name, jd){
+  const l1 = planetGeocentricLongitude(name, jd-0.25);
+  const l2 = planetGeocentricLongitude(name, jd+0.25);
+  let diff = l2-l1;
+  if (diff>180) diff-=360; if (diff<-180) diff+=360;
   return diff<0;
 }
 function rahuLongitude(jd){
@@ -1752,21 +1774,3 @@ function buildVargaFromLagna(chart, lagnaSignIdx, vargaKey){
     const planetsHere = PLANET_LIST.filter(name => planetVargaSign[name] === signIdx).map(name => ({
       name, retrograde: chart.planets[name].retrograde,
       dignity: vargaKey === "D1" ? chart.planets[name].dignity : getDignity(name, signIdx, 15)
-    }));
-    houses.push({
-      houseNum: h, sign: signIdx, signName: sign.name, signSanskrit: sign.sk,
-      signLord: sign.lord, signSymbol: sign.symbol, element: sign.element, modality: sign.modality,
-      planets: planetsHere, isEmpty: planetsHere.length === 0
-    });
-  }
-  const V0 = chart.vargas[vargaKey];
-  return { ascendantSign: lagnaSignIdx, houses, planetVargaSign, outerSign: V0.outerSign, outerRx: V0.outerRx };
-}
-
-// Plain-text render of one lagna's chart (for a chosen divisional chart) —
-// used by the "Copy Current Chart" button in the Lagnas tab.
-function lagnaChartToPlainText(chart, lagnaKey, vargaKey, vdata, aspectRows){
-  const lagnaMeta = SPECIAL_LAGNAS_META[lagnaKey];
-  const vargaMeta = VARGAS[vargaKey];
-  const ascSign = SIGNS[vdata.ascendantSign];
-  let out = `${lagnaMeta.name} (${lagnaMeta.sanskrit}) — ${vargaKey} ${vargaMeta.name}\n`;

@@ -1,3 +1,17 @@
+ {id:'thisyear',ico:'🗓️',t:'This year & next 12 months',kw:'forecast prediction timing dasha transit now upcoming',h:[1,10,7,2,11],s:[4,5,9],k:['Jupiter','Saturn'],ck:'',v:'D1',ar:[],subs:[
+  ['Month-by-month next 12 months','List the next 12 months, one line each: theme + one thing to do.'],
+  ['Best 3 & toughest 3 months','Name my best 3 and toughest 3 months in the next 12, with a short reason.'],
+  ['Do & avoid this year','Give 6 things to do and 6 things to avoid this year.']]}
+];
+SRCH_TOPICS.forEach(tp=>{ if (tp.id==='me') return;
+  tp.subs.unshift(['🪞 10 precise checks: '+tp.t, 'Give exactly 10 precise, self-verifiable statements about my '+tp.t.toLowerCase()+': specific behaviours, past events, situations, habits or age windows I can check against my own life. Nothing that fits most people. Each bullet: the statement, then 🔎 Because (exact combination), then a ✔/✖ test I can do.']);
+});
+function srchHouseLine(ch, L, h){
+  const pr = ch.planets, si = (L+h-1)%12, s = SIGNS[si], lp = pr[s.lord];
+  const occ = PLANET_LIST.filter(n=> pr[n] && pr[n].house===h);
+  const asp = PLANET_LIST.filter(n=> pr[n] && pr[n].house!==h && (pr[n].aspectsHouses||[]).indexOf(h)>-1);
+  return `H${h} ${s.name}: lord ${s.lord}${lp?` in H${lp.house} ${SIGNS[lp.sign].name}${srchDig(lp)}${lp.retrograde?' Retro':''}`:''}; occ ${occ.length?occ.join(','):'none'}; aspected by ${asp.length?asp.join(','):'none'}`;
+}
 function srchVargaPos(ch, vk, name){
   try { const v = ch.vargas[vk]; for (const hh of v.houses){ if (hh.planets.some(x=>x.name===name)) return `${name} ${hh.signName} H${hh.houseNum}`; } } catch(e){} return '';
 }
@@ -1760,13 +1774,3 @@ const KM_YONI = [
  [0,3,3,1,2,2,2,3,4,1,2,2,1,2],[1,1,1,2,1,1,2,0,1,4,1,1,2,2],[3,2,2,2,0,3,2,3,2,1,4,2,2,2],[3,3,0,2,2,3,2,2,2,1,2,4,3,2],
  [1,0,1,1,1,1,1,1,1,2,2,3,4,2],[2,2,2,0,1,2,3,2,2,2,2,2,2,4]];
 const KM_FRIEND = {
-  Sun: { F: ['Moon','Mars','Jupiter'], E: ['Venus','Saturn'] }, Moon: { F: ['Sun','Mercury'], E: [] },
-  Mars: { F: ['Sun','Moon','Jupiter'], E: ['Mercury'] }, Mercury: { F: ['Sun','Venus'], E: ['Moon'] },
-  Jupiter: { F: ['Sun','Moon','Mars'], E: ['Mercury','Venus'] }, Venus: { F: ['Mercury','Saturn'], E: ['Sun','Moon'] },
-  Saturn: { F: ['Mercury','Venus'], E: ['Sun','Moon','Mars'] }
-};
-const KM_RAJJU_NAMES = ['Pada (feet)','Kati (waist)','Nabhi (navel)','Kantha (neck)','Siro (head)'];
-const KM_RAJJU = [0,1,2,3,4,3,2,1,0,0,1,2,3,4,3,2,1,0,0,1,2,3,4,3,2,1,0];   // zig-zag by nakshatra index
-
-function kmRel(a, b){ return KM_FRIEND[a].F.includes(b) ? 'F' : (KM_FRIEND[a].E.includes(b) ? 'E' : 'N'); }
-function kmPerson(profile){

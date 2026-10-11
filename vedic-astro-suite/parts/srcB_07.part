@@ -1,3 +1,9 @@
+    </div>
+  </div>`;
+}
+
+function aspectRowsToPlainText(aspectRows, vargaKey){
+  let out = `PLANETARY ASPECTS (DRISHTI) — ${vargaKey}\n`;
   out += '='.repeat(60) + '\n\n';
   aspectRows.forEach(r => {
     out += `${r.planet}${r.retrograde ? ' (R)' : ''} — House ${r.fromHouse}, ${r.fromSign} (${r.fromSignSanskrit})\n`;

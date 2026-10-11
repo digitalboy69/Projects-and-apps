@@ -1,3 +1,21 @@
+    }));
+    houses.push({
+      houseNum: h, sign: signIdx, signName: sign.name, signSanskrit: sign.sk,
+      signLord: sign.lord, signSymbol: sign.symbol, element: sign.element, modality: sign.modality,
+      planets: planetsHere, isEmpty: planetsHere.length === 0
+    });
+  }
+  const V0 = chart.vargas[vargaKey];
+  return { ascendantSign: lagnaSignIdx, houses, planetVargaSign, outerSign: V0.outerSign, outerRx: V0.outerRx };
+}
+
+// Plain-text render of one lagna's chart (for a chosen divisional chart) —
+// used by the "Copy Current Chart" button in the Lagnas tab.
+function lagnaChartToPlainText(chart, lagnaKey, vargaKey, vdata, aspectRows){
+  const lagnaMeta = SPECIAL_LAGNAS_META[lagnaKey];
+  const vargaMeta = VARGAS[vargaKey];
+  const ascSign = SIGNS[vdata.ascendantSign];
+  let out = `${lagnaMeta.name} (${lagnaMeta.sanskrit}) — ${vargaKey} ${vargaMeta.name}\n`;
   out += '='.repeat(60) + '\n';
   out += `${lagnaMeta.desc}\n`;
   out += `Ascendant (this Lagna): ${ascSign.name} (${ascSign.sk})\n\n`;
@@ -1756,17 +1774,3 @@ const SRCH_TOPICS = [
  {id:'inherit',ico:'🏦',t:'Inheritance & hidden wealth',kw:'will insurance partner money legacy',h:[8,2],s:[11,7],k:['Saturn','Jupiter'],ck:'',v:'D1',ar:['A8'],subs:[
   ['Inheritance outlook','Give a direct outlook on inheritance and family wealth.'],
   ['Partner / insurance money','Describe money from partners, insurance or sudden sources in 5 bullets.']]},
- {id:'thisyear',ico:'🗓️',t:'This year & next 12 months',kw:'forecast prediction timing dasha transit now upcoming',h:[1,10,7,2,11],s:[4,5,9],k:['Jupiter','Saturn'],ck:'',v:'D1',ar:[],subs:[
-  ['Month-by-month next 12 months','List the next 12 months, one line each: theme + one thing to do.'],
-  ['Best 3 & toughest 3 months','Name my best 3 and toughest 3 months in the next 12, with a short reason.'],
-  ['Do & avoid this year','Give 6 things to do and 6 things to avoid this year.']]}
-];
-SRCH_TOPICS.forEach(tp=>{ if (tp.id==='me') return;
-  tp.subs.unshift(['🪞 10 precise checks: '+tp.t, 'Give exactly 10 precise, self-verifiable statements about my '+tp.t.toLowerCase()+': specific behaviours, past events, situations, habits or age windows I can check against my own life. Nothing that fits most people. Each bullet: the statement, then 🔎 Because (exact combination), then a ✔/✖ test I can do.']);
-});
-function srchHouseLine(ch, L, h){
-  const pr = ch.planets, si = (L+h-1)%12, s = SIGNS[si], lp = pr[s.lord];
-  const occ = PLANET_LIST.filter(n=> pr[n] && pr[n].house===h);
-  const asp = PLANET_LIST.filter(n=> pr[n] && pr[n].house!==h && (pr[n].aspectsHouses||[]).indexOf(h)>-1);
-  return `H${h} ${s.name}: lord ${s.lord}${lp?` in H${lp.house} ${SIGNS[lp.sign].name}${srchDig(lp)}${lp.retrograde?' Retro':''}`:''}; occ ${occ.length?occ.join(','):'none'}; aspected by ${asp.length?asp.join(','):'none'}`;
-}
