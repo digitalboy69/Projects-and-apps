@@ -14,8 +14,8 @@
 | `symbols.idx` | Auto-generated index `name, kind, file:line` of every function/const/panel id. Grep it; never read it whole. | No (generated) |
 | `CLAUDE.md` | One-line pointer so Claude Code loads `AI_GUIDE.md` first. | No |
 | `install-hooks.sh`, `.githooks/` | Run `sh install-hooks.sh` once per clone: pre-commit hook keeps `AI_GUIDE.md` + `symbols.idx` fresh. | No |
+| `docs/` | `HANDOFF.md` (new-chat notes) and `THIRD_PARTY_LICENSES.md` (QR libraries). | Rarely |
 | `tests/` | `syntax_check.py` (node --check on all scripts), `smoke.py` (Playwright smoke test). | When adding features |
-| `HANDOFF.md` | Short project notes for a new chat (details live in `AI_GUIDE.md`). | Rarely |
 
 Build outputs: `vedic-astro-suite-readable.html` (plain code, use this) and `vedic-astro-suite-2.html` (base64 copy).
 
@@ -37,16 +37,16 @@ See `AI_GUIDE.md` (prompt router + auto-updated section map) and `symbols.idx` (
 
 ## Fast workflow, one task per chat
 1. Pick ONE feature (example: "add Kama saham" or "improve Bhava Bala UI").
-2. New chat, upload only: `HANDOFF.md` + the ONE part from the table above (never the whole project).
+2. New chat, upload only: `docs/HANDOFF.md` + the ONE part from the table above (never the whole project).
 3. Prompt template:
-   > Project notes are in HANDOFF.md. The attached part holds [feature]. Task: [what you want]. Return only the changed function(s) or the full edited part, tested with a quick script. Do not rewrite unrelated code.
+   > Project notes are in docs/HANDOFF.md. The attached part holds [feature]. Task: [what you want]. Return only the changed function(s) or the full edited part, tested with a quick script. Do not rewrite unrelated code.
 4. Paste the returned code into that part file, run `python3 build.py`, open `vedic-astro-suite-readable.html` and test.
 5. Commit to GitHub (free) so every account can pull the latest.
 
 ## Switching between accounts
 - Keep ONE source of truth: a GitHub repo (or Google Drive folder) with this project. Never keep the only copy inside a chat.
-- When an account's limit ends, open the next account, start a new chat, and repeat step 2 with the same `HANDOFF.md`. Nothing else needs moving.
-- If you changed things yourself, update `HANDOFF.md` ("Features done" and "Next") so the next account knows the state.
+- When an account's limit ends, open the next account, start a new chat, and repeat step 2 with the same `docs/HANDOFF.md`. Nothing else needs moving.
+- If you changed things yourself, update `docs/HANDOFF.md` ("Features done" and "Next") so the next account knows the state.
 - Save every returned code block into the repo before moving to the next account.
 
 ## Saving your limit
