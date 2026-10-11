@@ -1,66 +1,3 @@
-  ['Mentors & gurus','Describe the type of mentor/teacher who helps me and when they appear.']]},
- {id:'mother',ico:'👩',t:'Mother & home life',kw:'mom family happiness domestic',h:[4],s:[10,9],k:['Moon'],ck:'Matrikaraka',v:'D12',ar:['A4'],subs:[
-  ['Bond with mother','Give 8 specific, checkable facts about my relationship with my mother: closeness/distance phases with ages, conflict style, her health or role at home, what I got or missed from her.'],
-  ['Home happiness','Give 8 specific, checkable facts about my home life (moves, property disputes, noise/peace, who dominates, mother\'s role) and 3 fixes.']]},
- {id:'siblings',ico:'🧑‍🤝‍🧑',t:'Siblings & courage',kw:'brother sister effort initiative',h:[3],s:[11,1],k:['Mars'],ck:'Bhratrikaraka',v:'D3',ar:['A3'],subs:[
-  ['Siblings','Give 8 specific, checkable facts about my siblings situation (number tendency, birth order feel, age gaps, closeness, rivalry, who helps whom).'],
-  ['My courage & effort style','Give 8 specific, checkable ways I take initiative, handle risk, react to dares or competition, and where I hold back.']]},
- {id:'property',ico:'🏠',t:'Property, home & vehicles',kw:'house land real estate car buy flat',h:[4],s:[2,11,12],k:['Mars','Venus','Saturn'],ck:'Matrikaraka',v:'D4',ar:['A4'],subs:[
-  ['Will I own property?','Give a direct verdict and the likely age/year range.'],
-  ['What suits me','Rank: house, flat, land, farm, commercial, vehicle, with a one-line reason each.'],
-  ['Where to buy','Describe the best type of location/direction and city style for me.'],
-  ['Best years to buy','List the best 3 years/windows to buy property or a vehicle.']]},
- {id:'foreign',ico:'✈️',t:'Foreign travel & settlement',kw:'abroad visa immigration relocate overseas',h:[12,9],s:[3,7,4],k:['Rahu','Moon'],ck:'',v:'D1',ar:[],subs:[
-  ['Will I go abroad?','Give a direct verdict with a percentage and the type: study, work, settle, or travel.'],
-  ['10 best countries/regions','List 10 countries or regions ranked by fit for me.'],
-  ['Best years to go','List the best 3 years/windows to travel, move or study abroad.']]},
- {id:'enemies',ico:'⚔️',t:'Rivals, debts & disputes',kw:'enemies litigation court competition loans conflict',h:[6],s:[8,12,3],k:['Mars','Saturn'],ck:'Gnatikaraka',v:'D1',ar:['A6'],subs:[
-  ['Types of rivals','Describe the kind of rivals/opponents I face in 6 bullets.'],
-  ['Debt & legal risk','Give a calm verdict on debt and legal-dispute risk and 5 ways to stay safe.'],
-  ['How I win','List 6 strategies that work best for me in conflicts.']]},
- {id:'spiritual',ico:'🕉️',t:'Spirituality & moksha',kw:'meditation dharma purpose inner growth',h:[9,12],s:[5,8],k:['Ketu','Jupiter'],ck:'Atmakaraka',v:'D20',ar:[],subs:[
-  ['8 paths that suit me','List 8 spiritual paths/practices (bhakti, meditation, yoga, service, study...) ranked.'],
-  ['Traditional mantra / deity leaning','Name the traditional deities or mantras that match my chart (3-5) and a simple daily practice.'],
-  ['When spirituality deepens','List the best periods for spiritual growth.']]},
- {id:'karma',ico:'🔮',t:'Karma & past life',kw:'karmic lessons rahu ketu dosha pitru kala sarpa mangal past life debt',h:[5,9,12,8],s:[1],k:['Rahu','Ketu','Saturn'],ck:'Atmakaraka',v:'D60',ar:[],subs:[
-  ['My karmic lessons','List my top 6 karmic lessons in this life in plain words, one line each.'],
-  ['Past-life gifts','List 8 talents or instincts that feel naturally mine (likely carried from the past).'],
-  ['Repeating patterns','List 5 relationship/life patterns that repeat for me and how to break each.'],
-  ['Doshas explained simply','Using DOSHA FACTS, say which doshas apply (Mangal, Kala Sarpa, Pitru, Shani), in plain words, with how serious each is and 3 traditional remedies.'],
-  ['Soul\'s mission','In 3 short lines, say my soul\'s mission and what to focus on.']]},
- {id:'purpose',ico:'🧭',t:'Personality & life purpose',kw:'nature character soul atmakaraka self',h:[1],s:[5,9],k:['Sun','Moon'],ck:'Atmakaraka',v:'D9',ar:['AL'],subs:[
-  ['My top 10 strengths','Give 10 specific strengths shown as concrete behaviours that others have actually noticed in me, with the situation where each shows.'],
-  ['5 weaknesses & fixes','List 5 weaknesses as concrete recurring mistakes (with the typical situation where each happens), each with one practical fix.'],
-  ['Life purpose','State my life direction in 3 lines using specific themes from the data (no motivational clichés) and name 3 concrete fields or life areas where it plays out.'],
-  ['Traditional lucky aids','List my traditional lucky colour, day, number, direction and gem (for fun, traditional).']]},
- {id:'friends',ico:'🤝',t:'Friends, networks & gains',kw:'social circle allies fulfilment desires',h:[11],s:[3,7,5],k:['Jupiter','Mercury'],ck:'',v:'D1',ar:['A11'],subs:[
-  ['My friend types','Give 8 specific traits of the friends I attract: age gap, profession types, how friendships start and end, who supports me and who lets me down.'],
-  ['Networking strengths','List how I gain from networks and 5 ways to use it.']]},
- {id:'losses',ico:'📉',t:'Expenses, losses & sleep',kw:'spending waste hospital isolation bed',h:[12],s:[2,6,8],k:['Saturn','Ketu'],ck:'',v:'D1',ar:[],subs:[
-  ['Where money leaks','List my top 6 spending leaks and a fix each.'],
-  ['Sleep & rest','Describe my sleep pattern and 5 tips.'],
-  ['Hidden fears','List 5 hidden fears or blocks and how to ease them.']]},
- {id:'talent',ico:'🎨',t:'Talent, creativity & arts',kw:'music art writing skill hobby entertainment',h:[5,3],s:[10,11],k:['Venus','Mercury','Moon'],ck:'Putrakaraka',v:'D9',ar:[],subs:[
-  ['15 creative fields','List 15 creative fields ranked by fit for me.'],
-  ['Natural talents','List 8 natural talents as concrete things I picked up fast without training, with the age or situation where it showed.'],
-  ['Hobbies that suit me','List 8 hobbies that recharge me.']]},
- {id:'inherit',ico:'🏦',t:'Inheritance & hidden wealth',kw:'will insurance partner money legacy',h:[8,2],s:[11,7],k:['Saturn','Jupiter'],ck:'',v:'D1',ar:['A8'],subs:[
-  ['Inheritance outlook','Give a direct outlook on inheritance and family wealth.'],
-  ['Partner / insurance money','Describe money from partners, insurance or sudden sources in 5 bullets.']]},
- {id:'thisyear',ico:'🗓️',t:'This year & next 12 months',kw:'forecast prediction timing dasha transit now upcoming',h:[1,10,7,2,11],s:[4,5,9],k:['Jupiter','Saturn'],ck:'',v:'D1',ar:[],subs:[
-  ['Month-by-month next 12 months','List the next 12 months, one line each: theme + one thing to do.'],
-  ['Best 3 & toughest 3 months','Name my best 3 and toughest 3 months in the next 12, with a short reason.'],
-  ['Do & avoid this year','Give 6 things to do and 6 things to avoid this year.']]}
-];
-SRCH_TOPICS.forEach(tp=>{ if (tp.id==='me') return;
-  tp.subs.unshift(['🪞 10 precise checks: '+tp.t, 'Give exactly 10 precise, self-verifiable statements about my '+tp.t.toLowerCase()+': specific behaviours, past events, situations, habits or age windows I can check against my own life. Nothing that fits most people. Each bullet: the statement, then 🔎 Because (exact combination), then a ✔/✖ test I can do.']);
-});
-function srchHouseLine(ch, L, h){
-  const pr = ch.planets, si = (L+h-1)%12, s = SIGNS[si], lp = pr[s.lord];
-  const occ = PLANET_LIST.filter(n=> pr[n] && pr[n].house===h);
-  const asp = PLANET_LIST.filter(n=> pr[n] && pr[n].house!==h && (pr[n].aspectsHouses||[]).indexOf(h)>-1);
-  return `H${h} ${s.name}: lord ${s.lord}${lp?` in H${lp.house} ${SIGNS[lp.sign].name}${srchDig(lp)}${lp.retrograde?' Retro':''}`:''}; occ ${occ.length?occ.join(','):'none'}; aspected by ${asp.length?asp.join(','):'none'}`;
-}
 function srchVargaPos(ch, vk, name){
   try { const v = ch.vargas[vk]; for (const hh of v.houses){ if (hh.planets.some(x=>x.name===name)) return `${name} ${hh.signName} H${hh.houseNum}`; } } catch(e){} return '';
 }
@@ -1749,3 +1686,87 @@ function buildTransitsPanel(chart, profile){
       const retro = (n === 'Saturn' || n === 'Jupiter') && prev && prev.sign === (s.sign + 1) % 12;
       const hidden = idxNow >= 0 && (i < idxNow - 2 || i > idxNow + 7) ? ' tr-more' : '';
       return `<div class="dx-row ${st}${hidden}"><div class="dx-row-h" style="cursor:default"><span class="dx-dot" style="background:${DASHA_PLANET_COLORS[n]}">${SIGNS[s.sign].symbol}</span>
+        <span class="dx-row-main"><b>${SIGNS[s.sign].name}${retro ? ' <em class="tr-retro">↺ retrograde return</em>' : ''}</b><small>${dt(s.start)} → ${s.end === null ? '—' : dt(s.end)}</small></span>
+        <span class="dx-row-side"><span class="dx-age">H${hL(s.sign)} Lagna · H${hM(s.sign)} Moon</span>${trPill(st)}</span></div></div>`;
+    }).join('');
+    const hiddenN = (rows.match(/tr-more/g) || []).length;
+    return `<div class="tr-list" data-tr-body="${n}" ${ti ? 'hidden' : ''}>${rows}${hiddenN ? `<button type="button" class="tr-showall" data-tr-all>Show full timeline (${hiddenN} more)</button>` : ''}</div>`;
+  }).join('');
+
+  return `<div class="tr">
+    <div class="tr-intro">Saturn and Jupiter transit signs relative to your <b>Moon</b> (${SIGNS[T.moonSign].name}) and <b>Lagna</b> (${SIGNS[T.asc].name}). Sade Sati is Saturn in the 12th, 1st and 2nd sign from the Moon.</div>
+    <div class="tr-hero">${ssHero}${dh('Kantaka Shani (4th)', actK, nK, TR_COL[3])}${dh('Ashtama Shani (8th)', actA, nA, TR_COL[7])}${pos('Saturn', satS)}${pos('Jupiter', jupS)}</div>
+    <div class="tr-sec"><h5>Sade Sati cycles <span>7½ years each</span></h5><div class="tr-cycles">${cyc}</div></div>
+    <div class="tr-sec"><h5>Dhaiya <span>Saturn 4th &amp; 8th from Moon</span></h5><div class="dx-list">${dhRows(T.kantaka, 'Kantaka Shani · 4th from Moon', TR_COL[3])}${dhRows(T.ashtama, 'Ashtama Shani · 8th from Moon', TR_COL[7])}</div></div>
+    <div class="tr-sec"><h5>Ingress timeline <span>when each planet changes sign</span></h5>
+      <div class="pl-chips tr-tabs">${tabs.map((n, i) => `<button type="button" class="pl-chip ${i ? '' : 'on'}" data-tr-tab="${n}">${PLANET_GLYPHS[n]} ${n}</button>`).join('')}</div>${lists}</div>
+    <div class="pn-note">Ingress dates come from the app's compact built-in ephemeris and can differ from published almanacs by a few days for Saturn and Jupiter (Rahu/Ketu use the mean node). Sade Sati dates merge brief retrograde re-entries into one phase. Window: 3 years before birth to 100 years after.</div>
+  </div>`;
+}
+document.addEventListener('click', (e) => {
+  const tab = e.target.closest('[data-tr-tab]');
+  if (tab){ document.querySelectorAll('[data-tr-tab]').forEach(b => b.classList.toggle('on', b === tab)); document.querySelectorAll('[data-tr-body]').forEach(l => l.hidden = l.dataset.trBody !== tab.dataset.trTab); return; }
+  const all = e.target.closest('[data-tr-all]');
+  if (all){ all.parentElement.querySelectorAll('.tr-more').forEach(r => r.classList.remove('tr-more')); all.remove(); }
+});
+
+/* --------------------------------- BHAVA CHALIT --------------------------------- */
+function buildBhavaPanel(chart, profile){
+  const B = computeBhavaChalit(chart, profile.lat, profile.lon);
+  const moved = PLANET_LIST.filter(n => B.place[n].shifted);
+  const cards = B.houses.map(h => {
+    const ws = (chart.ascendant.sign + h.n - 1) % 12;
+    const chips = h.planets.map(n => { const p = B.place[n]; const c = DASHA_PLANET_COLORS[n];
+      return `<span class="bh-p ${p.shifted ? 'moved' : ''}" style="--pc:${c}" data-planet-click="${n}">${PLANET_GLYPHS[n]} ${n}${p.shifted ? `<em>from H${p.whole}</em>` : ''}</span>`; }).join('') || '<span class="bh-empty">empty</span>';
+    return `<div class="bh-card ${h.planets.length ? 'has' : ''}">
+      <div class="bh-top"><span class="bh-n">${h.n}</span><span class="bh-sign">${SIGNS[ws].symbol} ${SIGNS[ws].name}<small>whole-sign house</small></span></div>
+      <div class="bh-mid"><small>Madhya (centre)</small><b>${nvDeg(h.madhya)}</b></div>
+      <div class="bh-span"><small>Spans</small><span>${nvDeg(h.begin)}</span><span>→ ${nvDeg(h.end)}</span></div>
+      <div class="bh-pl">${chips}</div></div>`;
+  }).join('');
+  const shiftRows = moved.map(n => { const p = B.place[n], c = DASHA_PLANET_COLORS[n];
+    return `<div class="dx-row"><div class="dx-row-h" style="cursor:default"><span class="dx-dot" style="background:${c}">${PLANET_GLYPHS[n]}</span><span class="dx-row-main"><b>${n}: House ${p.whole} → House ${p.chalit}</b><small>${nvDeg(p.lon)} · ${Math.abs(p.fromMadhya).toFixed(1)}° ${p.fromMadhya < 0 ? 'before' : 'past'} the house centre</small></span></div></div>`; }).join('');
+  return `<div class="bh">
+    <div class="tr-intro">Whole-sign houses give each planet the house of its sign. <b>Bhava Chalit</b> (Sripati) instead centres each house on its madhya and ends it halfway to the next, so a planet near a sign edge can shift to the neighbouring house.</div>
+    <div class="tr-hero">
+      <div class="tr-card" style="--pc:#D4AF37"><small>Lagna · Bhava 1 centre</small><b>${nvDeg(B.asc)}</b></div>
+      <div class="tr-card" style="--pc:#5EC4B7"><small>Midheaven · Bhava 10 centre</small><b>${nvDeg(B.mc)}</b></div>
+      <div class="tr-card ${moved.length ? 'on' : ''}" style="--pc:#E0A64A"><small>Planets changing house</small><b>${moved.length} of ${PLANET_LIST.length}</b><span>${moved.length ? moved.join(', ') : 'Chalit matches whole-sign'}</span></div>
+    </div>
+    ${moved.length ? `<div class="tr-sec"><h5>Shifted planets <span>whole-sign → Bhava Chalit</span></h5><div class="dx-list">${shiftRows}</div></div>` : ''}
+    <div class="tr-sec"><h5>The 12 bhavas <span>tap a planet for details</span></h5><div class="bh-grid">${cards}</div></div>
+    <div class="pn-note">Sripati method: the Lagna and Midheaven are the centres of houses 1 and 10; the arcs between them are divided into equal thirds to place the other centres; each house ends at the midpoint between neighbouring centres. Positions are sidereal (Lahiri).</div>
+  </div>`;
+}
+
+/* =============================================================================
+   KUNDALI MATCHING — Ashtakoota (36 gunas) + Manglik + bonus checks
+   Groom = Person 1 (Vara), Bride = Person 2 (Kanya). Asymmetric tables use these roles.
+   ============================================================================= */
+const KM_VARNA = ['Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin'];
+const KM_VARNA_RANK = { Brahmin: 4, Kshatriya: 3, Vaishya: 2, Shudra: 1 };
+const KM_VASHYA_SIGN = ['Chatushpada','Chatushpada','Manava','Jalachara','Vanachara','Manava','Manava','Keeta','*','*','Manava','Jalachara'];
+const KM_VASHYA_ORDER = ['Chatushpada','Manava','Jalachara','Vanachara','Keeta'];
+const KM_VASHYA = [[2,1,1,0.5,1],[1,2,0.5,0,1],[1,0.5,2,1,1],[0,0,0,2,0],[1,1,1,0,2]];   // [groom][bride]
+const KM_GANA = ['Deva','Manushya','Rakshasa','Manushya','Deva','Manushya','Deva','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva','Rakshasa','Deva','Rakshasa','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva'];
+const KM_GANA_SCORE = { Deva: { Deva: 6, Manushya: 6, Rakshasa: 1 }, Manushya: { Deva: 5, Manushya: 6, Rakshasa: 0 }, Rakshasa: { Deva: 0, Manushya: 0, Rakshasa: 6 } };
+const KM_NADI_NAMES = ['Aadi (Vata)', 'Madhya (Pitta)', 'Antya (Kapha)'];
+const KM_NADI = [0,1,2,2,1,0];                        // by nakshatra index % 6
+const KM_YONI_ORDER = ['Horse','Elephant','Sheep','Serpent','Dog','Cat','Rat','Cow','Buffalo','Tiger','Deer','Monkey','Lion','Mongoose'];
+const KM_YONI_NAK = ['Horse','Elephant','Sheep','Serpent','Serpent','Dog','Cat','Sheep','Cat','Rat','Rat','Cow','Buffalo','Tiger','Buffalo','Tiger','Deer','Deer','Dog','Monkey','Mongoose','Monkey','Lion','Horse','Lion','Cow','Elephant'];
+const KM_YONI = [
+ [4,2,2,3,2,2,2,1,0,1,3,3,1,2],[2,4,3,3,2,2,2,2,3,1,2,3,0,2],[2,3,4,2,1,2,1,3,3,1,2,0,1,2],[3,3,2,4,2,1,1,1,1,2,2,2,1,0],
+ [2,2,1,2,4,2,1,2,2,1,0,2,1,1],[2,2,2,1,2,4,0,2,2,1,3,3,1,2],[2,2,1,1,1,0,4,2,2,2,2,2,1,3],[1,2,3,1,2,2,2,4,3,0,3,2,1,2],
+ [0,3,3,1,2,2,2,3,4,1,2,2,1,2],[1,1,1,2,1,1,2,0,1,4,1,1,2,2],[3,2,2,2,0,3,2,3,2,1,4,2,2,2],[3,3,0,2,2,3,2,2,2,1,2,4,3,2],
+ [1,0,1,1,1,1,1,1,1,2,2,3,4,2],[2,2,2,0,1,2,3,2,2,2,2,2,2,4]];
+const KM_FRIEND = {
+  Sun: { F: ['Moon','Mars','Jupiter'], E: ['Venus','Saturn'] }, Moon: { F: ['Sun','Mercury'], E: [] },
+  Mars: { F: ['Sun','Moon','Jupiter'], E: ['Mercury'] }, Mercury: { F: ['Sun','Venus'], E: ['Moon'] },
+  Jupiter: { F: ['Sun','Moon','Mars'], E: ['Mercury','Venus'] }, Venus: { F: ['Mercury','Saturn'], E: ['Sun','Moon'] },
+  Saturn: { F: ['Mercury','Venus'], E: ['Sun','Moon','Mars'] }
+};
+const KM_RAJJU_NAMES = ['Pada (feet)','Kati (waist)','Nabhi (navel)','Kantha (neck)','Siro (head)'];
+const KM_RAJJU = [0,1,2,3,4,3,2,1,0,0,1,2,3,4,3,2,1,0,0,1,2,3,4,3,2,1,0];   // zig-zag by nakshatra index
+
+function kmRel(a, b){ return KM_FRIEND[a].F.includes(b) ? 'F' : (KM_FRIEND[a].E.includes(b) ? 'E' : 'N'); }
+function kmPerson(profile){

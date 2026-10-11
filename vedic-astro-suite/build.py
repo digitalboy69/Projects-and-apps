@@ -5,6 +5,7 @@ import re,base64,glob,sys,os,datetime
 t=open('wrapper_template.html',encoding='utf-8').read()
 t=t.replace('/*LOCPICKER*/',open('parts/locpicker.js',encoding='utf-8').read().replace('</script','<\\/script'))
 b=''.join(open(p,encoding='utf-8').read() for p in sorted(glob.glob('parts/srcB_*.part')))
+b=b.replace('/*QRLIBS*/',open('parts/qrlibs.js',encoding='utf-8').read().replace('</script','<\\/script'))
 src={'srcA':open('parts/srcA.html',encoding='utf-8').read(),'srcB':b,'srcN':open('parts/srcN.html',encoding='utf-8').read(),'srcDev':open('parts/srcDev.html',encoding='utf-8').read()}
 exec(open('tools_guide.py',encoding='utf-8').read())
 if '--guide' in sys.argv:

@@ -1,24 +1,3 @@
-.dx-row-h{all:unset;box-sizing:border-box;width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;font-family:var(--font-sans)}
-.dx-row-h:disabled{cursor:default}
-.dx-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(0,0,0,.8);font-size:16px;flex:none}
-.dx-row-main{flex:1;min-width:0}
-.dx-row-main b{display:block;font-size:14px;font-weight:600;color:var(--text-main)}
-.dx-row-main small{display:block;font:11px var(--font-mono);color:var(--text-muted);margin-top:2px}
-.dx-row-side{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
-.dx-age{font:11px var(--font-mono);color:var(--text-subtle)}
-.dx-pill{font:600 10px var(--font-sans);letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;border:1px solid var(--border-light);color:var(--text-muted)}
-.dx-pill.now{background:var(--gold);border-color:var(--gold);color:#111}
-.dx-chev{width:14px;color:var(--text-subtle);transition:transform .2s;flex:none}
-.dx-row.open>.dx-row-h .dx-chev{transform:rotate(90deg)}
-.dx-row>.dx-bar{margin:0 14px 12px}
-.dx-row>.dx-children{margin:0 12px 12px 26px}
-@media (max-width:880px){
-  .dx-step{grid-template-columns:78px 1fr}.dx-step-e{grid-column:2;text-align:left}
-  .dx-dhead{flex-wrap:wrap}.dx-dtitle{order:-1;flex-basis:100%}.dx-nav{flex:1;text-align:center}
-  .dx-now{padding:16px}.dx-detail{padding:12px}
-  .dx-row-h{gap:10px;padding:11px 10px}.dx-age{display:none}
-  .dx-sec h5 span{display:block;margin:2px 0 0}
-}
 /* ---- Yogas + Shadbala redesign ---- */
 .yg,.sb{max-width:1000px;margin:0 auto}
 .yg-hero,.sb-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
@@ -116,6 +95,27 @@
 .pe-l input{padding:11px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:inherit;font-size:16px;font-family:inherit}
 .pe-note{font-size:12px;opacity:.7;margin:0;text-align:left}
 .pe-err{color:#ff8a8a;font-size:13px;text-align:left}
+.in-share{max-width:640px;margin:18px auto 0;padding:16px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.25);backdrop-filter:blur(10px)}
+.in-share-t{font-weight:700;margin-bottom:10px;text-align:center}
+.in-share-b{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.in-sh-btn{display:flex;flex-direction:column;gap:3px;align-items:center;padding:14px 8px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:inherit;font:inherit;font-weight:600;cursor:pointer;transition:transform .2s,background .2s}
+.in-sh-btn small{font-weight:400;opacity:.65;font-size:11px}
+.in-sh-btn:hover{transform:translateY(-2px);background:rgba(212,175,55,.14)}
+.in-share-n{margin-top:10px;font-size:13px;color:#e7c766;text-align:center}
+.sh-box{max-width:380px;width:100%;position:relative;text-align:center;display:flex;flex-direction:column;gap:12px;max-height:92vh;overflow:auto}
+.sh-x{position:absolute;top:10px;right:12px;background:none;border:none;color:inherit;font-size:18px;cursor:pointer;opacity:.7}
+.sh-box h4{margin:4px 24px 0}
+.sh-sub{font-size:13px;opacity:.75;margin:0}
+.sh-qrwrap{display:flex;justify-content:center}
+.sh-qr{width:min(260px,70vw);height:auto;border-radius:14px;image-rendering:pixelated}
+.sh-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.sh-up{cursor:pointer}
+.sh-warn{font-size:12px;opacity:.7}
+.sh-or{font-size:12px;opacity:.6}
+.sh-paste input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:inherit;font-size:16px}
+.sh-vid{border-radius:14px;overflow:hidden}.sh-vid video{width:100%;display:block}
+.sh-msg{font-size:13px;color:#ff9d9d}
+.prof-share{background:transparent;border:none;cursor:pointer;font-size:15px;opacity:.6;padding:6px;border-radius:8px}.prof-share:hover{opacity:1;background:rgba(212,175,55,.15)}
 .prof-del{background:transparent;border:none;cursor:pointer;font-size:16px;opacity:.55;padding:6px;border-radius:8px}
 .prof-del:hover{opacity:1;background:rgba(201,80,80,.15)}
 .prof-empty{text-align:center;color:var(--text-muted);font-size:13px;padding:18px;border:1px dashed var(--border-light);border-radius:14px;line-height:1.5}
@@ -1749,3 +1749,24 @@ function heliocentricPos(elements, T){
   const E = solveKepler(normDeg(M*RAD)*DEG, e);
   const xv = a*(Math.cos(E)-e);
   const yv = a*(Math.sqrt(1-e*e)*Math.sin(E));
+  const v = Math.atan2(yv,xv);
+  const r = Math.sqrt(xv*xv+yv*yv);
+  const omega = peri - node;
+  const xh = r*(Math.cos(node)*Math.cos(v+omega) - Math.sin(node)*Math.sin(v+omega)*Math.cos(i));
+  const yh = r*(Math.sin(node)*Math.cos(v+omega) + Math.cos(node)*Math.sin(v+omega)*Math.cos(i));
+  return {x:xh,y:yh};
+}
+function planetGeocentricLongitude(name, jd){
+  const T = (jd-J2000)/36525.0;
+  const earth = heliocentricPos(EARTH_ELEMENTS,T);
+  const planet = heliocentricPos(PLANET_ELEMENTS[name],T);
+  const xg = planet.x-earth.x, yg = planet.y-earth.y;
+  // Elements are referred to the fixed J2000 equinox; the ayanamsa is subtracted from tropical-of-DATE longitudes
+  // (as for Sun/Moon/Rahu), so add the general precession since J2000 to put all bodies in the same frame.
+  return normDeg(Math.atan2(yg,xg)*RAD + 1.3969713*T + 0.0003086*T*T);
+}
+function isRetrograde(name, jd){
+  const l1 = planetGeocentricLongitude(name, jd-0.25);
+  const l2 = planetGeocentricLongitude(name, jd+0.25);
+  let diff = l2-l1;
+  if (diff>180) diff-=360; if (diff<-180) diff+=360;

@@ -89,6 +89,7 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
     <button class="sw-item" type="button" role="menuitem" data-act="dev"><span class="e">💬</span>Developer</button>
   </div>
 </div>
+<script>try{window.__vaxHash=location.hash;}catch(e){}</script>
 <script>/*LOCPICKER*/</script>
 <script type="text/plain" id="srcA">..</script>
 <script type="text/plain" id="srcB">..</script>
@@ -113,7 +114,7 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
   function mount(k){
     if (frames[k]) return frames[k];
     load.classList.remove('hide'); txt.textContent = 'LOADING ' + NAME[k].toUpperCase() + '…';
-    const f = document.createElement('iframe'); f.title = NAME[k]; f.setAttribute('allow', 'fullscreen');
+    const f = document.createElement('iframe'); f.title = NAME[k]; f.setAttribute('allow', 'fullscreen; camera');
     f.addEventListener('load', ()=>{
       try{ f.contentWindow.dispatchEvent(new Event('resize')); }catch(e){}
       /* one loader only: stay until the inner app has finished its own start-up (max 9s) */

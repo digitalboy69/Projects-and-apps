@@ -1,87 +1,3 @@
-        <span class="dx-row-main"><b>${SIGNS[s.sign].name}${retro ? ' <em class="tr-retro">↺ retrograde return</em>' : ''}</b><small>${dt(s.start)} → ${s.end === null ? '—' : dt(s.end)}</small></span>
-        <span class="dx-row-side"><span class="dx-age">H${hL(s.sign)} Lagna · H${hM(s.sign)} Moon</span>${trPill(st)}</span></div></div>`;
-    }).join('');
-    const hiddenN = (rows.match(/tr-more/g) || []).length;
-    return `<div class="tr-list" data-tr-body="${n}" ${ti ? 'hidden' : ''}>${rows}${hiddenN ? `<button type="button" class="tr-showall" data-tr-all>Show full timeline (${hiddenN} more)</button>` : ''}</div>`;
-  }).join('');
-
-  return `<div class="tr">
-    <div class="tr-intro">Saturn and Jupiter transit signs relative to your <b>Moon</b> (${SIGNS[T.moonSign].name}) and <b>Lagna</b> (${SIGNS[T.asc].name}). Sade Sati is Saturn in the 12th, 1st and 2nd sign from the Moon.</div>
-    <div class="tr-hero">${ssHero}${dh('Kantaka Shani (4th)', actK, nK, TR_COL[3])}${dh('Ashtama Shani (8th)', actA, nA, TR_COL[7])}${pos('Saturn', satS)}${pos('Jupiter', jupS)}</div>
-    <div class="tr-sec"><h5>Sade Sati cycles <span>7½ years each</span></h5><div class="tr-cycles">${cyc}</div></div>
-    <div class="tr-sec"><h5>Dhaiya <span>Saturn 4th &amp; 8th from Moon</span></h5><div class="dx-list">${dhRows(T.kantaka, 'Kantaka Shani · 4th from Moon', TR_COL[3])}${dhRows(T.ashtama, 'Ashtama Shani · 8th from Moon', TR_COL[7])}</div></div>
-    <div class="tr-sec"><h5>Ingress timeline <span>when each planet changes sign</span></h5>
-      <div class="pl-chips tr-tabs">${tabs.map((n, i) => `<button type="button" class="pl-chip ${i ? '' : 'on'}" data-tr-tab="${n}">${PLANET_GLYPHS[n]} ${n}</button>`).join('')}</div>${lists}</div>
-    <div class="pn-note">Ingress dates come from the app's compact built-in ephemeris and can differ from published almanacs by a few days for Saturn and Jupiter (Rahu/Ketu use the mean node). Sade Sati dates merge brief retrograde re-entries into one phase. Window: 3 years before birth to 100 years after.</div>
-  </div>`;
-}
-document.addEventListener('click', (e) => {
-  const tab = e.target.closest('[data-tr-tab]');
-  if (tab){ document.querySelectorAll('[data-tr-tab]').forEach(b => b.classList.toggle('on', b === tab)); document.querySelectorAll('[data-tr-body]').forEach(l => l.hidden = l.dataset.trBody !== tab.dataset.trTab); return; }
-  const all = e.target.closest('[data-tr-all]');
-  if (all){ all.parentElement.querySelectorAll('.tr-more').forEach(r => r.classList.remove('tr-more')); all.remove(); }
-});
-
-/* --------------------------------- BHAVA CHALIT --------------------------------- */
-function buildBhavaPanel(chart, profile){
-  const B = computeBhavaChalit(chart, profile.lat, profile.lon);
-  const moved = PLANET_LIST.filter(n => B.place[n].shifted);
-  const cards = B.houses.map(h => {
-    const ws = (chart.ascendant.sign + h.n - 1) % 12;
-    const chips = h.planets.map(n => { const p = B.place[n]; const c = DASHA_PLANET_COLORS[n];
-      return `<span class="bh-p ${p.shifted ? 'moved' : ''}" style="--pc:${c}" data-planet-click="${n}">${PLANET_GLYPHS[n]} ${n}${p.shifted ? `<em>from H${p.whole}</em>` : ''}</span>`; }).join('') || '<span class="bh-empty">empty</span>';
-    return `<div class="bh-card ${h.planets.length ? 'has' : ''}">
-      <div class="bh-top"><span class="bh-n">${h.n}</span><span class="bh-sign">${SIGNS[ws].symbol} ${SIGNS[ws].name}<small>whole-sign house</small></span></div>
-      <div class="bh-mid"><small>Madhya (centre)</small><b>${nvDeg(h.madhya)}</b></div>
-      <div class="bh-span"><small>Spans</small><span>${nvDeg(h.begin)}</span><span>→ ${nvDeg(h.end)}</span></div>
-      <div class="bh-pl">${chips}</div></div>`;
-  }).join('');
-  const shiftRows = moved.map(n => { const p = B.place[n], c = DASHA_PLANET_COLORS[n];
-    return `<div class="dx-row"><div class="dx-row-h" style="cursor:default"><span class="dx-dot" style="background:${c}">${PLANET_GLYPHS[n]}</span><span class="dx-row-main"><b>${n}: House ${p.whole} → House ${p.chalit}</b><small>${nvDeg(p.lon)} · ${Math.abs(p.fromMadhya).toFixed(1)}° ${p.fromMadhya < 0 ? 'before' : 'past'} the house centre</small></span></div></div>`; }).join('');
-  return `<div class="bh">
-    <div class="tr-intro">Whole-sign houses give each planet the house of its sign. <b>Bhava Chalit</b> (Sripati) instead centres each house on its madhya and ends it halfway to the next, so a planet near a sign edge can shift to the neighbouring house.</div>
-    <div class="tr-hero">
-      <div class="tr-card" style="--pc:#D4AF37"><small>Lagna · Bhava 1 centre</small><b>${nvDeg(B.asc)}</b></div>
-      <div class="tr-card" style="--pc:#5EC4B7"><small>Midheaven · Bhava 10 centre</small><b>${nvDeg(B.mc)}</b></div>
-      <div class="tr-card ${moved.length ? 'on' : ''}" style="--pc:#E0A64A"><small>Planets changing house</small><b>${moved.length} of ${PLANET_LIST.length}</b><span>${moved.length ? moved.join(', ') : 'Chalit matches whole-sign'}</span></div>
-    </div>
-    ${moved.length ? `<div class="tr-sec"><h5>Shifted planets <span>whole-sign → Bhava Chalit</span></h5><div class="dx-list">${shiftRows}</div></div>` : ''}
-    <div class="tr-sec"><h5>The 12 bhavas <span>tap a planet for details</span></h5><div class="bh-grid">${cards}</div></div>
-    <div class="pn-note">Sripati method: the Lagna and Midheaven are the centres of houses 1 and 10; the arcs between them are divided into equal thirds to place the other centres; each house ends at the midpoint between neighbouring centres. Positions are sidereal (Lahiri).</div>
-  </div>`;
-}
-
-/* =============================================================================
-   KUNDALI MATCHING — Ashtakoota (36 gunas) + Manglik + bonus checks
-   Groom = Person 1 (Vara), Bride = Person 2 (Kanya). Asymmetric tables use these roles.
-   ============================================================================= */
-const KM_VARNA = ['Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin'];
-const KM_VARNA_RANK = { Brahmin: 4, Kshatriya: 3, Vaishya: 2, Shudra: 1 };
-const KM_VASHYA_SIGN = ['Chatushpada','Chatushpada','Manava','Jalachara','Vanachara','Manava','Manava','Keeta','*','*','Manava','Jalachara'];
-const KM_VASHYA_ORDER = ['Chatushpada','Manava','Jalachara','Vanachara','Keeta'];
-const KM_VASHYA = [[2,1,1,0.5,1],[1,2,0.5,0,1],[1,0.5,2,1,1],[0,0,0,2,0],[1,1,1,0,2]];   // [groom][bride]
-const KM_GANA = ['Deva','Manushya','Rakshasa','Manushya','Deva','Manushya','Deva','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva','Rakshasa','Deva','Rakshasa','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva'];
-const KM_GANA_SCORE = { Deva: { Deva: 6, Manushya: 6, Rakshasa: 1 }, Manushya: { Deva: 5, Manushya: 6, Rakshasa: 0 }, Rakshasa: { Deva: 0, Manushya: 0, Rakshasa: 6 } };
-const KM_NADI_NAMES = ['Aadi (Vata)', 'Madhya (Pitta)', 'Antya (Kapha)'];
-const KM_NADI = [0,1,2,2,1,0];                        // by nakshatra index % 6
-const KM_YONI_ORDER = ['Horse','Elephant','Sheep','Serpent','Dog','Cat','Rat','Cow','Buffalo','Tiger','Deer','Monkey','Lion','Mongoose'];
-const KM_YONI_NAK = ['Horse','Elephant','Sheep','Serpent','Serpent','Dog','Cat','Sheep','Cat','Rat','Rat','Cow','Buffalo','Tiger','Buffalo','Tiger','Deer','Deer','Dog','Monkey','Mongoose','Monkey','Lion','Horse','Lion','Cow','Elephant'];
-const KM_YONI = [
- [4,2,2,3,2,2,2,1,0,1,3,3,1,2],[2,4,3,3,2,2,2,2,3,1,2,3,0,2],[2,3,4,2,1,2,1,3,3,1,2,0,1,2],[3,3,2,4,2,1,1,1,1,2,2,2,1,0],
- [2,2,1,2,4,2,1,2,2,1,0,2,1,1],[2,2,2,1,2,4,0,2,2,1,3,3,1,2],[2,2,1,1,1,0,4,2,2,2,2,2,1,3],[1,2,3,1,2,2,2,4,3,0,3,2,1,2],
- [0,3,3,1,2,2,2,3,4,1,2,2,1,2],[1,1,1,2,1,1,2,0,1,4,1,1,2,2],[3,2,2,2,0,3,2,3,2,1,4,2,2,2],[3,3,0,2,2,3,2,2,2,1,2,4,3,2],
- [1,0,1,1,1,1,1,1,1,2,2,3,4,2],[2,2,2,0,1,2,3,2,2,2,2,2,2,4]];
-const KM_FRIEND = {
-  Sun: { F: ['Moon','Mars','Jupiter'], E: ['Venus','Saturn'] }, Moon: { F: ['Sun','Mercury'], E: [] },
-  Mars: { F: ['Sun','Moon','Jupiter'], E: ['Mercury'] }, Mercury: { F: ['Sun','Venus'], E: ['Moon'] },
-  Jupiter: { F: ['Sun','Moon','Mars'], E: ['Mercury','Venus'] }, Venus: { F: ['Mercury','Saturn'], E: ['Sun','Moon'] },
-  Saturn: { F: ['Mercury','Venus'], E: ['Sun','Moon','Mars'] }
-};
-const KM_RAJJU_NAMES = ['Pada (feet)','Kati (waist)','Nabhi (navel)','Kantha (neck)','Siro (head)'];
-const KM_RAJJU = [0,1,2,3,4,3,2,1,0,0,1,2,3,4,3,2,1,0,0,1,2,3,4,3,2,1,0];   // zig-zag by nakshatra index
-
-function kmRel(a, b){ return KM_FRIEND[a].F.includes(b) ? 'F' : (KM_FRIEND[a].E.includes(b) ? 'E' : 'N'); }
-function kmPerson(profile){
   const chart = computeChart(profile.dob, profile.tob.length === 5 ? profile.tob + ':00' : profile.tob, profile.lat, profile.lon, profile.tz);
   const moon = chart.planets.Moon;
   return { profile, chart, moonSign: moon.sign, nak: Math.floor(normDeg(moon.longitude) / (360 / 27)), pada: moon.nakshatra.pada, deg: moon.degInSign, lagna: chart.ascendant.sign };
@@ -1749,3 +1665,108 @@ function computeVargaAspects(chart, vdata){
   const houseOfSign = {}; // signIdx -> house number in this varga
   for (let h=1; h<=12; h++){
     houseOfSign[(ascSign + h - 1) % 12] = h;
+  }
+
+  // Build planet -> {sign, house} for this varga
+  const placement = {};
+  PLANET_LIST.forEach(name => {
+    const sign = vdata.planetVargaSign[name];
+    placement[name] = { sign, house: houseOfSign[sign] };
+  });
+
+  const results = [];
+  PLANET_LIST.forEach(fromName => {
+    const from = placement[fromName];
+    const aspectedHouseNums = getAspectedHouses(fromName, from.house); // houses (1-12) this planet aspects
+    const aspectedSignIdxs = aspectedHouseNums.map(h => (ascSign + h - 1) % 12);
+
+    const aspectOffsetLabel = (houseNum) => {
+      const diff = ((houseNum - from.house + 12) % 12) + 1; // 1..12, e.g. 7 = opposition
+      if (diff === 7) return "7th aspect (opposition)";
+      if (SPECIAL_ASPECTS[fromName] && SPECIAL_ASPECTS[fromName].includes(diff)) return `${diff}th aspect (special)`;
+      return `${diff}th aspect`;
+    };
+
+    const targets = [];
+    aspectedHouseNums.forEach(houseNum => {
+      const signIdx = (ascSign + houseNum - 1) % 12;
+      const sign = SIGNS[signIdx];
+      const occupants = PLANET_LIST.filter(p => p !== fromName && placement[p].sign === signIdx);
+      occupants.forEach(toName => {
+        targets.push({
+          toPlanet: toName,
+          toHouse: houseNum,
+          toSign: sign.name,
+          toSignSanskrit: sign.sk,
+          label: aspectOffsetLabel(houseNum)
+        });
+      });
+      if (occupants.length === 0) {
+        targets.push({
+          toPlanet: null,
+          toHouse: houseNum,
+          toSign: sign.name,
+          toSignSanskrit: sign.sk,
+          label: aspectOffsetLabel(houseNum)
+        });
+      }
+    });
+
+    const realPlanet = chart.planets[fromName];
+    const fromSign = SIGNS[from.sign];
+
+    results.push({
+      planet: fromName,
+      glyph: PLANET_GLYPHS[fromName],
+      fromHouse: from.house,
+      fromSign: fromSign.name,
+      fromSignSanskrit: fromSign.sk,
+      nakshatra: realPlanet.nakshatra.name,
+      nakshatraLord: realPlanet.nakshatra.lord,
+      pada: realPlanet.nakshatra.pada,
+      degree: formatDeg(realPlanet.degInSign),
+      retrograde: realPlanet.retrograde,
+      aspectedHouses: aspectedHouseNums,
+      aspectedSigns: aspectedSignIdxs.map(i => SIGNS[i].name),
+      targets
+    });
+  });
+
+  return results;
+}
+
+function buildAspectsTableHtml(aspectRows, idPrefix){
+  const prefix = idPrefix || 'varga';
+  let rows = '';
+  aspectRows.forEach(r => {
+    const planetTargets = r.targets.filter(t => t.toPlanet);
+    const targetHtml = planetTargets.length
+      ? planetTargets.map(t => `<span class="occupant-chip aspect-target-chip"><span class="planet-glyph">${PLANET_GLYPHS[t.toPlanet]}</span>${t.toPlanet} <span class="tiny">(H${t.toHouse} ${t.toSign})</span></span>`).join(' ')
+      : `<span class="house-empty-tag">No planets aspected</span>`;
+    const housesHtml = r.aspectedHouses.map(h => `H${h}`).join(', ');
+
+    rows += `<tr>
+      <td class="planet-name-cell"><span class="planet-glyph">${r.glyph}</span>${r.planet}${r.retrograde ? '<sup class="retro-tag-sm">R</sup>' : ''}</td>
+      <td>H${r.fromHouse} — ${r.fromSign} <span class="sign-sk">(${r.fromSignSanskrit})</span></td>
+      <td>${r.nakshatra} <span class="sign-sk">(Pada ${r.pada})</span><br><span class="tiny">Lord: ${r.nakshatraLord} · ${r.degree}</span></td>
+      <td class="mono">${housesHtml}</td>
+      <td>${targetHtml}</td>
+    </tr>`;
+  });
+
+  return `<div class="varga-aspect-table-wrap" id="${prefix}AspectTableWrap">
+    <div class="aspect-table-head">
+      <span class="section-sub" style="margin:0;">Full Aspects (Drishti) Table</span>
+      <button type="button" class="chart-dl-btn-single aspect-copy-btn" id="${prefix}CopyAspectTableBtn"><span>📋</span> Copy Table</button>
+    </div>
+    <div class="aspect-table-scroll">
+      <table class="varga-house-table aspect-table">
+        <thead><tr><th>Planet</th><th>Position</th><th>Nakshatra</th><th>Aspects Houses</th><th>Aspects Planets</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function aspectRowsToPlainText(aspectRows, vargaKey){
+  let out = `PLANETARY ASPECTS (DRISHTI) — ${vargaKey}\n`;

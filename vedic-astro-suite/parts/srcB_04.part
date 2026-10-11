@@ -1,45 +1,3 @@
-    SURYA: getSignIndex(chart.siderealLongitudes.Sun),
-    A2: arudhaPadas.A2, A3: arudhaPadas.A3, A4: arudhaPadas.A4, A5: arudhaPadas.A5,
-    A6: arudhaPadas.A6, A8: arudhaPadas.A8, A9: arudhaPadas.A9, A10: arudhaPadas.A10, A11: arudhaPadas.A11
-  };
-  return signs;
-}
-
-// Builds a full varga-shaped dataset (ascendantSign, houses, planetVargaSign)
-// for a chosen special lagna acting as the new Ascendant, for a given
-// divisional chart (D1..D60). Planets keep their own divisional placement;
-// only the reference point (Lagna) changes, exactly as classical Jyotish
-// treats these special points as alternate ascendants for house-counting.
-function buildVargaFromLagna(chart, lagnaSignIdx, vargaKey){
-  const planetVargaSign = {};
-  PLANET_LIST.forEach(name => {
-    planetVargaSign[name] = chart.vargas[vargaKey].planetVargaSign[name];
-  });
-  const houses = [];
-  for (let h=1; h<=12; h++){
-    const signIdx = (lagnaSignIdx + h - 1) % 12;
-    const sign = SIGNS[signIdx];
-    const planetsHere = PLANET_LIST.filter(name => planetVargaSign[name] === signIdx).map(name => ({
-      name, retrograde: chart.planets[name].retrograde,
-      dignity: vargaKey === "D1" ? chart.planets[name].dignity : getDignity(name, signIdx, 15)
-    }));
-    houses.push({
-      houseNum: h, sign: signIdx, signName: sign.name, signSanskrit: sign.sk,
-      signLord: sign.lord, signSymbol: sign.symbol, element: sign.element, modality: sign.modality,
-      planets: planetsHere, isEmpty: planetsHere.length === 0
-    });
-  }
-  const V0 = chart.vargas[vargaKey];
-  return { ascendantSign: lagnaSignIdx, houses, planetVargaSign, outerSign: V0.outerSign, outerRx: V0.outerRx };
-}
-
-// Plain-text render of one lagna's chart (for a chosen divisional chart) —
-// used by the "Copy Current Chart" button in the Lagnas tab.
-function lagnaChartToPlainText(chart, lagnaKey, vargaKey, vdata, aspectRows){
-  const lagnaMeta = SPECIAL_LAGNAS_META[lagnaKey];
-  const vargaMeta = VARGAS[vargaKey];
-  const ascSign = SIGNS[vdata.ascendantSign];
-  let out = `${lagnaMeta.name} (${lagnaMeta.sanskrit}) — ${vargaKey} ${vargaMeta.name}\n`;
   out += '='.repeat(60) + '\n';
   out += `${lagnaMeta.desc}\n`;
   out += `Ascendant (this Lagna): ${ascSign.name} (${ascSign.sk})\n\n`;
@@ -1749,3 +1707,66 @@ const SRCH_TOPICS = [
  {id:'father',ico:'👨',t:'Father & mentors',kw:'dad guru teacher blessings',h:[9],s:[10,3],k:['Sun','Jupiter'],ck:'',v:'D12',ar:['A9'],subs:[
   ['Bond with father','Give 8 specific, checkable facts about my relationship with my father: closeness/distance phases with ages, conflict style, how he shaped my career, health or support issues.'],
   ['Father\'s nature & work','Describe my father\'s likely nature and 5 likely professions.'],
+  ['Mentors & gurus','Describe the type of mentor/teacher who helps me and when they appear.']]},
+ {id:'mother',ico:'👩',t:'Mother & home life',kw:'mom family happiness domestic',h:[4],s:[10,9],k:['Moon'],ck:'Matrikaraka',v:'D12',ar:['A4'],subs:[
+  ['Bond with mother','Give 8 specific, checkable facts about my relationship with my mother: closeness/distance phases with ages, conflict style, her health or role at home, what I got or missed from her.'],
+  ['Home happiness','Give 8 specific, checkable facts about my home life (moves, property disputes, noise/peace, who dominates, mother\'s role) and 3 fixes.']]},
+ {id:'siblings',ico:'🧑‍🤝‍🧑',t:'Siblings & courage',kw:'brother sister effort initiative',h:[3],s:[11,1],k:['Mars'],ck:'Bhratrikaraka',v:'D3',ar:['A3'],subs:[
+  ['Siblings','Give 8 specific, checkable facts about my siblings situation (number tendency, birth order feel, age gaps, closeness, rivalry, who helps whom).'],
+  ['My courage & effort style','Give 8 specific, checkable ways I take initiative, handle risk, react to dares or competition, and where I hold back.']]},
+ {id:'property',ico:'🏠',t:'Property, home & vehicles',kw:'house land real estate car buy flat',h:[4],s:[2,11,12],k:['Mars','Venus','Saturn'],ck:'Matrikaraka',v:'D4',ar:['A4'],subs:[
+  ['Will I own property?','Give a direct verdict and the likely age/year range.'],
+  ['What suits me','Rank: house, flat, land, farm, commercial, vehicle, with a one-line reason each.'],
+  ['Where to buy','Describe the best type of location/direction and city style for me.'],
+  ['Best years to buy','List the best 3 years/windows to buy property or a vehicle.']]},
+ {id:'foreign',ico:'✈️',t:'Foreign travel & settlement',kw:'abroad visa immigration relocate overseas',h:[12,9],s:[3,7,4],k:['Rahu','Moon'],ck:'',v:'D1',ar:[],subs:[
+  ['Will I go abroad?','Give a direct verdict with a percentage and the type: study, work, settle, or travel.'],
+  ['10 best countries/regions','List 10 countries or regions ranked by fit for me.'],
+  ['Best years to go','List the best 3 years/windows to travel, move or study abroad.']]},
+ {id:'enemies',ico:'⚔️',t:'Rivals, debts & disputes',kw:'enemies litigation court competition loans conflict',h:[6],s:[8,12,3],k:['Mars','Saturn'],ck:'Gnatikaraka',v:'D1',ar:['A6'],subs:[
+  ['Types of rivals','Describe the kind of rivals/opponents I face in 6 bullets.'],
+  ['Debt & legal risk','Give a calm verdict on debt and legal-dispute risk and 5 ways to stay safe.'],
+  ['How I win','List 6 strategies that work best for me in conflicts.']]},
+ {id:'spiritual',ico:'🕉️',t:'Spirituality & moksha',kw:'meditation dharma purpose inner growth',h:[9,12],s:[5,8],k:['Ketu','Jupiter'],ck:'Atmakaraka',v:'D20',ar:[],subs:[
+  ['8 paths that suit me','List 8 spiritual paths/practices (bhakti, meditation, yoga, service, study...) ranked.'],
+  ['Traditional mantra / deity leaning','Name the traditional deities or mantras that match my chart (3-5) and a simple daily practice.'],
+  ['When spirituality deepens','List the best periods for spiritual growth.']]},
+ {id:'karma',ico:'🔮',t:'Karma & past life',kw:'karmic lessons rahu ketu dosha pitru kala sarpa mangal past life debt',h:[5,9,12,8],s:[1],k:['Rahu','Ketu','Saturn'],ck:'Atmakaraka',v:'D60',ar:[],subs:[
+  ['My karmic lessons','List my top 6 karmic lessons in this life in plain words, one line each.'],
+  ['Past-life gifts','List 8 talents or instincts that feel naturally mine (likely carried from the past).'],
+  ['Repeating patterns','List 5 relationship/life patterns that repeat for me and how to break each.'],
+  ['Doshas explained simply','Using DOSHA FACTS, say which doshas apply (Mangal, Kala Sarpa, Pitru, Shani), in plain words, with how serious each is and 3 traditional remedies.'],
+  ['Soul\'s mission','In 3 short lines, say my soul\'s mission and what to focus on.']]},
+ {id:'purpose',ico:'🧭',t:'Personality & life purpose',kw:'nature character soul atmakaraka self',h:[1],s:[5,9],k:['Sun','Moon'],ck:'Atmakaraka',v:'D9',ar:['AL'],subs:[
+  ['My top 10 strengths','Give 10 specific strengths shown as concrete behaviours that others have actually noticed in me, with the situation where each shows.'],
+  ['5 weaknesses & fixes','List 5 weaknesses as concrete recurring mistakes (with the typical situation where each happens), each with one practical fix.'],
+  ['Life purpose','State my life direction in 3 lines using specific themes from the data (no motivational clichés) and name 3 concrete fields or life areas where it plays out.'],
+  ['Traditional lucky aids','List my traditional lucky colour, day, number, direction and gem (for fun, traditional).']]},
+ {id:'friends',ico:'🤝',t:'Friends, networks & gains',kw:'social circle allies fulfilment desires',h:[11],s:[3,7,5],k:['Jupiter','Mercury'],ck:'',v:'D1',ar:['A11'],subs:[
+  ['My friend types','Give 8 specific traits of the friends I attract: age gap, profession types, how friendships start and end, who supports me and who lets me down.'],
+  ['Networking strengths','List how I gain from networks and 5 ways to use it.']]},
+ {id:'losses',ico:'📉',t:'Expenses, losses & sleep',kw:'spending waste hospital isolation bed',h:[12],s:[2,6,8],k:['Saturn','Ketu'],ck:'',v:'D1',ar:[],subs:[
+  ['Where money leaks','List my top 6 spending leaks and a fix each.'],
+  ['Sleep & rest','Describe my sleep pattern and 5 tips.'],
+  ['Hidden fears','List 5 hidden fears or blocks and how to ease them.']]},
+ {id:'talent',ico:'🎨',t:'Talent, creativity & arts',kw:'music art writing skill hobby entertainment',h:[5,3],s:[10,11],k:['Venus','Mercury','Moon'],ck:'Putrakaraka',v:'D9',ar:[],subs:[
+  ['15 creative fields','List 15 creative fields ranked by fit for me.'],
+  ['Natural talents','List 8 natural talents as concrete things I picked up fast without training, with the age or situation where it showed.'],
+  ['Hobbies that suit me','List 8 hobbies that recharge me.']]},
+ {id:'inherit',ico:'🏦',t:'Inheritance & hidden wealth',kw:'will insurance partner money legacy',h:[8,2],s:[11,7],k:['Saturn','Jupiter'],ck:'',v:'D1',ar:['A8'],subs:[
+  ['Inheritance outlook','Give a direct outlook on inheritance and family wealth.'],
+  ['Partner / insurance money','Describe money from partners, insurance or sudden sources in 5 bullets.']]},
+ {id:'thisyear',ico:'🗓️',t:'This year & next 12 months',kw:'forecast prediction timing dasha transit now upcoming',h:[1,10,7,2,11],s:[4,5,9],k:['Jupiter','Saturn'],ck:'',v:'D1',ar:[],subs:[
+  ['Month-by-month next 12 months','List the next 12 months, one line each: theme + one thing to do.'],
+  ['Best 3 & toughest 3 months','Name my best 3 and toughest 3 months in the next 12, with a short reason.'],
+  ['Do & avoid this year','Give 6 things to do and 6 things to avoid this year.']]}
+];
+SRCH_TOPICS.forEach(tp=>{ if (tp.id==='me') return;
+  tp.subs.unshift(['🪞 10 precise checks: '+tp.t, 'Give exactly 10 precise, self-verifiable statements about my '+tp.t.toLowerCase()+': specific behaviours, past events, situations, habits or age windows I can check against my own life. Nothing that fits most people. Each bullet: the statement, then 🔎 Because (exact combination), then a ✔/✖ test I can do.']);
+});
+function srchHouseLine(ch, L, h){
+  const pr = ch.planets, si = (L+h-1)%12, s = SIGNS[si], lp = pr[s.lord];
+  const occ = PLANET_LIST.filter(n=> pr[n] && pr[n].house===h);
+  const asp = PLANET_LIST.filter(n=> pr[n] && pr[n].house!==h && (pr[n].aspectsHouses||[]).indexOf(h)>-1);
+  return `H${h} ${s.name}: lord ${s.lord}${lp?` in H${lp.house} ${SIGNS[lp.sign].name}${srchDig(lp)}${lp.retrograde?' Retro':''}`:''}; occ ${occ.length?occ.join(','):'none'}; aspected by ${asp.length?asp.join(','):'none'}`;
+}
