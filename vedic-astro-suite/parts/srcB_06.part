@@ -1,3 +1,4 @@
+    ${moved.length ? `<div class="tr-sec"><h5>Shifted planets <span>whole-sign → Bhava Chalit</span></h5><div class="dx-list">${shiftRows}</div></div>` : ''}
     <div class="tr-sec"><h5>The 12 bhavas <span>tap a planet for details</span></h5><div class="bh-grid">${cards}</div></div>
     <div class="pn-note">Sripati method: the Lagna and Midheaven are the centres of houses 1 and 10; the arcs between them are divided into equal thirds to place the other centres; each house ends at the midpoint between neighbouring centres. Positions are sidereal (Lahiri).</div>
   </div>`;
@@ -1789,3 +1790,5 @@ function buildAspectsTableHtml(aspectRows, idPrefix){
       <td>${targetHtml}</td>
     </tr>`;
   });
+
+  return `<div class="varga-aspect-table-wrap" id="${prefix}AspectTableWrap">

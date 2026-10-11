@@ -1,12 +1,3 @@
-  const V0 = chart.vargas[vargaKey];
-  return { ascendantSign: lagnaSignIdx, houses, planetVargaSign, outerSign: V0.outerSign, outerRx: V0.outerRx };
-}
-
-// Plain-text render of one lagna's chart (for a chosen divisional chart) —
-// used by the "Copy Current Chart" button in the Lagnas tab.
-function lagnaChartToPlainText(chart, lagnaKey, vargaKey, vdata, aspectRows){
-  const lagnaMeta = SPECIAL_LAGNAS_META[lagnaKey];
-  const vargaMeta = VARGAS[vargaKey];
   const ascSign = SIGNS[vdata.ascendantSign];
   let out = `${lagnaMeta.name} (${lagnaMeta.sanskrit}) — ${vargaKey} ${vargaMeta.name}\n`;
   out += '='.repeat(60) + '\n';
@@ -1696,6 +1687,22 @@ const SRCH_TOPICS = [
   ['Money-focused remedies','Give 8 traditional remedies and 4 practical habits specifically to improve money flow in my chart.'],
   ['Love-focused remedies','Give 8 traditional remedies and 4 practical habits specifically for love, marriage and relationships in my chart.'],
   ['Remedies for the running period','Based on my current dasha and antardasha, list 6 targeted remedies and what to avoid until it ends.']]},
+ {id:'karma',ico:'♾️',t:'Karmic patterns',kw:'karma karmic past life rahu ketu nodes saturn lesson debt repeating pattern destiny dharma',h:[5,8,9,12],s:[1,6,10],k:['Rahu','Ketu','Saturn'],ck:'Atmakaraka',v:'D60',ar:[],subs:[
+  ['My Rahu–Ketu life lesson','Using the houses and signs of Rahu and Ketu, explain in 8 plain bullets: what I over-chase now (Rahu), what I already mastered and tend to abandon (Ketu), and the balance to find.'],
+  ['Top 8 repeating patterns','List the 8 life patterns that keep repeating for me (people, situations, endings), each tied to a placement and a checkable real-life example.'],
+  ['Soul purpose (Atmakaraka)','Based on my Atmakaraka planet and sign, describe my soul\'s core lesson, 6 gifts I carry and 4 traps.'],
+  ['Saturn: where life tests me','Using Saturn\'s house, sign and aspects, list 7 areas where I face delay or pressure, what it asks of me, and the reward when I do it.'],
+  ['Karmic debts I owe / are owed','Using the 6th, 8th, 12th houses and their lords, list 6 likely karmic debts (family, money, relationships, health, duty) and how to settle each.'],
+  ['Retrograde planets & unfinished work','List each retrograde planet in my chart and what unfinished past-life theme it points to, 1 line each.'],
+  ['Family & ancestral karma','Using the 4th, 9th, Sun, Moon and Saturn, list 6 ancestral or family patterns I may be carrying and healthy ways to break them.'],
+  ['Karmic turning points','List the 5 age windows where my karma shifts strongly (dasha or node transits), with what changes at each.'],
+  ['Breaking the cycle','Give 10 practical steps (habits, boundaries, service, remedies) to break my top repeating karmic patterns.']]},
+ {id:'karmarel',ico:'🪢',t:'Karmic relationships',kw:'karmic relationship soul contract twin flame toxic cycle attachment rahu ketu 7th 12th',h:[5,7,8,12],s:[4,11],k:['Rahu','Ketu','Venus','Saturn'],ck:'Darakaraka',v:'D9',ar:['UL'],subs:[
+  ['My karmic relationship type','Describe in 7 checkable bullets the type of karmic relationship I attract (teacher, mirror, rescuer, avoidant, controlling...) and why.'],
+  ['Signs a bond is karmic','List 8 clear signs a relationship is karmic for me versus healthy, so I can recognise it early.'],
+  ['Parents, siblings & friends karma','Using the 4th, 3rd, 9th and 11th, list 6 karmic lessons with parents, siblings, friends and mentors.'],
+  ['Teachers & mentors I meet','Say when and what kind of teachers or mentors appear in my life, with 4 age windows.'],
+  ['Cutting toxic cycles','Give 8 specific boundaries and habits to stop repeating toxic cycles, tied to my chart.']]},
  {id:'fame',ico:'🌟',t:'Fame, status & recognition',kw:'reputation name public image authority',h:[10,1],s:[11,5],k:['Sun','Moon'],ck:'Atmakaraka',v:'D10',ar:['AL','A10'],subs:[
   ['Will I become well known?','Give a direct verdict with a percentage and the fields where it is most likely.'],
   ['My public image','In 6 bullets: how people see me, and how to sharpen it.'],
@@ -1785,7 +1792,3 @@ const SRCH_TOPICS = [
  {id:'mother',ico:'👩',t:'Mother & home life',kw:'mom family happiness domestic',h:[4],s:[10,9],k:['Moon'],ck:'Matrikaraka',v:'D12',ar:['A4'],subs:[
   ['Bond with mother','Give 8 specific, checkable facts about my relationship with my mother: closeness/distance phases with ages, conflict style, her health or role at home, what I got or missed from her.'],
   ['Home happiness','Give 8 specific, checkable facts about my home life (moves, property disputes, noise/peace, who dominates, mother\'s role) and 3 fixes.']]},
- {id:'siblings',ico:'🧑‍🤝‍🧑',t:'Siblings & courage',kw:'brother sister effort initiative',h:[3],s:[11,1],k:['Mars'],ck:'Bhratrikaraka',v:'D3',ar:['A3'],subs:[
-  ['Siblings','Give 8 specific, checkable facts about my siblings situation (number tendency, birth order feel, age gaps, closeness, rivalry, who helps whom).'],
-  ['My courage & effort style','Give 8 specific, checkable ways I take initiative, handle risk, react to dares or competition, and where I hold back.']]},
- {id:'property',ico:'🏠',t:'Property, home & vehicles',kw:'house land real estate car buy flat',h:[4],s:[2,11,12],k:['Mars','Venus','Saturn'],ck:'Matrikaraka',v:'D4',ar:['A4'],subs:[

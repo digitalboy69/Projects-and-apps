@@ -1,9 +1,3 @@
-function heliocentricPos(elements, T){
-  const a=elements.a, e=elements.e, i=elements.i*DEG;
-  const L = normDeg(elements.L + elements.Lrate*T)*DEG;
-  const peri = normDeg(elements.peri + elements.periRate*T)*DEG;
-  const node = normDeg(elements.node + elements.nodeRate*T)*DEG;
-  const M = L - peri;
   const E = solveKepler(normDeg(M*RAD)*DEG, e);
   const xv = a*(Math.cos(E)-e);
   const yv = a*(Math.sqrt(1-e*e)*Math.sin(E));
@@ -1789,3 +1783,12 @@ function buildVargaFromLagna(chart, lagnaSignIdx, vargaKey){
       planets: planetsHere, isEmpty: planetsHere.length === 0
     });
   }
+  const V0 = chart.vargas[vargaKey];
+  return { ascendantSign: lagnaSignIdx, houses, planetVargaSign, outerSign: V0.outerSign, outerRx: V0.outerRx };
+}
+
+// Plain-text render of one lagna's chart (for a chosen divisional chart) —
+// used by the "Copy Current Chart" button in the Lagnas tab.
+function lagnaChartToPlainText(chart, lagnaKey, vargaKey, vdata, aspectRows){
+  const lagnaMeta = SPECIAL_LAGNAS_META[lagnaKey];
+  const vargaMeta = VARGAS[vargaKey];

@@ -1,3 +1,7 @@
+ {id:'siblings',ico:'🧑‍🤝‍🧑',t:'Siblings & courage',kw:'brother sister effort initiative',h:[3],s:[11,1],k:['Mars'],ck:'Bhratrikaraka',v:'D3',ar:['A3'],subs:[
+  ['Siblings','Give 8 specific, checkable facts about my siblings situation (number tendency, birth order feel, age gaps, closeness, rivalry, who helps whom).'],
+  ['My courage & effort style','Give 8 specific, checkable ways I take initiative, handle risk, react to dares or competition, and where I hold back.']]},
+ {id:'property',ico:'🏠',t:'Property, home & vehicles',kw:'house land real estate car buy flat',h:[4],s:[2,11,12],k:['Mars','Venus','Saturn'],ck:'Matrikaraka',v:'D4',ar:['A4'],subs:[
   ['Will I own property?','Give a direct verdict and the likely age/year range.'],
   ['What suits me','Rank: house, flat, land, farm, commercial, vehicle, with a one-line reason each.'],
   ['Where to buy','Describe the best type of location/direction and city style for me.'],
@@ -1788,4 +1792,3 @@ function buildBhavaPanel(chart, profile){
       <div class="tr-card" style="--pc:#5EC4B7"><small>Midheaven · Bhava 10 centre</small><b>${nvDeg(B.mc)}</b></div>
       <div class="tr-card ${moved.length ? 'on' : ''}" style="--pc:#E0A64A"><small>Planets changing house</small><b>${moved.length} of ${PLANET_LIST.length}</b><span>${moved.length ? moved.join(', ') : 'Chalit matches whole-sign'}</span></div>
     </div>
-    ${moved.length ? `<div class="tr-sec"><h5>Shifted planets <span>whole-sign → Bhava Chalit</span></h5><div class="dx-list">${shiftRows}</div></div>` : ''}
