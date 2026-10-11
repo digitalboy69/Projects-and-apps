@@ -1,33 +1,3 @@
-    [1,1,1,0,351],[3,0,-2,0,-340],[4,0,-3,0,330],[2,-1,2,0,327],
-    [0,2,1,0,-323],[1,1,-1,0,299],[2,0,3,0,294]
-  ];
-  for (const [d,m,mp,f,coef] of terms){
-    const arg = d*Dr + m*Mr + mp*Mpr + f*Fr;
-    sumL += coef * Math.sin(arg);
-  }
-  return normDeg(Lp + sumL/1000000);
-}
-
-const PLANET_ELEMENTS = {
-  mercury:{a:0.387098,e:0.205635,i:7.0047,L:252.2503,Lrate:149472.6746,peri:77.4561,periRate:0.1588,node:48.3308,nodeRate:-0.1254},
-  venus:{a:0.723330,e:0.006773,i:3.3946,L:181.9791,Lrate:58517.8156,peri:131.5637,periRate:0.0048,node:76.6799,nodeRate:-0.2780},
-  mars:{a:1.523688,e:0.093405,i:1.8497,L:355.4330,Lrate:19140.2993,peri:336.0602,periRate:0.4438,node:49.5581,nodeRate:-0.2910},
-  jupiter:{a:5.202561,e:0.048498,i:1.3033,L:34.3515,Lrate:3034.9057,peri:14.3312,periRate:0.2155,node:100.4644,nodeRate:0.1767},
-  saturn:{a:9.554747,e:0.055546,i:2.4886,L:50.0774,Lrate:1222.1138,peri:93.0572,periRate:0.5150,node:113.6634,nodeRate:-0.2566}
-};
-Object.assign(PLANET_ELEMENTS,{
-  uranus:{a:19.18797948,e:0.04685740,i:0.77298127,L:313.23810451,Lrate:428.48202785,peri:170.95427630,periRate:0.40805281,node:74.01692503,nodeRate:0.04240589},
-  neptune:{a:30.06952752,e:0.00895439,i:1.77005520,L:-55.12002969,Lrate:218.45945325,peri:44.96476227,periRate:-0.32241464,node:131.78422574,nodeRate:-0.00508664},
-  pluto:{a:39.48686035,e:0.24885238,i:17.14104260,L:238.96535011,Lrate:145.18042903,peri:224.09702598,periRate:-0.04062942,node:110.30167986,nodeRate:-0.01183482}
-});
-const EARTH_ELEMENTS = {a:1.000001,e:0.016709,i:0.0,L:100.4664,Lrate:35999.3729,peri:102.9373,periRate:0.3225,node:0,nodeRate:0};
-
-function solveKepler(M, e){
-  let E = M;
-  for (let i=0;i<50;i++){
-    const dE = (E - e*Math.sin(E) - M) / (1 - e*Math.cos(E));
-    E -= dE;
-    if (Math.abs(dE) < 1e-10) break;
   }
   return E;
 }
@@ -1699,3 +1669,50 @@ function calcBhavaLagnaSign(chart){
 
 // Vighati Lagna: the fourth and fastest member of the sunrise-anchored
 // family (Bhava: 5 ghati/rashi, Hora: 2.5 ghati/rashi, Ghati: 1 ghati/rashi),
+// completing the same "1 rashi per unit" pattern one level finer — 1 full
+// sign (30°) per Vighati (24 seconds) elapsed since the most recent sunrise.
+// This makes it extremely time-sensitive, useful chiefly for disambiguating
+// near-simultaneous births (classically invoked before resorting to D-60).
+function calcVighatiLagnaLongitude(chart){
+  let elapsedDays = chart.julianDay - chart.sunriseJD;
+  if (elapsedDays < 0) elapsedDays += 1;
+  const elapsedVighatis = elapsedDays * 3600; // 1 day = 3600 vighatis
+  const degreesTravelled = elapsedVighatis * 30; // 1 rashi (30°) per vighati
+  return normDeg(lastSunriseInfo(chart).sun + degreesTravelled);
+}
+function calcVighatiLagnaSign(chart){
+  return getSignIndex(calcVighatiLagnaLongitude(chart));
+}
+
+// Bhrigu Bindu (Rahu-Moon midpoint / "destiny point"): the point exactly
+// midway between the Moon and Rahu along the SHORTER arc between them.
+function calcBhriguBinduLongitude(chart){
+  const moonLon = chart.siderealLongitudes.Moon;
+  const rahuLon = chart.siderealLongitudes.Rahu;
+  const gap = normDeg(rahuLon - moonLon); // 0-360, moving from Moon to Rahu
+  let midpoint = normDeg((moonLon + rahuLon) / 2);
+  if (gap > 180) midpoint = normDeg(midpoint + 180); // flip to the shorter arc
+  return midpoint;
+}
+function calcBhriguBinduSign(chart){
+  return getSignIndex(calcBhriguBinduLongitude(chart));
+}
+
+// Paka Lagna ("ripening" ascendant): simply the sign occupied by the Lagna
+// Lord (the ruler of the natal Ascendant) — shows what a person actually
+// gravitates toward, versus the raw potential shown by the Lagna itself.
+function calcPakaLagnaSign(chart, ascSignIdx){
+  const lagnaLord = SIGNS[ascSignIdx].lord;
+  return chart.planets[lagnaLord].sign;
+}
+
+const SPECIAL_LAGNAS_META = {
+  UL_LAGNA:   { key:"UL_LAGNA",   name:"Udaya Lagna",        sanskrit:"Lagna / Ascendant",  group:"core",   desc:"The Ascendant itself — physical body, personality, overall life direction." },
+  AL:         { key:"AL",         name:"Arudha Lagna",       sanskrit:"AL / Pada Lagna",    group:"arudha", desc: ARUDHA_HOUSE_META.AL.desc },
+  KL:         { key:"KL",         name:"Karakamsha Lagna",   sanskrit:"KL",                 group:"karaka", desc:"The Navamsa sign of the Atmakaraka — soul purpose and spiritual identity." },
+  UL:         { key:"UL",         name:"Upapada Lagna",      sanskrit:"UL / Gauna Pada / A7",group:"arudha",desc: ARUDHA_HOUSE_META.UL.desc },
+  HL:         { key:"HL",         name:"Hora Lagna",         sanskrit:"HL",                 group:"kala",   desc:"Wealth and resource flow, based on elapsed time since sunrise." },
+  GL:         { key:"GL",         name:"Ghati Lagna",        sanskrit:"GL",                 group:"kala",   desc:"Fame, honors, and government favor, based on elapsed time since sunrise." },
+  BL:         { key:"BL",         name:"Bhava Lagna",        sanskrit:"BL",                 group:"kala",   desc:"General nature, mentality, and physical/mental constitution — the slowest of the sunrise-anchored lagnas." },
+  VGL:        { key:"VGL",        name:"Vighati Lagna",      sanskrit:"VGL / Pal Lagna",    group:"kala",   desc:"An extremely fine-grained timing point, classically used to distinguish near-simultaneous births (e.g. twins)." },
+  VL:         { key:"VL",         name:"Varnada Lagna",      sanskrit:"VL",                 group:"kala",   desc:"Social standing, class, and reputation." },

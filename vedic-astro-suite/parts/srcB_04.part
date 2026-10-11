@@ -1,50 +1,3 @@
-// completing the same "1 rashi per unit" pattern one level finer — 1 full
-// sign (30°) per Vighati (24 seconds) elapsed since the most recent sunrise.
-// This makes it extremely time-sensitive, useful chiefly for disambiguating
-// near-simultaneous births (classically invoked before resorting to D-60).
-function calcVighatiLagnaLongitude(chart){
-  let elapsedDays = chart.julianDay - chart.sunriseJD;
-  if (elapsedDays < 0) elapsedDays += 1;
-  const elapsedVighatis = elapsedDays * 3600; // 1 day = 3600 vighatis
-  const degreesTravelled = elapsedVighatis * 30; // 1 rashi (30°) per vighati
-  return normDeg(lastSunriseInfo(chart).sun + degreesTravelled);
-}
-function calcVighatiLagnaSign(chart){
-  return getSignIndex(calcVighatiLagnaLongitude(chart));
-}
-
-// Bhrigu Bindu (Rahu-Moon midpoint / "destiny point"): the point exactly
-// midway between the Moon and Rahu along the SHORTER arc between them.
-function calcBhriguBinduLongitude(chart){
-  const moonLon = chart.siderealLongitudes.Moon;
-  const rahuLon = chart.siderealLongitudes.Rahu;
-  const gap = normDeg(rahuLon - moonLon); // 0-360, moving from Moon to Rahu
-  let midpoint = normDeg((moonLon + rahuLon) / 2);
-  if (gap > 180) midpoint = normDeg(midpoint + 180); // flip to the shorter arc
-  return midpoint;
-}
-function calcBhriguBinduSign(chart){
-  return getSignIndex(calcBhriguBinduLongitude(chart));
-}
-
-// Paka Lagna ("ripening" ascendant): simply the sign occupied by the Lagna
-// Lord (the ruler of the natal Ascendant) — shows what a person actually
-// gravitates toward, versus the raw potential shown by the Lagna itself.
-function calcPakaLagnaSign(chart, ascSignIdx){
-  const lagnaLord = SIGNS[ascSignIdx].lord;
-  return chart.planets[lagnaLord].sign;
-}
-
-const SPECIAL_LAGNAS_META = {
-  UL_LAGNA:   { key:"UL_LAGNA",   name:"Udaya Lagna",        sanskrit:"Lagna / Ascendant",  group:"core",   desc:"The Ascendant itself — physical body, personality, overall life direction." },
-  AL:         { key:"AL",         name:"Arudha Lagna",       sanskrit:"AL / Pada Lagna",    group:"arudha", desc: ARUDHA_HOUSE_META.AL.desc },
-  KL:         { key:"KL",         name:"Karakamsha Lagna",   sanskrit:"KL",                 group:"karaka", desc:"The Navamsa sign of the Atmakaraka — soul purpose and spiritual identity." },
-  UL:         { key:"UL",         name:"Upapada Lagna",      sanskrit:"UL / Gauna Pada / A7",group:"arudha",desc: ARUDHA_HOUSE_META.UL.desc },
-  HL:         { key:"HL",         name:"Hora Lagna",         sanskrit:"HL",                 group:"kala",   desc:"Wealth and resource flow, based on elapsed time since sunrise." },
-  GL:         { key:"GL",         name:"Ghati Lagna",        sanskrit:"GL",                 group:"kala",   desc:"Fame, honors, and government favor, based on elapsed time since sunrise." },
-  BL:         { key:"BL",         name:"Bhava Lagna",        sanskrit:"BL",                 group:"kala",   desc:"General nature, mentality, and physical/mental constitution — the slowest of the sunrise-anchored lagnas." },
-  VGL:        { key:"VGL",        name:"Vighati Lagna",      sanskrit:"VGL / Pal Lagna",    group:"kala",   desc:"An extremely fine-grained timing point, classically used to distinguish near-simultaneous births (e.g. twins)." },
-  VL:         { key:"VL",         name:"Varnada Lagna",      sanskrit:"VL",                 group:"kala",   desc:"Social standing, class, and reputation." },
   INDU:       { key:"INDU",       name:"Indu Lagna",         sanskrit:"Indu Lagna",         group:"karaka", desc:"Financial prosperity and accumulated wealth (a special money-point)." },
   SL:         { key:"SL",         name:"Shree Lagna",        sanskrit:"SL",                 group:"karaka", desc:"General auspiciousness, prosperity, and good fortune." },
   PRANAPADA:  { key:"PRANAPADA",  name:"Pranapada Lagna",    sanskrit:"Pranapada",          group:"kala",   desc:"Vitality, life-force, and how one meets fated events." },
@@ -1649,7 +1602,8 @@ function srchBuild(){
       });
     } catch(e){}
   }
-  if (ch) SRCH_TOPICS.forEach((tp,i)=>{ const x = {k:'ask',ico:tp.ico,t:'Ask AI: '+tp.t,s:tp.q,kw:'ask ai '+tp.t+' '+tp.kw+' about my chart google ai mode',go:null,q:tp.t,tp}; I.push(x); });
+  if (ch) SRCH_TOPICS.forEach((tp,i)=>{ I.push({k:'topic',ico:tp.ico,t:'Ask AI: '+tp.t+' ›',s:tp.subs.map(x=>x[0]).join(' · '),kw:'ask ai '+tp.t+' '+tp.kw+' about my chart google ai mode',go:null,q:tp.t,tp,ti:i});
+    tp.subs.forEach(sb=> I.push({k:'ask',ico:tp.ico,t:tp.t+' › '+sb[0],s:sb[1],kw:'ask ai '+tp.kw+' '+sb[0],go:null,q:tp.t,tp,sub:sb})); });
   SIGNS.forEach((s,i)=> add('term',s.symbol,`${s.name} (${s.sk})`,`${s.element} · ${s.modality} · ruled by ${s.lord}`,`sign rashi ${s.name} ${s.sk} ${s.element} ${s.modality} ${s.lord}`,null,`${s.name} rashi ${s.sk} meaning`));
   NAKSHATRAS.forEach((n,i)=> add('term','🌟',`${n.name} nakshatra`,`#${i+1} · lord ${n.lord} · deity ${n.deity}`,`nakshatra star ${n.name} ${n.lord} ${n.deity}`,null,`${n.name} nakshatra characteristics`));
   Object.keys(SRCH_PLANET).forEach(n=> add('term','📖',`${n} — what it signifies`,SRCH_PLANET[n],`graha planet meaning karaka ${n} ${SRCH_PLANET[n]}`,null,`${n} in vedic astrology significations`));
@@ -1657,7 +1611,7 @@ function srchBuild(){
 }
 function srchRank(q){
   const items = srchBuild(), toks = q.toLowerCase().split(/\s+/).filter(Boolean);
-  const W = { page:2, ask:3.2, planet:3, house:3, chart:3, dasha:3.5, yoga:2.5, term:1 };
+  const W = { page:2, ask:3.2, topic:3.4, planet:3, house:3, chart:3, dasha:3.5, yoga:2.5, term:1 };
   const out = [];
   items.forEach(it=>{
     const hay = (it.t+' '+it.kw+' '+it.s).toLowerCase(), tl = it.t.toLowerCase(); let sc = 0, ok = true;
@@ -1693,9 +1647,72 @@ function srchOpen(prefill){
       else if (e.key==='Escape'){ srchClose(); }
     });
     ov.querySelector('#srchList').addEventListener('click', e=>{
-      const g = e.target.closest('[data-g]'); if (g){ const rr = srchRows[+g.dataset.g]; srchRemember(inp.value); if (rr.k==='ask') srchAsk(rr.tp, true); else srchGoogle(rr.q, false); return; }
+      const g = e.target.closest('[data-g]'); if (g){ const rr = srchRows[+g.dataset.g]; srchRemember(inp.value); if (rr.k==='ask') srchAsk(rr.tp, rr.sub, true); else srchGoogle(rr.q, false); return; }
       const r = e.target.closest('[data-i]'); if (r) srchAct(+r.dataset.i);
-      const a = e.target.closest('[data-ask]'); if (a){ srchAsk(SRCH_TOPICS[+a.dataset.ask], e.shiftKey || e.ctrlKey || e.metaKey); return; }
+      if (e.target.closest('[data-back]')){ srchRender(inp.value); return; }
+      const a = e.target.closest('[data-ask]'); if (a){ srchTopicBox(+a.dataset.ask); return; }
       const c = e.target.closest('[data-chip]'); if (c){ inp.value = c.dataset.chip; srchRender(inp.value); inp.focus(); }
     });
     ov.querySelector('#srchClick').addEventListener('click', ()=>{ const t = document.getElementById('qsearchToggle'); if (t) t.click(); srchClickState(); });
+  }
+  ov.classList.add('show'); document.body.classList.add('srch-lock');
+  const inp = ov.querySelector('#srchIn'); inp.value = prefill || ''; srchRender(inp.value); srchClickState(); setTimeout(()=> inp.focus(), 30);
+}
+function srchClickState(){ const s = document.getElementById('srchClickState'); if (s) s.textContent = (typeof qsearchActive!=='undefined' && qsearchActive) ? 'ON' : 'off'; const b = document.getElementById('srchClick'); if (b) b.classList.toggle('on', typeof qsearchActive!=='undefined' && qsearchActive); }
+function srchClose(){ const ov = document.getElementById('srchOv'); if (ov) ov.classList.remove('show'); document.body.classList.remove('srch-lock'); }
+function srchMove(d){
+  if (!srchRows.length) return; srchSel = (srchSel + d + srchRows.length) % srchRows.length;
+  const list = document.getElementById('srchList');
+  list.querySelectorAll('.srch-row').forEach((r,i)=> r.classList.toggle('sel', i===srchSel));
+  const el = list.querySelector('.srch-row.sel'); if (el) el.scrollIntoView({ block:'nearest' });
+}
+function srchAct(i, google){
+  const r = srchRows[i]; if (!r) return; const q = document.getElementById('srchIn').value;
+  if (r.k==='topic'){ srchTopicBox(r.ti); return; }
+  if (r.k==='ask'){ srchRemember(q || r.t); srchAsk(r.tp, r.sub, !!google); return; }
+  if (r.k==='google' || r.k==='ai'){ srchRemember(q); srchGoogle(q, r.k==='ai'); return; }
+  srchRemember(q || r.t);
+  if (google || !r.go){ srchGoogle(r.q, false); if (r.go) {} return; }
+  srchClose(); switchAppTab(r.go);
+}
+function srchRender(q){
+  const list = document.getElementById('srchList'); if (!list) return;
+  q = (q||'').trim(); let html = '';
+  if (!q){
+    const hasChart = typeof currentChartForModal !== 'undefined' && currentChartForModal;
+    const rec = srchRecent();
+    srchRows = srchBuild().filter(x=> x.k==='dasha').concat(HOME_ITEMS.slice(0,0).map(()=>null)).filter(Boolean);
+    ['panel-rectification','panel-dasha','panel-transit','panel-vargas','panel-yogas','panel-reading'].forEach(id=>{
+      const it = HOME_ITEMS.find(h=>h[0]===id); if (it) srchRows.push({k:'page',ico:it[1],t:it[2],s:it[3],go:id,q:it[2]});
+    });
+    if (hasChart){ html += `<div class="srch-h">✨ Ask AI about your chart <span class="srch-sub">pick an area, then a question</span></div><div class="srch-topics">${SRCH_TOPICS.map((tp,i)=>`<button type="button" data-ask="${i}">${tp.ico} ${tp.t}</button>`).join('')}</div>`; }
+    html += `<div class="srch-h">${hasChart?'Right now & popular':'Popular tools'}</div>`;
+    if (rec.length) html = `<div class="srch-h">Recent</div><div class="srch-chips">${rec.map(r=>`<button type="button" data-chip="${rsEsc(r)}">${rsEsc(r)}</button>`).join('')}</div>` + html;
+    html += srchRows.map((r,i)=> srchRowHTML(r,i)).join('');
+    html += `<div class="srch-tip">Try: <button data-chip="mars">mars</button> <button data-chip="7th house">7th house</button> <button data-chip="dasha">dasha</button> <button data-chip="rectify">rectify</button> <button data-chip="rohini">rohini</button> <button data-chip="gaja">gaja kesari</button></div>`;
+  } else {
+    srchRows = srchRank(q);
+    html += srchRows.length ? '' : `<div class="srch-none">No match inside the app for “${rsEsc(q)}”. Try Google below 👇</div>`;
+    html += srchRows.map((r,i)=> srchRowHTML(r,i)).join('');
+    const base = srchRows.length;
+    srchRows.push({k:'google',ico:'🌐',t:`Google “${q}”`,s:'Search the web with “vedic astrology” added',q}); html += srchRowHTML(srchRows[base], base);
+    srchRows.push({k:'ai',ico:'🤖',t:`Ask Google AI about “${q}”`,s:'AI answer with sources',q}); html += srchRowHTML(srchRows[base+1], base+1);
+  }
+  srchSel = 0; list.innerHTML = html;
+  const first = list.querySelector('.srch-row'); if (first) first.classList.add('sel');
+}
+function srchRowHTML(r,i){
+  const tag = { page:'Open', planet:'Your chart', house:'Your chart', chart:'Your chart', dasha:'Your chart', yoga:'Your chart', term:'Learn', ask:'Ask AI', topic:'Ask AI ›', google:'Web', ai:'Web' }[r.k] || '';
+  return `<div class="srch-row ${i===0?'sel':''}" data-i="${i}" data-k="${r.k}"><span class="srch-ico">${r.ico}</span><div class="srch-txt"><b>${rsEsc(r.t)}</b><small>${rsEsc((r.s||'').slice(0,150))}</small></div><span class="srch-tag">${tag}</span>${r.k!=='google'&&r.k!=='ai'?`<button type="button" class="srch-g" data-g="${i}" title="${r.k==='ask'?'Copy the full brief':'Google this'}">${r.k==='ask'?'📋':'🌐'}</button>`:''}</div>`;
+}
+document.addEventListener('keydown', e=>{
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test((e.target||{}).tagName) || (e.target && e.target.isContentEditable);
+  if ((e.key==='k' || e.key==='K') && (e.ctrlKey || e.metaKey)){ e.preventDefault(); srchOpen(); }
+  else if (e.key==='/' && !typing && document.getElementById('appTabbar') && document.getElementById('appTabbar').classList.contains('show')){ e.preventDefault(); srchOpen(); }
+  else if (e.key==='Escape') srchClose();
+});
+document.addEventListener('click', e=>{
+  if (e.target.closest && e.target.closest('#quickSearchBtn')){ e.preventDefault(); e.stopImmediatePropagation(); srchOpen(); }
+}, true);
+
+/* ---------- Ask-AI: topic → small box of focused questions → Google AI mode ---------- */

@@ -1699,3 +1699,20 @@ body.app-mode .header-actions .btn{padding:8px 12px!important;min-width:40px;jus
 body.app-mode.on-sub #hdrBack{display:block}
 body.app-mode.on-sub .brand-glyph{display:none}
 body.app-mode main.wrap{padding-left:14px;padding-right:14px}
+@media (min-width:881px){body.app-mode .app-tabbar{top:50px;margin-bottom:24px}}
+/* ---- Dasha redesign ---- */
+.dx{max-width:1000px;margin:0 auto}
+.dx-intro{color:var(--text-muted);font-size:14px;line-height:1.6;margin:0 0 18px}
+.dx-intro b{color:var(--gold-bright)}
+.dx-now{background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.01));border:1px solid var(--border-light);border-top:3px solid var(--pc,var(--gold));border-radius:18px;padding:20px;margin-bottom:26px}
+.dx-now-top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.dx-bigglyph{font-size:34px;line-height:1;width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);color:var(--pc,var(--gold-bright));flex:none}
+.dx-eyebrow{font:600 11px var(--font-sans);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim,var(--gold))}
+.dx-now h4,.dx-dtitle h4{margin:2px 0;font:500 21px var(--font-display);color:var(--text-main)}
+.dx-now small,.dx-dtitle small{color:var(--text-muted);font-size:13px}
+.dx-bar{height:4px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin-top:8px}
+.dx-bar i{display:block;height:100%;border-radius:4px}
+.dx-bar.big{height:8px;margin-top:0}
+.dx-bar-lbl{display:flex;justify-content:space-between;font:11px var(--font-mono);color:var(--text-subtle);margin:6px 0 16px}
+.dx-ladder{display:grid;gap:6px}
+.dx-step{display:grid;grid-template-columns:92px 1fr auto;gap:10px;align-items:center;padding:8px 12px;background:rgba(0,0,0,.2);border-radius:10px;font-size:13px}

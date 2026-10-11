@@ -1,3 +1,21 @@
+    Sun: sunLongitude(jd), Moon: moonLongitude(jd),
+    Mercury: planetGeocentricLongitude("mercury",jd), Venus: planetGeocentricLongitude("venus",jd),
+    Mars: planetGeocentricLongitude("mars",jd), Jupiter: planetGeocentricLongitude("jupiter",jd),
+    Saturn: planetGeocentricLongitude("saturn",jd)
+  };
+  const rahuTropical = rahuLongitude(jd);
+  const transitSidereal = {};
+  for (const p in tropical) transitSidereal[p] = normDeg(tropical[p]-ayanamsa);
+  transitSidereal.Rahu = normDeg(rahuTropical-ayanamsa);
+  transitSidereal.Ketu = normDeg(transitSidereal.Rahu+180);
+  const transitRetro = {
+    Mercury:isRetrograde("mercury",jd), Venus:isRetrograde("venus",jd), Mars:isRetrograde("mars",jd),
+    Jupiter:isRetrograde("jupiter",jd), Saturn:isRetrograde("saturn",jd),
+    Sun:false, Moon:false, Rahu:true, Ketu:true
+  };
+
+  const planets = {};
+  PLANET_LIST.forEach(name=>{
     const lonT = transitSidereal[name];
     const signIdx = getSignIndex(lonT);
     const degInSign = getDegInSign(lonT);
