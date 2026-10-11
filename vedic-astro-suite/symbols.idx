@@ -196,7 +196,7 @@ CONTRIBUTION_TABLE	const	parts/srcB_03.part:808	srcB
 CONTRIBUTORS	const	parts/srcB_03.part:818	srcB
 copy	fn	parts/srcB_02.part:1623	srcB
 copyDevNumber	fn	parts/srcB_02.part:1568	srcB
-copyDevNumber	fn	parts/srcDev.html:142	srcDev
+copyDevNumber	fn	parts/srcDev.html:148	srcDev
 copyText	fn	parts/srcA.html:5447	srcA
 copyText	fn	parts/srcB_07.part:1169	srcB
 copyText	fn	parts/export_addon.js:72	export_addon

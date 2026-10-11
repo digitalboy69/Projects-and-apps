@@ -116,7 +116,7 @@ _Generated 2026-10-11 - 1032 symbols in `symbols.idx`._
 | srcA | 6025 | 369 | srcA.html |
 | srcB | 12253 | 898 | srcB_01.part, srcB_02.part, srcB_03.part, srcB_04.part, srcB_05.part, srcB_06.part, srcB_07.part |
 | srcN | 530 | 93 | srcN.html |
-| srcDev | 151 | 12 | srcDev.html |
+| srcDev | 157 | 12 | srcDev.html |
 | locpicker | 202 | 34 | locpicker.js |
 | export_addon | 647 | 47 | export_addon.js |
 

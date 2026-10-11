@@ -108,7 +108,13 @@ html,body{height:100%;background:transparent;font-family:var(--font-sans);color:
 .dc-copy:hover { background: rgba(212,175,55,.1); } .dc-copy.ok { color: var(--teal-bright); border-color: var(--teal-bright); }
 .dc-foot { margin-top: 16px; font-size: 11.5px; letter-spacing: .08em; color: var(--text-muted); }
 @media (max-width: 480px) { .contact-modal-box.dev-card { padding: 30px 16px 18px; } .dc-name { font-size: 24px; } .dc-topics a { font-size: 11.5px; } }
-.pd-modal-close{top:16px!important;right:16px!important;z-index:2;cursor:pointer;font-size:14px}</style></head><body>
+.pd-modal-close{top:16px!important;right:16px!important;z-index:2;cursor:pointer;font-size:14px}/* polish: soft glow, smooth hover, focus rings, reduced motion */
+a,button{transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+a:hover,button:hover{transform:translateY(-2px);filter:brightness(1.1)}
+a:focus-visible,button:focus-visible{outline:2px solid #D4AF37;outline-offset:3px}
+body{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
 <div class="modal-overlay show" id="contactModal">
   <div class="contact-modal-box dev-card">
     <button type="button" class="pd-modal-close" id="contactModalClose">✕</button>
