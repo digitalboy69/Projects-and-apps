@@ -199,7 +199,7 @@ CONTRIBUTION_TABLE	const	parts/srcB_03.part:835	srcB
 CONTRIBUTORS	const	parts/srcB_03.part:845	srcB
 copy	fn	parts/srcB_02.part:1681	srcB
 copyDevNumber	fn	parts/srcB_02.part:1626	srcB
-copyDevNumber	fn	parts/srcDev.html:173	srcDev
+copyDevNumber	fn	parts/srcDev.html:171	srcDev
 copyText	fn	parts/srcA.html:5447	srcA
 copyText	fn	parts/srcB_07.part:1073	srcB
 copyText	fn	parts/export_addon.js:72	export_addon
@@ -509,6 +509,7 @@ loadNatalProfiles	fn	parts/srcA.html:3436	srcA
 loadProfileIntoForm	fn	parts/srcB_05.part:378	srcB
 loadProfiles	fn	parts/srcB_04.part:185	srcB
 lockNow	fn	parts/srcN.html:406	srcN
+loop	fn	parts/srcDev.html:184	srcDev
 makeSphere	fn	parts/srcA.html:2380	srcA
 MALE_PLANETS	const	parts/srcB_03.part:1042	srcB
 Map2	fn	parts/locpicker.js:31	locpicker
