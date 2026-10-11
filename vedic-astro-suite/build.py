@@ -19,3 +19,4 @@ old=pl[pl.index('const decode = id =>'):];old=old[:old.index('};')+2]
 pl=pl.replace(old,"const decode = id => document.getElementById(id).textContent.replace(/<\\\\\\/script/gi,'</script').replace(/<\\\\!--/g,'<!--').replace(/^\\n/,'');")
 open('vedic-astro-suite-readable.html','w',encoding='utf-8').write(pl);print('built')
 gen_guide()
+exec(open('protect.py',encoding='utf-8').read()); run()

@@ -4,7 +4,7 @@
 import os, sys, json
 from playwright.sync_api import sync_playwright
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-PAGE = 'file://' + os.path.join(ROOT, 'vedic-astro-suite-readable.html')
+PAGE = os.environ.get('PAGE') or ('file://' + os.path.join(ROOT, 'vedic-astro-suite-readable.html'))
 THREE = open(os.environ['THREE_JS'], 'rb').read() if os.environ.get('THREE_JS') else None
 def route(r):
     u = r.request.url
