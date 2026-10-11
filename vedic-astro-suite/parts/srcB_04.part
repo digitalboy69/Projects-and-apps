@@ -1,3 +1,24 @@
+    const signIdx = (lagnaSignIdx + h - 1) % 12;
+    const sign = SIGNS[signIdx];
+    const planetsHere = PLANET_LIST.filter(name => planetVargaSign[name] === signIdx).map(name => ({
+      name, retrograde: chart.planets[name].retrograde,
+      dignity: vargaKey === "D1" ? chart.planets[name].dignity : getDignity(name, signIdx, 15)
+    }));
+    houses.push({
+      houseNum: h, sign: signIdx, signName: sign.name, signSanskrit: sign.sk,
+      signLord: sign.lord, signSymbol: sign.symbol, element: sign.element, modality: sign.modality,
+      planets: planetsHere, isEmpty: planetsHere.length === 0
+    });
+  }
+  const V0 = chart.vargas[vargaKey];
+  return { ascendantSign: lagnaSignIdx, houses, planetVargaSign, outerSign: V0.outerSign, outerRx: V0.outerRx };
+}
+
+// Plain-text render of one lagna's chart (for a chosen divisional chart) —
+// used by the "Copy Current Chart" button in the Lagnas tab.
+function lagnaChartToPlainText(chart, lagnaKey, vargaKey, vdata, aspectRows){
+  const lagnaMeta = SPECIAL_LAGNAS_META[lagnaKey];
+  const vargaMeta = VARGAS[vargaKey];
   const ascSign = SIGNS[vdata.ascendantSign];
   let out = `${lagnaMeta.name} (${lagnaMeta.sanskrit}) — ${vargaKey} ${vargaMeta.name}\n`;
   out += '='.repeat(60) + '\n';
@@ -1547,14 +1568,16 @@ function srchOpen(prefill){
   if (!ov){
     ov = document.createElement('div'); ov.id = 'srchOv'; ov.className = 'srch-ov';
     ov.innerHTML = `<div class="srch-box" role="dialog" aria-label="Search">
-      <div class="srch-top"><span>🔍</span><input id="srchIn" type="search" autocomplete="off" spellcheck="false" placeholder="Search tools, planets, houses, yogas, meanings…"><kbd>Esc</kbd></div>
+      <div class="srch-handle"></div><div class="srch-top"><span class="srch-mag">🔍</span><input id="srchIn" type="search" autocomplete="off" spellcheck="false" placeholder="Search tools, planets, houses, yogas, meanings…"><button type="button" class="srch-clr" id="srchClr" aria-label="Clear" hidden>✕</button><kbd>Esc</kbd><button type="button" class="srch-x" id="srchX" aria-label="Close">Done</button></div>
       <div class="srch-list" id="srchList"></div>
       <div class="srch-foot"><span>↑↓ move · Enter open · 🌐 Google it</span>
         <button type="button" class="srch-click" id="srchClick" title="When on, click anything in a chart to Google it">🖱️ Click-to-Google <b id="srchClickState">off</b></button></div></div>`;
     document.body.appendChild(ov);
     ov.addEventListener('mousedown', e=>{ if (e.target===ov) srchClose(); });
     const inp = ov.querySelector('#srchIn');
-    inp.addEventListener('input', ()=> srchRender(inp.value));
+    inp.addEventListener('input', ()=>{ srchRender(inp.value); document.getElementById('srchClr').hidden = !inp.value; });
+    ov.querySelector('#srchClr').addEventListener('click', ()=>{ inp.value=''; document.getElementById('srchClr').hidden=true; srchRender(''); inp.focus(); });
+    ov.querySelector('#srchX').addEventListener('click', srchClose);
     inp.addEventListener('keydown', e=>{
       if (e.key==='ArrowDown'){ e.preventDefault(); srchMove(1); }
       else if (e.key==='ArrowUp'){ e.preventDefault(); srchMove(-1); }
@@ -1571,7 +1594,7 @@ function srchOpen(prefill){
     ov.querySelector('#srchClick').addEventListener('click', ()=>{ const t = document.getElementById('qsearchToggle'); if (t) t.click(); srchClickState(); });
   }
   ov.classList.add('show'); document.body.classList.add('srch-lock');
-  const inp = ov.querySelector('#srchIn'); inp.value = prefill || ''; srchRender(inp.value); srchClickState(); setTimeout(()=> inp.focus(), 30);
+  const inp = ov.querySelector('#srchIn'); inp.value = prefill || ''; document.getElementById('srchClr').hidden = !inp.value; srchRender(inp.value); srchClickState(); setTimeout(()=> inp.focus(), 30);
 }
 function srchClickState(){ const s = document.getElementById('srchClickState'); if (s) s.textContent = (typeof qsearchActive!=='undefined' && qsearchActive) ? 'ON' : 'off'; const b = document.getElementById('srchClick'); if (b) b.classList.toggle('on', typeof qsearchActive!=='undefined' && qsearchActive); }
 function srchClose(){ const ov = document.getElementById('srchOv'); if (ov) ov.classList.remove('show'); document.body.classList.remove('srch-lock'); }
@@ -1600,7 +1623,7 @@ function srchRender(q){
     ['panel-rectification','panel-dasha','panel-transit','panel-vargas','panel-yogas','panel-reading'].forEach(id=>{
       const it = HOME_ITEMS.find(h=>h[0]===id); if (it) srchRows.push({k:'page',ico:it[1],t:it[2],s:it[3],go:id,q:it[2]});
     });
-    if (hasChart){ html += `<div class="srch-h">✨ Ask AI about your chart <span class="srch-sub">pick an area, then a question</span></div><div class="srch-topics">${SRCH_TOPICS.map((tp,i)=>`<button type="button" data-ask="${i}">${tp.ico} ${tp.t}</button>`).join('')}</div>`; }
+    if (hasChart){ html += srchGroupsHTML(); }
     html += `<div class="srch-h">${hasChart?'Right now & popular':'Popular tools'}</div>`;
     if (rec.length) html = `<div class="srch-h">Recent</div><div class="srch-chips">${rec.map(r=>`<button type="button" data-chip="${rsEsc(r)}">${rsEsc(r)}</button>`).join('')}</div>` + html;
     html += srchRows.map((r,i)=> srchRowHTML(r,i)).join('');
@@ -1613,8 +1636,27 @@ function srchRender(q){
     srchRows.push({k:'google',ico:'🌐',t:`Google “${q}”`,s:'Search the web with “vedic astrology” added',q}); html += srchRowHTML(srchRows[base], base);
     srchRows.push({k:'ai',ico:'🤖',t:`Ask Google AI about “${q}”`,s:'AI answer with sources',q}); html += srchRowHTML(srchRows[base+1], base+1);
   }
-  srchSel = 0; list.innerHTML = html;
+  srchSel = 0; list.innerHTML = html; list.scrollTop = 0;
   const first = list.querySelector('.srch-row'); if (first) first.classList.add('sel');
+}
+
+const SRCH_GROUPS = [
+  ['🪞','Know yourself',['me','purpose','mind','talent','spiritual','karma','karmapat','thisyear']],
+  ['❤️','Love & relationships',['love','lovers','soulmate','chemistry','breakup','partnerfit','spouse','marriagetime','marriedlife','karmarel','children']],
+  ['💰','Money & career',['career','job','money','moneyblocks','wealthboost','fame','inherit','losses','property','foreign']],
+  ['🏡','Family, health & remedies',['health','longevity','father','mother','siblings','friends','enemies','education','remedies']]
+];
+function srchGroupsHTML(){
+  const seen = {}; let n = 0;
+  let out = '<div class="srch-hero"><b>✨ Ask AI about your chart</b><small>Pick a topic, then a question. Opens Google AI with your exact chart data.</small></div>';
+  const tile = (tp,i)=> `<button type="button" class="srch-tile" data-ask="${i}" style="--d:${(n++%12)*28}ms"><span>${tp.ico}</span><b>${rsEsc(tp.t)}</b><small>${tp.subs.length} questions</small></button>`;
+  SRCH_GROUPS.forEach(g=>{
+    const tiles = g[2].map(id=>{ const i = SRCH_TOPICS.findIndex(t=>t.id===id); if (i<0 || seen[i]) return ''; seen[i]=1; return tile(SRCH_TOPICS[i], i); }).join('');
+    if (tiles) out += `<div class="srch-grp"><span>${g[0]}</span>${g[1]}</div><div class="srch-tiles">${tiles}</div>`;
+  });
+  const rest = SRCH_TOPICS.map((tp,i)=> seen[i]?'':tile(tp,i)).join('');
+  if (rest.trim()) out += `<div class="srch-grp"><span>🔎</span>More</div><div class="srch-tiles">${rest}</div>`;
+  return out;
 }
 function srchRowHTML(r,i){
   const tag = { page:'Open', planet:'Your chart', house:'Your chart', chart:'Your chart', dasha:'Your chart', yoga:'Your chart', term:'Learn', ask:'Ask AI', topic:'Ask AI ›', google:'Web', ai:'Web' }[r.k] || '';
@@ -1687,7 +1729,7 @@ const SRCH_TOPICS = [
   ['Money-focused remedies','Give 8 traditional remedies and 4 practical habits specifically to improve money flow in my chart.'],
   ['Love-focused remedies','Give 8 traditional remedies and 4 practical habits specifically for love, marriage and relationships in my chart.'],
   ['Remedies for the running period','Based on my current dasha and antardasha, list 6 targeted remedies and what to avoid until it ends.']]},
- {id:'karma',ico:'♾️',t:'Karmic patterns',kw:'karma karmic past life rahu ketu nodes saturn lesson debt repeating pattern destiny dharma',h:[5,8,9,12],s:[1,6,10],k:['Rahu','Ketu','Saturn'],ck:'Atmakaraka',v:'D60',ar:[],subs:[
+ {id:'karmapat',ico:'♾️',t:'Karmic patterns',kw:'karma karmic past life rahu ketu nodes saturn lesson debt repeating pattern destiny dharma',h:[5,8,9,12],s:[1,6,10],k:['Rahu','Ketu','Saturn'],ck:'Atmakaraka',v:'D60',ar:[],subs:[
   ['My Rahu–Ketu life lesson','Using the houses and signs of Rahu and Ketu, explain in 8 plain bullets: what I over-chase now (Rahu), what I already mastered and tend to abandon (Ketu), and the balance to find.'],
   ['Top 8 repeating patterns','List the 8 life patterns that keep repeating for me (people, situations, endings), each tied to a placement and a checkable real-life example.'],
   ['Soul purpose (Atmakaraka)','Based on my Atmakaraka planet and sign, describe my soul\'s core lesson, 6 gifts I carry and 4 traps.'],
@@ -1760,35 +1802,3 @@ const SRCH_TOPICS = [
   ['In-laws & family','Give 6 bullets on my relationship with in-laws and joint-family dynamics.'],
   ['Common fights & solutions','List my 6 most likely arguments and a solution for each.'],
   ['Spouse\'s support & career','How will my spouse help or affect my career and money? 6 bullets.'],
-  ['Marriage strong years','List the 3 strongest and 2 testing phases of my marriage by age window.']]},
- {id:'children',ico:'👶',t:'Children & progeny',kw:'kids baby child birth pregnancy fertility',h:[5],s:[2,9,11],k:['Jupiter'],ck:'Putrakaraka',v:'D7',ar:['A5'],subs:[
-  ['Children: outlook','Give a direct outlook on having children (easy / some delay / needs care) with a one-line reason.'],
-  ['Best years for children','List the 3 most favourable years/windows.'],
-  ['My child\'s nature','Describe the kind of child(ren) I am likely to have in 6 bullets and my parenting style.'],
-  ['Support & remedies','List 5 practical supports or traditional remedies that help.']]},
- {id:'education',ico:'🎓',t:'Education & learning',kw:'study college exams degree knowledge',h:[4,5],s:[9,2],k:['Mercury','Jupiter'],ck:'Putrakaraka',v:'D24',ar:[],subs:[
-  ['15 best subjects/degrees','List 15 subjects or degrees ranked by fit.'],
-  ['How I learn best','Give 8 specific, checkable learning habits: best time of day, format, memory style, subjects I struggle with, how I react to exams.'],
-  ['Exam & degree timing','List the best years/windows for exams, admissions or a new course.'],
-  ['Study abroad chance','Give a direct verdict on studying abroad, best regions, and best timing.']]},
- {id:'health',ico:'🩺',t:'Health & vitality',kw:'disease illness body fitness immunity',h:[1,6],s:[8,12],k:['Sun','Moon','Mars'],ck:'Atmakaraka',v:'D30',ar:['A6'],subs:[
-  ['Strong & sensitive areas','List my body areas from strongest to most sensitive, one line each (traditional astrology, not medical advice).'],
-  ['Habits that suit me','List 8 daily habits, foods and exercise types that suit me.'],
-  ['Care periods','List the periods that need extra care and the periods of strong vitality (balanced, non-fearful).'],
-  ['Stress & sleep','Give 5 tips for my stress and sleep pattern.']]},
- {id:'mind',ico:'🧠',t:'Mind & emotional peace',kw:'stress anxiety depression mood happiness',h:[4,1],s:[5,12],k:['Moon','Mercury'],ck:'Atmakaraka',v:'D1',ar:[],subs:[
-  ['My stress triggers','List 8 very specific situations that spike my stress (types of people, settings, deadlines, noise, money, health) that I can verify from my own past.'],
-  ['Mood pattern','Give 8 specific, checkable mood patterns: times of day/month/year I dip or peak, what triggers a swing, how long it lasts, what I do when low.'],
-  ['Habits for peace','List 8 daily practices that bring me peace.'],
-  ['Best calming practices','Rank 8 practices (meditation, music, nature, prayer, exercise...) by how well they suit me.']]},
- {id:'longevity',ico:'⏳',t:'Resilience & sudden changes',kw:'life span accidents surgery transformation 8th house',h:[8,1],s:[3,6,12],k:['Saturn'],ck:'Atmakaraka',v:'D30',ar:['A8'],subs:[
-  ['Sudden-change areas','List the life areas where sudden change is most likely, ranked, with a calm tone.'],
-  ['Sensitive periods','List the next 3 sensitive periods and how to handle each (balanced, no fear).'],
-  ['Protective habits','List 6 habits that protect me.']]},
- {id:'father',ico:'👨',t:'Father & mentors',kw:'dad guru teacher blessings',h:[9],s:[10,3],k:['Sun','Jupiter'],ck:'',v:'D12',ar:['A9'],subs:[
-  ['Bond with father','Give 8 specific, checkable facts about my relationship with my father: closeness/distance phases with ages, conflict style, how he shaped my career, health or support issues.'],
-  ['Father\'s nature & work','Describe my father\'s likely nature and 5 likely professions.'],
-  ['Mentors & gurus','Describe the type of mentor/teacher who helps me and when they appear.']]},
- {id:'mother',ico:'👩',t:'Mother & home life',kw:'mom family happiness domestic',h:[4],s:[10,9],k:['Moon'],ck:'Matrikaraka',v:'D12',ar:['A4'],subs:[
-  ['Bond with mother','Give 8 specific, checkable facts about my relationship with my mother: closeness/distance phases with ages, conflict style, her health or role at home, what I got or missed from her.'],
-  ['Home happiness','Give 8 specific, checkable facts about my home life (moves, property disputes, noise/peace, who dominates, mother\'s role) and 3 fixes.']]},

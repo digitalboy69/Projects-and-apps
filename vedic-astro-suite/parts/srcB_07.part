@@ -1,3 +1,15 @@
+    const housesHtml = r.aspectedHouses.map(h => `H${h}`).join(', ');
+
+    rows += `<tr>
+      <td class="planet-name-cell"><span class="planet-glyph">${r.glyph}</span>${r.planet}${r.retrograde ? '<sup class="retro-tag-sm">R</sup>' : ''}</td>
+      <td>H${r.fromHouse} — ${r.fromSign} <span class="sign-sk">(${r.fromSignSanskrit})</span></td>
+      <td>${r.nakshatra} <span class="sign-sk">(Pada ${r.pada})</span><br><span class="tiny">Lord: ${r.nakshatraLord} · ${r.degree}</span></td>
+      <td class="mono">${housesHtml}</td>
+      <td>${targetHtml}</td>
+    </tr>`;
+  });
+
+  return `<div class="varga-aspect-table-wrap" id="${prefix}AspectTableWrap">
     <div class="aspect-table-head">
       <span class="section-sub" style="margin:0;">Full Aspects (Drishti) Table</span>
       <button type="button" class="chart-dl-btn-single aspect-copy-btn" id="${prefix}CopyAspectTableBtn"><span>📋</span> Copy Table</button>
