@@ -20,7 +20,8 @@ SQL editor: `update public.member_access set status='active', plan='monthly', ex
 Sign in with an admin account > Menu > account card > "Admin". Lists members, lets you add +30/+90/+365 days, lifetime, trial or block. All checks run on the server (functions `admin_list_members`, `admin_set_access`, `is_admin`).
 Make another admin (SQL editor): `insert into private.app_admins(user_id) select id from auth.users where email='them@example.com';`
 
-## Gated delivery (code only for verified members)
+## Gated delivery — SUPERSEDED by docs/DOOR.md (get-app now serves from a private bucket; the encrypted-blob flow below is no longer used)
+## (old) Gated delivery
 - `gate/index.html` = the ONLY public page: login screen. After sign-in it calls Edge Function `get-app`.
 - `get-app` (Supabase Edge Function, source in `gate/get-app.ts`; the real AES key is only inside the DEPLOYED function, `__APP_KEY__` here is a placeholder) checks the user + `member_access` (trial = 7 days from sign-up; active until `expires_at`; blocked = never), then fetches `app.enc` (public, AES-GCM encrypted + gzipped), decrypts it and returns the HTML. The browser then `document.write`s it.
 - Release: `python3 build.py` -> `python3 tools_encrypt.py vedic-astro-suite-readable.html app.enc` (needs the key: env `APP_KEY`, or read it from the deployed function with Supabase `get_edge_function`) -> publish `gate/index.html` + `app.enc` to the PUBLIC gate repo (`vedic-gate`, GitHub Pages).

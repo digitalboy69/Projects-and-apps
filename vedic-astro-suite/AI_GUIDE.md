@@ -142,3 +142,4 @@ ASTRONOMICAL ENGINE — sidereal (Lahiri), validated against India Independence 
 VEDIC ASTRO SUITE — EXPORT + COPY ADD-ON (v1.0) @export_addon.js:1; BIRTH CHART APP (B) @export_addon.js:197; EXPORT WINDOW REDESIGN (Birth Chart app) - restyles + regroups the existing @export_addon.js:303; 3D SKY APP (A) @export_addon.js:552
 
 <!-- AUTO:END -->
+- Door v2 (login→Razorpay pay→app + local admin): see docs/DOOR.md and ../door-site/. Customer edition is DERIVED by tools_customer.py (parts/customer_layer.js, customer_top.js); originals untouched. Old gate/ (encrypted blob) is superseded.
