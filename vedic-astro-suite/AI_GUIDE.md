@@ -119,7 +119,7 @@ Cross-app messages: Notepad → wrapper `postMessage('vedic-open-chart')`; wrapp
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-12 - 1079 symbols in `symbols.idx`._
+_Generated 2026-10-13 - 1079 symbols in `symbols.idx`._
 
 ### File sizes (read only what you need)
 | App | Lines | KB | Files |

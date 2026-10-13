@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#03060d">
+<title>Vedic Astro Suite</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+.shell{position:fixed;inset:0}
+.stage{position:absolute;inset:0}
+.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#03060d;display:none}
+.stage iframe.on{display:block;animation:fade .35s ease both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.load{position:absolute;inset:0;z-index:3;display:grid;place-items:center;align-content:center;gap:16px;background:radial-gradient(60% 50% at 50% 45%,rgba(123,110,246,.22),#03060d 70%);transition:opacity .4s}
+.load.hide{opacity:0;pointer-events:none}
+.ring{width:54px;height:54px;border-radius:50%;border:3px solid rgba(255,255,255,.08);border-top-color:#00F0D5;border-right-color:#7B6EF6;animation:spin 1s linear infinite;box-shadow:0 0 30px rgba(0,240,213,.3)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load span{font-size:12px;letter-spacing:.2em;color:#9aa8c2}
+/* developer card overlay (its own document, does not touch the current view) */
+#devFrame{position:fixed;inset:0;width:100%;height:100%;border:0;background:transparent;z-index:40;display:none;color-scheme:normal}
+#devFrame.on{display:block}
+/* floating switcher */
+.sw{position:fixed;z-index:50;left:0;top:0;width:40px;height:40px;touch-action:none;user-select:none;-webkit-user-select:none}
+.sw-btn{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(11,17,32,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#e8edf7;font-size:18px;line-height:1;cursor:pointer;opacity:.78;box-shadow:0 4px 14px rgba(0,0,0,.45);transition:opacity .2s,border-color .2s,box-shadow .2s,transform .2s}
+.sw-btn:hover,.sw.open .sw-btn,.sw.drag .sw-btn{opacity:1}
+.sw.open .sw-btn{border-color:rgba(0,240,213,.65);box-shadow:0 0 0 3px rgba(0,240,213,.14),0 4px 14px rgba(0,0,0,.45)}
+.sw.drag .sw-btn{transform:scale(1.1);cursor:grabbing}
+.sw-menu{position:absolute;min-width:178px;padding:5px;border-radius:16px;background:linear-gradient(180deg,#121a2e,#0b1120);border:1px solid rgba(255,255,255,.1);box-shadow:0 18px 40px rgba(0,0,0,.55);transform:scale(.55);opacity:0;visibility:hidden;pointer-events:none;transition:transform .22s cubic-bezier(.2,.9,.3,1.2),opacity .16s,visibility 0s .22s}
+.sw[data-x="r"] .sw-menu{right:0;transform-origin:right}.sw[data-x="l"] .sw-menu{left:0;transform-origin:left}
+.sw[data-y="t"] .sw-menu{top:calc(100% + 8px)}.sw[data-y="b"] .sw-menu{bottom:calc(100% + 8px)}
+.sw[data-y="t"][data-x="r"] .sw-menu{transform-origin:top right}.sw[data-y="t"][data-x="l"] .sw-menu{transform-origin:top left}
+.sw[data-y="b"][data-x="r"] .sw-menu{transform-origin:bottom right}.sw[data-y="b"][data-x="l"] .sw-menu{transform-origin:bottom left}
+.sw.open .sw-menu{transform:scale(1);opacity:1;visibility:visible;pointer-events:auto;transition:transform .22s cubic-bezier(.2,.9,.3,1.2),opacity .16s,visibility 0s}
+.sw-item{display:flex;align-items:center;gap:10px;width:100%;min-height:42px;padding:8px 11px;border:0;border-radius:11px;background:transparent;color:#c3cde0;font:600 13.5px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:left;cursor:pointer;transition:background-color .15s,color .15s}
+.sw-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.sw-item:active{filter:brightness(1.25)}
+.sw-item .e{font-size:17px;width:22px;text-align:center}
+.sw-item.on{background:linear-gradient(135deg,#00F0D5,#7B6EF6);color:#021210;box-shadow:0 4px 16px rgba(0,240,213,.22)}
+.sw-sep{height:1px;margin:4px 8px;background:rgba(255,255,255,.08)}
+.sw-back{position:fixed;inset:0;z-index:45;display:none;background:rgba(3,6,13,.3)}
+.sw-back.show{display:block}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="stage" id="stage"><div class="load" id="load"><div class="ring"></div><span id="loadTxt">LOADING…</span></div></div>
+</div>
+<div class="sw-back" id="swBack"></div>
+<div class="sw" id="sw" data-x="r" data-y="t">
+  <button class="sw-btn" id="swBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="swMenu" title="Switch view (drag to move)"><span id="swIco">🌌</span></button>
+  <div class="sw-menu" id="swMenu" role="menu">
+    <button class="sw-item on" type="button" role="menuitemradio" aria-checked="true" data-act="A"><span class="e">🌌</span>3D Sky</button>
+    <button class="sw-item" type="button" role="menuitemradio" aria-checked="false" data-act="B"><span class="e">🧭</span>Birth Chart</button>
+    <div class="sw-sep"></div>
+    <button class="sw-item" type="button" role="menuitem" data-act="dev"><span class="e">💬</span>Developer</button>
+  </div>
+</div>
+<script type="text/plain" id="srcA">..</script>
+<script type="text/plain" id="srcB">..</script>
+<script type="text/plain" id="srcDev">..</script>
+<script>
+(function(){
+  const stage = document.getElementById('stage'), load = document.getElementById('load'), txt = document.getElementById('loadTxt');
+  const NAME = { A:'Sky 3D', B:'Birth Time Rectification' }, frames = {};
+  const decode = id => { const bin = atob(document.getElementById(id).textContent.trim()); const u = new Uint8Array(bin.length); for (let i=0;i<bin.length;i++) u[i] = bin.charCodeAt(i); return new TextDecoder('utf-8').decode(u); };
+  function mount(k){
+    if (frames[k]) return frames[k];
+    load.classList.remove('hide'); txt.textContent = 'LOADING ' + NAME[k].toUpperCase() + '…';
+    const f = document.createElement('iframe'); f.title = NAME[k]; f.setAttribute('allow', 'fullscreen');
+    f.addEventListener('load', ()=>{ load.classList.add('hide'); try{ f.contentWindow.dispatchEvent(new Event('resize')); }catch(e){} });
+    f.srcdoc = decode('src' + k); stage.appendChild(f); frames[k] = f; return f;
+  }
+  const sw = document.getElementById('sw'), swBtn = document.getElementById('swBtn'), swBack = document.getElementById('swBack'), swIco = document.getElementById('swIco');
+  const ICON = { A:'🌌', B:'🧭' };
+  let cur = 'A', devF = null;
+  function setMenu(open){
+    if (open) place();
+    sw.classList.toggle('open', open); swBack.classList.toggle('show', open);
+    swBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  function show(k){
+    cur = k; closeDev();
+    const f = mount(k);
+    for (const j in frames) frames[j].classList.toggle('on', j === k);
+    sw.querySelectorAll('.sw-item[data-act="A"],.sw-item[data-act="B"]').forEach(b=>{ const on = b.dataset.act === k; b.classList.toggle('on', on); b.setAttribute('aria-checked', on ? 'true' : 'false'); });
+    swIco.textContent = ICON[k];
+    try{ f.contentWindow.dispatchEvent(new Event('resize')); }catch(e){}
+    try{ history.replaceState(null, '', k === 'B' ? '#rectify' : '#sky'); }catch(e){}
+  }
+  /* Developer card: its own overlay on top of whatever view is open — never switches views */
+  function openDev(){
+    if (!devF){ devF = document.createElement('iframe'); devF.id = 'devFrame'; devF.title = 'Developer'; devF.srcdoc = decode('srcDev'); document.body.appendChild(devF); }
+    devF.classList.add('on');
+  }
+  function closeDev(){ if (devF) devF.classList.remove('on'); }
+  window.addEventListener('message', e=>{ if (e.data === 'vedic-dev-close') closeDev(); });
+
+  /* ---- floating, draggable switcher ---- */
+  const SZ = 40, M = 10;
+  let pos = { x:null, y:null };
+  try{ const s = JSON.parse(localStorage.getItem('vedicSwPos') || 'null'); if (s && typeof s.x === 'number') pos = s; }catch(e){}
+  function clamp(){
+    const W = innerWidth, H = innerHeight;
+    if (pos.x == null){ pos.x = W - SZ - M; pos.y = Math.round(H * 0.4); }
+    pos.x = Math.min(Math.max(pos.x, M), W - SZ - M);
+    pos.y = Math.min(Math.max(pos.y, M + 40), H - SZ - M - 20);
+  }
+  function place(){
+    clamp();
+    sw.style.transform = 'translate(' + pos.x + 'px,' + pos.y + 'px)';
+    sw.dataset.x = (pos.x + SZ/2 > innerWidth/2) ? 'r' : 'l';
+    sw.dataset.y = (pos.y + SZ/2 > innerHeight/2) ? 'b' : 't';
+  }
+  function save(){ try{ localStorage.setItem('vedicSwPos', JSON.stringify(pos)); }catch(e){} }
+  let drag = null, moved = false;
+  swBtn.addEventListener('pointerdown', e=>{
+    drag = { sx:e.clientX, sy:e.clientY, ox:pos.x, oy:pos.y, id:e.pointerId }; moved = false;
+    try{ swBtn.setPointerCapture(e.pointerId); }catch(_){}
+  });
+  swBtn.addEventListener('pointermove', e=>{
+    if (!drag) return;
+    const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+    if (!moved && Math.hypot(dx, dy) < 7) return;
+    if (!moved){ moved = true; sw.classList.add('drag'); setMenu(false); }
+    pos.x = drag.ox + dx; pos.y = drag.oy + dy; place();
+  });
+  function endDrag(){
+    if (!drag) return;
+    drag = null; sw.classList.remove('drag');
+    if (moved){ pos.x = (pos.x + SZ/2 > innerWidth/2) ? innerWidth - SZ - M : M; place(); save(); }   // snap to nearest side
+  }
+  swBtn.addEventListener('pointerup', endDrag); swBtn.addEventListener('pointercancel', endDrag);
+  swBtn.addEventListener('click', ()=>{ if (moved){ moved = false; return; } setMenu(!sw.classList.contains('open')); });
+  addEventListener('resize', place);
+
+  swBack.addEventListener('click', ()=> setMenu(false));
+  document.addEventListener('keydown', e=>{ if (e.key === 'Escape' && sw.classList.contains('open')){ setMenu(false); swBtn.focus(); } });
+  sw.querySelectorAll('.sw-item').forEach(b=> b.addEventListener('click', ()=>{
+    const a = b.dataset.act; setMenu(false);
+    if (a === 'dev') openDev(); else show(a);
+  }));
+  place();
+  show(location.hash === '#rectify' ? 'B' : 'A');
+  if (location.hash === '#developer') openDev();
+})();
+</script>
+</body>
+</html>

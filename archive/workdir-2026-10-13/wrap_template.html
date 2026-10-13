@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#03060d">
+<title>Vedic Astro Suite</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+.shell{position:fixed;inset:0}
+.stage{position:absolute;inset:0}
+.stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#03060d;display:none}
+.stage iframe.on{display:block;animation:fade .35s ease both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.load{position:absolute;inset:0;z-index:3;display:grid;place-items:center;align-content:center;gap:26px;background:radial-gradient(70% 55% at 50% 42%,rgba(123,110,246,.20),transparent 70%),radial-gradient(40% 30% at 20% 80%,rgba(0,240,213,.07),transparent 70%),#03060d;transition:opacity .55s ease,visibility 0s .55s;overflow:hidden}
+.load.hide{opacity:0;visibility:hidden;pointer-events:none}
+.load::before{content:"";position:absolute;inset:-50%;background-image:radial-gradient(1.2px 1.2px at 12% 18%,#fff8 50%,transparent 51%),radial-gradient(1px 1px at 78% 12%,#fff6 50%,transparent 51%),radial-gradient(1.4px 1.4px at 34% 72%,#fff9 50%,transparent 51%),radial-gradient(1px 1px at 88% 66%,#fff7 50%,transparent 51%),radial-gradient(1.2px 1.2px at 56% 40%,#fff5 50%,transparent 51%),radial-gradient(1px 1px at 22% 46%,#fff6 50%,transparent 51%),radial-gradient(1.3px 1.3px at 66% 88%,#fff8 50%,transparent 51%);background-size:340px 340px;animation:drift 90s linear infinite;opacity:.8}
+@keyframes drift{to{transform:rotate(360deg)}}
+.orb{position:relative;width:132px;height:132px;display:grid;place-items:center}
+.orb i{position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.10)}
+.orb .o1{width:62px;height:62px}.orb .o2{width:96px;height:96px}.orb .o3{width:132px;height:132px}
+.orb b{position:absolute;width:100%;height:100%;animation:spin linear infinite}
+.orb b::after{content:"";position:absolute;left:50%;top:0;border-radius:50%;transform:translate(-50%,-50%)}
+.orb .p1{animation-duration:2.4s;inset:35px;width:62px;height:62px}.orb .p1::after{width:7px;height:7px;background:#00F0D5;box-shadow:0 0 12px #00F0D5}
+.orb .p2{animation-duration:4s;inset:18px;width:96px;height:96px;animation-direction:reverse}.orb .p2::after{width:9px;height:9px;background:#7B6EF6;box-shadow:0 0 14px #7B6EF6}
+.orb .p3{animation-duration:6.5s;inset:0}.orb .p3::after{width:6px;height:6px;background:#D4AF37;box-shadow:0 0 12px #D4AF37}
+.orb em{width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#ffd98a 45%,#e89b2c);box-shadow:0 0 26px 6px rgba(255,190,80,.45);animation:beat 2.4s ease-in-out infinite}
+@keyframes beat{50%{transform:scale(1.14);box-shadow:0 0 34px 10px rgba(255,190,80,.55)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load h1{position:relative;font:600 15px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:.42em;text-indent:.42em;color:#e8edf7;text-align:center}
+.load span{position:relative;display:block;margin-top:-12px;font:500 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.24em;text-align:center;background:linear-gradient(90deg,#6b7a99,#fff,#6b7a99);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:shim 2s linear infinite}
+@keyframes shim{to{background-position:-200% 0}}
+.load .bar{position:relative;width:120px;height:2px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
+.load .bar::after{content:"";position:absolute;inset:0;width:40%;background:linear-gradient(90deg,transparent,#00F0D5,#7B6EF6,transparent);animation:slide 1.3s ease-in-out infinite}
+@keyframes slide{from{transform:translateX(-100%)}to{transform:translateX(300%)}}
+/* welcome screen */
+.load{gap:22px}
+.zring{position:absolute;inset:-46px;border-radius:50%;animation:spin 90s linear infinite;pointer-events:none}
+.zring s{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px;text-decoration:none;text-align:center;font:14px/20px system-ui,"Segoe UI Symbol",sans-serif;color:#D4AF37;opacity:0;animation:zin .6s ease forwards}
+@keyframes zin{to{opacity:.8}}
+.wel{position:relative;text-align:center;margin-top:38px;animation:welUp .9s .15s cubic-bezier(.2,.8,.3,1) both}
+.wel-hi{font:600 clamp(28px,7vw,44px)/1.1 Georgia,"Times New Roman",serif;background:linear-gradient(90deg,#F9D976,#fff 50%,#9fe9df);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 40px rgba(212,175,55,.25)}
+.pray{font-size:30px;margin-bottom:6px;display:block;animation:wave 2.4s ease-in-out infinite}
+@keyframes wave{50%{transform:translateY(-3px) rotate(-6deg)}}
+.wel-sub{margin-top:10px;font:300 clamp(13px,3.4vw,16px)/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.06em;color:#b9c3d9;min-height:1.4em;transition:opacity .4s}
+@keyframes welUp{from{opacity:0;transform:translateY(14px)}}
+.load.hide .wel{transform:translateY(-8px);transition:transform .6s}
+.load.compact .wel{display:none}
+@media (prefers-reduced-motion:reduce){.zring,.wel,.zring s{animation:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.load::before,.orb b,.orb em,.load .bar::after,.load span{animation:none}}
+/* developer card overlay (its own document, does not touch the current view) */
+#devFrame{position:fixed;inset:0;width:100%;height:100%;border:0;background:transparent;z-index:40;display:none;color-scheme:normal}
+#devFrame.on{display:block}
+/* floating switcher */
+.sw{position:fixed;z-index:50;left:0;top:0;width:40px;height:40px;touch-action:none;user-select:none;-webkit-user-select:none}
+.sw-btn{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(11,17,32,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#e8edf7;font-size:18px;line-height:1;cursor:pointer;opacity:.78;box-shadow:0 4px 14px rgba(0,0,0,.45);transition:opacity .2s,border-color .2s,box-shadow .2s,transform .2s}
+.sw-btn:hover,.sw.open .sw-btn,.sw.drag .sw-btn{opacity:1}
+.sw.open .sw-btn{border-color:rgba(0,240,213,.65);box-shadow:0 0 0 3px rgba(0,240,213,.14),0 4px 14px rgba(0,0,0,.45)}
+.sw.drag .sw-btn{transform:scale(1.1);cursor:grabbing}
+.sw-menu{position:absolute;min-width:178px;padding:5px;border-radius:16px;background:linear-gradient(180deg,#121a2e,#0b1120);border:1px solid rgba(255,255,255,.1);box-shadow:0 18px 40px rgba(0,0,0,.55);transform:scale(.55);opacity:0;visibility:hidden;pointer-events:none;transition:transform .22s cubic-bezier(.2,.9,.3,1.2),opacity .16s,visibility 0s .22s}
+.sw[data-x="r"] .sw-menu{right:0;transform-origin:right}.sw[data-x="l"] .sw-menu{left:0;transform-origin:left}
+.sw[data-y="t"] .sw-menu{top:calc(100% + 8px)}.sw[data-y="b"] .sw-menu{bottom:calc(100% + 8px)}
+.sw[data-y="t"][data-x="r"] .sw-menu{transform-origin:top right}.sw[data-y="t"][data-x="l"] .sw-menu{transform-origin:top left}
+.sw[data-y="b"][data-x="r"] .sw-menu{transform-origin:bottom right}.sw[data-y="b"][data-x="l"] .sw-menu{transform-origin:bottom left}
+.sw.open .sw-menu{transform:scale(1);opacity:1;visibility:visible;pointer-events:auto;transition:transform .22s cubic-bezier(.2,.9,.3,1.2),opacity .16s,visibility 0s}
+.sw-item{display:flex;align-items:center;gap:10px;width:100%;min-height:42px;padding:8px 11px;border:0;border-radius:11px;background:transparent;color:#c3cde0;font:600 13.5px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:left;cursor:pointer;transition:background-color .15s,color .15s}
+.sw-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.sw-item:active{filter:brightness(1.25)}
+.sw-item .e{font-size:17px;width:22px;text-align:center}
+.sw-item.on{background:linear-gradient(135deg,#00F0D5,#7B6EF6);color:#021210;box-shadow:0 4px 16px rgba(0,240,213,.22)}
+.sw-sep{height:1px;margin:4px 8px;background:rgba(255,255,255,.08)}
+.sw-back{position:fixed;inset:0;z-index:45;display:none;background:rgba(3,6,13,.3)}
+.sw-back.show{display:block}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="stage" id="stage"><div class="load" id="load"><div class="orb"><div class="zring" id="zring"></div><i class="o1"></i><i class="o2"></i><i class="o3"></i><b class="p1"></b><b class="p2"></b><b class="p3"></b><em></em></div><div class="wel" id="wel"><div class="pray">🙏</div><div class="wel-hi" id="welHi">Namaste 🙏</div><div class="wel-sub" id="welSub">Welcome to your sky</div></div><h1>VEDIC ASTRO SUITE</h1><span id="loadTxt">LOADING…</span><div class="bar"></div></div></div>
+</div>
+<div class="sw-back" id="swBack"></div>
+<div class="sw" id="sw" data-x="r" data-y="t">
+  <button class="sw-btn" id="swBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="swMenu" title="Switch view (drag to move)"><span id="swIco">🧭</span></button>
+  <div class="sw-menu" id="swMenu" role="menu">
+    <button class="sw-item" type="button" role="menuitemradio" aria-checked="false" data-act="A"><span class="e">🌌</span>3D Sky</button>
+    <button class="sw-item on" type="button" role="menuitemradio" aria-checked="true" data-act="B"><span class="e">🧭</span>Birth Chart</button>
+    <button class="sw-item" type="button" role="menuitemradio" aria-checked="false" data-act="N"><span class="e">📝</span>Notepad</button>
+    <div class="sw-sep"></div>
+    <button class="sw-item" type="button" role="menuitem" data-act="dev"><span class="e">💬</span>Developer</button>
+  </div>
+</div>
+<script>try{window.__vaxHash=location.hash;}catch(e){}</script>
+<script>/*LOCPICKER*/</script>
+<script type="text/plain" id="srcA">..</script>
+<script type="text/plain" id="srcB">..</script>
+<script type="text/plain" id="srcN">..</script>
+<script type="text/plain" id="srcDev">..</script>
+<script>
+(function(){
+  const stage = document.getElementById('stage'), load = document.getElementById('load'), txt = document.getElementById('loadTxt');
+  const NAME = { A:'3D Sky', B:'Birth Chart', N:'Notepad' }, frames = {};
+  const decode = id => { const bin = atob(document.getElementById(id).textContent.trim()); const u = new Uint8Array(bin.length); for (let i=0;i<bin.length;i++) u[i] = bin.charCodeAt(i); return new TextDecoder('utf-8').decode(u); };
+
+  /* welcome greeting (first start only) */
+  const T0 = performance.now(); let firstDone = false;
+  (function(){
+    const hr = new Date().getHours(), g = hr < 5 ? 'Shubh Ratri' : hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : hr < 21 ? 'Good evening' : 'Shubh Ratri';
+    document.getElementById('welHi').textContent = 'Namaste, ' + g.toLowerCase();
+    const z = document.getElementById('zring'), G = '\u2648\u2649\u264A\u264B\u264C\u264D\u264E\u264F\u2650\u2651\u2652\u2653';
+    for (let i = 0; i < 12; i++){ const e = document.createElement('s'); e.textContent = G[i] + '\uFE0E'; e.style.transform = 'rotate(' + i*30 + 'deg) translateY(-86px) rotate(' + (-i*30) + 'deg)'; e.style.animationDelay = (0.2 + i*0.07) + 's'; z.appendChild(e); }
+    const L = ['Welcome to your sky', 'Charts, planets and time, in one place', 'Preparing the heavens\u2026', 'Aligning the planets\u2026'], sub = document.getElementById('welSub'); let k = 0;
+    const t = setInterval(()=>{ if (firstDone){ clearInterval(t); return; } sub.style.opacity = 0; setTimeout(()=>{ k = (k+1) % L.length; sub.textContent = L[k]; sub.style.opacity = 1; }, 380); }, 1700);
+  })();
+  function mount(k){
+    if (frames[k]) return frames[k];
+    load.classList.remove('hide'); txt.textContent = 'LOADING ' + NAME[k].toUpperCase() + '…';
+    const f = document.createElement('iframe'); f.title = NAME[k]; f.setAttribute('allow', 'fullscreen; camera');
+    f.addEventListener('load', ()=>{
+      try{ f.contentWindow.dispatchEvent(new Event('resize')); }catch(e){}
+      /* one loader only: stay until the inner app has finished its own start-up (max 9s) */
+      let n = 0; const done = ()=>{ if (cur !== k) return; const wait0 = firstDone ? 0 : Math.max(0, 2400 - (performance.now() - T0)); setTimeout(()=>{ if (cur === k){ load.classList.add('hide'); firstDone = true; setTimeout(()=>load.classList.add('compact'), 800); } }, wait0); };
+      (function wait(){ let ready = true; try{ const m = f.contentDocument.getElementById('loadingMask'); ready = !m || m.classList.contains('hide'); }catch(e){}
+        if (ready || ++n > 90) settle(); else setTimeout(wait, 100); })();
+      /* keep the loader up until the heavy scene is rendering smoothly (10 quick frames in a row, max 6s) */
+      function settle(){
+        if (k !== 'A'){ done(); return; }
+        txt.textContent = 'WARMING UP THE SKY\u2026';
+        let good = 0, last = 0; const t0 = performance.now(); let w; try{ w = f.contentWindow; }catch(e){ done(); return; }
+        (function f1(ts){
+          if (cur !== k){ done(); return; }
+          if (last){ good = (ts - last) < 45 ? good + 1 : 0; } last = ts;
+          if (good >= 10 || performance.now() - t0 > 6000) done(); else w.requestAnimationFrame(f1);
+        })(0);
+      }
+    });
+    f.srcdoc = decode('src' + k); stage.appendChild(f); frames[k] = f; return f;
+  }
+  const sw = document.getElementById('sw'), swBtn = document.getElementById('swBtn'), swBack = document.getElementById('swBack'), swIco = document.getElementById('swIco');
+  const ICON = { A:'🌌', B:'🧭', N:'📝' };
+  let cur = 'B', devF = null;
+  function setMenu(open){
+    if (open) place();
+    sw.classList.toggle('open', open); swBack.classList.toggle('show', open);
+    swBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  function show(k){
+    cur = k; closeDev();
+    const f = mount(k);
+    for (const j in frames) frames[j].classList.toggle('on', j === k);
+    sw.querySelectorAll('.sw-item[data-act="A"],.sw-item[data-act="B"],.sw-item[data-act="N"]').forEach(b=>{ const on = b.dataset.act === k; b.classList.toggle('on', on); b.setAttribute('aria-checked', on ? 'true' : 'false'); });
+    swIco.textContent = ICON[k];
+    try{ f.contentWindow.dispatchEvent(new Event('resize')); }catch(e){}
+    try{ history.replaceState(null, '', k === 'A' ? '#sky' : k === 'N' ? '#notes' : '#chart'); }catch(e){}
+  }
+  /* Developer card: its own overlay on top of whatever view is open — never switches views */
+  function openDev(){
+    if (!devF){ devF = document.createElement('iframe'); devF.id = 'devFrame'; devF.title = 'Developer'; devF.srcdoc = decode('srcDev'); document.body.appendChild(devF); }
+    devF.classList.add('on');
+  }
+  function closeDev(){ if (devF) devF.classList.remove('on'); }
+  window.addEventListener('message', e=>{ if (e.data === 'vedic-dev-close') closeDev(); else if (e.data === 'vedic-open-chart') show('B'); });
+
+  /* ---- floating, draggable switcher ---- */
+  const SZ = 40, M = 10;
+  let pos = { x:null, y:null };
+  try{ const s = JSON.parse(localStorage.getItem('vedicSwPos') || 'null'); if (s && typeof s.x === 'number') pos = s; }catch(e){}
+  function clamp(){
+    const W = innerWidth, H = innerHeight;
+    if (pos.x == null){ pos.x = W - SZ - M; pos.y = Math.round(H * 0.4); }
+    pos.x = Math.min(Math.max(pos.x, M), W - SZ - M);
+    pos.y = Math.min(Math.max(pos.y, M + 40), H - SZ - M - 20);
+  }
+  function place(){
+    clamp();
+    sw.style.transform = 'translate(' + pos.x + 'px,' + pos.y + 'px)';
+    sw.dataset.x = (pos.x + SZ/2 > innerWidth/2) ? 'r' : 'l';
+    sw.dataset.y = (pos.y + SZ/2 > innerHeight/2) ? 'b' : 't';
+  }
+  function save(){ try{ localStorage.setItem('vedicSwPos', JSON.stringify(pos)); }catch(e){} }
+  let drag = null, moved = false;
+  swBtn.addEventListener('pointerdown', e=>{
+    drag = { sx:e.clientX, sy:e.clientY, ox:pos.x, oy:pos.y, id:e.pointerId }; moved = false;
+    try{ swBtn.setPointerCapture(e.pointerId); }catch(_){}
+  });
+  swBtn.addEventListener('pointermove', e=>{
+    if (!drag) return;
+    const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+    if (!moved && Math.hypot(dx, dy) < 7) return;
+    if (!moved){ moved = true; sw.classList.add('drag'); setMenu(false); }
+    pos.x = drag.ox + dx; pos.y = drag.oy + dy; place();
+  });
+  function endDrag(){
+    if (!drag) return;
+    drag = null; sw.classList.remove('drag');
+    if (moved){ pos.x = (pos.x + SZ/2 > innerWidth/2) ? innerWidth - SZ - M : M; place(); save(); }   // snap to nearest side
+  }
+  swBtn.addEventListener('pointerup', endDrag); swBtn.addEventListener('pointercancel', endDrag);
+  swBtn.addEventListener('click', ()=>{ if (moved){ moved = false; return; } setMenu(!sw.classList.contains('open')); });
+  addEventListener('resize', place);
+
+  swBack.addEventListener('click', ()=> setMenu(false));
+  document.addEventListener('keydown', e=>{ if (e.key === 'Escape' && sw.classList.contains('open')){ setMenu(false); swBtn.focus(); } });
+  sw.querySelectorAll('.sw-item').forEach(b=> b.addEventListener('click', ()=>{
+    const a = b.dataset.act; setMenu(false);
+    if (a === 'dev') openDev(); else show(a);
+  }));
+  place();
+  show(location.hash === '#sky' ? 'A' : location.hash === '#notes' ? 'N' : 'B');
+  if (location.hash === '#developer') openDev();
+})();
+</script>
+</body>
+</html>

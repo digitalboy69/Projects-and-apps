@@ -1,0 +1,26 @@
+exec(open('trs.py').read().split("def run")[0])
+def run(w,h,t):
+  with sync_playwright() as p:
+    b=p.chromium.launch();ctx=b.new_context(viewport={'width':w,'height':h});ctx.route('**/*',handler);pg=ctx.new_page();errs=[]
+    pg.on("pageerror",lambda e:errs.append(str(e)))
+    pg.goto("file:///home/claude/w/out_plain.html");pg.wait_for_timeout(2500)
+    fr=[f for f in pg.frames if 'Rectification' in (f.title() or '')][0]
+    fr.fill('#profileName','Test User');fr.evaluate("()=>{const d=document.getElementById('dobInput');d.value='1990-05-15';d.dispatchEvent(new Event('input',{bubbles:true}));}")
+    fr.evaluate("()=>{const t=document.querySelector('#birthForm input[type=time]');if(t){t.value='10:30';t.dispatchEvent(new Event('input',{bubbles:true}));}}")
+    fr.click('.lp-tools [data-m=map]');pg.wait_for_timeout(400);pg.fill('#lpQ','Mumbai');pg.wait_for_timeout(1000);pg.keyboard.press('Enter');pg.wait_for_timeout(500);pg.click('#lpUse');pg.wait_for_timeout(300)
+    fr.click('#castBtn');pg.wait_for_timeout(5000)
+    fr.click('#quickSearchBtn');pg.wait_for_timeout(500);pg.screenshot(path=f'sr_{t}_empty.png')
+    fr.fill('#srchIn','mars');pg.wait_for_timeout(300);pg.screenshot(path=f'sr_{t}_mars.png')
+    fr.fill('#srchIn','7th house');pg.wait_for_timeout(200)
+    print('7th:',fr.evaluate("()=>[...document.querySelectorAll('.srch-row b')].slice(0,3).map(x=>x.textContent)"))
+    fr.fill('#srchIn','rectify');pg.wait_for_timeout(200)
+    print('rect:',fr.evaluate("()=>[...document.querySelectorAll('.srch-row b')].slice(0,3).map(x=>x.textContent)"))
+    fr.press('#srchIn','Enter');pg.wait_for_timeout(800)
+    print('landed',fr.evaluate("()=>document.querySelector('.app-panel.active').id+' overlay:'+document.getElementById('srchOv').classList.contains('show')"))
+    pg.keyboard.press('Control+k');pg.wait_for_timeout(300)
+    fr.fill('#srchIn','gaja');pg.wait_for_timeout(200)
+    print('gaja:',fr.evaluate("()=>[...document.querySelectorAll('.srch-row b')].slice(0,2).map(x=>x.textContent)"))
+    fr.fill('#srchIn','zzzqq');pg.wait_for_timeout(200)
+    print('none:',fr.evaluate("()=>document.querySelectorAll('.srch-row').length+' '+document.querySelector('.srch-none')?.textContent"))
+    print('ERR',errs);b.close()
+run(1280,860,'d');run(390,800,'m')
