@@ -1065,8 +1065,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
     <div class="viewport-actions">
       <button class="vp-btn" id="aspExpBtn" title="Aspect Explorer" aria-label="Aspect Explorer">☍</button>
       <button class="vp-btn" id="planetPickBtn" title="Select a planet" aria-label="Select a planet">🪐</button>
-      <button class="vp-btn" id="zoomInBtn" title="Zoom in">+</button>
-      <button class="vp-btn" id="zoomOutBtn" title="Zoom out">−</button>
       <button class="vp-btn" id="resetViewBtn" title="Reset view">⟲</button>
     </div>
     <div id="planetLabels"></div>
@@ -4719,8 +4717,6 @@ document.getElementById('nowBtn').addEventListener('click', ()=>{
   jumpToJD(jd);
 });
 
-document.getElementById('zoomInBtn').addEventListener('click', ()=>{ orbitDist = clampZoom(SOL.view==='solar' ? orbitDist*0.78 : orbitDist-4); markDirty(); });
-document.getElementById('zoomOutBtn').addEventListener('click', ()=>{ orbitDist = clampZoom(SOL.view==='solar' ? orbitDist*1.28 : orbitDist+4); markDirty(); });
 document.getElementById('resetViewBtn').addEventListener('click', ()=>{
   orbitAngleTheta=0.55; orbitAnglePhi=1.15; orbitDist = SOL.view==='solar' ? (SOL.scale==='real'?120:62) : 26; autoRotate=true; markDirty();
 });
