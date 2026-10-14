@@ -1,162 +1,3 @@
-  const groupLabels = { core: "Core Ascendants", arudha: "Arudha Padas", karaka: "Karaka-Based", kala: "Time-Based (Kala)" };
-  ["core","arudha","karaka","kala"].forEach(group => {
-    out += `${groupLabels[group].toUpperCase()}\n${'-'.repeat(70)}\n`;
-    SPECIAL_LAGNAS_ORDER.filter(k => SPECIAL_LAGNAS_META[k].group === group).forEach(key => {
-      const meta = SPECIAL_LAGNAS_META[key];
-      const signIdx = specialLagnaSigns[key];
-      const sign = SIGNS[signIdx];
-      out += `\n${meta.name} (${meta.sanskrit}): ${sign.name} (${sign.sk})\n`;
-      out += `  ${meta.desc}\n`;
-      const vdata = buildVargaFromLagna(chart, signIdx, vargaKey);
-      vdata.houses.forEach(h => {
-        if (h.isEmpty) return;
-        const occupants = h.planets.map(p => `${p.name}${p.retrograde ? ' (R)' : ''}`).join(', ');
-        out += `    H${h.houseNum} ${h.signName}: ${occupants}\n`;
-      });
-    });
-    out += '\n';
-  });
-  return out;
-}
-
-/* ============================================================================
-   UI & DOM LOGIC
-   ============================================================================ */
-const TZ_OPTIONS = [-12,-11,-10,-9.5,-9,-8,-7,-6,-5,-4.5,-4,-3.5,-3,-2,-1,0,1,2,3,3.5,4,4.5,5,5.5,5.75,6,6.5,7,8,8.75,9,9.5,10,10.5,11,12,12.75,13,14];
-function fmtTz(v){
-  const sign = v>=0?"+":"-";
-  const abs = Math.abs(v);
-  const h = Math.floor(abs);
-  const m = Math.round((abs-h)*60);
-  return `UTC${sign}${h}${m?":"+String(m).padStart(2,"0"):":00"}`;
-}
-function populateTz(){
-  const sel = document.getElementById('tzInput');
-  sel.innerHTML = "";
-  TZ_OPTIONS.forEach(v=>{
-    const opt = document.createElement('option');
-    opt.value = v; opt.textContent = fmtTz(v);
-    if (v===5.5) opt.selected = true;
-    sel.appendChild(opt);
-  });
-}
-
-let selectedLat=null, selectedLon=null, tzAutoGuess=null;
-let searchDebounce=null;
-const placeInput = document.getElementById('placeInput');
-const locationResults = document.getElementById('locationResults');
-const locationStatus = document.getElementById('locationStatus');
-const coordReadout = document.getElementById('coordReadout');
-
-placeInput.addEventListener('input', ()=>{
-  const q = placeInput.value.trim();
-  selectedLat = null; selectedLon = null;
-  coordReadout.textContent = "— not yet selected —";
-  clearTimeout(searchDebounce);
-  if (q.length < 3){ locationResults.classList.remove('open'); locationResults.innerHTML=""; return; }
-  locationStatus.textContent = "Searching…";
-  // Increased debounce to 1000ms to enforce 1 req/sec limit
-  searchDebounce = setTimeout(()=> doLocationSearch(q), 1000);
-});
-
-async function doLocationSearch(q){
-  try{
-    const appEmail = "contact@yourdomain.com"; // Replace with your actual email
-    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=7&q=${encodeURIComponent(q)}&email=${appEmail}`;
-    const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
-    if (!res.ok) throw new Error("Network response was not ok");
-    const data = await res.json();
-    renderLocationResults(data);
-    locationStatus.textContent = data.length ? "" : "No matches found — try a broader search";
-  } catch(err){
-    locationStatus.textContent = "Location search unavailable right now — you can still enter coordinates manually below.";
-    locationResults.classList.remove('open');
-  }
-}
-
-function renderLocationResults(results){
-  locationResults.innerHTML = "";
-  if (!results.length){ locationResults.classList.remove('open'); return; }
-  results.forEach(r=>{
-    const div = document.createElement('div');
-    div.className = 'location-item';
-    const main = r.display_name.split(',')[0];
-    div.innerHTML = `<span class="lname">${main}</span><span class="lsub">${r.display_name}</span>`;
-    div.addEventListener('click', ()=> selectLocation(r));
-    locationResults.appendChild(div);
-  });
-  locationResults.classList.add('open');
-}
-
-function selectLocation(r){
-  placeInput.value = r.display_name;
-  selectedLat = parseFloat(r.lat);
-  selectedLon = parseFloat(r.lon);
-  coordReadout.textContent = `${selectedLat.toFixed(4)}°, ${selectedLon.toFixed(4)}°`;
-  locationResults.classList.remove('open');
-  locationStatus.textContent = "";
-  guessTimezone(selectedLat, selectedLon, r);
-}
-
-
-/* Map + coordinates pickers (shared popup hosted by the outer page) */
-try{ if (window.parent && window.parent!==window && window.parent.LocPicker) window.parent.LocPicker.attach(document, placeInput, r=>selectLocation(r), {title:'Place of birth', get:()=> selectedLat!=null ? {lat:selectedLat, lon:selectedLon} : null}); }catch(e){}
-
-/* Accurate timezone guess: country rule first (fixes +5:30 India etc.), then longitude */
-const TZ_BY_COUNTRY={in:5.5,lk:5.5,np:5.75,ir:3.5,af:4.5,mm:6.5,bd:6,pk:5,bt:6,mv:5,uz:5,cn:8,sg:8,my:8,ph:8,hk:8,tw:8,kr:9,jp:9,th:7,vn:7,kh:7,la:7,nz:12,ae:4,om:4,sa:3,qa:3,kw:3,bh:3,ye:3,iq:3,tr:3,eg:2,ke:3,et:3,tz:3,ug:3,za:2,ng:1,gh:0,gb:0,ie:0,pt:0,is:0};
-function estimateTz(lat, lon, r){
-  const cc = r && r.address && r.address.country_code ? r.address.country_code.toLowerCase() : '';
-  let tz;
-  if (cc === 'au') tz = lon < 129 ? 8 : (lon < 138 ? 9.5 : 10);
-  else if (cc in TZ_BY_COUNTRY) tz = TZ_BY_COUNTRY[cc];
-  else tz = Math.round(lon/15);           // whole hours only; no more half-hour rounding errors
-  return TZ_OPTIONS.reduce((a,b)=> Math.abs(b-tz)<Math.abs(a-tz)?b:a);
-}
-function setTzSelect(sel, v){ [...sel.options].forEach(o=>{ o.selected = (parseFloat(o.value)===v); }); }
-function guessTimezone(lat, lon, r){
-  const closest = estimateTz(lat, lon, r);
-  setTzSelect(document.getElementById('tzInput'), closest);
-  document.getElementById('tzHint').textContent = `Estimated from longitude — please verify against local records`;
-}
-
-document.addEventListener('click', (e)=>{
-  if (!e.target.closest('.location-wrap')) locationResults.classList.remove('open');
-});
-
-const STORAGE_KEY = 'Vedic Astrology_profiles_v1';
-function loadProfiles(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }catch(e){ return []; } }
-function saveProfiles(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
-function refreshProfileSelect(){
-  const profiles = loadProfiles();
-  const sel = document.getElementById('profileSelect');
-  const currentVal = sel.value;
-  sel.innerHTML = '<option value="">— Select a profile —</option>';
-  profiles.forEach((p,i)=>{
-    const opt = document.createElement('option');
-    opt.value = i; opt.textContent = p.name;
-    sel.appendChild(opt);
-  });
-  if (currentVal) sel.value = currentVal;
-}
-
-let currentChartForModal = null; 
-let currentProfileForExport = null; 
-
-/* ===== Planets panel + detail popup (redesigned) ===== */
-function plDigInfo(pl){
-  const st = pl.dignity.status;
-  const good = st==='Exalted'||st==='OwnSign'||st==='Moolatrikona', bad = st==='Debilitated';
-  return {good, bad, cls: good?'good':bad?'bad':''};
-}
-function buildPlanetsPanel(chart){
-  let nRetro=0,nStrong=0,nChall=0;
-  const cards = PLANET_LIST.map(name=>{
-    const pl = chart.planets[name], sg = SIGNS[pl.sign], d = plDigInfo(pl), c = DASHA_PLANET_COLORS[name]||'#888';
-    const combust = pl.combustion && pl.combustion.combust, warLose = pl.war && !pl.war.won;
-    const flags = [];
-    if (pl.retrograde){ flags.push('retro'); nRetro++; }
-    if (d.good){ flags.push('strong'); nStrong++; }
-    if (d.bad || combust || warLose){ flags.push('chall'); nChall++; }
     const tags = [
       d.cls ? `<span class="pl-tag ${d.cls}">${pl.dignity.label}</span>` : (pl.dignity.label && pl.dignity.label!=='—' ? `<span class="pl-tag">${pl.dignity.label}</span>` : ''),
       combust ? `<span class="pl-tag bad">Combust ${pl.combustion.separation.toFixed(1)}°</span>` : '',
@@ -970,6 +811,7 @@ const HOME_ITEMS=[
  ['panel-vargas','◫','Divisional Charts','D1 to D60 chart viewer','Your Chart','chart'],
  ['panel-lagnas','✧','Special Lagnas','23 alternate ascendants','Your Chart','chart'],
  ['panel-rectification','🎯','Rectification Studio','Dial, scan & confirm the time','Fix Birth Time','rectify'],
+ ['panel-datefinder','🔎','Date Finder','Find the birth date from festival, tithi & day clues','Fix Birth Time','rectify'],
  ['panel-sandhi','⏱','Sandhi Table','Ascendant window across all charts','Fix Birth Time','rectify'],
  ['panel-vargatimeline','🗺️','Varga Timeline','Map the birth window on any chart','Fix Birth Time','rectify'],
  ['panel-transittimer','⏳','Transit Timer','When a planet changes house','Fix Birth Time','rectify'],
@@ -1065,6 +907,7 @@ document.querySelectorAll('.app-tab').forEach(tab=>{
    (IDs + listeners survive) into tab panes. Old panel ids still work via switchAppTab.
    ============================================================================ */
 const RS_TABS = [
+  ['dates', '🔎', 'Date Finder',    1],
   ['dial',  '🕰️', 'Time Dial',      1],
   ['scan',  '🎯', 'Second Scan',    2],
   ['sandhi','⏱️', 'Sandhi Table',   2],
@@ -1072,9 +915,9 @@ const RS_TABS = [
   ['tt',    '⏳', 'Transit Timer',  2],
   ['life',  '🌟', 'Life Events',    3]
 ];
-const RS_STEPS = [[1,'Set the time'],[2,'Narrow it down'],[3,'Confirm with life']];
+const RS_STEPS = [[1,'Set date & time'],[2,'Narrow it down'],[3,'Confirm with life']];
 const RS_SUBS = { sandhi:'panel-sandhi', vt:'panel-vargatimeline', tt:'panel-transittimer' };
-const RS_ROUTE = { 'panel-sandhi':'sandhi', 'panel-vargatimeline':'vt', 'panel-transittimer':'tt', 'panel-lifeevents':'life' };
+const RS_ROUTE = { 'panel-datefinder':'dates', 'panel-sandhi':'sandhi', 'panel-vargatimeline':'vt', 'panel-transittimer':'tt', 'panel-lifeevents':'life' };
 const RS_CATS = {
   marriage:{label:'💍 Marriage / partnership', p:[7], s:[2,11], k:['Venus']},
   child:   {label:'👶 Child birth',            p:[5], s:[2,9,11], k:['Jupiter']},
@@ -1173,6 +1016,7 @@ function rsShow(id, scroll){
   const line = root.querySelector('.rs-rail-fill'); if (line) line.style.width = ((grp-1)/2*100)+'%';
   if (scroll){ const top = root.querySelector('.rs-tabs').getBoundingClientRect().top + window.pageYOffset - 70; window.scrollTo({ top:Math.max(0,top), behavior:'smooth' }); }
   if (id==='life') rsRenderEvents();
+  if (id==='dates'){ try { dfPlaceNote(); } catch(e){} }
 }
 
 function rsHow(el, title){
@@ -1244,6 +1088,7 @@ function initRectStudio(){
   });
   // Life
   rsBuildLife(pane('life'));
+  try { dfBuild(pane('dates')); } catch(e){ console.error('Date Finder', e); }
   // Next / Back
   RS_TABS.forEach((t,i)=>{
     const nx = RS_TABS[i+1], pv = RS_TABS[i-1];
@@ -1279,6 +1124,430 @@ function rsChip(key){
   if (hint) hint.textContent = '→ ' + M.msg;
   rsState.conf = key;
   rsShow(M.tab, true);
+}
+
+/* ============================================================================
+   DATE FINDER — find the likely birth DATE from what the family remembers
+   (tithi / weekday / festival / eclipse / nakshatra / Moon sign / lunar month /
+   Saturn-Jupiter-Rahu sign / Samvatsara / English month / date number).
+   Engine = pure functions (df*) + one generator `dfGen` (yields progress, returns results).
+   Month names are AMANTA (Diwali = Ashvina Amavasya); "North-India names" option shifts Krishna paksha by one.
+   Day = sunrise to next sunrise (Vedic day). Tithi/nakshatra match if active at sunrise OR during that day.
+   ============================================================================ */
+const DF_SAM = ['Prabhava','Vibhava','Shukla','Pramodoota','Prajotpatti','Angirasa','Srimukha','Bhava','Yuva','Dhatu','Ishvara','Bahudhanya','Pramathi','Vikrama','Vrisha','Chitrabhanu','Subhanu','Tarana','Parthiva','Vyaya','Sarvajit','Sarvadhari','Virodhi','Vikriti','Khara','Nandana','Vijaya','Jaya','Manmatha','Durmukhi','Hevilambi','Vilambi','Vikari','Sharvari','Plava','Shubhakrit','Shobhakrit','Krodhi','Vishvavasu','Parabhava','Plavanga','Kilaka','Saumya','Sadharana','Virodhikrit','Paridhavi','Pramadicha','Ananda','Rakshasa','Nala','Pingala','Kalayukti','Siddharthi','Raudra','Durmati','Dundubhi','Rudhirodgari','Raktakshi','Krodhana','Akshaya'];
+const DF_AT = { sr:0, fore:0.15, noon:0.25, eve:0.54, mid:0.75 };          // moment of the day, as a fraction of a day after sunrise
+const DF_LIM_SOLAR = 1.55, DF_LIM_LUNAR = 1.0;                  // |Moon latitude| limits (degrees) at new / full moon
+/* [id, name, kind, amantaMonth(0=Chaitra), tithi(1-30), moment]  kind L = lunar (tithi in month), S = Sun enters sign, O = Onam (Shravana nakshatra in Simha) */
+const DF_FEST = [
+ ['ugadi','Ugadi / Gudi Padwa (new year)','L',0,1,'sr'],
+ ['ramnavami','Ram Navami','L',0,9,'noon'],
+ ['hanuman','Hanuman Jayanti','L',0,15,'sr'],
+ ['akshaya','Akshaya Tritiya','L',1,3,'fore'],
+ ['buddha','Buddha Purnima','L',1,15,'eve'],
+ ['rath','Rath Yatra','L',3,2,'sr'],
+ ['guru','Guru Purnima','L',3,15,'sr'],
+ ['nagpanchami','Nag Panchami','L',4,5,'sr'],
+ ['rakhi','Raksha Bandhan','L',4,15,'noon'],
+ ['janmashtami','Krishna Janmashtami','L',4,23,'mid'],
+ ['ganesh','Ganesh Chaturthi','L',5,4,'noon'],
+ ['anant','Anant Chaturdashi','L',5,14,'sr'],
+ ['pitru','Sarva Pitru Amavasya (Mahalaya)','L',5,30,'sr'],
+ ['navratri','Navaratri begins','L',6,1,'sr'],
+ ['durgashtami','Durga Ashtami','L',6,8,'sr'],
+ ['mahanavami','Maha Navami','L',6,9,'sr'],
+ ['dussehra','Vijayadashami (Dussehra)','L',6,10,'noon+eve'],
+ ['sharad','Sharad Purnima','L',6,15,'eve'],
+ ['karwa','Karwa Chauth','L',6,19,'eve'],
+ ['dhanteras','Dhanteras','L',6,28,'eve'],
+ ['narak','Naraka Chaturdashi (Choti Diwali)','L',6,29,'sr'],
+ ['diwali','Diwali (Lakshmi Puja)','L',6,30,'eve'],
+ ['govardhan','Govardhan Puja / Bali Pratipada','L',7,1,'sr'],
+ ['bhaidooj','Bhai Dooj','L',7,2,'noon'],
+ ['chhath','Chhath Puja','L',7,6,'eve'],
+ ['devuthani','Dev Uthani Ekadashi','L',7,11,'sr'],
+ ['kartikpurnima','Kartik Purnima / Dev Diwali','L',7,15,'eve'],
+ ['makar','Makar Sankranti / Pongal','S',9],
+ ['vasant','Vasant Panchami','L',10,5,'fore'],
+ ['shivratri','Maha Shivaratri','L',10,29,'mid'],
+ ['holika','Holika Dahan','L',11,15,'eve'],
+ ['holi','Holi (Dhulandi)','L',11,15,'eve',1],
+ ['mesha','Mesha Sankranti (Vishu / Baisakhi / Puthandu)','S',0],
+ ['onam','Onam (Thiruvonam)','O']
+];
+
+/* ---------- engine ---------- */
+function dfSunrise(y, m, d, lat, lon, tz){
+  const jd0 = toJulianDay(y, m, d, 0, 0, 0) - tz / 24;
+  const guess = jd0 + 0.5 - (lon - tz * 15) / 360 - 0.25;
+  const f = x => pnSunAlt(x, lat, lon) + 0.8333;
+  let t = guess;
+  for (let i = 0; i < 6; i++){
+    const a = f(t), s = (f(t + 0.01) - a) / 0.01;
+    if (!isFinite(s) || Math.abs(s) < 1e-6) break;
+    const dt = a / s; t -= dt; if (Math.abs(dt) < 1e-5) break;
+  }
+  return (isFinite(t) && Math.abs(t - guess) < 0.2) ? t : guess;
+}
+function dfSunSign(jd){ return getSignIndex(getSiderealLongitudeAt('Sun', jd)); }
+/* Moon's ecliptic latitude (Meeus ch.47, main terms; good to ~0.03°) */
+function dfMoonLat(jd){
+  const T = (jd - J2000) / 36525.0;
+  const D = normDeg(297.8501921 + 445267.1114034*T), Mp = normDeg(134.9633964 + 477198.8675055*T), F = normDeg(93.2720950 + 483202.0175233*T), M = normDeg(357.5291092 + 35999.0502909*T);
+  const R = DEG, tm = [[0,0,0,1,5128122],[0,0,1,1,280602],[0,0,1,-1,277693],[2,0,0,-1,173237],[2,0,-1,1,55413],[2,0,-1,-1,46271],[2,0,0,1,32573],[0,0,2,1,17198],[2,0,1,-1,9266],[0,0,2,-1,8822],[2,-1,0,-1,8216],[2,0,-2,-1,4324],[2,0,1,1,4200],[2,1,0,-1,-3359],[2,-1,-1,1,2463],[2,-1,0,1,2211],[2,-1,-1,-1,2065],[0,1,-1,-1,-1870],[4,0,-1,-1,1828],[0,1,0,1,-1794],[0,0,0,3,-1749]];
+  let s = 0; tm.forEach(t => { s += t[4] * Math.sin((t[0]*D + t[1]*M + t[2]*Mp + t[3]*F) * R); });
+  return s / 1e6;
+}
+/* every new / full moon (Moon-Sun elongation crosses 0 or 180) from a little before jdA to a little after jdB */
+function dfSyz(jdA, jdB){
+  const out = []; let t = jdA - 35;
+  for (let g = 0; g < 4000 && t < jdB + 35; g++){
+    const x = pnBoundary(pnDiff, t, 180, +1, 0.25);
+    out.push({ jd: x, full: Math.round(pnDiff(x) / 180) % 2 === 1 });
+    t = x + 1;
+  }
+  return out;
+}
+/* Amanta lunar months from the new moons: starts at a new moon, named by the Sun's sign then; Adhika if the Sun stays in one sign */
+function dfMonths(sy){
+  const nm = sy.filter(s => !s.full), mo = [];
+  for (let k = 0; k + 1 < nm.length; k++){
+    const s1 = dfSunSign(nm[k].jd), s2 = dfSunSign(nm[k + 1].jd);
+    mo.push({ start: nm[k].jd, end: nm[k + 1].jd, mi: (s1 + 1) % 12, adhika: s1 === s2 });
+  }
+  return mo;
+}
+function dfMonthAt(mo, jd){
+  let lo = 0, hi = mo.length - 1;
+  if (!mo.length || jd < mo[0].start || jd >= mo[hi].end) return null;
+  while (lo < hi){ const m = (lo + hi + 1) >> 1; if (mo[m].start <= jd) lo = m; else hi = m - 1; }
+  return mo[lo];
+}
+/* eclipses (any visible somewhere on Earth): new moon with |Moon lat| < 1.55° = solar, full moon with |lat| < 1.0° = lunar (umbral) */
+function dfEclipses(sy){
+  const out = [];
+  sy.forEach(s => {
+    const lat = Math.abs(dfMoonLat(s.jd));
+    if (!s.full && lat < DF_LIM_SOLAR) out.push({ jd: s.jd, kind: 'solar', lat });
+    else if (s.full && lat < DF_LIM_LUNAR) out.push({ jd: s.jd, kind: 'lunar', lat });
+  });
+  return out;
+}
+function dfIn(a, b, x, mod){ const d1 = (x - a + mod) % mod, d2 = (b - a + mod) % mod; return d1 <= d2; }   // is x within the cyclic run a..b ?
+function dfNear(arr, i, n, tol){ for (let d = 0; d <= tol; d++){ if (i - d >= 0 && arr[i - d]) return -d; if (i + d < n && arr[i + d]) return d; } return null; }
+function dfTithiName(t0){ const pk = t0 < 15 ? 'Shukla' : 'Krishna', k = t0 % 15; return k === 14 ? (t0 < 15 ? 'Purnima' : 'Amavasya') : pk + ' ' + PN_TITHI[k]; }
+function dfTithiTargets(q){
+  if (q.tithi === '' && q.pak === '') return null;
+  if (q.tithi === 'P') return [14];
+  if (q.tithi === 'A') return [29];
+  const out = [];
+  if (q.tithi === ''){ for (let k = 0; k < 15; k++){ if (q.pak === 'S' && k < 15) out.push(k); if (q.pak === 'K') out.push(k + 15); } return out; }
+  const x = +q.tithi - 1;
+  if (q.pak !== 'K') out.push(x);
+  if (q.pak !== 'S') out.push(x + 15);
+  return out;
+}
+/* sign of a slow planet on every day, sampled every 6 days and interpolated (error is far below a day) */
+function dfSlow(name, tm, n){
+  const out = new Int8Array(n), step = 6; let prev = null;
+  for (let i = 0; i < n; i += step){
+    const j = Math.min(n - 1, i + step), a = getSiderealLongitudeAt(name, tm[i]), b = getSiderealLongitudeAt(name, tm[j]);
+    const dd = ((b - a + 540) % 360) - 180;
+    for (let k = i; k <= j && k < n; k++){ const f = j === i ? 0 : (k - i) / (j - i); out[k] = getSignIndex(a + dd * f); }
+  }
+  return out;
+}
+
+function* dfGen(q){
+  const lat = q.lat, lon = q.lon, tz = q.tz;
+  const base = Date.UTC(q.y0, 0, 1), n = Math.round((Date.UTC(q.y1, 11, 31) - base) / 864e5) + 1, N2 = n + 2;
+  const dt = i => { const d = new Date(base + i * 864e5); return [d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate(), d.getUTCDay()]; };
+  const srj = new Float64Array(N2), T = new Int8Array(N2), NK = new Int8Array(N2), MS = new Int8Array(N2), SUN = new Int8Array(N2);
+  for (let i = 0; i < N2; i++){
+    const [y, m, d] = dt(i), t = dfSunrise(y, m, d, lat, lon, tz); srj[i] = t;
+    T[i] = Math.min(29, Math.floor(pnDiff(t) / 12));
+    const ml = pnMoon(t); NK[i] = Math.floor(ml / PN_NAK) % 27; MS[i] = getSignIndex(ml); SUN[i] = dfSunSign(t);
+    if (i % 200 === 0) yield 0.55 * i / N2;
+  }
+  const sy = dfSyz(srj[0], srj[N2 - 1]); yield 0.6;
+  const months = dfMonths(sy), ecl = dfEclipses(sy);
+  const MI = new Int8Array(N2), ADH = new Uint8Array(N2), SAM = new Int8Array(N2);
+  for (let i = 0; i < N2; i++){
+    const mo = dfMonthAt(months, srj[i]); MI[i] = mo ? mo.mi : 0; ADH[i] = mo && mo.adhika ? 1 : 0;
+    const [y, m] = dt(i), Y = (m <= 4 && MI[i] >= 8) ? y - 1 : y; SAM[i] = (((Y - 2024 + 37) % 60) + 60) % 60;
+  }
+  const SAT = dfSlow('Saturn', srj, N2), JUP = dfSlow('Jupiter', srj, N2), RAH = dfSlow('Rahu', srj, N2); yield 0.8;
+  const eclS = new Uint8Array(n), eclL = new Uint8Array(n);
+  ecl.forEach(e => { const p = jdToLocalParts(e.jd, tz).dateStr.split('-').map(Number), idx = Math.round((Date.UTC(p[0], p[1] - 1, p[2]) - base) / 864e5); if (idx >= 0 && idx < n) (e.kind === 'solar' ? eclS : eclL)[idx] = 1; });
+  const ctx = { q, n, base, srj, T, NK, MS, SUN, MI, ADH, SAM, SAT, JUP, RAH, months, ecl, eclS, eclL, dt };
+  ctx.festHits = f => dfFestHits(ctx, f);
+  let fh = null;
+  if (q.fest){ const f = DF_FEST.find(x => x[0] === q.fest); if (f) fh = dfFestHits(ctx, f); }
+  yield 0.9;
+
+  const tg = dfTithiTargets(q), clues = [];
+  if (tg) clues.push('tithi'); if (q.wd !== '') clues.push('wd'); if (fh) clues.push('fest');
+  if (q.ecl) clues.push('ecl'); if (q.nak !== '') clues.push('nak'); if (q.moon !== '') clues.push('moon'); if (q.masa !== '') clues.push('masa');
+  if (q.sun !== '') clues.push('sun'); if (q.sam !== '') clues.push('sam'); if (q.mon !== '') clues.push('mon'); if (q.dom !== '') clues.push('dom');
+  if (q.sat !== '') clues.push('sat'); if (q.jup !== '') clues.push('jup'); if (q.rahu !== '') clues.push('rahu');
+  const maxMiss = clues.length >= 3 ? 1 : 0, tol = +q.tol || 0, rows = [];
+  for (let i = 0; i < n; i++){
+    const [y, m, d, wd] = dt(i), chips = []; let miss = 0;
+    const chk = (id, ok, txt) => { chips.push({ id, ok, txt }); if (!ok) miss++; };
+    if (q.wd !== '') chk('wd', wd === +q.wd, PN_VARA[+q.wd][1]);
+    if (q.mon !== '') chk('mon', m === +q.mon, PN_MON[+q.mon - 1]);
+    if (q.dom !== '') chk('dom', d === +q.dom, 'Date ' + q.dom);
+    if (tg){
+      const a = T[i], b = T[i + 1], hit = tg.find(x => dfIn(a, b, x, 30)), ex = tg.indexOf(a) >= 0;
+      chk('tithi', hit !== undefined, (hit !== undefined ? dfTithiName(hit) : dfTithiName(tg[0])) + (hit !== undefined ? (ex ? ' · at sunrise' : ' · during the day') : ''));
+    }
+    if (q.nak !== ''){ const hit = dfIn(NK[i], NK[i + 1], +q.nak, 27); chk('nak', hit, NAKSHATRAS[+q.nak].name + (hit ? (NK[i] === +q.nak ? ' · at sunrise' : ' · during the day') : '')); }
+    if (q.moon !== ''){ const hit = dfIn(MS[i], MS[i + 1], +q.moon, 12); chk('moon', hit, 'Moon in ' + SIGNS[+q.moon].name); }
+    if (q.masa !== ''){ const mi = (MI[i] + (q.purn && T[i] >= 15 ? 1 : 0)) % 12; chk('masa', mi === +q.masa, PN_MASA[+q.masa] + ' month'); }
+    if (q.sun !== '') chk('sun', SUN[i] === +q.sun, 'Sun in ' + SIGNS[+q.sun].name);
+    if (q.sam !== '') chk('sam', SAM[i] === +q.sam, DF_SAM[+q.sam] + ' year');
+    if (q.sat !== '') chk('sat', SAT[i] === +q.sat, 'Saturn in ' + SIGNS[+q.sat].name);
+    if (q.jup !== '') chk('jup', JUP[i] === +q.jup, 'Jupiter in ' + SIGNS[+q.jup].name);
+    if (q.rahu !== '') chk('rahu', RAH[i] === +q.rahu, 'Rahu in ' + SIGNS[+q.rahu].name);
+    if (fh){ const o = dfNear(fh, i, n, tol), f = DF_FEST.find(x => x[0] === q.fest); chk('fest', o !== null, f[1] + (o === null ? '' : (o === 0 ? ' · same day' : ' · ' + Math.abs(o) + ' day' + (Math.abs(o) > 1 ? 's' : '') + (o < 0 ? ' after' : ' before')))); }
+    if (q.ecl){
+      const arrs = q.ecl === 'solar' ? [eclS] : q.ecl === 'lunar' ? [eclL] : [eclS, eclL]; let best = null;
+      arrs.forEach((a, k) => { const o = dfNear(a, i, n, tol); if (o !== null && (best === null || Math.abs(o) < Math.abs(best.o))) best = { o, kind: q.ecl === 'either' ? (k === 0 ? 'Solar' : 'Lunar') : (q.ecl === 'solar' ? 'Solar' : 'Lunar') }; });
+      chk('ecl', best !== null, (best ? best.kind : (q.ecl === 'solar' ? 'Solar' : q.ecl === 'lunar' ? 'Lunar' : 'Solar / lunar')) + ' eclipse' + (best ? (best.o === 0 ? ' · same day' : ' · ' + Math.abs(best.o) + ' day' + (Math.abs(best.o) > 1 ? 's' : '') + (best.o < 0 ? ' after' : ' before')) : ''));
+    }
+    if (miss <= maxMiss) rows.push({ i, date: `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, wd, chips, miss });
+    if (i % 1500 === 0) yield 0.9 + 0.1 * i / n;
+  }
+  rows.sort((a, b) => a.miss - b.miss || a.i - b.i);
+  return { rows, clues, nFull: rows.filter(r => r.miss === 0).length, nAlmost: rows.filter(r => r.miss > 0).length, n, ctx };
+}
+
+/* does lunar festival f fall on day i?  (f[5] = moment(s) of the day joined by '+', f[6] = days after the tithi day) */
+function dfLunarHit(ctx, f, i){
+  const j = i - (f[6] || 0); if (j < 0) return false;
+  return f[5].split('+').some(mm => {
+    const tf = ctx.srj[j] + DF_AT[mm];
+    if (Math.floor(pnDiff(tf) / 12) + 1 !== f[4]) return false;
+    const mo = dfMonthAt(ctx.months, tf); return !!(mo && mo.mi === f[3] && !mo.adhika);
+  });
+}
+/* all days on which a festival falls (index array as 0/1) */
+function dfFestHits(ctx, f){
+  const { n, srj, SUN, NK, months } = ctx, h = new Uint8Array(n);
+  if (f[2] === 'L'){
+    for (let i = 0; i < n; i++) if (dfLunarHit(ctx, f, i)) h[i] = 1;
+  } else if (f[2] === 'S'){
+    for (let i = 0; i < n; i++){
+      if (SUN[i] === f[3] || SUN[i + 1] !== f[3]) continue;
+      let a = srj[i], b = srj[i + 1];
+      for (let k = 0; k < 30; k++){ const m = (a + b) / 2; if (dfSunSign(m) === f[3]) b = m; else a = m; }
+      const idx = (b >= srj[i] + 0.5) ? i + 1 : i; if (idx < n) h[idx] = 1;      // after sunset -> observed next day
+    }
+  } else {
+    for (let i = 0; i < n; i++) if (SUN[i] === 4 && dfIn(NK[i], NK[i + 1], 21, 27)) h[i] = 1;
+  }
+  return h;
+}
+/* everything we know about one result day (for the result card) */
+function dfInfo(ctx, i){
+  const { q, T, NK, MS, SUN, MI, ADH, SAM, SAT, JUP, RAH, n, srj, dt } = ctx, [y, m, d, wd] = dt(i);
+  const mi = (MI[i] + (q.purn && T[i] >= 15 ? 1 : 0)) % 12, fests = [];
+  DF_FEST.forEach(f => {
+    if (f[2] === 'L'){ if (dfLunarHit(ctx, f, i)) fests.push(f[1]); }
+    else if (f[2] === 'O'){ if (SUN[i] === 4 && dfIn(NK[i], NK[i + 1], 21, 27)) fests.push(f[1]); }
+    else if (SUN[i] !== f[3] && SUN[i + 1] === f[3]){ let a = srj[i], b = srj[i + 1]; for (let k = 0; k < 30; k++){ const mm = (a + b) / 2; if (dfSunSign(mm) === f[3]) b = mm; else a = mm; } if (((b >= srj[i] + 0.5) ? i + 1 : i) === i) fests.push(f[1]); }
+  });
+  const ecl = []; [-1, 0, 1].forEach(o => { const j = i + o; if (j < 0 || j >= n) return; const w = o === 0 ? '' : (o < 0 ? ' (day before)' : ' (day after)'); if (ctx.eclS[j]) ecl.push('Solar eclipse' + w); if (ctx.eclL[j]) ecl.push('Lunar eclipse' + w); });
+  return { y, m, d, wd, tithi: dfTithiName(T[i]), nak: NAKSHATRAS[NK[i]].name, moonSign: SIGNS[MS[i]], masa: PN_MASA[mi], adhika: !!ADH[i], sam: DF_SAM[SAM[i]], sun: SIGNS[SUN[i]], sat: SIGNS[SAT[i]], jup: SIGNS[JUP[i]], rahu: SIGNS[RAH[i]], fests, ecl };
+}
+
+/* ---------- UI ---------- */
+const dfState = { res: null, shown: 40, run: 0 };
+function dfPlace(){
+  try {
+    if (typeof selectedLat !== 'undefined' && selectedLat != null && selectedLon != null){
+      const tz = parseFloat(document.getElementById('tzInput').value);
+      if (isFinite(tz)) return { lat: +selectedLat, lon: +selectedLon, tz, label: (placeInput && placeInput.value) ? placeInput.value : 'the place chosen on the form' };
+    }
+    const p = currentProfileForExport;
+    if (p && isFinite(p.lat) && isFinite(p.lon) && isFinite(p.tz)) return { lat: +p.lat, lon: +p.lon, tz: +p.tz, label: p.place || 'your chart place' };
+  } catch(e){}
+  return { lat: 22.0, lon: 79.0, tz: 5.5, label: 'central India (default)', dflt: true };
+}
+function dfEsc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function dfFmtDate(y, m, d, wd){ return `${PN_VARA[wd][1].slice(0, 3)}, ${d} ${PN_MON[m - 1]} ${y}`; }
+function dfFmtT(jd, tz, dateStr){ if (jd == null || !isFinite(jd)) return '—'; const p = jdToLocalParts(jd, tz), t = p.timeStr.slice(0, 5); return p.dateStr === dateStr ? t : `${t} (${p.dateStr.slice(8)} ${PN_MON[+p.dateStr.slice(5, 7) - 1]})`; }
+
+function dfPlaceNote(){
+  const el = document.getElementById('dfPlace'); if (!el) return;
+  const pl = dfPlace();
+  el.innerHTML = `📍 Sunrise is worked out for <b>${dfEsc(pl.label)}</b>${pl.dflt ? ' — pick the birth place on the form for exact sunrise' : ''}.`;
+}
+function dfBuild(pane){
+  const had = document.getElementById('dfRoot'); if (had){ pane.appendChild(had); return; }   // already built (e.g. opened from the form before any chart)
+  const p = document.createElement('div'); p.id = 'dfRoot'; pane.appendChild(p);
+  const opt = (arr, first) => (first ? `<option value="">${first}</option>` : '') + arr.map((t, i) => `<option value="${i}">${dfEsc(t)}</option>`).join('');
+  const signs = SIGNS.map(s => `${s.symbol} ${s.name}`);
+  p.innerHTML = `
+  <div class="rs-pane-head"><h3>🔎 Date Finder</h3><p>Not sure of the birth date? Add whatever the family remembers: full moon, a festival, the weekday… We check every day and list the ones that fit.</p></div>
+  <details class="rs-how"><summary>💡 How it works (and how far to trust it)</summary>
+    <p>You give a range of years and any clues. For every day in that range we work out the tithi, weekday, nakshatra, Moon sign, lunar month, festivals, eclipses and where Saturn, Jupiter and Rahu were (Lahiri, same engine as the rest of the app). A day is listed when it fits <b>all</b> your clues. With 3 or more clues we also show days that miss <b>just one</b> (memory is often slightly wrong), clearly marked.
+    More clues = fewer dates. <b>Amavasya + Sunday + Diwali</b> within a few years usually gives one or two days.</p>
+    <p><b>Good to know:</b> a day runs from sunrise to the next sunrise, so a tithi counts if it is active at sunrise <i>or</i> at some time that day. If the baby was born after midnight but before sunrise, also check the next date. Festival days follow the usual panchang rules; some regions keep a festival one day earlier or later, so use “± 1 day”. Eclipses are those visible somewhere on Earth (not checked for your town). Sunrise uses the place on the birth form (central India if none).</p></details>
+  <div class="df-card"><h4>1 · Which years? <small>required</small></h4>
+    <div class="df-grid"><label class="df-f">From year<input id="dfY0" type="number" inputmode="numeric" min="1900" max="2050" placeholder="e.g. 1968"></label>
+    <label class="df-f">To year<input id="dfY1" type="number" inputmode="numeric" min="1900" max="2050" placeholder="e.g. 1972"></label></div>
+    <div class="df-place" id="dfPlace"></div></div>
+  <div class="df-card"><h4>2 · What do they remember?</h4>
+    <div class="df-pills" id="dfQuick"><span class="df-pl">Quick:</span>
+      <button type="button" class="df-pill" data-q="amav">🌑 Amavasya</button><button type="button" class="df-pill" data-q="purn">🌕 Purnima</button><button type="button" class="df-pill" data-q="ekad">Ekadashi</button>
+      <button type="button" class="df-pill" data-q="shani">Shani Amavasya</button><button type="button" class="df-pill" data-q="somv">Somvati Amavasya</button><button type="button" class="df-pill" data-q="gurup">Guru Pushya</button><button type="button" class="df-pill" data-q="ravip">Ravi Pushya</button></div>
+    <div class="df-grid">
+      <label class="df-f">Paksha (moon phase)<select id="dfPak"><option value="">Any</option><option value="S">Shukla · growing moon</option><option value="K">Krishna · fading moon</option></select></label>
+      <label class="df-f">Tithi<select id="dfTithi"><option value="">Any</option>${PN_TITHI.map((t, i) => `<option value="${i + 1}">${i + 1} · ${t}</option>`).join('')}<option value="P">🌕 Purnima (full moon)</option><option value="A">🌑 Amavasya (new moon)</option></select></label>
+      <label class="df-f">Weekday<select id="dfWd"><option value="">Any</option>${PN_VARA.map((v, i) => `<option value="${i}">${v[1]}</option>`).join('')}</select></label>
+      <label class="df-f">Festival<select id="dfFest"><option value="">None</option>${DF_FEST.map(f => `<option value="${f[0]}">${dfEsc(f[1])}</option>`).join('')}</select></label>
+      <label class="df-f">How close to the festival / eclipse?<select id="dfTol"><option value="0">Same day</option><option value="1" selected>± 1 day</option><option value="2">± 2 days</option><option value="3">± 3 days</option><option value="7">± 1 week</option><option value="15">± 2 weeks</option></select></label>
+    </div>
+    <details class="df-more"><summary>More clues (eclipse, nakshatra, Moon sign, month, Saturn, Jupiter…)</summary>
+      <div class="df-grid">
+        <label class="df-f">Eclipse (grahan)<select id="dfEcl"><option value="">None</option><option value="solar">☀ Solar eclipse</option><option value="lunar">🌙 Lunar eclipse</option><option value="either">Either one</option></select></label>
+        <label class="df-f">Nakshatra (birth star)<select id="dfNak">${opt(NAKSHATRAS.map(x => x.name), 'Any')}</select></label>
+        <label class="df-f">Moon sign (rashi)<select id="dfMoon">${opt(signs, 'Any')}</select></label>
+        <label class="df-f">Hindu lunar month<select id="dfMasa">${opt(PN_MASA, 'Any')}</select></label>
+        <label class="df-f">Sun sign (Tamil / Malayalam month)<select id="dfSun">${opt(signs, 'Any')}</select></label>
+        <label class="df-f">Year name (Samvatsara)<select id="dfSam">${opt(DF_SAM.map((s, i) => `${i + 1} · ${s}`), 'Any')}</select></label>
+        <label class="df-f">Month (English)<select id="dfMon">${opt(PN_MON, 'Any').replace(/value="(\d+)"/g, (m0, v) => `value="${+v + 1}"`)}</select></label>
+        <label class="df-f">Date number (1–31)<input id="dfDom" type="number" inputmode="numeric" min="1" max="31" placeholder="e.g. 14"></label>
+        <label class="df-f">Saturn was in<select id="dfSat">${opt(signs, 'Any')}</select></label>
+        <label class="df-f">Jupiter was in<select id="dfJup">${opt(signs, 'Any')}</select></label>
+        <label class="df-f">Rahu was in<select id="dfRahu">${opt(signs, 'Any')}</select></label>
+      </div>
+      <label class="df-chk"><input type="checkbox" id="dfPurn"> Use North-India month names (Purnimanta: the fading half belongs to the next month)</label>
+    </details></div>
+  <div class="df-actions"><button type="button" class="btn btn-primary" id="dfRun">🔎 Find possible dates</button><button type="button" class="btn btn-ghost" id="dfClear">Clear</button><span class="df-count" id="dfCount"></span></div>
+  <div id="dfOut"></div>`;
+  const $ = id => p.querySelector('#' + id), val = id => $(id).value;
+  const set = (id, v) => { $(id).value = v; };
+  const count = () => {
+    const ids = ['dfPak', 'dfTithi', 'dfWd', 'dfFest', 'dfEcl', 'dfNak', 'dfMoon', 'dfMasa', 'dfSun', 'dfSam', 'dfMon', 'dfDom', 'dfSat', 'dfJup', 'dfRahu'];
+    let c = 0; ids.forEach(i => { if (val(i) !== '' && !(i === 'dfPak' && val('dfTithi') !== '')) c++; });
+    $('dfCount').textContent = c ? `${c} clue${c > 1 ? 's' : ''} set` : 'Add at least one clue';
+  };
+  const clear = () => { p.querySelectorAll('select').forEach(s => { s.selectedIndex = 0; }); set('dfTol', '1'); p.querySelectorAll('input[type=number]').forEach(i => { if (i.id !== 'dfY0' && i.id !== 'dfY1') i.value = ''; }); $('dfPurn').checked = false; count(); };
+  p.addEventListener('input', count); p.addEventListener('change', count);
+  dfPlaceNote(); count();
+  const dob = (currentProfileForExport && currentProfileForExport.dob) || (document.getElementById('dobInput') || {}).value;
+  if (dob && /^\d{4}/.test(dob)){ const y = +dob.slice(0, 4); set('dfY0', y - 1); set('dfY1', y + 1); }
+  const Q = {
+    amav: () => { clear(); set('dfTithi', 'A'); }, purn: () => { clear(); set('dfTithi', 'P'); }, ekad: () => { clear(); set('dfTithi', '11'); },
+    shani: () => { clear(); set('dfTithi', 'A'); set('dfWd', '6'); }, somv: () => { clear(); set('dfTithi', 'A'); set('dfWd', '1'); },
+    gurup: () => { clear(); set('dfNak', '7'); set('dfWd', '4'); }, ravip: () => { clear(); set('dfNak', '7'); set('dfWd', '0'); }
+  };
+  $('dfQuick').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b){ Q[b.dataset.q](); count(); } });
+  $('dfClear').addEventListener('click', () => { clear(); $('dfOut').innerHTML = ''; dfState.res = null; });
+  $('dfRun').addEventListener('click', () => dfRun(p));
+  p.addEventListener('click', e => {
+    const use = e.target.closest('[data-df-use]'); if (use){ dfUse(use.dataset.dfUse); return; }
+    const mo = e.target.closest('[data-df-more]'); if (mo){ dfDetail(p, +mo.dataset.dfMore, mo); return; }
+    if (e.target.closest('#dfShowMore')){ dfState.shown += 40; dfRender(p); }
+    const al = e.target.closest('#dfAlmostBtn'); if (al){ dfState.showAlmost = !dfState.showAlmost; dfRender(p); }
+  });
+}
+function dfRead(p){
+  const val = id => p.querySelector('#' + id).value, pl = dfPlace();
+  let y0 = parseInt(val('dfY0'), 10), y1 = parseInt(val('dfY1'), 10);
+  if (!isFinite(y0) && !isFinite(y1)){ rsToast('Enter the years first (e.g. 1968 to 1972) 📅'); return null; }
+  if (!isFinite(y0)) y0 = y1; if (!isFinite(y1)) y1 = y0;
+  if (y0 > y1){ const t = y0; y0 = y1; y1 = t; }
+  if (y0 < 1900 || y1 > 2050){ rsToast('Please use years between 1900 and 2050'); return null; }
+  if (y1 - y0 > 40){ rsToast('Please keep it within 40 years — add a narrower range'); return null; }
+  const q = { y0, y1, lat: pl.lat, lon: pl.lon, tz: pl.tz, pak: val('dfPak'), tithi: val('dfTithi'), wd: val('dfWd'), fest: val('dfFest'), tol: val('dfTol'), ecl: val('dfEcl'), nak: val('dfNak'), moon: val('dfMoon'), masa: val('dfMasa'), sun: val('dfSun'), sam: val('dfSam'), mon: val('dfMon'), dom: val('dfDom'), sat: val('dfSat'), jup: val('dfJup'), rahu: val('dfRahu'), purn: p.querySelector('#dfPurn').checked };
+  const any = q.pak || q.tithi || q.wd || q.fest || q.ecl || q.nak || q.moon || q.masa || q.sun || q.sam || q.mon || q.dom || q.sat || q.jup || q.rahu;
+  if (!any){ rsToast('Add at least one clue (like Amavasya or a weekday) ✨'); return null; }
+  return q;
+}
+function dfRun(p){
+  const q = dfRead(p); if (!q) return;
+  const out = p.querySelector('#dfOut'), run = ++dfState.run, g = dfGen(q);
+  out.innerHTML = `<div class="df-prog"><div class="df-bar"><i id="dfBar" style="width:2%"></i></div><span>Looking through ${(q.y1 - q.y0 + 1) * 365} days…</span></div>`;
+  const step = () => {
+    if (run !== dfState.run) return;
+    let r; const t0 = performance.now();
+    try { do { r = g.next(); } while (!r.done && performance.now() - t0 < 40); }
+    catch(e){ console.error('Date Finder', e); out.innerHTML = '<div class="df-empty">Something went wrong while searching. Please try a smaller range.</div>'; return; }
+    if (r.done){ dfState.res = r.value; dfState.shown = 40; dfState.showAlmost = r.value.nFull === 0; dfRender(p); return; }
+    const bar = p.querySelector('#dfBar'); if (bar) bar.style.width = Math.max(2, Math.round(r.value * 100)) + '%';
+    setTimeout(step, 0);
+  };
+  setTimeout(step, 20);
+}
+function dfRender(p){
+  const R = dfState.res, out = p.querySelector('#dfOut'); if (!R) return;
+  const full = R.rows.filter(r => r.miss === 0), almost = R.rows.filter(r => r.miss > 0);
+  const card = r => {
+    const inf = dfInfo(R.ctx, r.i), miss = r.chips.filter(c => !c.ok).map(c => c.txt);
+    return `<div class="df-res${r.miss ? ' near' : ''}"><div class="df-res-top"><div><div class="df-date">${dfFmtDate(inf.y, inf.m, inf.d, inf.wd)}</div>
+      <div class="df-sub">${dfEsc(inf.tithi)} · ${dfEsc(inf.nak)} · ${inf.moonSign.symbol} Moon in ${inf.moonSign.name} · ${dfEsc(inf.masa)}${inf.adhika ? ' (Adhika)' : ''}</div></div>
+      <div class="df-res-act"><button type="button" class="btn btn-primary" data-df-use="${r.date}">Use this date</button><button type="button" class="btn btn-ghost" data-df-more="${r.i}">Details</button></div></div>
+      <div class="df-chips">${r.chips.map(c => `<span class="df-chip ${c.ok ? 'ok' : 'bad'}">${c.ok ? '✓' : '✕'} ${dfEsc(c.txt)}</span>`).join('')}${inf.fests.map(f => `<span class="df-chip fest">🎉 ${dfEsc(f)}</span>`).join('')}${inf.ecl.map(f => `<span class="df-chip fest">🌘 ${dfEsc(f)}</span>`).join('')}</div>
+      ${r.miss ? `<div class="df-miss">Close match: does not fit ${dfEsc(miss.join(', '))}</div>` : ''}<div class="df-detail" id="dfD${r.i}" hidden></div></div>`;
+  };
+  let html = '';
+  if (!full.length) html += `<div class="df-empty">No day fits <b>all</b> the clues in these years.${almost.length ? ' Below are days that miss just one clue.' : ' Try a wider range of years, fewer clues, or a bigger “how close” setting.'}</div>`;
+  else html += `<div class="df-summary"><b>${full.length}</b> possible date${full.length > 1 ? 's' : ''} found${full.length > 12 ? ' — add more clues to narrow it down' : ''}.</div>${full.slice(0, dfState.shown).map(card).join('')}`;
+  if (full.length > dfState.shown) html += `<button type="button" class="btn btn-ghost df-showmore" id="dfShowMore">Show more (${full.length - dfState.shown} left)</button>`;
+  if (almost.length && full.length) html += `<button type="button" class="btn btn-ghost df-showmore" id="dfAlmostBtn">${dfState.showAlmost ? 'Hide' : 'Show'} ${almost.length} close match${almost.length > 1 ? 'es' : ''} (miss one clue)</button>`;
+  if (almost.length && (dfState.showAlmost || !full.length)) html += `<div class="df-near-h">Close matches · miss one clue</div>${almost.slice(0, dfState.shown).map(card).join('')}`;
+  out.innerHTML = html;
+}
+function dfDetail(p, i, btn){
+  const R = dfState.res, box = p.querySelector('#dfD' + i); if (!R || !box) return;
+  if (!box.hidden){ box.hidden = true; btn.textContent = 'Details'; return; }
+  const ctx = R.ctx, q = ctx.q, inf = dfInfo(ctx, i), dateStr = ctx.dt(i).slice(0, 3).map((x, k) => k ? String(x).padStart(2, '0') : x).join('-');
+  let pn = null; try { pn = panchangaAt(ctx.srj[i] + 0.01, q.lat, q.lon, q.tz); } catch(e){}
+  const row = (a, b) => `<div class="df-drow"><span>${a}</span><b>${b}</b></div>`;
+  let h = '';
+  if (pn){
+    h += row('Tithi', `${dfEsc(pn.tithi.paksha)} ${dfEsc(pn.tithi.name)} · ${dfFmtT(pn.tithi.start, q.tz, dateStr)} → ${dfFmtT(pn.tithi.end, q.tz, dateStr)}`);
+    h += row('Nakshatra', `${dfEsc(pn.nakshatra.name)} (pada ${pn.nakshatra.pada}) · until ${dfFmtT(pn.nakshatra.end, q.tz, dateStr)}`);
+    h += row('Yoga · Karana', `${dfEsc(pn.yoga.name)} · ${dfEsc(pn.karana.name)}`);
+    h += row('Sunrise · Sunset', `${dfFmtT(pn.sunrise, q.tz, dateStr)} · ${dfFmtT(pn.sunset, q.tz, dateStr)}`);
+  }
+  h += row('Lunar month · year', `${dfEsc(inf.masa)}${inf.adhika ? ' (Adhika)' : ''} · ${dfEsc(inf.sam)} samvatsara`);
+  h += row('Sun · Saturn · Jupiter · Rahu', `${inf.sun.symbol} ${inf.sun.name} · ${inf.sat.symbol} ${inf.sat.name} · ${inf.jup.symbol} ${inf.jup.name} · ${inf.rahu.symbol} ${inf.rahu.name}`);
+  h += `<div class="df-tip">Next: press <b>Use this date</b>, then open <b>Time Dial</b> or <b>Sandhi Table</b> to find the time. Tithi and nakshatra end times above show which part of the day fits your clues.</div>`;
+  box.innerHTML = h; box.hidden = false; btn.textContent = 'Hide details';
+}
+/* The same Date Finder also opens as a popup from the birth form, so it can be used before any chart exists. */
+function dfModalOpen(){ const m = document.getElementById('dfModal'); return !!(m && m.classList.contains('show')); }
+function dfOpenModal(){
+  let m = document.getElementById('dfModal');
+  if (!m){
+    m = document.createElement('div'); m.id = 'dfModal'; m.className = 'df-modal';
+    m.innerHTML = '<div class="df-modal-box" role="dialog" aria-modal="true" aria-label="Date Finder"><button type="button" class="df-x" id="dfX" aria-label="Close">✕</button><div id="dfModalBody"></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click', e => { if (e.target === m || e.target.closest('#dfX')) dfCloseModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && dfModalOpen()) dfCloseModal(); });
+  }
+  const body = document.getElementById('dfModalBody'); let root = document.getElementById('dfRoot');
+  if (!root){ dfBuild(body); root = document.getElementById('dfRoot'); } else body.appendChild(root);
+  const head = root.querySelector('.rs-pane-head'); if (head) head.style.paddingRight = '44px';
+  dfPlaceNote(); m.classList.add('show'); document.body.style.overflow = 'hidden';
+}
+function dfCloseModal(){
+  const m = document.getElementById('dfModal'); if (!m) return;
+  m.classList.remove('show'); document.body.style.overflow = '';
+  const root = document.getElementById('dfRoot'), pane = document.querySelector('.rs-pane[data-rs-pane="dates"]');
+  if (root && pane) pane.appendChild(root);
+}
+function dfUse(dateStr){
+  const el = document.getElementById('dobInput'); if (!el) return;
+  el.value = dateStr;
+  ['input', 'change'].forEach(ev => el.dispatchEvent(new Event(ev, { bubbles: true })));
+  try { inSyncFriendly(); } catch(e){}
+  rsToast('Birth date set to ' + dateStr + '. Now add the place and time ✨');
+  const wasModal = dfModalOpen(); if (wasModal) dfCloseModal();
+  try { if (!wasModal) switchAppTab('panel-home'); const f = document.getElementById('birthForm'); if (f) f.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e){}
 }
 
 /* ---------------------------- Life-Event checker ---------------------------- */
@@ -1626,203 +1895,3 @@ document.addEventListener('keydown', e=>{
   else if (e.key==='Escape') srchClose();
 });
 document.addEventListener('click', e=>{
-  if (e.target.closest && e.target.closest('#quickSearchBtn')){ e.preventDefault(); e.stopImmediatePropagation(); srchOpen(); }
-}, true);
-
-/* ---------- Ask-AI: topic → small box of focused questions → Google AI mode ---------- */
-const SRCH_STYLE = 'RULES: (1) Use ONLY the CHART DATA below. It is exact and authoritative: never invent, change or guess any sign, house, degree, aspect or planet; if something is not listed, do not claim it; if your memory disagrees with the data, the data wins. (2) Be PRECISE, not generic: every point must be a specific, checkable behaviour, habit, event, body area, relationship scenario or age window that a person can test against their own life. Forbidden: statements that fit almost anyone (e.g. "you value...", "sometimes you...", "deep down...", "you can be both..."). Prefer concrete contrasts and numbers. (3) BLEND, do not list: combine Lagna + Sun + Moon signs, conjunctions and aspects from the data into one picture, and say how each aspect or conjunction modifies the trait or event (example style: Saturn+Ketu together in a fire sign -> a specific accident/injury or detachment pattern). (4) End every bullet with a tiny tag: 🔎 Because: <exact combination from the data>. (5) FORMAT: bold headline with an emoji verdict; 3-5 sections with emoji + CAPS headline; tight ranked bullets; ✅ strengths, ⚠️ cautions, ⏳ timing; finish with 🎯 Bottom line in one sentence. Plain words, no jargon. Health topics: one-line not-medical-advice note.';
-const SRCH_TOPICS = [
- {id:'me',ico:'🪞',t:'This is me — precise self-check',kw:'verify my chart is mine personality blend aspects conjunction accuracy relatable self reflect barnum',h:[1],s:[5,9],k:['Sun','Moon'],ck:'Atmakaraka',v:'D1',ar:['AL'],subs:[
-  ['✅ Verify: is this chart mine? (10 checks)','Give 10 very specific, hard-to-fake statements about my PAST and everyday life that I can mark ✔ or ✖: childhood or family situation, a recurring health/injury/body-mark pattern, a relationship scenario that repeats, a school or work turning point with an approximate age window, habits, living situation, parents/siblings facts. Rank from most to least confident. End with: how many ✔ out of 10 would confirm this chart is mine, and which of the 10 depend on the exact birth time (Lagna/house based) versus Sun/Moon-sign based ones that survive a time error.'],
-  ['🧬 My personality blend (Lagna + Sun + Moon)','Explain my personality as ONE blend. Three short blocks: Outer me (Lagna sign + planets in/aspecting Lagna), Core me (Sun sign + what conjoins/aspects Sun), Inner me (Moon sign + what conjoins/aspects Moon). Then say precisely where these three clash or reinforce, and how each aspect/conjunction in the data shifts the behaviour. Give 10 relatable but non-generic behaviours I can recognise in myself.'],
-  ['🔗 What each aspect & conjunction does to me','Go through EVERY conjunction and EVERY aspect in the data. For each: one line on exactly how it changes my behaviour or life events (be concrete: situations, reactions, accident/health/relationship patterns, ages), plus its 🔎 Because tag. Rank from strongest effect to weakest.'],
-  ['🔒 10 private things only I would know','Give 10 specific private habits, thoughts or reactions that I can easily self-reflect on but that are NOT generic: how I react under stress, spending/sleep/food habits, texting or arguing style, what I do when ignored, what I hide, what triggers me. Each must be checkable ✔/✖.'],
-  ['👪 Childhood & family snapshot','Give 10 specific, checkable statements about my childhood, parents, siblings, home environment and early school years, with approximate age windows.'],
-  ['🔁 Relationship scenarios I keep repeating','Give 8 specific repeating scenarios in my close relationships (who I attract, what goes wrong, how it ends or restarts) that I can recognise, with an age window where the pattern began.'],
-  ['⚙️ How I really work & handle money','Give 10 specific, checkable work-style and money habits (how I start tasks, deadlines, bargains, savings, impulse spending, risk) — nothing generic.'],
-  ['🩹 Body & health quirks to verify','Give 8 specific body/health tendencies I can verify in my own history (areas, injuries, digestion, sleep, energy dips, skin/hair, accident-prone situations). Traditional astrology only, not medical advice.'],
-  ['⏱️ Birth-time sanity check','Using only the data: which 5 claims about me depend on the Lagna/houses (change if my birth time is off), and which 5 depend only on Sun/Moon/planet signs? Suggest 3 life events I should ask family about to confirm the birth time.']]},
- {id:'career',ico:'💼',t:'Career & profession',kw:'job work profession promotion success',h:[10],s:[6,2,11],k:['Sun','Saturn','Mercury','Jupiter'],ck:'Amatyakaraka',v:'D10',ar:['A10','AL'],subs:[
-  ['Top 20 careers for me','List 20 specific careers/professions ranked from most to least likely for me (like artist, scientist, doctor, advocate, engineer, teacher). One line each: the job + a 4-6 word reason in plain words.'],
-  ['Job or business?','Say clearly: job, business, or both, with one line why. Then list 5 job roles and 5 business types that fit me.'],
-  ['Best industries & work style','List my 10 best industries, then my ideal work style (solo or team, desk or field, own boss or not) in 5 short bullets.'],
-  ['Next 5 years of career','Give a year-by-year list for the next 5 years: rise / stable / change / risk, one line each, with the best months or quarters to move.'],
-  ['Blockers & fixes','List my 5 biggest career blockers and one practical fix for each.'],
-  ['Skills to build','List my 8 strongest professional strengths and the 3 skills I should develop most.']]},
- {id:'job',ico:'🧑‍💻',t:'Job vs business',kw:'employment self employed entrepreneur startup',h:[10,7],s:[6,3,11],k:['Mercury','Saturn','Mars'],ck:'Amatyakaraka',v:'D10',ar:['A10'],subs:[
-  ['Job or business: decide','Give a direct verdict (job / business / both) with a percentage split and one reason.'],
-  ['15 business ideas','List 15 specific business ideas ranked by fit for me, with 4-word reasons.'],
-  ['Best time to switch or start','List the 3 best years/windows to change jobs or start a business, and 2 periods to avoid.'],
-  ['Solo or partners?','Should I work alone or with partners? Describe the type of partner to trust and the type to avoid.']]},
- {id:'money',ico:'💰',t:'Wealth & finances',kw:'money income savings rich dhana',h:[2,11],s:[5,9,8],k:['Jupiter','Venus'],ck:'',v:'D2',ar:['A2','A11'],subs:[
-  ['10 income sources','List my 10 most likely sources of income, ranked, one line each.'],
-  ['Money habits','Give 8 specific, checkable money behaviours: what I do right after income, impulse-spend categories, saving style, lending/borrowing habit, risk appetite, with an example each.'],
-  ['Wealth years ahead','Year-by-year for the next 5 years: income up/down, best years to invest, buy or save.'],
-  ['Where to invest','List 8 asset types that suit my nature ranked, and 4 to avoid (general idea only, not financial advice).'],
-  ['Money leaks & fixes','List my 5 biggest money leaks and a fix for each.'],
-  ['Best age to build wealth','Give the 3 age windows when I build the most wealth, and what I should do in each.'],
-  ['Good & bad money days','List the weekdays and 3 conditions that are good for money decisions for me and which to avoid.']]},
- {id:'moneyblocks',ico:'🚧',t:'Money blocks & delays',kw:'money block stuck poor debt loan loss not saving financial problem scarcity obstacle',h:[2,11,6,8,12],s:[5,9,10],k:['Saturn','Rahu','Ketu','Jupiter'],ck:'',v:'D2',ar:['A2','A11'],subs:[
-  ['My top 7 money blocks','List my 7 most likely money blocks, tied to specific placements, each with a checkable real-life sign (no generic lines).'],
-  ['Why money leaves me','List 6 specific ways money leaves me (loans, trust, impulse, family, health, fines, scams, lending) ranked, with a fix for each.'],
-  ['Debt & loans','Give a direct view on debt and loan risk (low / medium / high), 4 reasons, and the safest way I should borrow or avoid it.'],
-  ['Mindset blocks','Give 6 specific beliefs or habits about money that my chart suggests I hold, and a replacement habit for each.'],
-  ['Blocked years & when it eases','List the next 3 tight financial periods (with years) and the first window when money flow clearly improves.'],
-  ['Unexpected loss risks','List 5 types of sudden financial loss to guard against (theft, fraud, partners, speculation, health) and a precaution for each.']]},
- {id:'wealthboost',ico:'📈',t:'Wealth growth & luck',kw:'rich millionaire business profit investment property lottery speculation windfall gains',h:[2,5,9,11],s:[8,10],k:['Jupiter','Venus','Mercury'],ck:'',v:'D2',ar:['A2','A11'],subs:[
-  ['Rich or comfortable?','Give a direct verdict (struggle / comfortable / wealthy / very wealthy) with a percentage and 5 chart reasons.'],
-  ['Salary, business or both','Rank salary, business, freelance, investments and family money for me with a percentage and reason.'],
-  ['Windfalls & speculation','Say whether sudden gains (inheritance, gifts, stocks, lottery) are likely, with 4 reasons and how careful I should be.'],
-  ['Property, gold or stocks','Rank property, gold, stocks, business and savings for my nature, 1 line each (general idea only, not financial advice).'],
-  ['My 5 best money years','List the 5 best years ahead for income growth, each with one action to take.'],
-  ['Multiple income streams','List 8 income stream ideas that fit my chart, ranked, with the planet behind each.']]},
- {id:'remedies',ico:'🪔',t:'Remedies & what to do',kw:'remedy remedies upay mantra gemstone puja charity fasting donate fix dosha solution',h:[1,6,8,12],s:[9,5],k:['Jupiter','Saturn','Sun','Moon'],ck:'',v:'D1',ar:[],subs:[
-  ['My top 5 remedies','Pick the 5 most useful traditional remedies for MY chart, ranked by importance, with the exact planet and reason for each.'],
-  ['Weak planets & how to strengthen','List my 3 weakest planets and, for each: a simple mantra, a day to fast or donate, a colour and a daily habit.'],
-  ['Gemstones: wear or avoid','Say which gemstones may suit me and which to avoid, with the reason and a caution to consult a trusted astrologer before wearing.'],
-  ['Mantras & daily routine','Build a 10-minute daily routine: mantras, timing and simple actions matched to my chart.'],
-  ['Charity & seva that helps','List 7 specific charity or service actions (what to give, on which day, to whom) matched to my planets.'],
-  ['Habits that matter more than rituals','List 8 practical, non-ritual habits that work as remedies for my chart in everyday life.'],
-  ['Money-focused remedies','Give 8 traditional remedies and 4 practical habits specifically to improve money flow in my chart.'],
-  ['Love-focused remedies','Give 8 traditional remedies and 4 practical habits specifically for love, marriage and relationships in my chart.'],
-  ['Remedies for the running period','Based on my current dasha and antardasha, list 6 targeted remedies and what to avoid until it ends.']]},
- {id:'karmapat',ico:'♾️',t:'Karmic patterns',kw:'karma karmic past life rahu ketu nodes saturn lesson debt repeating pattern destiny dharma',h:[5,8,9,12],s:[1,6,10],k:['Rahu','Ketu','Saturn'],ck:'Atmakaraka',v:'D60',ar:[],subs:[
-  ['My Rahu–Ketu life lesson','Using the houses and signs of Rahu and Ketu, explain in 8 plain bullets: what I over-chase now (Rahu), what I already mastered and tend to abandon (Ketu), and the balance to find.'],
-  ['Top 8 repeating patterns','List the 8 life patterns that keep repeating for me (people, situations, endings), each tied to a placement and a checkable real-life example.'],
-  ['Soul purpose (Atmakaraka)','Based on my Atmakaraka planet and sign, describe my soul\'s core lesson, 6 gifts I carry and 4 traps.'],
-  ['Saturn: where life tests me','Using Saturn\'s house, sign and aspects, list 7 areas where I face delay or pressure, what it asks of me, and the reward when I do it.'],
-  ['Karmic debts I owe / are owed','Using the 6th, 8th, 12th houses and their lords, list 6 likely karmic debts (family, money, relationships, health, duty) and how to settle each.'],
-  ['Retrograde planets & unfinished work','List each retrograde planet in my chart and what unfinished past-life theme it points to, 1 line each.'],
-  ['Family & ancestral karma','Using the 4th, 9th, Sun, Moon and Saturn, list 6 ancestral or family patterns I may be carrying and healthy ways to break them.'],
-  ['Karmic turning points','List the 5 age windows where my karma shifts strongly (dasha or node transits), with what changes at each.'],
-  ['Breaking the cycle','Give 10 practical steps (habits, boundaries, service, remedies) to break my top repeating karmic patterns.']]},
- {id:'karmarel',ico:'🪢',t:'Karmic relationships',kw:'karmic relationship soul contract twin flame toxic cycle attachment rahu ketu 7th 12th',h:[5,7,8,12],s:[4,11],k:['Rahu','Ketu','Venus','Saturn'],ck:'Darakaraka',v:'D9',ar:['UL'],subs:[
-  ['My karmic relationship type','Describe in 7 checkable bullets the type of karmic relationship I attract (teacher, mirror, rescuer, avoidant, controlling...) and why.'],
-  ['Signs a bond is karmic','List 8 clear signs a relationship is karmic for me versus healthy, so I can recognise it early.'],
-  ['Parents, siblings & friends karma','Using the 4th, 3rd, 9th and 11th, list 6 karmic lessons with parents, siblings, friends and mentors.'],
-  ['Teachers & mentors I meet','Say when and what kind of teachers or mentors appear in my life, with 4 age windows.'],
-  ['Cutting toxic cycles','Give 8 specific boundaries and habits to stop repeating toxic cycles, tied to my chart.']]},
- {id:'fame',ico:'🌟',t:'Fame, status & recognition',kw:'reputation name public image authority',h:[10,1],s:[11,5],k:['Sun','Moon'],ck:'Atmakaraka',v:'D10',ar:['AL','A10'],subs:[
-  ['Will I become well known?','Give a direct verdict with a percentage and the fields where it is most likely.'],
-  ['My public image','In 6 bullets: how people see me, and how to sharpen it.'],
-  ['10 best fields for recognition','List 10 fields or platforms where I can get recognised, ranked.'],
-  ['When recognition peaks','List the 3 best years/windows for visibility and 1 to avoid.']]},
- {id:'spouse',ico:'💍',t:'Spouse & marriage',kw:'wife husband partner relationship spouse details',h:[7],s:[2,11,12],k:['Venus','Jupiter'],ck:'Darakaraka',v:'D9',ar:['UL','A7'],subs:[
-  ['Who is my likely spouse','Describe my likely spouse in bullets: personality, looks tendency, 8 most likely professions, family background, age gap tendency and how close our culture will be.'],
-  ['Where & how will I meet','List the 10 most likely places or ways I meet my partner, ranked (work, college, friends, family introduction, online, travel, neighbourhood...). One line each.'],
-  ['Love or arranged?','Give a direct verdict with a percentage split between love and arranged.'],
-  ['Where is my partner from','Rank where my partner is likely from: same city, another city, another state, abroad, other culture. One line each.'],
-  ['Marriage quality','List my marriage strengths (5) and challenges (5) in plain words.'],
-  ['Making marriage smoother','Give 6 practical habits and traditional remedies for a smoother marriage.']]},
- {id:'marriagetime',ico:'📅',t:'Marriage timing',kw:'when will i marry wedding delay',h:[7,2,11],s:[5,12],k:['Venus','Jupiter'],ck:'Darakaraka',v:'D9',ar:['UL'],subs:[
-  ['Likely marriage years','List the 3 most likely years/age windows for marriage, ranked, one line each.'],
-  ['Any delay and why','Is there a delay? Say yes/no, give 3 plain reasons, and the first window when it eases.'],
-  ['Best months next 12 months','List the best 3 months in the next 12 for engagement/marriage steps and any to avoid.']]},
- {id:'love',ico:'❤️',t:'Love & romance',kw:'dating affair crush relationship attraction',h:[5,7],s:[11,2],k:['Venus','Moon'],ck:'Darakaraka',v:'D9',ar:['UL'],subs:[
-  ['My romance pattern','Give 8 specific, checkable things about how I behave in love (who initiates, how I act in the first 3 months, what I do when jealous or hurt, what I secretly need). Nothing generic.'],
-  ['Types of people I attract','List 8 types of partner I am attracted to or attract.'],
-  ['Heartbreak risks & how to avoid','List 5 relationship traps for me and how to avoid each.'],
-  ['Best time for new love','List the best 3 windows for new love in the next 3 years.'],
-  ['How to attract the right person','Give 8 specific actions, places and habits that help me attract the right partner, plus 3 things to stop doing.']]},
- {id:'lovers',ico:'💞',t:'Lovers & love story',kw:'lover boyfriend girlfriend ex first love crush story attraction partner type',h:[5,7,11],s:[2,8,12],k:['Venus','Moon','Mars'],ck:'Darakaraka',v:'D9',ar:['UL','A7'],subs:[
-  ['My love story outline','Outline my love life as 6 chapters (age windows): first attraction, first serious relationship, hardest phase, turning point, settling phase, long-term. One line each, concrete.'],
-  ['My first love','Describe, in 7 specific bullets, the kind of person my first real love is likely to be and how it starts and ends.'],
-  ['How many serious relationships','Give a direct estimate of how many serious relationships I am likely to have before settling, with the reason in one line each.'],
-  ['What I want vs what I attract','Two lists of 6 bullets: what I consciously want in a lover, and what I actually keep attracting. Point out the gap.'],
-  ['My love language','Rank my 5 love languages (words, time, touch, gifts, acts) with a checkable example of each.'],
-  ['My attachment style','Name my attachment style (secure, anxious, avoidant, mixed) and give 6 checkable behaviours: texting habits, reaction to silence, jealousy, space needs.']]},
- {id:'soulmate',ico:'🔮',t:'Soulmate & karmic love',kw:'soulmate twin flame karmic past life rahu ketu connection destiny',h:[5,7,8,12],s:[11,1],k:['Rahu','Ketu','Venus'],ck:'Darakaraka',v:'D9',ar:['UL'],subs:[
-  ['Karmic love pattern','Using Rahu/Ketu, Venus and the 5th/7th/8th/12th, give 6 specific karmic patterns in my love life (repeating situations, a type of person, a lesson).'],
-  ['Past-life love debts','Give 5 plain-language signs of unfinished love karma and how it shows up in my life now.'],
-  ['Is this a soulmate or a lesson?','Give 8 checkable signs that separate a soulmate-type bond from a karmic lesson for my chart, so I can judge my current relationship.'],
-  ['The one who comes back','Will an ex or old lover return? Give a verdict with a percentage and 4 reasons.'],
-  ['Healing karmic ties','Give 6 practical steps and traditional remedies to heal karmic love knots.']]},
- {id:'chemistry',ico:'🔥',t:'Chemistry & intimacy',kw:'romance passion physical attraction desire bedroom chemistry intimacy',h:[7,8,12],s:[5,2],k:['Venus','Mars','Moon'],ck:'Darakaraka',v:'D9',ar:['UL'],subs:[
-  ['My attraction style','Describe in 7 tasteful, specific bullets what draws me to someone, how I flirt, and how fast I open up.'],
-  ['Emotional vs physical needs','Give a balanced view of my emotional versus physical needs in a relationship in 6 bullets.'],
-  ['What keeps the spark alive','List 8 practical things that keep romance and closeness alive for me.'],
-  ['Mismatch risks','List 5 chemistry mismatches to watch for in a partner and how to talk about them kindly.']]},
- {id:'breakup',ico:'💔',t:'Breakups & healing',kw:'breakup heartbreak separation divorce cheating betrayal move on pain',h:[7,8,12],s:[5,6],k:['Saturn','Mars','Rahu'],ck:'Darakaraka',v:'D9',ar:['UL','A7'],subs:[
-  ['Why relationships break for me','Give 7 specific, checkable reasons my relationships may strain or end, tied to my chart (no generic lines).'],
-  ['Breakup or divorce risk','Give a direct risk level (low / medium / high) for lasting separation and the 4 main factors.'],
-  ['Trust & loyalty patterns','List 6 patterns around trust, loyalty and secrecy for me and for my partner type.'],
-  ['How I heal','Give 8 specific steps for how I personally heal after heartbreak, and how long it tends to take.'],
-  ['Danger periods','List the next 3 periods (with years) where relationships need extra care, and what to do in each.']]},
- {id:'partnerfit',ico:'🧩',t:'Ideal partner & red flags',kw:'ideal partner compatibility match red flags green flags zodiac sign suits me',h:[7,1,5],s:[11,2],k:['Venus','Jupiter'],ck:'Darakaraka',v:'D9',ar:['UL'],subs:[
-  ['My ideal partner profile','Describe my ideal partner in 10 bullets: temperament, values, communication style, ambition level, family attitude.'],
-  ['Best 5 signs/nakshatras for me','Rank the 5 zodiac signs and 5 nakshatras that match me best, with one line why.'],
-  ['Red flags for me','List 8 partner red flags specifically dangerous for me, and 5 green flags to look for.'],
-  ['Age gap & distance','Say whether an age gap, long distance or a partner from another city, culture or country suits me, with reasons.'],
-  ['Questions to ask before committing','Give 10 sharp questions I should ask a partner before committing, based on my chart weak spots.']]},
- {id:'marriedlife',ico:'🏠',t:'Married life & in-laws',kw:'after marriage husband wife in-laws family home harmony fights',h:[7,4,2],s:[8,12,10],k:['Venus','Moon','Jupiter'],ck:'Darakaraka',v:'D9',ar:['UL','A4'],subs:[
-  ['Daily life after marriage','Describe in 8 checkable bullets how my married life looks day to day: who leads, fights, money, home.'],
-  ['In-laws & family','Give 6 bullets on my relationship with in-laws and joint-family dynamics.'],
-  ['Common fights & solutions','List my 6 most likely arguments and a solution for each.'],
-  ['Spouse\'s support & career','How will my spouse help or affect my career and money? 6 bullets.'],
-  ['Marriage strong years','List the 3 strongest and 2 testing phases of my marriage by age window.']]},
- {id:'children',ico:'👶',t:'Children & progeny',kw:'kids baby child birth pregnancy fertility',h:[5],s:[2,9,11],k:['Jupiter'],ck:'Putrakaraka',v:'D7',ar:['A5'],subs:[
-  ['Children: outlook','Give a direct outlook on having children (easy / some delay / needs care) with a one-line reason.'],
-  ['Best years for children','List the 3 most favourable years/windows.'],
-  ['My child\'s nature','Describe the kind of child(ren) I am likely to have in 6 bullets and my parenting style.'],
-  ['Support & remedies','List 5 practical supports or traditional remedies that help.']]},
- {id:'education',ico:'🎓',t:'Education & learning',kw:'study college exams degree knowledge',h:[4,5],s:[9,2],k:['Mercury','Jupiter'],ck:'Putrakaraka',v:'D24',ar:[],subs:[
-  ['15 best subjects/degrees','List 15 subjects or degrees ranked by fit.'],
-  ['How I learn best','Give 8 specific, checkable learning habits: best time of day, format, memory style, subjects I struggle with, how I react to exams.'],
-  ['Exam & degree timing','List the best years/windows for exams, admissions or a new course.'],
-  ['Study abroad chance','Give a direct verdict on studying abroad, best regions, and best timing.']]},
- {id:'health',ico:'🩺',t:'Health & vitality',kw:'disease illness body fitness immunity',h:[1,6],s:[8,12],k:['Sun','Moon','Mars'],ck:'Atmakaraka',v:'D30',ar:['A6'],subs:[
-  ['Strong & sensitive areas','List my body areas from strongest to most sensitive, one line each (traditional astrology, not medical advice).'],
-  ['Habits that suit me','List 8 daily habits, foods and exercise types that suit me.'],
-  ['Care periods','List the periods that need extra care and the periods of strong vitality (balanced, non-fearful).'],
-  ['Stress & sleep','Give 5 tips for my stress and sleep pattern.']]},
- {id:'mind',ico:'🧠',t:'Mind & emotional peace',kw:'stress anxiety depression mood happiness',h:[4,1],s:[5,12],k:['Moon','Mercury'],ck:'Atmakaraka',v:'D1',ar:[],subs:[
-  ['My stress triggers','List 8 very specific situations that spike my stress (types of people, settings, deadlines, noise, money, health) that I can verify from my own past.'],
-  ['Mood pattern','Give 8 specific, checkable mood patterns: times of day/month/year I dip or peak, what triggers a swing, how long it lasts, what I do when low.'],
-  ['Habits for peace','List 8 daily practices that bring me peace.'],
-  ['Best calming practices','Rank 8 practices (meditation, music, nature, prayer, exercise...) by how well they suit me.']]},
- {id:'longevity',ico:'⏳',t:'Resilience & sudden changes',kw:'life span accidents surgery transformation 8th house',h:[8,1],s:[3,6,12],k:['Saturn'],ck:'Atmakaraka',v:'D30',ar:['A8'],subs:[
-  ['Sudden-change areas','List the life areas where sudden change is most likely, ranked, with a calm tone.'],
-  ['Sensitive periods','List the next 3 sensitive periods and how to handle each (balanced, no fear).'],
-  ['Protective habits','List 6 habits that protect me.']]},
- {id:'father',ico:'👨',t:'Father & mentors',kw:'dad guru teacher blessings',h:[9],s:[10,3],k:['Sun','Jupiter'],ck:'',v:'D12',ar:['A9'],subs:[
-  ['Bond with father','Give 8 specific, checkable facts about my relationship with my father: closeness/distance phases with ages, conflict style, how he shaped my career, health or support issues.'],
-  ['Father\'s nature & work','Describe my father\'s likely nature and 5 likely professions.'],
-  ['Mentors & gurus','Describe the type of mentor/teacher who helps me and when they appear.']]},
- {id:'mother',ico:'👩',t:'Mother & home life',kw:'mom family happiness domestic',h:[4],s:[10,9],k:['Moon'],ck:'Matrikaraka',v:'D12',ar:['A4'],subs:[
-  ['Bond with mother','Give 8 specific, checkable facts about my relationship with my mother: closeness/distance phases with ages, conflict style, her health or role at home, what I got or missed from her.'],
-  ['Home happiness','Give 8 specific, checkable facts about my home life (moves, property disputes, noise/peace, who dominates, mother\'s role) and 3 fixes.']]},
- {id:'siblings',ico:'🧑‍🤝‍🧑',t:'Siblings & courage',kw:'brother sister effort initiative',h:[3],s:[11,1],k:['Mars'],ck:'Bhratrikaraka',v:'D3',ar:['A3'],subs:[
-  ['Siblings','Give 8 specific, checkable facts about my siblings situation (number tendency, birth order feel, age gaps, closeness, rivalry, who helps whom).'],
-  ['My courage & effort style','Give 8 specific, checkable ways I take initiative, handle risk, react to dares or competition, and where I hold back.']]},
- {id:'property',ico:'🏠',t:'Property, home & vehicles',kw:'house land real estate car buy flat',h:[4],s:[2,11,12],k:['Mars','Venus','Saturn'],ck:'Matrikaraka',v:'D4',ar:['A4'],subs:[
-  ['Will I own property?','Give a direct verdict and the likely age/year range.'],
-  ['What suits me','Rank: house, flat, land, farm, commercial, vehicle, with a one-line reason each.'],
-  ['Where to buy','Describe the best type of location/direction and city style for me.'],
-  ['Best years to buy','List the best 3 years/windows to buy property or a vehicle.']]},
- {id:'foreign',ico:'✈️',t:'Foreign travel & settlement',kw:'abroad visa immigration relocate overseas',h:[12,9],s:[3,7,4],k:['Rahu','Moon'],ck:'',v:'D1',ar:[],subs:[
-  ['Will I go abroad?','Give a direct verdict with a percentage and the type: study, work, settle, or travel.'],
-  ['10 best countries/regions','List 10 countries or regions ranked by fit for me.'],
-  ['Best years to go','List the best 3 years/windows to travel, move or study abroad.']]},
- {id:'enemies',ico:'⚔️',t:'Rivals, debts & disputes',kw:'enemies litigation court competition loans conflict',h:[6],s:[8,12,3],k:['Mars','Saturn'],ck:'Gnatikaraka',v:'D1',ar:['A6'],subs:[
-  ['Types of rivals','Describe the kind of rivals/opponents I face in 6 bullets.'],
-  ['Debt & legal risk','Give a calm verdict on debt and legal-dispute risk and 5 ways to stay safe.'],
-  ['How I win','List 6 strategies that work best for me in conflicts.']]},
- {id:'spiritual',ico:'🕉️',t:'Spirituality & moksha',kw:'meditation dharma purpose inner growth',h:[9,12],s:[5,8],k:['Ketu','Jupiter'],ck:'Atmakaraka',v:'D20',ar:[],subs:[
-  ['8 paths that suit me','List 8 spiritual paths/practices (bhakti, meditation, yoga, service, study...) ranked.'],
-  ['Traditional mantra / deity leaning','Name the traditional deities or mantras that match my chart (3-5) and a simple daily practice.'],
-  ['When spirituality deepens','List the best periods for spiritual growth.']]},
- {id:'karma',ico:'🔮',t:'Karma & past life',kw:'karmic lessons rahu ketu dosha pitru kala sarpa mangal past life debt',h:[5,9,12,8],s:[1],k:['Rahu','Ketu','Saturn'],ck:'Atmakaraka',v:'D60',ar:[],subs:[
-  ['My karmic lessons','List my top 6 karmic lessons in this life in plain words, one line each.'],
-  ['Past-life gifts','List 8 talents or instincts that feel naturally mine (likely carried from the past).'],
-  ['Repeating patterns','List 5 relationship/life patterns that repeat for me and how to break each.'],
-  ['Doshas explained simply','Using DOSHA FACTS, say which doshas apply (Mangal, Kala Sarpa, Pitru, Shani), in plain words, with how serious each is and 3 traditional remedies.'],
-  ['Soul\'s mission','In 3 short lines, say my soul\'s mission and what to focus on.']]},
- {id:'purpose',ico:'🧭',t:'Personality & life purpose',kw:'nature character soul atmakaraka self',h:[1],s:[5,9],k:['Sun','Moon'],ck:'Atmakaraka',v:'D9',ar:['AL'],subs:[
-  ['My top 10 strengths','Give 10 specific strengths shown as concrete behaviours that others have actually noticed in me, with the situation where each shows.'],
-  ['5 weaknesses & fixes','List 5 weaknesses as concrete recurring mistakes (with the typical situation where each happens), each with one practical fix.'],
-  ['Life purpose','State my life direction in 3 lines using specific themes from the data (no motivational clichés) and name 3 concrete fields or life areas where it plays out.'],
-  ['Traditional lucky aids','List my traditional lucky colour, day, number, direction and gem (for fun, traditional).']]},
- {id:'friends',ico:'🤝',t:'Friends, networks & gains',kw:'social circle allies fulfilment desires',h:[11],s:[3,7,5],k:['Jupiter','Mercury'],ck:'',v:'D1',ar:['A11'],subs:[
-  ['My friend types','Give 8 specific traits of the friends I attract: age gap, profession types, how friendships start and end, who supports me and who lets me down.'],
-  ['Networking strengths','List how I gain from networks and 5 ways to use it.']]},
- {id:'losses',ico:'📉',t:'Expenses, losses & sleep',kw:'spending waste hospital isolation bed',h:[12],s:[2,6,8],k:['Saturn','Ketu'],ck:'',v:'D1',ar:[],subs:[

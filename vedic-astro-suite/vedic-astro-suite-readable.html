@@ -9380,6 +9380,54 @@ img,svg{max-width:100%}
 .rs-note{margin-top:14px;padding:13px 15px;border-radius:14px;background:rgba(94,196,183,.07);border:1px solid rgba(94,196,183,.25);font-size:12.5px;line-height:1.6;color:var(--text-muted)}
 .rs-toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,30px);opacity:0;z-index:9999;padding:11px 20px;border-radius:999px;background:#12141d;border:1px solid var(--gold);color:var(--gold-bright);font-size:13.5px;box-shadow:0 12px 40px rgba(0,0,0,.5);transition:all .35s cubic-bezier(.2,1,.3,1);pointer-events:none}
 .rs-toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---- Date Finder ---- */
+.df-card{border:1px solid var(--border-light);background:rgba(255,255,255,.025);border-radius:18px;padding:16px;margin-bottom:14px}
+.df-card h4{margin:0 0 12px;font-family:var(--font-display);font-weight:500;font-size:16px;color:var(--gold-bright)}
+.df-card h4 small{font-family:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-left:6px}
+.df-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:12px}
+.df-f{display:flex;flex-direction:column;gap:5px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);min-width:0}
+.df-f select,.df-f input{background:rgba(0,0,0,.3);border:1px solid var(--border-light);color:var(--text-main);border-radius:12px;padding:10px 12px;font-size:14px;font-family:inherit;text-transform:none;letter-spacing:0;min-width:0;width:100%;box-sizing:border-box}
+.df-f select:focus,.df-f input:focus{outline:none;border-color:var(--gold)}
+.df-place{font-size:12.5px;color:var(--text-muted)}
+.df-pills{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.df-pl{font-size:12px;color:var(--text-muted)}
+.df-pill{padding:7px 13px;border-radius:999px;border:1px solid var(--border-light);background:rgba(255,255,255,.03);color:var(--text-main);font-size:12.5px;cursor:pointer;font-family:inherit;transition:border-color .2s,color .2s}
+.df-pill:hover{border-color:var(--gold);color:var(--gold-bright)}
+.df-more{margin-top:4px}.df-more summary{cursor:pointer;color:var(--gold);font-size:13px;padding:6px 0;margin-bottom:8px}
+.df-chk{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--text-muted);margin-top:2px}
+.df-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px}
+.df-actions .btn{border-radius:999px}
+.df-count{font-size:12.5px;color:var(--text-muted)}
+.df-prog{display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text-muted)}
+.df-bar{height:6px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}.df-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-bright));transition:width .25s}
+.df-summary{margin:4px 0 12px;font-size:14px;color:var(--text-main)}
+.df-empty{padding:16px;border:1px dashed var(--border-light);border-radius:14px;color:var(--text-muted);font-size:13.5px;margin-bottom:12px}
+.df-res{border:1px solid var(--border-light);border-radius:16px;padding:14px;margin-bottom:10px;background:rgba(255,255,255,.025)}
+.df-res.near{border-style:dashed}
+.df-res-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.df-date{font-family:var(--font-display);font-size:19px;color:var(--gold-bright)}
+.df-sub{font-size:12.5px;color:var(--text-muted);margin-top:3px}
+.df-res-act{display:flex;gap:8px;flex-wrap:wrap}.df-res-act .btn{border-radius:999px;padding:8px 14px;font-size:13px}
+.df-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.df-chip{font-size:11.5px;padding:4px 10px;border-radius:999px;border:1px solid var(--border-light);color:var(--text-muted)}
+.df-chip.ok{border-color:rgba(94,196,183,.45);color:var(--teal-bright)}
+.df-chip.bad{border-color:rgba(230,120,100,.5);color:#e68a78}
+.df-chip.fest{border-color:var(--gold-dim);color:var(--gold)}
+.df-miss{font-size:12px;color:#e68a78;margin-top:8px}
+.df-detail{margin-top:12px;border-top:1px solid var(--border-light);padding-top:10px}
+.df-drow{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:5px 0;color:var(--text-muted)}.df-drow b{color:var(--text-main);font-weight:500;text-align:right}
+.df-tip{margin-top:8px;font-size:12.5px;color:var(--text-muted)}
+.df-near-h{margin:16px 0 8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+.df-showmore{border-radius:999px;margin:4px 8px 10px 0}
+.df-modal{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(2,3,8,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .25s}
+.df-modal.show{opacity:1;pointer-events:auto}
+.df-modal-box{position:relative;width:100%;max-width:780px;max-height:92vh;max-height:92dvh;overflow-y:auto;overscroll-behavior:contain;background:var(--bg-card,#10121b);border:1px solid var(--border-light);border-radius:24px;padding:22px 20px 24px;box-shadow:0 24px 80px rgba(0,0,0,.7);transform:translateY(24px) scale(.98);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.df-modal.show .df-modal-box{transform:none}
+.df-x{position:sticky;top:0;float:right;z-index:2;width:36px;height:36px;border-radius:12px;border:1px solid var(--border-light);background:rgba(255,255,255,.06);color:var(--text-muted);font-size:15px;cursor:pointer;margin:-4px -4px 0 8px}
+.df-x:hover{color:var(--gold-bright);border-color:var(--gold)}
+@media (max-width:560px){.df-modal{padding:0;align-items:flex-end}.df-modal-box{max-height:94vh;max-height:94dvh;border-radius:24px 24px 0 0;padding:18px 14px 22px}}
+@media (max-width:560px){.df-card{padding:13px}.df-res-act{width:100%}.df-res-act .btn{flex:1}.df-drow{flex-direction:column;gap:2px}.df-drow b{text-align:left}}
 @media (max-width:860px){
   .rs-hero{grid-template-columns:1fr;padding:24px 18px;gap:14px;text-align:center}
   .rs-clockwrap{width:150px;margin:0 auto}.rs-pill{justify-content:center}
@@ -12834,6 +12882,7 @@ const HOME_ITEMS=[
  ['panel-vargas','◫','Divisional Charts','D1 to D60 chart viewer','Your Chart','chart'],
  ['panel-lagnas','✧','Special Lagnas','23 alternate ascendants','Your Chart','chart'],
  ['panel-rectification','🎯','Rectification Studio','Dial, scan & confirm the time','Fix Birth Time','rectify'],
+ ['panel-datefinder','🔎','Date Finder','Find the birth date from festival, tithi & day clues','Fix Birth Time','rectify'],
  ['panel-sandhi','⏱','Sandhi Table','Ascendant window across all charts','Fix Birth Time','rectify'],
  ['panel-vargatimeline','🗺️','Varga Timeline','Map the birth window on any chart','Fix Birth Time','rectify'],
  ['panel-transittimer','⏳','Transit Timer','When a planet changes house','Fix Birth Time','rectify'],
@@ -12929,6 +12978,7 @@ document.querySelectorAll('.app-tab').forEach(tab=>{
    (IDs + listeners survive) into tab panes. Old panel ids still work via switchAppTab.
    ============================================================================ */
 const RS_TABS = [
+  ['dates', '🔎', 'Date Finder',    1],
   ['dial',  '🕰️', 'Time Dial',      1],
   ['scan',  '🎯', 'Second Scan',    2],
   ['sandhi','⏱️', 'Sandhi Table',   2],
@@ -12936,9 +12986,9 @@ const RS_TABS = [
   ['tt',    '⏳', 'Transit Timer',  2],
   ['life',  '🌟', 'Life Events',    3]
 ];
-const RS_STEPS = [[1,'Set the time'],[2,'Narrow it down'],[3,'Confirm with life']];
+const RS_STEPS = [[1,'Set date & time'],[2,'Narrow it down'],[3,'Confirm with life']];
 const RS_SUBS = { sandhi:'panel-sandhi', vt:'panel-vargatimeline', tt:'panel-transittimer' };
-const RS_ROUTE = { 'panel-sandhi':'sandhi', 'panel-vargatimeline':'vt', 'panel-transittimer':'tt', 'panel-lifeevents':'life' };
+const RS_ROUTE = { 'panel-datefinder':'dates', 'panel-sandhi':'sandhi', 'panel-vargatimeline':'vt', 'panel-transittimer':'tt', 'panel-lifeevents':'life' };
 const RS_CATS = {
   marriage:{label:'💍 Marriage / partnership', p:[7], s:[2,11], k:['Venus']},
   child:   {label:'👶 Child birth',            p:[5], s:[2,9,11], k:['Jupiter']},
@@ -13037,6 +13087,7 @@ function rsShow(id, scroll){
   const line = root.querySelector('.rs-rail-fill'); if (line) line.style.width = ((grp-1)/2*100)+'%';
   if (scroll){ const top = root.querySelector('.rs-tabs').getBoundingClientRect().top + window.pageYOffset - 70; window.scrollTo({ top:Math.max(0,top), behavior:'smooth' }); }
   if (id==='life') rsRenderEvents();
+  if (id==='dates'){ try { dfPlaceNote(); } catch(e){} }
 }
 
 function rsHow(el, title){
@@ -13108,6 +13159,7 @@ function initRectStudio(){
   });
   // Life
   rsBuildLife(pane('life'));
+  try { dfBuild(pane('dates')); } catch(e){ console.error('Date Finder', e); }
   // Next / Back
   RS_TABS.forEach((t,i)=>{
     const nx = RS_TABS[i+1], pv = RS_TABS[i-1];
@@ -13143,6 +13195,430 @@ function rsChip(key){
   if (hint) hint.textContent = '→ ' + M.msg;
   rsState.conf = key;
   rsShow(M.tab, true);
+}
+
+/* ============================================================================
+   DATE FINDER — find the likely birth DATE from what the family remembers
+   (tithi / weekday / festival / eclipse / nakshatra / Moon sign / lunar month /
+   Saturn-Jupiter-Rahu sign / Samvatsara / English month / date number).
+   Engine = pure functions (df*) + one generator `dfGen` (yields progress, returns results).
+   Month names are AMANTA (Diwali = Ashvina Amavasya); "North-India names" option shifts Krishna paksha by one.
+   Day = sunrise to next sunrise (Vedic day). Tithi/nakshatra match if active at sunrise OR during that day.
+   ============================================================================ */
+const DF_SAM = ['Prabhava','Vibhava','Shukla','Pramodoota','Prajotpatti','Angirasa','Srimukha','Bhava','Yuva','Dhatu','Ishvara','Bahudhanya','Pramathi','Vikrama','Vrisha','Chitrabhanu','Subhanu','Tarana','Parthiva','Vyaya','Sarvajit','Sarvadhari','Virodhi','Vikriti','Khara','Nandana','Vijaya','Jaya','Manmatha','Durmukhi','Hevilambi','Vilambi','Vikari','Sharvari','Plava','Shubhakrit','Shobhakrit','Krodhi','Vishvavasu','Parabhava','Plavanga','Kilaka','Saumya','Sadharana','Virodhikrit','Paridhavi','Pramadicha','Ananda','Rakshasa','Nala','Pingala','Kalayukti','Siddharthi','Raudra','Durmati','Dundubhi','Rudhirodgari','Raktakshi','Krodhana','Akshaya'];
+const DF_AT = { sr:0, fore:0.15, noon:0.25, eve:0.54, mid:0.75 };          // moment of the day, as a fraction of a day after sunrise
+const DF_LIM_SOLAR = 1.55, DF_LIM_LUNAR = 1.0;                  // |Moon latitude| limits (degrees) at new / full moon
+/* [id, name, kind, amantaMonth(0=Chaitra), tithi(1-30), moment]  kind L = lunar (tithi in month), S = Sun enters sign, O = Onam (Shravana nakshatra in Simha) */
+const DF_FEST = [
+ ['ugadi','Ugadi / Gudi Padwa (new year)','L',0,1,'sr'],
+ ['ramnavami','Ram Navami','L',0,9,'noon'],
+ ['hanuman','Hanuman Jayanti','L',0,15,'sr'],
+ ['akshaya','Akshaya Tritiya','L',1,3,'fore'],
+ ['buddha','Buddha Purnima','L',1,15,'eve'],
+ ['rath','Rath Yatra','L',3,2,'sr'],
+ ['guru','Guru Purnima','L',3,15,'sr'],
+ ['nagpanchami','Nag Panchami','L',4,5,'sr'],
+ ['rakhi','Raksha Bandhan','L',4,15,'noon'],
+ ['janmashtami','Krishna Janmashtami','L',4,23,'mid'],
+ ['ganesh','Ganesh Chaturthi','L',5,4,'noon'],
+ ['anant','Anant Chaturdashi','L',5,14,'sr'],
+ ['pitru','Sarva Pitru Amavasya (Mahalaya)','L',5,30,'sr'],
+ ['navratri','Navaratri begins','L',6,1,'sr'],
+ ['durgashtami','Durga Ashtami','L',6,8,'sr'],
+ ['mahanavami','Maha Navami','L',6,9,'sr'],
+ ['dussehra','Vijayadashami (Dussehra)','L',6,10,'noon+eve'],
+ ['sharad','Sharad Purnima','L',6,15,'eve'],
+ ['karwa','Karwa Chauth','L',6,19,'eve'],
+ ['dhanteras','Dhanteras','L',6,28,'eve'],
+ ['narak','Naraka Chaturdashi (Choti Diwali)','L',6,29,'sr'],
+ ['diwali','Diwali (Lakshmi Puja)','L',6,30,'eve'],
+ ['govardhan','Govardhan Puja / Bali Pratipada','L',7,1,'sr'],
+ ['bhaidooj','Bhai Dooj','L',7,2,'noon'],
+ ['chhath','Chhath Puja','L',7,6,'eve'],
+ ['devuthani','Dev Uthani Ekadashi','L',7,11,'sr'],
+ ['kartikpurnima','Kartik Purnima / Dev Diwali','L',7,15,'eve'],
+ ['makar','Makar Sankranti / Pongal','S',9],
+ ['vasant','Vasant Panchami','L',10,5,'fore'],
+ ['shivratri','Maha Shivaratri','L',10,29,'mid'],
+ ['holika','Holika Dahan','L',11,15,'eve'],
+ ['holi','Holi (Dhulandi)','L',11,15,'eve',1],
+ ['mesha','Mesha Sankranti (Vishu / Baisakhi / Puthandu)','S',0],
+ ['onam','Onam (Thiruvonam)','O']
+];
+
+/* ---------- engine ---------- */
+function dfSunrise(y, m, d, lat, lon, tz){
+  const jd0 = toJulianDay(y, m, d, 0, 0, 0) - tz / 24;
+  const guess = jd0 + 0.5 - (lon - tz * 15) / 360 - 0.25;
+  const f = x => pnSunAlt(x, lat, lon) + 0.8333;
+  let t = guess;
+  for (let i = 0; i < 6; i++){
+    const a = f(t), s = (f(t + 0.01) - a) / 0.01;
+    if (!isFinite(s) || Math.abs(s) < 1e-6) break;
+    const dt = a / s; t -= dt; if (Math.abs(dt) < 1e-5) break;
+  }
+  return (isFinite(t) && Math.abs(t - guess) < 0.2) ? t : guess;
+}
+function dfSunSign(jd){ return getSignIndex(getSiderealLongitudeAt('Sun', jd)); }
+/* Moon's ecliptic latitude (Meeus ch.47, main terms; good to ~0.03°) */
+function dfMoonLat(jd){
+  const T = (jd - J2000) / 36525.0;
+  const D = normDeg(297.8501921 + 445267.1114034*T), Mp = normDeg(134.9633964 + 477198.8675055*T), F = normDeg(93.2720950 + 483202.0175233*T), M = normDeg(357.5291092 + 35999.0502909*T);
+  const R = DEG, tm = [[0,0,0,1,5128122],[0,0,1,1,280602],[0,0,1,-1,277693],[2,0,0,-1,173237],[2,0,-1,1,55413],[2,0,-1,-1,46271],[2,0,0,1,32573],[0,0,2,1,17198],[2,0,1,-1,9266],[0,0,2,-1,8822],[2,-1,0,-1,8216],[2,0,-2,-1,4324],[2,0,1,1,4200],[2,1,0,-1,-3359],[2,-1,-1,1,2463],[2,-1,0,1,2211],[2,-1,-1,-1,2065],[0,1,-1,-1,-1870],[4,0,-1,-1,1828],[0,1,0,1,-1794],[0,0,0,3,-1749]];
+  let s = 0; tm.forEach(t => { s += t[4] * Math.sin((t[0]*D + t[1]*M + t[2]*Mp + t[3]*F) * R); });
+  return s / 1e6;
+}
+/* every new / full moon (Moon-Sun elongation crosses 0 or 180) from a little before jdA to a little after jdB */
+function dfSyz(jdA, jdB){
+  const out = []; let t = jdA - 35;
+  for (let g = 0; g < 4000 && t < jdB + 35; g++){
+    const x = pnBoundary(pnDiff, t, 180, +1, 0.25);
+    out.push({ jd: x, full: Math.round(pnDiff(x) / 180) % 2 === 1 });
+    t = x + 1;
+  }
+  return out;
+}
+/* Amanta lunar months from the new moons: starts at a new moon, named by the Sun's sign then; Adhika if the Sun stays in one sign */
+function dfMonths(sy){
+  const nm = sy.filter(s => !s.full), mo = [];
+  for (let k = 0; k + 1 < nm.length; k++){
+    const s1 = dfSunSign(nm[k].jd), s2 = dfSunSign(nm[k + 1].jd);
+    mo.push({ start: nm[k].jd, end: nm[k + 1].jd, mi: (s1 + 1) % 12, adhika: s1 === s2 });
+  }
+  return mo;
+}
+function dfMonthAt(mo, jd){
+  let lo = 0, hi = mo.length - 1;
+  if (!mo.length || jd < mo[0].start || jd >= mo[hi].end) return null;
+  while (lo < hi){ const m = (lo + hi + 1) >> 1; if (mo[m].start <= jd) lo = m; else hi = m - 1; }
+  return mo[lo];
+}
+/* eclipses (any visible somewhere on Earth): new moon with |Moon lat| < 1.55° = solar, full moon with |lat| < 1.0° = lunar (umbral) */
+function dfEclipses(sy){
+  const out = [];
+  sy.forEach(s => {
+    const lat = Math.abs(dfMoonLat(s.jd));
+    if (!s.full && lat < DF_LIM_SOLAR) out.push({ jd: s.jd, kind: 'solar', lat });
+    else if (s.full && lat < DF_LIM_LUNAR) out.push({ jd: s.jd, kind: 'lunar', lat });
+  });
+  return out;
+}
+function dfIn(a, b, x, mod){ const d1 = (x - a + mod) % mod, d2 = (b - a + mod) % mod; return d1 <= d2; }   // is x within the cyclic run a..b ?
+function dfNear(arr, i, n, tol){ for (let d = 0; d <= tol; d++){ if (i - d >= 0 && arr[i - d]) return -d; if (i + d < n && arr[i + d]) return d; } return null; }
+function dfTithiName(t0){ const pk = t0 < 15 ? 'Shukla' : 'Krishna', k = t0 % 15; return k === 14 ? (t0 < 15 ? 'Purnima' : 'Amavasya') : pk + ' ' + PN_TITHI[k]; }
+function dfTithiTargets(q){
+  if (q.tithi === '' && q.pak === '') return null;
+  if (q.tithi === 'P') return [14];
+  if (q.tithi === 'A') return [29];
+  const out = [];
+  if (q.tithi === ''){ for (let k = 0; k < 15; k++){ if (q.pak === 'S' && k < 15) out.push(k); if (q.pak === 'K') out.push(k + 15); } return out; }
+  const x = +q.tithi - 1;
+  if (q.pak !== 'K') out.push(x);
+  if (q.pak !== 'S') out.push(x + 15);
+  return out;
+}
+/* sign of a slow planet on every day, sampled every 6 days and interpolated (error is far below a day) */
+function dfSlow(name, tm, n){
+  const out = new Int8Array(n), step = 6; let prev = null;
+  for (let i = 0; i < n; i += step){
+    const j = Math.min(n - 1, i + step), a = getSiderealLongitudeAt(name, tm[i]), b = getSiderealLongitudeAt(name, tm[j]);
+    const dd = ((b - a + 540) % 360) - 180;
+    for (let k = i; k <= j && k < n; k++){ const f = j === i ? 0 : (k - i) / (j - i); out[k] = getSignIndex(a + dd * f); }
+  }
+  return out;
+}
+
+function* dfGen(q){
+  const lat = q.lat, lon = q.lon, tz = q.tz;
+  const base = Date.UTC(q.y0, 0, 1), n = Math.round((Date.UTC(q.y1, 11, 31) - base) / 864e5) + 1, N2 = n + 2;
+  const dt = i => { const d = new Date(base + i * 864e5); return [d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate(), d.getUTCDay()]; };
+  const srj = new Float64Array(N2), T = new Int8Array(N2), NK = new Int8Array(N2), MS = new Int8Array(N2), SUN = new Int8Array(N2);
+  for (let i = 0; i < N2; i++){
+    const [y, m, d] = dt(i), t = dfSunrise(y, m, d, lat, lon, tz); srj[i] = t;
+    T[i] = Math.min(29, Math.floor(pnDiff(t) / 12));
+    const ml = pnMoon(t); NK[i] = Math.floor(ml / PN_NAK) % 27; MS[i] = getSignIndex(ml); SUN[i] = dfSunSign(t);
+    if (i % 200 === 0) yield 0.55 * i / N2;
+  }
+  const sy = dfSyz(srj[0], srj[N2 - 1]); yield 0.6;
+  const months = dfMonths(sy), ecl = dfEclipses(sy);
+  const MI = new Int8Array(N2), ADH = new Uint8Array(N2), SAM = new Int8Array(N2);
+  for (let i = 0; i < N2; i++){
+    const mo = dfMonthAt(months, srj[i]); MI[i] = mo ? mo.mi : 0; ADH[i] = mo && mo.adhika ? 1 : 0;
+    const [y, m] = dt(i), Y = (m <= 4 && MI[i] >= 8) ? y - 1 : y; SAM[i] = (((Y - 2024 + 37) % 60) + 60) % 60;
+  }
+  const SAT = dfSlow('Saturn', srj, N2), JUP = dfSlow('Jupiter', srj, N2), RAH = dfSlow('Rahu', srj, N2); yield 0.8;
+  const eclS = new Uint8Array(n), eclL = new Uint8Array(n);
+  ecl.forEach(e => { const p = jdToLocalParts(e.jd, tz).dateStr.split('-').map(Number), idx = Math.round((Date.UTC(p[0], p[1] - 1, p[2]) - base) / 864e5); if (idx >= 0 && idx < n) (e.kind === 'solar' ? eclS : eclL)[idx] = 1; });
+  const ctx = { q, n, base, srj, T, NK, MS, SUN, MI, ADH, SAM, SAT, JUP, RAH, months, ecl, eclS, eclL, dt };
+  ctx.festHits = f => dfFestHits(ctx, f);
+  let fh = null;
+  if (q.fest){ const f = DF_FEST.find(x => x[0] === q.fest); if (f) fh = dfFestHits(ctx, f); }
+  yield 0.9;
+
+  const tg = dfTithiTargets(q), clues = [];
+  if (tg) clues.push('tithi'); if (q.wd !== '') clues.push('wd'); if (fh) clues.push('fest');
+  if (q.ecl) clues.push('ecl'); if (q.nak !== '') clues.push('nak'); if (q.moon !== '') clues.push('moon'); if (q.masa !== '') clues.push('masa');
+  if (q.sun !== '') clues.push('sun'); if (q.sam !== '') clues.push('sam'); if (q.mon !== '') clues.push('mon'); if (q.dom !== '') clues.push('dom');
+  if (q.sat !== '') clues.push('sat'); if (q.jup !== '') clues.push('jup'); if (q.rahu !== '') clues.push('rahu');
+  const maxMiss = clues.length >= 3 ? 1 : 0, tol = +q.tol || 0, rows = [];
+  for (let i = 0; i < n; i++){
+    const [y, m, d, wd] = dt(i), chips = []; let miss = 0;
+    const chk = (id, ok, txt) => { chips.push({ id, ok, txt }); if (!ok) miss++; };
+    if (q.wd !== '') chk('wd', wd === +q.wd, PN_VARA[+q.wd][1]);
+    if (q.mon !== '') chk('mon', m === +q.mon, PN_MON[+q.mon - 1]);
+    if (q.dom !== '') chk('dom', d === +q.dom, 'Date ' + q.dom);
+    if (tg){
+      const a = T[i], b = T[i + 1], hit = tg.find(x => dfIn(a, b, x, 30)), ex = tg.indexOf(a) >= 0;
+      chk('tithi', hit !== undefined, (hit !== undefined ? dfTithiName(hit) : dfTithiName(tg[0])) + (hit !== undefined ? (ex ? ' · at sunrise' : ' · during the day') : ''));
+    }
+    if (q.nak !== ''){ const hit = dfIn(NK[i], NK[i + 1], +q.nak, 27); chk('nak', hit, NAKSHATRAS[+q.nak].name + (hit ? (NK[i] === +q.nak ? ' · at sunrise' : ' · during the day') : '')); }
+    if (q.moon !== ''){ const hit = dfIn(MS[i], MS[i + 1], +q.moon, 12); chk('moon', hit, 'Moon in ' + SIGNS[+q.moon].name); }
+    if (q.masa !== ''){ const mi = (MI[i] + (q.purn && T[i] >= 15 ? 1 : 0)) % 12; chk('masa', mi === +q.masa, PN_MASA[+q.masa] + ' month'); }
+    if (q.sun !== '') chk('sun', SUN[i] === +q.sun, 'Sun in ' + SIGNS[+q.sun].name);
+    if (q.sam !== '') chk('sam', SAM[i] === +q.sam, DF_SAM[+q.sam] + ' year');
+    if (q.sat !== '') chk('sat', SAT[i] === +q.sat, 'Saturn in ' + SIGNS[+q.sat].name);
+    if (q.jup !== '') chk('jup', JUP[i] === +q.jup, 'Jupiter in ' + SIGNS[+q.jup].name);
+    if (q.rahu !== '') chk('rahu', RAH[i] === +q.rahu, 'Rahu in ' + SIGNS[+q.rahu].name);
+    if (fh){ const o = dfNear(fh, i, n, tol), f = DF_FEST.find(x => x[0] === q.fest); chk('fest', o !== null, f[1] + (o === null ? '' : (o === 0 ? ' · same day' : ' · ' + Math.abs(o) + ' day' + (Math.abs(o) > 1 ? 's' : '') + (o < 0 ? ' after' : ' before')))); }
+    if (q.ecl){
+      const arrs = q.ecl === 'solar' ? [eclS] : q.ecl === 'lunar' ? [eclL] : [eclS, eclL]; let best = null;
+      arrs.forEach((a, k) => { const o = dfNear(a, i, n, tol); if (o !== null && (best === null || Math.abs(o) < Math.abs(best.o))) best = { o, kind: q.ecl === 'either' ? (k === 0 ? 'Solar' : 'Lunar') : (q.ecl === 'solar' ? 'Solar' : 'Lunar') }; });
+      chk('ecl', best !== null, (best ? best.kind : (q.ecl === 'solar' ? 'Solar' : q.ecl === 'lunar' ? 'Lunar' : 'Solar / lunar')) + ' eclipse' + (best ? (best.o === 0 ? ' · same day' : ' · ' + Math.abs(best.o) + ' day' + (Math.abs(best.o) > 1 ? 's' : '') + (best.o < 0 ? ' after' : ' before')) : ''));
+    }
+    if (miss <= maxMiss) rows.push({ i, date: `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, wd, chips, miss });
+    if (i % 1500 === 0) yield 0.9 + 0.1 * i / n;
+  }
+  rows.sort((a, b) => a.miss - b.miss || a.i - b.i);
+  return { rows, clues, nFull: rows.filter(r => r.miss === 0).length, nAlmost: rows.filter(r => r.miss > 0).length, n, ctx };
+}
+
+/* does lunar festival f fall on day i?  (f[5] = moment(s) of the day joined by '+', f[6] = days after the tithi day) */
+function dfLunarHit(ctx, f, i){
+  const j = i - (f[6] || 0); if (j < 0) return false;
+  return f[5].split('+').some(mm => {
+    const tf = ctx.srj[j] + DF_AT[mm];
+    if (Math.floor(pnDiff(tf) / 12) + 1 !== f[4]) return false;
+    const mo = dfMonthAt(ctx.months, tf); return !!(mo && mo.mi === f[3] && !mo.adhika);
+  });
+}
+/* all days on which a festival falls (index array as 0/1) */
+function dfFestHits(ctx, f){
+  const { n, srj, SUN, NK, months } = ctx, h = new Uint8Array(n);
+  if (f[2] === 'L'){
+    for (let i = 0; i < n; i++) if (dfLunarHit(ctx, f, i)) h[i] = 1;
+  } else if (f[2] === 'S'){
+    for (let i = 0; i < n; i++){
+      if (SUN[i] === f[3] || SUN[i + 1] !== f[3]) continue;
+      let a = srj[i], b = srj[i + 1];
+      for (let k = 0; k < 30; k++){ const m = (a + b) / 2; if (dfSunSign(m) === f[3]) b = m; else a = m; }
+      const idx = (b >= srj[i] + 0.5) ? i + 1 : i; if (idx < n) h[idx] = 1;      // after sunset -> observed next day
+    }
+  } else {
+    for (let i = 0; i < n; i++) if (SUN[i] === 4 && dfIn(NK[i], NK[i + 1], 21, 27)) h[i] = 1;
+  }
+  return h;
+}
+/* everything we know about one result day (for the result card) */
+function dfInfo(ctx, i){
+  const { q, T, NK, MS, SUN, MI, ADH, SAM, SAT, JUP, RAH, n, srj, dt } = ctx, [y, m, d, wd] = dt(i);
+  const mi = (MI[i] + (q.purn && T[i] >= 15 ? 1 : 0)) % 12, fests = [];
+  DF_FEST.forEach(f => {
+    if (f[2] === 'L'){ if (dfLunarHit(ctx, f, i)) fests.push(f[1]); }
+    else if (f[2] === 'O'){ if (SUN[i] === 4 && dfIn(NK[i], NK[i + 1], 21, 27)) fests.push(f[1]); }
+    else if (SUN[i] !== f[3] && SUN[i + 1] === f[3]){ let a = srj[i], b = srj[i + 1]; for (let k = 0; k < 30; k++){ const mm = (a + b) / 2; if (dfSunSign(mm) === f[3]) b = mm; else a = mm; } if (((b >= srj[i] + 0.5) ? i + 1 : i) === i) fests.push(f[1]); }
+  });
+  const ecl = []; [-1, 0, 1].forEach(o => { const j = i + o; if (j < 0 || j >= n) return; const w = o === 0 ? '' : (o < 0 ? ' (day before)' : ' (day after)'); if (ctx.eclS[j]) ecl.push('Solar eclipse' + w); if (ctx.eclL[j]) ecl.push('Lunar eclipse' + w); });
+  return { y, m, d, wd, tithi: dfTithiName(T[i]), nak: NAKSHATRAS[NK[i]].name, moonSign: SIGNS[MS[i]], masa: PN_MASA[mi], adhika: !!ADH[i], sam: DF_SAM[SAM[i]], sun: SIGNS[SUN[i]], sat: SIGNS[SAT[i]], jup: SIGNS[JUP[i]], rahu: SIGNS[RAH[i]], fests, ecl };
+}
+
+/* ---------- UI ---------- */
+const dfState = { res: null, shown: 40, run: 0 };
+function dfPlace(){
+  try {
+    if (typeof selectedLat !== 'undefined' && selectedLat != null && selectedLon != null){
+      const tz = parseFloat(document.getElementById('tzInput').value);
+      if (isFinite(tz)) return { lat: +selectedLat, lon: +selectedLon, tz, label: (placeInput && placeInput.value) ? placeInput.value : 'the place chosen on the form' };
+    }
+    const p = currentProfileForExport;
+    if (p && isFinite(p.lat) && isFinite(p.lon) && isFinite(p.tz)) return { lat: +p.lat, lon: +p.lon, tz: +p.tz, label: p.place || 'your chart place' };
+  } catch(e){}
+  return { lat: 22.0, lon: 79.0, tz: 5.5, label: 'central India (default)', dflt: true };
+}
+function dfEsc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function dfFmtDate(y, m, d, wd){ return `${PN_VARA[wd][1].slice(0, 3)}, ${d} ${PN_MON[m - 1]} ${y}`; }
+function dfFmtT(jd, tz, dateStr){ if (jd == null || !isFinite(jd)) return '—'; const p = jdToLocalParts(jd, tz), t = p.timeStr.slice(0, 5); return p.dateStr === dateStr ? t : `${t} (${p.dateStr.slice(8)} ${PN_MON[+p.dateStr.slice(5, 7) - 1]})`; }
+
+function dfPlaceNote(){
+  const el = document.getElementById('dfPlace'); if (!el) return;
+  const pl = dfPlace();
+  el.innerHTML = `📍 Sunrise is worked out for <b>${dfEsc(pl.label)}</b>${pl.dflt ? ' — pick the birth place on the form for exact sunrise' : ''}.`;
+}
+function dfBuild(pane){
+  const had = document.getElementById('dfRoot'); if (had){ pane.appendChild(had); return; }   // already built (e.g. opened from the form before any chart)
+  const p = document.createElement('div'); p.id = 'dfRoot'; pane.appendChild(p);
+  const opt = (arr, first) => (first ? `<option value="">${first}</option>` : '') + arr.map((t, i) => `<option value="${i}">${dfEsc(t)}</option>`).join('');
+  const signs = SIGNS.map(s => `${s.symbol} ${s.name}`);
+  p.innerHTML = `
+  <div class="rs-pane-head"><h3>🔎 Date Finder</h3><p>Not sure of the birth date? Add whatever the family remembers: full moon, a festival, the weekday… We check every day and list the ones that fit.</p></div>
+  <details class="rs-how"><summary>💡 How it works (and how far to trust it)</summary>
+    <p>You give a range of years and any clues. For every day in that range we work out the tithi, weekday, nakshatra, Moon sign, lunar month, festivals, eclipses and where Saturn, Jupiter and Rahu were (Lahiri, same engine as the rest of the app). A day is listed when it fits <b>all</b> your clues. With 3 or more clues we also show days that miss <b>just one</b> (memory is often slightly wrong), clearly marked.
+    More clues = fewer dates. <b>Amavasya + Sunday + Diwali</b> within a few years usually gives one or two days.</p>
+    <p><b>Good to know:</b> a day runs from sunrise to the next sunrise, so a tithi counts if it is active at sunrise <i>or</i> at some time that day. If the baby was born after midnight but before sunrise, also check the next date. Festival days follow the usual panchang rules; some regions keep a festival one day earlier or later, so use “± 1 day”. Eclipses are those visible somewhere on Earth (not checked for your town). Sunrise uses the place on the birth form (central India if none).</p></details>
+  <div class="df-card"><h4>1 · Which years? <small>required</small></h4>
+    <div class="df-grid"><label class="df-f">From year<input id="dfY0" type="number" inputmode="numeric" min="1900" max="2050" placeholder="e.g. 1968"></label>
+    <label class="df-f">To year<input id="dfY1" type="number" inputmode="numeric" min="1900" max="2050" placeholder="e.g. 1972"></label></div>
+    <div class="df-place" id="dfPlace"></div></div>
+  <div class="df-card"><h4>2 · What do they remember?</h4>
+    <div class="df-pills" id="dfQuick"><span class="df-pl">Quick:</span>
+      <button type="button" class="df-pill" data-q="amav">🌑 Amavasya</button><button type="button" class="df-pill" data-q="purn">🌕 Purnima</button><button type="button" class="df-pill" data-q="ekad">Ekadashi</button>
+      <button type="button" class="df-pill" data-q="shani">Shani Amavasya</button><button type="button" class="df-pill" data-q="somv">Somvati Amavasya</button><button type="button" class="df-pill" data-q="gurup">Guru Pushya</button><button type="button" class="df-pill" data-q="ravip">Ravi Pushya</button></div>
+    <div class="df-grid">
+      <label class="df-f">Paksha (moon phase)<select id="dfPak"><option value="">Any</option><option value="S">Shukla · growing moon</option><option value="K">Krishna · fading moon</option></select></label>
+      <label class="df-f">Tithi<select id="dfTithi"><option value="">Any</option>${PN_TITHI.map((t, i) => `<option value="${i + 1}">${i + 1} · ${t}</option>`).join('')}<option value="P">🌕 Purnima (full moon)</option><option value="A">🌑 Amavasya (new moon)</option></select></label>
+      <label class="df-f">Weekday<select id="dfWd"><option value="">Any</option>${PN_VARA.map((v, i) => `<option value="${i}">${v[1]}</option>`).join('')}</select></label>
+      <label class="df-f">Festival<select id="dfFest"><option value="">None</option>${DF_FEST.map(f => `<option value="${f[0]}">${dfEsc(f[1])}</option>`).join('')}</select></label>
+      <label class="df-f">How close to the festival / eclipse?<select id="dfTol"><option value="0">Same day</option><option value="1" selected>± 1 day</option><option value="2">± 2 days</option><option value="3">± 3 days</option><option value="7">± 1 week</option><option value="15">± 2 weeks</option></select></label>
+    </div>
+    <details class="df-more"><summary>More clues (eclipse, nakshatra, Moon sign, month, Saturn, Jupiter…)</summary>
+      <div class="df-grid">
+        <label class="df-f">Eclipse (grahan)<select id="dfEcl"><option value="">None</option><option value="solar">☀ Solar eclipse</option><option value="lunar">🌙 Lunar eclipse</option><option value="either">Either one</option></select></label>
+        <label class="df-f">Nakshatra (birth star)<select id="dfNak">${opt(NAKSHATRAS.map(x => x.name), 'Any')}</select></label>
+        <label class="df-f">Moon sign (rashi)<select id="dfMoon">${opt(signs, 'Any')}</select></label>
+        <label class="df-f">Hindu lunar month<select id="dfMasa">${opt(PN_MASA, 'Any')}</select></label>
+        <label class="df-f">Sun sign (Tamil / Malayalam month)<select id="dfSun">${opt(signs, 'Any')}</select></label>
+        <label class="df-f">Year name (Samvatsara)<select id="dfSam">${opt(DF_SAM.map((s, i) => `${i + 1} · ${s}`), 'Any')}</select></label>
+        <label class="df-f">Month (English)<select id="dfMon">${opt(PN_MON, 'Any').replace(/value="(\d+)"/g, (m0, v) => `value="${+v + 1}"`)}</select></label>
+        <label class="df-f">Date number (1–31)<input id="dfDom" type="number" inputmode="numeric" min="1" max="31" placeholder="e.g. 14"></label>
+        <label class="df-f">Saturn was in<select id="dfSat">${opt(signs, 'Any')}</select></label>
+        <label class="df-f">Jupiter was in<select id="dfJup">${opt(signs, 'Any')}</select></label>
+        <label class="df-f">Rahu was in<select id="dfRahu">${opt(signs, 'Any')}</select></label>
+      </div>
+      <label class="df-chk"><input type="checkbox" id="dfPurn"> Use North-India month names (Purnimanta: the fading half belongs to the next month)</label>
+    </details></div>
+  <div class="df-actions"><button type="button" class="btn btn-primary" id="dfRun">🔎 Find possible dates</button><button type="button" class="btn btn-ghost" id="dfClear">Clear</button><span class="df-count" id="dfCount"></span></div>
+  <div id="dfOut"></div>`;
+  const $ = id => p.querySelector('#' + id), val = id => $(id).value;
+  const set = (id, v) => { $(id).value = v; };
+  const count = () => {
+    const ids = ['dfPak', 'dfTithi', 'dfWd', 'dfFest', 'dfEcl', 'dfNak', 'dfMoon', 'dfMasa', 'dfSun', 'dfSam', 'dfMon', 'dfDom', 'dfSat', 'dfJup', 'dfRahu'];
+    let c = 0; ids.forEach(i => { if (val(i) !== '' && !(i === 'dfPak' && val('dfTithi') !== '')) c++; });
+    $('dfCount').textContent = c ? `${c} clue${c > 1 ? 's' : ''} set` : 'Add at least one clue';
+  };
+  const clear = () => { p.querySelectorAll('select').forEach(s => { s.selectedIndex = 0; }); set('dfTol', '1'); p.querySelectorAll('input[type=number]').forEach(i => { if (i.id !== 'dfY0' && i.id !== 'dfY1') i.value = ''; }); $('dfPurn').checked = false; count(); };
+  p.addEventListener('input', count); p.addEventListener('change', count);
+  dfPlaceNote(); count();
+  const dob = (currentProfileForExport && currentProfileForExport.dob) || (document.getElementById('dobInput') || {}).value;
+  if (dob && /^\d{4}/.test(dob)){ const y = +dob.slice(0, 4); set('dfY0', y - 1); set('dfY1', y + 1); }
+  const Q = {
+    amav: () => { clear(); set('dfTithi', 'A'); }, purn: () => { clear(); set('dfTithi', 'P'); }, ekad: () => { clear(); set('dfTithi', '11'); },
+    shani: () => { clear(); set('dfTithi', 'A'); set('dfWd', '6'); }, somv: () => { clear(); set('dfTithi', 'A'); set('dfWd', '1'); },
+    gurup: () => { clear(); set('dfNak', '7'); set('dfWd', '4'); }, ravip: () => { clear(); set('dfNak', '7'); set('dfWd', '0'); }
+  };
+  $('dfQuick').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b){ Q[b.dataset.q](); count(); } });
+  $('dfClear').addEventListener('click', () => { clear(); $('dfOut').innerHTML = ''; dfState.res = null; });
+  $('dfRun').addEventListener('click', () => dfRun(p));
+  p.addEventListener('click', e => {
+    const use = e.target.closest('[data-df-use]'); if (use){ dfUse(use.dataset.dfUse); return; }
+    const mo = e.target.closest('[data-df-more]'); if (mo){ dfDetail(p, +mo.dataset.dfMore, mo); return; }
+    if (e.target.closest('#dfShowMore')){ dfState.shown += 40; dfRender(p); }
+    const al = e.target.closest('#dfAlmostBtn'); if (al){ dfState.showAlmost = !dfState.showAlmost; dfRender(p); }
+  });
+}
+function dfRead(p){
+  const val = id => p.querySelector('#' + id).value, pl = dfPlace();
+  let y0 = parseInt(val('dfY0'), 10), y1 = parseInt(val('dfY1'), 10);
+  if (!isFinite(y0) && !isFinite(y1)){ rsToast('Enter the years first (e.g. 1968 to 1972) 📅'); return null; }
+  if (!isFinite(y0)) y0 = y1; if (!isFinite(y1)) y1 = y0;
+  if (y0 > y1){ const t = y0; y0 = y1; y1 = t; }
+  if (y0 < 1900 || y1 > 2050){ rsToast('Please use years between 1900 and 2050'); return null; }
+  if (y1 - y0 > 40){ rsToast('Please keep it within 40 years — add a narrower range'); return null; }
+  const q = { y0, y1, lat: pl.lat, lon: pl.lon, tz: pl.tz, pak: val('dfPak'), tithi: val('dfTithi'), wd: val('dfWd'), fest: val('dfFest'), tol: val('dfTol'), ecl: val('dfEcl'), nak: val('dfNak'), moon: val('dfMoon'), masa: val('dfMasa'), sun: val('dfSun'), sam: val('dfSam'), mon: val('dfMon'), dom: val('dfDom'), sat: val('dfSat'), jup: val('dfJup'), rahu: val('dfRahu'), purn: p.querySelector('#dfPurn').checked };
+  const any = q.pak || q.tithi || q.wd || q.fest || q.ecl || q.nak || q.moon || q.masa || q.sun || q.sam || q.mon || q.dom || q.sat || q.jup || q.rahu;
+  if (!any){ rsToast('Add at least one clue (like Amavasya or a weekday) ✨'); return null; }
+  return q;
+}
+function dfRun(p){
+  const q = dfRead(p); if (!q) return;
+  const out = p.querySelector('#dfOut'), run = ++dfState.run, g = dfGen(q);
+  out.innerHTML = `<div class="df-prog"><div class="df-bar"><i id="dfBar" style="width:2%"></i></div><span>Looking through ${(q.y1 - q.y0 + 1) * 365} days…</span></div>`;
+  const step = () => {
+    if (run !== dfState.run) return;
+    let r; const t0 = performance.now();
+    try { do { r = g.next(); } while (!r.done && performance.now() - t0 < 40); }
+    catch(e){ console.error('Date Finder', e); out.innerHTML = '<div class="df-empty">Something went wrong while searching. Please try a smaller range.</div>'; return; }
+    if (r.done){ dfState.res = r.value; dfState.shown = 40; dfState.showAlmost = r.value.nFull === 0; dfRender(p); return; }
+    const bar = p.querySelector('#dfBar'); if (bar) bar.style.width = Math.max(2, Math.round(r.value * 100)) + '%';
+    setTimeout(step, 0);
+  };
+  setTimeout(step, 20);
+}
+function dfRender(p){
+  const R = dfState.res, out = p.querySelector('#dfOut'); if (!R) return;
+  const full = R.rows.filter(r => r.miss === 0), almost = R.rows.filter(r => r.miss > 0);
+  const card = r => {
+    const inf = dfInfo(R.ctx, r.i), miss = r.chips.filter(c => !c.ok).map(c => c.txt);
+    return `<div class="df-res${r.miss ? ' near' : ''}"><div class="df-res-top"><div><div class="df-date">${dfFmtDate(inf.y, inf.m, inf.d, inf.wd)}</div>
+      <div class="df-sub">${dfEsc(inf.tithi)} · ${dfEsc(inf.nak)} · ${inf.moonSign.symbol} Moon in ${inf.moonSign.name} · ${dfEsc(inf.masa)}${inf.adhika ? ' (Adhika)' : ''}</div></div>
+      <div class="df-res-act"><button type="button" class="btn btn-primary" data-df-use="${r.date}">Use this date</button><button type="button" class="btn btn-ghost" data-df-more="${r.i}">Details</button></div></div>
+      <div class="df-chips">${r.chips.map(c => `<span class="df-chip ${c.ok ? 'ok' : 'bad'}">${c.ok ? '✓' : '✕'} ${dfEsc(c.txt)}</span>`).join('')}${inf.fests.map(f => `<span class="df-chip fest">🎉 ${dfEsc(f)}</span>`).join('')}${inf.ecl.map(f => `<span class="df-chip fest">🌘 ${dfEsc(f)}</span>`).join('')}</div>
+      ${r.miss ? `<div class="df-miss">Close match: does not fit ${dfEsc(miss.join(', '))}</div>` : ''}<div class="df-detail" id="dfD${r.i}" hidden></div></div>`;
+  };
+  let html = '';
+  if (!full.length) html += `<div class="df-empty">No day fits <b>all</b> the clues in these years.${almost.length ? ' Below are days that miss just one clue.' : ' Try a wider range of years, fewer clues, or a bigger “how close” setting.'}</div>`;
+  else html += `<div class="df-summary"><b>${full.length}</b> possible date${full.length > 1 ? 's' : ''} found${full.length > 12 ? ' — add more clues to narrow it down' : ''}.</div>${full.slice(0, dfState.shown).map(card).join('')}`;
+  if (full.length > dfState.shown) html += `<button type="button" class="btn btn-ghost df-showmore" id="dfShowMore">Show more (${full.length - dfState.shown} left)</button>`;
+  if (almost.length && full.length) html += `<button type="button" class="btn btn-ghost df-showmore" id="dfAlmostBtn">${dfState.showAlmost ? 'Hide' : 'Show'} ${almost.length} close match${almost.length > 1 ? 'es' : ''} (miss one clue)</button>`;
+  if (almost.length && (dfState.showAlmost || !full.length)) html += `<div class="df-near-h">Close matches · miss one clue</div>${almost.slice(0, dfState.shown).map(card).join('')}`;
+  out.innerHTML = html;
+}
+function dfDetail(p, i, btn){
+  const R = dfState.res, box = p.querySelector('#dfD' + i); if (!R || !box) return;
+  if (!box.hidden){ box.hidden = true; btn.textContent = 'Details'; return; }
+  const ctx = R.ctx, q = ctx.q, inf = dfInfo(ctx, i), dateStr = ctx.dt(i).slice(0, 3).map((x, k) => k ? String(x).padStart(2, '0') : x).join('-');
+  let pn = null; try { pn = panchangaAt(ctx.srj[i] + 0.01, q.lat, q.lon, q.tz); } catch(e){}
+  const row = (a, b) => `<div class="df-drow"><span>${a}</span><b>${b}</b></div>`;
+  let h = '';
+  if (pn){
+    h += row('Tithi', `${dfEsc(pn.tithi.paksha)} ${dfEsc(pn.tithi.name)} · ${dfFmtT(pn.tithi.start, q.tz, dateStr)} → ${dfFmtT(pn.tithi.end, q.tz, dateStr)}`);
+    h += row('Nakshatra', `${dfEsc(pn.nakshatra.name)} (pada ${pn.nakshatra.pada}) · until ${dfFmtT(pn.nakshatra.end, q.tz, dateStr)}`);
+    h += row('Yoga · Karana', `${dfEsc(pn.yoga.name)} · ${dfEsc(pn.karana.name)}`);
+    h += row('Sunrise · Sunset', `${dfFmtT(pn.sunrise, q.tz, dateStr)} · ${dfFmtT(pn.sunset, q.tz, dateStr)}`);
+  }
+  h += row('Lunar month · year', `${dfEsc(inf.masa)}${inf.adhika ? ' (Adhika)' : ''} · ${dfEsc(inf.sam)} samvatsara`);
+  h += row('Sun · Saturn · Jupiter · Rahu', `${inf.sun.symbol} ${inf.sun.name} · ${inf.sat.symbol} ${inf.sat.name} · ${inf.jup.symbol} ${inf.jup.name} · ${inf.rahu.symbol} ${inf.rahu.name}`);
+  h += `<div class="df-tip">Next: press <b>Use this date</b>, then open <b>Time Dial</b> or <b>Sandhi Table</b> to find the time. Tithi and nakshatra end times above show which part of the day fits your clues.</div>`;
+  box.innerHTML = h; box.hidden = false; btn.textContent = 'Hide details';
+}
+/* The same Date Finder also opens as a popup from the birth form, so it can be used before any chart exists. */
+function dfModalOpen(){ const m = document.getElementById('dfModal'); return !!(m && m.classList.contains('show')); }
+function dfOpenModal(){
+  let m = document.getElementById('dfModal');
+  if (!m){
+    m = document.createElement('div'); m.id = 'dfModal'; m.className = 'df-modal';
+    m.innerHTML = '<div class="df-modal-box" role="dialog" aria-modal="true" aria-label="Date Finder"><button type="button" class="df-x" id="dfX" aria-label="Close">✕</button><div id="dfModalBody"></div></div>';
+    document.body.appendChild(m);
+    m.addEventListener('click', e => { if (e.target === m || e.target.closest('#dfX')) dfCloseModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && dfModalOpen()) dfCloseModal(); });
+  }
+  const body = document.getElementById('dfModalBody'); let root = document.getElementById('dfRoot');
+  if (!root){ dfBuild(body); root = document.getElementById('dfRoot'); } else body.appendChild(root);
+  const head = root.querySelector('.rs-pane-head'); if (head) head.style.paddingRight = '44px';
+  dfPlaceNote(); m.classList.add('show'); document.body.style.overflow = 'hidden';
+}
+function dfCloseModal(){
+  const m = document.getElementById('dfModal'); if (!m) return;
+  m.classList.remove('show'); document.body.style.overflow = '';
+  const root = document.getElementById('dfRoot'), pane = document.querySelector('.rs-pane[data-rs-pane="dates"]');
+  if (root && pane) pane.appendChild(root);
+}
+function dfUse(dateStr){
+  const el = document.getElementById('dobInput'); if (!el) return;
+  el.value = dateStr;
+  ['input', 'change'].forEach(ev => el.dispatchEvent(new Event(ev, { bubbles: true })));
+  try { inSyncFriendly(); } catch(e){}
+  rsToast('Birth date set to ' + dateStr + '. Now add the place and time ✨');
+  const wasModal = dfModalOpen(); if (wasModal) dfCloseModal();
+  try { if (!wasModal) switchAppTab('panel-home'); const f = document.getElementById('birthForm'); if (f) f.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e){}
 }
 
 /* ---------------------------- Life-Event checker ---------------------------- */
@@ -15179,7 +15655,7 @@ function panchangaAt(jd, lat, lon, tz){
   const nmPrev = pnBoundary(pnDiff, jd, 360, -1, 0.25), nmNext = pnBoundary(pnDiff, jd, 360, +1, 0.25);
   const s1 = getSignIndex(getSiderealLongitudeAt('Sun', nmPrev)), s2 = getSignIndex(getSiderealLongitudeAt('Sun', nmNext));
   const mi = (s1 + 1) % 12, gm = lp.m;
-  out.masa = { name: PN_MASA[mi], adhika: s1 === s2, newMoonPrev: nmPrev, newMoonNext: nmNext, shaka: (gm <= 4 && mi >= 9) ? lp.y - 79 : lp.y - 78 };
+  out.masa = { name: PN_MASA[mi], adhika: s1 === s2, newMoonPrev: nmPrev, newMoonNext: nmNext, shaka: (gm <= 4 && mi >= 8) ? lp.y - 79 : lp.y - 78 };
   const tl = sunLongitude(jd); out.ayana = (tl >= 270 || tl < 90) ? 'Uttarayana' : 'Dakshinayana';
   return out;
 }
@@ -17667,6 +18143,8 @@ function inBuildFriendly(){
     selectLocation({display_name:'Mumbai, Maharashtra, India', lat:'19.0760', lon:'72.8777', address:{country_code:'in'}});
     fire(document.getElementById('profileName')); inUpdate();
   });
+  const fd = document.createElement('button'); fd.type = 'button'; fd.className = 'in-ex'; fd.id = 'inFindDate'; fd.textContent = '🔎 Don\u2019t know the birth date? Find it from clues (full moon, festival\u2026)'; sub.appendChild(fd);
+  fd.addEventListener('click', ()=>{ try { dfOpenModal(); } catch(e){ console.error('Date Finder', e); } });
 }
 function inFoundUpdate(){
   const f = document.getElementById('inFound'); if (!f) return;
@@ -18500,7 +18978,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('.fm-h');if(!t)re
   }
   function installB(){
     var COVERED = { 'panel-overview': 1, 'panel-planets': 1, 'panel-yogas': 1, 'panel-shadbala': 1, 'panel-ashtakavarga': 1, 'panel-dasha': 1, 'panel-transit': 1 };
-    var SKIPP = { 'panel-export': 1, 'panel-contact': 1, 'panel-rectification': 1, 'panel-vargatimeline': 1, 'panel-transittimer': 1, 'panel-lifeevents': 1 };
+    var SKIPP = { 'panel-export': 1, 'panel-contact': 1, 'panel-rectification': 1, 'panel-vargatimeline': 1, 'panel-transittimer': 1, 'panel-lifeevents': 1, 'panel-datefinder': 1 };
     XP.push(['xp_aiPrompt', 'Instructions for AI (top of file)', 'Short prompt so any AI knows how to read and analyse this export', true, null]);
     XP.push(['xp_houses', 'House-by-House Summary', 'Each house: sign, lord and where it sits, occupants, aspects received, rulerships', true, null]);
     HOME_ITEMS.forEach(function(i){

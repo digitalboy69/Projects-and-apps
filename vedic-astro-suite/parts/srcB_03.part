@@ -1,93 +1,3 @@
-    const dE = (E - e*Math.sin(E) - M) / (1 - e*Math.cos(E));
-    E -= dE;
-    if (Math.abs(dE) < 1e-10) break;
-  }
-  return E;
-}
-function heliocentricPos(elements, T){
-  const a=elements.a, e=elements.e, i=elements.i*DEG;
-  const L = normDeg(elements.L + elements.Lrate*T)*DEG;
-  const peri = normDeg(elements.peri + elements.periRate*T)*DEG;
-  const node = normDeg(elements.node + elements.nodeRate*T)*DEG;
-  const M = L - peri;
-  const E = solveKepler(normDeg(M*RAD)*DEG, e);
-  const xv = a*(Math.cos(E)-e);
-  const yv = a*(Math.sqrt(1-e*e)*Math.sin(E));
-  const v = Math.atan2(yv,xv);
-  const r = Math.sqrt(xv*xv+yv*yv);
-  const omega = peri - node;
-  const xh = r*(Math.cos(node)*Math.cos(v+omega) - Math.sin(node)*Math.sin(v+omega)*Math.cos(i));
-  const yh = r*(Math.sin(node)*Math.cos(v+omega) + Math.cos(node)*Math.sin(v+omega)*Math.cos(i));
-  return {x:xh,y:yh};
-}
-function planetGeocentricLongitude(name, jd){
-  const T = (jd-J2000)/36525.0;
-  const earth = heliocentricPos(EARTH_ELEMENTS,T);
-  const planet = heliocentricPos(PLANET_ELEMENTS[name],T);
-  const xg = planet.x-earth.x, yg = planet.y-earth.y;
-  // Elements are referred to the fixed J2000 equinox; the ayanamsa is subtracted from tropical-of-DATE longitudes
-  // (as for Sun/Moon/Rahu), so add the general precession since J2000 to put all bodies in the same frame.
-  return normDeg(Math.atan2(yg,xg)*RAD + 1.3969713*T + 0.0003086*T*T);
-}
-function isRetrograde(name, jd){
-  const l1 = planetGeocentricLongitude(name, jd-0.25);
-  const l2 = planetGeocentricLongitude(name, jd+0.25);
-  let diff = l2-l1;
-  if (diff>180) diff-=360; if (diff<-180) diff+=360;
-  return diff<0;
-}
-function rahuLongitude(jd){
-  const T = (jd-J2000)/36525.0;
-  return normDeg(125.0445479 - 1934.1362891*T + 0.0020754*T*T + T*T*T/467441 - T*T*T*T/60616000);
-}
-
-function getSiderealLongitudeAt(name, jd){
-  const ayan = lahiriAyanamsa(jd);
-  let tropical;
-  switch(name){
-    case "Sun": tropical = sunLongitude(jd); break;
-    case "Moon": tropical = moonLongitude(jd); break;
-    case "Mercury": tropical = planetGeocentricLongitude("mercury", jd); break;
-    case "Venus": tropical = planetGeocentricLongitude("venus", jd); break;
-    case "Mars": tropical = planetGeocentricLongitude("mars", jd); break;
-    case "Jupiter": tropical = planetGeocentricLongitude("jupiter", jd); break;
-    case "Saturn": tropical = planetGeocentricLongitude("saturn", jd); break;
-    case "Rahu": return normDeg(rahuLongitude(jd) - ayan);
-    case "Ketu": return normDeg(rahuLongitude(jd) - ayan + 180);
-  }
-  return normDeg(tropical - ayan);
-}
-
-function getPlanetSpeed(name, jd){
-  if (name === "Rahu" || name === "Ketu"){
-    const T = (jd-J2000)/36525.0;
-    const dTdJD = 1/36525.0;
-    const speed = (-1934.1362891 + 2*0.0020754*T + 3*T*T/467441 - 4*T*T*T/60616000) * dTdJD;
-    return speed; 
-  }
-  const dt = 0.5; 
-  const l1 = getSiderealLongitudeAt(name, jd-dt);
-  const l2 = getSiderealLongitudeAt(name, jd+dt);
-  let diff = l2 - l1;
-  if (diff > 180) diff -= 360;
-  if (diff < -180) diff += 360;
-  return diff / (2*dt);
-}
-
-/* ============================================================================
-   DIVISIONAL TRANSIT TIMING ENGINE
-   Powers the "Transit Timer" and "Sandhi Table" tabs: given any body (a graha
-   or the Ascendant) and any varga (D1-D60), finds precisely when it entered
-   its current division and when it will leave — using real evaluated motion
-   (adaptive scan + bisection on the body's actual longitude function), not a
-   flat linear guess, so retrograde loops and speed changes are respected.
-   ============================================================================ */
-
-// Julian Day -> JS UTC Date (Meeus algorithm), the inverse of toJulianDay().
-function jdToDate(jd){
-  const jdShifted = jd + 0.5;
-  const Z = Math.floor(jdShifted);
-  const F = jdShifted - Z;
   let A = Z;
   if (Z >= 2299161){
     const alpha = Math.floor((Z - 1867216.25) / 36524.25);
@@ -1826,3 +1736,162 @@ function allLagnasToPlainText(chart, specialLagnaSigns, vargaKey){
   const vargaMeta = VARGAS[vargaKey];
   let out = `SPECIAL LAGNAS — FULL EXPORT (cast on ${vargaKey} ${vargaMeta.name})\n`;
   out += '='.repeat(70) + '\n\n';
+  const groupLabels = { core: "Core Ascendants", arudha: "Arudha Padas", karaka: "Karaka-Based", kala: "Time-Based (Kala)" };
+  ["core","arudha","karaka","kala"].forEach(group => {
+    out += `${groupLabels[group].toUpperCase()}\n${'-'.repeat(70)}\n`;
+    SPECIAL_LAGNAS_ORDER.filter(k => SPECIAL_LAGNAS_META[k].group === group).forEach(key => {
+      const meta = SPECIAL_LAGNAS_META[key];
+      const signIdx = specialLagnaSigns[key];
+      const sign = SIGNS[signIdx];
+      out += `\n${meta.name} (${meta.sanskrit}): ${sign.name} (${sign.sk})\n`;
+      out += `  ${meta.desc}\n`;
+      const vdata = buildVargaFromLagna(chart, signIdx, vargaKey);
+      vdata.houses.forEach(h => {
+        if (h.isEmpty) return;
+        const occupants = h.planets.map(p => `${p.name}${p.retrograde ? ' (R)' : ''}`).join(', ');
+        out += `    H${h.houseNum} ${h.signName}: ${occupants}\n`;
+      });
+    });
+    out += '\n';
+  });
+  return out;
+}
+
+/* ============================================================================
+   UI & DOM LOGIC
+   ============================================================================ */
+const TZ_OPTIONS = [-12,-11,-10,-9.5,-9,-8,-7,-6,-5,-4.5,-4,-3.5,-3,-2,-1,0,1,2,3,3.5,4,4.5,5,5.5,5.75,6,6.5,7,8,8.75,9,9.5,10,10.5,11,12,12.75,13,14];
+function fmtTz(v){
+  const sign = v>=0?"+":"-";
+  const abs = Math.abs(v);
+  const h = Math.floor(abs);
+  const m = Math.round((abs-h)*60);
+  return `UTC${sign}${h}${m?":"+String(m).padStart(2,"0"):":00"}`;
+}
+function populateTz(){
+  const sel = document.getElementById('tzInput');
+  sel.innerHTML = "";
+  TZ_OPTIONS.forEach(v=>{
+    const opt = document.createElement('option');
+    opt.value = v; opt.textContent = fmtTz(v);
+    if (v===5.5) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+let selectedLat=null, selectedLon=null, tzAutoGuess=null;
+let searchDebounce=null;
+const placeInput = document.getElementById('placeInput');
+const locationResults = document.getElementById('locationResults');
+const locationStatus = document.getElementById('locationStatus');
+const coordReadout = document.getElementById('coordReadout');
+
+placeInput.addEventListener('input', ()=>{
+  const q = placeInput.value.trim();
+  selectedLat = null; selectedLon = null;
+  coordReadout.textContent = "— not yet selected —";
+  clearTimeout(searchDebounce);
+  if (q.length < 3){ locationResults.classList.remove('open'); locationResults.innerHTML=""; return; }
+  locationStatus.textContent = "Searching…";
+  // Increased debounce to 1000ms to enforce 1 req/sec limit
+  searchDebounce = setTimeout(()=> doLocationSearch(q), 1000);
+});
+
+async function doLocationSearch(q){
+  try{
+    const appEmail = "contact@yourdomain.com"; // Replace with your actual email
+    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=7&q=${encodeURIComponent(q)}&email=${appEmail}`;
+    const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+    if (!res.ok) throw new Error("Network response was not ok");
+    const data = await res.json();
+    renderLocationResults(data);
+    locationStatus.textContent = data.length ? "" : "No matches found — try a broader search";
+  } catch(err){
+    locationStatus.textContent = "Location search unavailable right now — you can still enter coordinates manually below.";
+    locationResults.classList.remove('open');
+  }
+}
+
+function renderLocationResults(results){
+  locationResults.innerHTML = "";
+  if (!results.length){ locationResults.classList.remove('open'); return; }
+  results.forEach(r=>{
+    const div = document.createElement('div');
+    div.className = 'location-item';
+    const main = r.display_name.split(',')[0];
+    div.innerHTML = `<span class="lname">${main}</span><span class="lsub">${r.display_name}</span>`;
+    div.addEventListener('click', ()=> selectLocation(r));
+    locationResults.appendChild(div);
+  });
+  locationResults.classList.add('open');
+}
+
+function selectLocation(r){
+  placeInput.value = r.display_name;
+  selectedLat = parseFloat(r.lat);
+  selectedLon = parseFloat(r.lon);
+  coordReadout.textContent = `${selectedLat.toFixed(4)}°, ${selectedLon.toFixed(4)}°`;
+  locationResults.classList.remove('open');
+  locationStatus.textContent = "";
+  guessTimezone(selectedLat, selectedLon, r);
+}
+
+
+/* Map + coordinates pickers (shared popup hosted by the outer page) */
+try{ if (window.parent && window.parent!==window && window.parent.LocPicker) window.parent.LocPicker.attach(document, placeInput, r=>selectLocation(r), {title:'Place of birth', get:()=> selectedLat!=null ? {lat:selectedLat, lon:selectedLon} : null}); }catch(e){}
+
+/* Accurate timezone guess: country rule first (fixes +5:30 India etc.), then longitude */
+const TZ_BY_COUNTRY={in:5.5,lk:5.5,np:5.75,ir:3.5,af:4.5,mm:6.5,bd:6,pk:5,bt:6,mv:5,uz:5,cn:8,sg:8,my:8,ph:8,hk:8,tw:8,kr:9,jp:9,th:7,vn:7,kh:7,la:7,nz:12,ae:4,om:4,sa:3,qa:3,kw:3,bh:3,ye:3,iq:3,tr:3,eg:2,ke:3,et:3,tz:3,ug:3,za:2,ng:1,gh:0,gb:0,ie:0,pt:0,is:0};
+function estimateTz(lat, lon, r){
+  const cc = r && r.address && r.address.country_code ? r.address.country_code.toLowerCase() : '';
+  let tz;
+  if (cc === 'au') tz = lon < 129 ? 8 : (lon < 138 ? 9.5 : 10);
+  else if (cc in TZ_BY_COUNTRY) tz = TZ_BY_COUNTRY[cc];
+  else tz = Math.round(lon/15);           // whole hours only; no more half-hour rounding errors
+  return TZ_OPTIONS.reduce((a,b)=> Math.abs(b-tz)<Math.abs(a-tz)?b:a);
+}
+function setTzSelect(sel, v){ [...sel.options].forEach(o=>{ o.selected = (parseFloat(o.value)===v); }); }
+function guessTimezone(lat, lon, r){
+  const closest = estimateTz(lat, lon, r);
+  setTzSelect(document.getElementById('tzInput'), closest);
+  document.getElementById('tzHint').textContent = `Estimated from longitude — please verify against local records`;
+}
+
+document.addEventListener('click', (e)=>{
+  if (!e.target.closest('.location-wrap')) locationResults.classList.remove('open');
+});
+
+const STORAGE_KEY = 'Vedic Astrology_profiles_v1';
+function loadProfiles(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }catch(e){ return []; } }
+function saveProfiles(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+function refreshProfileSelect(){
+  const profiles = loadProfiles();
+  const sel = document.getElementById('profileSelect');
+  const currentVal = sel.value;
+  sel.innerHTML = '<option value="">— Select a profile —</option>';
+  profiles.forEach((p,i)=>{
+    const opt = document.createElement('option');
+    opt.value = i; opt.textContent = p.name;
+    sel.appendChild(opt);
+  });
+  if (currentVal) sel.value = currentVal;
+}
+
+let currentChartForModal = null; 
+let currentProfileForExport = null; 
+
+/* ===== Planets panel + detail popup (redesigned) ===== */
+function plDigInfo(pl){
+  const st = pl.dignity.status;
+  const good = st==='Exalted'||st==='OwnSign'||st==='Moolatrikona', bad = st==='Debilitated';
+  return {good, bad, cls: good?'good':bad?'bad':''};
+}
+function buildPlanetsPanel(chart){
+  let nRetro=0,nStrong=0,nChall=0;
+  const cards = PLANET_LIST.map(name=>{
+    const pl = chart.planets[name], sg = SIGNS[pl.sign], d = plDigInfo(pl), c = DASHA_PLANET_COLORS[name]||'#888';
+    const combust = pl.combustion && pl.combustion.combust, warLose = pl.war && !pl.war.won;
+    const flags = [];
+    if (pl.retrograde){ flags.push('retro'); nRetro++; }
+    if (d.good){ flags.push('strong'); nStrong++; }
+    if (d.bad || combust || warLose){ flags.push('chall'); nChall++; }
