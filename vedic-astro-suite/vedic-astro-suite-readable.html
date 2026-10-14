@@ -1281,6 +1281,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
 .hud-asc, .hud-moon { display: block; width: fit-content; }
 .hud-asc { font-family: var(--font-mono); font-size: 14px; color: var(--gold, #d4a24a); margin-top: 10px; letter-spacing: 0.02em; text-shadow: 0 2px 10px rgba(212,162,74,0.35); background: rgba(212,162,74,0.1); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(212,162,74,0.25); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hud-moon { margin-top: 6px; }
+.hud-asc { pointer-events: auto; cursor: pointer; }
+.hud-asc .asc-pin { opacity: .85; font-size: .9em; }
 .asp-pop { max-width: 440px; }
 .asp-pop-body { padding: 22px 18px 20px; }
 .asp-pop-body .panel-heading { margin-top: 0; padding-right: 44px; }
@@ -1348,7 +1350,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
     <div class="viewport-hud">
       <div class="hud-datetime"><span id="hudDate">—</span> <span class="time" id="hudTime">—</span></div>
       <div class="hud-sub" id="hudSub">JD — · Ayanamsa —°</div>
-      <div class="hud-asc" id="hudAsc">↑ Ascendant — · —</div>
+      <div class="hud-asc" id="hudAsc" role="button" tabindex="0" title="Tap to set where you are">↑ Rising — · —</div>
       <div class="hud-moon" id="hudMoon">☽ — · —</div>
     </div>
     <div class="view-switch-wrap">
@@ -1557,7 +1559,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
         <div class="panel-heading">3D Layers</div>
         <div class="cam-mode-row" id="presetRow"><button class="pbtn" data-preset="top">Top</button><button class="pbtn" data-preset="tilt">Tilt</button><button class="pbtn" data-preset="side">Side</button></div>
         <button type="button" class="btn-secondary-block" id="lagnaViewBtn" style="margin:0 0 14px">Rotate wheel to Lagna</button>
-        <div class="line-toggle-row"><div><div class="lt-label">Natal ghosts + transit arcs</div><div class="lt-sub">Your birth planets stay as rings; arcs show transit aspects to them</div></div><label class="switch"><input type="checkbox" id="L_natal" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Live Lagna pointer</div><div class="lt-sub">Rising sign line (ASC / DSC) for your saved birth place</div></div><label class="switch"><input type="checkbox" id="L_lagna" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">House numbers</div><div class="lt-sub">Houses 1 to 12 counted from the Lagna, Lagna sign highlighted</div></div><label class="switch"><input type="checkbox" id="L_houses" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Planet condition marks</div><div class="lt-sub">▲ exalted · ▼ debilitated · ★ own sign · ☀ combust · ℞ retrograde</div></div><label class="switch"><input type="checkbox" id="L_cond" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Sade Sati zone</div><div class="lt-sub">Highlights the 3 signs around your natal Moon</div></div><label class="switch"><input type="checkbox" id="L_sade" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Rahu–Ketu axis</div><div class="lt-sub">Axis line; turns red in eclipse season</div></div><label class="switch"><input type="checkbox" id="L_axis" checked><span class="slider"></span></label></div>
+        <div class="line-toggle-row"><div><div class="lt-label">Natal ghosts + transit arcs</div><div class="lt-sub">Your birth planets stay as rings; arcs show transit aspects to them</div></div><label class="switch"><input type="checkbox" id="L_natal" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Live Lagna pointer</div><div class="lt-sub">Rising sign line (ASC / DSC) for where you are now</div></div><label class="switch"><input type="checkbox" id="L_lagna" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Rising sign lines</div><div class="lt-sub">Gold lines where the current rising sign starts and ends (tap the Rising chip at the top to set your place)</div></div><label class="switch"><input type="checkbox" id="L_rise" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">House numbers</div><div class="lt-sub">Houses 1 to 12 counted from the Lagna, Lagna sign highlighted</div></div><label class="switch"><input type="checkbox" id="L_houses" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Planet condition marks</div><div class="lt-sub">▲ exalted · ▼ debilitated · ★ own sign · ☀ combust · ℞ retrograde</div></div><label class="switch"><input type="checkbox" id="L_cond" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Sade Sati zone</div><div class="lt-sub">Highlights the 3 signs around your natal Moon</div></div><label class="switch"><input type="checkbox" id="L_sade" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Rahu–Ketu axis</div><div class="lt-sub">Axis line; turns red in eclipse season</div></div><label class="switch"><input type="checkbox" id="L_axis" checked><span class="slider"></span></label></div>
         <button type="button" class="btn-block" id="saveImgBtn">Save wheel as image</button>
         
       </div>
@@ -3540,6 +3542,25 @@ function formatFullDate(jd){
 /* ============================================================================
    RENDER: HUD + Sky table
    ============================================================================ */
+/* ---- where you are now (used for the live Rising sign) ---- */
+let liveLocMem = null;
+const hudEsc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+function getLiveLoc(){
+  if (liveLocMem) return liveLocMem;
+  try { const v = JSON.parse(localStorage.getItem('vax_live_loc') || 'null'); if (v && isFinite(v.lat) && isFinite(v.lon)) return (liveLocMem = { lat:+v.lat, lon:+v.lon, label:String(v.label || 'your place') }); } catch(e){}
+  const off = -new Date().getTimezoneOffset() / 60;          // hours east of Greenwich -> rough longitude until the person sets a place
+  return { lat: 22, lon: off * 15, label: 'time-zone estimate', approx: true };
+}
+function askLiveLoc(){
+  const apply = (lat, lon, label)=>{
+    liveLocMem = { lat, lon, label };
+    try { localStorage.setItem('vax_live_loc', JSON.stringify(liveLocMem)); } catch(e){}
+    const snap = A.snap || snapshotPositions(currentJD); renderHUD(snap); updateOverlays(snap); markDirty();
+  };
+  const LP = (window.parent && window.parent !== window) ? window.parent.LocPicker : null;
+  if (LP){ const c = getLiveLoc(); LP.open({ title:'Where are you now?', lat:c.lat, lon:c.lon, onPick: r => apply(parseFloat(r.lat), parseFloat(r.lon), String(r.display_name || 'your place').split(',')[0]) }); }
+  else if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => apply(p.coords.latitude, p.coords.longitude, 'your location'), ()=>{});
+}
 function renderHUD(snap){
   document.getElementById('hudDate').textContent = formatHudDate(snap.jd);
   document.getElementById('hudTime').textContent = formatHudTime(snap.jd);
@@ -3550,15 +3571,8 @@ function renderHUD(snap){
   document.getElementById('hudMoon').textContent = `☽ ${moonSign.symbol} ${moonSign.name} · ${moonNak} Nakshatra`;
   const ascEl = document.getElementById('hudAsc');
   if (ascEl){
-    if (isValidProfile(activeNatalProfile)){
-      // live Ascendant = rising sign right now at the active profile's birth place
-      const aLon = siderealAscendant(snap.jd, activeNatalProfile.lat, activeNatalProfile.lon);
-      const aSign = SIGNS[getSignIndex(aLon)];
-      const aNak = NAKSHATRAS[getNakshatraIndex(aLon)];
-      ascEl.innerHTML = `↑ Ascendant ${aSign.symbol} ${aSign.name} ${degreeInSign(aLon).deg}°<span class="asc-nak"> · ${aNak} Nakshatra</span>`;
-    } else {
-      ascEl.textContent = '↑ Ascendant — add a birth profile';
-    }
+    const L = getLiveLoc(), aLon = siderealAscendant(snap.jd, L.lat, L.lon), aSign = SIGNS[getSignIndex(aLon)];
+    ascEl.innerHTML = `↑ Rising ${aSign.symbol} ${aSign.name} ${degreeInSign(aLon).deg}°<span class="asc-nak"> · ${L.approx ? 'tap to set your place' : hudEsc(L.label)}</span> <span class="asc-pin">📍</span>`;
   }
 }
 
@@ -4785,6 +4799,8 @@ function closeAspExp(){
   document.getElementById('explorerHome').appendChild(document.getElementById('explorerBlock'));
 }
 document.getElementById('aspExpBtn').addEventListener('click', openAspExp);
+document.getElementById('hudAsc').addEventListener('click', askLiveLoc);
+document.getElementById('hudAsc').addEventListener('keydown', (e)=>{ if (e.key==='Enter' || e.key===' '){ e.preventDefault(); askLiveLoc(); } });
 document.getElementById('aspExpClose').addEventListener('click', closeAspExp);
 document.getElementById('aspExpOverlay').addEventListener('click', (e)=>{
   if (e.target.id==='aspExpOverlay') closeAspExp();
@@ -5310,6 +5326,14 @@ function initAstroLayers(){
   const lg = new THREE.PlaneGeometry(14, 0.09); lg.rotateX(-Math.PI/2); lg.translate(7.8, 0.02, 0);
   T.asc = flat(lg, 0xFFFFFF, 0.95); T.dsc = flat(lg, 0xFFFFFF, 0.25); T.dsc.rotation.y = Math.PI; T.lagna.add(T.asc, T.dsc);
   T.ascLbl = mkLabel('ghost_asc', 'ASC', 'asc');
+  // current rising sign: gold START / END lines from Earth to the zodiac ring, a soft wedge between them, and a label
+  T.riseG = new THREE.Group(); G.add(T.riseG);
+  const rg = new THREE.PlaneGeometry(11.7, 0.08); rg.rotateX(-Math.PI/2); rg.translate(6.75, 0.035, 0);
+  T.riseA = flat(rg, 0xD4A24A, 0.95); T.riseB = flat(rg.clone(), 0xD4A24A, 0.95); T.riseB.rotation.y = 30*DEG;
+  const rw = flat(new THREE.RingGeometry(11.45, 12.55, 32, 1, -30*DEG, 30*DEG), 0xD4A24A, 0.5); rw.rotation.x = Math.PI/2; rw.position.y = 0.03;
+  const rf = flat(new THREE.CircleGeometry(12.5, 32, -30*DEG, 30*DEG), 0xD4A24A, 0.07); rf.rotation.x = Math.PI/2; rf.position.y = 0.005;
+  T.riseG.add(rf, rw, T.riseA, T.riseB);
+  T.riseLbl = mkLabel('ghost_rise', 'Rising', 'asc');
   // houses + Lagna sign highlight
   T.houseLbl = []; for (let h=0; h<12; h++) T.houseLbl.push(mkLabel('ghost_h'+h, String(h+1), 'house'));
   T.wedgeG = new THREE.Group(); const w = flat(new THREE.RingGeometry(11.45, 12.55, 32, 1, -30*DEG, 30*DEG), 0xFFFFFF, 0.3); w.rotation.x = Math.PI/2; w.position.y = 0.02; T.wedgeG.add(w); G.add(T.wedgeG);
@@ -5368,6 +5392,10 @@ function _updateOverlays(snap){
   // natal-dependent layers
   if (has && A.np !== p){ A.np = p; A.natal = snapshotPositions(computeNatalAscendant(p).jd).sidereal; }
   if (!has){ A.np = null; A.natal = null; A.lagnaLon = null; }
+  // current rising sign at the viewer's place: start / end lines of the sign
+  const liveL = getLiveLoc(), lonR = siderealAscendant(snap.jd, liveL.lat, liveL.lon), rsI = getSignIndex(lonR), riseOn = _on('L_rise');
+  A.lagnaLon = lonR; T.riseG.visible = riseOn; T.riseG.rotation.y = rsI*30*DEG;
+  T.riseLbl.obj.position.copy(_pt(rsI*30 + 15, 14.4)); T.riseLbl.el.innerHTML = `↑ Rising ${SIGNS[rsI].symbol} ${SIGNS[rsI].name}`; vis(T.riseLbl, riseOn);
   const showN = has && _on('L_natal');
   PLANET_LIST.forEach(n=>{ const g = T.ghosts[n]; if (showN) g.obj.position.copy(_pt(A.natal[n], ORB_R[n])); vis(g, showN); g.ring.visible = showN; });
   const now = performance.now();
@@ -5385,7 +5413,7 @@ function _updateOverlays(snap){
     });
   }
   if (has){
-    const lon = siderealAscendant(snap.jd, p.lat, p.lon); A.lagnaLon = lon; const ls = getSignIndex(lon);
+    const lon = lonR; const ls = rsI;
     T.lagna.rotation.y = lon*DEG; T.lagna.visible = _on('L_lagna');
     T.ascLbl.obj.position.copy(_pt(lon, 15.3)); T.ascLbl.el.innerHTML = `ASC ${SIGNS[ls].symbol} ${degreeInSign(lon).deg}°`; vis(T.ascLbl, _on('L_lagna'));
     const hs = _on('L_houses'); T.wedgeG.visible = hs; T.wedgeG.rotation.y = ls*30*DEG;
