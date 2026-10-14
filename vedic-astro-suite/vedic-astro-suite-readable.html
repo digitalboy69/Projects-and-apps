@@ -1327,6 +1327,35 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
 .rs-note{ font-size:11.5px; color:var(--text-faint); line-height:1.55; margin-top:12px; }
 .rs-btn{ display:block; width:100%; margin-top:12px; padding:10px; border-radius:12px; cursor:pointer; background:rgba(244,196,92,.12); border:1px solid rgba(244,196,92,.4); color:var(--gold); font:600 13px var(--font-ui); }
 .rs-btn:active{ transform:scale(.98); }
+/* ============ PREMIUM POLISH LAYER (smooth motion · champagne-gold glass · magnetic hover) ============ */
+:root{ --ease:cubic-bezier(.22,1,.36,1); --gold-hi:#FFE3A0; --gold-line:rgba(244,196,92,.22); }
+::selection{ background:rgba(244,196,92,.3); }
+:focus-visible{ outline:2px solid rgba(244,196,92,.75); outline-offset:2px; }
+.sidepanel{ background:linear-gradient(180deg,rgba(15,21,35,.86),rgba(6,9,17,.94)); box-shadow:inset 1px 0 0 var(--gold-line),-24px 0 70px rgba(0,0,0,.4); }
+.panel-tabs{ box-shadow:inset 0 1px 0 rgba(244,196,92,.2),inset 0 -1px 0 rgba(255,255,255,.06); background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0)); }
+.panel-tab{ position:relative; transition:color .3s var(--ease),background-color .3s var(--ease),box-shadow .3s var(--ease),translate .35s var(--ease); translate:var(--tx,0) var(--ty,0); }
+.panel-tab:hover:not(.active),.icon-btn:hover{ background-image:radial-gradient(110px circle at var(--mx,50%) var(--my,50%),rgba(244,196,92,.16),transparent 70%); }
+.panel-tab.active{ color:var(--gold-hi); background:linear-gradient(160deg,rgba(244,196,92,.2),rgba(0,240,213,.09)); box-shadow:inset 0 0 0 1px rgba(244,196,92,.42),0 8px 22px rgba(244,196,92,.12); text-shadow:0 0 14px rgba(244,196,92,.45); border-bottom-color:transparent; }
+.panel-tab.active .ti{ filter:drop-shadow(0 0 8px rgba(244,196,92,.6)); }
+.icon-btn,.speed-chip,.cam-mode-btn,.pbtn,.rs-btn{ translate:var(--tx,0) var(--ty,0); transition:border-color .3s var(--ease),background-color .3s var(--ease),box-shadow .3s var(--ease),color .3s var(--ease),translate .35s var(--ease),transform .3s var(--ease); }
+.icon-btn:hover{ border-color:rgba(244,196,92,.6); color:var(--gold-hi); box-shadow:0 10px 26px rgba(0,0,0,.45),0 0 0 1px rgba(244,196,92,.15),0 0 22px rgba(244,196,92,.18); }
+.hud-asc{ translate:var(--tx,0) var(--ty,0); }
+.panel-content{ scrollbar-width:thin; scrollbar-color:rgba(244,196,92,.35) transparent; scroll-behavior:smooth; }
+.panel-content::-webkit-scrollbar{ width:6px; } .panel-content::-webkit-scrollbar-thumb{ background:rgba(244,196,92,.3); border-radius:9px; }
+.panel-section.active{ animation:pxIn .45s var(--ease) both; }
+@keyframes pxIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+.timeline{ background:linear-gradient(180deg,rgba(14,20,33,.78),rgba(6,9,16,.92)); box-shadow:inset 0 1px 0 var(--gold-line),0 -18px 50px rgba(0,0,0,.35); }
+.viewport::after{ content:''; position:absolute; inset:0; pointer-events:none; z-index:5;
+  background:radial-gradient(ellipse at 50% 46%,transparent 52%,rgba(1,3,9,.55) 100%),radial-gradient(60% 40% at 50% 110%,rgba(244,196,92,.07),transparent 70%); }
+.viewport-hud{ filter:drop-shadow(0 12px 30px rgba(0,0,0,.45)); }
+.hud-datetime{ letter-spacing:.015em; font-variant-numeric:tabular-nums; }
+.pdmodal{ border-color:rgba(244,196,92,.2); box-shadow:0 30px 90px rgba(0,0,0,.78),inset 0 1px 0 rgba(255,255,255,.12),0 0 0 1px rgba(244,196,92,.05); }
+.pdmodal-overlay.show .pdmodal,.modal-overlay.show .modal-box{ animation:pxPop .6s var(--ease) both; }
+@keyframes pxPop{ from{ opacity:0; transform:translateY(26px) scale(.96); } to{ opacity:1; transform:none; } }
+.sky-row,.transit-card,.house-row,.aspect-row{ transition:transform .35s var(--ease),border-color .3s var(--ease),background-color .3s var(--ease),box-shadow .35s var(--ease); }
+.sky-row:hover,.transit-card:hover{ border-color:rgba(244,196,92,.35); box-shadow:0 10px 28px rgba(0,0,0,.4),0 0 0 1px rgba(244,196,92,.08); }
+@media (prefers-reduced-motion:reduce){ .panel-section.active,.pdmodal-overlay.show .pdmodal{ animation:none; } .panel-tab,.icon-btn,.speed-chip,.cam-mode-btn,.pbtn,.hud-asc{ translate:none; } }
+
 @media (max-width:720px){ .rs-pop{ border-radius:24px 24px 0 0; max-height:88vh; } .rs-t b{ font-size:20px; } }
 
 </style>
@@ -2197,6 +2226,8 @@ let freeMoveState = { fwd:0, right:0, up:0 };
 let freeLookDrag = false, freeLookLast = {x:0,y:0};
 const FREE_MOVE_SPEED = 18; // scene units / second
 let lastFreeTickTime = null;
+var spinVT = 0, spinVP = 0, lastMoveTs = 0, zoomGoal = null, zoomSet = null, reduceMotion = false;
+try { reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){}
 
 const bodyMeshes = {}; // name -> mesh
 const clickRaycaster = new THREE.Raycaster();
@@ -2491,12 +2522,13 @@ function initScene(){
 
   canvas.addEventListener('pointerdown', (e)=>{
     e.preventDefault();
-    isDragging=true; lastPointer={x:e.clientX,y:e.clientY}; autoRotate=false;
+    isDragging=true; lastPointer={x:e.clientX,y:e.clientY}; autoRotate=false; spinVT = spinVP = 0; zoomGoal = null;
     pointerDownPos = {x:e.clientX,y:e.clientY};
     markDirty();
   });
   window.addEventListener('pointerup', (e)=>{
     isDragging=false;
+    if (performance.now() - lastMoveTs > 90) spinVT = spinVP = 0;   // held still before release -> no fling
     if (pointerDownPos){
       const moved = Math.hypot(e.clientX-pointerDownPos.x, e.clientY-pointerDownPos.y);
       if (moved < 6) handleCanvasClick(e); // treat as a tap/click, not a drag
@@ -2514,6 +2546,7 @@ function initScene(){
     } else {
       orbitAngleTheta -= dx*0.006;
       orbitAnglePhi = Math.max(0.15, Math.min(Math.PI-0.15, orbitAnglePhi - dy*0.006));
+      if (!reduceMotion){ spinVT = spinVT*0.4 - dx*0.006*0.6; spinVP = spinVP*0.4 - dy*0.006*0.6; lastMoveTs = performance.now(); }
     }
     lastPointer = {x:e.clientX,y:e.clientY};
     markDirty();
@@ -2548,7 +2581,9 @@ function initScene(){
       const forward = new THREE.Vector3(Math.cos(freeCamPitch)*Math.cos(freeCamYaw), Math.sin(freeCamPitch), Math.cos(freeCamPitch)*Math.sin(freeCamYaw));
       freeCamPos.addScaledVector(forward, -e.deltaY*0.03);
     } else {
-      orbitDist = clampZoom(SOL.view==="solar" ? orbitDist*(1 + e.deltaY*0.0012) : orbitDist + e.deltaY*0.02);
+      const zb = zoomGoal != null ? zoomGoal : orbitDist;
+      const zn = clampZoom(SOL.view==="solar" ? zb*(1 + e.deltaY*0.0012) : zb + e.deltaY*0.02);
+      if (reduceMotion) orbitDist = zn; else { zoomGoal = zn; zoomSet = orbitDist; }
     }
     markDirty();
   }, {passive:false});
@@ -3131,6 +3166,7 @@ function renderLoop(ts){
   
 
   if (camMode==="free"){
+    zoomGoal = null; spinVT = spinVP = 0;
     // Always re-render in free mode since movement can happen every frame
     const speed = FREE_MOVE_SPEED * dt;
     if (speed>0 && (freeMoveState.fwd||freeMoveState.right||freeMoveState.up)){
@@ -3149,6 +3185,20 @@ function renderLoop(ts){
     return;
   }
 
+  if (!isDragging && (Math.abs(spinVT) > 4e-5 || Math.abs(spinVP) > 4e-5)){      // drag momentum, glides to a stop
+    const f = dt * 60;
+    orbitAngleTheta += spinVT * f;
+    orbitAnglePhi = Math.max(0.15, Math.min(Math.PI-0.15, orbitAnglePhi + spinVP * f));
+    const dmp = Math.pow(0.93, f); spinVT *= dmp; spinVP *= dmp; markDirty();
+  }
+  if (zoomGoal != null){                                                          // eased zoom
+    if (orbitDist !== zoomSet) zoomGoal = null;                                   // something else moved the camera
+    else {
+      orbitDist += (zoomGoal - orbitDist) * (1 - Math.exp(-dt * 11));
+      if (Math.abs(zoomGoal - orbitDist) < Math.abs(zoomGoal) * 1e-4 + 1e-6){ orbitDist = zoomGoal; zoomGoal = null; }
+      zoomSet = orbitDist; markDirty();
+    }
+  }
   if (autoRotate){ orbitAngleTheta += 0.0006; markDirty(); }
   if (!needsRender) return;
   needsRender = false;
@@ -4921,6 +4971,24 @@ function closeAspExp(){
   document.getElementById('explorerHome').appendChild(document.getElementById('explorerBlock'));
 }
 document.getElementById('aspExpBtn').addEventListener('click', openAspExp);
+(function setupMagnetic(){
+  let fine = false, reduce = false;
+  try { fine = matchMedia('(hover:hover) and (pointer:fine)').matches; reduce = matchMedia('(prefers-reduced-motion:reduce)').matches; } catch(e){}
+  if (!fine || reduce) return;
+  const SEL = '.icon-btn,.panel-tab,.speed-chip,.cam-mode-btn,.pbtn,.hud-asc,.rs-btn'; let cur = null;
+  const clear = el => { ['--tx','--ty'].forEach(k => el.style.removeProperty(k)); };
+  document.addEventListener('pointermove', (e)=>{
+    const el = e.target.closest && e.target.closest(SEL);
+    if (cur && cur !== el){ clear(cur); cur = null; }
+    if (!el || isDragging) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--tx', (((e.clientX - r.left) / r.width - .5) * 5).toFixed(2) + 'px');
+    el.style.setProperty('--ty', (((e.clientY - r.top) / r.height - .5) * 4).toFixed(2) + 'px');
+    el.style.setProperty('--mx', (e.clientX - r.left) + 'px'); el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    cur = el;
+  }, { passive:true });
+  window.addEventListener('blur', ()=>{ if (cur){ clear(cur); cur = null; } });
+})();
 (function setupRisingPress(){
   const el = document.getElementById('hudAsc'); let t = null, fired = false, sx = 0, sy = 0;
   const clear = ()=>{ if (t){ clearTimeout(t); t = null; } el.classList.remove('pressing'); };
