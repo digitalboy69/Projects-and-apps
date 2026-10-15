@@ -336,9 +336,9 @@ css/20-hud-ascendant-rising.css                     51 lines    4 KB
 css/21-premium-polish.css                           32 lines    3 KB
 ```
 
-**shell** - 4 files, 432 lines, 52 KB
+**shell** - 4 files, 428 lines, 52 KB
 ```
-index.html                                          35 lines    2 KB
+index.html                                          31 lines    2 KB
 shell/css/shell.css                                 72 lines    8 KB
 shell/js/locpicker.js                              202 lines   34 KB
 shell/js/shell.js                                  123 lines    8 KB
