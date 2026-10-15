@@ -145,7 +145,7 @@ chMeta	fn	apps/birth-chart/js/61-varga-chart-svg.js:2	birth-chart
 chOuter	fn	apps/birth-chart/js/61-varga-chart-svg.js:1	birth-chart
 chPlanets	fn	apps/birth-chart/js/61-varga-chart-svg.js:7	birth-chart
 chSignDot	fn	apps/birth-chart/js/61-varga-chart-svg.js:10	birth-chart
-clamp	fn	shell/js/shell.js:78	shell
+clamp	fn	shell/js/shell.js:79	shell
 clampZoom	fn	apps/sky3d/js/12-solar-system-view.js:109	sky3d
 clearArcs	fn	apps/sky3d/js/40-3d-astro-layers.js:132	sky3d
 clearNakshatraHighlight	fn	apps/sky3d/js/08-scene-setup-and-camera.js:28	sky3d
@@ -153,7 +153,7 @@ clientHTML	fn	apps/notepad/js/01-notepad.js:116	notepad
 close	fn	apps/birth-chart/js/77-cloud-account.js:89	birth-chart
 close	fn	shell/js/locpicker.js:158	shell
 closeAspExp	fn	apps/sky3d/js/32-aspect-explorer-popup.js:10	sky3d
-closeDev	fn	shell/js/shell.js:71	shell
+closeDev	fn	shell/js/shell.js:72	shell
 closeExportModal	fn	apps/birth-chart/js/44-export-modal.js:13	birth-chart
 closeModal	fn	apps/birth-chart/js/76-share-link-qr.js:40	birth-chart
 closeModal	fn	apps/notepad/js/01-notepad.js:142	notepad
@@ -303,7 +303,7 @@ ed	fn	apps/notepad/js/01-notepad.js:129	notepad
 edge	fn	apps/sky3d/js/06-planet-detail-helpers.js:82	sky3d
 editorHTML	fn	apps/notepad/js/01-notepad.js:92	notepad
 ELC	const	apps/birth-chart/js/60-interactive-varga-svg.js:152	birth-chart
-endDrag	fn	shell/js/shell.js:103	shell
+endDrag	fn	shell/js/shell.js:104	shell
 engineLabel	fn	apps/birth-chart/js/33-quick-search.js:17	birth-chart
 enhanceZodiac	fn	apps/sky3d/js/11-planet-visuals.js:11	sky3d
 ensureModal	fn	apps/birth-chart/js/76-share-link-qr.js:42	birth-chart
@@ -535,7 +535,7 @@ moonLongitude	fn	apps/sky3d/js/01-astro-engine.js:54	sky3d
 moreModal	fn	apps/notepad/js/01-notepad.js:171	notepad
 mount	fn	apps/birth-chart/js/74-sahams.js:48	birth-chart
 mount	fn	apps/birth-chart/js/77-cloud-account.js:133	birth-chart
-mount	fn	shell/js/shell.js:25	shell
+mount	fn	shell/js/shell.js:26	shell
 msg	fn	apps/birth-chart/js/77-cloud-account.js:86	birth-chart
 MT_COLS	const	apps/birth-chart/js/52-kundali-matching-ui.js:42	birth-chart
 mtAvatar	fn	apps/birth-chart/js/52-kundali-matching-ui.js:41	birth-chart
@@ -599,7 +599,7 @@ open	fn	apps/birth-chart/js/77-cloud-account.js:88	birth-chart
 open	fn	shell/js/locpicker.js:185	shell
 openAdmin	fn	apps/birth-chart/js/77-cloud-account.js:116	birth-chart
 openAspExp	fn	apps/sky3d/js/32-aspect-explorer-popup.js:4	sky3d
-openDev	fn	shell/js/shell.js:67	shell
+openDev	fn	shell/js/shell.js:68	shell
 openExportModal	fn	apps/birth-chart/js/44-export-modal.js:2	birth-chart
 openNote	fn	apps/notepad/js/01-notepad.js:56	notepad
 openOuterDetail	fn	apps/birth-chart/js/19-planets-panel.js:77	birth-chart
@@ -685,7 +685,7 @@ pick	fn	apps/sky3d/js/41-quick-planet-picker.js:12	sky3d
 pickPlanet	fn	apps/sky3d/js/43-degree-finder-returns.js:115	sky3d
 PL7	const	apps/birth-chart/js/75-fate-meter.js:4	birth-chart
 PL9	const	apps/birth-chart/js/74-sahams.js:33	birth-chart
-place	fn	shell/js/shell.js:84	shell
+place	fn	shell/js/shell.js:85	shell
 PLANET_COLORS	const	apps/sky3d/js/02-planetary-dignity.js:5	sky3d
 PLANET_ELEMENTS	const	apps/birth-chart/js/03-ephemeris-engine.js:71	birth-chart
 PLANET_ELEMENTS	const	apps/sky3d/js/01-astro-engine.js:82	sky3d
@@ -840,7 +840,7 @@ safe	fn	apps/birth-chart/js/02-app-meta-layer.js:43	birth-chart
 SAFE_BUILDERS	const	apps/birth-chart/js/65-error-boundaries.js:2	birth-chart
 safeJSON	fn	shared/export-addon.js:197	shared
 SAPTAVARGA_KEYS	const	apps/birth-chart/js/14-shadbala-engine.js:50	birth-chart
-save	fn	shell/js/shell.js:90	shell
+save	fn	shell/js/shell.js:91	shell
 saveNatalProfiles	fn	apps/sky3d/js/21-natal-profile.js:6	sky3d
 saveProfiles	fn	apps/birth-chart/js/18-ui-location-profiles.js:107	birth-chart
 SB_COMPS	const	apps/birth-chart/js/40-shadbala.js:2	birth-chart
@@ -851,7 +851,7 @@ scanTransits	fn	apps/sky3d/js/20-transit-conjunction-scanner.js:19	sky3d
 selectLocation	fn	apps/birth-chart/js/18-ui-location-profiles.js:70	birth-chart
 selectWheelSign	fn	apps/sky3d/js/24-sign-selector.js:28	sky3d
 setCamMode	fn	apps/sky3d/js/13-camera-mode-control.js:4	sky3d
-setMenu	fn	shell/js/shell.js:52	shell
+setMenu	fn	shell/js/shell.js:53	shell
 setModal	fn	apps/notepad/js/01-notepad.js:173	notepad
 setMode	fn	apps/birth-chart/js/77-cloud-account.js:87	birth-chart
 setPlace	fn	shell/js/locpicker.js:147	shell
@@ -864,7 +864,7 @@ setViewMode	fn	apps/sky3d/js/11-planet-visuals.js:243	sky3d
 SEV	const	apps/birth-chart/js/72-bhava-bala.js:5	birth-chart
 sha	fn	apps/notepad/js/01-notepad.js:178	notepad
 shiftLocalDateTime	fn	apps/birth-chart/js/16-rectification-engine.js:28	birth-chart
-show	fn	shell/js/shell.js:57	shell
+show	fn	shell/js/shell.js:58	shell
 showNakshatraHighlight	fn	apps/sky3d/js/08-scene-setup-and-camera.js:36	sky3d
 showScan	fn	apps/birth-chart/js/76-share-link-qr.js:76	birth-chart
 showSel	fn	shell/js/locpicker.js:148	shell

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="booting">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
@@ -72,6 +72,11 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
 .sw-sep{height:1px;margin:4px 8px;background:rgba(255,255,255,.08)}
 .sw-back{position:fixed;inset:0;z-index:45;display:none;background:rgba(3,6,13,.3)}
 .sw-back.show{display:block}
+
+/* first start: only the loading screen is visible; the switcher fades in after it */
+.sw{transition:opacity .5s ease}
+.booting .sw,.booting .sw-back{opacity:0;pointer-events:none;visibility:hidden}
+.load.instant{transition:none}
 </style>
 </head>
 <body>
@@ -33174,6 +33179,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
   };
   const setSource = (f, key) => { if (document.getElementById('src' + key)) f.srcdoc = decode('src' + key); else f.src = APP_URL[key]; };
 
+  setTimeout(()=>document.documentElement.classList.remove('booting'), 20000); /* failsafe */
   /* welcome greeting (first start only) */
   const T0 = performance.now(); let firstDone = false;
   (function(){
@@ -33186,12 +33192,12 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
   })();
   function mount(k){
     if (frames[k]) return frames[k];
-    load.classList.remove('hide'); txt.textContent = 'LOADING ' + NAME[k].toUpperCase() + '…';
+    load.classList.add('instant'); load.classList.remove('hide'); void load.offsetWidth; load.classList.remove('instant'); txt.textContent = 'LOADING ' + NAME[k].toUpperCase() + '…';
     const f = document.createElement('iframe'); f.title = NAME[k]; f.setAttribute('allow', 'fullscreen; camera');
     f.addEventListener('load', ()=>{
       try{ f.contentWindow.dispatchEvent(new Event('resize')); }catch(e){}
       /* one loader only: stay until the inner app has finished its own start-up (max 9s) */
-      let n = 0; const done = ()=>{ if (cur !== k) return; const wait0 = firstDone ? 0 : Math.max(0, 2400 - (performance.now() - T0)); setTimeout(()=>{ if (cur === k){ load.classList.add('hide'); firstDone = true; setTimeout(()=>load.classList.add('compact'), 800); } }, wait0); };
+      let n = 0; const done = ()=>{ if (cur !== k) return; const wait0 = firstDone ? 0 : Math.max(0, 1500 - (performance.now() - T0)); setTimeout(()=>{ if (cur === k){ load.classList.add('hide'); firstDone = true; document.documentElement.classList.remove('booting'); setTimeout(()=>load.classList.add('compact'), 800); } }, wait0); };
       (function wait(){ let ready = true; try{ const m = f.contentDocument.getElementById('loadingMask'); ready = !m || m.classList.contains('hide'); }catch(e){}
         if (ready || ++n > 90) settle(); else setTimeout(wait, 100); })();
       /* keep the loader up until the heavy scene is rendering smoothly (10 quick frames in a row, max 6s) */

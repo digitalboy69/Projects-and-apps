@@ -12,6 +12,7 @@
   };
   const setSource = (f, key) => { if (document.getElementById('src' + key)) f.srcdoc = decode('src' + key); else f.src = APP_URL[key]; };
 
+  setTimeout(()=>document.documentElement.classList.remove('booting'), 20000); /* failsafe */
   /* welcome greeting (first start only) */
   const T0 = performance.now(); let firstDone = false;
   (function(){
@@ -24,12 +25,12 @@
   })();
   function mount(k){
     if (frames[k]) return frames[k];
-    load.classList.remove('hide'); txt.textContent = 'LOADING ' + NAME[k].toUpperCase() + '…';
+    load.classList.add('instant'); load.classList.remove('hide'); void load.offsetWidth; load.classList.remove('instant'); txt.textContent = 'LOADING ' + NAME[k].toUpperCase() + '…';
     const f = document.createElement('iframe'); f.title = NAME[k]; f.setAttribute('allow', 'fullscreen; camera');
     f.addEventListener('load', ()=>{
       try{ f.contentWindow.dispatchEvent(new Event('resize')); }catch(e){}
       /* one loader only: stay until the inner app has finished its own start-up (max 9s) */
-      let n = 0; const done = ()=>{ if (cur !== k) return; const wait0 = firstDone ? 0 : Math.max(0, 2400 - (performance.now() - T0)); setTimeout(()=>{ if (cur === k){ load.classList.add('hide'); firstDone = true; setTimeout(()=>load.classList.add('compact'), 800); } }, wait0); };
+      let n = 0; const done = ()=>{ if (cur !== k) return; const wait0 = firstDone ? 0 : Math.max(0, 1500 - (performance.now() - T0)); setTimeout(()=>{ if (cur === k){ load.classList.add('hide'); firstDone = true; document.documentElement.classList.remove('booting'); setTimeout(()=>load.classList.add('compact'), 800); } }, wait0); };
       (function wait(){ let ready = true; try{ const m = f.contentDocument.getElementById('loadingMask'); ready = !m || m.classList.contains('hide'); }catch(e){}
         if (ready || ++n > 90) settle(); else setTimeout(wait, 100); })();
       /* keep the loader up until the heavy scene is rendering smoothly (10 quick frames in a row, max 6s) */

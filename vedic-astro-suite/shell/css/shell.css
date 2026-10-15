@@ -64,3 +64,8 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
 .sw-sep{height:1px;margin:4px 8px;background:rgba(255,255,255,.08)}
 .sw-back{position:fixed;inset:0;z-index:45;display:none;background:rgba(3,6,13,.3)}
 .sw-back.show{display:block}
+
+/* first start: only the loading screen is visible; the switcher fades in after it */
+.sw{transition:opacity .5s ease}
+.booting .sw,.booting .sw-back{opacity:0;pointer-events:none;visibility:hidden}
+.load.instant{transition:none}
