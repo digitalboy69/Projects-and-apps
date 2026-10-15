@@ -45,3 +45,5 @@
   #results.show { padding-bottom: 100px; } /* clear fixed tabbar only when results exist */
 }
 
+
+.app-tab .tab-icon{display:inline-grid;place-items:center}.app-tab .tab-icon svg{width:22px;height:22px;display:block;transition:transform .25s cubic-bezier(.22,1,.36,1),filter .25s}.app-tab.active .tab-icon svg,.app-tab.on .tab-icon svg{filter:drop-shadow(0 0 6px rgba(212,162,74,.45))}

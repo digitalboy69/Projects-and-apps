@@ -136,9 +136,9 @@ _Generated 2026-10-15 - 1064 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 112 files, 12809 lines, 897 KB
+**birth-chart** - 112 files, 12811 lines, 898 KB
 ```
-index.html                                         524 lines   28 KB
+index.html                                         524 lines   29 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -219,7 +219,7 @@ js/77-cloud-account.js                             142 lines   14 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
-css/04-app-tab-navigation.css                       48 lines    2 KB
+css/04-app-tab-navigation.css                       50 lines    2 KB
 css/05-results-sections.css                        970 lines   59 KB
 css/06-quick-search.css                             61 lines    3 KB
 css/07-ai-jyotish-chatbot.css                      297 lines   13 KB
