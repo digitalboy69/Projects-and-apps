@@ -136,9 +136,9 @@ _Generated 2026-10-15 - 1064 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 112 files, 12836 lines, 897 KB
+**birth-chart** - 112 files, 12837 lines, 897 KB
 ```
-index.html                                         523 lines   28 KB
+index.html                                         524 lines   28 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -252,24 +252,24 @@ css/33-friendly-input-page.css                      47 lines    4 KB
 css/34-smart-search.css                             30 lines    3 KB
 ```
 
-**developer** - 4 files, 178 lines, 13 KB
+**developer** - 4 files, 179 lines, 13 KB
 ```
-index.html                                          38 lines    3 KB
+index.html                                          39 lines    3 KB
 js/01-dev-card.js                                   12 lines    0 KB
 css/01-base.css                                     62 lines    2 KB
 css/02-developer-card.css                           66 lines    8 KB
 ```
 
-**notepad** - 3 files, 532 lines, 92 KB
+**notepad** - 3 files, 533 lines, 92 KB
 ```
-index.html                                          45 lines    2 KB
+index.html                                          46 lines    2 KB
 js/01-notepad.js                                   319 lines   65 KB
 css/01-notepad.css                                 168 lines   25 KB
 ```
 
-**sky3d** - 66 files, 5793 lines, 318 KB
+**sky3d** - 66 files, 5794 lines, 318 KB
 ```
-index.html                                         435 lines   26 KB
+index.html                                         436 lines   26 KB
 js/01-astro-engine.js                              143 lines    7 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -345,9 +345,10 @@ shell/js/locpicker.js                              202 lines   34 KB
 shell/js/shell.js                                  123 lines    8 KB
 ```
 
-**shared** - 1 files, 643 lines, 47 KB
+**shared** - 2 files, 733 lines, 52 KB
 ```
 shared/export-addon.js                             643 lines   47 KB
+shared/meta.css                                     90 lines    5 KB
 ```
 <!-- AUTO:END -->
 - Door v2 (login→Razorpay pay→app + local admin): see docs/DOOR.md and ../door-site/. Customer edition is DERIVED by tools/build_customer.py (editions/customer/customer-layer.js, customer_top.js); originals untouched. Old gate/ (encrypted blob) is superseded.

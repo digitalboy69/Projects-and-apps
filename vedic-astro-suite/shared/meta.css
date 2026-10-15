@@ -1,0 +1,89 @@
+/* ============================================================================
+   META LAYER  ·  shared/meta.css
+   One file for the "feel" of every screen: smooth motion, gentle touch feedback,
+   gold focus + selection, thin scrollbars, safe text wrapping, calm reduced-motion.
+   Loaded LAST by the shell and every app (so it can refine, never fight).
+   RULE: everything uses :where() = zero specificity, so any app/class rule always wins.
+   Never put layout, colors of components or sizes here — only global feel.
+   ============================================================================ */
+:root{
+  --meta-gold:#d4a24a; --meta-gold-soft:rgba(212,162,74,.35); --meta-gold-glow:rgba(212,162,74,.18);
+  --meta-ease:cubic-bezier(.22,1,.36,1);        /* soft, confident ease-out */
+  --meta-fast:.16s; --meta-mid:.28s; --meta-slow:.5s;
+  accent-color:var(--meta-gold);                 /* checkboxes, radios, sliders, progress */
+}
+
+/* ---------- base: crisp text, no jumpy zoom, app-like scrolling ---------- */
+:where(html){
+  -webkit-text-size-adjust:100%; text-size-adjust:100%;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  scroll-behavior:smooth; overscroll-behavior-y:none;
+  -webkit-tap-highlight-color:transparent;
+}
+:where(body){ overscroll-behavior-y:none; font-synthesis:none; }
+:where(*){ -webkit-tap-highlight-color:transparent; }
+:where(img,svg,video){ -webkit-user-drag:none; }
+:where(img,video){ max-width:100%; }
+
+/* ---------- gentle entrance: pages fade in instead of popping ---------- */
+@keyframes metaIn{ from{ opacity:0 } }
+:where(body){ animation:metaIn var(--meta-mid) ease backwards; }
+
+/* ---------- selection, caret, focus: one gold identity ---------- */
+::selection{ background:var(--meta-gold-soft); color:inherit; }
+:where(input,textarea,[contenteditable]){ caret-color:var(--meta-gold); }
+:where(:focus-visible){ outline:2px solid var(--meta-gold); outline-offset:2px; border-radius:inherit; }
+:where(:focus:not(:focus-visible)){ outline:none; }
+
+/* ---------- touch: no 300ms delay, no accidental double-tap zoom ---------- */
+:where(a,button,summary,select,label,input,[role=button],[role=tab],[role=menuitem],[role=menuitemradio]){ touch-action:manipulation; }
+:where(button,[role=button]){ -webkit-user-select:none; user-select:none; }
+
+/* ---------- smooth state changes on every interactive thing ---------- */
+:where(a,button,select,input,textarea,summary,[role=button],[role=tab],[role=menuitem],[role=menuitemradio]){
+  transition:color var(--meta-mid) var(--meta-ease), background-color var(--meta-mid) var(--meta-ease),
+             border-color var(--meta-mid) var(--meta-ease), box-shadow var(--meta-mid) var(--meta-ease),
+             opacity var(--meta-mid) var(--meta-ease), filter var(--meta-mid) var(--meta-ease),
+             transform var(--meta-fast) var(--meta-ease);
+}
+/* touch feedback: a soft press, like a physical key */
+:where(button:active:not(:disabled),[role=button]:active,summary:active){ transform:scale(.97); filter:brightness(.94); }
+@media (hover:hover){
+  :where(button:hover:not(:disabled),[role=button]:hover,summary:hover){ filter:brightness(1.08); }
+  :where(a:hover){ filter:brightness(1.12); }
+}
+:where(button:disabled,[aria-disabled=true]){ cursor:not-allowed; opacity:.55; }
+:where(input:focus,textarea:focus,select:focus){ box-shadow:0 0 0 3px var(--meta-gold-glow); }
+
+/* ---------- thin gold scrollbars (desktop) ---------- */
+:where(*){ scrollbar-width:thin; scrollbar-color:var(--meta-gold-soft) transparent; }
+::-webkit-scrollbar{ width:8px; height:8px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:var(--meta-gold-soft); border-radius:8px; border:2px solid transparent; background-clip:content-box; }
+::-webkit-scrollbar-thumb:hover{ background:rgba(212,162,74,.6); background-clip:content-box; }
+
+/* ---------- scrolling lists/popups stay inside themselves ---------- */
+:where(dialog,[role=dialog],[aria-modal=true],.modal,.popup,.overlay){ overscroll-behavior:contain; }
+
+/* ---------- text that never overflows, numbers that never wiggle ---------- */
+:where(p,li,td,th,h1,h2,h3,h4,h5,h6,label,span,div){ overflow-wrap:break-word; }
+:where(pre,code){ overflow-wrap:anywhere; }
+:where(h1,h2,h3){ text-wrap:balance; }
+:where(p){ text-wrap:pretty; }
+:where(table,td,th,time,output){ font-variant-numeric:tabular-nums; }
+:where(table){ border-collapse:collapse; }
+
+/* ---------- phones & notches: respect the safe area on the edges ---------- */
+@supports (padding:max(0px)){
+  :where(body){ scroll-padding-top:env(safe-area-inset-top); scroll-padding-bottom:env(safe-area-inset-bottom); }
+}
+
+/* ---------- large screens: keep long reading text comfortable ---------- */
+@media (min-width:1400px){ :where(html){ font-size:clamp(16px,.9vw + 3px,19px); } }
+
+/* ---------- people who prefer less motion get a calm app ---------- */
+@media (prefers-reduced-motion:reduce){
+  :where(html){ scroll-behavior:auto; }
+  :where(*,*::before,*::after){ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+}

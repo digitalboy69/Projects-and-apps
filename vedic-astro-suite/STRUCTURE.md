@@ -26,6 +26,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 | 3D scene, planets, camera | sky3d | `js/08-…` to `js/15-…`, `js/40-…` |
 | Solar System view | sky3d | `js/12-solar-system-view.js` |
 | Rising sign popup + tab | sky3d | `js/18-…`, `js/19-…`, `js/32-…`, `css/20-…`, `css/21-…` |
+| App-wide smoothness / responsiveness / feel | all | `shared/meta.css` |
 | Notepad | notepad | `js/01-notepad.js` |
 | Location picker | shell | `shell/js/locpicker.js` |
 
@@ -243,6 +244,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/developer/css/02-developer-card.css` — developer card styles
 
 ### shared/, vendor/, editions/, gate/
+- `shared/meta.css` — META LAYER: one global file for feel (smooth transitions, touch press feedback, gold focus/selection/scrollbars, text wrapping, safe areas, reduced motion). Linked LAST by the shell and every app; all rules are `:where()` zero-specificity so app css always wins. Edit this file for any app-wide smoothness/responsiveness change
 - `shared/export-addon.js` — export add-on UI used by apps (window.VAX); do not edit unless asked
 - `vendor/qrlibs.js` — QR code libraries (third party)
 - `editions/customer/customer-layer.js` — customer edition behaviour layer
