@@ -136,7 +136,7 @@ _Generated 2026-10-15 - 1064 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 112 files, 12806 lines, 896 KB
+**birth-chart** - 112 files, 12807 lines, 897 KB
 ```
 index.html                                         524 lines   28 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -231,7 +231,7 @@ css/12-export-and-profiles.css                      46 lines    4 KB
 css/13-ui-polish-layer.css                          31 lines    3 KB
 css/14-share-qr.css                                 39 lines    4 KB
 css/15-search-ui.css                                52 lines    5 KB
-css/16-cloud-account-ui.css                         34 lines    4 KB
+css/16-cloud-account-ui.css                         35 lines    5 KB
 css/17-my-chart-redesign.css                        63 lines    6 KB
 css/18-intake-redesign.css                          53 lines    4 KB
 css/19-planets-popup-redesign.css                   75 lines    7 KB
