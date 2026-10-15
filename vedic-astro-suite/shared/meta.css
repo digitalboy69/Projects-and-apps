@@ -82,6 +82,14 @@
 /* ---------- large screens: keep long reading text comfortable ---------- */
 @media (min-width:1400px){ :where(html){ font-size:clamp(16px,.9vw + 3px,19px); } }
 
+/* ---------- icons (shared/icons.js turns UI emojis into these) ---------- */
+.vxi{display:inline-flex;align-items:center;justify-content:center;position:relative;flex:none;width:1.18em;height:1.18em;vertical-align:-.22em;line-height:1;font-style:normal;font-size:inherit;transition:transform var(--meta-mid) var(--meta-ease),color var(--meta-mid) var(--meta-ease)}
+.vxi svg{width:100%;height:100%;display:block;overflow:visible}
+.vxi .f{fill:currentColor;fill-opacity:.16}
+.vxe{position:absolute;width:0;height:0;overflow:hidden;font-size:0;opacity:0;pointer-events:none;-webkit-user-select:none;user-select:none}
+:where(h2,h3,h4,summary,.action-icon,.tab-icon,.section-heading) .vxi{color:var(--meta-gold)}
+:where(button:active,[role=button]:active) .vxi{transform:scale(.92)}
+
 /* ---------- people who prefer less motion get a calm app ---------- */
 @media (prefers-reduced-motion:reduce){
   :where(html){ scroll-behavior:auto; }
