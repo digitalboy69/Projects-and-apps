@@ -4,6 +4,7 @@ ROOT="$(git rev-parse --show-toplevel)"
 for d in "$ROOT/vedic-astro-suite" "$ROOT"; do
   if [ -f "$d/build.py" ] && [ -d "$d/apps" ]; then
     (cd "$d" && python3 build.py --guide >/dev/null 2>&1 && git add AI_GUIDE.md symbols.idx 2>/dev/null)
+    (cd "$d" && python3 tools/check_structure.py) || { echo "commit blocked: update STRUCTURE.md"; exit 1; }
     break
   fi
 done

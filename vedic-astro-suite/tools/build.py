@@ -17,3 +17,4 @@ for name, enc in (('vedic-astro-suite-readable.html', 'plain'), ('vedic-astro-su
         f.write(assemble.shell_html(slots, enc))
 print('built')
 guide.gen_guide()
+import subprocess; subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'check_structure.py')])

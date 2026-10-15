@@ -2,7 +2,7 @@
 
 You are working on the **Vedic Astro Suite**: a folder project made of a shell + 4 apps (each app = its own folder with `index.html`, `css/`, `js/`). Single-file builds are generated into `dist/`. The owner is a student on free plans with tiny usage limits and several accounts. **Every token matters.** Follow this file exactly; it tells you where things are so you do not have to explore.
 
-## 0. The 12 rules (token savers)
+## 0. The 13 rules (token savers)
 1. **Never read the built HTML files** (`dist/*.html`, 1.8–2.5 MB). They are build outputs. Never `cat` or `Read` them.
 2. **Read only the range you need.** Source files are small topic files (20–750 lines). Find the symbol with `grep -P "^name\t" symbols.idx` (gives the real `file:line`), then `Read` with `offset` and `limit` (40–120 lines).
 3. **Never read `symbols.idx` whole** (grep it) and never print the AUTO section map unless you need it.
@@ -14,7 +14,8 @@ You are working on the **Vedic Astro Suite**: a folder project made of a shell +
 9. Prefer one build at the end (`python3 build.py`), not after every edit.
 10. When the task is only data/text (e.g. a new description string), edit the string; do not touch engines.
 11. If a request is ambiguous and cheap to redo, make the most reasonable choice and say which one; ask only for expensive or irreversible choices.
-12. **Before finishing, update this file** (section 7 changelog) and run `python3 build.py` — it regenerates `symbols.idx` and the AUTO block below by itself.
+12. **Read `STRUCTURE.md` once (every file + feature + path). Whenever you add/rename/move/delete a file or add a feature, update `STRUCTURE.md` too** (checked by `tools/check_structure.py`).
+13. **Before finishing, update this file** (section 7 changelog) and run `python3 build.py` — it regenerates `symbols.idx` and the AUTO block below by itself.
 
 ## 1. Architecture in 10 lines
 - Source of truth = the **folder tree** (see `README.md`): `index.html` + `shell/` (loader, floating switcher, location picker) + `apps/{sky3d,birth-chart,notepad,developer}/` + `shared/export-addon.js` + `vendor/qrlibs.js` + `editions/customer/`.
