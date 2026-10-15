@@ -1,0 +1,51 @@
+/* ===== V6 · astro layers ===== */
+.pbtn { flex: 1; padding: 11px 8px; border-radius: 8px; background: transparent; color: var(--text-dim); font-size: 12px; font-weight: 600; }
+.pbtn:active { background: var(--cyan); color: #021210; }
+.planet-label.ghost { font-size: 10px; color: var(--text-dim); font-style: italic; }
+.planet-label.house { font-size: 11px; font-weight: 700; color: #FFE6A8; background: rgba(6,10,20,.65); padding: 1px 7px; border-radius: 10px; }
+.planet-label.asc { color: #fff; font-weight: 700; background: rgba(0,0,0,.6); padding: 2px 9px; border-radius: 12px; border: 1px solid #fff; }
+.planet-label.sade { color: #FFB199; font-weight: 700; background: rgba(60,20,10,.7); padding: 2px 9px; border-radius: 12px; border: 1px solid #FF6B4A; }
+.planet-label .cond { font-size: 11px; }
+
+/* ===== V7 · RICH PLANET DETAIL ===== */
+.pdx-hero { position: relative; padding: 46px 20px 16px; text-align: center; overflow: hidden; background: radial-gradient(120% 90% at 50% 0%, var(--pca), transparent 64%); }
+.pdx-hero::before { content: ''; position: absolute; inset: 0; opacity: .5; background-image: radial-gradient(1.5px 1.5px at 12% 22%, #fff, transparent), radial-gradient(1px 1px at 80% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 66% 70%, #fff, transparent), radial-gradient(1px 1px at 25% 78%, #fff, transparent), radial-gradient(1px 1px at 90% 80%, #fff, transparent); animation: pdxTw 3.5s ease-in-out infinite alternate; }
+.pdx-orb { position: relative; width: 108px; height: 108px; margin: 0 auto 14px; border-radius: 50%; background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.85), var(--pc) 36%, color-mix(in srgb, var(--pc) 30%, #000) 100%); box-shadow: 0 0 44px var(--pca), inset -14px -14px 26px rgba(0,0,0,.5); animation: pdxFloat 5s ease-in-out infinite; }
+.pdx-orb::after { content: ''; position: absolute; inset: -16px; border-radius: 50%; border: 1px dashed var(--pca); animation: pdxSpin 20s linear infinite; }
+.pdx-orb span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 44px; color: rgba(0,0,0,.5); }
+.pdx-name { position: relative; font: 700 28px var(--font-display); letter-spacing: .02em; }
+.pdx-sk { position: relative; font-size: 13px; color: var(--pc); letter-spacing: .18em; text-transform: uppercase; margin-top: 2px; }
+.pdx-date { position: relative; font-size: 11px; color: var(--text-faint); margin: 8px 0 12px; font-family: var(--font-mono); }
+.pdx-badges { position: relative; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.pdx-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); }
+.pdx-badge.good { color: #6EE7B7; border-color: rgba(110,231,183,.4); } .pdx-badge.bad { color: #FF8A66; border-color: rgba(255,138,102,.4); }
+.pdx-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 10px 14px; position: sticky; top: 0; z-index: 4; background: rgba(10,15,26,.96); border-bottom: 1px solid rgba(255,255,255,.06); scrollbar-width: none; }
+.pdx-tabs::-webkit-scrollbar { display: none; }
+.pdx-tab { flex: 0 0 auto; padding: 9px 14px; border-radius: 12px; font-size: 12.5px; font-weight: 600; color: var(--text-dim); transition: background-color .2s, color .2s; }
+.pdx-tab.on { background: var(--pca); color: #fff; box-shadow: inset 0 0 0 1px var(--pc); }
+.pdx-pane { display: none; padding: 14px 16px 30px; } .pdx-pane.on { display: block; }
+.pdx-in { animation: pdxUp .5s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 55ms); }
+.pdx-h { font: 600 12px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim); margin: 20px 0 10px; display: flex; align-items: center; gap: 8px; }
+.pdx-h::before { content: ''; width: 18px; height: 2px; border-radius: 2px; background: var(--pc); }
+.pdx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pdx-card { padding: 12px; border-radius: 16px; background: linear-gradient(150deg, rgba(255,255,255,.06), rgba(255,255,255,.015)); border: 1px solid rgba(255,255,255,.08); min-width: 0; }
+.pdx-card .k { font-size: 10.5px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .08em; }
+.pdx-card .v { font-size: 14px; font-weight: 600; margin-top: 4px; overflow-wrap: anywhere; } .pdx-card .s { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
+.pdx-card.wide { grid-column: 1 / -1; }
+.pdx-bar { height: 9px; border-radius: 6px; background: rgba(255,255,255,.08); overflow: hidden; margin-top: 8px; }
+.pdx-bar i { display: block; height: 100%; width: 0; border-radius: 6px; background: linear-gradient(90deg, var(--pc), #fff); transition: width 1.2s cubic-bezier(.2,.8,.2,1) .2s; }
+.pdx-root.go .pdx-bar i { width: var(--w); }
+.pdx-ladder { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pdx-step { padding: 10px 6px; text-align: center; font-size: 11.5px; border-radius: 12px; background: rgba(255,255,255,.04); color: var(--text-faint); border: 1px solid transparent; }
+.pdx-step.cur { color: #fff; font-weight: 700; background: var(--pca); border-color: var(--pc); animation: pdxPulse 2s ease-in-out infinite; }
+.pdx-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.pdx-chip, .pdx-pchip { padding: 6px 11px; border-radius: 16px; font-size: 12px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); }
+.pdx-pchip { color: var(--c); border-color: color-mix(in srgb, var(--c) 45%, transparent); }
+.pdx-pchip:active { transform: scale(.95); }
+.pdx-about { font-size: 13.5px; line-height: 1.7; color: var(--text-dim); padding: 14px; border-radius: 16px; background: rgba(255,255,255,.03); border-left: 3px solid var(--pc); }
+.pdx-row { display: flex; gap: 12px; align-items: center; padding: 11px 12px; border-radius: 14px; background: rgba(255,255,255,.04); margin-bottom: 8px; font-size: 13px; }
+.pdx-row b { margin-left: auto; font-family: var(--font-mono); font-size: 11.5px; color: var(--text-dim); font-weight: 500; text-align: right; }
+@keyframes pdxFloat { 50% { transform: translateY(-7px); } } @keyframes pdxSpin { to { transform: rotate(360deg); } }
+@keyframes pdxTw { to { opacity: .15; } } @keyframes pdxUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes pdxPulse { 50% { box-shadow: 0 0 18px var(--pca); } }
+

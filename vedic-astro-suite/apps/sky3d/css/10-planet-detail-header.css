@@ -1,0 +1,47 @@
+/* ---- Planet detail header (hero) ---- */
+.pd-hero {
+  padding: 40px 24px 24px; text-align: center; border-bottom: 1px solid var(--glass-border);
+  background: radial-gradient(ellipse at top, rgba(0,240,213,0.15), transparent 70%);
+}
+.pd-hero-glyph { font-size: 56px; line-height: 1; margin-bottom: 12px; filter: drop-shadow(0 4px 24px currentColor); }
+.pd-hero-name { font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--text); letter-spacing: 0.02em; }
+.pd-hero-sub { font-size: 14px; color: var(--text-dim); margin-top: 8px; font-family: var(--font-mono); }
+.pd-hero-badges { display: flex; gap: 8px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+.pd-badge {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500; padding: 6px 14px; border-radius: 24px;
+  border: 1px solid var(--glass-border); color: var(--text); background: var(--panel-3); box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.pd-badge.retro { color: #FFA98F; border-color: rgba(255,107,74,0.4); background: rgba(255,107,74,0.15); }
+.pd-badge.direct { color: #6EE7B7; border-color: rgba(110,231,183,0.4); background: rgba(110,231,183,0.1); }
+
+/* ---- Data grid for stats ---- */
+.pd-section { padding: 24px; border-bottom: 1px solid var(--glass-border); }
+.pd-section:last-child { border-bottom: none; }
+.pd-section-title {
+  font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px;
+}
+.pd-section-title::before { content: ''; width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 8px var(--cyan); }
+.pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pd-stat { background: var(--panel-2); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 16px; transition: 0.2s; }
+.pd-stat:hover { border-color: var(--line-bright); background: var(--panel-3); }
+.pd-stat-label { font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; font-weight: 600; }
+.pd-stat-value { font-family: var(--font-mono); font-size: 16px; color: var(--text); font-weight: 600; }
+.pd-stat-value.accent { color: var(--cyan); text-shadow: 0 0 12px var(--cyan-glow); }
+.pd-stat-sub { font-size: 12px; color: var(--text-dim); margin-top: 6px; line-height: 1.4; }
+
+/* Degree gauge */
+.pd-gauge-row { display: flex; align-items: center; gap: 20px; background: var(--panel-2); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); }
+.pd-gauge { width: 72px; height: 72px; flex-shrink: 0; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
+.pd-gauge-label { flex: 1; }
+.pd-gauge-deg { font-family: var(--font-mono); font-size: 24px; color: var(--text); font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+.pd-gauge-sign { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
+
+.pd-aspect-chip-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.pd-aspect-chip {
+  display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 12px; background: var(--panel-2);
+  border: 1px solid var(--glass-border); font-size: 13px; color: var(--text-dim); cursor: pointer; transition: 0.2s; font-weight: 500;
+}
+.pd-aspect-chip:hover { border-color: var(--cyan); color: var(--text); background: var(--panel-3); box-shadow: 0 4px 16px rgba(0,0,0,0.3); transform: translateY(-2px); }
+.pd-aspect-chip b { color: var(--text); }
+.pd-empty-note { font-size: 13px; color: var(--text-faint); font-style: italic; background: var(--panel-2); padding: 20px; border-radius: var(--radius-md); text-align: center; border: 1px dashed var(--line); }
+

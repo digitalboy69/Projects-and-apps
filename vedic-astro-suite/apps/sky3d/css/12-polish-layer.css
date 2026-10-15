@@ -1,0 +1,53 @@
+/* ============================== POLISH LAYER ============================== */
+.app { height: 100vh; height: 100dvh; grid-template-rows: 64px minmax(0,1fr) auto; }
+.sheet-handle { display: none; }
+.tl-jump-toggle { display: none; }
+
+/* Brand */
+.brand-mark { background: linear-gradient(145deg, rgba(0,240,213,0.22), rgba(0,240,213,0.02)); flex-shrink: 0; }
+.brand h1 { background: linear-gradient(90deg, #fff 30%, var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.profile-bar select { text-overflow: ellipsis; background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%), linear-gradient(135deg, var(--text-dim) 50%, transparent 50%); background-position: calc(100% - 15px) 52%, calc(100% - 10px) 52%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 28px; }
+.mini-field select, .sign-select-row select { background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%), linear-gradient(135deg, var(--text-dim) 50%, transparent 50%); background-position: calc(100% - 18px) 52%, calc(100% - 13px) 52%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 36px !important; appearance: none; -webkit-appearance: none; }
+
+/* Viewport depth + HUD card */
+.viewport::before { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at 15% 85%, rgba(0,240,213,0.07), transparent 42%), radial-gradient(circle at 88% 12%, rgba(255,107,74,0.07), transparent 40%); }
+.viewport-hud { padding: 14px 18px; background: linear-gradient(145deg, rgba(14,20,33,0.72), rgba(10,15,26,0.4)); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); max-width: calc(100% - 100px); }
+.hud-datetime { font-size: 24px; }
+.hud-moon { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Side panel tabs -> pills */
+.panel-tabs { gap: 4px; padding: 10px 12px; scroll-snap-type: x proximity; touch-action: pan-x; background: rgba(255,255,255,0.02); }
+.panel-tab { flex: 0 0 auto; border-bottom: none; border-radius: 10px; padding: 10px 14px; scroll-snap-align: start; }
+.panel-tab.active { background: rgba(0,240,213,0.12); box-shadow: inset 0 0 0 1px rgba(0,240,213,0.35); }
+.panel-content { overscroll-behavior: contain; }
+
+/* Cards */
+.sky-row, .house-row, .aspect-row, .line-toggle-row { background: linear-gradient(135deg, var(--panel-2), rgba(255,255,255,0.015)); }
+.aspect-row, .sa-target-row { flex-wrap: wrap; }
+.aspect-desc { flex: 1 1 150px; min-width: 0; }
+.sa-target-row .sa-occupants { flex: 1 1 100px; min-width: 0; }
+.expl-row .desc, .house-planets-line { overflow-wrap: anywhere; }
+
+/* Timeline */
+.timeline { min-height: 0; }
+.timeline-controls { flex-wrap: wrap; row-gap: 10px; }
+.tl-speed { background: var(--panel-2); border: 1px solid var(--glass-border); border-radius: 12px; padding: 4px; gap: 2px; }
+.speed-chip { border: none; background: transparent; padding: 6px 12px; flex-shrink: 0; }
+.speed-chip.active { background: rgba(0,240,213,0.18); box-shadow: inset 0 0 0 1px rgba(0,240,213,0.5); }
+.tl-jump input[type="datetime-local"] { min-width: 0; color-scheme: dark; }
+
+/* Modals: sticky close button that stays reachable while scrolling */
+.pdmodal-close { position: sticky; top: 12px; margin: 12px 12px 0 auto; display: flex; }
+#planetDetailContent, #signDetailContent { margin-top: -48px; }
+.pdmodal { touch-action: pan-y; overscroll-behavior: contain; }
+input[type="date"], input[type="time"] { color-scheme: dark; }
+
+/* Touch devices: no sticky hover shifts */
+@media (hover: none) {
+  .sky-row:hover, .house-row:hover, .aspect-row:hover, .transit-card:hover, .sd-planet-card:hover, .pd-aspect-chip:hover, .btn-block:hover, .icon-btn:hover, .vp-btn:hover, .tl-btn:hover { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+

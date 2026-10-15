@@ -1,7 +1,7 @@
 # Supabase setup (cloud login + profile sync)
 
 Project: `pbnfpbugxcndmrgpuved` (name: Vedic Astro Suite, region ap-south-1 / Mumbai).
-URL: https://pbnfpbugxcndmrgpuved.supabase.co  (publishable key is inside `parts/srcB_*` cloud block; it is safe to be public).
+URL: https://pbnfpbugxcndmrgpuved.supabase.co  (publishable key is inside `apps/birth-chart/js/77-cloud-account.js`; it is safe to be public).
 
 ## Tables (all in `public`, RLS ON)
 - `chart_profiles`: one saved chart per row, owner-only (select/insert/update/delete where `auth.uid() = user_id`).
@@ -24,6 +24,6 @@ Make another admin (SQL editor): `insert into private.app_admins(user_id) select
 ## (old) Gated delivery
 - `gate/index.html` = the ONLY public page: login screen. After sign-in it calls Edge Function `get-app`.
 - `get-app` (Supabase Edge Function, source in `gate/get-app.ts`; the real AES key is only inside the DEPLOYED function, `__APP_KEY__` here is a placeholder) checks the user + `member_access` (trial = 7 days from sign-up; active until `expires_at`; blocked = never), then fetches `app.enc` (public, AES-GCM encrypted + gzipped), decrypts it and returns the HTML. The browser then `document.write`s it.
-- Release: `python3 build.py` -> `python3 tools_encrypt.py vedic-astro-suite-readable.html app.enc` (needs the key: env `APP_KEY`, or read it from the deployed function with Supabase `get_edge_function`) -> publish `gate/index.html` + `app.enc` to the PUBLIC gate repo (`vedic-gate`, GitHub Pages).
+- Release: `python3 build.py` -> `python3 tools/encrypt.py dist/customer-edition.html app.enc` (needs the key: env `APP_KEY`, or read it from the deployed function with Supabase `get_edge_function`) -> publish `gate/index.html` + `app.enc` to the PUBLIC gate repo (`vedic-gate`, GitHub Pages).
 - Rotate key: generate 32 random bytes hex, redeploy `get-app` with the new key, re-encrypt, push app.enc.
 - Source repo must be PRIVATE (it contains the readable code). GitHub Pages on private repos needs a paid GitHub plan, so the public gate repo holds only login page + encrypted file.

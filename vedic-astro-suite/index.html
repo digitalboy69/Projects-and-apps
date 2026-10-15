@@ -1,4 +1,34 @@
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#03060d">
 <title>Vedic Astro Suite</title>
-<meta http-equiv="refresh" content="0;url=vedic-astro-suite-readable.html">
-<a href="vedic-astro-suite-readable.html">Open Vedic Astro Suite</a>
+<link rel="stylesheet" href="shell/css/shell.css">
+</head>
+<body>
+<div class="shell">
+  <div class="stage" id="stage"><div class="load" id="load"><div class="orb"><div class="zring" id="zring"></div><i class="o1"></i><i class="o2"></i><i class="o3"></i><b class="p1"></b><b class="p2"></b><b class="p3"></b><em></em></div><div class="wel" id="wel"><div class="pray">🙏</div><div class="wel-hi" id="welHi">Namaste 🙏</div><div class="wel-sub" id="welSub">Welcome to your sky</div></div><h1>VEDIC ASTRO SUITE</h1><span id="loadTxt">LOADING…</span><div class="bar"></div></div></div>
+</div>
+<div class="sw-back" id="swBack"></div>
+<div class="sw" id="sw" data-x="r" data-y="t">
+  <button class="sw-btn" id="swBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="swMenu" title="Switch view (drag to move)"><span id="swIco">🧭</span></button>
+  <div class="sw-menu" id="swMenu" role="menu">
+    <button class="sw-item" type="button" role="menuitemradio" aria-checked="false" data-act="A"><span class="e">🌌</span>3D Sky</button>
+    <button class="sw-item on" type="button" role="menuitemradio" aria-checked="true" data-act="B"><span class="e">🧭</span>Birth Chart</button>
+    <button class="sw-item" type="button" role="menuitemradio" aria-checked="false" data-act="N"><span class="e">📝</span>Notepad</button>
+    <div class="sw-sep"></div>
+    <button class="sw-item" type="button" role="menuitem" data-act="dev"><span class="e">💬</span>Developer</button>
+  </div>
+</div>
+<!--HOSTED-ONLY--><script>
+/* The folder version needs a web server (browsers block frames talking to each other on file://).
+   Double-clicked from disk? Open the single-file build instead. */
+if (location.protocol === 'file:') location.replace('dist/vedic-astro-suite-readable.html' + location.hash);
+</script><!--/HOSTED-ONLY-->
+<script>try{window.__vaxHash=location.hash;}catch(e){}</script>
+<script src="shell/js/locpicker.js"></script>
+<script src="shell/js/shell.js"></script>
+</body>
+</html>

@@ -3,4 +3,4 @@ Everything an AI needs is in **`AI_GUIDE.md`** (prompt router, token-saving rule
 
 > Read AI_GUIDE.md first, then do: [task]. Return the readable HTML + zip, keep the reply short.
 
-Project = one HTML file with 4 embedded apps (3D Sky `srcA`, Birth Chart `srcB`, Notepad `srcN`, Developer card `srcDev`). Edit `parts/`, run `python3 build.py`, test with `python3 tests/smoke.py`, commit. If a chat only has a few tokens left: upload/paste nothing big; the repo is the source of truth.
+Project = a folder project: a shell (`index.html`, `shell/`) + 4 apps (`apps/sky3d`, `apps/birth-chart`, `apps/notepad`, `apps/developer`), each with its own `index.html`, `css/` and `js/` files. Edit the file that holds the feature (find it with `grep -P "^name\t" symbols.idx`), run `python3 build.py` (writes the single-file builds into `dist/`), test with `python3 tests/smoke.py`, commit.

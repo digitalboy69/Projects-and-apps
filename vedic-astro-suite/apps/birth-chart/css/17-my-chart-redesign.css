@@ -1,0 +1,62 @@
+/* ---- My Chart redesign ---- */
+.ov{max-width:1000px;margin:0 auto}
+.ov-hero{display:flex;align-items:center;gap:16px;padding:18px;border-radius:20px;background:linear-gradient(135deg,rgba(212,175,55,.16),rgba(255,255,255,.02));border:1px solid var(--border-light);margin-bottom:14px}
+.ov-av{width:64px;height:64px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font:600 28px var(--font-display);color:#111;background:linear-gradient(135deg,var(--gold-bright),var(--gold))}
+.ov-id{min-width:0}.ov-id h3{margin:0 0 8px;font:500 24px var(--font-display);color:var(--text-main);overflow:hidden;text-overflow:ellipsis}
+.ov-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ov-chips span{font:12px var(--font-sans);color:var(--text-muted);background:rgba(0,0,0,.25);border:1px solid var(--border-subtle);border-radius:999px;padding:4px 10px}
+.ov-big3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:26px}
+.ov-big{background:var(--bg-card);border:1px solid var(--border-light);border-radius:18px;padding:16px 10px;text-align:center;position:relative;overflow:hidden}
+.ov-big:nth-child(1){border-top:3px solid #D4AF37}.ov-big:nth-child(2){border-top:3px solid #C9C3AE}.ov-big:nth-child(3){border-top:3px solid #E0A64A}
+.ov-big small{display:block;font:600 10px var(--font-sans);letter-spacing:.1em;text-transform:uppercase;color:var(--text-subtle)}
+.ov-sym{font-size:38px;line-height:1.2;color:var(--gold-bright);margin:6px 0 2px}.ov-sym.sm{font-size:26px;margin:0;width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;color:var(--gold-bright);flex:none}
+.ov-big b{display:block;font:500 20px var(--font-display);color:var(--text-main)}
+.ov-big span{display:block;font-size:12px;color:var(--text-muted);margin-top:2px}
+.ov-big em{display:inline-block;margin-top:8px;font:600 11px var(--font-mono);font-style:normal;color:var(--teal-bright);background:rgba(94,196,183,.1);border-radius:999px;padding:3px 10px}
+.ov-sec{margin-bottom:28px}
+.ov-sec h5{margin:0 0 12px;font:600 13px var(--font-sans);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright)}
+.ov-sec h5 span{margin-left:8px;color:var(--text-subtle);font-weight:400;letter-spacing:0;text-transform:none;font-size:12px}
+.ov-chartgrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:start}
+.ov-chartcard{background:var(--bg-card);border:1px solid var(--border-light);border-radius:18px;padding:14px}
+.ov-toggle{display:flex;gap:4px;background:rgba(0,0,0,.3);border-radius:999px;padding:3px;width:max-content;margin:0 auto 12px}
+.ov-toggle button{background:transparent;border:none;color:var(--text-muted);font:600 12px var(--font-sans);padding:7px 14px;border-radius:999px;cursor:pointer}
+.ov-toggle button.on{background:var(--gold);color:#111}
+.ov-svg{display:flex;justify-content:center}.ov-svg svg{max-width:100%;height:auto}
+.ov-plist{background:var(--bg-card);border:1px solid var(--border-light);border-radius:18px;padding:8px;display:grid;gap:2px}
+.ov-plist-h,.ov-prow{display:grid;grid-template-columns:1.3fr 1.2fr .7fr;gap:8px;align-items:center;padding:8px 10px}
+.ov-plist-h{font:600 10px var(--font-sans);letter-spacing:.1em;text-transform:uppercase;color:var(--text-subtle)}
+.ov-prow{border-radius:12px;cursor:pointer;transition:background .15s}.ov-prow:hover{background:rgba(255,255,255,.05)}
+.ov-prow{grid-template-columns:auto 1.3fr 1.2fr .7fr}.ov-plist-h{grid-template-columns:auto 1.3fr 1.2fr .7fr}
+.ov-pdot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;color:rgba(0,0,0,.8);flex:none}
+.ov-pname b,.ov-psign,.ov-phouse{font-size:13px;color:var(--text-main);font-weight:600}
+.ov-pname em{color:#E07070;font-style:normal;font-size:11px}
+.ov-pname small,.ov-psign small,.ov-phouse small{display:block;font:10px var(--font-mono);color:var(--text-muted);font-weight:400;margin-top:1px}
+.ov-psign{font-weight:500}
+.ov-nak{background:var(--bg-card);border:1px solid var(--border-light);border-radius:18px;padding:16px}
+.ov-nak-main{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.ov-nak-main b{display:block;font:500 20px var(--font-display);color:var(--text-main)}.ov-nak-main small{color:var(--text-muted);font-size:12px}
+.ov-nak-grid,.ov-techgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.ov-nak-grid>div,.ov-techgrid>div{background:rgba(0,0,0,.22);border-radius:12px;padding:10px 12px}
+.ov-nak-grid small,.ov-techgrid small{display:block;font:600 10px var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--text-subtle);margin-bottom:3px}
+.ov-nak-grid b,.ov-techgrid b{font-size:13px;color:var(--text-main);font-weight:600}
+.ov-elbar{display:flex;height:14px;border-radius:999px;overflow:hidden;gap:2px;background:rgba(255,255,255,.05)}
+.ov-elbar i{display:block;height:100%}
+.ov-ellegend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:12px;color:var(--text-muted)}
+.ov-ellegend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.ov-kscroll{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.ov-kcard{background:var(--bg-card);border:1px solid var(--border-light);border-left:3px solid var(--pc);border-radius:16px;padding:14px}
+.ov-kcard.karaka-primary{background:linear-gradient(145deg,color-mix(in srgb,var(--pc) 14%,transparent),var(--bg-card));border-color:var(--pc)}
+.ov-ktop{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ov-ktop b{display:block;font:500 16px var(--font-display);color:var(--text-main)}
+.ov-ktop small{font:600 10px var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--pc)}
+.ov-kdesc{font-size:12px;line-height:1.5;color:var(--text-muted)}
+.ov-kdeg{margin-top:8px;font:11px var(--font-mono);color:var(--text-subtle)}
+.ov-tech{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.ov-tech summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--text-muted)}
+.ov-techgrid{margin-top:12px}
+@media (max-width:880px){
+  .ov-hero{padding:14px;gap:12px}.ov-av{width:52px;height:52px;font-size:22px}.ov-id h3{font-size:20px}
+  .ov-big3{gap:6px}.ov-big{padding:12px 4px}.ov-sym{font-size:28px}.ov-big b{font-size:15px}.ov-big span{font-size:10px}.ov-big em{font-size:10px;padding:2px 6px}
+  .ov-chartgrid{grid-template-columns:1fr}
+  .ov-nak-grid,.ov-techgrid{grid-template-columns:1fr 1fr}
+}

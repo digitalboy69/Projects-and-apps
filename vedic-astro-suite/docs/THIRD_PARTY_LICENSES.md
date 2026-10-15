@@ -1,6 +1,6 @@
 # Third-party code
 
-These libraries are embedded (unmodified) in `parts/qrlibs.js` for the share-by-QR feature.
+These libraries are embedded (unmodified) in `vendor/qrlibs.js` for the share-by-QR feature.
 
 ## qrcode-generator (MIT) – Kazuhiko Arase
 ```

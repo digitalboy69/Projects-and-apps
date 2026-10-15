@@ -76,7 +76,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px 8px;
     <section id="t-up" class="hide">
       <div class="card"><h3>Publish app update</h3>
         <p class="mut" id="upInfo" style="margin-bottom:10px">Checking current version…</p>
-        <div class="dz"><p style="margin-bottom:10px">Choose <b>customer-edition.html</b> (built by <code>tools_customer.py</code>)</p><input type="file" id="upFile" accept=".html,text/html"></div>
+        <div class="dz"><p style="margin-bottom:10px">Choose <b>customer-edition.html</b> (built by <code>tools/build_customer.py</code>)</p><input type="file" id="upFile" accept=".html,text/html"></div>
         <p class="mut" id="upMsg" style="margin:10px 0"></p>
         <button class="btn pri" id="upGo" disabled>Publish to all customers</button>
         <p class="mut" style="margin-top:8px">The previous version is backed up automatically. Customers get the new version the next time they open the app.</p></div>
@@ -211,7 +211,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px 8px;
   $('upFile').onchange=function(){
     var f=this.files&&this.files[0]; upText=null; $('upGo').disabled=true; if(!f) return;
     f.text().then(function(t){
-      if(t.indexOf('vcxBrand')<0||/data-act="dev"/.test(t)){ $('upMsg').textContent='⚠ This does not look like the customer edition. Use customer-edition.html from tools_customer.py.'; return; }
+      if(t.indexOf('vcxBrand')<0||/data-act="dev"/.test(t)){ $('upMsg').textContent='⚠ This does not look like the customer edition. Use customer-edition.html from tools/build_customer.py (dist/customer-edition.html).'; return; }
       upText=t; $('upMsg').textContent=f.name+' · '+Math.round(f.size/1024)+' KB · ready'; $('upGo').disabled=false;
     });
   };

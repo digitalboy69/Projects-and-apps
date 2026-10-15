@@ -1,0 +1,84 @@
+
+/* ==========================================================================
+   PREMIUM TOKENS & RESET
+   ========================================================================== */
+:root {
+  --bg-dark: #050507;
+  --bg-card: #0B0D14;
+  --bg-card-hover: #12151F;
+  --border-light: rgba(212, 175, 55, 0.15);
+  --border-lighter: rgba(212, 175, 55, 0.3);
+  
+  --text-main: #EAE6DF;
+  --text-muted: #9F9A8F;
+  --text-subtle: #6B675D;
+  
+  --gold: #D4AF37;
+  --gold-bright: #F9D976;
+  --gold-dim: #8C7323;
+  
+  --teal: #42877E;
+  --teal-bright: #5EC4B7;
+  --teal-dim: rgba(66, 135, 126, 0.15);
+  
+  --red: #A64444;
+  --red-bright: #D95F5F;
+  
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-display: 'Cinzel', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+  
+  --shadow-glass: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --shadow-btn: 0 4px 16px rgba(212, 175, 55, 0.25);
+  
+  --transition-fast: 0.15s ease;
+  --transition-smooth: 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; background: var(--bg-dark); }
+body {
+  font-family: var(--font-sans);
+  color: var(--text-main);
+  background: radial-gradient(circle at 50% 0%, #111424 0%, var(--bg-dark) 60%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Starfield Background */
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image: 
+    radial-gradient(1px 1px at 15% 25%, rgba(255,255,255,0.4) 100%, transparent),
+    radial-gradient(1.5px 1.5px at 75% 15%, rgba(212,175,55,0.4) 100%, transparent),
+    radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,0.3) 100%, transparent),
+    radial-gradient(2px 2px at 25% 85%, rgba(212,175,55,0.3) 100%, transparent),
+    radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,0.5) 100%, transparent);
+  background-size: 200px 200px;
+  pointer-events: none; z-index: -1; opacity: 0.8;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: var(--bg-card-hover); border-radius: 4px; border: 1px solid var(--bg-dark); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-subtle); }
+
+::selection { background: var(--gold); color: #000; }
+:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+button { font-family: inherit; }
+
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+

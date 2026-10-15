@@ -1,0 +1,47 @@
+/* ==========================================================================
+   APP TAB NAVIGATION (Responsive iOS-style bottom bar on mobile)
+   ========================================================================== */
+.app-tabbar { display: none; }
+.app-tabbar.show { display: block; animation: fadeIn 0.4s ease; }
+
+@media (min-width: 881px) {
+  .app-tabbar {
+    position: sticky; top: 77px; z-index: 90;
+    background: rgba(5, 5, 7, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-light); margin-bottom: 40px;
+  }
+  .app-tabbar-inner {
+    max-width: 1240px; margin: 0 auto; padding: 0 24px;
+    display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+  }
+  .app-tabbar-inner::-webkit-scrollbar { display: none; }
+  .app-tab {
+    background: transparent; border: none; color: var(--text-muted);
+    font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+    padding: 16px 12px; cursor: pointer; white-space: nowrap;
+    border-bottom: 2px solid transparent; transition: all var(--transition-fast);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .app-tab:hover { color: var(--text-main); }
+  .app-tab.active { color: var(--gold-bright); border-bottom-color: var(--gold); }
+}
+
+@media (max-width: 880px) {
+  .app-tabbar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(11, 13, 20, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-light); padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+  .app-tabbar-inner { display: flex; justify-content: space-between; overflow-x: auto; padding: 8px 12px; scrollbar-width: none; }
+  .app-tab {
+    background: transparent; border: none; color: var(--text-muted);
+    font-family: var(--font-sans); font-size: 10px; font-weight: 500;
+    padding: 8px; cursor: pointer; white-space: nowrap;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    min-width: 64px; flex-shrink: 0; transition: color 0.2s;
+  }
+  .app-tab .tab-icon { font-size: 20px; line-height: 1; }
+  .app-tab.active { color: var(--gold-bright); }
+  #results.show { padding-bottom: 100px; } /* clear fixed tabbar only when results exist */
+}
+

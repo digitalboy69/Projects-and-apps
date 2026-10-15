@@ -1,0 +1,30 @@
+/* ---- Chart wheel ---- */
+#chartWheelWrap { display: flex; justify-content: center; margin-bottom: 16px; flex-direction: column; align-items: center; }
+.chart-wheel { width: 100%; max-width: 360px; aspect-ratio: 1/1; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); }
+.chart-wheel svg { width: 100%; height: 100%; display: block; }
+.cw-house-bg { fill: var(--panel-3); stroke: rgba(255,255,255,0.1); stroke-width: 1.5; transition: fill 0.3s; }
+.cw-house-bg:hover { fill: var(--panel-2); stroke: var(--cyan); }
+.cw-house-bg.lagna { fill: rgba(0, 240, 213, 0.1); stroke: var(--cyan); }
+.cw-house-num { font-family: var(--font-mono); font-size: 8px; fill: var(--text-faint); font-weight: 600; }
+.cw-sign-name { font-family: var(--font-mono); font-size: 10px; fill: var(--text-dim); letter-spacing: 0.02em; }
+.cw-planet { font-family: var(--font-ui); font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+.cw-planet:hover { filter: brightness(1.5) drop-shadow(0 0 4px currentColor); }
+
+/* ---- House table ---- */
+.house-row {
+  display: grid; grid-template-columns: 40px 1fr; gap: 16px; padding: 16px; border: 1px solid var(--glass-border);
+  background: var(--panel-2); border-radius: var(--radius-md); margin-bottom: 8px; align-items: center; transition: 0.2s;
+}
+.house-row:hover { border-color: var(--line-bright); transform: translateX(2px); }
+.house-num-badge {
+  width: 40px; height: 40px; border-radius: 12px; background: var(--panel-3); border: 1px solid var(--glass-border);
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 14px; color: var(--cyan); font-weight: 700;
+}
+.house-num-badge.lagna { border-color: var(--cyan); background: var(--cyan-glow); color: #fff; box-shadow: 0 0 12px var(--cyan-glow); }
+.house-sign-line { font-size: 14px; color: var(--text); font-weight: 600; margin-bottom: 4px; }
+.house-sign-line .lagna-tag { font-size: 10px; color: var(--cyan); border: 1px solid var(--cyan-dim); background: rgba(0,240,213,0.1); padding: 2px 8px; border-radius: 6px; margin-left: 8px; font-weight: 700; }
+.house-planets-line { font-size: 13px; color: var(--text-dim); }
+.house-planets-line span { padding: 2px 6px; border-radius: 4px; transition: 0.2s; }
+.house-planets-line span:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+.house-planets-line .hp-empty { color: var(--text-faint); font-style: italic; }
+

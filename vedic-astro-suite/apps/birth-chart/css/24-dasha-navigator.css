@@ -1,0 +1,31 @@
+/* ---- Dasha navigator v2 ---- */
+.dx-chk{background:var(--bg-card);border:1px solid var(--border-light);border-radius:20px;padding:14px}
+.dx-chk-in{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:14px}
+.dx-chk-in label{display:flex;flex-direction:column;gap:4px;font:600 10px var(--font-sans);letter-spacing:.1em;text-transform:uppercase;color:var(--text-subtle)}
+.dx-chk-in input{background:rgba(0,0,0,.3);border:1px solid var(--border-light);color:var(--text-main);border-radius:10px;padding:10px;font:14px var(--font-sans);color-scheme:dark}
+.dx-chk-q{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.dx-chk-q button{background:transparent;border:1px solid var(--border-light);color:var(--text-muted);border-radius:999px;padding:9px 14px;font:600 12px var(--font-sans);cursor:pointer}
+.dx-chk-q button:hover{border-color:var(--gold);color:var(--gold-bright)}.dx-chk-q .gold{background:var(--gold);color:#111;border-color:transparent}
+.dx-lvs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.dx-lv{background:linear-gradient(170deg,color-mix(in srgb,var(--pc) 13%,transparent),rgba(0,0,0,.2));border:1px solid var(--border-subtle);border-top:3px solid var(--pc);border-radius:14px;padding:12px 10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.dx-lv-top{display:flex;align-items:center;gap:6px}.dx-lv-n{width:18px;height:18px;border-radius:50%;background:var(--pc);color:#111;font:700 10px var(--font-sans);display:flex;align-items:center;justify-content:center}
+.dx-lv-top small{font:600 10px var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.dx-lv-main{display:flex;align-items:center;gap:8px}.dx-lv-main b{font:500 17px var(--font-display);color:var(--text-main)}
+.dx-lv-path{font:600 10px var(--font-mono);color:var(--pc)}
+.dx-lv-dates{font:10px/1.5 var(--font-mono);color:var(--text-muted)}
+.dx-lv-foot{display:flex;justify-content:space-between;gap:6px;font:10px var(--font-mono);color:var(--teal-bright)}
+.dx-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px}
+.dx-st{background:rgba(0,0,0,.25);border:1px solid var(--border-subtle);border-radius:12px;padding:8px 4px;cursor:pointer;color:var(--text-muted);display:flex;flex-direction:column;gap:2px;align-items:center;font-family:var(--font-sans);min-width:0}
+.dx-st small{font:600 9px var(--font-sans);letter-spacing:.06em;text-transform:uppercase}.dx-st b{font:600 12px var(--font-sans);color:var(--text-main);white-space:nowrap}
+.dx-st.has{border-color:var(--border-light)}.dx-st.cur{background:var(--gold);border-color:transparent}.dx-st.cur small,.dx-st.cur b{color:#111}
+.dx-st:disabled{opacity:.35;cursor:default}
+.dx-ctx{background:linear-gradient(160deg,color-mix(in srgb,var(--pc,#D4AF37) 13%,transparent),transparent);border:1px solid var(--border-light);border-left:4px solid var(--pc,var(--gold));border-radius:16px;padding:12px;margin-bottom:14px}
+.dx-ctx-bar{display:flex;gap:6px;margin-bottom:10px}.dx-ctx-bar .dx-nav{flex:1;text-align:center}.dx-nav.up{flex:1.2;background:rgba(212,175,55,.12)}
+.dx-ctx-t{display:flex;align-items:center;gap:12px;min-width:0}.dx-ctx-t b{display:block;font:500 18px var(--font-display);color:var(--text-main)}.dx-ctx-t small{color:var(--text-muted);font-size:12px;display:block}
+.dx-ctx .dx-bigglyph{width:44px;height:44px;font-size:26px}.dx-ctx .dx-bar.big{margin-top:12px}
+.dx-lh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.dx-lh h6{margin:0;font:600 12px var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}.dx-lh h6 span{color:var(--text-subtle);font-weight:400;letter-spacing:0;text-transform:none;margin-left:6px}
+.dx-nowbtn{background:var(--gold);color:#111;border:none;border-radius:999px;padding:8px 14px;font:700 12px var(--font-sans);cursor:pointer}
+@media (max-width:880px){.dx-lvs{grid-template-columns:1fr 1fr}.dx-lv:first-child{grid-column:1/-1}.dx-lv-dates{font-size:11px}.dx-chk-q{margin-left:0;width:100%}.dx-chk-q button{flex:1}
+  .dx-steps{gap:4px}.dx-st b{font-size:11px}}
+

@@ -1,0 +1,45 @@
+/* ---- Export merge + profiles ---- */
+.export-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.export-ghost{background:transparent!important;border:1px solid var(--gold)!important;color:var(--gold-bright)!important}
+.export-dev{padding:12px 32px;border-top:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--text-muted);flex-shrink:0}
+.export-dev div{display:flex;gap:8px}
+.export-dev a{color:var(--gold-bright);text-decoration:none;border:1px solid var(--border-light);border-radius:999px;padding:6px 12px;font-weight:600}
+.export-dev a:hover{border-color:var(--gold)}
+.prof-count{color:var(--text-subtle);font-weight:400;letter-spacing:0;text-transform:none}
+.prof-cards{display:grid;gap:8px;max-height:280px;overflow-y:auto}
+.prof-card{display:flex;align-items:center;gap:12px;padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid var(--border-light);border-radius:14px;cursor:pointer;transition:border-color .2s,background .2s}
+.prof-card:hover{border-color:var(--gold)}
+.prof-card.active{border-color:var(--gold);background:rgba(212,175,55,.09)}
+.prof-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:600 17px var(--font-display);color:rgba(0,0,0,.8);flex:none}
+.prof-info{flex:1;min-width:0}
+.prof-info b{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--text-main)}
+.prof-info small{display:block;font:11px var(--font-mono);color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prof-badge{font:600 9px var(--font-sans);letter-spacing:.08em;text-transform:uppercase;background:var(--gold);color:#111;border-radius:999px;padding:2px 7px}
+.prof-edit{background:transparent;border:none;cursor:pointer;font-size:15px;opacity:.6;padding:6px;border-radius:8px}
+.prof-edit:hover{opacity:1;background:rgba(212,175,55,.15)}
+.pe-box{max-width:380px;width:100%;display:flex;flex-direction:column;gap:12px}
+.pe-l{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--text-dim,#aaa);text-align:left}
+.pe-l input{padding:11px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:inherit;font-size:16px;font-family:inherit}
+.pe-note{font-size:12px;opacity:.7;margin:0;text-align:left}
+.pe-err{color:#ff8a8a;font-size:13px;text-align:left}
+.in-share{max-width:640px;margin:18px auto 0;padding:16px;border-radius:20px;background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.25);backdrop-filter:blur(10px)}
+.in-share-t{font-weight:700;margin-bottom:10px;text-align:center}
+.in-share-b{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.in-sh-btn{display:flex;flex-direction:column;gap:3px;align-items:center;padding:14px 8px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:inherit;font:inherit;font-weight:600;cursor:pointer;transition:transform .2s,background .2s}
+.in-sh-btn small{font-weight:400;opacity:.65;font-size:11px}
+.in-sh-btn:hover{transform:translateY(-2px);background:rgba(212,175,55,.14)}
+.in-share-n{margin-top:10px;font-size:13px;color:#e7c766;text-align:center}
+.sh-box{max-width:380px;width:100%;position:relative;text-align:center;display:flex;flex-direction:column;gap:12px;max-height:92vh;overflow:auto}
+.sh-x{position:absolute;top:10px;right:12px;background:none;border:none;color:inherit;font-size:18px;cursor:pointer;opacity:.7}
+.sh-box h4{margin:4px 24px 0}
+.sh-sub{font-size:13px;opacity:.75;margin:0}
+.sh-qrwrap{display:flex;justify-content:center}
+.sh-qr{width:min(260px,70vw);height:auto;border-radius:14px;image-rendering:pixelated}
+.sh-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.sh-up{cursor:pointer}
+.sh-warn{font-size:12px;opacity:.7}
+.sh-or{font-size:12px;opacity:.6}
+.sh-paste input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:inherit;font-size:16px}
+.sh-vid{border-radius:14px;overflow:hidden}.sh-vid video{width:100%;display:block}
+.sh-msg{font-size:13px;color:#ff9d9d}
+.prof-share{background:transparent;border:none;cursor:pointer;font-size:15px;opacity:.6;padding:6px;border-radius:8px}.prof-share:hover{opacity:1;background:rgba(212,175,55,.15)}

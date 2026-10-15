@@ -1,0 +1,41 @@
+/* ---- Mobile free-fly joystick ---- */
+.freefly-stick {
+  position: absolute; z-index: 15; display: none; touch-action: none;
+}
+.freefly-stick.show { display: block; }
+.freefly-stick.move { left: 24px; bottom: 180px; width: 120px; height: 120px; }
+.freefly-stick.look-hint { right: 24px; bottom: 180px; width: 120px; text-align: center; font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); pointer-events: none; }
+.stick-base {
+  width: 120px; height: 120px; border-radius: 50%; background: rgba(18, 25, 38, 0.6); border: 1px solid var(--glass-border); position: relative; backdrop-filter: blur(12px); box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.stick-nub {
+  width: 52px; height: 52px; border-radius: 50%; background: var(--cyan-glow); border: 1.5px solid var(--cyan);
+  position: absolute; left: 34px; top: 34px; transition: transform .05s linear; box-shadow: 0 0 16px var(--cyan-glow) inset;
+}
+.freefly-vert {
+  position: absolute; z-index: 15; right: 24px; bottom: 320px; display: none; flex-direction: column; gap: 12px;
+}
+.freefly-vert.show { display: flex; }
+.ff-vbtn {
+  width: 52px; height: 52px; border-radius: 16px; background: rgba(18, 25, 38, 0.7); border: 1px solid var(--glass-border); color: var(--text);
+  font-size: 20px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(12px); box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.ff-vbtn:active { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-glow); transform: scale(0.95); }
+
+/* ---- Planet / Sign Detail Modals ---- */
+.pdmodal {
+  width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; background: var(--panel);
+  border: 1px solid var(--glass-border); border-radius: var(--radius-xl); position: relative;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1); 
+  transform: translateY(30px) scale(0.95); transition: all .3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+}
+.pdmodal-overlay.show .pdmodal { transform: translateY(0) scale(1); }
+.pdmodal::-webkit-scrollbar { width: 4px; }
+.pdmodal-close {
+  position: absolute; top: 16px; right: 16px; z-index: 2; width: 36px; height: 36px; border-radius: 12px;
+  background: var(--panel-3); border: 1px solid var(--glass-border); color: var(--text-dim); font-size: 16px;
+  display: flex; align-items: center; justify-content: center; transition: 0.2s;
+}
+.pdmodal-close:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-glow); transform: rotate(90deg); }
+

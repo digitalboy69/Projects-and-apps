@@ -1,0 +1,47 @@
+/* ============================== APP SHELL (DESKTOP) ============================== */
+.app { 
+  display: grid; 
+  grid-template-columns: 1fr 420px; 
+  grid-template-rows: 64px 1fr 100px; 
+  height: 100vh; 
+  width: 100vw; 
+}
+
+/* ---- Top bar ---- */
+.topbar {
+  grid-column: 1 / -1; grid-row: 1;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; 
+  background: var(--panel);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--glass-border);
+  z-index: 20;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark {
+  width: 32px; height: 32px; 
+  border: 1.5px solid var(--cyan); 
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; 
+  color: var(--cyan); font-size: 16px; font-family: var(--font-mono);
+  box-shadow: 0 0 16px var(--cyan-glow) inset, 0 0 8px var(--cyan-glow);
+}
+.brand h1 { font-family: var(--font-display); font-size: 18px; font-weight: 600; letter-spacing: 0.03em; }
+.brand .tag { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); letter-spacing: 0.1em; margin-left: 12px; text-transform: uppercase; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px;}
+
+.topbar-controls { display: flex; align-items: center; gap: 12px; }
+
+.profile-bar { display: flex; align-items: center; gap: 8px; }
+.profile-bar select {
+  background: var(--panel-2); border: 1px solid var(--glass-border); color: var(--text);
+  padding: 8px 12px; border-radius: 10px; font-size: 13px; max-width: 180px;
+  appearance: none; cursor: pointer;
+}
+.icon-btn {
+  width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--panel-2);
+  display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-dim);
+  transition: all .2s ease;
+}
+.icon-btn:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-glow); transform: translateY(-1px); }
+

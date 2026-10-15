@@ -1,0 +1,60 @@
+/* ==========================================================================
+   QUICK SEARCH (click-any-placement Google lookup)
+   ========================================================================== */
+.qsearch-wrap { position: relative; }
+#quickSearchBtn.qsearch-active { border-color: var(--teal-bright); color: var(--teal-bright); background: rgba(94,196,183,0.1); }
+.qsearch-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--teal-bright); display: none;
+  box-shadow: 0 0 6px var(--teal-bright);
+}
+#quickSearchBtn.qsearch-active .qsearch-dot { display: inline-block; }
+.qsearch-popover {
+  position: absolute; top: calc(100% + 12px); right: 0; width: 300px;
+  background: var(--bg-card-hover); border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg); box-shadow: 0 24px 48px rgba(0,0,0,0.6);
+  padding: 20px; z-index: 300; display: none;
+}
+.qsearch-popover.show { display: block; animation: fadeIn 0.2s ease; }
+.qsearch-popover-title { font-family: var(--font-display); font-size: 15px; color: var(--text-main); margin-bottom: 4px; }
+.qsearch-popover-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+.qsearch-toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); margin-bottom: 16px;
+}
+.qsearch-toggle-row span { font-size: 13px; font-weight: 500; color: var(--text-main); }
+.qsearch-toggle {
+  position: relative; width: 42px; height: 24px; border-radius: var(--radius-full);
+  background: rgba(255,255,255,0.15); border: 1px solid var(--border-light); cursor: pointer;
+  transition: var(--transition-fast); flex-shrink: 0;
+}
+.qsearch-toggle::after {
+  content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+  border-radius: 50%; background: var(--text-muted); transition: var(--transition-fast);
+}
+.qsearch-toggle.on { background: rgba(94,196,183,0.35); border-color: var(--teal-bright); }
+.qsearch-toggle.on::after { transform: translateX(18px); background: var(--teal-bright); }
+.qsearch-engine-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-dim); font-weight: 600; margin-bottom: 10px; display: block; }
+.qsearch-engine-options { display: flex; flex-direction: column; gap: 8px; }
+.qsearch-engine-btn {
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+  padding: 12px 14px; border-radius: var(--radius-md); background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border-subtle); color: var(--text-muted); font-family: var(--font-sans);
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+}
+.qsearch-engine-btn:hover { border-color: var(--gold); color: var(--text-main); }
+.qsearch-engine-btn.active { border-color: var(--teal-bright); color: var(--teal-bright); background: rgba(94,196,183,0.08); }
+.qsearch-engine-btn .qe-icon { font-size: 16px; }
+.qsearch-engine-btn .qe-check { margin-left: auto; opacity: 0; }
+.qsearch-engine-btn.active .qe-check { opacity: 1; }
+.qsearch-live-badge {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: rgba(11,13,20,0.92); border: 1px solid var(--teal-bright); backdrop-filter: blur(10px);
+  color: var(--teal-bright); font-size: 12.5px; font-weight: 500; padding: 10px 18px;
+  border-radius: var(--radius-full); box-shadow: 0 8px 24px rgba(0,0,0,0.5); z-index: 250;
+  display: none; align-items: center; gap: 10px;
+}
+.qsearch-live-badge.show { display: inline-flex; }
+.qsearch-live-badge button { background: none; border: none; color: var(--text-subtle); cursor: pointer; font-size: 12px; text-decoration: underline; }
+body.qsearch-mode-on .app-panel { cursor: crosshair; }
+

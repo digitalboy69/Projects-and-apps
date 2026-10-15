@@ -1,0 +1,33 @@
+/* ---- Home launcher ---- */
+.home-wrap{max-width:1000px;margin:0 auto;padding:8px 4px 24px}
+.home-hello{font:600 22px var(--font-serif,var(--font-sans));color:var(--text-main);margin:0 0 4px}
+.home-sub{color:var(--text-muted);font-size:14px;margin:0 0 24px}
+.home-sec{margin:0 0 26px}
+.home-sec h3{font:600 12px var(--font-sans);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-bright);margin:0 0 10px}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.home-card{display:flex;align-items:center;gap:12px;text-align:left;background:var(--bg-card);border:1px solid var(--border-light);border-radius:14px;padding:14px;cursor:pointer;color:var(--text-main);font-family:var(--font-sans);transition:border-color .2s,transform .15s}
+.home-card:hover{border-color:var(--gold)}
+.home-card:active{transform:scale(.98)}
+.home-card .hc-i{font-size:22px;width:36px;text-align:center;flex:none}
+.home-card b{display:block;font-size:15px;font-weight:600}
+.home-card small{display:block;color:var(--text-muted);font-size:12px;margin-top:2px}
+.panel-back{display:flex;align-items:center;gap:10px;max-width:1080px;margin:0 auto 14px}
+.panel-back button{background:transparent;border:1px solid var(--border-light);color:var(--gold-bright);border-radius:999px;padding:7px 14px;font:600 13px var(--font-sans);cursor:pointer}
+.panel-back span{color:var(--text-muted);font-size:13px}
+@media (max-width:880px){.home-grid{grid-template-columns:1fr}}
+
+/* ---- Full-screen app mode: slim header, no footer ---- */
+#hdrBack{display:none;background:transparent;border:1px solid var(--border-light);color:var(--gold-bright);border-radius:50%;width:34px;height:34px;font-size:17px;cursor:pointer;flex:none}
+body.app-mode .site-header{position:sticky;top:0;padding:8px 0}
+body.app-mode .header-row{flex-wrap:nowrap;gap:10px}
+body.app-mode .brand{gap:10px;min-width:0}
+body.app-mode .brand-glyph{width:32px;height:32px;font-size:16px}
+body.app-mode .brand-text{min-width:0}
+body.app-mode .brand-text h1{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.app-mode .brand-text p,body.app-mode .btn-label,body.app-mode .site-footer,body.app-mode .panel-back{display:none!important}
+body.app-mode .header-actions{flex-direction:row!important;width:auto!important;flex-wrap:nowrap;gap:8px}
+body.app-mode .header-actions .btn{padding:8px 12px!important;min-width:40px;justify-content:center;border-radius:999px}
+body.app-mode.on-sub #hdrBack{display:block}
+body.app-mode.on-sub .brand-glyph{display:none}
+body.app-mode main.wrap{padding-left:14px;padding-right:14px}
+@media (min-width:881px){body.app-mode .app-tabbar{top:50px;margin-bottom:24px}}

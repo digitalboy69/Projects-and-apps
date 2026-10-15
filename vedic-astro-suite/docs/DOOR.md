@@ -11,7 +11,7 @@ You      ──▶ admin/admin.html (a file on YOUR computer, not hosted)
 | Door site | `door-site/site/` (deploy to Cloudflare Pages — free tier allows commercial use; Vercel Hobby does NOT) | index.html, legal.html (fill the [PLACEHOLDERS]), _headers |
 | Admin | `door-site/admin/admin.html` | Open locally. Sign in with the admin account. Customers · Payments · Settings · App update |
 | Functions | `door-site/functions/*.ts` (deployed on Supabase) | `create-order`, `verify-payment`, `rzp-webhook`, `get-app` (all verify_jwt=false; each checks auth itself) |
-| Customer app | built by `python3 tools_customer.py` → `customer-edition.html` | derived from the ORIGINAL sources, which stay unchanged. Upload it in Admin → App update |
+| Customer app | built by `python3 tools/build_customer.py` → `dist/customer-edition.html` | derived from the ORIGINAL sources, which stay unchanged. Upload it in Admin → App update |
 
 ## Rules the server enforces (never trust the browser)
 - Price comes from `app_settings`, not from the page. `activate_payment()` is idempotent and only callable by the service role.
@@ -20,7 +20,7 @@ You      ──▶ admin/admin.html (a file on YOUR computer, not hosted)
 - `get-app` returns the app only for `status='active'` and not expired. The file lives in the PRIVATE bucket `app` (admin-only write).
 - Per-customer brand (`brand_profiles`) and feature flags (`member_access.features`) are injected as `window.__VAX_BRAND/__VAX_FEATURES`.
 
-## Customer edition (tools_customer.py)
+## Customer edition (tools/build_customer.py)
 Removes the Developer menu/card/strip and every "Copy …" control, blocks clipboard writes except a single share link, disables text selection outside inputs/notes, adds brand badge + accent colour + brand header on the text report. Export/Download is kept.
 Honest limit: this is a deterrent, not DRM (screenshots, DevTools and re-typing still work).
 Tests: `python3 tests/customer_smoke.py`.

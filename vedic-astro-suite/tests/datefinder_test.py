@@ -1,12 +1,12 @@
 # Date Finder engine checks: known festival dates (Delhi), 16 solar + 11 lunar eclipses 2000-2030, combined-clue search, Samvatsara.
 # Usage: python3 tests/datefinder_test.py   (after python3 build.py). Festival dates may differ by 1 day for regional reasons ('~' is fine, 'X' is not).
-import os, json, time
+import os, sys, json, time
 from playwright.sync_api import sync_playwright
 ROOT=os.path.abspath(os.path.join(os.path.dirname(__file__),'..'))
-PAGE='file://'+ROOT+'/vedic-astro-suite-readable.html'
+sys.path.insert(0, os.path.dirname(__file__)); from _helpers import PAGE, CUSTOMER, is_local
 def route(r):
     u=r.request.url
-    if u.startswith(('file:','data:','blob:')): return r.continue_()
+    if is_local(u): return r.continue_()
     return r.abort()
 RUN="""(q)=>{const g=dfGen(q);let r;do{r=g.next();}while(!r.done);const R=r.value;return {rows:R.rows.map(x=>({d:x.date,m:x.miss,c:x.chips.map(c=>c.txt)})),nFull:R.nFull,nAlmost:R.nAlmost}}"""
 BASE=dict(lat=28.6139,lon=77.2090,tz=5.5,pak='',tithi='',wd='',fest='',tol='0',ecl='',nak='',moon='',masa='',sun='',sam='',mon='',dom='',sat='',jup='',rahu='',purn=False)

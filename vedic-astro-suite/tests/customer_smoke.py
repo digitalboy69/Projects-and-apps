@@ -1,11 +1,11 @@
-# Usage: python3 tools_customer.py && python3 tests/customer_smoke.py   (env THREE_JS optional)
-import os, json
+# Usage: python3 tools/build_customer.py && python3 tests/customer_smoke.py   (env THREE_JS optional)
+import os, sys, json
 from playwright.sync_api import sync_playwright
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-PAGE = 'file://' + os.path.join(ROOT, 'customer-edition.html')
+sys.path.insert(0, os.path.dirname(__file__)); from _helpers import PAGE, CUSTOMER, is_local; PAGE = CUSTOMER
 def route(r):
     u = r.request.url
-    if u.startswith(('file:', 'data:', 'blob:')): return r.continue_()
+    if is_local(u): return r.continue_()
     if 'nominatim' in u: return r.fulfill(status=200, content_type='application/json', body=json.dumps([{"display_name": "Mumbai, India", "lat": "19.076", "lon": "72.877"}]))
     return r.abort()
 res = []; ok = lambda n, c, d='': res.append((n, bool(c), d))
