@@ -129,7 +129,7 @@ calcSwamshaLagnaSign	fn	apps/birth-chart/js/17-special-lagnas.js:183	birth-chart
 calculateAntardashas	fn	apps/birth-chart/js/10-vimshottari-dasha-engine.js:43	birth-chart
 calculateCharaKarakas	fn	apps/birth-chart/js/13-chara-karakas.js:14	birth-chart
 calculateVimshottariDasha	fn	apps/birth-chart/js/10-vimshottari-dasha-engine.js:11	birth-chart
-calcVarga	fn	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:93	birth-chart
+calcVarga	fn	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:94	birth-chart
 calcVarnadaLagnaSign	fn	apps/birth-chart/js/17-special-lagnas.js:100	birth-chart
 calcVighatiLagnaLongitude	fn	apps/birth-chart/js/17-special-lagnas.js:219	birth-chart
 calcVighatiLagnaSign	fn	apps/birth-chart/js/17-special-lagnas.js:226	birth-chart
@@ -588,7 +588,7 @@ NATAL_STORAGE_KEY	const	apps/sky3d/js/21-natal-profile.js:4	sky3d
 NATURAL_BENEFICS	const	apps/birth-chart/js/14-shadbala-engine.js:164	birth-chart
 NATURAL_MALEFICS	const	apps/birth-chart/js/14-shadbala-engine.js:165	birth-chart
 NATURAL_RELATIONS	const	apps/birth-chart/js/07-planetary-dignity.js:32	birth-chart
-nestedVargaLon	fn	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:89	birth-chart
+nestedVargaLon	fn	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:90	birth-chart
 NEUTER_PLANETS	const	apps/birth-chart/js/14-shadbala-engine.js:41	birth-chart
 newClient	fn	apps/notepad/js/01-notepad.js:197	notepad
 newNote	fn	apps/notepad/js/01-notepad.js:55	notepad
@@ -648,16 +648,16 @@ ORB_R	const	apps/sky3d/js/40-3d-astro-layers.js:8	sky3d
 ordered	fn	apps/birth-chart/js/82-dasha-systems-ui.js:78	birth-chart
 OUTER_ASPECTS	const	apps/birth-chart/js/06-outer-planet-knowledge.js:20	birth-chart
 OUTER_ASPECTS	const	apps/sky3d/js/30-outer-planet-knowledge.js:20	sky3d
-OUTER_COL	const	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:205	birth-chart
-OUTER_GLYPHS	const	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:204	birth-chart
+OUTER_COL	const	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:207	birth-chart
+OUTER_GLYPHS	const	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:206	birth-chart
 OUTER_HOUSE_KW	const	apps/birth-chart/js/06-outer-planet-knowledge.js:25	birth-chart
 OUTER_HOUSE_KW	const	apps/sky3d/js/30-outer-planet-knowledge.js:25	sky3d
 OUTER_INFO	const	apps/birth-chart/js/06-outer-planet-knowledge.js:2	birth-chart
 OUTER_INFO	const	apps/sky3d/js/30-outer-planet-knowledge.js:2	sky3d
-OUTER_LIST	const	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:203	birth-chart
+OUTER_LIST	const	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:205	birth-chart
 OUTER_LIST	const	apps/sky3d/js/02-planetary-dignity.js:2	sky3d
 OUTER_ORBIT_R	const	apps/sky3d/js/02-planetary-dignity.js:4	sky3d
-OUTER_SK	const	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:206	birth-chart
+OUTER_SK	const	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:208	birth-chart
 OUTER_SK	const	apps/sky3d/js/02-planetary-dignity.js:3	sky3d
 OUTER_VEDIC_NOTE	const	apps/birth-chart/js/06-outer-planet-knowledge.js:19	birth-chart
 OUTER_VEDIC_NOTE	const	apps/sky3d/js/30-outer-planet-knowledge.js:19	sky3d
@@ -725,7 +725,7 @@ PLANET_ELEMENTS	const	apps/birth-chart/js/03-ephemeris-engine.js:71	birth-chart
 PLANET_ELEMENTS	const	apps/sky3d/js/01-astro-engine.js:82	sky3d
 PLANET_GLYPHS	const	apps/birth-chart/js/07-planetary-dignity.js:2	birth-chart
 PLANET_GLYPHS	const	apps/sky3d/js/02-planetary-dignity.js:1	sky3d
-PLANET_LIST	const	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:201	birth-chart
+PLANET_LIST	const	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:203	birth-chart
 PLANET_LIST	const	apps/sky3d/js/01-astro-engine.js:142	sky3d
 planetGeocentricLongitude	fn	apps/birth-chart/js/03-ephemeris-engine.js:110	birth-chart
 planetGeocentricLongitude	fn	apps/sky3d/js/01-astro-engine.js:122	sky3d

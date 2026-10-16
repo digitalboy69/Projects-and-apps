@@ -128,6 +128,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - 36 Dasha Systems panel (`panel-dashasys`, Home → Time & Cycles; UI folds the 36 into 7 `GROUPS` in `js/82-…` with a side-by-side compare view per group): engines `js/78-82` + `css/35`. Registry `DashaSys.register({id,name,blurb,family,keyType,conf,applic,build,sub})`; periods laid out from birth, sub-periods on the FULL parent length then clipped (like Vimshottari). Vimshottari there == main engine (tested). Disputed rules (Kala Chakra, Sudasa, Paryaya, Padanadhamsa, Mandooka, Moola, Brahma, Drig, Chara AD patterns) are flagged `conf:'varies'` in the UI. Iranganti needs Male/Female toggle.
 - Added nested vargas D81 (D9 in D9), D108 (D12 in D9), D144 (D12 in D12): `VARGAS` + `calcVarga` cases + `nestedVargaLon()` in `js/05-…`; every varga picker/export iterates `VARGAS`, so they appear automatically (verified vs independent formula, 4000 random longitudes).
 - Icons for the new stuff: 12 new SVGs in `shared/icons.js` (hexagram, octagram, wheel, daynight, swap, triangle, kendra, feet, anchor, trident, beads, dna) + extra emoji keys on existing icons. Dasha cards use `ICO` map (system id → emoji key) in `js/82-…`; D81/D108/D144 icons are in `AREA` in `js/69-…`; Home row uses 🎡.
+- Added RTN (Rasi Tulya Navamsa) as a varga key: planets = D9 signs, lagna = D1 lagna (special-cased in `computeChart`); `noTimer:true` keeps it out of the transit/sandhi/timeline pickers.
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 
@@ -139,14 +140,14 @@ _Generated 2026-10-16 - 1112 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 118 files, 13817 lines, 958 KB
+**birth-chart** - 118 files, 13819 lines, 958 KB
 ```
 index.html                                         531 lines   30 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
 js/04-transit-timing-engine.js                     249 lines   11 KB
-js/05-ascendant-nakshatra-vargas.js                208 lines   12 KB
+js/05-ascendant-nakshatra-vargas.js                210 lines   12 KB
 js/06-outer-planet-knowledge.js                     37 lines    5 KB
 js/07-planetary-dignity.js                          77 lines    3 KB
 js/08-combustion-and-war.js                         30 lines    1 KB

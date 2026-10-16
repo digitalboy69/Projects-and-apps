@@ -69,6 +69,7 @@ const VARGAS = {
   D7:{n:7,name:"Saptamsa",full:"Children Chart",desc:"Children, progeny, creativity"},
   D8:{n:8,name:"Ashtamsa",full:"Longevity Chart",desc:"Longevity, sudden events, transformation"},
   D9:{n:9,name:"Navamsa",full:"Marriage & Dharma",desc:"Marriage, spouse, inner dharma, fortune"},
+  RTN:{n:9,name:"Rasi Tulya Navamsa",full:"Navamsa on the Rasi lagna",desc:"Each planet\u2019s Navamsa sign transposed onto the Rasi chart (D1 lagna kept fixed)",noTimer:true},
   D10:{n:10,name:"Dasamsa",full:"Career Chart",desc:"Career, profession, status, achievements"},
   D11:{n:11,name:"Rudramsa",full:"Death & Destruction",desc:"Death-like events, endings, destruction"},
   D12:{n:12,name:"Dwadasamsa",full:"Parents Chart",desc:"Parents, ancestry, lineage"},
@@ -96,6 +97,7 @@ function calcVarga(varga, lon){
   const odd = signIdx % 2 === 0;
   switch(varga){
     case "D1": return signIdx;
+    case "RTN": return calcVarga("D9", lon);   // planets only: the lagna of this chart stays the D1 lagna (see computeChart)
     case "D2": { if (odd) return degInSign<15 ? 4 : 3; return degInSign<15 ? 3 : 4; }
     case "D3": { const part = Math.floor(degInSign/10); if (part===0) return signIdx; if (part===1) return (signIdx+4)%12; return (signIdx+8)%12; }
     case "D4": { const part = Math.floor(degInSign/7.5); return (signIdx+part*3)%12; }

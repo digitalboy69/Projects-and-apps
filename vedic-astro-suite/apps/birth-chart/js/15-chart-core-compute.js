@@ -115,7 +115,7 @@ function computeChart(dateStr, timeStr, lat, lon, tzOffsetHours){
 
   const vargaResults = {};
   for (const key in VARGAS){
-    const ascVargaSign = calcVarga(key, ascSidereal);
+    const ascVargaSign = key === "RTN" ? ascSignIdx : calcVarga(key, ascSidereal);   // Rasi Tulya Navamsa keeps the D1 lagna
     const planetVargaSign = {};
     PLANET_LIST.forEach(name=> planetVargaSign[name] = calcVarga(key, siderealLongitudes[name]));
 

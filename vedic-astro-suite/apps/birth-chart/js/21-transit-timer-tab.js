@@ -2,7 +2,7 @@
    TRANSIT TIMER TAB
    ============================================================================ */
 let ttCountdownInterval = null;
-const VARGA_ORDER = Object.keys(VARGAS).sort((a,b) => VARGAS[a].n - VARGAS[b].n);
+const VARGA_ORDER = Object.keys(VARGAS).filter(k => !VARGAS[k].noTimer).sort((a,b) => VARGAS[a].n - VARGAS[b].n);
 
 function wireTransitTimerPanel(){
   if (ttCountdownInterval){ clearInterval(ttCountdownInterval); ttCountdownInterval = null; }
