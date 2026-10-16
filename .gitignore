@@ -7,3 +7,4 @@ node_modules/
 .appkey
 app.enc
 customer-edition.html
+!assets/*.png
