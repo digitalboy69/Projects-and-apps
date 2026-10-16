@@ -767,6 +767,7 @@ pravesh	fn	apps/birth-chart/js/73-tithi-pravesh.js:12	birth-chart
 predHTML	fn	apps/notepad/js/01-notepad.js:120	notepad
 predModal	fn	apps/notepad/js/01-notepad.js:170	notepad
 preview	fn	apps/sky3d/js/43-degree-finder-returns.js:126	sky3d
+PSVG	const	apps/birth-chart/js/78-dasha-systems-core.js:228	birth-chart
 PUSH	const	apps/birth-chart/js/75-fate-meter.js:6	birth-chart
 pushDate	fn	apps/birth-chart/js/67-friendly-input-page.js:28	birth-chart
 pushTime	fn	apps/birth-chart/js/67-friendly-input-page.js:35	birth-chart

@@ -135,11 +135,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-16 - 1111 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-16 - 1112 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 118 files, 13800 lines, 956 KB
+**birth-chart** - 118 files, 13817 lines, 958 KB
 ```
 index.html                                         531 lines   30 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -219,7 +219,7 @@ js/74-sahams.js                                     67 lines   15 KB
 js/75-fate-meter.js                                 76 lines   20 KB
 js/76-share-link-qr.js                             129 lines   10 KB
 js/77-cloud-account.js                             142 lines   14 KB
-js/78-dasha-systems-core.js                        229 lines    9 KB
+js/78-dasha-systems-core.js                        244 lines   11 KB
 js/79-dasha-systems-nakshatra.js                   150 lines    9 KB
 js/80-dasha-systems-rasi.js                        149 lines    8 KB
 js/81-dasha-systems-ayur-special.js                146 lines    7 KB
@@ -258,7 +258,7 @@ css/31-rectification-studio.css                    100 lines   10 KB
 css/32-date-finder.css                              66 lines    6 KB
 css/33-friendly-input-page.css                      47 lines    4 KB
 css/34-smart-search.css                             30 lines    3 KB
-css/35-dasha-systems.css                            94 lines    8 KB
+css/35-dasha-systems.css                            96 lines    8 KB
 ```
 
 **developer** - 4 files, 180 lines, 13 KB

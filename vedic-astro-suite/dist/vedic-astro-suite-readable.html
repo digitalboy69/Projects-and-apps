@@ -10464,6 +10464,8 @@ body.srch-lock{overflow:hidden}
 .ds-cc b{font:500 14px var(--font-display,inherit);color:var(--text-main);overflow-wrap:anywhere}
 .ds-cc small{font:10.5px var(--font-mono,monospace);color:var(--text-muted)}
 @media (max-width:380px){.ds-cmp-c{grid-template-columns:1fr 1fr}.ds-cc:nth-child(3){grid-column:span 2}}
+
+.ds-tile .ds-pg{width:20px;height:20px;display:block}
 </style>
 
 
@@ -33530,7 +33532,22 @@ DS.active = function(sys, c, periods, t){
 };
 
 DS.label = function(sys, key){ return sys.keyType === 'planet' ? key : SIGNS[key].name; };
-DS.glyph = function(sys, key){ return sys.keyType === 'planet' ? (window.PLANET_GLYPHS && PLANET_GLYPHS[key]) || '' : SIGNS[key].symbol + '\uFE0E'; };
+// Planet icons: hand-drawn line SVGs (24x24, currentColor); signs stay as text glyphs (♈ ...).
+const PSVG = {
+  Sun:'<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/>',
+  Moon:'<path d="M16.5 4.5A8 8 0 1 0 16.5 19.5 6.5 6.5 0 0 1 16.5 4.5Z"/>',
+  Mars:'<circle cx="10" cy="14" r="5"/><path d="m14 10 6-6M15 4h5v5"/>',
+  Mercury:'<circle cx="12" cy="11" r="4"/><path d="M8.5 4a3.5 3.5 0 0 0 7 0M12 15v6M9 18h6"/>',
+  Jupiter:'<path d="M7 5c2.5 0 4.5 2 4.5 4.5S9.5 14 7 14h12M15 5v15"/>',
+  Venus:'<circle cx="12" cy="9" r="5"/><path d="M12 14v7M9 18h6"/>',
+  Saturn:'<path d="M7 4v9M5 6.5h5M7 9.5c2.5-1.5 6.5-1 6.5 3 0 2.5-2 3.5-2.5 5.5-.3 1.2.5 2 1.8 2"/>',
+  Rahu:'<path d="M6 16h3.5c-2-1-3-3-3-5a5.5 5.5 0 0 1 11 0c0 2-1 4-3 5H18"/><circle cx="6" cy="17.5" r="1.5"/><circle cx="18" cy="17.5" r="1.5"/>',
+  Ketu:'<path d="M6 8h3.5c-2 1-3 3-3 5a5.5 5.5 0 0 0 11 0c0-2-1-4-3-5H18"/><circle cx="6" cy="6.5" r="1.5"/><circle cx="18" cy="6.5" r="1.5"/>'
+};
+DS.glyph = function(sys, key){
+  if (sys.keyType === 'planet') return PSVG[key] ? '<svg class="ds-pg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + PSVG[key] + '</svg>' : '';
+  return SIGNS[key].symbol + '︎';
+};
 })();
 <\/script>
 <script>
