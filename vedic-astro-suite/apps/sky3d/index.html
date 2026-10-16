@@ -28,6 +28,7 @@
 <link rel="stylesheet" href="css/19-retrograde-planner.css">
 <link rel="stylesheet" href="css/20-hud-ascendant-rising.css">
 <link rel="stylesheet" href="css/21-premium-polish.css">
+<link rel="stylesheet" href="css/22-dasha-transit-triggers.css">
 <link rel="stylesheet" href="../../shared/meta.css">
 <script src="../../shared/icons.js"></script>
 </head>
@@ -126,6 +127,7 @@
       <button class="panel-tab" data-tab="conjunctions"><span class="ti">☌</span><span>Meetings</span></button>
       <button class="panel-tab" data-tab="degree"><span class="ti">⌖</span><span>Degree</span></button>
       <button class="panel-tab" data-tab="natal"><span class="ti">✦</span><span>Natal</span></button>
+      <button class="panel-tab" data-tab="triggers"><span class="ti">⚡</span><span>Triggers</span></button>
       <button class="panel-tab" data-tab="returns"><span class="ti">↺</span><span>Returns</span></button>
       <button class="panel-tab" data-tab="retro"><span class="ti">℞</span><span>Retro</span></button>
       <button class="panel-tab" data-tab="solar"><span class="ti">🪐</span><span>Solar</span></button>
@@ -227,6 +229,11 @@
         <div class="panel-heading">Planet Returns</div>
         <div class="scan-range-note" id="retNote"></div>
         <div id="retFeed"></div>
+      </div>
+
+      <div class="panel-section" id="tab-triggers">
+        <div class="tab-intro"><span class="ico">⚡</span><div><b>When dasha and transit meet.</b> Real events tend to happen when a running dasha lord is linked to a life area <i>and</i> Jupiter + Saturn both light up that same house. Uses your active Natal profile.</div></div>
+        <div id="dtBody"></div>
       </div>
 
       <div class="panel-section" id="tab-retro">
@@ -432,6 +439,9 @@
 <script src="js/42-init.js"></script>
 <script src="js/43-degree-finder-returns.js"></script>
 <script src="js/44-retrograde-planner.js"></script>
+<script src="js/45-vimshottari-dasha.js"></script>
+<script src="js/46-dasha-transit-engine.js"></script>
+<script src="js/47-dasha-transit-ui.js"></script>
 <script src="../../shared/export-addon.js"></script>
 </body>
 </html>

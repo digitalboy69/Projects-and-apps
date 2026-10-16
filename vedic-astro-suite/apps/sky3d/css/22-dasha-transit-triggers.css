@@ -1,0 +1,30 @@
+/* ===== Dasha + Transit triggers tab ===== */
+.dt-prof{margin:0 0 12px;font-size:13px;color:var(--text-dim)}.dt-prof b{color:var(--text)}.dt-prof small{color:var(--text-faint);margin-left:6px}
+.dt-now{padding:14px;border-radius:18px;background:var(--panel-2);border:1px solid var(--glass-border);margin-bottom:6px}
+.dt-now-h{font-size:12px;color:var(--text-dim);margin-bottom:10px}.dt-now-h b{color:var(--text)}.dt-now-h small{color:var(--text-faint)}
+.dt-dasha{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.dt-dasha>span{padding:9px 10px;border-radius:13px;background:rgba(255,255,255,.04);border:1px solid var(--glass-border);min-width:0}
+.dt-dasha i{display:block;font-style:normal;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint)}
+.dt-dasha b{display:block;font-size:16px;color:var(--gold);margin:2px 0}.dt-dasha small{display:block;font-size:10px;color:var(--text-dim);line-height:1.3}
+.dt-bars{display:grid;gap:7px}
+.dt-bar{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) 54px;gap:8px;align-items:center;font-size:12px;color:var(--text-dim)}
+.dt-bar.on{color:var(--text)}.dt-bl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dt-bt{height:7px;border-radius:5px;background:rgba(255,255,255,.07);overflow:hidden}.dt-bt i{display:block;height:100%;border-radius:5px;background:rgba(255,255,255,.22)}
+.dt-bar.on .dt-bt i{background:var(--lv);box-shadow:0 0 10px color-mix(in srgb,var(--lv) 60%,transparent)}
+.dt-bv{font-size:10.5px;text-align:right;color:var(--text-faint)}.dt-bar.on .dt-bv{color:var(--lv);font-weight:700}
+.dt-none{padding:14px;border-radius:14px;font-size:12px;line-height:1.5;color:var(--text-dim);text-align:center}
+.dt-sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:4px 0 14px}
+.dt-sum>div{padding:11px 10px;border-radius:14px;background:var(--panel-2);border:1px solid var(--glass-border);min-width:0}
+.dt-sum label{display:block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint)}.dt-sum b{display:block;font-size:20px;color:var(--text);margin:2px 0}.dt-sum small{font-size:10.5px;color:var(--text-dim);display:block;line-height:1.3}
+.dt-card{margin-bottom:10px;padding:13px 14px;border-radius:18px;background:var(--panel-2);border:1px solid var(--glass-border);border-left:4px solid var(--lv);cursor:pointer;transition:transform .15s,border-color .2s}
+.dt-card:active{transform:scale(.99)}.dt-card.past{opacity:.62}.dt-card.act{border-color:var(--lv);box-shadow:0 0 18px color-mix(in srgb,var(--lv) 28%,transparent)}
+.dt-ch{display:flex;gap:10px;align-items:center}.dt-ch>i{font-style:normal;font-size:22px}.dt-ch>div{flex:1;min-width:0}
+.dt-ch b{display:block;font-size:14px;color:var(--text)}.dt-ch small{font-size:11px;color:var(--text-dim)}
+.dt-ch em{font-style:normal;font-size:11px;font-weight:700;color:var(--lv);padding:3px 10px;border-radius:99px;border:1px solid var(--lv);background:color-mix(in srgb,var(--lv) 14%,transparent);white-space:nowrap}
+.dt-dates{margin:9px 0 6px}.dt-dates b{display:block;font:600 13px var(--font-mono);color:var(--text)}.dt-dates small{display:block;margin-top:2px;font-size:11px;color:var(--text-dim);line-height:1.4}
+.dt-live{color:var(--lv);font-weight:700}
+.dt-why summary,.dt-how summary{cursor:pointer;font-size:12px;color:var(--cyan);padding:4px 0}
+.dt-wh{margin:8px 0 3px;font-size:11px;font-weight:700;color:var(--text);letter-spacing:.04em}.dt-wh small{color:var(--text-faint);font-weight:400}
+.dt-why ul{margin:0;padding-left:18px;font-size:11.5px;line-height:1.55;color:var(--text-dim)}
+.dt-how{margin-top:14px;padding:10px 14px;border-radius:14px;background:var(--panel-2);border:1px solid var(--glass-border)}
+.dt-how p{margin:8px 0;font-size:12px;line-height:1.55;color:var(--text-dim)}.dt-how b{color:var(--text)}

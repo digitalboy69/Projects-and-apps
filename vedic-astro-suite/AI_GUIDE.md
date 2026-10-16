@@ -129,6 +129,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Added nested vargas D81 (D9 in D9), D108 (D12 in D9), D144 (D12 in D12): `VARGAS` + `calcVarga` cases + `nestedVargaLon()` in `js/05-…`; every varga picker/export iterates `VARGAS`, so they appear automatically (verified vs independent formula, 4000 random longitudes).
 - Icons for the new stuff: 12 new SVGs in `shared/icons.js` (hexagram, octagram, wheel, daynight, swap, triangle, kendra, feet, anchor, trident, beads, dna) + extra emoji keys on existing icons. Dasha cards use `ICO` map (system id → emoji key) in `js/82-…`; D81/D108/D144 icons are in `AREA` in `js/69-…`; Home row uses 🎡.
 - Added RTN (Rasi Tulya Navamsa) as a varga key: planets = D9 signs, lagna = D1 lagna (special-cased in `computeChart`); `noTimer:true` keeps it out of the transit/sandhi/timeline pickers.
+- 3D Sky: new "Triggers" tab (Vimshottari dasha + Jupiter/Saturn double-transit life-area triggers, window scan) — sky3d js 45/46/47, css 22.
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 
@@ -136,7 +137,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-16 - 1113 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-16 - 1142 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -277,9 +278,9 @@ js/01-notepad.js                                   319 lines   65 KB
 css/01-notepad.css                                 168 lines   25 KB
 ```
 
-**sky3d** - 66 files, 5795 lines, 318 KB
+**sky3d** - 70 files, 6281 lines, 345 KB
 ```
-index.html                                         437 lines   26 KB
+index.html                                         447 lines   26 KB
 js/01-astro-engine.js                              143 lines    7 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -313,7 +314,7 @@ js/30-outer-planet-knowledge.js                     38 lines    5 KB
 js/31-outer-planet-popup.js                        100 lines    8 KB
 js/32-aspect-explorer-popup.js                      74 lines    4 KB
 js/33-timeline-scrubber.js                          58 lines    2 KB
-js/34-main-refresh-loop.js                          59 lines    2 KB
+js/34-main-refresh-loop.js                          60 lines    2 KB
 js/35-ui-wiring.js                                  21 lines    1 KB
 js/36-mobile-bottom-sheet.js                        75 lines    3 KB
 js/37-natal-form-location.js                        90 lines    5 KB
@@ -324,6 +325,9 @@ js/41-quick-planet-picker.js                        47 lines    3 KB
 js/42-init.js                                       24 lines    0 KB
 js/43-degree-finder-returns.js                     211 lines   13 KB
 js/44-retrograde-planner.js                         41 lines    7 KB
+js/45-vimshottari-dasha.js                          60 lines    2 KB
+js/46-dasha-transit-engine.js                      250 lines   13 KB
+js/47-dasha-transit-ui.js                          134 lines    9 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -345,6 +349,7 @@ css/18-planet-picker.css                            40 lines    3 KB
 css/19-retrograde-planner.css                       35 lines    4 KB
 css/20-hud-ascendant-rising.css                     51 lines    4 KB
 css/21-premium-polish.css                           32 lines    3 KB
+css/22-dasha-transit-triggers.css                   31 lines    3 KB
 ```
 
 **shell** - 4 files, 399 lines, 52 KB
