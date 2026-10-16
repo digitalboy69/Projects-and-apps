@@ -455,7 +455,7 @@ function renderResults(profile){
         ? `<span class="house-empty-tag">Empty</span>`
         : h.planets.map(p => {
             const digClass = p.dignity.status==="Exalted"||p.dignity.status==="OwnSign"||p.dignity.status==="Moolatrikona" ? "dig-good" : p.dignity.status==="Debilitated" ? "dig-bad" : "";
-            return `<span class="occupant-chip"><span class="planet-glyph">${PLANET_GLYPHS[p.name]}</span>${p.name}${p.retrograde?'<sup class="retro-tag-sm">R</sup>':''}${key==="D1"?` <span class="${digClass} tiny">${p.dignity.status!=="Neutral"&&p.dignity.status!=="Friend"&&p.dignity.status!=="Enemy"?p.dignity.status:''}</span>`:''}</span>`;
+            return `<span class="occupant-chip"><span class="planet-glyph">${PLANET_GLYPHS[p.name]}</span>${p.name}${p.retrograde?'<sup class="retro-tag-sm">R</sup>':''}${key==="RTN"?` <span class="tiny">${chart.planets[p.name].degInSign.toFixed(1)}°</span>`:''}${key==="D1"?` <span class="${digClass} tiny">${p.dignity.status!=="Neutral"&&p.dignity.status!=="Friend"&&p.dignity.status!=="Enemy"?p.dignity.status:''}</span>`:''}</span>`;
           }).join(' ');
       singleHtml += `<tr class="${h.isEmpty?'house-row-empty':''}">
         <td class="house-num-cell">H${h.houseNum}</td>
@@ -470,6 +470,7 @@ function renderResults(profile){
         <span>Harmonic Division: <strong>1/${meta.n} (${meta.n} parts)</strong></span>
         <span><strong>${vdata.houses.filter(h=>!h.isEmpty).length}</strong> of 12 houses occupied</span>
       </div>
+      ${key==="RTN" && typeof buildRtnExtras==='function' ? buildRtnExtras(chart, vdata) : ''}
       ${aspectRows ? buildAspectsTableHtml(aspectRows, 'varga') : ''}
     </div>`;
 

@@ -136,11 +136,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-16 - 1112 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-16 - 1113 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 118 files, 13819 lines, 958 KB
+**birth-chart** - 118 files, 13834 lines, 959 KB
 ```
 index.html                                         531 lines   30 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -159,7 +159,7 @@ js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
 js/15-chart-core-compute.js                        155 lines    7 KB
 js/16-rectification-engine.js                       38 lines    2 KB
-js/17-special-lagnas.js                            390 lines   22 KB
+js/17-special-lagnas.js                            404 lines   23 KB
 js/18-ui-location-profiles.js                      124 lines    5 KB
 js/19-planets-panel.js                             223 lines   16 KB
 js/20-rectification-scan-tab.js                    271 lines   11 KB
@@ -200,7 +200,7 @@ js/54-vedic-birthday-ui.js                         152 lines   12 KB
 js/55-numerology-engine.js                          54 lines    9 KB
 js/56-numerology-ui.js                             126 lines   13 KB
 js/57-my-chart-overview.js                         100 lines    6 KB
-js/58-render-results.js                            751 lines   34 KB
+js/58-render-results.js                            752 lines   34 KB
 js/59-live-transit-form.js                         150 lines    7 KB
 js/60-interactive-varga-svg.js                     162 lines    6 KB
 js/61-varga-chart-svg.js                            61 lines    9 KB

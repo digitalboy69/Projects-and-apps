@@ -387,3 +387,17 @@ function allLagnasToPlainText(chart, specialLagnaSigns, vargaKey){
   return out;
 }
 
+
+
+/* Rasi Tulya Navamsa extras: Arudha padas (AL, UL, A2..A12) computed ON the RTN chart (planets = their D9 signs, lagna = D1 lagna),
+   shown as a strip under the chart table. Planet degrees are the real D1 degrees (RTN keeps them). */
+function buildRtnExtras(chart, vdata){
+  const pseudo = { planets:{} };
+  PLANET_LIST.forEach(n => { pseudo.planets[n] = { sign: vdata.planetVargaSign[n] }; });
+  const ar = calcAllArudhaPadas(pseudo, vdata.ascendantSign);
+  const chips = Object.keys(ar).map(k => {
+    const sg = ar[k], h = ((sg - vdata.ascendantSign + 12) % 12) + 1;
+    return `<span class="occupant-chip" title="${ARUDHA_HOUSE_META[k].name}"><b>${k}</b>&nbsp;${SIGNS[sg].symbol} ${SIGNS[sg].name} <span class="tiny">H${h}</span></span>`;
+  }).join(' ');
+  return `<div class="varga-footer" style="flex-direction:column;align-items:flex-start;gap:8px"><span><strong>Arudha padas</strong> on this chart (AL = Arudha Lagna, UL = Upapada)</span><div>${chips}</div></div>`;
+}
