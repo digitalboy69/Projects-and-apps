@@ -130,6 +130,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Icons for the new stuff: 12 new SVGs in `shared/icons.js` (hexagram, octagram, wheel, daynight, swap, triangle, kendra, feet, anchor, trident, beads, dna) + extra emoji keys on existing icons. Dasha cards use `ICO` map (system id → emoji key) in `js/82-…`; D81/D108/D144 icons are in `AREA` in `js/69-…`; Home row uses 🎡.
 - Added RTN (Rasi Tulya Navamsa) as a varga key: planets = D9 signs, lagna = D1 lagna (special-cased in `computeChart`); `noTimer:true` keeps it out of the transit/sandhi/timeline pickers.
 - 3D Sky: new "Triggers" tab (Vimshottari dasha + Jupiter/Saturn double-transit life-area triggers, window scan) — sky3d js 45/46/47, css 22.
+- Birth chart UI overhaul: input page = full screen, no header (floating profile button); app header = [back][search pill][avatar]; Home = segmented section chips (All / sections / Ask AI) + tiles, Smart-Search "Ask AI" topics and Tap-to-search moved into Home as sections; profile sheet with hero. css 36, js 83, edits in js 25.
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 
@@ -137,13 +138,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-16 - 1142 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-16 - 1146 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 118 files, 13834 lines, 959 KB
+**birth-chart** - 120 files, 14035 lines, 976 KB
 ```
-index.html                                         531 lines   30 KB
+index.html                                         533 lines   30 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -168,7 +169,7 @@ js/21-transit-timer-tab.js                         100 lines    4 KB
 js/22-sandhi-table-tab.js                           68 lines    2 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             104 lines   10 KB
+js/25-home-and-tabs.js                             117 lines   12 KB
 js/26-rectification-studio.js                      227 lines   13 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -226,6 +227,7 @@ js/79-dasha-systems-nakshatra.js                   150 lines    9 KB
 js/80-dasha-systems-rasi.js                        149 lines    8 KB
 js/81-dasha-systems-ayur-special.js                146 lines    7 KB
 js/82-dasha-systems-ui.js                          200 lines   14 KB
+js/83-ui-overhaul.js                                65 lines    4 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
@@ -261,6 +263,7 @@ css/32-date-finder.css                              66 lines    6 KB
 css/33-friendly-input-page.css                      47 lines    4 KB
 css/34-smart-search.css                             30 lines    3 KB
 css/35-dasha-systems.css                            96 lines    8 KB
+css/36-ui-overhaul.css                             121 lines   11 KB
 ```
 
 **developer** - 4 files, 180 lines, 13 KB

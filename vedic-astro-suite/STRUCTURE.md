@@ -136,6 +136,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/80-dasha-systems-rasi.js` — 36 Dasha Systems: 14 phalita rasi systems (Chara Parasara/K.N. Rao/Iranganti 1 & 2, Narayana, Sudasa, Drig, Trikona, Lagnamsaka, Yogardha, Kendradi, Padanadhamsa, Paryaya, Moola)
 - `apps/birth-chart/js/81-dasha-systems-ayur-special.js` — 36 Dasha Systems: 5 Ayur (Sthira, Shoola, Niryana Shoola, Mandooka, Brahma) + 5 Special (Varnada, Navamsa, Sandhya, Chakra, Tara Lagna)
 - `apps/birth-chart/js/82-dasha-systems-ui.js` — 36 Dasha Systems panel `buildDashaSystemsPanel` (7 groups → side-by-side compare of each group's systems → per-system running-now ladder + level-by-level drill-down with start/end of every period; gender + sub-period toggles; conditional dashas sorted by whether the chart qualifies)
+- `apps/birth-chart/js/83-ui-overhaul.js` — UI overhaul glue: floating profile button (input page), search pill label, avatar initial, profile sheet hero (rising/moon/sun/star)
 - `apps/birth-chart/css/01-premium-tokens-reset.css` — design tokens (colors, fonts) and reset
 - `apps/birth-chart/css/02-header.css` — header
 - `apps/birth-chart/css/03-hero-intake-form.css` — hero and birth intake form
@@ -171,6 +172,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/33-friendly-input-page.css` — friendly input page
 - `apps/birth-chart/css/34-smart-search.css` — Smart Search
 - `apps/birth-chart/css/35-dasha-systems.css` — 36 Dasha Systems panel styles (`ds-*`)
+- `apps/birth-chart/css/36-ui-overhaul.css` — UI overhaul: clean full-screen input page, search-first header, segmented tile Home, profile sheet
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order

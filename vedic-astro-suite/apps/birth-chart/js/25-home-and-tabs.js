@@ -36,6 +36,14 @@ const HOME_ITEMS=[
  ['panel-export','📤','Export & Share','Download a file or copy your full report','Export & Help','export'],
  ['panel-contact','💬','Contact Developer','Bugs, ideas or astrology chat','Export & Help','export']];
 const HOME_SEC_COL={'Your Chart':'#D4AF37','Fix Birth Time':'#5EC4B7','Time & Cycles':'#8A6FB8','Analysis':'#6B7FA3','Compatibility':'#D96C9B','Export & Help':'#C95050'};
+function homeAskHtml(){
+  if(typeof SRCH_GROUPS==='undefined'||typeof SRCH_TOPICS==='undefined') return '';
+  const col=['#5EC4B7','#D96C9B','#E0A64A','#8A6FB8'];
+  const grp=SRCH_GROUPS.map((g,gi)=>{const t=g[2].map(id=>SRCH_TOPICS.findIndex(x=>x.id===id)).filter(i=>i>=0);
+    return `<section class="hm-sec hm-ask-sec" hidden data-sec="ask" style="--sc:${col[gi%4]}"><h3 class="hm-h"><i></i>${g[0]} ${g[1]}<em>${t.length}</em></h3><div class="hm-grid">${t.map(i=>`<button type="button" class="hm-c" data-askt="${i}"><span class="hm-ci">${SRCH_TOPICS[i].ico}</span><span class="hm-ct"><b>${escapeHtml(SRCH_TOPICS[i].t)}</b><small>${SRCH_TOPICS[i].subs.length} ready questions</small></span></button>`).join('')}</div></section>`;}).join('');
+  const tool=`<section class="hm-sec hm-ask-sec" hidden data-sec="ask" style="--sc:#D4AF37"><h3 class="hm-h"><i></i>Search tools<em>1</em></h3><div class="hm-grid"><button type="button" class="hm-c" data-qstoggle="1"><span class="hm-ci">🔍</span><span class="hm-ct"><b>Tap-to-search</b><small>Tap any placement in a chart to look it up</small></span></button></div></section>`;
+  return `<p class="hm-ask-note hm-ask-sec" data-sec="ask" hidden>Pick a topic and a question. Google AI opens with your exact chart details.</p>`+tool+grp;
+}
 function buildHomePanel(name){
   const secs=[...new Set(HOME_ITEMS.map(i=>i[4]))], PL=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
   const pr=window.__vgProf||{}, ch=(typeof currentChartForModal!=='undefined')?currentChartForModal:null;
@@ -53,20 +61,25 @@ function buildHomePanel(name){
         <div class="hm-pb"><label>${ad.lord} Antardasha<small>until ${formatDashaDate(ad.endDate)}</small></label><i><u style="width:${pct(ad.startDate,ad.endDate)}%"></u></i></div></button>`;}
     top+=`<section><h3 class="hm-h">Your planets</h3><div class="hm-strip">${PL.map(n=>{const p=ch.planets[n],s=SIGNS[p.sign];return `<button type="button" class="hm-pl" data-go="panel-overview"><span>${PLANET_GLYPHS[n]}</span><b>${n}${p.retrograde?' ℞':''}</b><small>${s.symbol} ${s.name}</small><em>${Math.floor(p.degInSign)}° · H${p.house}</em></button>`}).join('')}</div></section>`;
   }catch(e){top=`<section class="hm-hero"><div class="hm-id"><small>Namaste 🙏</small><h2>${escapeHtml(name||'Your chart')}</h2><p>Your chart is ready. Pick what you want to explore.</p></div></section>`;}
-  h+=top+`<div class="hm-search"><span>🔎</span><input id="hmQ" type="search" placeholder="Search tools — dasha, yoga, match…" autocomplete="off"></div>`;
+  const segs=[['all','All','#D4AF37']].concat(secs.map(x=>[x,x,HOME_SEC_COL[x]||'#D4AF37'])).concat([['ask','Ask AI','#5EC4B7']]);
+  h+=top+`<div class="hm-seg" id="hmSeg" role="tablist">${segs.map((x,i)=>`<button type="button" role="tab" data-seg="${x[0]}" style="--sc:${x[2]}" class="${i?'':'on'}"><i></i>${x[1]}</button>`).join('')}</div>`;
   const pref=['panel-reading','panel-active','panel-overview','panel-dasha','panel-vargas','panel-lagnas','panel-yogas','panel-shadbala'];
   const feat=pref.map(id=>HOME_ITEMS.find(i=>i[0]===id)).filter(Boolean).concat(HOME_ITEMS).filter((v,i,a)=>a.indexOf(v)===i).slice(0,4);
-  h+=`<section><h3 class="hm-h">Quick start</h3><div class="hm-feat">${feat.map(i=>`<button type="button" class="hm-f" style="--sc:${HOME_SEC_COL[i[4]]||'#D4AF37'}" data-go="${i[0]}"><span>${i[1]}</span><b>${i[2]}</b><small>${i[4]}</small></button>`).join('')}</div></section><div id="hmSecs">`;
+  h+=`<section class="hm-qs" data-sec="all"><h3 class="hm-h">Quick start</h3><div class="hm-feat">${feat.map(i=>`<button type="button" class="hm-f" style="--sc:${HOME_SEC_COL[i[4]]||'#D4AF37'}" data-go="${i[0]}"><span>${i[1]}</span><b>${i[2]}</b><small>${i[4]}</small></button>`).join('')}</div></section><div id="hmSecs">`;
   secs.forEach(s=>{const its=HOME_ITEMS.filter(i=>i[4]===s);
-    h+=`<section class="hm-sec" style="--sc:${HOME_SEC_COL[s]||'#D4AF37'}"><h3 class="hm-h"><i></i>${s}<em>${its.length}</em></h3><div class="hm-grid">${its.map(i=>`<button type="button" class="hm-c" data-go="${i[0]}"><span class="hm-ci">${i[1]}</span><span class="hm-ct"><b>${i[2]}</b><small>${i[3]}</small></span><span class="hm-ar">›</span></button>`).join('')}</div></section>`;});
-  h+=`</div><p class="hm-none" id="hmNone" hidden>No tool matches that search.</p></div></div><div class="panel-back" id="panelBack" style="display:none"><button type="button" data-go="panel-home">← Home</button><span></span></div>`;
+    h+=`<section class="hm-sec" data-sec="${s}" style="--sc:${HOME_SEC_COL[s]||'#D4AF37'}"><h3 class="hm-h"><i></i>${s}<em>${its.length}</em></h3><div class="hm-grid">${its.map(i=>`<button type="button" class="hm-c" data-go="${i[0]}"><span class="hm-ci">${i[1]}</span><span class="hm-ct"><b>${i[2]}</b><small>${i[3]}</small></span><span class="hm-ar">›</span></button>`).join('')}</div></section>`;});
+  h+=homeAskHtml()+`</div></div></div><div class="panel-back" id="panelBack" style="display:none"><button type="button" data-go="panel-home">← Home</button><span></span></div>`;
   const r=document.getElementById('results');
   r.insertAdjacentHTML('afterbegin',h);
   const bk=document.getElementById('panelBack'); const home=document.getElementById('panel-home');
   home.after(bk);
   r.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>switchAppTab(b.dataset.go)));
-  const q=document.getElementById('hmQ'); q.addEventListener('input',()=>{const t=q.value.trim().toLowerCase();let any=false;
-    home.querySelectorAll('.hm-sec').forEach(s=>{let n=0;s.querySelectorAll('.hm-c').forEach(c=>{const ok=!t||c.textContent.toLowerCase().includes(t);c.hidden=!ok;if(ok)n++;});s.hidden=!n;if(n)any=true;});document.getElementById('hmNone').hidden=any;});
+  const seg=document.getElementById('hmSeg');
+  seg.addEventListener('click',e=>{const b=e.target.closest('[data-seg]');if(!b)return;const k=b.dataset.seg;
+    seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    home.querySelectorAll('.hm-sec,.hm-qs,.hm-ask-sec').forEach(sec=>{const d=sec.dataset.sec;sec.hidden=!(k==='all'?d!=='ask':d===k);});});
+  home.addEventListener('click',e=>{const a=e.target.closest('[data-askt]');if(a&&typeof srchOpen==='function'){srchOpen();if(typeof srchTopicBox==='function')srchTopicBox(+a.dataset.askt);return;}
+    if(e.target.closest('[data-qstoggle]')){const t=document.getElementById('qsearchToggle');if(t){t.click();e.target.closest('[data-qstoggle]').classList.toggle('on',typeof qsearchActive!=='undefined'&&qsearchActive);}}});
 }
 
 document.getElementById('hdrBack').addEventListener('click',()=>switchAppTab('panel-home'));
