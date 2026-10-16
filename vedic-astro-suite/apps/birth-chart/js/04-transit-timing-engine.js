@@ -1,7 +1,7 @@
 /* ============================================================================
    DIVISIONAL TRANSIT TIMING ENGINE
    Powers the "Transit Timer" and "Sandhi Table" tabs: given any body (a graha
-   or the Ascendant) and any varga (D1-D60), finds precisely when it entered
+   or the Ascendant) and any varga (D1-D144), finds precisely when it entered
    its current division and when it will leave — using real evaluated motion
    (adaptive scan + bisection on the body's actual longitude function), not a
    flat linear guess, so retrograde loops and speed changes are respected.

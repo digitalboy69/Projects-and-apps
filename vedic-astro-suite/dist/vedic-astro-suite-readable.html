@@ -11289,7 +11289,7 @@ function getPlanetSpeed(name, jd){
 /* ============================================================================
    DIVISIONAL TRANSIT TIMING ENGINE
    Powers the "Transit Timer" and "Sandhi Table" tabs: given any body (a graha
-   or the Ascendant) and any varga (D1-D60), finds precisely when it entered
+   or the Ascendant) and any varga (D1-D144), finds precisely when it entered
    its current division and when it will leave — using real evaluated motion
    (adaptive scan + bisection on the body's actual longitude function), not a
    flat linear guess, so retrograde loops and speed changes are respected.
@@ -11616,9 +11616,17 @@ const VARGAS = {
   D30:{n:30,name:"Trimsamsa",full:"Misfortunes Chart",desc:"Miseries, evils, misfortunes"},
   D40:{n:40,name:"Khavedamsa",full:"Auspicious Effects",desc:"Maternal legacy, auspicious/inauspicious effects"},
   D45:{n:45,name:"Akshavedamsa",full:"General Indications",desc:"Character, conduct, general life indications"},
-  D60:{n:60,name:"Shashtiamsa",full:"Past Karma Chart",desc:"Past-life karma, overall life refinement"}
+  D60:{n:60,name:"Shashtiamsa",full:"Past Karma Chart",desc:"Past-life karma, overall life refinement"},
+  D81:{n:81,name:"Nava-navamsa",full:"Nested D9 in D9",desc:"Fine-grained dharma and fortune (D9 computed within D9)"},
+  D108:{n:108,name:"Ashtottaramsa",full:"Nested D12 in D9",desc:"Deep karmic lineage (D12 computed within D9)"},
+  D144:{n:144,name:"Dwadasa-dwadasamsa",full:"Nested D12 in D12",desc:"Subtle ancestry and heredity (D12 computed within D12)"}
 };
 
+// Longitude of a planet inside its divisional sign (for equal-division vargas D9 / D12), stretched to 0-30\u00B0 of that sign.
+function nestedVargaLon(key, lon){
+  const w = 30 / VARGAS[key].n, frac = Math.min(0.999999, (getDegInSign(lon) % w) / w);
+  return calcVarga(key, lon) * 30 + frac * 30;
+}
 function calcVarga(varga, lon){
   const signIdx = getSignIndex(lon);
   const degInSign = getDegInSign(lon);
@@ -11719,6 +11727,10 @@ function calcVarga(varga, lon){
       return (start+part)%12;
     }
     case "D60": { const part = Math.floor(degInSign/0.5); return (signIdx+part)%12; }
+    // Nested charts: the inner divisional position is stretched back over a full 30\u00B0 sign, then divided again.
+    case "D81":  return calcVarga("D9",  nestedVargaLon("D9",  lon));
+    case "D108": return calcVarga("D12", nestedVargaLon("D9",  lon));
+    case "D144": return calcVarga("D12", nestedVargaLon("D12", lon));
     default: return signIdx;
   }
 }
@@ -14029,7 +14041,7 @@ const HOME_ITEMS=[
  ['panel-overview','◈','Overview','Birth chart & key details','Your Chart','chart'],
  ['panel-planets','☉','Planets','Positions & aspects of every planet','Your Chart','chart'],
  ['panel-bhava','⌂','Bhava Chalit','Sripati house cusps & shifted planets','Your Chart','chart'],
- ['panel-vargas','◫','Divisional Charts','D1 to D60 chart viewer','Your Chart','chart'],
+ ['panel-vargas','◫','Divisional Charts','D1 to D144 chart viewer','Your Chart','chart'],
  ['panel-lagnas','✧','Special Lagnas','23 alternate ascendants','Your Chart','chart'],
  ['panel-rectification','🎯','Rectification Studio','Dial, scan & confirm the time','Fix Birth Time','rectify'],
  ['panel-datefinder','🔎','Date Finder','Find the birth date from festival, tithi & day clues','Fix Birth Time','rectify'],
@@ -17917,7 +17929,7 @@ function renderResults(profile){
     <p class="rect-intro">
       Dial the exact date and time with the Hour · Minute · Second controls below, then hit
       <strong>Calculate Full Chart</strong> to recompute the <strong>entire chart</strong> — every
-      tab (Overview, Dasha, Yogas, Ashtakavarga, Shadbala, Planets, Divisions D1–D60, Lagnas) —
+      tab (Overview, Dasha, Yogas, Ashtakavarga, Shadbala, Planets, Divisions D1–D144, Lagnas) —
       exactly like generating a fresh chart, for that exact instant. You'll be taken straight to
       Overview to see it. Nothing is saved to your stored profile unless you choose to apply it —
       come back to Rectify any time to dial a different second and recalculate again.
@@ -18001,7 +18013,7 @@ function renderResults(profile){
   <div class="section-heading"><h3>Transit Timer</h3><div class="rule"></div><span class="section-sub">When any planet — or the Ascendant — changes house in any D-chart</span></div>
   <div class="tt-panel-card">
     <p class="tt-intro">
-      Pick a body and a divisional chart (D1–D60). This finds, using the body's real evaluated
+      Pick a body and a divisional chart (D1–D144). This finds, using the body's real evaluated
       motion (not a flat average), exactly <strong>when it entered</strong> its current division,
       <strong>when it will move</strong> into the next one, and the live countdown between now
       and then. Retrograde bodies are handled correctly — the countdown reflects them moving
@@ -18139,7 +18151,7 @@ function renderResults(profile){
 
   html += `<div class="app-panel" id="panel-vargas">`;
   html += `
-  <div class="section-heading"><h3>Shodasa Varga — Divisional Charts (D1–D60)</h3><div class="rule"></div><span class="section-sub">Interactive chart viewer</span></div>
+  <div class="section-heading"><h3>Shodasa Varga — Divisional Charts (D1–D144)</h3><div class="rule"></div><span class="section-sub">Interactive chart viewer</span></div>
   
   <div class="varga-toolbar">
     <div class="varga-control-group">

@@ -8,7 +8,7 @@ const HOME_ITEMS=[
  ['panel-overview','◈','Overview','Birth chart & key details','Your Chart','chart'],
  ['panel-planets','☉','Planets','Positions & aspects of every planet','Your Chart','chart'],
  ['panel-bhava','⌂','Bhava Chalit','Sripati house cusps & shifted planets','Your Chart','chart'],
- ['panel-vargas','◫','Divisional Charts','D1 to D60 chart viewer','Your Chart','chart'],
+ ['panel-vargas','◫','Divisional Charts','D1 to D144 chart viewer','Your Chart','chart'],
  ['panel-lagnas','✧','Special Lagnas','23 alternate ascendants','Your Chart','chart'],
  ['panel-rectification','🎯','Rectification Studio','Dial, scan & confirm the time','Fix Birth Time','rectify'],
  ['panel-datefinder','🔎','Date Finder','Find the birth date from festival, tithi & day clues','Fix Birth Time','rectify'],

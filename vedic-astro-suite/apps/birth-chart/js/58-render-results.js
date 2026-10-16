@@ -55,7 +55,7 @@ function renderResults(profile){
     <p class="rect-intro">
       Dial the exact date and time with the Hour · Minute · Second controls below, then hit
       <strong>Calculate Full Chart</strong> to recompute the <strong>entire chart</strong> — every
-      tab (Overview, Dasha, Yogas, Ashtakavarga, Shadbala, Planets, Divisions D1–D60, Lagnas) —
+      tab (Overview, Dasha, Yogas, Ashtakavarga, Shadbala, Planets, Divisions D1–D144, Lagnas) —
       exactly like generating a fresh chart, for that exact instant. You'll be taken straight to
       Overview to see it. Nothing is saved to your stored profile unless you choose to apply it —
       come back to Rectify any time to dial a different second and recalculate again.
@@ -139,7 +139,7 @@ function renderResults(profile){
   <div class="section-heading"><h3>Transit Timer</h3><div class="rule"></div><span class="section-sub">When any planet — or the Ascendant — changes house in any D-chart</span></div>
   <div class="tt-panel-card">
     <p class="tt-intro">
-      Pick a body and a divisional chart (D1–D60). This finds, using the body's real evaluated
+      Pick a body and a divisional chart (D1–D144). This finds, using the body's real evaluated
       motion (not a flat average), exactly <strong>when it entered</strong> its current division,
       <strong>when it will move</strong> into the next one, and the live countdown between now
       and then. Retrograde bodies are handled correctly — the countdown reflects them moving
@@ -277,7 +277,7 @@ function renderResults(profile){
 
   html += `<div class="app-panel" id="panel-vargas">`;
   html += `
-  <div class="section-heading"><h3>Shodasa Varga — Divisional Charts (D1–D60)</h3><div class="rule"></div><span class="section-sub">Interactive chart viewer</span></div>
+  <div class="section-heading"><h3>Shodasa Varga — Divisional Charts (D1–D144)</h3><div class="rule"></div><span class="section-sub">Interactive chart viewer</span></div>
   
   <div class="varga-toolbar">
     <div class="varga-control-group">

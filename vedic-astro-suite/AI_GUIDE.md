@@ -126,6 +126,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - 3D Rising timeline: LONG-PRESS (550ms, `setupRisingPress`, `.pressing` fill, click suppressed after a hold) on `#hudAsc` opens popup `#risingOverlay`; tap still opens the place picker. Same content in new side-panel tab `tab-rising` (`#risingTabBody`). Model `riseTimeline(jd,L)` (cached; `_ascEdge` steps 1 min + bisects) -> 12 signs start/end/duration; `risingHTML`, `renderRising(force)` (called from `renderHUD`, per-minute key), `openRising`/`closeRising`.
 - 3D: removed the + / − zoom buttons (`zoomInBtn`/`zoomOutBtn`); zoom is by pinch / mouse wheel only.
 - 36 Dasha Systems panel (`panel-dashasys`, Home → Time & Cycles): engines `js/78-82` + `css/35`. Registry `DashaSys.register({id,name,blurb,family,keyType,conf,applic,build,sub})`; periods laid out from birth, sub-periods on the FULL parent length then clipped (like Vimshottari). Vimshottari there == main engine (tested). Disputed rules (Kala Chakra, Sudasa, Paryaya, Padanadhamsa, Mandooka, Moola, Brahma, Drig, Chara AD patterns) are flagged `conf:'varies'` in the UI. Iranganti needs Male/Female toggle.
+- Added nested vargas D81 (D9 in D9), D108 (D12 in D9), D144 (D12 in D12): `VARGAS` + `calcVarga` cases + `nestedVargaLon()` in `js/05-…`; every varga picker/export iterates `VARGAS`, so they appear automatically (verified vs independent formula, 4000 random longitudes).
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 
@@ -133,18 +134,18 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-16 - 1105 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-16 - 1106 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 118 files, 13681 lines, 945 KB
+**birth-chart** - 118 files, 13693 lines, 946 KB
 ```
 index.html                                         531 lines   30 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
 js/04-transit-timing-engine.js                     249 lines   11 KB
-js/05-ascendant-nakshatra-vargas.js                196 lines   11 KB
+js/05-ascendant-nakshatra-vargas.js                208 lines   12 KB
 js/06-outer-planet-knowledge.js                     37 lines    5 KB
 js/07-planetary-dignity.js                          77 lines    3 KB
 js/08-combustion-and-war.js                         30 lines    1 KB

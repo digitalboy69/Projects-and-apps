@@ -79,9 +79,17 @@ const VARGAS = {
   D30:{n:30,name:"Trimsamsa",full:"Misfortunes Chart",desc:"Miseries, evils, misfortunes"},
   D40:{n:40,name:"Khavedamsa",full:"Auspicious Effects",desc:"Maternal legacy, auspicious/inauspicious effects"},
   D45:{n:45,name:"Akshavedamsa",full:"General Indications",desc:"Character, conduct, general life indications"},
-  D60:{n:60,name:"Shashtiamsa",full:"Past Karma Chart",desc:"Past-life karma, overall life refinement"}
+  D60:{n:60,name:"Shashtiamsa",full:"Past Karma Chart",desc:"Past-life karma, overall life refinement"},
+  D81:{n:81,name:"Nava-navamsa",full:"Nested D9 in D9",desc:"Fine-grained dharma and fortune (D9 computed within D9)"},
+  D108:{n:108,name:"Ashtottaramsa",full:"Nested D12 in D9",desc:"Deep karmic lineage (D12 computed within D9)"},
+  D144:{n:144,name:"Dwadasa-dwadasamsa",full:"Nested D12 in D12",desc:"Subtle ancestry and heredity (D12 computed within D12)"}
 };
 
+// Longitude of a planet inside its divisional sign (for equal-division vargas D9 / D12), stretched to 0-30\u00B0 of that sign.
+function nestedVargaLon(key, lon){
+  const w = 30 / VARGAS[key].n, frac = Math.min(0.999999, (getDegInSign(lon) % w) / w);
+  return calcVarga(key, lon) * 30 + frac * 30;
+}
 function calcVarga(varga, lon){
   const signIdx = getSignIndex(lon);
   const degInSign = getDegInSign(lon);
@@ -182,6 +190,10 @@ function calcVarga(varga, lon){
       return (start+part)%12;
     }
     case "D60": { const part = Math.floor(degInSign/0.5); return (signIdx+part)%12; }
+    // Nested charts: the inner divisional position is stretched back over a full 30\u00B0 sign, then divided again.
+    case "D81":  return calcVarga("D9",  nestedVargaLon("D9",  lon));
+    case "D108": return calcVarga("D12", nestedVargaLon("D9",  lon));
+    case "D144": return calcVarga("D12", nestedVargaLon("D12", lon));
     default: return signIdx;
   }
 }
