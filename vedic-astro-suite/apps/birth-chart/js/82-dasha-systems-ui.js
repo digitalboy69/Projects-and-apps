@@ -3,15 +3,26 @@
 (function(){
 'use strict';
 const DS = window.DashaSys;
-const FAMILIES = [
-  ['Nakshatra','Nakshatra dashas'],
-  ['Conditional','Conditional nakshatra dashas'],
-  ['Phalita','Phalita rasi dashas'],
-  ['Ayur','Ayur dashas'],
-  ['Special','Special dashas']
+// 36 systems folded into 7 groups: systems an astrologer reads side by side live together.
+const GROUPS = [
+  { id:'nak',   title:'Moon-based (Nakshatra)', ico:'🌙', desc:'The classic life timelines, read from the Moon\u2019s nakshatra. Vimshottari is the main one; the others are cross-checks.',
+    ids:['vimshottari','yogini','ashtottari','kalachakra'] },
+  { id:'cond',  title:'Conditional dashas', ico:'⚖️', desc:'Nakshatra systems that are meant only when the chart meets a condition. The ones that apply to you are shown first.',
+    ids:['shodasottari','shattrimsa','dwadasottari','dwisaptati','sataabdika','chaturaseeti','shashtihayani','panchottari'] },
+  { id:'chara', title:'Chara (Jaimini)', ico:'🧭', desc:'Sign-based dashas from the Jaimini school \u2014 the Chara variants side by side, plus the Chara + Sthira hybrid.',
+    ids:['chara-parasara','chara-knrao','chara-iranganti1','chara-iranganti2','yogardha'] },
+  { id:'nara',  title:'Narayana family', ico:'🛕', desc:'Sign dashas for life events, wealth and fortune: Narayana, Sudasa, Drig, Trikona and Lagnamsaka.',
+    ids:['narayana','sudasa','drig','trikona','lagnamsaka'] },
+  { id:'kendra',title:'Kendra & Padakrama', ico:'🔲', desc:'Sign dashas that move through kendras or by footsteps (padakrama).',
+    ids:['kendradi','moola','padanadhamsa','paryaya'] },
+  { id:'ayur',  title:'Longevity (Ayur)', ico:'⏳', desc:'Dashas used to judge life span and critical periods.',
+    ids:['sthira','shoola','niryana','mandooka','brahma'] },
+  { id:'spec',  title:'Special purpose', ico:'✨', desc:'Status, spiritual and fine-tuning dashas: Varnada, Navamsa, Sandhya, Chakra and Tara Lagna.',
+    ids:['varnada','navamsa','sandhya','chakra','taralagna'] }
 ];
-const CONDITIONAL = ['shodasottari','shattrimsa','dwadasottari','dwisaptati','sataabdika','chaturaseeti','shashtihayani','panchottari'];
-const famOf = s => s.family === 'Nakshatra' && CONDITIONAL.includes(s.id) ? 'Conditional' : s.family;
+const GMAP = {}; GROUPS.forEach(g => g.ids.forEach(i => { GMAP[i] = g; }));
+const gById = id => GROUPS.find(g => g.id === id);
+const gIco = g => '<span class="ds-ico">' + g.ico + '</span>';
 const ELEM = { Fire:'#d9824a', Earth:'#8fae6b', Air:'#6fa8c8', Water:'#7a8fd4' };
 const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 // One icon (emoji key -> SVG via shared/icons.js) per system
@@ -21,7 +32,7 @@ const ICO = { vimshottari:'🔯', ashtottari:'✴️', kalachakra:'☸️', yogi
   paryaya:'♻️', moola:'🪴', sthira:'⚓', shoola:'🔱', niryana:'🕯️', mandooka:'🐸', brahma:'🌠', varnada:'🎖️', navamsa:'💒', sandhya:'🌆',
   chakra:'🎡', taralagna:'🌃' };
 const ico = x => '<span class="ds-ico">' + (ICO[x.id] || '🎡') + '</span>';
-const S = { chart:null, sys:null, gender:'M', subMode:'auto', path:[], data:null };
+const S = { chart:null, grp:null, sys:null, gender:'M', subMode:'auto', path:[], data:null };
 try { S.gender = localStorage.getItem('vx_ds_gender') === 'F' ? 'F' : 'M'; S.subMode = localStorage.getItem('vx_ds_sub') || 'auto'; } catch(e){}
 
 const tz = () => (S.chart && S.chart.tzOffsetHours) || 0;
@@ -46,7 +57,7 @@ const withTime = lv => lv >= 3;
 
 function recompute(){
   const sys = S.sys;
-  const r = DS.compute(sys, S.chart, { gender:S.gender, subMode:S.subMode });
+  const r = DS.compute(sys, S.chart, opts());
   const limit = r.c.birth + 128 * DS.YR;
   r.periods = r.periods.filter(p => p.start < limit);
   S.data = { c:r.c, periods:r.periods };
@@ -62,29 +73,66 @@ function rowHtml(p, i, now){
     + (lv < 4 ? '<span class="ds-go">›</span>' : '') + (isNow ? '<span class="ds-nowtag">now</span>' : '') + `</button>`;
 }
 
+const opts = () => ({ gender:S.gender, subMode:S.subMode });
+const sysOf = g => g.ids.map(i => DS.map[i]).filter(Boolean);
+function ordered(g, c){        // conditional group: systems that apply to this chart first
+  const L = sysOf(g);
+  if (g.id !== 'cond') return L;
+  const ok = x => x.applic(c).ok ? 0 : 1;
+  return L.map((x,i)=>[x,i]).sort((a,b)=> ok(a[0]) - ok(b[0]) || a[1] - b[1]).map(x => x[0]);
+}
+function ctrlHtml(list){
+  let h = '';
+  if (list.some(x => x.needsGender)) h += `<div class="ds-seg" data-k="gender"><span>Gender</span><button type="button" data-v="M" class="${S.gender==='M'?'on':''}">Male</button><button type="button" data-v="F" class="${S.gender==='F'?'on':''}">Female</button></div>`;
+  if (list.some(x => x.subToggle)) h += `<div class="ds-seg" data-k="sub"><span>Sub-periods</span><button type="button" data-v="auto" class="${S.subMode==='auto'?'on':''}">Classical</button><button type="button" data-v="equal" class="${S.subMode==='equal'?'on':''}">Equal</button><button type="button" data-v="prop" class="${S.subMode==='prop'?'on':''}">Proportional</button></div>`;
+  return h ? `<div class="ds-ctl">${h}</div>` : '';
+}
+function chipsHtml(g, c){
+  const list = ordered(g, c);
+  return `<div class="ds-chips"><button type="button" class="ds-chip${S.sys ? '' : ' on'}" data-id="cmp"><b>Compare</b></button>`
+    + list.map(x => {
+        const ok = g.id === 'cond' ? x.applic(c).ok : null;
+        return `<button type="button" class="ds-chip${S.sys === x ? ' on' : ''}" data-id="${x.id}">${ico(x)}<b>${x.name}</b>${ok === true ? '<i class="ds-dot" title="Applies to your chart"></i>' : ''}</button>`;
+      }).join('') + `</div>`;
+}
+const badge = x => `<span class="ds-badge ${x.conf === 'classical' ? 'ok' : 'warn'}" title="${x.conf === 'classical' ? 'Standard, widely agreed rules' : 'Software conventions differ on some rules; treat as interpretation'}">${x.conf === 'classical' ? 'classical' : 'varies'}</span>`;
+
+function groupHtml(){      // side-by-side comparison of every system in the group
+  const g = gById(S.grp), now = Date.now(), c = DS.ctx(S.chart, opts()), list = ordered(g, c);
+  let h = `<button type="button" class="ds-back" data-act="home">‹ All dasha groups</button>`;
+  h += `<div class="ds-head">${gIco(g)}<div class="ds-ht"><div class="ds-eyebrow">${list.length} systems · side by side</div><h4>${g.title}</h4></div></div><p class="ds-rule">${g.desc}</p>`;
+  h += chipsHtml(g, c) + ctrlHtml(list);
+  if (g.id === 'cond'){ const n = list.filter(x => x.applic(c).ok).length; h += `<div class="ds-note ${n ? 'g' : 'b'}"><span>${n ? '✓' : '!'}</span><div>${n ? n + ' of ' + list.length + ' conditional dashas apply to this chart (marked with a gold dot).' : 'None of the conditional dashas apply to this chart — they are shown for study only.'}</div></div>`; }
+  h += `<div class="ds-eyebrow">Running now in each system</div><div class="ds-cmpl">`;
+  list.forEach(x => {
+    let act = [], ap;
+    try { const r = DS.compute(x, S.chart, opts()); act = DS.active(x, r.c, r.periods, now); ap = x.applic(r.c); } catch(e){ ap = { ok:false, text:'' }; }
+    h += `<button type="button" class="ds-cmp${g.id === 'cond' && !ap.ok ? ' dim' : ''}" data-id="${x.id}">`
+      + `<div class="ds-cmp-h">${ico(x)}<span class="ds-rt"><b>${x.name}</b><small>${x.blurb}</small></span>`
+      + (g.id === 'cond' ? `<span class="ds-badge ${ap.ok ? 'ok' : 'warn'}">${ap.ok ? 'applies' : 'not met'}</span>` : badge(x)) + `<span class="ds-go">›</span></div>`
+      + `<div class="ds-cmp-c">` + (act.length ? act.slice(0,3).map((p,i)=>
+          `<span class="ds-cc"><i>${DS.LEVELS[i]}</i><b>${DS.label(x,p.key)}</b><small>to ${fmt(p.end, false)}</small></span>`).join('') : '<span class="ds-cc"><small>No period running today</small></span>')
+      + `</div></button>`;
+  });
+  return h + `</div>`;
+}
+
 function systemHtml(){
-  const sys = S.sys, c = S.data.c, now = Date.now();
+  const sys = S.sys, g = GMAP[sys.id], c = S.data.c, now = Date.now();
   const ap = sys.applic(c);
   const active = DS.active(sys, c, S.data.periods, now);
-  let h = `<button type="button" class="ds-back" data-act="home">‹ All 36 systems</button>`;
-  h += `<div class="ds-head">${ico(sys)}<div class="ds-ht"><div class="ds-eyebrow">${famLabel(sys)}</div><h4>${sys.name}</h4><small>${sys.blurb}</small></div>`
-     + `<span class="ds-badge ${sys.conf === 'classical' ? 'ok' : 'warn'}" title="${sys.conf === 'classical' ? 'Standard, widely agreed rules' : 'Software conventions differ on some rules; treat as interpretation'}">${sys.conf === 'classical' ? 'classical' : 'interpretation varies'}</span></div>`;
+  let h = `<button type="button" class="ds-back" data-act="cmp">‹ ${g.title} — compare</button>`;
+  h += chipsHtml(g, c);
+  h += `<div class="ds-head">${ico(sys)}<div class="ds-ht"><div class="ds-eyebrow">${g.title}</div><h4>${sys.name}</h4><small>${sys.blurb}</small></div>${badge(sys)}</div>`;
   h += `<div class="ds-note ${ap.ok ? 'g' : 'b'}"><span>${ap.ok ? '✓' : '!'}</span><div>${ap.text}</div></div>`;
-  if (sys.needsGender || sys.subToggle){
-    h += `<div class="ds-ctl">`;
-    if (sys.needsGender) h += `<div class="ds-seg" data-k="gender"><span>Gender</span><button type="button" data-v="M" class="${S.gender==='M'?'on':''}">Male</button><button type="button" data-v="F" class="${S.gender==='F'?'on':''}">Female</button></div>`;
-    if (sys.subToggle) h += `<div class="ds-seg" data-k="sub"><span>Sub-periods</span><button type="button" data-v="auto" class="${S.subMode==='auto'?'on':''}">Classical</button><button type="button" data-v="equal" class="${S.subMode==='equal'?'on':''}">Equal</button><button type="button" data-v="prop" class="${S.subMode==='prop'?'on':''}">Proportional</button></div>`;
-    h += `</div>`;
-  }
+  h += ctrlHtml([sys]);
   if (sys.rule) h += `<p class="ds-rule">${sys.rule}</p>`;
-  // running now ladder
   h += `<div class="ds-now"><div class="ds-eyebrow">Running now</div>`;
   if (active.length){
     h += `<div class="ds-ladder">` + active.map((p,i)=>
       `<div class="ds-lad"><span class="ds-lv">${DS.LEVELS[i]}</span>${tile(sys,p.key)}<span class="ds-rt"><b>${DS.label(sys,p.key)}</b><small>${fmt(p.start,withTime(i))} → ${fmt(p.end,withTime(i))}</small></span></div>`).join('') + `</div>`;
   } else h += `<p class="ds-rule">No period is running today (outside the calculated span).</p>`;
   h += `</div>`;
-  // drill-down
   const crumbs = [`<button type="button" data-act="crumb" data-n="0">${sys.name}</button>`].concat(S.path.map((p,i)=>
     `<button type="button" data-act="crumb" data-n="${i+1}">${DS.label(sys,p.key)}</button>`)).join('<i>›</i>');
   h += `<div class="ds-drill"><div class="ds-crumbs">${crumbs}</div>`;
@@ -93,46 +141,55 @@ function systemHtml(){
   h += `<div class="ds-list">` + list.map((p,i)=> rowHtml(p,i,now)).join('') + `</div></div>`;
   return h;
 }
-function famLabel(sys){ return FAMILIES.find(f => f[0] === famOf(sys))[1]; }
 
 function homeHtml(){
-  let h = `<p class="ds-intro">Pick a system. Each one opens <b>level by level</b> — Maha › Antar › Pratyantar › Sookshma › Prana — with the <b>start and end of every period</b>.</p>`;
-  FAMILIES.forEach(([f,title])=>{
-    const items = DS.list.filter(s => famOf(s) === f);
-    h += `<div class="ds-fam"><div class="ds-eyebrow">${title}</div><div class="ds-grid">`
-      + items.map(s => `<button type="button" class="ds-card" data-id="${s.id}">${ico(s)}<span class="ds-ct"><b>${s.name}</b><small>${s.blurb}</small></span></button>`).join('') + `</div></div>`;
+  const c = DS.ctx(S.chart, opts());
+  let h = `<p class="ds-intro"><b>36 dasha systems in 7 groups.</b> Open a group to see its systems <b>side by side</b>, then tap one to open it <b>level by level</b> — Maha › Antar › Pratyantar › Sookshma › Prana — with the <b>start and end of every period</b>.</p><div class="ds-groups">`;
+  GROUPS.forEach(g => {
+    const list = sysOf(g);
+    let extra = '';
+    if (g.id === 'cond'){ const n = list.filter(x => x.applic(c).ok).length; extra = `<span class="ds-badge ${n ? 'ok' : 'warn'}">${n} apply to you</span>`; }
+    h += `<button type="button" class="ds-gcard" data-g="${g.id}">${gIco(g)}<span class="ds-ct"><b>${g.title}</b><small>${list.slice(0,4).map(x => x.name.replace(/ (Dasha|Dasa|Rashi)$/,'')).join(' · ')}${list.length > 4 ? ' · +' + (list.length - 4) + ' more' : ''}</small></span>${extra}<span class="ds-go">›</span></button>`;
   });
-  return h;
+  return h + `</div>`;
 }
+const view = () => S.sys ? systemHtml() : S.grp ? groupHtml() : homeHtml();
 
 function paint(root){
   root = root || document.getElementById('ds-root'); if (!root) return;
-  try { root.innerHTML = S.sys ? systemHtml() : homeHtml(); }
+  try { root.innerHTML = view(); }
   catch(e){ root.innerHTML = `<div class="vx-note b"><div>Could not compute this system for this chart. (${String(e && e.message || e)})</div></div>`; console.error(e); }
 }
 
 window.buildDashaSystemsPanel = function(chart){
   S.chart = chart; S.data = null;
   if (S.sys){ try { recompute(); } catch(e){ S.sys = null; } }
-  return `<div class="section-heading"><h3>36 Dasha Systems</h3><div class="rule"></div></div><div class="ds" id="ds-root">${S.sys ? systemHtml() : homeHtml()}</div>`;
+  let body; try { body = view(); } catch(e){ S.sys = null; S.grp = null; body = homeHtml(); }
+  return `<div class="section-heading"><h3>36 Dasha Systems</h3><div class="rule"></div></div><div class="ds" id="ds-root">${body}</div>`;
 };
 
+function openSys(id){
+  S.sys = DS.map[id]; S.grp = GMAP[id].id; S.path = [];
+  try { recompute(); } catch(err){ S.sys = null; console.error(err); }
+}
 document.addEventListener('click', e => {
   const root = e.target.closest('#ds-root'); if (!root || !S.chart) return;
   const q = sel => e.target.closest(sel);
   let b;
-  if ((b = q('.ds-card'))){
-    S.sys = DS.map[b.dataset.id]; S.path = [];
-    try { recompute(); } catch(err){ S.sys = null; console.error(err); }
-    paint(root); root.scrollIntoView({block:'start', behavior:'smooth'}); return;
+  if ((b = q('.ds-gcard'))){ S.grp = b.dataset.g; S.sys = null; S.path = []; paint(root); root.scrollIntoView({block:'start', behavior:'smooth'}); return; }
+  if ((b = q('.ds-chip, .ds-cmp'))){
+    if (b.dataset.id === 'cmp'){ S.sys = null; S.path = []; paint(root); }
+    else { openSys(b.dataset.id); paint(root); }
+    root.scrollIntoView({block:'start', behavior:'smooth'}); return;
   }
-  if ((b = q('[data-act="home"]'))){ S.sys = null; S.path = []; paint(root); return; }
+  if ((b = q('[data-act="home"]'))){ S.sys = null; S.grp = null; S.path = []; paint(root); return; }
+  if ((b = q('[data-act="cmp"]'))){ S.sys = null; S.path = []; paint(root); return; }
   if ((b = q('[data-act="crumb"]'))){ S.path = S.path.slice(0, +b.dataset.n); paint(root); return; }
   if ((b = q('.ds-seg button'))){
     const k = b.parentNode.dataset.k;
     if (k === 'gender') S.gender = b.dataset.v; else S.subMode = b.dataset.v;
     try { localStorage.setItem(k === 'gender' ? 'vx_ds_gender' : 'vx_ds_sub', b.dataset.v); } catch(err){}
-    S.path = []; recompute(); paint(root); return;
+    S.path = []; if (S.sys) recompute(); paint(root); return;
   }
   if ((b = q('.ds-row')) && !b.disabled){
     const p = listAt(S.path)[+b.dataset.i];

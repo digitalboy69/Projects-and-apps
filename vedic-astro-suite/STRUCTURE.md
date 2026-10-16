@@ -135,7 +135,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/79-dasha-systems-nakshatra.js` — 36 Dasha Systems: 12 nakshatra systems (Vimshottari, Ashtottari, Kala Chakra, Yogini + 8 conditional: Shodasottari, Shattrimsa Sama, Dwadasottari, Dwisaptati Sama, Sataabdika, Chaturaseeti Sama, Shashtihayani, Panchottari)
 - `apps/birth-chart/js/80-dasha-systems-rasi.js` — 36 Dasha Systems: 14 phalita rasi systems (Chara Parasara/K.N. Rao/Iranganti 1 & 2, Narayana, Sudasa, Drig, Trikona, Lagnamsaka, Yogardha, Kendradi, Padanadhamsa, Paryaya, Moola)
 - `apps/birth-chart/js/81-dasha-systems-ayur-special.js` — 36 Dasha Systems: 5 Ayur (Sthira, Shoola, Niryana Shoola, Mandooka, Brahma) + 5 Special (Varnada, Navamsa, Sandhya, Chakra, Tara Lagna)
-- `apps/birth-chart/js/82-dasha-systems-ui.js` — 36 Dasha Systems panel `buildDashaSystemsPanel` (system picker, running-now ladder, level-by-level drill-down with start/end of every period, gender + sub-period toggles)
+- `apps/birth-chart/js/82-dasha-systems-ui.js` — 36 Dasha Systems panel `buildDashaSystemsPanel` (7 groups → side-by-side compare of each group's systems → per-system running-now ladder + level-by-level drill-down with start/end of every period; gender + sub-period toggles; conditional dashas sorted by whether the chart qualifies)
 - `apps/birth-chart/css/01-premium-tokens-reset.css` — design tokens (colors, fonts) and reset
 - `apps/birth-chart/css/02-header.css` — header
 - `apps/birth-chart/css/03-hero-intake-form.css` — hero and birth intake form

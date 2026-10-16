@@ -125,7 +125,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - 3D premium polish: CSS block "PREMIUM POLISH LAYER" in srcA (champagne-gold glass, vignette `.viewport::after`, eased tab/modal motion, `--ease`); camera drag momentum + eased wheel zoom (`spinVT/spinVP`, `zoomGoal/zoomSet` in renderLoop; skipped under reduced-motion); magnetic hover `setupMagnetic` (sets `--tx/--ty/--mx/--my`, uses CSS `translate`, mouse devices only).
 - 3D Rising timeline: LONG-PRESS (550ms, `setupRisingPress`, `.pressing` fill, click suppressed after a hold) on `#hudAsc` opens popup `#risingOverlay`; tap still opens the place picker. Same content in new side-panel tab `tab-rising` (`#risingTabBody`). Model `riseTimeline(jd,L)` (cached; `_ascEdge` steps 1 min + bisects) -> 12 signs start/end/duration; `risingHTML`, `renderRising(force)` (called from `renderHUD`, per-minute key), `openRising`/`closeRising`.
 - 3D: removed the + / − zoom buttons (`zoomInBtn`/`zoomOutBtn`); zoom is by pinch / mouse wheel only.
-- 36 Dasha Systems panel (`panel-dashasys`, Home → Time & Cycles): engines `js/78-82` + `css/35`. Registry `DashaSys.register({id,name,blurb,family,keyType,conf,applic,build,sub})`; periods laid out from birth, sub-periods on the FULL parent length then clipped (like Vimshottari). Vimshottari there == main engine (tested). Disputed rules (Kala Chakra, Sudasa, Paryaya, Padanadhamsa, Mandooka, Moola, Brahma, Drig, Chara AD patterns) are flagged `conf:'varies'` in the UI. Iranganti needs Male/Female toggle.
+- 36 Dasha Systems panel (`panel-dashasys`, Home → Time & Cycles; UI folds the 36 into 7 `GROUPS` in `js/82-…` with a side-by-side compare view per group): engines `js/78-82` + `css/35`. Registry `DashaSys.register({id,name,blurb,family,keyType,conf,applic,build,sub})`; periods laid out from birth, sub-periods on the FULL parent length then clipped (like Vimshottari). Vimshottari there == main engine (tested). Disputed rules (Kala Chakra, Sudasa, Paryaya, Padanadhamsa, Mandooka, Moola, Brahma, Drig, Chara AD patterns) are flagged `conf:'varies'` in the UI. Iranganti needs Male/Female toggle.
 - Added nested vargas D81 (D9 in D9), D108 (D12 in D9), D144 (D12 in D12): `VARGAS` + `calcVarga` cases + `nestedVargaLon()` in `js/05-…`; every varga picker/export iterates `VARGAS`, so they appear automatically (verified vs independent formula, 4000 random longitudes).
 - Icons for the new stuff: 12 new SVGs in `shared/icons.js` (hexagram, octagram, wheel, daynight, swap, triangle, kendra, feet, anchor, trident, beads, dna) + extra emoji keys on existing icons. Dasha cards use `ICO` map (system id → emoji key) in `js/82-…`; D81/D108/D144 icons are in `AREA` in `js/69-…`; Home row uses 🎡.
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
@@ -135,11 +135,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-16 - 1107 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-16 - 1111 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 118 files, 13709 lines, 948 KB
+**birth-chart** - 118 files, 13800 lines, 956 KB
 ```
 index.html                                         531 lines   30 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -223,7 +223,7 @@ js/78-dasha-systems-core.js                        229 lines    9 KB
 js/79-dasha-systems-nakshatra.js                   150 lines    9 KB
 js/80-dasha-systems-rasi.js                        149 lines    8 KB
 js/81-dasha-systems-ayur-special.js                146 lines    7 KB
-js/82-dasha-systems-ui.js                          143 lines    9 KB
+js/82-dasha-systems-ui.js                          200 lines   14 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
@@ -258,7 +258,7 @@ css/31-rectification-studio.css                    100 lines   10 KB
 css/32-date-finder.css                              66 lines    6 KB
 css/33-friendly-input-page.css                      47 lines    4 KB
 css/34-smart-search.css                             30 lines    3 KB
-css/35-dasha-systems.css                            60 lines    5 KB
+css/35-dasha-systems.css                            94 lines    8 KB
 ```
 
 **developer** - 4 files, 180 lines, 13 KB
