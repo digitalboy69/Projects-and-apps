@@ -224,5 +224,5 @@ DS.active = function(sys, c, periods, t){
 };
 
 DS.label = function(sys, key){ return sys.keyType === 'planet' ? key : SIGNS[key].name; };
-DS.glyph = function(sys, key){ return sys.keyType === 'planet' ? (window.PLANET_GLYPHS && PLANET_GLYPHS[key]) || '' : SIGNS[key].symbol; };
+DS.glyph = function(sys, key){ return sys.keyType === 'planet' ? (window.PLANET_GLYPHS && PLANET_GLYPHS[key]) || '' : SIGNS[key].symbol + '\uFE0E'; };
 })();

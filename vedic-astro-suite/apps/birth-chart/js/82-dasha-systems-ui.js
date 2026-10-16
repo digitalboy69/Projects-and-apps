@@ -14,6 +14,13 @@ const CONDITIONAL = ['shodasottari','shattrimsa','dwadasottari','dwisaptati','sa
 const famOf = s => s.family === 'Nakshatra' && CONDITIONAL.includes(s.id) ? 'Conditional' : s.family;
 const ELEM = { Fire:'#d9824a', Earth:'#8fae6b', Air:'#6fa8c8', Water:'#7a8fd4' };
 const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// One icon (emoji key -> SVG via shared/icons.js) per system
+const ICO = { vimshottari:'🔯', ashtottari:'✴️', kalachakra:'☸️', yogini:'🪷', shodasottari:'🌞', shattrimsa:'🔅', dwadasottari:'💝', dwisaptati:'🔀',
+  sataabdika:'💠', chaturaseeti:'🧳', shashtihayani:'🌄', panchottari:'🦀', 'chara-parasara':'🧭', 'chara-knrao':'🏹', 'chara-iranganti1':'🙍',
+  'chara-iranganti2':'🙋', narayana:'🛕', sudasa:'💴', drig:'🧐', trikona:'🔺', lagnamsaka:'🧱', yogardha:'⚖️', kendradi:'🔲', padanadhamsa:'👣',
+  paryaya:'♻️', moola:'🪴', sthira:'⚓', shoola:'🔱', niryana:'🕯️', mandooka:'🐸', brahma:'🌠', varnada:'🎖️', navamsa:'💒', sandhya:'🌆',
+  chakra:'🎡', taralagna:'🌃' };
+const ico = x => '<span class="ds-ico">' + (ICO[x.id] || '🎡') + '</span>';
 const S = { chart:null, sys:null, gender:'M', subMode:'auto', path:[], data:null };
 try { S.gender = localStorage.getItem('vx_ds_gender') === 'F' ? 'F' : 'M'; S.subMode = localStorage.getItem('vx_ds_sub') || 'auto'; } catch(e){}
 
@@ -60,7 +67,7 @@ function systemHtml(){
   const ap = sys.applic(c);
   const active = DS.active(sys, c, S.data.periods, now);
   let h = `<button type="button" class="ds-back" data-act="home">‹ All 36 systems</button>`;
-  h += `<div class="ds-head"><div><div class="ds-eyebrow">${famLabel(sys)}</div><h4>${sys.name}</h4><small>${sys.blurb}</small></div>`
+  h += `<div class="ds-head">${ico(sys)}<div class="ds-ht"><div class="ds-eyebrow">${famLabel(sys)}</div><h4>${sys.name}</h4><small>${sys.blurb}</small></div>`
      + `<span class="ds-badge ${sys.conf === 'classical' ? 'ok' : 'warn'}" title="${sys.conf === 'classical' ? 'Standard, widely agreed rules' : 'Software conventions differ on some rules; treat as interpretation'}">${sys.conf === 'classical' ? 'classical' : 'interpretation varies'}</span></div>`;
   h += `<div class="ds-note ${ap.ok ? 'g' : 'b'}"><span>${ap.ok ? '✓' : '!'}</span><div>${ap.text}</div></div>`;
   if (sys.needsGender || sys.subToggle){
@@ -93,7 +100,7 @@ function homeHtml(){
   FAMILIES.forEach(([f,title])=>{
     const items = DS.list.filter(s => famOf(s) === f);
     h += `<div class="ds-fam"><div class="ds-eyebrow">${title}</div><div class="ds-grid">`
-      + items.map(s => `<button type="button" class="ds-card" data-id="${s.id}"><b>${s.name}</b><small>${s.blurb}</small></button>`).join('') + `</div></div>`;
+      + items.map(s => `<button type="button" class="ds-card" data-id="${s.id}">${ico(s)}<span class="ds-ct"><b>${s.name}</b><small>${s.blurb}</small></span></button>`).join('') + `</div></div>`;
   });
   return h;
 }

@@ -261,18 +261,31 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
     up:'<path d="M12 19V5M6 11l6-6 6 6"/>',
     waves:'<path d="M3 9c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',
     fullmoon:'<circle class="f" cx="12" cy="12" r="8.500"/><path d="M9 9.500v.1M14.500 8.500v.1M13.500 14.500v.1M8.500 14v.1"/>',
-    layers:'<path class="f" d="m12 3.500 9 4.500-9 4.500L3 8Z"/><path d="m3 12 9 4.500 9-4.500M3 16l9 4.500 9-4.500"/>'
+    layers:'<path class="f" d="m12 3.500 9 4.500-9 4.500L3 8Z"/><path d="m3 12 9 4.500 9-4.500M3 16l9 4.500 9-4.500"/>',
+    hexagram:'<path d="M12 3.5 19.5 16.5h-15Z"/><path class="f" d="M12 20.5 4.5 7.5h15Z"/>',
+    octagram:'<rect class="f" x="5.5" y="5.5" width="13" height="13" rx="1"/><rect x="5.5" y="5.5" width="13" height="13" rx="1" transform="rotate(45 12 12)"/>',
+    wheel:'<circle class="f" cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 3.5V10M12 14v6.5M3.5 12H10M14 12h6.5M6 6l4.5 4.5M13.5 13.5 18 18M18 6l-4.5 4.5M10.5 13.5 6 18"/>',
+    daynight:'<circle cx="12" cy="12" r="8.5"/><path class="f" d="M12 3.5a8.5 8.5 0 0 1 0 17Z"/><path d="M12 3.5v17"/>',
+    swap:'<path d="M4 8h14M14.5 4.5 18 8l-3.5 3.5M20 16H6M9.5 12.5 6 16l3.5 3.5"/>',
+    triangle:'<path class="f" d="M12 4 20.5 19h-17Z"/><circle cx="12" cy="14" r="1.2"/>',
+    kendra:'<rect class="f" x="4" y="4" width="16" height="16" rx="2.5"/><path d="M12 4v16M4 12h16"/>',
+    feet:'<ellipse class="f" cx="8.5" cy="14" rx="3" ry="5"/><ellipse class="f" cx="16" cy="9.5" rx="3" ry="5"/>',
+    anchor:'<circle cx="12" cy="5.5" r="2"/><path d="M12 7.5V20M7.5 11h9M5 14c0 3.5 3 6 7 6s7-2.5 7-6"/>',
+    trident:'<path d="M12 3.5v17M6.5 5v4.5a5.5 5.5 0 0 0 11 0V5M9.5 20.5h5"/>',
+    beads:'<g class="f"><circle cx="12" cy="4.5" r="1.7"/><circle cx="17.3" cy="6.7" r="1.7"/><circle cx="19.5" cy="12" r="1.7"/><circle cx="17.3" cy="17.3" r="1.7"/><circle cx="12" cy="19.5" r="1.7"/><circle cx="6.7" cy="17.3" r="1.7"/><circle cx="4.5" cy="12" r="1.7"/><circle cx="6.7" cy="6.7" r="1.7"/></g><path d="M12 19.5v2.5"/>',
+    dna:'<path d="M8 3.5c0 5 8 5 8 8.5s-8 3.5-8 8.5M16 3.5c0 5-8 5-8 8.5s8 3.5 8 8.5M9 7h6M9 17h6"/>'
   };
   var M = {
     home:'🏠 🏡', doc:'🗎 📋 📄 📃 📜 📒 🗒️ 🗒', book:'📚 📖', calendar:'📅 🗓️ 🗓 📆', clock:'🕰️ 🕰 ⏱️ ⏱ 🕘 ⏰ 🕐 🕒', hourglass:'⏳ ⌛', search:'🔎 🔍 🔬',
-    alert:'⚠️ ⚠', target:'🎯', orb:'🔮', sparkle:'✨ 🌟 💫', coin:'💰 💵 🪙', ring:'💍', briefcase:'💼', bulb:'💡', download:'📥', upload:'📤',
-    user:'👤 🧍 🧑', users:'👥 🤝 👪 👨 👩 👨‍👩‍👧 🪪', smile:'👶 🙂 😊', planet:'🪐 🌌', moon:'🌙 🌒 🌓 🌔 🌖 🌗 🌘 🌛 🌜', sun:'☀️ ☀ 🌞', newmoon:'🌑', sunrise:'🌅 🌄 🌇', thermo:'🌡️ 🌡',
-    flame:'🔥', bolt:'⚡ 💪', cake:'🎂', pulse:'🩺 💓', heart:'❤️ ❤ 💞 💕 ♥️ 💖 💗', lotus:'🙏 🕉️ 🕉 🪷', pin:'📍 📌', link:'🔗', lock:'🔒 🔐', scales:'⚖️ ⚖',
-    eye:'🧿 👁️ 👁 👀', telescope:'🔭', camera:'📸 📷', map:'🗺️ 🗺', check:'✅ ☑️ ☑', cloud:'☁️ ☁', trophy:'🏆 🥇', up:'👆 ⬆️', waves:'🌊', fullmoon:'🌕',
+    alert:'⚠️ ⚠', target:'🎯 🏹', orb:'🔮', sparkle:'✨ 🌟 💫 🌠', coin:'💰 💵 🪙 💴', ring:'💍 💒', briefcase:'💼 🧳', bulb:'💡', download:'📥', upload:'📤',
+    user:'👤 🧍 🧑 🙍', users:'👥 🤝 👪 👨 👩 👨‍👩‍👧 🪪 🙋', smile:'👶 🙂 😊', planet:'🪐 🌌', moon:'🌙 🌒 🌓 🌔 🌖 🌗 🌘 🌛 🌜 🦀', sun:'☀️ ☀ 🌞', newmoon:'🌑', sunrise:'🌅 🌄 🌇 🌆', thermo:'🌡️ 🌡',
+    flame:'🔥 🕯️', bolt:'⚡ 💪', cake:'🎂', pulse:'🩺 💓', heart:'❤️ ❤ 💞 💕 ♥️ 💖 💗 💝', lotus:'🙏 🕉️ 🕉 🪷', pin:'📍 📌', link:'🔗', lock:'🔒 🔐', scales:'⚖️ ⚖',
+    eye:'🧿 👁️ 👁 👀 🧐', telescope:'🔭', camera:'📸 📷', map:'🗺️ 🗺', check:'✅ ☑️ ☑', cloud:'☁️ ☁', trophy:'🏆 🥇 🎖️', up:'👆 ⬆️', waves:'🌊 🐸', fullmoon:'🌕',
     globe:'🌐 🌍 🌎 🌏', cap:'🎓', crown:'👑 🦁', compass:'🧭', mirror:'🪞', wrench:'🛠️ 🛠 🔧',
     plus:'➕', trash:'🗑️ 🗑', gear:'⚙️ ⚙', pencil:'📝 ✏️ ✏ 🖊️', clip:'📎', mic:'🎙️ 🎙 🎤', folder:'🗂️ 🗂 📁 📂', phone:'📞 📱 📲', help:'❓ ❔ 🤷', chat:'💬 🗣️ 🗣',
-    bug:'🐞 🐛', refresh:'🔄 🔁', ruler:'📏 📐', video:'🎥 🎬', satellite:'🛰️ 🛰', gem:'💎', lamp:'🪔', swirl:'🌀', star:'⭐', gift:'🎁', ban:'⛔ 🚫',
-    chart:'📊 🔢', trend:'📈', sprout:'🌱 🍀 🌳 🌿', bell:'🔔', building:'🏛️ 🏛', layers:'🗃️ 📑'
+    bug:'🐞 🐛', refresh:'🔄 🔁 ♻️', ruler:'📏 📐', video:'🎥 🎬', satellite:'🛰️ 🛰', gem:'💎 💠', lamp:'🪔', swirl:'🌀', star:'⭐ 🌃', gift:'🎁', ban:'⛔ 🚫',
+    chart:'📊 🔢', trend:'📈', sprout:'🌱 🍀 🌳 🌿 🪴', bell:'🔔', building:'🏛️ 🏛 🛕', layers:'🗃️ 📑 🧱',
+    hexagram:'🔯', octagram:'✴️', wheel:'☸️ 🎡', daynight:'🔅', swap:'🔀', triangle:'🔺', kendra:'🔲', feet:'👣', anchor:'⚓', trident:'🔱', beads:'📿', dna:'🧬'
   };
   var MAP = {}, keys = [];
   Object.keys(M).forEach(function(n){ M[n].split(' ').forEach(function(e){ if (e){ MAP[e.replace(/️/g, '')] = n; } }); });
@@ -1800,18 +1813,31 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
     up:'<path d="M12 19V5M6 11l6-6 6 6"/>',
     waves:'<path d="M3 9c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',
     fullmoon:'<circle class="f" cx="12" cy="12" r="8.500"/><path d="M9 9.500v.1M14.500 8.500v.1M13.500 14.500v.1M8.500 14v.1"/>',
-    layers:'<path class="f" d="m12 3.500 9 4.500-9 4.500L3 8Z"/><path d="m3 12 9 4.500 9-4.500M3 16l9 4.500 9-4.500"/>'
+    layers:'<path class="f" d="m12 3.500 9 4.500-9 4.500L3 8Z"/><path d="m3 12 9 4.500 9-4.500M3 16l9 4.500 9-4.500"/>',
+    hexagram:'<path d="M12 3.5 19.5 16.5h-15Z"/><path class="f" d="M12 20.5 4.5 7.5h15Z"/>',
+    octagram:'<rect class="f" x="5.5" y="5.5" width="13" height="13" rx="1"/><rect x="5.5" y="5.5" width="13" height="13" rx="1" transform="rotate(45 12 12)"/>',
+    wheel:'<circle class="f" cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 3.5V10M12 14v6.5M3.5 12H10M14 12h6.5M6 6l4.5 4.5M13.5 13.5 18 18M18 6l-4.5 4.5M10.5 13.5 6 18"/>',
+    daynight:'<circle cx="12" cy="12" r="8.5"/><path class="f" d="M12 3.5a8.5 8.5 0 0 1 0 17Z"/><path d="M12 3.5v17"/>',
+    swap:'<path d="M4 8h14M14.5 4.5 18 8l-3.5 3.5M20 16H6M9.5 12.5 6 16l3.5 3.5"/>',
+    triangle:'<path class="f" d="M12 4 20.5 19h-17Z"/><circle cx="12" cy="14" r="1.2"/>',
+    kendra:'<rect class="f" x="4" y="4" width="16" height="16" rx="2.5"/><path d="M12 4v16M4 12h16"/>',
+    feet:'<ellipse class="f" cx="8.5" cy="14" rx="3" ry="5"/><ellipse class="f" cx="16" cy="9.5" rx="3" ry="5"/>',
+    anchor:'<circle cx="12" cy="5.5" r="2"/><path d="M12 7.5V20M7.5 11h9M5 14c0 3.5 3 6 7 6s7-2.5 7-6"/>',
+    trident:'<path d="M12 3.5v17M6.5 5v4.5a5.5 5.5 0 0 0 11 0V5M9.5 20.5h5"/>',
+    beads:'<g class="f"><circle cx="12" cy="4.5" r="1.7"/><circle cx="17.3" cy="6.7" r="1.7"/><circle cx="19.5" cy="12" r="1.7"/><circle cx="17.3" cy="17.3" r="1.7"/><circle cx="12" cy="19.5" r="1.7"/><circle cx="6.7" cy="17.3" r="1.7"/><circle cx="4.5" cy="12" r="1.7"/><circle cx="6.7" cy="6.7" r="1.7"/></g><path d="M12 19.5v2.5"/>',
+    dna:'<path d="M8 3.5c0 5 8 5 8 8.5s-8 3.5-8 8.5M16 3.5c0 5-8 5-8 8.5s8 3.5 8 8.5M9 7h6M9 17h6"/>'
   };
   var M = {
     home:'🏠 🏡', doc:'🗎 📋 📄 📃 📜 📒 🗒️ 🗒', book:'📚 📖', calendar:'📅 🗓️ 🗓 📆', clock:'🕰️ 🕰 ⏱️ ⏱ 🕘 ⏰ 🕐 🕒', hourglass:'⏳ ⌛', search:'🔎 🔍 🔬',
-    alert:'⚠️ ⚠', target:'🎯', orb:'🔮', sparkle:'✨ 🌟 💫', coin:'💰 💵 🪙', ring:'💍', briefcase:'💼', bulb:'💡', download:'📥', upload:'📤',
-    user:'👤 🧍 🧑', users:'👥 🤝 👪 👨 👩 👨‍👩‍👧 🪪', smile:'👶 🙂 😊', planet:'🪐 🌌', moon:'🌙 🌒 🌓 🌔 🌖 🌗 🌘 🌛 🌜', sun:'☀️ ☀ 🌞', newmoon:'🌑', sunrise:'🌅 🌄 🌇', thermo:'🌡️ 🌡',
-    flame:'🔥', bolt:'⚡ 💪', cake:'🎂', pulse:'🩺 💓', heart:'❤️ ❤ 💞 💕 ♥️ 💖 💗', lotus:'🙏 🕉️ 🕉 🪷', pin:'📍 📌', link:'🔗', lock:'🔒 🔐', scales:'⚖️ ⚖',
-    eye:'🧿 👁️ 👁 👀', telescope:'🔭', camera:'📸 📷', map:'🗺️ 🗺', check:'✅ ☑️ ☑', cloud:'☁️ ☁', trophy:'🏆 🥇', up:'👆 ⬆️', waves:'🌊', fullmoon:'🌕',
+    alert:'⚠️ ⚠', target:'🎯 🏹', orb:'🔮', sparkle:'✨ 🌟 💫 🌠', coin:'💰 💵 🪙 💴', ring:'💍 💒', briefcase:'💼 🧳', bulb:'💡', download:'📥', upload:'📤',
+    user:'👤 🧍 🧑 🙍', users:'👥 🤝 👪 👨 👩 👨‍👩‍👧 🪪 🙋', smile:'👶 🙂 😊', planet:'🪐 🌌', moon:'🌙 🌒 🌓 🌔 🌖 🌗 🌘 🌛 🌜 🦀', sun:'☀️ ☀ 🌞', newmoon:'🌑', sunrise:'🌅 🌄 🌇 🌆', thermo:'🌡️ 🌡',
+    flame:'🔥 🕯️', bolt:'⚡ 💪', cake:'🎂', pulse:'🩺 💓', heart:'❤️ ❤ 💞 💕 ♥️ 💖 💗 💝', lotus:'🙏 🕉️ 🕉 🪷', pin:'📍 📌', link:'🔗', lock:'🔒 🔐', scales:'⚖️ ⚖',
+    eye:'🧿 👁️ 👁 👀 🧐', telescope:'🔭', camera:'📸 📷', map:'🗺️ 🗺', check:'✅ ☑️ ☑', cloud:'☁️ ☁', trophy:'🏆 🥇 🎖️', up:'👆 ⬆️', waves:'🌊 🐸', fullmoon:'🌕',
     globe:'🌐 🌍 🌎 🌏', cap:'🎓', crown:'👑 🦁', compass:'🧭', mirror:'🪞', wrench:'🛠️ 🛠 🔧',
     plus:'➕', trash:'🗑️ 🗑', gear:'⚙️ ⚙', pencil:'📝 ✏️ ✏ 🖊️', clip:'📎', mic:'🎙️ 🎙 🎤', folder:'🗂️ 🗂 📁 📂', phone:'📞 📱 📲', help:'❓ ❔ 🤷', chat:'💬 🗣️ 🗣',
-    bug:'🐞 🐛', refresh:'🔄 🔁', ruler:'📏 📐', video:'🎥 🎬', satellite:'🛰️ 🛰', gem:'💎', lamp:'🪔', swirl:'🌀', star:'⭐', gift:'🎁', ban:'⛔ 🚫',
-    chart:'📊 🔢', trend:'📈', sprout:'🌱 🍀 🌳 🌿', bell:'🔔', building:'🏛️ 🏛', layers:'🗃️ 📑'
+    bug:'🐞 🐛', refresh:'🔄 🔁 ♻️', ruler:'📏 📐', video:'🎥 🎬', satellite:'🛰️ 🛰', gem:'💎 💠', lamp:'🪔', swirl:'🌀', star:'⭐ 🌃', gift:'🎁', ban:'⛔ 🚫',
+    chart:'📊 🔢', trend:'📈', sprout:'🌱 🍀 🌳 🌿 🪴', bell:'🔔', building:'🏛️ 🏛 🛕', layers:'🗃️ 📑 🧱',
+    hexagram:'🔯', octagram:'✴️', wheel:'☸️ 🎡', daynight:'🔅', swap:'🔀', triangle:'🔺', kendra:'🔲', feet:'👣', anchor:'⚓', trident:'🔱', beads:'📿', dna:'🧬'
   };
   var MAP = {}, keys = [];
   Object.keys(M).forEach(function(n){ M[n].split(' ').forEach(function(e){ if (e){ MAP[e.replace(/️/g, '')] = n; } }); });
@@ -10352,7 +10378,7 @@ body.srch-lock{overflow:hidden}
 .ds-eyebrow{font:600 11px var(--font-sans);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim,#b48a3a);margin:0 0 8px}
 .ds-fam{margin:0 0 22px}
 .ds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
-.ds-card{display:flex;flex-direction:column;gap:3px;text-align:left;padding:13px 14px;border-radius:14px;cursor:pointer;color:var(--text-main);
+.ds-card{display:flex;flex-direction:row;align-items:center;gap:11px;text-align:left;padding:13px 14px;border-radius:14px;cursor:pointer;color:var(--text-main);
   background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));border:1px solid var(--border-light,rgba(255,255,255,.1));font-family:inherit}
 .ds-card b{font:500 15px var(--font-display,inherit);color:var(--text-main)}
 .ds-card small{font-size:12px;color:var(--text-muted);line-height:1.35}
@@ -10376,7 +10402,7 @@ body.srch-lock{overflow:hidden}
 .ds-now{padding:14px;border-radius:16px;margin:0 0 18px;background:linear-gradient(145deg,rgba(212,162,74,.09),rgba(255,255,255,.012));border:1px solid rgba(212,162,74,.28)}
 .ds-ladder{display:flex;flex-direction:column;gap:8px}
 .ds-lad{display:flex;align-items:center;gap:10px;min-width:0}
-.ds-lv{flex:none;width:82px;font:600 10.5px var(--font-sans);letter-spacing:.06em;text-transform:uppercase;color:var(--text-subtle,var(--text-muted))}
+.ds-lv{flex:none;width:96px;font:600 10.5px var(--font-sans);letter-spacing:.06em;text-transform:uppercase;color:var(--text-subtle,var(--text-muted))}
 .ds-tile{flex:none;width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:17px;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);border:1px solid color-mix(in srgb,var(--c) 40%,transparent)}
 .ds-rt{display:flex;flex-direction:column;min-width:0;flex:1}
 .ds-rt b{font:500 15px var(--font-display,inherit);color:var(--text-main)}
@@ -10394,7 +10420,16 @@ body.srch-lock{overflow:hidden}
 .ds-rd em{font-style:normal;font-size:10.5px;color:var(--text-subtle,var(--text-muted))}
 .ds-go{flex:none;color:var(--gold,#d4a24a);font-size:20px;line-height:1}
 .ds-nowtag{position:absolute;top:-8px;right:12px;font:700 9.5px var(--font-sans);letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:var(--gold,#d4a24a);color:#1a1408}
-@media (max-width:480px){.ds-lv{width:70px}.ds-rd em{display:none}}
+@media (max-width:480px){.ds-lv{width:88px;letter-spacing:.03em}.ds-rd em{display:none}}
+
+.ds-ct{display:flex;flex-direction:column;gap:3px;min-width:0}
+.ds-ico{flex:none;width:38px;height:38px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;color:var(--gold,#d4a24a);
+  background:linear-gradient(145deg,rgba(212,162,74,.16),rgba(212,162,74,.04));border:1px solid rgba(212,162,74,.28)}
+.ds-ico .vxi,.ds-ico svg{width:22px;height:22px}
+.ds-head{align-items:center}
+.ds-head .ds-ico{width:46px;height:46px;border-radius:14px}
+.ds-head .ds-ico .vxi,.ds-head .ds-ico svg{width:27px;height:27px}
+.ds-ht{flex:1;min-width:0}
 </style>
 
 
@@ -10599,18 +10634,31 @@ body.srch-lock{overflow:hidden}
     up:'<path d="M12 19V5M6 11l6-6 6 6"/>',
     waves:'<path d="M3 9c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',
     fullmoon:'<circle class="f" cx="12" cy="12" r="8.500"/><path d="M9 9.500v.1M14.500 8.500v.1M13.500 14.500v.1M8.500 14v.1"/>',
-    layers:'<path class="f" d="m12 3.500 9 4.500-9 4.500L3 8Z"/><path d="m3 12 9 4.500 9-4.500M3 16l9 4.500 9-4.500"/>'
+    layers:'<path class="f" d="m12 3.500 9 4.500-9 4.500L3 8Z"/><path d="m3 12 9 4.500 9-4.500M3 16l9 4.500 9-4.500"/>',
+    hexagram:'<path d="M12 3.5 19.5 16.5h-15Z"/><path class="f" d="M12 20.5 4.5 7.5h15Z"/>',
+    octagram:'<rect class="f" x="5.5" y="5.5" width="13" height="13" rx="1"/><rect x="5.5" y="5.5" width="13" height="13" rx="1" transform="rotate(45 12 12)"/>',
+    wheel:'<circle class="f" cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 3.5V10M12 14v6.5M3.5 12H10M14 12h6.5M6 6l4.5 4.5M13.5 13.5 18 18M18 6l-4.5 4.5M10.5 13.5 6 18"/>',
+    daynight:'<circle cx="12" cy="12" r="8.5"/><path class="f" d="M12 3.5a8.5 8.5 0 0 1 0 17Z"/><path d="M12 3.5v17"/>',
+    swap:'<path d="M4 8h14M14.5 4.5 18 8l-3.5 3.5M20 16H6M9.5 12.5 6 16l3.5 3.5"/>',
+    triangle:'<path class="f" d="M12 4 20.5 19h-17Z"/><circle cx="12" cy="14" r="1.2"/>',
+    kendra:'<rect class="f" x="4" y="4" width="16" height="16" rx="2.5"/><path d="M12 4v16M4 12h16"/>',
+    feet:'<ellipse class="f" cx="8.5" cy="14" rx="3" ry="5"/><ellipse class="f" cx="16" cy="9.5" rx="3" ry="5"/>',
+    anchor:'<circle cx="12" cy="5.5" r="2"/><path d="M12 7.5V20M7.5 11h9M5 14c0 3.5 3 6 7 6s7-2.5 7-6"/>',
+    trident:'<path d="M12 3.5v17M6.5 5v4.5a5.5 5.5 0 0 0 11 0V5M9.5 20.5h5"/>',
+    beads:'<g class="f"><circle cx="12" cy="4.5" r="1.7"/><circle cx="17.3" cy="6.7" r="1.7"/><circle cx="19.5" cy="12" r="1.7"/><circle cx="17.3" cy="17.3" r="1.7"/><circle cx="12" cy="19.5" r="1.7"/><circle cx="6.7" cy="17.3" r="1.7"/><circle cx="4.5" cy="12" r="1.7"/><circle cx="6.7" cy="6.7" r="1.7"/></g><path d="M12 19.5v2.5"/>',
+    dna:'<path d="M8 3.5c0 5 8 5 8 8.5s-8 3.5-8 8.5M16 3.5c0 5-8 5-8 8.5s8 3.5 8 8.5M9 7h6M9 17h6"/>'
   };
   var M = {
     home:'🏠 🏡', doc:'🗎 📋 📄 📃 📜 📒 🗒️ 🗒', book:'📚 📖', calendar:'📅 🗓️ 🗓 📆', clock:'🕰️ 🕰 ⏱️ ⏱ 🕘 ⏰ 🕐 🕒', hourglass:'⏳ ⌛', search:'🔎 🔍 🔬',
-    alert:'⚠️ ⚠', target:'🎯', orb:'🔮', sparkle:'✨ 🌟 💫', coin:'💰 💵 🪙', ring:'💍', briefcase:'💼', bulb:'💡', download:'📥', upload:'📤',
-    user:'👤 🧍 🧑', users:'👥 🤝 👪 👨 👩 👨‍👩‍👧 🪪', smile:'👶 🙂 😊', planet:'🪐 🌌', moon:'🌙 🌒 🌓 🌔 🌖 🌗 🌘 🌛 🌜', sun:'☀️ ☀ 🌞', newmoon:'🌑', sunrise:'🌅 🌄 🌇', thermo:'🌡️ 🌡',
-    flame:'🔥', bolt:'⚡ 💪', cake:'🎂', pulse:'🩺 💓', heart:'❤️ ❤ 💞 💕 ♥️ 💖 💗', lotus:'🙏 🕉️ 🕉 🪷', pin:'📍 📌', link:'🔗', lock:'🔒 🔐', scales:'⚖️ ⚖',
-    eye:'🧿 👁️ 👁 👀', telescope:'🔭', camera:'📸 📷', map:'🗺️ 🗺', check:'✅ ☑️ ☑', cloud:'☁️ ☁', trophy:'🏆 🥇', up:'👆 ⬆️', waves:'🌊', fullmoon:'🌕',
+    alert:'⚠️ ⚠', target:'🎯 🏹', orb:'🔮', sparkle:'✨ 🌟 💫 🌠', coin:'💰 💵 🪙 💴', ring:'💍 💒', briefcase:'💼 🧳', bulb:'💡', download:'📥', upload:'📤',
+    user:'👤 🧍 🧑 🙍', users:'👥 🤝 👪 👨 👩 👨‍👩‍👧 🪪 🙋', smile:'👶 🙂 😊', planet:'🪐 🌌', moon:'🌙 🌒 🌓 🌔 🌖 🌗 🌘 🌛 🌜 🦀', sun:'☀️ ☀ 🌞', newmoon:'🌑', sunrise:'🌅 🌄 🌇 🌆', thermo:'🌡️ 🌡',
+    flame:'🔥 🕯️', bolt:'⚡ 💪', cake:'🎂', pulse:'🩺 💓', heart:'❤️ ❤ 💞 💕 ♥️ 💖 💗 💝', lotus:'🙏 🕉️ 🕉 🪷', pin:'📍 📌', link:'🔗', lock:'🔒 🔐', scales:'⚖️ ⚖',
+    eye:'🧿 👁️ 👁 👀 🧐', telescope:'🔭', camera:'📸 📷', map:'🗺️ 🗺', check:'✅ ☑️ ☑', cloud:'☁️ ☁', trophy:'🏆 🥇 🎖️', up:'👆 ⬆️', waves:'🌊 🐸', fullmoon:'🌕',
     globe:'🌐 🌍 🌎 🌏', cap:'🎓', crown:'👑 🦁', compass:'🧭', mirror:'🪞', wrench:'🛠️ 🛠 🔧',
     plus:'➕', trash:'🗑️ 🗑', gear:'⚙️ ⚙', pencil:'📝 ✏️ ✏ 🖊️', clip:'📎', mic:'🎙️ 🎙 🎤', folder:'🗂️ 🗂 📁 📂', phone:'📞 📱 📲', help:'❓ ❔ 🤷', chat:'💬 🗣️ 🗣',
-    bug:'🐞 🐛', refresh:'🔄 🔁', ruler:'📏 📐', video:'🎥 🎬', satellite:'🛰️ 🛰', gem:'💎', lamp:'🪔', swirl:'🌀', star:'⭐', gift:'🎁', ban:'⛔ 🚫',
-    chart:'📊 🔢', trend:'📈', sprout:'🌱 🍀 🌳 🌿', bell:'🔔', building:'🏛️ 🏛', layers:'🗃️ 📑'
+    bug:'🐞 🐛', refresh:'🔄 🔁 ♻️', ruler:'📏 📐', video:'🎥 🎬', satellite:'🛰️ 🛰', gem:'💎 💠', lamp:'🪔', swirl:'🌀', star:'⭐ 🌃', gift:'🎁', ban:'⛔ 🚫',
+    chart:'📊 🔢', trend:'📈', sprout:'🌱 🍀 🌳 🌿 🪴', bell:'🔔', building:'🏛️ 🏛 🛕', layers:'🗃️ 📑 🧱',
+    hexagram:'🔯', octagram:'✴️', wheel:'☸️ 🎡', daynight:'🔅', swap:'🔀', triangle:'🔺', kendra:'🔲', feet:'👣', anchor:'⚓', trident:'🔱', beads:'📿', dna:'🧬'
   };
   var MAP = {}, keys = [];
   Object.keys(M).forEach(function(n){ M[n].split(' ').forEach(function(e){ if (e){ MAP[e.replace(/️/g, '')] = n; } }); });
@@ -14053,7 +14101,7 @@ const HOME_ITEMS=[
  ['panel-vbday','🎂','Vedic Birthday','Tithi, Nakshatra & solar birthday for any year','Time & Cycles','home'],
  ['panel-active','🔥','Life Activation','Houses lit up now · pick any date','Time & Cycles','home'],
  ['panel-dasha','◷','Dasha','120-year life-period timeline','Time & Cycles','home'],
- ['panel-dashasys','◷','36 Dasha Systems','Vimshottari, Yogini, Chara, Narayana & more','Time & Cycles','home'],
+ ['panel-dashasys','🎡','36 Dasha Systems','Vimshottari, Yogini, Chara, Narayana & more','Time & Cycles','home'],
  ['panel-tithi','🪔','Tithi Pravesh','Your yearly lunar-birthday chart','Time & Cycles','home'],
  ['panel-transits','♄','Transits & Sade Sati','Saturn, Jupiter & node ingress dates','Time & Cycles','home'],
  ['panel-transit','⟲','Live Sky','Today\'s planets vs your chart','Time & Cycles','home'],
@@ -19401,7 +19449,7 @@ document.getElementById('modalConfirm').addEventListener('click', () => {
 <\/script>
 <script>
 (function(){
-const AREA={D1:['🧍','Self · Body'],D2:['💰','Wealth'],D3:['🦁','Siblings · Courage'],D4:['🏡','Home · Fortune'],D5:['👑','Fame · Power'],D6:['🩺','Health · Foes'],D7:['👶','Children'],D8:['⏳','Longevity'],D9:['💍','Marriage · Dharma'],D10:['💼','Career'],D11:['📈','Gains'],D12:['🌳','Parents'],D16:['🚗','Comforts'],D20:['🕉️','Spiritual'],D24:['🎓','Learning'],D27:['💪','Strength'],D30:['⚡','Troubles'],D40:['🌙','Maternal line'],D45:['☀️','Paternal line'],D60:['🌀','Past karma']};
+const AREA={D1:['🧍','Self · Body'],D2:['💰','Wealth'],D3:['🦁','Siblings · Courage'],D4:['🏡','Home · Fortune'],D5:['👑','Fame · Power'],D6:['🩺','Health · Foes'],D7:['👶','Children'],D8:['⏳','Longevity'],D9:['💍','Marriage · Dharma'],D10:['💼','Career'],D11:['📈','Gains'],D12:['🌳','Parents'],D16:['🚗','Comforts'],D20:['🕉️','Spiritual'],D24:['🎓','Learning'],D27:['💪','Strength'],D30:['⚡','Troubles'],D40:['🌙','Maternal line'],D45:['☀️','Paternal line'],D60:['🌀','Past karma'],D81:['🔍','Fine dharma'],D108:['📿','Deep karma'],D144:['🧬','Heredity']};
 const P=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
 const KEND=[1,4,7,10],TRI=[1,5,9],DUS=[6,8,12],UPA=[3,6,10,11];
 const f=(x,d)=>(typeof x==='number'&&isFinite(x))?x.toFixed(d):'—';
@@ -33448,7 +33496,7 @@ DS.active = function(sys, c, periods, t){
 };
 
 DS.label = function(sys, key){ return sys.keyType === 'planet' ? key : SIGNS[key].name; };
-DS.glyph = function(sys, key){ return sys.keyType === 'planet' ? (window.PLANET_GLYPHS && PLANET_GLYPHS[key]) || '' : SIGNS[key].symbol; };
+DS.glyph = function(sys, key){ return sys.keyType === 'planet' ? (window.PLANET_GLYPHS && PLANET_GLYPHS[key]) || '' : SIGNS[key].symbol + '\uFE0E'; };
 })();
 <\/script>
 <script>
@@ -33916,6 +33964,13 @@ const CONDITIONAL = ['shodasottari','shattrimsa','dwadasottari','dwisaptati','sa
 const famOf = s => s.family === 'Nakshatra' && CONDITIONAL.includes(s.id) ? 'Conditional' : s.family;
 const ELEM = { Fire:'#d9824a', Earth:'#8fae6b', Air:'#6fa8c8', Water:'#7a8fd4' };
 const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// One icon (emoji key -> SVG via shared/icons.js) per system
+const ICO = { vimshottari:'🔯', ashtottari:'✴️', kalachakra:'☸️', yogini:'🪷', shodasottari:'🌞', shattrimsa:'🔅', dwadasottari:'💝', dwisaptati:'🔀',
+  sataabdika:'💠', chaturaseeti:'🧳', shashtihayani:'🌄', panchottari:'🦀', 'chara-parasara':'🧭', 'chara-knrao':'🏹', 'chara-iranganti1':'🙍',
+  'chara-iranganti2':'🙋', narayana:'🛕', sudasa:'💴', drig:'🧐', trikona:'🔺', lagnamsaka:'🧱', yogardha:'⚖️', kendradi:'🔲', padanadhamsa:'👣',
+  paryaya:'♻️', moola:'🪴', sthira:'⚓', shoola:'🔱', niryana:'🕯️', mandooka:'🐸', brahma:'🌠', varnada:'🎖️', navamsa:'💒', sandhya:'🌆',
+  chakra:'🎡', taralagna:'🌃' };
+const ico = x => '<span class="ds-ico">' + (ICO[x.id] || '🎡') + '</span>';
 const S = { chart:null, sys:null, gender:'M', subMode:'auto', path:[], data:null };
 try { S.gender = localStorage.getItem('vx_ds_gender') === 'F' ? 'F' : 'M'; S.subMode = localStorage.getItem('vx_ds_sub') || 'auto'; } catch(e){}
 
@@ -33962,7 +34017,7 @@ function systemHtml(){
   const ap = sys.applic(c);
   const active = DS.active(sys, c, S.data.periods, now);
   let h = `<button type="button" class="ds-back" data-act="home">‹ All 36 systems</button>`;
-  h += `<div class="ds-head"><div><div class="ds-eyebrow">${famLabel(sys)}</div><h4>${sys.name}</h4><small>${sys.blurb}</small></div>`
+  h += `<div class="ds-head">${ico(sys)}<div class="ds-ht"><div class="ds-eyebrow">${famLabel(sys)}</div><h4>${sys.name}</h4><small>${sys.blurb}</small></div>`
      + `<span class="ds-badge ${sys.conf === 'classical' ? 'ok' : 'warn'}" title="${sys.conf === 'classical' ? 'Standard, widely agreed rules' : 'Software conventions differ on some rules; treat as interpretation'}">${sys.conf === 'classical' ? 'classical' : 'interpretation varies'}</span></div>`;
   h += `<div class="ds-note ${ap.ok ? 'g' : 'b'}"><span>${ap.ok ? '✓' : '!'}</span><div>${ap.text}</div></div>`;
   if (sys.needsGender || sys.subToggle){
@@ -33995,7 +34050,7 @@ function homeHtml(){
   FAMILIES.forEach(([f,title])=>{
     const items = DS.list.filter(s => famOf(s) === f);
     h += `<div class="ds-fam"><div class="ds-eyebrow">${title}</div><div class="ds-grid">`
-      + items.map(s => `<button type="button" class="ds-card" data-id="${s.id}"><b>${s.name}</b><small>${s.blurb}</small></button>`).join('') + `</div></div>`;
+      + items.map(s => `<button type="button" class="ds-card" data-id="${s.id}">${ico(s)}<span class="ds-ct"><b>${s.name}</b><small>${s.blurb}</small></span></button>`).join('') + `</div></div>`;
   });
   return h;
 }
@@ -34406,18 +34461,31 @@ input,select,textarea{font:inherit;color:inherit}
     up:'<path d="M12 19V5M6 11l6-6 6 6"/>',
     waves:'<path d="M3 9c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',
     fullmoon:'<circle class="f" cx="12" cy="12" r="8.500"/><path d="M9 9.500v.1M14.500 8.500v.1M13.500 14.500v.1M8.500 14v.1"/>',
-    layers:'<path class="f" d="m12 3.500 9 4.500-9 4.500L3 8Z"/><path d="m3 12 9 4.500 9-4.500M3 16l9 4.500 9-4.500"/>'
+    layers:'<path class="f" d="m12 3.500 9 4.500-9 4.500L3 8Z"/><path d="m3 12 9 4.500 9-4.500M3 16l9 4.500 9-4.500"/>',
+    hexagram:'<path d="M12 3.5 19.5 16.5h-15Z"/><path class="f" d="M12 20.5 4.5 7.5h15Z"/>',
+    octagram:'<rect class="f" x="5.5" y="5.5" width="13" height="13" rx="1"/><rect x="5.5" y="5.5" width="13" height="13" rx="1" transform="rotate(45 12 12)"/>',
+    wheel:'<circle class="f" cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 3.5V10M12 14v6.5M3.5 12H10M14 12h6.5M6 6l4.5 4.5M13.5 13.5 18 18M18 6l-4.5 4.5M10.5 13.5 6 18"/>',
+    daynight:'<circle cx="12" cy="12" r="8.5"/><path class="f" d="M12 3.5a8.5 8.5 0 0 1 0 17Z"/><path d="M12 3.5v17"/>',
+    swap:'<path d="M4 8h14M14.5 4.5 18 8l-3.5 3.5M20 16H6M9.5 12.5 6 16l3.5 3.5"/>',
+    triangle:'<path class="f" d="M12 4 20.5 19h-17Z"/><circle cx="12" cy="14" r="1.2"/>',
+    kendra:'<rect class="f" x="4" y="4" width="16" height="16" rx="2.5"/><path d="M12 4v16M4 12h16"/>',
+    feet:'<ellipse class="f" cx="8.5" cy="14" rx="3" ry="5"/><ellipse class="f" cx="16" cy="9.5" rx="3" ry="5"/>',
+    anchor:'<circle cx="12" cy="5.5" r="2"/><path d="M12 7.5V20M7.5 11h9M5 14c0 3.5 3 6 7 6s7-2.5 7-6"/>',
+    trident:'<path d="M12 3.5v17M6.5 5v4.5a5.5 5.5 0 0 0 11 0V5M9.5 20.5h5"/>',
+    beads:'<g class="f"><circle cx="12" cy="4.5" r="1.7"/><circle cx="17.3" cy="6.7" r="1.7"/><circle cx="19.5" cy="12" r="1.7"/><circle cx="17.3" cy="17.3" r="1.7"/><circle cx="12" cy="19.5" r="1.7"/><circle cx="6.7" cy="17.3" r="1.7"/><circle cx="4.5" cy="12" r="1.7"/><circle cx="6.7" cy="6.7" r="1.7"/></g><path d="M12 19.5v2.5"/>',
+    dna:'<path d="M8 3.5c0 5 8 5 8 8.5s-8 3.5-8 8.5M16 3.5c0 5-8 5-8 8.5s8 3.5 8 8.5M9 7h6M9 17h6"/>'
   };
   var M = {
     home:'🏠 🏡', doc:'🗎 📋 📄 📃 📜 📒 🗒️ 🗒', book:'📚 📖', calendar:'📅 🗓️ 🗓 📆', clock:'🕰️ 🕰 ⏱️ ⏱ 🕘 ⏰ 🕐 🕒', hourglass:'⏳ ⌛', search:'🔎 🔍 🔬',
-    alert:'⚠️ ⚠', target:'🎯', orb:'🔮', sparkle:'✨ 🌟 💫', coin:'💰 💵 🪙', ring:'💍', briefcase:'💼', bulb:'💡', download:'📥', upload:'📤',
-    user:'👤 🧍 🧑', users:'👥 🤝 👪 👨 👩 👨‍👩‍👧 🪪', smile:'👶 🙂 😊', planet:'🪐 🌌', moon:'🌙 🌒 🌓 🌔 🌖 🌗 🌘 🌛 🌜', sun:'☀️ ☀ 🌞', newmoon:'🌑', sunrise:'🌅 🌄 🌇', thermo:'🌡️ 🌡',
-    flame:'🔥', bolt:'⚡ 💪', cake:'🎂', pulse:'🩺 💓', heart:'❤️ ❤ 💞 💕 ♥️ 💖 💗', lotus:'🙏 🕉️ 🕉 🪷', pin:'📍 📌', link:'🔗', lock:'🔒 🔐', scales:'⚖️ ⚖',
-    eye:'🧿 👁️ 👁 👀', telescope:'🔭', camera:'📸 📷', map:'🗺️ 🗺', check:'✅ ☑️ ☑', cloud:'☁️ ☁', trophy:'🏆 🥇', up:'👆 ⬆️', waves:'🌊', fullmoon:'🌕',
+    alert:'⚠️ ⚠', target:'🎯 🏹', orb:'🔮', sparkle:'✨ 🌟 💫 🌠', coin:'💰 💵 🪙 💴', ring:'💍 💒', briefcase:'💼 🧳', bulb:'💡', download:'📥', upload:'📤',
+    user:'👤 🧍 🧑 🙍', users:'👥 🤝 👪 👨 👩 👨‍👩‍👧 🪪 🙋', smile:'👶 🙂 😊', planet:'🪐 🌌', moon:'🌙 🌒 🌓 🌔 🌖 🌗 🌘 🌛 🌜 🦀', sun:'☀️ ☀ 🌞', newmoon:'🌑', sunrise:'🌅 🌄 🌇 🌆', thermo:'🌡️ 🌡',
+    flame:'🔥 🕯️', bolt:'⚡ 💪', cake:'🎂', pulse:'🩺 💓', heart:'❤️ ❤ 💞 💕 ♥️ 💖 💗 💝', lotus:'🙏 🕉️ 🕉 🪷', pin:'📍 📌', link:'🔗', lock:'🔒 🔐', scales:'⚖️ ⚖',
+    eye:'🧿 👁️ 👁 👀 🧐', telescope:'🔭', camera:'📸 📷', map:'🗺️ 🗺', check:'✅ ☑️ ☑', cloud:'☁️ ☁', trophy:'🏆 🥇 🎖️', up:'👆 ⬆️', waves:'🌊 🐸', fullmoon:'🌕',
     globe:'🌐 🌍 🌎 🌏', cap:'🎓', crown:'👑 🦁', compass:'🧭', mirror:'🪞', wrench:'🛠️ 🛠 🔧',
     plus:'➕', trash:'🗑️ 🗑', gear:'⚙️ ⚙', pencil:'📝 ✏️ ✏ 🖊️', clip:'📎', mic:'🎙️ 🎙 🎤', folder:'🗂️ 🗂 📁 📂', phone:'📞 📱 📲', help:'❓ ❔ 🤷', chat:'💬 🗣️ 🗣',
-    bug:'🐞 🐛', refresh:'🔄 🔁', ruler:'📏 📐', video:'🎥 🎬', satellite:'🛰️ 🛰', gem:'💎', lamp:'🪔', swirl:'🌀', star:'⭐', gift:'🎁', ban:'⛔ 🚫',
-    chart:'📊 🔢', trend:'📈', sprout:'🌱 🍀 🌳 🌿', bell:'🔔', building:'🏛️ 🏛', layers:'🗃️ 📑'
+    bug:'🐞 🐛', refresh:'🔄 🔁 ♻️', ruler:'📏 📐', video:'🎥 🎬', satellite:'🛰️ 🛰', gem:'💎 💠', lamp:'🪔', swirl:'🌀', star:'⭐ 🌃', gift:'🎁', ban:'⛔ 🚫',
+    chart:'📊 🔢', trend:'📈', sprout:'🌱 🍀 🌳 🌿 🪴', bell:'🔔', building:'🏛️ 🏛 🛕', layers:'🗃️ 📑 🧱',
+    hexagram:'🔯', octagram:'✴️', wheel:'☸️ 🎡', daynight:'🔅', swap:'🔀', triangle:'🔺', kendra:'🔲', feet:'👣', anchor:'⚓', trident:'🔱', beads:'📿', dna:'🧬'
   };
   var MAP = {}, keys = [];
   Object.keys(M).forEach(function(n){ M[n].split(' ').forEach(function(e){ if (e){ MAP[e.replace(/️/g, '')] = n; } }); });
@@ -35146,18 +35214,31 @@ body{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
     up:'<path d="M12 19V5M6 11l6-6 6 6"/>',
     waves:'<path d="M3 9c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',
     fullmoon:'<circle class="f" cx="12" cy="12" r="8.500"/><path d="M9 9.500v.1M14.500 8.500v.1M13.500 14.500v.1M8.500 14v.1"/>',
-    layers:'<path class="f" d="m12 3.500 9 4.500-9 4.500L3 8Z"/><path d="m3 12 9 4.500 9-4.500M3 16l9 4.500 9-4.500"/>'
+    layers:'<path class="f" d="m12 3.500 9 4.500-9 4.500L3 8Z"/><path d="m3 12 9 4.500 9-4.500M3 16l9 4.500 9-4.500"/>',
+    hexagram:'<path d="M12 3.5 19.5 16.5h-15Z"/><path class="f" d="M12 20.5 4.5 7.5h15Z"/>',
+    octagram:'<rect class="f" x="5.5" y="5.5" width="13" height="13" rx="1"/><rect x="5.5" y="5.5" width="13" height="13" rx="1" transform="rotate(45 12 12)"/>',
+    wheel:'<circle class="f" cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 3.5V10M12 14v6.5M3.5 12H10M14 12h6.5M6 6l4.5 4.5M13.5 13.5 18 18M18 6l-4.5 4.5M10.5 13.5 6 18"/>',
+    daynight:'<circle cx="12" cy="12" r="8.5"/><path class="f" d="M12 3.5a8.5 8.5 0 0 1 0 17Z"/><path d="M12 3.5v17"/>',
+    swap:'<path d="M4 8h14M14.5 4.5 18 8l-3.5 3.5M20 16H6M9.5 12.5 6 16l3.5 3.5"/>',
+    triangle:'<path class="f" d="M12 4 20.5 19h-17Z"/><circle cx="12" cy="14" r="1.2"/>',
+    kendra:'<rect class="f" x="4" y="4" width="16" height="16" rx="2.5"/><path d="M12 4v16M4 12h16"/>',
+    feet:'<ellipse class="f" cx="8.5" cy="14" rx="3" ry="5"/><ellipse class="f" cx="16" cy="9.5" rx="3" ry="5"/>',
+    anchor:'<circle cx="12" cy="5.5" r="2"/><path d="M12 7.5V20M7.5 11h9M5 14c0 3.5 3 6 7 6s7-2.5 7-6"/>',
+    trident:'<path d="M12 3.5v17M6.5 5v4.5a5.5 5.5 0 0 0 11 0V5M9.5 20.5h5"/>',
+    beads:'<g class="f"><circle cx="12" cy="4.5" r="1.7"/><circle cx="17.3" cy="6.7" r="1.7"/><circle cx="19.5" cy="12" r="1.7"/><circle cx="17.3" cy="17.3" r="1.7"/><circle cx="12" cy="19.5" r="1.7"/><circle cx="6.7" cy="17.3" r="1.7"/><circle cx="4.5" cy="12" r="1.7"/><circle cx="6.7" cy="6.7" r="1.7"/></g><path d="M12 19.5v2.5"/>',
+    dna:'<path d="M8 3.5c0 5 8 5 8 8.5s-8 3.5-8 8.5M16 3.5c0 5-8 5-8 8.5s8 3.5 8 8.5M9 7h6M9 17h6"/>'
   };
   var M = {
     home:'🏠 🏡', doc:'🗎 📋 📄 📃 📜 📒 🗒️ 🗒', book:'📚 📖', calendar:'📅 🗓️ 🗓 📆', clock:'🕰️ 🕰 ⏱️ ⏱ 🕘 ⏰ 🕐 🕒', hourglass:'⏳ ⌛', search:'🔎 🔍 🔬',
-    alert:'⚠️ ⚠', target:'🎯', orb:'🔮', sparkle:'✨ 🌟 💫', coin:'💰 💵 🪙', ring:'💍', briefcase:'💼', bulb:'💡', download:'📥', upload:'📤',
-    user:'👤 🧍 🧑', users:'👥 🤝 👪 👨 👩 👨‍👩‍👧 🪪', smile:'👶 🙂 😊', planet:'🪐 🌌', moon:'🌙 🌒 🌓 🌔 🌖 🌗 🌘 🌛 🌜', sun:'☀️ ☀ 🌞', newmoon:'🌑', sunrise:'🌅 🌄 🌇', thermo:'🌡️ 🌡',
-    flame:'🔥', bolt:'⚡ 💪', cake:'🎂', pulse:'🩺 💓', heart:'❤️ ❤ 💞 💕 ♥️ 💖 💗', lotus:'🙏 🕉️ 🕉 🪷', pin:'📍 📌', link:'🔗', lock:'🔒 🔐', scales:'⚖️ ⚖',
-    eye:'🧿 👁️ 👁 👀', telescope:'🔭', camera:'📸 📷', map:'🗺️ 🗺', check:'✅ ☑️ ☑', cloud:'☁️ ☁', trophy:'🏆 🥇', up:'👆 ⬆️', waves:'🌊', fullmoon:'🌕',
+    alert:'⚠️ ⚠', target:'🎯 🏹', orb:'🔮', sparkle:'✨ 🌟 💫 🌠', coin:'💰 💵 🪙 💴', ring:'💍 💒', briefcase:'💼 🧳', bulb:'💡', download:'📥', upload:'📤',
+    user:'👤 🧍 🧑 🙍', users:'👥 🤝 👪 👨 👩 👨‍👩‍👧 🪪 🙋', smile:'👶 🙂 😊', planet:'🪐 🌌', moon:'🌙 🌒 🌓 🌔 🌖 🌗 🌘 🌛 🌜 🦀', sun:'☀️ ☀ 🌞', newmoon:'🌑', sunrise:'🌅 🌄 🌇 🌆', thermo:'🌡️ 🌡',
+    flame:'🔥 🕯️', bolt:'⚡ 💪', cake:'🎂', pulse:'🩺 💓', heart:'❤️ ❤ 💞 💕 ♥️ 💖 💗 💝', lotus:'🙏 🕉️ 🕉 🪷', pin:'📍 📌', link:'🔗', lock:'🔒 🔐', scales:'⚖️ ⚖',
+    eye:'🧿 👁️ 👁 👀 🧐', telescope:'🔭', camera:'📸 📷', map:'🗺️ 🗺', check:'✅ ☑️ ☑', cloud:'☁️ ☁', trophy:'🏆 🥇 🎖️', up:'👆 ⬆️', waves:'🌊 🐸', fullmoon:'🌕',
     globe:'🌐 🌍 🌎 🌏', cap:'🎓', crown:'👑 🦁', compass:'🧭', mirror:'🪞', wrench:'🛠️ 🛠 🔧',
     plus:'➕', trash:'🗑️ 🗑', gear:'⚙️ ⚙', pencil:'📝 ✏️ ✏ 🖊️', clip:'📎', mic:'🎙️ 🎙 🎤', folder:'🗂️ 🗂 📁 📂', phone:'📞 📱 📲', help:'❓ ❔ 🤷', chat:'💬 🗣️ 🗣',
-    bug:'🐞 🐛', refresh:'🔄 🔁', ruler:'📏 📐', video:'🎥 🎬', satellite:'🛰️ 🛰', gem:'💎', lamp:'🪔', swirl:'🌀', star:'⭐', gift:'🎁', ban:'⛔ 🚫',
-    chart:'📊 🔢', trend:'📈', sprout:'🌱 🍀 🌳 🌿', bell:'🔔', building:'🏛️ 🏛', layers:'🗃️ 📑'
+    bug:'🐞 🐛', refresh:'🔄 🔁 ♻️', ruler:'📏 📐', video:'🎥 🎬', satellite:'🛰️ 🛰', gem:'💎 💠', lamp:'🪔', swirl:'🌀', star:'⭐ 🌃', gift:'🎁', ban:'⛔ 🚫',
+    chart:'📊 🔢', trend:'📈', sprout:'🌱 🍀 🌳 🌿 🪴', bell:'🔔', building:'🏛️ 🏛 🛕', layers:'🗃️ 📑 🧱',
+    hexagram:'🔯', octagram:'✴️', wheel:'☸️ 🎡', daynight:'🔅', swap:'🔀', triangle:'🔺', kendra:'🔲', feet:'👣', anchor:'⚓', trident:'🔱', beads:'📿', dna:'🧬'
   };
   var MAP = {}, keys = [];
   Object.keys(M).forEach(function(n){ M[n].split(' ').forEach(function(e){ if (e){ MAP[e.replace(/️/g, '')] = n; } }); });

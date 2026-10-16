@@ -90,18 +90,31 @@
     up:'<path d="M12 19V5M6 11l6-6 6 6"/>',
     waves:'<path d="M3 9c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',
     fullmoon:'<circle class="f" cx="12" cy="12" r="8.500"/><path d="M9 9.500v.1M14.500 8.500v.1M13.500 14.500v.1M8.500 14v.1"/>',
-    layers:'<path class="f" d="m12 3.500 9 4.500-9 4.500L3 8Z"/><path d="m3 12 9 4.500 9-4.500M3 16l9 4.500 9-4.500"/>'
+    layers:'<path class="f" d="m12 3.500 9 4.500-9 4.500L3 8Z"/><path d="m3 12 9 4.500 9-4.500M3 16l9 4.500 9-4.500"/>',
+    hexagram:'<path d="M12 3.5 19.5 16.5h-15Z"/><path class="f" d="M12 20.5 4.5 7.5h15Z"/>',
+    octagram:'<rect class="f" x="5.5" y="5.5" width="13" height="13" rx="1"/><rect x="5.5" y="5.5" width="13" height="13" rx="1" transform="rotate(45 12 12)"/>',
+    wheel:'<circle class="f" cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2"/><path d="M12 3.5V10M12 14v6.5M3.5 12H10M14 12h6.5M6 6l4.5 4.5M13.5 13.5 18 18M18 6l-4.5 4.5M10.5 13.5 6 18"/>',
+    daynight:'<circle cx="12" cy="12" r="8.5"/><path class="f" d="M12 3.5a8.5 8.5 0 0 1 0 17Z"/><path d="M12 3.5v17"/>',
+    swap:'<path d="M4 8h14M14.5 4.5 18 8l-3.5 3.5M20 16H6M9.5 12.5 6 16l3.5 3.5"/>',
+    triangle:'<path class="f" d="M12 4 20.5 19h-17Z"/><circle cx="12" cy="14" r="1.2"/>',
+    kendra:'<rect class="f" x="4" y="4" width="16" height="16" rx="2.5"/><path d="M12 4v16M4 12h16"/>',
+    feet:'<ellipse class="f" cx="8.5" cy="14" rx="3" ry="5"/><ellipse class="f" cx="16" cy="9.5" rx="3" ry="5"/>',
+    anchor:'<circle cx="12" cy="5.5" r="2"/><path d="M12 7.5V20M7.5 11h9M5 14c0 3.5 3 6 7 6s7-2.5 7-6"/>',
+    trident:'<path d="M12 3.5v17M6.5 5v4.5a5.5 5.5 0 0 0 11 0V5M9.5 20.5h5"/>',
+    beads:'<g class="f"><circle cx="12" cy="4.5" r="1.7"/><circle cx="17.3" cy="6.7" r="1.7"/><circle cx="19.5" cy="12" r="1.7"/><circle cx="17.3" cy="17.3" r="1.7"/><circle cx="12" cy="19.5" r="1.7"/><circle cx="6.7" cy="17.3" r="1.7"/><circle cx="4.5" cy="12" r="1.7"/><circle cx="6.7" cy="6.7" r="1.7"/></g><path d="M12 19.5v2.5"/>',
+    dna:'<path d="M8 3.5c0 5 8 5 8 8.5s-8 3.5-8 8.5M16 3.5c0 5-8 5-8 8.5s8 3.5 8 8.5M9 7h6M9 17h6"/>'
   };
   var M = {
     home:'🏠 🏡', doc:'🗎 📋 📄 📃 📜 📒 🗒️ 🗒', book:'📚 📖', calendar:'📅 🗓️ 🗓 📆', clock:'🕰️ 🕰 ⏱️ ⏱ 🕘 ⏰ 🕐 🕒', hourglass:'⏳ ⌛', search:'🔎 🔍 🔬',
-    alert:'⚠️ ⚠', target:'🎯', orb:'🔮', sparkle:'✨ 🌟 💫', coin:'💰 💵 🪙', ring:'💍', briefcase:'💼', bulb:'💡', download:'📥', upload:'📤',
-    user:'👤 🧍 🧑', users:'👥 🤝 👪 👨 👩 👨‍👩‍👧 🪪', smile:'👶 🙂 😊', planet:'🪐 🌌', moon:'🌙 🌒 🌓 🌔 🌖 🌗 🌘 🌛 🌜', sun:'☀️ ☀ 🌞', newmoon:'🌑', sunrise:'🌅 🌄 🌇', thermo:'🌡️ 🌡',
-    flame:'🔥', bolt:'⚡ 💪', cake:'🎂', pulse:'🩺 💓', heart:'❤️ ❤ 💞 💕 ♥️ 💖 💗', lotus:'🙏 🕉️ 🕉 🪷', pin:'📍 📌', link:'🔗', lock:'🔒 🔐', scales:'⚖️ ⚖',
-    eye:'🧿 👁️ 👁 👀', telescope:'🔭', camera:'📸 📷', map:'🗺️ 🗺', check:'✅ ☑️ ☑', cloud:'☁️ ☁', trophy:'🏆 🥇', up:'👆 ⬆️', waves:'🌊', fullmoon:'🌕',
+    alert:'⚠️ ⚠', target:'🎯 🏹', orb:'🔮', sparkle:'✨ 🌟 💫 🌠', coin:'💰 💵 🪙 💴', ring:'💍 💒', briefcase:'💼 🧳', bulb:'💡', download:'📥', upload:'📤',
+    user:'👤 🧍 🧑 🙍', users:'👥 🤝 👪 👨 👩 👨‍👩‍👧 🪪 🙋', smile:'👶 🙂 😊', planet:'🪐 🌌', moon:'🌙 🌒 🌓 🌔 🌖 🌗 🌘 🌛 🌜 🦀', sun:'☀️ ☀ 🌞', newmoon:'🌑', sunrise:'🌅 🌄 🌇 🌆', thermo:'🌡️ 🌡',
+    flame:'🔥 🕯️', bolt:'⚡ 💪', cake:'🎂', pulse:'🩺 💓', heart:'❤️ ❤ 💞 💕 ♥️ 💖 💗 💝', lotus:'🙏 🕉️ 🕉 🪷', pin:'📍 📌', link:'🔗', lock:'🔒 🔐', scales:'⚖️ ⚖',
+    eye:'🧿 👁️ 👁 👀 🧐', telescope:'🔭', camera:'📸 📷', map:'🗺️ 🗺', check:'✅ ☑️ ☑', cloud:'☁️ ☁', trophy:'🏆 🥇 🎖️', up:'👆 ⬆️', waves:'🌊 🐸', fullmoon:'🌕',
     globe:'🌐 🌍 🌎 🌏', cap:'🎓', crown:'👑 🦁', compass:'🧭', mirror:'🪞', wrench:'🛠️ 🛠 🔧',
     plus:'➕', trash:'🗑️ 🗑', gear:'⚙️ ⚙', pencil:'📝 ✏️ ✏ 🖊️', clip:'📎', mic:'🎙️ 🎙 🎤', folder:'🗂️ 🗂 📁 📂', phone:'📞 📱 📲', help:'❓ ❔ 🤷', chat:'💬 🗣️ 🗣',
-    bug:'🐞 🐛', refresh:'🔄 🔁', ruler:'📏 📐', video:'🎥 🎬', satellite:'🛰️ 🛰', gem:'💎', lamp:'🪔', swirl:'🌀', star:'⭐', gift:'🎁', ban:'⛔ 🚫',
-    chart:'📊 🔢', trend:'📈', sprout:'🌱 🍀 🌳 🌿', bell:'🔔', building:'🏛️ 🏛', layers:'🗃️ 📑'
+    bug:'🐞 🐛', refresh:'🔄 🔁 ♻️', ruler:'📏 📐', video:'🎥 🎬', satellite:'🛰️ 🛰', gem:'💎 💠', lamp:'🪔', swirl:'🌀', star:'⭐ 🌃', gift:'🎁', ban:'⛔ 🚫',
+    chart:'📊 🔢', trend:'📈', sprout:'🌱 🍀 🌳 🌿 🪴', bell:'🔔', building:'🏛️ 🏛 🛕', layers:'🗃️ 📑 🧱',
+    hexagram:'🔯', octagram:'✴️', wheel:'☸️ 🎡', daynight:'🔅', swap:'🔀', triangle:'🔺', kendra:'🔲', feet:'👣', anchor:'⚓', trident:'🔱', beads:'📿', dna:'🧬'
   };
   var MAP = {}, keys = [];
   Object.keys(M).forEach(function(n){ M[n].split(' ').forEach(function(e){ if (e){ MAP[e.replace(/️/g, '')] = n; } }); });

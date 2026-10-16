@@ -1,6 +1,6 @@
 
 (function(){
-const AREA={D1:['🧍','Self · Body'],D2:['💰','Wealth'],D3:['🦁','Siblings · Courage'],D4:['🏡','Home · Fortune'],D5:['👑','Fame · Power'],D6:['🩺','Health · Foes'],D7:['👶','Children'],D8:['⏳','Longevity'],D9:['💍','Marriage · Dharma'],D10:['💼','Career'],D11:['📈','Gains'],D12:['🌳','Parents'],D16:['🚗','Comforts'],D20:['🕉️','Spiritual'],D24:['🎓','Learning'],D27:['💪','Strength'],D30:['⚡','Troubles'],D40:['🌙','Maternal line'],D45:['☀️','Paternal line'],D60:['🌀','Past karma']};
+const AREA={D1:['🧍','Self · Body'],D2:['💰','Wealth'],D3:['🦁','Siblings · Courage'],D4:['🏡','Home · Fortune'],D5:['👑','Fame · Power'],D6:['🩺','Health · Foes'],D7:['👶','Children'],D8:['⏳','Longevity'],D9:['💍','Marriage · Dharma'],D10:['💼','Career'],D11:['📈','Gains'],D12:['🌳','Parents'],D16:['🚗','Comforts'],D20:['🕉️','Spiritual'],D24:['🎓','Learning'],D27:['💪','Strength'],D30:['⚡','Troubles'],D40:['🌙','Maternal line'],D45:['☀️','Paternal line'],D60:['🌀','Past karma'],D81:['🔍','Fine dharma'],D108:['📿','Deep karma'],D144:['🧬','Heredity']};
 const P=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
 const KEND=[1,4,7,10],TRI=[1,5,9],DUS=[6,8,12],UPA=[3,6,10,11];
 const f=(x,d)=>(typeof x==='number'&&isFinite(x))?x.toFixed(d):'—';
