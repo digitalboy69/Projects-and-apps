@@ -218,6 +218,9 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/42-init.js` — startup / init
 - `apps/sky3d/js/43-degree-finder-returns.js` — degree finder and returns
 - `apps/sky3d/js/44-retrograde-planner.js` — retrograde planner
+- `apps/sky3d/js/45-vimshottari-dasha.js` — Vimshottari dasha engine in Julian Days (VDasha: build timeline, at(jd) -> Maha/Antar/Pratyantar); same maths as birth-chart/js/10
+- `apps/sky3d/js/46-dasha-transit-engine.js` — Dasha + Transit trigger engine (DTrig): dasha link per house, Jupiter+Saturn double transit, dasha-lord activation, window scan; all weights in the `W` table and the `THEMES` list at the top
+- `apps/sky3d/js/47-dasha-transit-ui.js` — Triggers tab UI: running dashas, live strength per life area, scan windows (past/next years), "why" details, tap = jump to date
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
 - `apps/sky3d/css/03-3d-viewport.css` — 3D viewport
@@ -239,6 +242,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/css/19-retrograde-planner.css` — retrograde planner (also hides old loadingMask)
 - `apps/sky3d/css/20-hud-ascendant-rising.css` — HUD ascendant/rising chips, popups
 - `apps/sky3d/css/21-premium-polish.css` — premium gold glass, magnetic hover
+- `apps/sky3d/css/22-dasha-transit-triggers.css` — Triggers tab (dasha + transit) styles
 
 ### apps/notepad/ — Notepad
 - `apps/notepad/index.html` — markup of this app; lists its css/js in load order

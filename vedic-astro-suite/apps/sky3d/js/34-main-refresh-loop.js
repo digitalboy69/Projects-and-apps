@@ -50,6 +50,7 @@ function renderTimelineLight(){
     const act = (document.querySelector('.panel-tab.active')||{dataset:{}}).dataset.tab;
     if (open && act==='transits') renderTransitFeed();
     if (open && act==='conjunctions') renderConjunctionFeed();
+    if (open && act==='triggers' && window.__dtRefreshNow) window.__dtRefreshNow();
     const key = Math.round(timelineWindowStart)+'|'+Math.round(timelineWindowEnd);
     if (key!==lastTlKey || now-lastTlAt>10000){ lastTlKey = key; lastTlAt = now; renderTimeline(); }
   }
