@@ -10344,6 +10344,58 @@ body.srch-lock{overflow:hidden}
 .srch-click.on{border-color:var(--teal-bright);color:var(--teal-bright);background:rgba(94,196,183,.1)}
 @media (max-width:640px){.srch-ov{padding:10px}.srch-box{max-height:88vh;border-radius:18px}.srch-foot>span{display:none}.srch-top input{font-size:16px}}
 </style>
+<style>
+/* 36 Dasha Systems panel (js/82-dasha-systems-ui.js) — calm gold-on-dark, mobile first */
+.ds{display:block}
+.ds-intro{color:var(--text-muted);font-size:14px;line-height:1.6;margin:0 0 18px}
+.ds-intro b{color:var(--gold-bright,#e8c071)}
+.ds-eyebrow{font:600 11px var(--font-sans);letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dim,#b48a3a);margin:0 0 8px}
+.ds-fam{margin:0 0 22px}
+.ds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.ds-card{display:flex;flex-direction:column;gap:3px;text-align:left;padding:13px 14px;border-radius:14px;cursor:pointer;color:var(--text-main);
+  background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));border:1px solid var(--border-light,rgba(255,255,255,.1));font-family:inherit}
+.ds-card b{font:500 15px var(--font-display,inherit);color:var(--text-main)}
+.ds-card small{font-size:12px;color:var(--text-muted);line-height:1.35}
+.ds-card:hover,.ds-card:focus-visible{border-color:rgba(212,162,74,.55);transform:translateY(-1px)}
+.ds-back{background:none;border:0;color:var(--gold,#d4a24a);font:500 14px var(--font-sans,inherit);padding:4px 0 12px;cursor:pointer}
+.ds-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.ds-head h4{margin:2px 0;font:500 22px var(--font-display,inherit);color:var(--text-main)}
+.ds-head small{color:var(--text-muted);font-size:13px}
+.ds-badge{font:600 10.5px var(--font-sans);letter-spacing:.06em;text-transform:uppercase;padding:5px 10px;border-radius:99px;border:1px solid}
+.ds-badge.ok{color:#8fcf9f;border-color:rgba(143,207,159,.4);background:rgba(143,207,159,.08)}
+.ds-badge.warn{color:#e0b469;border-color:rgba(224,180,105,.4);background:rgba(224,180,105,.08)}
+.ds-note{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:12px;font-size:13px;line-height:1.5;color:var(--text-muted);margin:0 0 12px;border:1px solid var(--border-light,rgba(255,255,255,.1))}
+.ds-note>span{font-weight:700;flex:none}
+.ds-note.g>span{color:#8fcf9f}.ds-note.b>span{color:#e0b469}
+.ds-ctl{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px}
+.ds-seg{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.ds-seg>span{font-size:12px;color:var(--text-subtle,var(--text-muted));margin-right:2px}
+.ds-seg button{padding:6px 12px;border-radius:99px;border:1px solid var(--border-light,rgba(255,255,255,.12));background:transparent;color:var(--text-muted);font:500 12.5px var(--font-sans,inherit);cursor:pointer}
+.ds-seg button.on{background:rgba(212,162,74,.16);border-color:rgba(212,162,74,.6);color:var(--gold-bright,#e8c071)}
+.ds-rule{font-size:12.5px;line-height:1.55;color:var(--text-subtle,var(--text-muted));margin:0 0 14px}
+.ds-now{padding:14px;border-radius:16px;margin:0 0 18px;background:linear-gradient(145deg,rgba(212,162,74,.09),rgba(255,255,255,.012));border:1px solid rgba(212,162,74,.28)}
+.ds-ladder{display:flex;flex-direction:column;gap:8px}
+.ds-lad{display:flex;align-items:center;gap:10px;min-width:0}
+.ds-lv{flex:none;width:82px;font:600 10.5px var(--font-sans);letter-spacing:.06em;text-transform:uppercase;color:var(--text-subtle,var(--text-muted))}
+.ds-tile{flex:none;width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:17px;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);border:1px solid color-mix(in srgb,var(--c) 40%,transparent)}
+.ds-rt{display:flex;flex-direction:column;min-width:0;flex:1}
+.ds-rt b{font:500 15px var(--font-display,inherit);color:var(--text-main)}
+.ds-rt small{font:11.5px var(--font-mono,monospace);color:var(--text-muted);overflow-wrap:anywhere}
+.ds-crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:0 0 10px}
+.ds-crumbs button{background:none;border:0;padding:3px 2px;color:var(--gold,#d4a24a);font:500 13px var(--font-sans,inherit);cursor:pointer}
+.ds-crumbs i{color:var(--text-subtle,var(--text-muted));font-style:normal}
+.ds-list{display:flex;flex-direction:column;gap:7px}
+.ds-row{position:relative;display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:10px 12px;border-radius:13px;cursor:pointer;font-family:inherit;color:var(--text-main);
+  background:rgba(255,255,255,.025);border:1px solid var(--border-light,rgba(255,255,255,.08))}
+.ds-row:disabled{cursor:default}
+.ds-row:not(:disabled):hover{border-color:rgba(212,162,74,.5)}
+.ds-row.now{border-color:rgba(212,162,74,.7);background:rgba(212,162,74,.09)}
+.ds-rd{flex:none;text-align:right;font:12px var(--font-mono,monospace);color:var(--text-muted);display:flex;flex-direction:column;gap:2px}
+.ds-rd em{font-style:normal;font-size:10.5px;color:var(--text-subtle,var(--text-muted))}
+.ds-go{flex:none;color:var(--gold,#d4a24a);font-size:20px;line-height:1}
+.ds-nowtag{position:absolute;top:-8px;right:12px;font:700 9.5px var(--font-sans);letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:99px;background:var(--gold,#d4a24a);color:#1a1408}
+@media (max-width:480px){.ds-lv{width:70px}.ds-rd em{display:none}}
+</style>
 
 
 
@@ -13989,6 +14041,7 @@ const HOME_ITEMS=[
  ['panel-vbday','🎂','Vedic Birthday','Tithi, Nakshatra & solar birthday for any year','Time & Cycles','home'],
  ['panel-active','🔥','Life Activation','Houses lit up now · pick any date','Time & Cycles','home'],
  ['panel-dasha','◷','Dasha','120-year life-period timeline','Time & Cycles','home'],
+ ['panel-dashasys','◷','36 Dasha Systems','Vimshottari, Yogini, Chara, Narayana & more','Time & Cycles','home'],
  ['panel-tithi','🪔','Tithi Pravesh','Your yearly lunar-birthday chart','Time & Cycles','home'],
  ['panel-transits','♄','Transits & Sade Sati','Saturn, Jupiter & node ingress dates','Time & Cycles','home'],
  ['panel-transit','⟲','Live Sky','Today\'s planets vs your chart','Time & Cycles','home'],
@@ -18038,6 +18091,7 @@ function renderResults(profile){
 
   html += `<div class="app-panel" id="panel-reading">${window.buildReadingPanel(chart)}</div>`;
   html += `<div class="app-panel" id="panel-fate">${window.buildFatePanel(chart, profile)}</div>`;
+  html += `<div class="app-panel" id="panel-dashasys">${window.buildDashaSystemsPanel(chart, profile)}</div>`;
   html += `<div class="app-panel" id="panel-sahams">${window.buildSahamPanel(chart)}</div>`;
   html += `<div class="app-panel" id="panel-tithi">${window.buildTithiPraveshPanel(chart, profile)}</div>`;
   html += `<div class="app-panel" id="panel-bhavabala">${window.buildBhavaBalaPanel(chart, profile)}</div>`;
@@ -33153,6 +33207,821 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
   }
   mount();
   if(sess){ fullSync(); }
+})();
+<\/script>
+<script>
+/* ===== 36 Dasha Systems — CORE (helpers, registry, layout engine) =====
+   Engines live in 79 (nakshatra), 80 (rasi), 81 (ayur + special); the panel is 82.
+   A system is registered with:
+     { id, name, blurb, family, keyType:'planet'|'sign', conf:'classical'|'varies', total:<yrs label>,
+       needsGender?, applic(c) -> {ok, text}, build(c) -> {seq:[{key,years,meta?}], elapsed:0..1},
+       sub(parent, c) -> [{key, w, meta?}] }
+   Periods are laid out from birth. The first period is cut at birth (balance) but sub-periods are laid out on its
+   FULL length from a virtual start (same trick as the Vimshottari engine) and then clipped.
+   Year = 365.25 days, like the rest of the app. Sign index 0 = Aries. */
+(function(){
+'use strict';
+const YR = 365.25 * 86400000;
+const DS = window.DashaSys = { list:[], map:{}, YR, LEVELS:['Maha','Antar','Pratyantar','Sookshma','Prana'] };
+DS.register = function(s){ DS.list.push(s); DS.map[s.id] = s; };
+
+/* ---------- small sign helpers ---------- */
+const mod = (n,m)=> ((n % m) + m) % m;
+const mod12 = n => mod(n,12);
+const ojas = s => [0,1,2,6,7,8].includes(s);     // odd-footed (Ojapada) signs
+const oddSign = s => s % 2 === 0;                // Aries, Gemini, Leo... (odd signs)
+const typ = s => s % 3;                          // 0 movable, 1 fixed, 2 dual
+const EXALT = { Sun:0, Moon:1, Mars:9, Mercury:5, Jupiter:3, Venus:11, Saturn:6 };
+Object.assign(DS, { mod12, ojas, oddSign, typ, EXALT });
+
+/* ---------- context ---------- */
+DS.ctx = function(chart, opts){
+  opts = opts || {};
+  const ps = {}, pd = {};
+  PLANET_LIST.forEach(n => { ps[n] = chart.planets[n].sign; pd[n] = chart.planets[n].degInSign; });
+  const asc = getSignIndex(chart.ascendant.longitude);
+  const birth = chart.dashaData.mahadashas[0].startDate.getTime();
+  return { chart, ps, pd, asc, birth, gender: opts.gender || 'M', subMode: opts.subMode || 'auto' };
+};
+const occ = (s,c) => PLANET_LIST.filter(p => c.ps[p] === s);
+DS.occ = occ;
+
+/* ---------- lords, aspects, strength ---------- */
+function strongerPlanet(a,b,c){
+  const na = occ(c.ps[a],c).length, nb = occ(c.ps[b],c).length;
+  if (na !== nb) return na > nb ? a : b;
+  return c.pd[a] >= c.pd[b] ? a : b;
+}
+// Scorpio (Mars/Ketu) and Aquarius (Saturn/Rahu) have two lords (Jaimini): if only one sits in the sign the other is the lord;
+// otherwise the one with more company / higher degree.
+function lordOf(s,c){
+  if (s === 7 || s === 10){
+    const a = s === 7 ? 'Mars' : 'Saturn', b = s === 7 ? 'Ketu' : 'Rahu';
+    const ia = c.ps[a] === s, ib = c.ps[b] === s;
+    if (ia && !ib) return b;
+    if (ib && !ia) return a;
+    return strongerPlanet(a,b,c);
+  }
+  return SIGNS[s].lord;
+}
+const lordPos = (s,c) => c.ps[lordOf(s,c)];
+DS.lordOf = lordOf; DS.lordPos = lordPos;
+
+// Rashi drishti: movable→fixed (not adjacent), fixed→movable (not adjacent), dual→other duals.
+function rAsp(a,b){
+  const ma = a % 3, mb = b % 3, d = mod12(b - a);
+  if (ma === 0) return mb === 1 && d !== 1;
+  if (ma === 1) return mb === 0 && d !== 11;
+  return mb === 2 && a !== b;
+}
+DS.rAsp = rAsp;
+
+// Which of two signs is stronger (Jaimini rules, in order).
+function stronger(a,b,c){
+  if (a === b) return a;
+  const f = (fn) => { const x = fn(a), y = fn(b); return x === y ? 0 : (x > y ? 1 : -1); };
+  let r;
+  if ((r = f(s => occ(s,c).length))) return r > 0 ? a : b;
+  const infl = s => { const L = lordOf(s,c); return [...new Set(['Mercury','Jupiter',L])].filter(p => { const q = c.ps[p]; return q === s || rAsp(q,s); }).length; };
+  if ((r = f(infl))) return r > 0 ? a : b;
+  if ((r = f(s => occ(s,c).some(p => EXALT[p] === s) ? 1 : 0))) return r > 0 ? a : b;
+  if ((r = f(s => (oddSign(s) !== oddSign(lordPos(s,c))) ? 1 : 0))) return r > 0 ? a : b;
+  if ((r = f(s => typ(s) === 2 ? 2 : typ(s) === 1 ? 1 : 0))) return r > 0 ? a : b;
+  return c.pd[lordOf(a,c)] >= c.pd[lordOf(b,c)] ? a : b;
+}
+DS.stronger = stronger;
+const strongestOf = (arr,c) => arr.reduce((x,y)=> stronger(x,y,c));
+
+/* ---------- orders ---------- */
+const seq12 = (start, dir) => Array.from({length:12}, (_,i)=> mod12(start + dir*i));
+const kendraOrder = (seed, dir) => [0,3,6,9,1,4,7,10,2,5,8,11].map(o => mod12(seed + dir*o));
+// Padakrama: movable = consecutive, fixed = every 5th, dual = steps of 3 inside blocks of 4 (anchor +4).
+const DUAL_OFFS = [0,3,6,9,4,7,10,1,8,11,2,5];
+function padaOrder(start, dir){
+  const t = typ(start);
+  const offs = t === 0 ? [0,1,2,3,4,5,6,7,8,9,10,11] : t === 1 ? [0,5,10,3,8,1,6,11,4,9,2,7] : DUAL_OFFS;
+  return offs.map(o => mod12(start + dir*o));
+}
+Object.assign(DS, { seq12, kendraOrder, padaOrder, strongestOf });
+
+/* ---------- Sign-duration rules ---------- */
+// Steps from sign s to the position `pos` of its lord, counted forward for odd-footed signs, backward for even-footed
+// (inclusive count minus one). Lord in the sign itself = 12.
+function signSteps(s, pos){
+  if (pos === s) return 12;
+  const d = ojas(s) ? mod12(pos - s) : mod12(s - pos);
+  return d;
+}
+// Narayana / K.N. Rao style: steps, +1 if lord exalted, −1 if debilitated (clamped 1..12).
+function narayanaYears(s,c){
+  const L = lordOf(s,c), pos = c.ps[L];
+  let d = signSteps(s,pos);
+  if (EXALT[L] === pos) d += 1;
+  else if (EXALT[L] !== undefined && mod12(EXALT[L] + 6) === pos) d -= 1;
+  return Math.max(1, Math.min(12, d));
+}
+// Parasara Chara: same count, no exaltation / debilitation adjustment.
+const charaYears = (s,c) => signSteps(s, lordPos(s,c));
+// Two passes over the same order: first d years, then 12 − d (zero length skipped).
+function twoCycles(order, years, meta){
+  const out = [];
+  order.forEach(s => { const y = years(s); if (y > 0) out.push({ key:s, years:y, meta: meta ? meta(s) : undefined }); });
+  order.forEach(s => { const y = 12 - years(s); if (y > 0) out.push({ key:s, years:y, meta: meta ? meta(s) : undefined }); });
+  return out;
+}
+// Fixed length repeated until the life is covered.
+function repeatFixed(order, years, rounds){
+  const out = [];
+  for (let r = 0; r < (rounds || 2); r++) order.forEach(s => out.push({ key:s, years: typeof years === 'function' ? years(s) : years }));
+  return out;
+}
+Object.assign(DS, { signSteps, narayanaYears, charaYears, twoCycles, repeatFixed });
+
+/* ---------- Progression direction helpers (Narayana family) ---------- */
+// Odd sign → forward, even → backward; Saturn in the seed forces forward, otherwise Ketu in the seed reverses.
+function dirSaturnKetu(seed,c){
+  const base = oddSign(seed) ? 1 : -1;
+  if (c.ps.Saturn === seed) return 1;
+  if (c.ps.Ketu === seed) return -base;
+  return base;
+}
+// Narayana sub-periods of a sign: seed = stronger(sign of parent's lord, sign of 7th-from-parent's lord).
+function narayanaSub(parent,c){
+  const s = parent.key;
+  const seed = stronger(lordPos(s,c), lordPos(mod12(s+6),c), c);
+  let dir = oddSign(seed) ? 1 : -1;
+  if (c.ps.Saturn === seed) dir = 1;
+  if (c.ps.Ketu === s) dir = -dir;
+  return seq12(seed, dir).map(k => ({ key:k, w:1 }));
+}
+Object.assign(DS, { dirSaturnKetu, narayanaSub });
+
+/* ---------- Nakshatra helpers ---------- */
+// map 27 nakshatras → index in `order` from explicit lists {Lord:[1-based naks]}
+DS.mapFromLists = function(order, lists){
+  const m = new Array(27).fill(-1);
+  order.forEach((o,i)=> (lists[o.key] || []).forEach(n => { m[n-1] = i; }));
+  return m;
+};
+// seed nakshatra (1-based) gets order[0]; following nakshatras walk the order (mod 27 first, then mod len)
+DS.mapFromSeed = function(order, seed, dir){
+  return Array.from({length:27}, (_,i)=> mod(dir * ((i+1) - seed), 27) % order.length);
+};
+// Generic nakshatra-balance builder
+DS.nakBuild = function(def){
+  return function(c){
+    const lon = normDeg(c.chart.siderealLongitudes.Moon), span = 360/27;
+    const n = Math.floor(lon / span), elapsed = (lon % span) / span;
+    let i = def.map[n];
+    const seq = [];
+    let total = 0;
+    while (total < def.cover){ seq.push({ key:def.order[i].key, years:def.order[i].years }); total += def.order[i].years; i = (i+1) % def.order.length; }
+    return { seq, elapsed };
+  };
+};
+DS.nakSub = function(def, proportional){
+  return function(parent,c){
+    const idx = def.order.findIndex(o => o.key === parent.key);
+    const prop = c.subMode === 'prop' ? true : c.subMode === 'equal' ? false : proportional;
+    return def.order.map((_,k)=>{ const o = def.order[(idx+k) % def.order.length]; return { key:o.key, w: prop ? o.years : 1 }; });
+  };
+};
+
+/* ---------- Layout ---------- */
+DS.compute = function(sys, chart, opts){
+  const c = DS.ctx(chart, opts);
+  const b = sys.build(c);
+  const out = [];
+  let cur = null;
+  b.seq.forEach((p,i)=>{
+    const full = p.years * YR;
+    let fs, st;
+    if (i === 0){ fs = c.birth - full * b.elapsed; st = c.birth; }
+    else { fs = cur; st = cur; }
+    const en = fs + full;
+    cur = en;
+    out.push({ key:p.key, level:0, start:st, end:en, fullStart:fs, fullYears:p.years, meta:p.meta });
+  });
+  return { c, periods:out };
+};
+
+DS.children = function(sys, c, parent){
+  if (parent.level >= 4) return [];
+  const subs = sys.sub(parent,c).filter(x => x.w > 0);
+  const tw = subs.reduce((a,x)=>a + x.w, 0);
+  const out = [];
+  let cur = parent.fullStart;
+  const full = parent.fullYears * YR;
+  subs.forEach(x=>{
+    const len = full * x.w / tw, fs = cur, fe = cur + len;
+    cur = fe;
+    if (fe <= parent.start + 1000 || fs >= parent.end - 1000) return;   // outside (before birth / beyond parent)
+    out.push({ key:x.key, level:parent.level+1, start:Math.max(fs,parent.start), end:Math.min(fe,parent.end),
+               fullStart:fs, fullYears:len/YR, meta: x.meta !== undefined ? x.meta : parent.meta });
+  });
+  return out;
+};
+
+// the five periods running at time t (ms)
+DS.active = function(sys, c, periods, t){
+  const path = [];
+  let list = periods;
+  for (let lv = 0; lv < 5; lv++){
+    const p = list.find(x => t >= x.start && t < x.end);
+    if (!p) break;
+    path.push(p);
+    list = DS.children(sys, c, p);
+  }
+  return path;
+};
+
+DS.label = function(sys, key){ return sys.keyType === 'planet' ? key : SIGNS[key].name; };
+DS.glyph = function(sys, key){ return sys.keyType === 'planet' ? (window.PLANET_GLYPHS && PLANET_GLYPHS[key]) || '' : SIGNS[key].symbol; };
+})();
+<\/script>
+<script>
+/* ===== 36 Dasha Systems — NAKSHATRA family (12 systems) =====
+   Vimshottari, Ashtottari, Kala Chakra, Yogini + 8 conditional systems. See 78 for the registry / layout engine. */
+(function(){
+'use strict';
+const DS = window.DashaSys;
+const COVER = 150;                       // build at least this many years of periods (first one is cut at birth)
+const ap = (ok, text) => ({ ok, text });
+const ord = (pairs) => pairs.map(p => ({ key:p[0], years:p[1] }));
+const horaOfLagna = (c) => {             // 'Sun' or 'Moon' hora of the ascendant
+  const s = c.asc, d = c.chart.ascendant.degInSign != null ? c.chart.ascendant.degInSign : (normDeg(c.chart.ascendant.longitude) % 30);
+  const first = d < 15;
+  return oddSign(s) ? (first ? 'Sun' : 'Moon') : (first ? 'Moon' : 'Sun');
+};
+const oddSign = DS.oddSign;
+const isShukla = (c) => { const e = normDeg(c.chart.siderealLongitudes.Moon - c.chart.siderealLongitudes.Sun); return e < 180; };
+const isDay = (c) => c.chart.julianDay >= c.chart.sunriseJD && c.chart.julianDay < c.chart.sunsetJD;
+const d9Asc = (c) => c.chart.vargas.D9.ascendantSign;
+
+function simple(id, name, blurb, total, order, map, prop, applic, conf){
+  const def = { order, map, cover:COVER };
+  DS.register({ id, name, blurb, family:'Nakshatra', total, keyType:'planet', conf: conf || 'classical',
+    subToggle:true, applic, build: DS.nakBuild(def), sub: DS.nakSub(def, prop),
+    rule: prop ? 'Sub-periods are proportional to each lord’s years.' : 'Sub-periods are equal parts.' });
+}
+
+/* 1 Vimshottari — uses the same order & balance as the main Dasha tab */
+(function(){
+  const order = DASHA_SEQUENCE.map(k => ({ key:k, years:DASHA_YEARS[k] }));
+  const map = NAKSHATRAS.map(n => DASHA_SEQUENCE.indexOf(n.lord));
+  simple('vimshottari','Vimshottari','120-year cycle',120, order, map, true, () => ap(true,'Universal — the standard system for every chart.'));
+})();
+
+/* 2 Ashtottari 108 */
+(function(){
+  const order = ord([['Sun',6],['Moon',15],['Mars',8],['Mercury',17],['Saturn',10],['Jupiter',19],['Rahu',12],['Venus',21]]);
+  const map = DS.mapFromLists(order, { Sun:[6,7,8,9], Moon:[10,11,12], Mars:[13,14,15,16], Mercury:[17,18,19], Saturn:[20,21,22], Jupiter:[23,24,25], Rahu:[26,27,1,2], Venus:[3,4,5] });
+  simple('ashtottari','Ashtottari','108-year cycle',108, order, map, true, c => {
+    const L = c.ps[DS.lordOf(c.asc,c)], h = DS.mod12(c.ps.Rahu - L) + 1;
+    const ok = [1,4,5,7,9,10].includes(h) && c.ps.Rahu !== c.asc;
+    return ap(ok, ok ? 'Rahu is in a kendra/trikona from the lagna lord and not in the lagna — this chart qualifies.' : 'Classically used when Rahu sits in a kendra/trikona from the lagna lord (not in lagna). Not met here — shown for study.');
+  });
+})();
+
+/* 4 Yogini 36 */
+(function(){
+  const order = ord([['Moon',1],['Sun',2],['Jupiter',3],['Mars',4],['Mercury',5],['Saturn',6],['Venus',7],['Rahu',8]]);
+  const map = DS.mapFromLists(order, { Moon:[6,14,22], Sun:[7,15,23], Jupiter:[8,16,24], Mars:[1,9,17,25], Mercury:[2,10,18,26], Saturn:[3,11,19,27], Venus:[4,12,20], Rahu:[5,13,21] });
+  simple('yogini','Yogini Dasha','36-year cycle',36, order, map, false, () => ap(true,'Universal — usable for every chart (Moon’s nakshatra).'));
+})();
+
+/* Conditional nakshatra systems */
+(function(){
+  const n7 = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'];
+
+  // Shodasottari 116
+  let order = ord([['Sun',11],['Mars',12],['Jupiter',13],['Saturn',14],['Ketu',15],['Moon',16],['Mercury',17],['Venus',18]]);
+  simple('shodasottari','Shodasottari','116 yrs • hora-paksha',116, order, DS.mapFromSeed(order, 8, 1), false, c => {
+    const h = horaOfLagna(c), sh = isShukla(c), ok = (h === 'Sun' && sh) || (h === 'Moon' && !sh);
+    return ap(ok, (ok ? 'Qualifies: ' : 'Not met: ') + 'lagna is in the ' + h + ' hora and the birth is in ' + (sh ? 'Shukla' : 'Krishna') + ' paksha (needs Sun hora + Shukla, or Moon hora + Krishna).');
+  });
+
+  // Shattrimsa Sama 36
+  order = ord([['Moon',1],['Sun',2],['Jupiter',3],['Mars',4],['Mercury',5],['Saturn',6],['Venus',7],['Rahu',8]]);
+  simple('shattrimsa','Shattrimsa Sama','36 yrs • hora-day/night',36, order, DS.mapFromSeed(order, 22, 1), false, c => {
+    const h = horaOfLagna(c), day = isDay(c), ok = (day && h === 'Sun') || (!day && h === 'Moon');
+    return ap(ok, (ok ? 'Qualifies: ' : 'Not met: ') + (day ? 'day' : 'night') + ' birth with lagna in the ' + h + ' hora (needs day + Sun hora, or night + Moon hora).');
+  });
+
+  // Dwadasottari 112
+  order = ord([['Sun',7],['Jupiter',9],['Ketu',11],['Mercury',13],['Rahu',15],['Mars',17],['Saturn',19],['Moon',21]]);
+  simple('dwadasottari','Dwadasottari','112 yrs • Venus navamsha',112, order, DS.mapFromSeed(order, 27, -1), false, c => {
+    const a = d9Asc(c), ok = a === 1 || a === 6;
+    return ap(ok, (ok ? 'Qualifies: ' : 'Not met: ') + 'navamsa lagna is ' + SIGNS[a].name + ' (needs Taurus or Libra — Venus’ signs).');
+  });
+
+  // Dwisaptati Sama 72
+  order = ord(n7.concat(['Rahu']).map(k => [k,9]));
+  simple('dwisaptati','Dwisaptati Sama','72 yrs • 1st-7th exchange',72, order, DS.mapFromSeed(order, 19, 1), false, c => {
+    const l1 = DS.lordOf(c.asc,c), s7 = DS.mod12(c.asc+6), l7 = DS.lordOf(s7,c);
+    const ok = c.ps[l1] === s7 || c.ps[l7] === c.asc;
+    return ap(ok, (ok ? 'Qualifies: ' : 'Not met: ') + 'needs the lagna lord in the 7th house or the 7th lord in the lagna.');
+  });
+
+  // Sataabdika 100
+  order = ord([['Sun',5],['Moon',5],['Venus',10],['Mercury',10],['Jupiter',20],['Mars',20],['Saturn',30]]);
+  simple('sataabdika','Sataabdika','100 yrs • vargottama lagna',100, order, DS.mapFromSeed(order, 27, 1), false, c => {
+    const ok = d9Asc(c) === c.asc;
+    return ap(ok, (ok ? 'Qualifies: ' : 'Not met: ') + 'lagna is ' + SIGNS[c.asc].name + ' in D-1 and ' + SIGNS[d9Asc(c)].name + ' in D-9 (needs vargottama lagna).');
+  });
+
+  // Chaturaseeti Sama 84
+  order = ord(n7.map(k => [k,12]));
+  simple('chaturaseeti','Chaturaseeti Sama','84 yrs • 10th lord in 10th',84, order, DS.mapFromSeed(order, 15, 1), false, c => {
+    const s10 = DS.mod12(c.asc+9), ok = c.ps[DS.lordOf(s10,c)] === s10;
+    return ap(ok, (ok ? 'Qualifies: ' : 'Not met: ') + 'needs the 10th lord placed in the 10th house.');
+  });
+
+  // Shashtihayani 60
+  order = ord([['Jupiter',10],['Sun',10],['Mars',10],['Moon',6],['Mercury',6],['Venus',6],['Saturn',6],['Rahu',6]]);
+  simple('shashtihayani','Shashtihayani','60 yrs • Sun in lagna',60, order,
+    DS.mapFromLists(order, { Jupiter:[1,2,3], Sun:[4,5,6,7], Mars:[8,9,10], Moon:[11,12,13,14], Mercury:[15,16,17], Venus:[18,19,20,21], Saturn:[22,23,24], Rahu:[25,26,27] }),
+    false, c => { const ok = c.ps.Sun === c.asc; return ap(ok, (ok ? 'Qualifies: ' : 'Not met: ') + 'needs the Sun in the lagna sign.'); });
+
+  // Panchottari 105
+  order = ord([['Sun',12],['Mercury',13],['Saturn',14],['Mars',15],['Venus',16],['Moon',17],['Jupiter',18]]);
+  simple('panchottari','Panchottari','105 yrs • Cancer lagna',105, order, DS.mapFromSeed(order, 17, 1), false, c => {
+    const ok = c.asc === 3;
+    return ap(ok, (ok ? 'Qualifies: ' : 'Not met: ') + 'classically for Cancer lagna (here: ' + SIGNS[c.asc].name + ').');
+  }, 'varies');
+})();
+
+/* 3 Kala Chakra — pada-based sign periods (interpretive: no gati jumps) */
+(function(){
+  const SY = [7,16,9,21,5,9,16,7,10,4,4,10];
+  const SAV = new Set([1,2,3,7,8,9,13,14,15,19,20,21,25,26,27]);
+  const SERIES = [
+    [0,1,2,3,4,5,6,7,8],            // 100
+    [9,10,11,0,1,2,3,4,5],          // 85
+    [6,7,8,9,10,11,0,1,2],          // 83
+    [3,4,5,6,7,8,9,10,11]           // 86
+  ];
+  const seriesFor = (sav, p) => sav ? SERIES[p] : SERIES[p].slice().reverse();
+  const tot = a => a.reduce((x,s)=> x + SY[s], 0);
+  DS.register({ id:'kalachakra', name:'Kala Chakra', blurb:'Pada-based signs', family:'Nakshatra', total:'83–100', keyType:'sign', conf:'varies',
+    applic: () => ap(true, 'Pada of the Moon decides the sign series. Gati (sign-jump) corrections are not applied; the apasavya series is built as the reverse of the savya one — treat as an approximation.'),
+    build(c){
+      const lon = normDeg(c.chart.siderealLongitudes.Moon), padaSpan = 360/108;
+      const pi = Math.floor(lon / padaSpan), fracPada = (lon % padaSpan) / padaSpan;
+      const nak = Math.floor(pi/4) + 1, sav = SAV.has(nak);
+      let p = pi % 4;
+      let ser = seriesFor(sav, p), el = fracPada * tot(ser), acc = 0, k = 0;
+      while (k < ser.length - 1 && acc + SY[ser[k]] <= el){ acc += SY[ser[k]]; k++; }
+      const elapsed = (el - acc) / SY[ser[k]];
+      const seq = [];
+      let total = 0;
+      for (let j = k; j < ser.length; j++){ seq.push({ key:ser[j], years:SY[ser[j]], meta:ser }); total += SY[ser[j]]; }
+      while (total < COVER){
+        p = (p+1) % 4; ser = seriesFor(sav, p);
+        ser.forEach(s => { seq.push({ key:s, years:SY[s], meta:ser }); total += SY[s]; });
+      }
+      return { seq, elapsed };
+    },
+    sub(parent){
+      const ser = parent.meta || SERIES[0], i = Math.max(0, ser.indexOf(parent.key));
+      return ser.map((_,k)=>{ const s = ser[(i+k) % ser.length]; return { key:s, w:SY[s] }; });
+    },
+    rule:'Sub-periods follow the same pada series from the parent sign, proportional to sign years.' });
+})();
+})();
+<\/script>
+<script>
+/* ===== 36 Dasha Systems — PHALITA RASI family (14 sign-based systems) =====
+   Chara (Parasara, K.N. Rao, Iranganti 1 & 2), Narayana, Sudasa, Drig, Trikona, Lagnamsaka, Yogardha, Kendradi,
+   Padanadhamsa, Paryaya, Moola. Sign-based sub-periods are equal 1/12 splits. See 78 for helpers. */
+(function(){
+'use strict';
+const DS = window.DashaSys;
+const { mod12, ojas, oddSign, typ, EXALT, seq12, kendraOrder, padaOrder, stronger, strongestOf, signSteps, narayanaYears, charaYears, twoCycles, repeatFixed, lordOf, lordPos } = DS;
+const ap = (ok, text) => ({ ok, text });
+const eq = (arr) => arr.map(k => ({ key:k, w:1 }));
+const dirP = (s) => oddSign(s) ? 1 : -1;
+const OK = () => ap(true, 'Universal — computed from the ascendant and planet signs of any chart.');
+const reg = (o) => DS.register(Object.assign({ family:'Phalita', keyType:'sign', conf:'classical', total:'144', applic:OK }, o));
+const seven = (c) => stronger(c.asc, mod12(c.asc+6), c);
+
+/* ---------- Chara family ---------- */
+const charaParasaraSub = (parent,c) => {
+  const st = stronger(parent.key, mod12(parent.key+6), c);
+  return eq(padaOrder(st, ojas(st) ? 1 : -1));
+};
+reg({ id:'chara-parasara', name:'Chara – Parasara', blurb:'Sign-based (Jaimini)', conf:'varies',
+  build(c){ const dir = ojas(mod12(c.asc+8)) ? 1 : -1; return { seq: twoCycles(seq12(c.asc,dir), s => charaYears(s,c)), elapsed:0 }; },
+  sub: charaParasaraSub,
+  rule:'Starts at the lagna (direction from the 9th sign). Years = signs to the lord, 2nd cycle = 12 − first. Sub-periods start from the stronger of the sign and its 7th, in padakrama order.' });
+
+reg({ id:'chara-knrao', name:'Chara – K.N. Rao', blurb:'Single-cycle variant', conf:'varies',
+  build(c){ const dir = ojas(mod12(c.asc+8)) ? 1 : -1; return { seq: twoCycles(seq12(c.asc,dir), s => narayanaYears(s,c)), elapsed:0 }; },
+  sub(parent){
+    const s = parent.key;
+    return eq([0,4,5,6,10,11].includes(s) ? seq12(mod12(s+1), 1) : seq12(mod12(s-1), -1));
+  },
+  rule:'Years include +1 for an exalted and −1 for a debilitated lord. The first 12-sign cycle is the main run; a complementary cycle (12 − years) follows so the full life is covered. Sub-periods run forward from the next sign (Aries, Leo, Virgo, Libra, Aquarius, Pisces) or backward from the previous sign, the parent sign last.' });
+
+function irYears(s, c, female, adj){
+  const L = SIGNS[s].lord, pos = c.ps[L];
+  let d = (female && pos === mod12(s+6)) ? 10 : signSteps(s,pos);
+  if (adj){ if (EXALT[L] === pos) d += 1; else if (EXALT[L] !== undefined && mod12(EXALT[L]+6) === pos) d -= 1; }
+  return Math.max(1, Math.min(12, d));
+}
+function iranganti(id, name, byNinth, adj){
+  reg({ id, name, blurb:'By gender • Rangacharya', conf:'varies', needsGender:true,
+    build(c){
+      const f = c.gender === 'F';
+      const start = f ? mod12(c.asc + (ojas(c.asc) ? 3 : -3)) : c.asc;
+      const dir = byNinth ? (ojas(mod12(c.asc+8)) ? 1 : -1) : (ojas(c.asc) ? 1 : -1);
+      return { seq: twoCycles(seq12(start,dir), s => irYears(s,c,f,adj)), elapsed:0 };
+    },
+    sub(parent){ const p = parent.key; return eq(padaOrder(p, ojas(p) ? 1 : -1)); },
+    rule:'Male: starts at the lagna. Female: starts 3 signs from the lagna. Each sign’s lord is its plain ruler (Mars for Scorpio, Saturn for Aquarius). Needs the Male/Female choice above.' });
+}
+iranganti('chara-iranganti1','Chara – Iranganti 1', true,  true);
+iranganti('chara-iranganti2','Chara – Iranganti 2', false, false);
+
+/* ---------- Narayana family ---------- */
+reg({ id:'narayana', name:'Narayana Dasa', blurb:'Padakrama / versatile', conf:'varies',
+  build(c){ const seed = seven(c); return { seq: twoCycles(seq12(seed, DS.dirSaturnKetu(seed,c)), s => narayanaYears(s,c)), elapsed:0 }; },
+  sub: DS.narayanaSub,
+  rule:'Starts at the stronger of lagna / 7th. Odd seed runs forward, even backward (Saturn in the seed forces forward; Ketu reverses). Sub-periods start from the stronger of the lords’ signs.' });
+
+reg({ id:'sudasa', name:'Sudasa', blurb:'Wealth & prosperity', conf:'varies',
+  build(c){
+    const sl = calcShreeLagnaLongitude(c.chart), seed = getSignIndex(sl), el = (normDeg(sl) % 30) / 30;
+    return { seq: twoCycles(kendraOrder(seed, DS.dirSaturnKetu(seed,c)), s => narayanaYears(s,c)), elapsed: el };
+  },
+  sub(parent,c){ const st = stronger(parent.key, mod12(parent.key+6), c); return eq(seq12(st, oddSign(st) ? -1 : 1)); },
+  rule:'Starts at the Sree Lagna sign (first period cut by its degree). Signs run in kendra → panaphara → apoklima groups.' });
+
+function aspectedSigns(a){
+  const t = typ(a), list = [];
+  for (let b = 0; b < 12; b++) if (DS.rAsp(a,b)) list.push(b);
+  const fwd = t === 1 || (t === 2 && oddSign(a));
+  return list.sort((x,y)=> fwd ? mod12(x-a) - mod12(y-a) : mod12(a-x) - mod12(a-y));
+}
+reg({ id:'drig', name:'Drig Dasha', blurb:'Aspect-based', conf:'varies',
+  build(c){
+    const order = [];
+    [8,9,10].forEach(h => { const a = mod12(c.asc + h); order.push(a); aspectedSigns(a).forEach(x => order.push(x)); });
+    return { seq: twoCycles(order, s => narayanaYears(s,c)), elapsed:0 };
+  },
+  sub: DS.narayanaSub,
+  rule:'Runs the 9th, 10th and 11th signs, each followed by the three signs it aspects (rashi drishti).' });
+
+reg({ id:'trikona', name:'Trikona Dasha', blurb:'Dharma & fortune', conf:'varies',
+  build(c){
+    const seed = stronger(stronger(c.asc, mod12(c.asc+4), c), mod12(c.asc+8), c);
+    return { seq: twoCycles(seq12(seed, dirP(seed)), s => narayanaYears(s,c)), elapsed:0 };
+  },
+  sub(parent){ return eq(seq12(parent.key, dirP(parent.key))); },
+  rule:'Starts at the strongest of the 1st, 5th and 9th signs; odd seed forward, even backward.' });
+
+reg({ id:'lagnamsaka', name:'Lagnamsaka Dasha', blurb:'Navamsa Lagna seed', conf:'varies',
+  build(c){ const seed = c.chart.vargas.D9.ascendantSign; return { seq: twoCycles(seq12(seed, DS.dirSaturnKetu(seed,c)), s => narayanaYears(s,c)), elapsed:0 }; },
+  sub: DS.narayanaSub,
+  rule:'Narayana progression seeded from the navamsa lagna sign.' });
+
+reg({ id:'yogardha', name:'Yogardha Dasha', blurb:'Chara + Sthira hybrid', conf:'varies', total:'~190',
+  build(c){
+    const seed = seven(c);
+    const yrs = s => (charaYears(s,c) + (typ(s) === 0 ? 7 : typ(s) === 1 ? 8 : 9)) / 2;
+    return { seq: repeatFixed(seq12(seed, dirP(seed)), yrs, 2), elapsed:0 };
+  },
+  sub: charaParasaraSub,
+  rule:'Each sign runs the average of its Chara years and its Sthira years (7/8/9).' });
+
+const kendraDir = (seed,c) => c.ps.Saturn === seed ? 1 : c.ps.Ketu === seed ? -1 : dirP(seed);
+const kendraSub = (parent,c) => {
+  const s = parent.key;
+  let dir = (c.ps.Saturn === s || oddSign(s)) ? 1 : -1;
+  if (c.ps.Ketu === s) dir = -dir;
+  return eq(seq12(s, dir));
+};
+reg({ id:'kendradi', name:'Kendradi Rashi', blurb:'Kendra-based', conf:'varies',
+  build(c){ const seed = seven(c); return { seq: twoCycles(kendraOrder(seed, kendraDir(seed,c)), s => narayanaYears(s,c)), elapsed:0 }; },
+  sub: kendraSub,
+  rule:'Starts at the stronger of lagna / 7th, then kendras, panapharas, apoklimas.' });
+reg({ id:'moola', name:'Moola Dasha', blurb:'Lagna Kendradi', conf:'varies',
+  build(c){ const seed = c.asc; return { seq: twoCycles(kendraOrder(seed, kendraDir(seed,c)), s => narayanaYears(s,c)), elapsed:0 }; },
+  sub: kendraSub,
+  rule:'Kendradi order seeded directly from the lagna.' });
+
+reg({ id:'padanadhamsa', name:'Padanadhamsa Dasha', blurb:'D-9 of D-9 seed', conf:'varies',
+  build(c){
+    const al = calcAllArudhaPadas(c.chart, c.asc).AL;
+    const d9 = c.chart.vargas.D9.planetVargaSign;
+    const x = d9[SIGNS[al].lord], seed = stronger(x, mod12(x+6), c);
+    return { seq: twoCycles(padaOrder(seed, dirP(seed)), s => signSteps(s, d9[SIGNS[s].lord])), elapsed:0 };
+  },
+  sub(parent){ return eq(padaOrder(parent.key, dirP(parent.key))); },
+  rule:'Seed from the navamsa position of the Arudha Lagna lord; years are counted to each sign lord’s navamsa sign.' });
+
+reg({ id:'paryaya', name:'Paryaya Dasha', blurb:'Modality-based', conf:'varies',
+  build(c){
+    const t = typ(c.asc);
+    const start = t === 2 ? strongestOf([c.asc, mod12(c.asc+4), mod12(c.asc+8)], c)
+                : t === 0 ? strongestOf([0,3,6,9].map(o => mod12(c.asc+o)), c)
+                : seven(c);
+    const OFFS = [[0,4,8,1,5,9,2,6,10,3,7,11],[0,6,1,7,2,8,3,9,4,10,5,11],[0,3,6,9,1,4,7,10,2,5,8,11]][t];
+    const dir = ojas(start) ? 1 : -1;
+    const order = OFFS.map(o => mod12(start + dir*o));
+    const yrs = s => { const pos = lordPos(s,c); return ojas(s) ? mod12(pos - s) : mod12(s - pos); };
+    return { seq: twoCycles(order, yrs), elapsed:0 };
+  },
+  sub(parent){
+    const s = parent.key, t = typ(s), dir = ojas(s) ? 1 : -1;
+    const OFFS = [[0,4,8,1,5,9,2,6,10,3,7,11],[0,6,1,7,2,8,3,9,4,10,5,11],[0,3,6,9,1,4,7,10,2,5,8,11]][t];
+    return eq(OFFS.map(o => mod12(s + dir*o)));
+  },
+  rule:'Order depends on whether the lagna is movable, fixed or dual. Years = signs from a sign to its lord (0–11; zero skipped).' });
+})();
+<\/script>
+<script>
+/* ===== 36 Dasha Systems — AYUR (5) + SPECIAL (5) families =====
+   Sthira, Shoola, Niryana Shoola, Mandooka, Brahma · Varnada, Navamsa, Sandhya, Chakra, Tara Lagna. See 78 for helpers. */
+(function(){
+'use strict';
+const DS = window.DashaSys;
+const { mod12, ojas, oddSign, typ, EXALT, seq12, stronger, twoCycles, repeatFixed, lordOf } = DS;
+const ap = (ok, text) => ({ ok, text });
+const eq = (arr) => arr.map(k => ({ key:k, w:1 }));
+const dirP = (s) => oddSign(s) ? 1 : -1;
+const OK = () => ap(true, 'Universal — computed from the ascendant and planet signs of any chart.');
+const seven = (c) => stronger(c.asc, mod12(c.asc+6), c);
+const reg = (fam) => (o) => DS.register(Object.assign({ family:fam, keyType:'sign', conf:'varies', applic:OK }, o));
+const ayur = reg('Ayur'), special = reg('Special');
+const plainLord = (s) => SIGNS[s].lord;                       // never Rahu/Ketu
+const subFwdFromParent = (parent) => eq(seq12(parent.key, 1));
+const subSevenStrong = (parent,c) => eq(seq12(stronger(parent.key, mod12(parent.key+6), c), 1));
+const sub3Dir = (parent,c) => {                                // default backward; forward if Saturn there or odd sign; Ketu flips
+  const s = parent.key;
+  let dir = (c.ps.Saturn === s || oddSign(s)) ? 1 : -1;
+  if (c.ps.Ketu === s) dir = -dir;
+  return eq(seq12(s, dir));
+};
+
+/* ---------- Brahma planet (for Sthira & Brahma) ---------- */
+const FRIENDS = { Sun:['Moon','Mars','Jupiter'], Moon:['Sun','Mercury'], Mars:['Sun','Moon','Jupiter'], Mercury:['Sun','Venus'],
+                  Jupiter:['Sun','Moon','Mars'], Venus:['Mercury','Saturn'], Saturn:['Mercury','Venus'] };
+function brahmaPlanet(c){
+  const sp = seven(c);
+  const cands = [...new Set([5,7,11].map(o => plainLord(mod12(sp+o))))];
+  const score = p => {
+    const pos = c.ps[p], L = plainLord(pos);
+    let s = 0;
+    if (L === p || EXALT[p] === pos || (FRIENDS[p] || []).includes(L)) s++;
+    if (oddSign(pos)) s++;
+    return s;
+  };
+  const ranked = cands.slice().sort((a,b)=> score(b) - score(a) || c.pd[b] - c.pd[a]);
+  const top = ranked.slice(0,2);
+  if (top.length < 2) return top[0];
+  return stronger(c.ps[top[0]], c.ps[top[1]], c) === c.ps[top[0]] ? top[0] : top[1];
+}
+const brahmaSign = (c) => c.ps[brahmaPlanet(c)];
+
+/* ---------- AYUR ---------- */
+ayur({ id:'sthira', name:'Sthira Dasha', blurb:'Fixed longevity',
+  build(c){ const s0 = brahmaSign(c); return { seq: repeatFixed(seq12(s0,1), s => 7 + typ(s), 2), elapsed:0 }; },
+  sub: subFwdFromParent,
+  rule:'Starts at the Brahma planet’s sign, forward; 7 / 8 / 9 years for movable / fixed / dual signs.' });
+
+ayur({ id:'shoola', name:'Shoola Dasha', blurb:'9 years per sign',
+  build(c){ return { seq: repeatFixed(seq12(seven(c),1), 9, 2), elapsed:0 }; },
+  sub: subSevenStrong,
+  rule:'Starts at the stronger of lagna / 7th; 9 years per sign.' });
+
+ayur({ id:'niryana', name:'Niryana Shoola', blurb:'Modality durations',
+  build(c){
+    const seed = stronger(mod12(c.asc+1), mod12(c.asc+7), c);
+    return { seq: twoCycles(seq12(seed, dirP(seed)), s => 7 + typ(s)), elapsed:0 };
+  },
+  sub: sub3Dir,
+  rule:'Starts at the stronger of the 2nd / 8th sign; 7 / 8 / 9 years by modality, second cycle = 12 − years.' });
+
+ayur({ id:'mandooka', name:'Mandooka Dasha', blurb:'Kendra jumps',
+  build(c){ return { seq: twoCycles(mandookaOrder(c), s => mandookaYears(s,c)), elapsed:0 }; },
+  sub(parent,c){
+    const o = mandookaOrder(c), i = Math.max(0, o.indexOf(parent.key));
+    return eq(o.map((_,k)=> o[(i+k) % 12]));
+  },
+  rule:'The “frog jump” order skips between kendras and their neighbours; sub-periods follow the same order from the parent sign.' });
+function mandookaOrder(c){
+  const seed = seven(c), dir = dirP(seed);
+  return [0,3,6,9,2,5,8,11,1,4,7,10].map(o => mod12(seed + dir*o));
+}
+function mandookaYears(s,c){
+  const pos = DS.lordPos(s,c);
+  if (pos === s) return 12;
+  if (pos === mod12(s+6)) return 10;
+  const d = oddSign(s) ? mod12(pos - s + 1) : mod12(s - pos + 1);
+  return d === 0 ? 12 : d;
+}
+
+ayur({ id:'brahma', name:'Brahma Dasha', blurb:'6th lord distances',
+  build(c){
+    const s0 = brahmaSign(c);
+    const order = oddSign(s0) ? seq12(s0,1) : seq12(mod12(s0+6), -1);
+    const yrs = s => {
+      const L6 = plainLord(mod12(s+5)), pos = c.ps[L6];
+      let d = oddSign(s) ? mod12(pos - s) : mod12(s - pos);
+      if (EXALT[L6] === pos) d += 1; else if (EXALT[L6] !== undefined && mod12(EXALT[L6]+6) === pos) d -= 1;
+      return Math.max(0, Math.min(12, d));
+    };
+    return { seq: twoCycles(order, yrs), elapsed:0 };
+  },
+  sub: subFwdFromParent,
+  rule:'Starts at the Brahma planet’s sign. Years = distance from a sign to the sign of the lord of its 6th.' });
+
+/* ---------- SPECIAL ---------- */
+special({ id:'varnada', name:'Varnada Dasha', blurb:'Social status',
+  build(c){
+    const hora = calcHoraLagnaSign(c.chart), vl = calcVarnadaLagnaSign(c.asc, hora);
+    const seed = stronger(c.asc, hora, c);
+    return { seq: twoCycles(seq12(seed, dirP(seed)), s => mod12(s - vl)), elapsed:0 };
+  },
+  sub: subFwdFromParent,
+  rule:'Starts at the stronger of lagna / Hora Lagna; each sign runs its distance from the Varnada Lagna.' });
+
+special({ id:'navamsa', name:'Navamsa Dasha', blurb:'9 years per sign',
+  build(c){
+    const d9 = c.chart.vargas.D9.ascendantSign;
+    const seed = [0,4,6,10][Math.floor(d9/3)] ;
+    const order = oddSign(seed) ? seq12(seed,1) : seq12(mod12(seed+6), -1);
+    return { seq: repeatFixed(order, 9, 2), elapsed:0 };
+  },
+  sub(parent){ const st = [6,0,8,10,4,8,6,0,8,10,4,8][parent.key]; return eq(seq12(st,1)); },
+  rule:'Seed from the navamsa lagna group; 9 years per sign; sub-periods start from a fixed partner sign.' });
+
+special({ id:'sandhya', name:'Sandhya Dasha', blurb:'10 years per sign', conf:'classical',
+  build(c){ return { seq: repeatFixed(seq12(c.asc,1), 10, 2), elapsed:0 }; },
+  sub: subFwdFromParent,
+  rule:'Starts at the lagna, 10 years per sign, forward.' });
+
+special({ id:'chakra', name:'Chakra Dasha', blurb:'Lagna lord seed',
+  build(c){
+    const j = c.chart.julianDay, sr = c.chart.sunriseJD, ss = c.chart.sunsetJD, hr = 1/24;
+    const twilight = Math.abs(j - sr) < hr || Math.abs(j - ss) < hr;
+    const day = j >= sr && j < ss;
+    const seed = twilight ? mod12(c.asc+1) : day ? c.ps[lordOf(c.asc,c)] : c.asc;
+    return { seq: repeatFixed(seq12(seed,1), 10, 2), elapsed:0 };
+  },
+  sub: subFwdFromParent,
+  rule:'Seed: dawn/dusk (within an hour of sunrise/sunset) → sign after lagna; day → sign of the lagna lord; night → lagna. 10 years per sign.' });
+
+special({ id:'taralagna', name:'Tara Lagna Dasha', blurb:'Nakshatra fraction',
+  build(c){
+    const lon = normDeg(c.chart.siderealLongitudes.Moon), span = 360/27;
+    const part = Math.min(11, Math.floor(((lon % span) / span) * 12));
+    const seed = mod12(c.asc + part);
+    return { seq: repeatFixed(seq12(seed, dirP(seed)), 9, 2), elapsed:0 };
+  },
+  sub(parent,c){
+    const ak = c.ps[c.chart.charaKarakas.Atmakaraka.planet];
+    return eq(seq12(ak, [1,5,7,10].includes(ak) ? -1 : 1));
+  },
+  rule:'Seed = lagna + the 12th-part of the Moon’s nakshatra; 9 years per sign; sub-periods run from the Atma Karaka sign.' });
+})();
+<\/script>
+<script>
+/* ===== 36 Dasha Systems — PANEL (system picker, "running now" ladder, level-by-level drill-down) =====
+   Engines: 78 core · 79 nakshatra · 80 rasi · 81 ayur+special. Styles: css/35-dasha-systems.css. */
+(function(){
+'use strict';
+const DS = window.DashaSys;
+const FAMILIES = [
+  ['Nakshatra','Nakshatra dashas'],
+  ['Conditional','Conditional nakshatra dashas'],
+  ['Phalita','Phalita rasi dashas'],
+  ['Ayur','Ayur dashas'],
+  ['Special','Special dashas']
+];
+const CONDITIONAL = ['shodasottari','shattrimsa','dwadasottari','dwisaptati','sataabdika','chaturaseeti','shashtihayani','panchottari'];
+const famOf = s => s.family === 'Nakshatra' && CONDITIONAL.includes(s.id) ? 'Conditional' : s.family;
+const ELEM = { Fire:'#d9824a', Earth:'#8fae6b', Air:'#6fa8c8', Water:'#7a8fd4' };
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const S = { chart:null, sys:null, gender:'M', subMode:'auto', path:[], data:null };
+try { S.gender = localStorage.getItem('vx_ds_gender') === 'F' ? 'F' : 'M'; S.subMode = localStorage.getItem('vx_ds_sub') || 'auto'; } catch(e){}
+
+const tz = () => (S.chart && S.chart.tzOffsetHours) || 0;
+function fmt(ms, withTime){
+  const d = new Date(ms + tz()*3600000);
+  const base = String(d.getUTCDate()).padStart(2,'0') + ' ' + MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+  return withTime ? base + ' ' + String(d.getUTCHours()).padStart(2,'0') + ':' + String(d.getUTCMinutes()).padStart(2,'0') : base;
+}
+function dur(ms){
+  const days = ms / 86400000;
+  if (days >= 365.25*1) return (days/365.25).toFixed(days >= 365.25*10 ? 1 : 2).replace(/\.0+$/,'') + ' yrs';
+  if (days >= 30) return (days/30.4375).toFixed(1) + ' months';
+  if (days >= 1) return days.toFixed(1) + ' days';
+  return (days*24).toFixed(1) + ' hrs';
+}
+const age = ms => ((ms - S.data.c.birth) / DS.YR);
+function tile(sys, key){
+  const col = sys.keyType === 'planet' ? (window.DASHA_PLANET_COLORS && DASHA_PLANET_COLORS[key]) || '#d4a24a' : ELEM[SIGNS[key].element];
+  return `<span class="ds-tile" style="--c:${col}">${DS.glyph(sys,key)}</span>`;
+}
+const withTime = lv => lv >= 3;
+
+function recompute(){
+  const sys = S.sys;
+  const r = DS.compute(sys, S.chart, { gender:S.gender, subMode:S.subMode });
+  const limit = r.c.birth + 128 * DS.YR;
+  r.periods = r.periods.filter(p => p.start < limit);
+  S.data = { c:r.c, periods:r.periods };
+}
+function listAt(path){ return path.length ? DS.children(S.sys, S.data.c, path[path.length-1]) : S.data.periods; }
+
+function rowHtml(p, i, now){
+  const sys = S.sys, lv = p.level, isNow = now >= p.start && now < p.end;
+  return `<button type="button" class="ds-row${isNow ? ' now' : ''}" data-i="${i}" ${lv >= 4 ? 'disabled' : ''}>`
+    + tile(sys, p.key)
+    + `<span class="ds-rt"><b>${DS.label(sys,p.key)}</b><small>${fmt(p.start, withTime(lv))} → ${fmt(p.end, withTime(lv))}</small></span>`
+    + `<span class="ds-rd">${dur(p.end - p.start)}${lv < 3 ? `<em>age ${Math.max(0,age(p.start)).toFixed(1)}–${age(p.end).toFixed(1)}</em>` : ''}</span>`
+    + (lv < 4 ? '<span class="ds-go">›</span>' : '') + (isNow ? '<span class="ds-nowtag">now</span>' : '') + `</button>`;
+}
+
+function systemHtml(){
+  const sys = S.sys, c = S.data.c, now = Date.now();
+  const ap = sys.applic(c);
+  const active = DS.active(sys, c, S.data.periods, now);
+  let h = `<button type="button" class="ds-back" data-act="home">‹ All 36 systems</button>`;
+  h += `<div class="ds-head"><div><div class="ds-eyebrow">${famLabel(sys)}</div><h4>${sys.name}</h4><small>${sys.blurb}</small></div>`
+     + `<span class="ds-badge ${sys.conf === 'classical' ? 'ok' : 'warn'}" title="${sys.conf === 'classical' ? 'Standard, widely agreed rules' : 'Software conventions differ on some rules; treat as interpretation'}">${sys.conf === 'classical' ? 'classical' : 'interpretation varies'}</span></div>`;
+  h += `<div class="ds-note ${ap.ok ? 'g' : 'b'}"><span>${ap.ok ? '✓' : '!'}</span><div>${ap.text}</div></div>`;
+  if (sys.needsGender || sys.subToggle){
+    h += `<div class="ds-ctl">`;
+    if (sys.needsGender) h += `<div class="ds-seg" data-k="gender"><span>Gender</span><button type="button" data-v="M" class="${S.gender==='M'?'on':''}">Male</button><button type="button" data-v="F" class="${S.gender==='F'?'on':''}">Female</button></div>`;
+    if (sys.subToggle) h += `<div class="ds-seg" data-k="sub"><span>Sub-periods</span><button type="button" data-v="auto" class="${S.subMode==='auto'?'on':''}">Classical</button><button type="button" data-v="equal" class="${S.subMode==='equal'?'on':''}">Equal</button><button type="button" data-v="prop" class="${S.subMode==='prop'?'on':''}">Proportional</button></div>`;
+    h += `</div>`;
+  }
+  if (sys.rule) h += `<p class="ds-rule">${sys.rule}</p>`;
+  // running now ladder
+  h += `<div class="ds-now"><div class="ds-eyebrow">Running now</div>`;
+  if (active.length){
+    h += `<div class="ds-ladder">` + active.map((p,i)=>
+      `<div class="ds-lad"><span class="ds-lv">${DS.LEVELS[i]}</span>${tile(sys,p.key)}<span class="ds-rt"><b>${DS.label(sys,p.key)}</b><small>${fmt(p.start,withTime(i))} → ${fmt(p.end,withTime(i))}</small></span></div>`).join('') + `</div>`;
+  } else h += `<p class="ds-rule">No period is running today (outside the calculated span).</p>`;
+  h += `</div>`;
+  // drill-down
+  const crumbs = [`<button type="button" data-act="crumb" data-n="0">${sys.name}</button>`].concat(S.path.map((p,i)=>
+    `<button type="button" data-act="crumb" data-n="${i+1}">${DS.label(sys,p.key)}</button>`)).join('<i>›</i>');
+  h += `<div class="ds-drill"><div class="ds-crumbs">${crumbs}</div>`;
+  h += `<div class="ds-eyebrow">${DS.LEVELS[S.path.length]}dasha${S.path.length ? ' of ' + DS.label(sys, S.path[S.path.length-1].key) : ' — tap a period to open its sub-periods'}</div>`;
+  const list = listAt(S.path);
+  h += `<div class="ds-list">` + list.map((p,i)=> rowHtml(p,i,now)).join('') + `</div></div>`;
+  return h;
+}
+function famLabel(sys){ return FAMILIES.find(f => f[0] === famOf(sys))[1]; }
+
+function homeHtml(){
+  let h = `<p class="ds-intro">Pick a system. Each one opens <b>level by level</b> — Maha › Antar › Pratyantar › Sookshma › Prana — with the <b>start and end of every period</b>.</p>`;
+  FAMILIES.forEach(([f,title])=>{
+    const items = DS.list.filter(s => famOf(s) === f);
+    h += `<div class="ds-fam"><div class="ds-eyebrow">${title}</div><div class="ds-grid">`
+      + items.map(s => `<button type="button" class="ds-card" data-id="${s.id}"><b>${s.name}</b><small>${s.blurb}</small></button>`).join('') + `</div></div>`;
+  });
+  return h;
+}
+
+function paint(root){
+  root = root || document.getElementById('ds-root'); if (!root) return;
+  try { root.innerHTML = S.sys ? systemHtml() : homeHtml(); }
+  catch(e){ root.innerHTML = `<div class="vx-note b"><div>Could not compute this system for this chart. (${String(e && e.message || e)})</div></div>`; console.error(e); }
+}
+
+window.buildDashaSystemsPanel = function(chart){
+  S.chart = chart; S.data = null;
+  if (S.sys){ try { recompute(); } catch(e){ S.sys = null; } }
+  return `<div class="section-heading"><h3>36 Dasha Systems</h3><div class="rule"></div></div><div class="ds" id="ds-root">${S.sys ? systemHtml() : homeHtml()}</div>`;
+};
+
+document.addEventListener('click', e => {
+  const root = e.target.closest('#ds-root'); if (!root || !S.chart) return;
+  const q = sel => e.target.closest(sel);
+  let b;
+  if ((b = q('.ds-card'))){
+    S.sys = DS.map[b.dataset.id]; S.path = [];
+    try { recompute(); } catch(err){ S.sys = null; console.error(err); }
+    paint(root); root.scrollIntoView({block:'start', behavior:'smooth'}); return;
+  }
+  if ((b = q('[data-act="home"]'))){ S.sys = null; S.path = []; paint(root); return; }
+  if ((b = q('[data-act="crumb"]'))){ S.path = S.path.slice(0, +b.dataset.n); paint(root); return; }
+  if ((b = q('.ds-seg button'))){
+    const k = b.parentNode.dataset.k;
+    if (k === 'gender') S.gender = b.dataset.v; else S.subMode = b.dataset.v;
+    try { localStorage.setItem(k === 'gender' ? 'vx_ds_gender' : 'vx_ds_sub', b.dataset.v); } catch(err){}
+    S.path = []; recompute(); paint(root); return;
+  }
+  if ((b = q('.ds-row')) && !b.disabled){
+    const p = listAt(S.path)[+b.dataset.i];
+    if (p){ S.path = S.path.concat([p]); paint(root); root.querySelector('.ds-drill').scrollIntoView({block:'start', behavior:'smooth'}); }
+  }
+});
 })();
 <\/script>
 </body>

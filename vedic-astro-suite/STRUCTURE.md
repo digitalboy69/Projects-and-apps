@@ -16,6 +16,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 |---|---|---|
 | Birth chart calculation | birth-chart | `js/03-ephemeris-engine.js`, `js/15-chart-core-compute.js`, `js/35-form-submit-compute-render.js` |
 | Dashas | birth-chart | `js/10-…`, `js/37-…`, `js/38-…` |
+| 36 Dasha Systems (Vimshottari, Yogini, Chara, Narayana, Kala Chakra …) | birth-chart | `js/78-…` core, `js/79-…` nakshatra, `js/80-…` rasi, `js/81-…` ayur+special, `js/82-…` UI, `css/35-…` |
 | Divisional charts / SVG | birth-chart | `js/05-…`, `js/60-…`, `js/61-…` |
 | Panchanga / Transits / Bhava | birth-chart | `js/45-…` to `js/50-…`, `js/59-…` |
 | Kundali matching, Vedic birthday, numerology | birth-chart | `js/51-…` to `js/56-…` |
@@ -130,6 +131,11 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/75-fate-meter.js` — Fate Meter
 - `apps/birth-chart/js/76-share-link-qr.js` — share chart by link / QR (data in URL hash)
 - `apps/birth-chart/js/77-cloud-account.js` — cloud sign-in and profile sync (Supabase REST)
+- `apps/birth-chart/js/78-dasha-systems-core.js` — 36 Dasha Systems: helpers (sign strength, rashi drishti, padakrama, durations), registry `DashaSys.register`, layout engine (`compute`, `children`, `active`)
+- `apps/birth-chart/js/79-dasha-systems-nakshatra.js` — 36 Dasha Systems: 12 nakshatra systems (Vimshottari, Ashtottari, Kala Chakra, Yogini + 8 conditional: Shodasottari, Shattrimsa Sama, Dwadasottari, Dwisaptati Sama, Sataabdika, Chaturaseeti Sama, Shashtihayani, Panchottari)
+- `apps/birth-chart/js/80-dasha-systems-rasi.js` — 36 Dasha Systems: 14 phalita rasi systems (Chara Parasara/K.N. Rao/Iranganti 1 & 2, Narayana, Sudasa, Drig, Trikona, Lagnamsaka, Yogardha, Kendradi, Padanadhamsa, Paryaya, Moola)
+- `apps/birth-chart/js/81-dasha-systems-ayur-special.js` — 36 Dasha Systems: 5 Ayur (Sthira, Shoola, Niryana Shoola, Mandooka, Brahma) + 5 Special (Varnada, Navamsa, Sandhya, Chakra, Tara Lagna)
+- `apps/birth-chart/js/82-dasha-systems-ui.js` — 36 Dasha Systems panel `buildDashaSystemsPanel` (system picker, running-now ladder, level-by-level drill-down with start/end of every period, gender + sub-period toggles)
 - `apps/birth-chart/css/01-premium-tokens-reset.css` — design tokens (colors, fonts) and reset
 - `apps/birth-chart/css/02-header.css` — header
 - `apps/birth-chart/css/03-hero-intake-form.css` — hero and birth intake form
@@ -164,6 +170,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/32-date-finder.css` — Date Finder
 - `apps/birth-chart/css/33-friendly-input-page.css` — friendly input page
 - `apps/birth-chart/css/34-smart-search.css` — Smart Search
+- `apps/birth-chart/css/35-dasha-systems.css` — 36 Dasha Systems panel styles (`ds-*`)
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order

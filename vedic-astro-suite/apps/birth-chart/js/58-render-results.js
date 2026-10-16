@@ -229,6 +229,7 @@ function renderResults(profile){
 
   html += `<div class="app-panel" id="panel-reading">${window.buildReadingPanel(chart)}</div>`;
   html += `<div class="app-panel" id="panel-fate">${window.buildFatePanel(chart, profile)}</div>`;
+  html += `<div class="app-panel" id="panel-dashasys">${window.buildDashaSystemsPanel(chart, profile)}</div>`;
   html += `<div class="app-panel" id="panel-sahams">${window.buildSahamPanel(chart)}</div>`;
   html += `<div class="app-panel" id="panel-tithi">${window.buildTithiPraveshPanel(chart, profile)}</div>`;
   html += `<div class="app-panel" id="panel-bhavabala">${window.buildBhavaBalaPanel(chart, profile)}</div>`;

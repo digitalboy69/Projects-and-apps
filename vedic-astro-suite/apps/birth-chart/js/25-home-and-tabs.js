@@ -20,6 +20,7 @@ const HOME_ITEMS=[
  ['panel-vbday','🎂','Vedic Birthday','Tithi, Nakshatra & solar birthday for any year','Time & Cycles','home'],
  ['panel-active','🔥','Life Activation','Houses lit up now · pick any date','Time & Cycles','home'],
  ['panel-dasha','◷','Dasha','120-year life-period timeline','Time & Cycles','home'],
+ ['panel-dashasys','◷','36 Dasha Systems','Vimshottari, Yogini, Chara, Narayana & more','Time & Cycles','home'],
  ['panel-tithi','🪔','Tithi Pravesh','Your yearly lunar-birthday chart','Time & Cycles','home'],
  ['panel-transits','♄','Transits & Sade Sati','Saturn, Jupiter & node ingress dates','Time & Cycles','home'],
  ['panel-transit','⟲','Live Sky','Today\'s planets vs your chart','Time & Cycles','home'],

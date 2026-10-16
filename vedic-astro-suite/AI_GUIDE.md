@@ -125,6 +125,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - 3D premium polish: CSS block "PREMIUM POLISH LAYER" in srcA (champagne-gold glass, vignette `.viewport::after`, eased tab/modal motion, `--ease`); camera drag momentum + eased wheel zoom (`spinVT/spinVP`, `zoomGoal/zoomSet` in renderLoop; skipped under reduced-motion); magnetic hover `setupMagnetic` (sets `--tx/--ty/--mx/--my`, uses CSS `translate`, mouse devices only).
 - 3D Rising timeline: LONG-PRESS (550ms, `setupRisingPress`, `.pressing` fill, click suppressed after a hold) on `#hudAsc` opens popup `#risingOverlay`; tap still opens the place picker. Same content in new side-panel tab `tab-rising` (`#risingTabBody`). Model `riseTimeline(jd,L)` (cached; `_ascEdge` steps 1 min + bisects) -> 12 signs start/end/duration; `risingHTML`, `renderRising(force)` (called from `renderHUD`, per-minute key), `openRising`/`closeRising`.
 - 3D: removed the + / − zoom buttons (`zoomInBtn`/`zoomOutBtn`); zoom is by pinch / mouse wheel only.
+- 36 Dasha Systems panel (`panel-dashasys`, Home → Time & Cycles): engines `js/78-82` + `css/35`. Registry `DashaSys.register({id,name,blurb,family,keyType,conf,applic,build,sub})`; periods laid out from birth, sub-periods on the FULL parent length then clipped (like Vimshottari). Vimshottari there == main engine (tested). Disputed rules (Kala Chakra, Sudasa, Paryaya, Padanadhamsa, Mandooka, Moola, Brahma, Drig, Chara AD patterns) are flagged `conf:'varies'` in the UI. Iranganti needs Male/Female toggle.
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 
@@ -132,13 +133,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-15 - 1067 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-16 - 1105 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 112 files, 12812 lines, 898 KB
+**birth-chart** - 118 files, 13681 lines, 945 KB
 ```
-index.html                                         525 lines   29 KB
+index.html                                         531 lines   30 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -163,7 +164,7 @@ js/21-transit-timer-tab.js                         100 lines    4 KB
 js/22-sandhi-table-tab.js                           68 lines    2 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             103 lines   10 KB
+js/25-home-and-tabs.js                             104 lines   10 KB
 js/26-rectification-studio.js                      227 lines   13 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -196,7 +197,7 @@ js/54-vedic-birthday-ui.js                         152 lines   12 KB
 js/55-numerology-engine.js                          54 lines    9 KB
 js/56-numerology-ui.js                             126 lines   13 KB
 js/57-my-chart-overview.js                         100 lines    6 KB
-js/58-render-results.js                            750 lines   33 KB
+js/58-render-results.js                            751 lines   34 KB
 js/59-live-transit-form.js                         150 lines    7 KB
 js/60-interactive-varga-svg.js                     162 lines    6 KB
 js/61-varga-chart-svg.js                            61 lines    9 KB
@@ -216,6 +217,11 @@ js/74-sahams.js                                     67 lines   15 KB
 js/75-fate-meter.js                                 76 lines   20 KB
 js/76-share-link-qr.js                             129 lines   10 KB
 js/77-cloud-account.js                             142 lines   14 KB
+js/78-dasha-systems-core.js                        229 lines    9 KB
+js/79-dasha-systems-nakshatra.js                   150 lines    9 KB
+js/80-dasha-systems-rasi.js                        149 lines    8 KB
+js/81-dasha-systems-ayur-special.js                146 lines    7 KB
+js/82-dasha-systems-ui.js                          136 lines    8 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
@@ -250,6 +256,7 @@ css/31-rectification-studio.css                    100 lines   10 KB
 css/32-date-finder.css                              66 lines    6 KB
 css/33-friendly-input-page.css                      47 lines    4 KB
 css/34-smart-search.css                             30 lines    3 KB
+css/35-dasha-systems.css                            51 lines    4 KB
 ```
 
 **developer** - 4 files, 180 lines, 13 KB
