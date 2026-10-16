@@ -20,7 +20,7 @@
 .pn-facts small,.tr-card small{display:block;font:600 10px var(--font-sans);letter-spacing:.1em;text-transform:uppercase;color:var(--text-subtle);margin-bottom:3px}
 .pn-facts b{font-size:14px;color:var(--text-main)}
 .pn-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
-.pn-chips span{font:12px var(--font-sans);color:var(--text-muted);background:rgba(212,175,55,.07);border:1px solid var(--border-light);border-radius:999px;padding:6px 12px}
+.pn-chips>span{font:12px var(--font-sans);color:var(--text-muted);background:rgba(212,175,55,.07);border:1px solid var(--border-light);border-radius:999px;padding:6px 12px}
 .pn-chips em{font-style:normal;color:var(--text-subtle)}
 .pn-sec,.tr-sec{margin-bottom:26px}
 .pn-sec h5,.tr-sec h5{margin:0 0 12px;font:600 13px var(--font-sans);letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright)}

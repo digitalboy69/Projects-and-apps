@@ -4,7 +4,7 @@
 .ov-av{width:64px;height:64px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font:600 28px var(--font-display);color:#111;background:linear-gradient(135deg,var(--gold-bright),var(--gold))}
 .ov-id{min-width:0}.ov-id h3{margin:0 0 8px;font:500 24px var(--font-display);color:var(--text-main);overflow:hidden;text-overflow:ellipsis}
 .ov-chips{display:flex;flex-wrap:wrap;gap:6px}
-.ov-chips span{font:12px var(--font-sans);color:var(--text-muted);background:rgba(0,0,0,.25);border:1px solid var(--border-subtle);border-radius:999px;padding:4px 10px}
+.ov-chips>span{font:12px var(--font-sans);color:var(--text-muted);background:rgba(0,0,0,.25);border:1px solid var(--border-subtle);border-radius:999px;padding:4px 10px}
 .ov-big3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:26px}
 .ov-big{background:var(--bg-card);border:1px solid var(--border-light);border-radius:18px;padding:16px 10px;text-align:center;position:relative;overflow:hidden}
 .ov-big:nth-child(1){border-top:3px solid #D4AF37}.ov-big:nth-child(2){border-top:3px solid #C9C3AE}.ov-big:nth-child(3){border-top:3px solid #E0A64A}

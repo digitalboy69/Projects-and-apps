@@ -5,7 +5,7 @@
 .vb-hero h3{margin:0 0 8px;font:500 28px var(--font-display);color:var(--text-main)}
 .vb-hero p{margin:0 auto 14px;max-width:560px;color:var(--text-muted);font-size:14px;line-height:1.6}.vb-hero p b{color:var(--gold-bright)}
 .vb-born{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-.vb-born span{font:12px var(--font-sans);color:var(--text-main);background:rgba(212,175,55,.08);border:1px solid var(--border-light);border-radius:999px;padding:6px 12px}
+.vb-born>span{font:12px var(--font-sans);color:var(--text-main);background:rgba(212,175,55,.08);border:1px solid var(--border-light);border-radius:999px;padding:6px 12px}
 .vb-year{display:flex;align-items:flex-end;justify-content:center;gap:10px;margin:6px 0 20px;flex-wrap:wrap}
 .vb-year button{width:46px;height:46px;border-radius:50%;border:1px solid var(--border-light);background:var(--bg-card);color:var(--gold-bright);font-size:22px;cursor:pointer;transition:border-color .2s}
 .vb-year button:hover{border-color:var(--gold)}
