@@ -8,3 +8,4 @@ node_modules/
 app.enc
 customer-edition.html
 !assets/*.png
+!signal-decoder/icons/*.png
