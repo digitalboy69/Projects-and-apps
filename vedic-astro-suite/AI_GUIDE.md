@@ -133,6 +133,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Birth chart UI overhaul: input page = full screen, no header (floating profile button); app header = [back][search pill][avatar]; Home = segmented section chips (All / sections / Ask AI) + tiles, Smart-Search "Ask AI" topics and Tap-to-search moved into Home as sections; profile sheet with hero. css 36, js 83, edits in js 25.
 - Bridge main ⇄ 3D: sky3d js 48 merges the main app's saved profiles (key "Vedic Astrology_profiles_v1") into its dropdown and follows "vax_active_profile_v1" (written by birth-chart js 83 on every renderResults); 3D-only profiles stay in their own key.
 - 3D Sky: "Time Machine" picker replaces the native datetime-local (sky3d js 49, css 23): year slider 1800–2200, hold-to-repeat ±100y…±1h, typed dates, month/day tiles, Birth jump; timeline is draggable with 1M/1Y/10Y/100Y zoom; whole 3D UI re-skinned in css 23.
+- Triggers: 15 new life areas (love, infatuation, luck, promotion, fame, relationship strain, windfall/inheritance, legal, debt, father, mother, siblings, business, job change, spiritual) in sky3d js 46 THEMES; per-area transit style `tp` (dbl/jup/sat/press/node), `rule` text and `src` links (checked against astromedha, jagannathhora, astrologertripathi, Parashara, shreekundli) shown in the UI.
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 
@@ -140,7 +141,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-17 - 1162 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-17 - 1164 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -284,7 +285,7 @@ js/01-notepad.js                                   319 lines   65 KB
 css/01-notepad.css                                 168 lines   25 KB
 ```
 
-**sky3d** - 73 files, 6571 lines, 369 KB
+**sky3d** - 73 files, 6661 lines, 378 KB
 ```
 index.html                                         450 lines   27 KB
 js/01-astro-engine.js                              143 lines    7 KB
@@ -332,8 +333,8 @@ js/42-init.js                                       24 lines    0 KB
 js/43-degree-finder-returns.js                     211 lines   13 KB
 js/44-retrograde-planner.js                         41 lines    7 KB
 js/45-vimshottari-dasha.js                          60 lines    2 KB
-js/46-dasha-transit-engine.js                      250 lines   13 KB
-js/47-dasha-transit-ui.js                          134 lines    9 KB
+js/46-dasha-transit-engine.js                      319 lines   21 KB
+js/47-dasha-transit-ui.js                          145 lines   10 KB
 js/48-profile-bridge.js                             48 lines    2 KB
 js/49-time-machine.js                              139 lines   11 KB
 css/01-base-tokens.css                              51 lines    1 KB
@@ -358,7 +359,7 @@ css/19-retrograde-planner.css                       35 lines    4 KB
 css/20-hud-ascendant-rising.css                     51 lines    4 KB
 css/21-premium-polish.css                           32 lines    3 KB
 css/22-dasha-transit-triggers.css                   31 lines    3 KB
-css/23-time-machine-polish.css                     100 lines   10 KB
+css/23-time-machine-polish.css                     110 lines   10 KB
 ```
 
 **shell** - 4 files, 399 lines, 52 KB

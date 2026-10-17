@@ -1,6 +1,6 @@
 /* ============================================================================
    DASHA + TRANSIT TRIGGER ENGINE
-   Classical rule (Parashari / B.V. Raman double-transit idea):
+   Classical rule (Parashari / B.V. Raman double-transit idea; each life area states its own trigger in THEMES):
      1. DASHA = the promise. The running Maha / Antar / Pratyantar lords must be linked to the event's house:
         they rule it, sit in it, aspect it, or are the natural significator (supporting houses add a little).
         The Antardasha lord must be linked, plus the Mahadasha or Pratyantar lord. No dasha link -> no trigger.
@@ -29,16 +29,66 @@ const DTrig = (function(){
     step:3, gapDays:10              // scan sampling (days) and the gap that still merges two hits into one window
   };
 
-  // Event themes: p = primary houses, s = supporting houses, k = natural significators (karakas)
+  // Event themes: p = primary houses, s = supporting houses, k = natural significators (karakas).
+  // tp = which transit counts as the trigger:  dbl (default) Jupiter AND Saturn on/aspecting the house (double transit);
+  //   jup  Jupiter on/aspecting the house (Saturn adds a little)   sat  Saturn on/aspecting the house
+  //   press Saturn on/aspecting the house AND Rahu/Ketu on it (pressure)   node  Rahu/Ketu on the house or on natal Venus
+  // src = pages the house/karaka/transit rule was checked against (shown in the app).
+  const ln = (t,u)=>[t,u];
+  const SRC = {
+    love:[ln('Astromedha: love vs arranged marriage','https://astromedha.in/insights/vedic/love-marriage-or-arranged-marriage')],
+    luck:[ln('Astromedha: reading luck from the chart','https://astromedha.in/insights/luck/how-to-read-my-luck-from-my-birth-chart'),ln('Parashara Hora Shastra (9th house = bhagya)','https://enjoylearningsanskrit.com/scriptures/parashara/chapter-20')],
+    promo:[ln('Astromedha: promotion timing','https://astromedha.in/insights/career/astrology-for-promotion-timing')],
+    fame:[ln('Astromedha: will I be famous','https://astromedha.in/insights/vedic/will-i-be-famous')],
+    strain:[ln('Astromedha: separation indicators','https://astromedha.in/insights/vedic/divorce-indications-in-kundli'),ln('Jagannatha Hora: 6th and 12th houses in divorce','https://jagannathhora.com/divorce-separation-indicators-kp/')],
+    inherit:[ln('Astrologer Tripathi: 8th house windfalls','https://astrologertripathi.com/2026/08/14/8th-house-astrology-sudden-wealth-windfalls/')],
+    legal:[ln('Jagannatha Hora: 6th house and court cases','https://jagannathhora.com/winning-court-cases-6th-house/')],
+    debt:[ln('Astromedha: when will I be debt free','https://astromedha.in/insights/vedic/when-will-i-be-debt-free')],
+    family:[ln('Astromedha: family in the chart','https://astromedha.in/insights/vedic/ask-family')],
+    biz:[ln('Astromedha: best time to start a business','https://astromedha.in/insights/vedic/best-time-to-start-a-business')],
+    job:[ln('Astromedha: when will I get a job','https://astromedha.in/insights/vedic/naukri-kab-milegi'),ln('Shree Kundli: job change timing','https://www.shreekundli.com/blog/career-money/job-change-timing-kundli-astrology')],
+    spirit:[ln('Astro Jagriti: is your horoscope spiritual','https://astrojagriti.substack.com/p/i-am-spiritual')]
+  };
   const THEMES = [
-    { key:'marriage',  label:'Marriage & partnership',   icon:'💍', p:[7],     s:[2,11],   k:['Venus'] },
-    { key:'career',    label:'Career & status',          icon:'💼', p:[10],    s:[6,11,2], k:['Sun','Saturn'] },
-    { key:'wealth',    label:'Money & gains',            icon:'💰', p:[2,11],  s:[5,9],    k:['Jupiter'] },
-    { key:'children',  label:'Children',                 icon:'👶', p:[5],     s:[2,9,11], k:['Jupiter'] },
-    { key:'home',      label:'Home, property, vehicle',  icon:'🏠', p:[4],     s:[11,2],   k:['Mars','Venus'] },
-    { key:'education', label:'Education & learning',     icon:'🎓', p:[4,5],   s:[9,2],    k:['Mercury','Jupiter'] },
-    { key:'foreign',   label:'Travel & relocation', icon:'✈️', p:[12,9], s:[3,7],    k:['Rahu'] },
-    { key:'health',    label:'Health challenges',        icon:'🩺', p:[6,8],   s:[1,12],   k:['Saturn'] }
+    { key:'marriage',  short:'Marriage', label:'Marriage & partnership',   icon:'💍', p:[7],     s:[2,11],   k:['Venus'] },
+    { key:'career',    short:'Career',   label:'Career & status',          icon:'💼', p:[10],    s:[6,11,2], k:['Sun','Saturn'] },
+    { key:'wealth',    short:'Money',    label:'Money & gains',            icon:'💰', p:[2,11],  s:[5,9],    k:['Jupiter'] },
+    { key:'children',  short:'Children', label:'Children',                 icon:'👶', p:[5],     s:[2,9,11], k:['Jupiter'] },
+    { key:'home',      short:'Home',     label:'Home, property, vehicle',  icon:'🏠', p:[4],     s:[11,2],   k:['Mars','Venus'] },
+    { key:'education', short:'Study',    label:'Education & learning',     icon:'🎓', p:[4,5],   s:[9,2],    k:['Mercury','Jupiter'] },
+    { key:'foreign',   short:'Travel',   label:'Travel & relocation',      icon:'✈️', p:[12,9],  s:[3,7],    k:['Rahu'] },
+    { key:'health',    short:'Health',   label:'Health challenges',        icon:'🩺', p:[6,8],   s:[1,12],   k:['Saturn'] },
+    // ---- added: each checked against the pages in SRC ----
+    { key:'romance',   short:'Love',     label:'Love & romance',           icon:'💘', p:[5],     s:[7,11],   k:['Venus'],           tp:'jup',   src:SRC.love,
+      rule:'Dasha of the 5th/7th lord, Venus or a planet in the 5th. Trigger: Jupiter over or aspecting the 5th house (Saturn adds weight). Romance starts in the 5th and settles in the 7th and 11th.' },
+    { key:'crush',     short:'Infatuation', label:'Infatuation & sudden attraction', icon:'🔥', p:[5], s:[1,11], k:['Rahu','Venus'], tp:'node', src:SRC.love,
+      rule:'Dasha linked to the 5th house, Venus or Rahu. Trigger: Rahu or Ketu crossing the 5th house or your natal Venus brings sudden, intense attraction. Traditionally intense and often short-lived.' },
+    { key:'luck',      short:'Luck',     label:'Luck & good fortune',      icon:'🍀', p:[9],     s:[5,11,1], k:['Jupiter'],         tp:'jup',   src:SRC.luck,
+      rule:'The 9th house (bhagya) and its lord. Good seasons arrive when the 9th lord or a planet in the 9th runs its period, lifted by Jupiter over the 9th (Saturn adds weight).' },
+    { key:'promotion', short:'Promotion', label:'Promotion & recognition', icon:'📈', p:[10],    s:[11,6,1], k:['Sun','Jupiter'],   tp:'jup',   src:SRC.promo,
+      rule:'Antardasha of the 10th lord, Sun, Jupiter or a planet linked to the 10th. Trigger: Jupiter over or aspecting the 10th house; Saturn supporting it.' },
+    { key:'fame',      short:'Fame',     label:'Fame & public name',       icon:'🌟', p:[10],    s:[1,5,11], k:['Sun','Rahu'],      tp:'jup',   src:SRC.fame,
+      rule:'Dasha of the 10th lord, Sun, Rahu or a raja-yoga planet. Trigger: Jupiter over the 10th house (or the 1st). Saturn over the 10th builds a slow, lasting name.' },
+    { key:'strain',    short:'Strain',   label:'Relationship strain & separation', icon:'💔', p:[7], s:[6,8,12], k:['Venus'],     tp:'press', src:SRC.strain,
+      rule:'Dasha of the 7th lord (especially in the 6th/8th/12th), Venus or the 6th/8th/12th lords tied to the 7th. Trigger: Saturn on the 7th house together with Rahu/Ketu on the 1st-7th axis. This marks a period of pressure, not a verdict.' },
+    { key:'inherit',   short:'Windfall', label:'Inheritance & windfalls',  icon:'🪙', p:[8],     s:[2,11,4], k:['Jupiter'],         tp:'jup',   src:SRC.inherit,
+      rule:'Dasha of the 8th lord or a planet in the 8th, linked to the 2nd, 4th or 11th. Trigger: Jupiter over or aspecting the 8th house (the most reliable window for legacies and settlements).' },
+    { key:'legal',     short:'Legal',    label:'Legal matters & disputes', icon:'⚖️', p:[6],     s:[7,11,12], k:['Saturn'],         src:SRC.legal,
+      rule:'The 6th house (dispute), 7th (opponent), 11th (outcome); the 12th brings loss and expense. A window needs dasha and transit both on the 6th. Check the 11th for a win and the 12th for caution.' },
+    { key:'debt',      short:'Debt',     label:'Debts & loans',            icon:'🧾', p:[6],     s:[12,2,11], k:['Saturn'],         tp:'sat',   src:SRC.debt,
+      rule:'Dasha of the 6th lord (the debt house), with the 12th (outflow) and 2nd/11th (money) lords in support. Trigger: Saturn crossing or aspecting the 6th house presses debt matters.' },
+    { key:'father',    short:'Father',   label:'Father & elders',          icon:'👨', p:[9],     s:[2,1],    k:['Sun'],             src:SRC.family,
+      rule:'The 9th house and the Sun (father, elders, teachers). The dasha of the 9th lord or Sun, with Jupiter and Saturn on the 9th house, marks events around them.' },
+    { key:'mother',    short:'Mother',   label:'Mother & roots',           icon:'👩', p:[4],     s:[2,9],    k:['Moon'],            src:SRC.family,
+      rule:'The 4th house and the Moon (mother, home, roots). The dasha of the 4th lord or Moon, with Jupiter and Saturn on the 4th house, marks events around her.' },
+    { key:'siblings',  short:'Siblings', label:'Siblings & courage',       icon:'🤝', p:[3],     s:[11,1],   k:['Mars'],            src:SRC.family,
+      rule:'The 3rd house and Mars (siblings, courage, effort). The dasha of the 3rd lord or Mars, with Jupiter and Saturn on the 3rd house.' },
+    { key:'business',  short:'Business', label:'Business & self-employment', icon:'🏪', p:[10,7], s:[11,2,5], k:['Mercury'],       tp:'jup',   src:SRC.biz,
+      rule:'Dasha of the 10th, 7th or 11th lord, Mercury, or Mercury/Jupiter/Venus inside a Rahu period. Trigger: Jupiter over the 10th house or its lord. Saturn on the 10th is a test, not a launch.' },
+    { key:'jobchange', short:'Job',      label:'New job or job change',    icon:'🔄', p:[10,6],  s:[11,2,3,7], k:['Saturn','Mercury'], tp:'jup', src:SRC.job,
+      rule:'Dasha of the 10th or 6th lord, a planet in them, or Saturn/Mercury/Sun tied to the career houses. Trigger: Jupiter over the 10th/6th (or the 11th/2nd). Saturn over the 10th restructures.' },
+    { key:'spiritual', short:'Spiritual', label:'Spiritual turning point', icon:'🕉️', p:[12,9], s:[5,8],     k:['Ketu','Jupiter'],  src:SRC.spirit,
+      rule:'The 5th, 9th (dharma) and 12th (moksha) houses, with Ketu and Jupiter. A window needs the dasha tied to the 9th or 12th and the double transit on that house.' }
   ];
   const THEME = {}; THEMES.forEach(t=>{ THEME[t.key] = t; });
 
@@ -117,13 +167,32 @@ const DTrig = (function(){
     if (b) return { v:b.v*W.frameMoon, txt:`${planet} (${SIGNS[tsign].name}) ${b.txt} H${h} counted from the Moon` };
     return { v:0 };
   }
-  function houseTransit(ctx, h, ts){
+  function houseTransit(ctx, h, ts, tp){
     const j = onHouse(ctx,'Jupiter',ts.Jupiter,h), sa = onHouse(ctx,'Saturn',ts.Saturn,h);
-    let v = j.v*sa.v; const dt = v>0;
-    if (!dt) v = W.partial*Math.max(j.v,sa.v);
-    const reasons = []; if (j.v) reasons.push(j.txt); if (sa.v) reasons.push(sa.txt);
-    const lagSign = (ctx.L+h-1)%12;
-    ['Rahu','Ketu'].forEach(n=>{ if (ts[n]===lagSign){ v += W.node; reasons.push(`${n} (${SIGNS[ts[n]].name}) sits on H${h}`); } });
+    const lagSign = (ctx.L+h-1)%12, reasons = [];
+    let v, dt;
+    if (tp === 'jup'){
+      v = Math.min(1, j.v + 0.25*sa.v); dt = j.v > 0;
+      if (j.v) reasons.push(j.txt); if (sa.v) reasons.push(sa.txt + ' (supporting)');
+    } else if (tp === 'sat'){
+      v = Math.min(1, sa.v + 0.25*j.v); dt = sa.v > 0;
+      if (sa.v) reasons.push(sa.txt); if (j.v) reasons.push(j.txt + ' (easing)');
+    } else if (tp === 'press'){
+      const n = ['Rahu','Ketu'].find(x=> ts[x] === lagSign);
+      dt = sa.v > 0 && !!n; v = dt ? sa.v : W.partial*Math.max(sa.v, n?1:0);
+      if (sa.v) reasons.push(sa.txt); if (n) reasons.push(`${n} (${SIGNS[ts[n]].name}) sits on H${h}`);
+    } else if (tp === 'node'){
+      const vs = ctx.sign.Venus, n = ['Rahu','Ketu'].find(x=> ts[x] === lagSign || ts[x] === vs);
+      dt = !!n; v = n ? 1 : W.partial*j.v;
+      if (n) reasons.push(`${n} (${SIGNS[ts[n]].name}) ${ts[n]===lagSign?'sits on H'+h:'crosses natal Venus'}`); else if (j.v) reasons.push(j.txt);
+    } else {
+      v = j.v*sa.v; dt = v > 0;
+      if (!dt) v = W.partial*Math.max(j.v,sa.v);
+      if (j.v) reasons.push(j.txt); if (sa.v) reasons.push(sa.txt);
+    }
+    if (!tp || tp === 'jup' || tp === 'sat'){
+      ['Rahu','Ketu'].forEach(n=>{ if (ts[n]===lagSign){ v += W.node; reasons.push(`${n} (${SIGNS[ts[n]].name}) sits on H${h}`); } });
+    }
     const mi = infl('Mars', ts.Mars, lagSign);
     if (mi){ v += W.mars; reasons.push(`Mars (${SIGNS[ts.Mars].name}) ${mi.txt} H${h}`); }
     return { v:Math.min(1,v), dt, h, reasons };
@@ -156,7 +225,7 @@ const DTrig = (function(){
       const mdL = lk[seg.md].score, adL = lk[seg.ad].score, pdL = lk[seg.pd].score;
       const D = W.mdW*mdL + W.adW*adL + W.pdW*pdL;
       const gate = D >= W.gate && adL >= W.linkMin && (mdL >= W.linkMin || pdL >= W.linkMin);
-      const T = houseTransit(ctx, h, ts), A = activation(ctx, lk, seg, ts);
+      const T = houseTransit(ctx, h, ts, t.tp), A = activation(ctx, lk, seg, ts);
       const Tc = Math.min(1, W.tw*T.v + W.aw*A.v);
       const score = Math.round(100*(W.dw*D + W.cw*Tc));
       const r = { jd, seg, h, mdL, adL, pdL, D, T, A, Tc, gate, score,

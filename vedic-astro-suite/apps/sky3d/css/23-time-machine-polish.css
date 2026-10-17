@@ -97,3 +97,13 @@
 /* view switch sits left of the round buttons so it never covers the date card */
 @media (min-width:721px){.view-switch-wrap{left:auto;right:76px;transform:none;align-items:flex-end}}
 @media (max-width:640px){.timeline{padding:10px 14px 10px}.timeline-controls{gap:8px}.tl-btn.play{width:44px;height:44px}.tl-speed{order:10;flex:1 1 100%}.speed-chip{flex:1;padding:7px 4px}.tl-zoom{order:5}.tl-jump-toggle{order:6;margin-left:auto}.tl-track-wrap{height:30px}}
+/* ---- Triggers tab: rules, sources, quiet list ---- */
+.dt-rule{margin:4px 0 8px;font-size:12.5px;line-height:1.55;color:var(--text-dim)}
+.dt-src{margin:4px 0 2px;font-size:11.5px;line-height:1.6;color:var(--text-faint)}
+.dt-src a{color:var(--cyan);text-decoration:none;border-bottom:1px dotted rgba(0,240,213,.5)}
+.dt-src a:hover{color:#fff}
+.dt-quiet{margin-top:8px}
+.dt-quiet summary{cursor:pointer;list-style:none;font-size:12px;color:var(--text-faint);padding:6px 2px}
+.dt-quiet summary::-webkit-details-marker{display:none}
+.dt-quiet summary::before{content:"▸ ";color:var(--cyan)}
+.dt-quiet[open] summary::before{content:"▾ "}

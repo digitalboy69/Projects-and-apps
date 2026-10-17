@@ -12,6 +12,7 @@ const fd = jd => { const d = dOf(jd); return `${pad(d.getDate())} ${MONTHS[d.get
 const span = d => { d = Math.abs(d); if (d < 1) return '<1 day'; if (d < 60) return `${Math.round(d)} days`; const m = d/30.44; return m < 24 ? `${m.toFixed(1)} months` : `${(m/12).toFixed(1)} years`; };
 const LV = { Strong:'#00F0D5', Good:'#F4C45C', Possible:'#8A9BB0' };
 const RANGES = { p5:['Past 5 yrs',-5,0], n2:['Next 2 yrs',0,2], n5:['Next 5 yrs',0,5], n10:['Next 10 yrs',0,10] };
+const TRLAB = { dbl:'double transit', jup:'Jupiter trigger', sat:'Saturn pressure', press:'Saturn + node pressure', node:'Rahu/Ketu trigger' };
 const st = { range:'n5', theme:'all', sort:'date', scan:null, scanKey:'', nowKey:'' };
 
 const profKey = p => [p.dob,p.tob,p.tz,p.lat,p.lon].join('|');
@@ -25,25 +26,34 @@ function nowCardHtml(p){
     <span><i>Maha</i><b>${seg.md}</b><small>until ${fd(seg.mdE)}</small></span>
     <span><i>Antar</i><b>${seg.ad}</b><small>until ${fd(seg.adE)}</small></span>
     <span><i>Pratyantar</i><b>${seg.pd}</b><small>until ${fd(seg.e)}</small></span></div>`;
-  h += `<div class="dt-bars">` + snap.rows.map(({theme,res})=>{
+  const barHtml = ({theme,res})=>{
     const sc = res ? res.score : 0, on = !!(res && res.on), lv = on ? DTrig.levelOf(sc) : '';
-    return `<div class="dt-bar${on?' on':''}" ${on?`style="--lv:${LV[lv]}"`:''}><span class="dt-bl">${theme.icon} ${theme.label}</span>
+    return `<div class="dt-bar${on?' on':''}" ${on?`style="--lv:${LV[lv]}"`:''}><span class="dt-bl">${theme.icon} ${theme.short||theme.label}</span>
       <span class="dt-bt"><i style="width:${Math.max(3,Math.min(100,sc))}%"></i></span>
       <span class="dt-bv">${on ? lv : 'quiet'}</span></div>`;
-  }).join('') + `</div></div>`;
+  };
+  const rows = snap.rows.slice().sort((a,b)=> ((b.res&&b.res.on)?1:0)-((a.res&&a.res.on)?1:0) || (b.res?b.res.score:0)-(a.res?a.res.score:0));
+  const onRows = rows.filter(r=>r.res&&r.res.on), offRows = rows.filter(r=>!(r.res&&r.res.on));
+  h += `<div class="dt-bars">${onRows.length?onRows.map(barHtml).join(''):'<div class="dt-none" style="padding:8px 0">No life area is triggered on this date.</div>'}</div>`;
+  if (offRows.length) h += `<details class="dt-quiet"><summary>${offRows.length} quiet areas (closest first)</summary><div class="dt-bars">${offRows.map(barHtml).join('')}</div></details>`;
+  h += `</div>`;
   return h;
 }
 
+function srcHtml(t){
+  return t.src && t.src.length ? `<p class="dt-src">Checked against: ${t.src.map(x=>`<a href="${esc(x[1])}" target="_blank" rel="noopener noreferrer">${esc(x[0])}</a>`).join(' · ')}</p>` : '';
+}
 function windowCardHtml(w){
   const t = DTrig.THEME[w.theme], c = LV[w.level], now = currentJD;
   const active = now >= w.s && now <= w.e, past = w.e < now;
   const ex = w.explain;
   return `<div class="dt-card${active?' act':''}${past?' past':''}" data-jd="${w.peakJD}" style="--lv:${c}">
-    <div class="dt-ch"><i>${t.icon}</i><div><b>${t.label}</b><small>House ${ex.house} · peak ${fd(w.peakJD)}${w.dt?' · double transit':''}</small></div><em>${w.level} ${w.score}</em></div>
+    <div class="dt-ch"><i>${t.icon}</i><div><b>${t.label}</b><small>House ${ex.house} · peak ${fd(w.peakJD)}${w.dt?' · '+TRLAB[t.tp||'dbl']:''}</small></div><em>${w.level} ${w.score}</em></div>
     <div class="dt-dates"><b>${w.openStart?'… ':''}${fd(w.s)} → ${fd(w.e)}${w.openEnd?' …':''}</b><small>${span(w.e-w.s)} · ${w.dasha.md} › ${w.dasha.ad} › ${w.dasha.pd} at peak${active?' · <span class="dt-live">happening now</span>':''}</small></div>
     <details class="dt-why"><summary>Why this window</summary>
       <div class="dt-wh">Dasha link <small>(the promise)</small></div><ul>${ex.dasha.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
       <div class="dt-wh">Transit <small>(the trigger)</small></div><ul>${ex.transit.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+      ${t.rule?`<div class="dt-wh">Rule used <small>(${TRLAB[t.tp||'dbl']})</small></div><p class="dt-rule">${esc(t.rule)}</p>`:''}${srcHtml(t)}
     </details></div>`;
 }
 
@@ -66,7 +76,7 @@ function chips(map, cur, attr){
 }
 
 function shell(p){
-  const themeMap = { all:'All areas' }; DTrig.THEMES.forEach(t=>{ themeMap[t.key] = t.icon+' '+t.label.split(' ')[0].replace(/[,&]$/,''); });
+  const themeMap = { all:'All areas' }; DTrig.THEMES.forEach(t=>{ themeMap[t.key] = t.icon+' '+(t.short||t.label.split(' ')[0]); });
   const rangeMap = {}; Object.keys(RANGES).forEach(k=>{ rangeMap[k] = RANGES[k][0]; });
   return `<div class="dt-prof">Profile: <b>${esc(p.name||'Unnamed')}</b> <small>${esc(p.dob)} · ${esc(p.tob)}</small></div>
     <div id="dtNow">${nowCardHtml(p)}</div>
@@ -76,6 +86,7 @@ function shell(p){
     <div class="filter-row" id="dtSort">${chips({date:'By date',score:'Strongest first'}, st.sort, 's')}</div>
     <div id="dtRes"></div>
     <details class="dt-how"><summary>How this works (and how far to trust it)</summary>
+      <p class="dt-rule">Each life area names the houses it uses and its own trigger. Areas marked <i>Jupiter trigger</i>, <i>Saturn pressure</i> or <i>Rahu/Ketu trigger</i> follow what practising astrologers use for that question, instead of always requiring the double transit. Tap a window, then "Why this window", to see the rule and the pages it was checked against.</p>
       <p><b>Dasha = the promise.</b> A life event needs the running Maha, Antar and Pratyantar lords to be linked to that area's house: they rule it, sit in it, aspect it, or are its natural significator.</p>
       <p><b>Transit = the trigger.</b> Jupiter <i>and</i> Saturn must both occupy or aspect that same house at the same time (the classical double transit), counted from the Lagna and, at lower weight, from the Moon. Rahu/Ketu on the house, Mars, and slow planets crossing the natal sign of a running dasha lord raise the score.</p>
       <p>A window is shown only when both meet on the same house. The score and label (Possible / Good / Strong) rank how well they line up. It shows timing <i>potential</i>, not certainty, so use it as a guide and check it against real past events with <b>Past 5 yrs</b>.</p></details>`;

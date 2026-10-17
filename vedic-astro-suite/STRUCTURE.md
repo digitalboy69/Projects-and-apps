@@ -222,7 +222,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/43-degree-finder-returns.js` — degree finder and returns
 - `apps/sky3d/js/44-retrograde-planner.js` — retrograde planner
 - `apps/sky3d/js/45-vimshottari-dasha.js` — Vimshottari dasha engine in Julian Days (VDasha: build timeline, at(jd) -> Maha/Antar/Pratyantar)
-- `apps/sky3d/js/46-dasha-transit-engine.js` — Dasha + Transit trigger engine (DTrig): dasha link per house, Jupiter+Saturn double transit, dasha-lord activation, window scan
+- `apps/sky3d/js/46-dasha-transit-engine.js` — Dasha + Transit trigger engine (DTrig): 23 life areas with sourced rules (double transit, Jupiter, Saturn, Saturn+node, node triggers), dasha link per house, dasha-lord activation, window scan
 - `apps/sky3d/js/47-dasha-transit-ui.js` — Triggers tab UI: running dashas, live strength per life area, scan windows, why details, tap = jump to date
 - `apps/sky3d/js/48-profile-bridge.js` — Profile bridge: all Birth Chart profiles appear in 3D (marked ✦, live), and the chart opened in the main app is auto-selected in 3D
 - `apps/sky3d/js/49-time-machine.js` — Time Machine date picker (year slider, hold-to-repeat steps, typed dates, month/day tiles, birth jump) + draggable, zoomable timeline
