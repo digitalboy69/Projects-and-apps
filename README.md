@@ -1,16 +1,17 @@
 <div align="center">
 
-# ॐ Vedic Astro Suite
+<img src="assets/banner.png" alt="Vedic Astro Suite" width="100%">
+
+<br>
 
 **A calm, dark-and-gold toolkit for Vedic astrology.**
-Birth chart · 36 dasha systems · birth-time rectification · 3D sky · kundali matching · Ask-AI
 
-![HTML](https://img.shields.io/badge/built%20with-HTML%20·%20CSS%20·%20JS-d4a24a?style=flat-square)
-![No backend](https://img.shields.io/badge/runs-in%20your%20browser-5ec4b7?style=flat-square)
-![Ayanamsa](https://img.shields.io/badge/ayanamsa-Lahiri-8a6fb8?style=flat-square)
-![Deploy](https://img.shields.io/badge/deploys%20on-Vercel-111?style=flat-square)
+![HTML](https://img.shields.io/badge/built%20with-HTML%20·%20CSS%20·%20JS-d4a24a?style=for-the-badge)
+![No backend](https://img.shields.io/badge/runs-in%20your%20browser-5ec4b7?style=for-the-badge)
+![Ayanamsa](https://img.shields.io/badge/ayanamsa-Lahiri-8a6fb8?style=for-the-badge)
+![Deploy](https://img.shields.io/badge/deploys%20on-Vercel-111?style=for-the-badge)
 
-<img src="assets/home.png" alt="Home screen of the Vedic Astro Suite" width="860">
+<sub>Screenshots use a made-up demo profile.</sub>
 
 </div>
 
@@ -44,7 +45,7 @@ Birth chart · 36 dasha systems · birth-time rectification · 3D sky · kundali
 | 🤖 | **Ask-AI** | Pick a topic, get ready-made questions with your exact chart details |
 | 🔗 | **Share & export** | Share by link or QR, copy a full report, export or import profiles |
 
-<img src="assets/dasha-systems.png" alt="36 dasha systems in 7 groups" width="860">
+<div align="center"><img src="assets/showcase.png" alt="36 dasha systems and the profile sheet" width="100%"></div>
 
 ## 🚀 Run it
 
