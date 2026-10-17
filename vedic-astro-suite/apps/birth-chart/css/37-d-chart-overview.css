@@ -16,7 +16,7 @@
 .gl-pt{display:flex;flex-direction:column;gap:4px}
 .gl-r{display:grid;grid-template-columns:minmax(86px,1.1fr) 1.2fr 46px 1fr 1.2fr;gap:8px;align-items:center;padding:6px 8px;border-radius:10px;background:rgba(255,255,255,.03);border-left:3px solid transparent;font-size:12.5px;transition:background .2s,transform .2s}
 .gl-pt.d1 .gl-r{grid-template-columns:minmax(86px,1.1fr) 1.2fr 46px 1.2fr}
-.gl-r:hover{background:rgba(212,162,74,.09);transform:translateX(2px)}
+
 .gl-r.k{border-left-color:#D4AF37}.gl-r.t{border-left-color:#5EC4B7}.gl-r.d{border-left-color:#E25555}
 .gl-p{display:flex;align-items:center;gap:6px;min-width:0}
 .gl-p i{font-style:normal;color:var(--gold-bright,#f0c46a);width:18px;text-align:center}
@@ -26,7 +26,7 @@
 .gl-st{display:flex;gap:4px;flex-wrap:wrap}
 .gl-hs{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:7px}
 .gl-hc{padding:7px 8px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid var(--border-light);min-height:70px;transition:transform .2s,border-color .2s}
-.gl-hc:hover{transform:translateY(-2px);border-color:rgba(212,162,74,.5)}
+
 .gl-hc header{display:flex;justify-content:space-between;align-items:center}
 .gl-hc header em{font-style:normal;font-weight:700;font-size:11px;color:var(--text-muted)}
 .gl-hc>b{display:block;font-size:11.5px;margin:2px 0 4px}
@@ -53,3 +53,15 @@
  .gl-hs{grid-template-columns:repeat(3,1fr)}
 }
 @media(prefers-reduced-motion:reduce){.gl *{transition:none!important}}
+/* smooth, no-jump tabs + touch friendly */
+.vx-pane.on{animation:vxFade .22s both}
+@keyframes vxFade{from{opacity:0}to{opacity:1}}
+.vx-tabs,.vx-tabs button,.gl,.gl *{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.vx-tabs{overscroll-behavior-x:contain}
+.vx-tabs button{user-select:none}
+.vx-tabs button:active{transform:scale(.97)}
+.vx-t{content-visibility:visible}
+.gl-r,.gl-hc{transform:none}
+@media(hover:hover){.gl-r:hover{background:rgba(212,162,74,.09);transform:translateX(2px)}.gl-hc:hover{transform:translateY(-2px);border-color:rgba(212,162,74,.5)}}
+@media(hover:none){.gl-r:hover,.gl-hc:hover{transform:none;background:inherit}}
+#panel-vargas{overflow-anchor:none}

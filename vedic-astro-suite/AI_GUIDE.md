@@ -145,7 +145,7 @@ _Generated 2026-10-17 - 1164 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 122 files, 14140 lines, 985 KB
+**birth-chart** - 122 files, 14152 lines, 986 KB
 ```
 index.html                                         535 lines   30 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -268,7 +268,7 @@ css/33-friendly-input-page.css                      47 lines    4 KB
 css/34-smart-search.css                             30 lines    3 KB
 css/35-dasha-systems.css                            96 lines    8 KB
 css/36-ui-overhaul.css                             126 lines   11 KB
-css/37-d-chart-overview.css                         56 lines    4 KB
+css/37-d-chart-overview.css                         68 lines    5 KB
 ```
 
 **developer** - 4 files, 180 lines, 13 KB
@@ -380,3 +380,4 @@ shared/meta.css                                     98 lines    5 KB
 <!-- AUTO:END -->
 - Door v2 (login→Razorpay pay→app + local admin): see docs/DOOR.md and ../door-site/. Customer edition is DERIVED by tools/build_customer.py (editions/customer/customer-layer.js, customer_top.js); originals untouched. Old gate/ (encrypted blob) is superseded.
 - D-chart info redesigned as one 'At a glance' dashboard (js/69 overview(), css/37).
+- D-chart tabs: no jump on switch (fade only, scroll+height locked), touch-friendly, hover motion only on mouse devices.

@@ -11479,7 +11479,7 @@ body:not(.app-mode) main.wrap{overflow-x:clip}
 .gl-pt{display:flex;flex-direction:column;gap:4px}
 .gl-r{display:grid;grid-template-columns:minmax(86px,1.1fr) 1.2fr 46px 1fr 1.2fr;gap:8px;align-items:center;padding:6px 8px;border-radius:10px;background:rgba(255,255,255,.03);border-left:3px solid transparent;font-size:12.5px;transition:background .2s,transform .2s}
 .gl-pt.d1 .gl-r{grid-template-columns:minmax(86px,1.1fr) 1.2fr 46px 1.2fr}
-.gl-r:hover{background:rgba(212,162,74,.09);transform:translateX(2px)}
+
 .gl-r.k{border-left-color:#D4AF37}.gl-r.t{border-left-color:#5EC4B7}.gl-r.d{border-left-color:#E25555}
 .gl-p{display:flex;align-items:center;gap:6px;min-width:0}
 .gl-p i{font-style:normal;color:var(--gold-bright,#f0c46a);width:18px;text-align:center}
@@ -11489,7 +11489,7 @@ body:not(.app-mode) main.wrap{overflow-x:clip}
 .gl-st{display:flex;gap:4px;flex-wrap:wrap}
 .gl-hs{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:7px}
 .gl-hc{padding:7px 8px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid var(--border-light);min-height:70px;transition:transform .2s,border-color .2s}
-.gl-hc:hover{transform:translateY(-2px);border-color:rgba(212,162,74,.5)}
+
 .gl-hc header{display:flex;justify-content:space-between;align-items:center}
 .gl-hc header em{font-style:normal;font-weight:700;font-size:11px;color:var(--text-muted)}
 .gl-hc>b{display:block;font-size:11.5px;margin:2px 0 4px}
@@ -11516,6 +11516,18 @@ body:not(.app-mode) main.wrap{overflow-x:clip}
  .gl-hs{grid-template-columns:repeat(3,1fr)}
 }
 @media(prefers-reduced-motion:reduce){.gl *{transition:none!important}}
+/* smooth, no-jump tabs + touch friendly */
+.vx-pane.on{animation:vxFade .22s both}
+@keyframes vxFade{from{opacity:0}to{opacity:1}}
+.vx-tabs,.vx-tabs button,.gl,.gl *{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.vx-tabs{overscroll-behavior-x:contain}
+.vx-tabs button{user-select:none}
+.vx-tabs button:active{transform:scale(.97)}
+.vx-t{content-visibility:visible}
+.gl-r,.gl-hc{transform:none}
+@media(hover:hover){.gl-r:hover{background:rgba(212,162,74,.09);transform:translateX(2px)}.gl-hc:hover{transform:translateY(-2px);border-color:rgba(212,162,74,.5)}}
+@media(hover:none){.gl-r:hover,.gl-hc:hover{transform:none;background:inherit}}
+#panel-vargas{overflow-anchor:none}
 </style>
 
 
@@ -20689,7 +20701,7 @@ function decorate(card,lag){const c0=window.__vgC,V=(lag&&c0)?buildVargaFromLagn
   const cc=card.querySelector('.varga-chart-container');if(cc&&!cc.querySelector('.vc-leg'))cc.insertAdjacentHTML('beforeend','<div class="vc-leg"><span><i style="background:#D4AF37"></i>Kendra</span><span><i style="background:#5EC4B7"></i>Trikona</span><span><i style="background:#E25555"></i>Dusthana</span><span><i class="r" style="border-color:#F9D976"></i>Exalted</span><span><i class="r" style="border-color:#5EC4B7"></i>Own sign</span><span><i class="r" style="border-color:#E25555"></i>Debilitated</span><span style="color:#FF8A8A">R&nbsp;Retrograde</span><span style="color:#F9D976">★&nbsp;Vargottama</span></div>');
   const wrap=card.querySelector('.varga-house-table-wrap'),c=window.__vgC;
   if(wrap&&c&&(V||(c.vargas&&c.vargas[k]))){let ok=false;try{wrap.innerHTML=build(c,k,V);ok=true;}catch(e){console.warn('explorer',e);}
-    const tb=ok&&wrap.querySelector('.vx-tabs');if(tb)tb.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;tab=+b.dataset.i;wrap.querySelectorAll('.vx-tabs button').forEach((x,i)=>x.classList.toggle('on',i===tab));wrap.querySelectorAll('.vx-pane').forEach((x,i)=>x.classList.toggle('on',i===tab));});}}
+    const tb=ok&&wrap.querySelector('.vx-tabs');if(tb)tb.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;tab=+b.dataset.i;const hh=wrap.offsetHeight;wrap.style.minHeight=hh+'px';const y=window.scrollY;wrap.querySelectorAll('.vx-tabs button').forEach((x,i)=>x.classList.toggle('on',i===tab));wrap.querySelectorAll('.vx-pane').forEach((x,i)=>x.classList.toggle('on',i===tab));window.scrollTo(0,y);setTimeout(()=>{wrap.style.minHeight='';},320);});}}
 setInterval(()=>{if(document.hidden)return;rail();document.querySelectorAll('.varga-style-toggle').forEach(gp=>{const i=Math.max(0,[...gp.children].findIndex(b=>b.classList.contains('active')));if(gp.dataset.i!==String(i)){gp.dataset.i=i;gp.style.setProperty('--i',i);}});
   const card=document.querySelector('#vargaDisplayContainer .varga-card');if(card&&!card.dataset.vg){card.dataset.vg=1;try{decorate(card);}catch(e){console.warn('decorate',e);}}
   try{lagnaExtras();}catch(e){console.warn('lagna',e);}
