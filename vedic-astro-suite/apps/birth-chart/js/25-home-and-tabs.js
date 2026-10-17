@@ -53,7 +53,7 @@ function buildHomePanel(name){
   try{
     const asc=SIGNS[ch.ascendant.sign],mo=ch.planets.Moon,su=ch.planets.Sun,nk=mo.nakshatra,act=findActiveDasha(ch.dashaData.mahadashas,new Date());
     const big=(l,s,sub)=>`<button type="button" class="hm-b" data-go="panel-overview"><small>${l}</small><b>${s.symbol} ${s.name}</b><span>${sub}</span></button>`;
-    top+=`<section class="hm-hero"><div class="hm-top"><div class="hm-av">${escapeHtml((name||'✦').trim().charAt(0).toUpperCase()||'✦')}</div><div class="hm-id"><small>Namaste 🙏</small><h2>${escapeHtml(name||'Your chart')}</h2><p>${pr.dob?'🗓 '+fd(pr.dob):''}${pr.tob?' · 🕒 '+pr.tob.slice(0,5):''}${pr.place?' · 📍 '+escapeHtml(String(pr.place).split(',')[0]):''}</p></div></div>
+    top+=`<section class="hm-hero"><div class="hm-top"><div class="hm-av">${escapeHtml((name||'✦').trim().charAt(0).toUpperCase()||'✦')}</div><div class="hm-id"><small>Namaste 🙏</small><h2>${escapeHtml(name||'Your chart')}</h2><p>${pr.dob?'🗓 '+fd(pr.dob):''}${pr.tob?' · 🕒 '+pr.tob.slice(0,5):''}${pr.place?' · 📍 '+escapeHtml(String(pr.place).split(',')[0]):''}</p></div><button type="button" class="hm-3d" data-3d="1">🌌 3D Sky</button></div>
       <div class="hm-big">${big('Rising',asc,asc.sk)}${big('Moon',SIGNS[mo.sign],nk.name+' · pada '+nk.pada)}${big('Sun',SIGNS[su.sign],su.nakshatra?su.nakshatra.name:SIGNS[su.sign].sk)}</div></section>`;
     if(act&&act.antardasha){const m=act.mahadasha,ad=act.antardasha;
       top+=`<button type="button" class="hm-now" data-go="panel-dasha"><div class="hm-now-h"><span>⏳ Running now</span><em>Open timeline ›</em></div><div class="hm-now-t">${PLANET_GLYPHS[m.lord]} ${m.lord} <i>›</i> ${PLANET_GLYPHS[ad.lord]} ${ad.lord}</div>

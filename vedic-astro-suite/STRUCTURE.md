@@ -223,6 +223,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/45-vimshottari-dasha.js` — Vimshottari dasha engine in Julian Days (VDasha: build timeline, at(jd) -> Maha/Antar/Pratyantar)
 - `apps/sky3d/js/46-dasha-transit-engine.js` — Dasha + Transit trigger engine (DTrig): dasha link per house, Jupiter+Saturn double transit, dasha-lord activation, window scan
 - `apps/sky3d/js/47-dasha-transit-ui.js` — Triggers tab UI: running dashas, live strength per life area, scan windows, why details, tap = jump to date
+- `apps/sky3d/js/48-profile-bridge.js` — Profile bridge: all Birth Chart profiles appear in 3D (marked ✦, live), and the chart opened in the main app is auto-selected in 3D
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
 - `apps/sky3d/css/03-3d-viewport.css` — 3D viewport

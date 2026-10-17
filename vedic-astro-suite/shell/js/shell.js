@@ -70,7 +70,7 @@
     devF.classList.add('on');
   }
   function closeDev(){ if (devF) devF.classList.remove('on'); }
-  window.addEventListener('message', e=>{ if (e.data === 'vedic-dev-close') closeDev(); else if (e.data === 'vedic-open-chart') show('B'); });
+  window.addEventListener('message', e=>{ if (e.data === 'vedic-dev-close') closeDev(); else if (e.data === 'vedic-open-chart') show('B'); else if (e.data === 'vedic-open-3d'){ show('A'); [300, 1500].forEach(t=>setTimeout(()=>{ try{ frames.A.contentWindow.postMessage('vedic-bridge-ping','*'); }catch(x){} }, t)); } });
 
   /* ---- floating, draggable switcher ---- */
   const SZ = 40, M = 10;

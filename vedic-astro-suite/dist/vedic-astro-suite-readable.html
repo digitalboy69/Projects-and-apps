@@ -7011,6 +7011,55 @@ document.querySelector('[data-tab="triggers"]').addEventListener('click', ()=> s
 })();
 <\/script>
 <script>
+/* ===== Profile bridge: every saved profile of the Birth Chart app shows up here, and the profile you open there opens here =====
+   Both apps share one browser storage. Main keeps its list under MAIN_KEY; the chart it is showing is written to ACTIVE_KEY.
+   Main profiles are shown live (never copied), marked with ✦, and are edited only in the main app. */
+(function(){
+  'use strict';
+  const MAIN_KEY = 'Vedic Astrology_profiles_v1', ACTIVE_KEY = 'vax_active_profile_v1';
+  const pid = p => [p && p.name, p && p.dob, p && String(p.tob || '').slice(0,5)].join('|');
+  const readJSON = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch(e){ return d; } };
+  const rawOwn = () => readJSON(NATAL_STORAGE_KEY, []);
+  function mainList(){
+    const out = [], seen = {};
+    const add = p => { if (!isValidProfile(p) || seen[pid(p)]) return; seen[pid(p)] = 1; out.push(Object.assign({}, p, { fromMain:true })); };
+    const m = readJSON(MAIN_KEY, []); if (Array.isArray(m)) m.forEach(add);
+    add(readJSON(ACTIVE_KEY, null));
+    return out;
+  }
+  window.loadNatalProfiles = function(){
+    const main = mainList(), ids = {}; main.forEach(p => ids[pid(p)] = 1);
+    const own = rawOwn(); return main.concat(Array.isArray(own) ? own.filter(p => !ids[pid(p)]) : []);
+  };
+  window.saveNatalProfiles = function(list){
+    const mainIds = {}; mainList().forEach(p => mainIds[pid(p)] = 1);
+    const keep = list.filter(p => p && !p.fromMain);
+    const have = {}; keep.forEach(p => have[pid(p)] = 1);
+    const hidden = rawOwn().filter(p => mainIds[pid(p)] && !have[pid(p)]);   // my own copies hidden behind a main profile: keep them
+    localStorage.setItem(NATAL_STORAGE_KEY, JSON.stringify(keep.concat(hidden)));
+  };
+  const baseRefresh = refreshProfileSelect;
+  window.refreshProfileSelect = function(){
+    baseRefresh.apply(this, arguments);
+    const sel = document.getElementById('profileSelect'), l = loadNatalProfiles();
+    [...sel.options].forEach(o => { if (o.value !== '' && l[+o.value] && l[+o.value].fromMain) o.textContent = '✦ ' + l[+o.value].name; });
+  };
+  function followMain(){
+    const a = readJSON(ACTIVE_KEY, null); if (!isValidProfile(a)) return;
+    refreshProfileSelect();
+    const l = loadNatalProfiles(), i = l.findIndex(p => pid(p) === pid(a));
+    if (i < 0) return;
+    const sel = document.getElementById('profileSelect');
+    if (sel.value !== String(i) || !activeNatalProfile || pid(activeNatalProfile) !== pid(a)){ sel.value = String(i); sel.dispatchEvent(new Event('change')); }
+  }
+  window.addEventListener('storage', e => {
+    if (e.key === ACTIVE_KEY) followMain();
+    else if (e.key === MAIN_KEY){ const v = document.getElementById('profileSelect').value; refreshProfileSelect(); document.getElementById('profileSelect').value = v; }
+  });
+  refreshProfileSelect(); followMain();
+})();
+<\/script>
+<script>
 /* =============================================================================
    VEDIC ASTRO SUITE — EXPORT + COPY ADD-ON  (v1.0)
    One self-contained file. Works in BOTH apps, auto-detects which one it is in:
@@ -11074,6 +11123,11 @@ body.app-mode #openMenuBtn .btn-label{display:none!important}
 #mainMenuModal #contactDevBtn{grid-column:1/-1;flex-direction:row;min-height:50px}
 #mainMenuModal .cl-acct{margin:0 0 12px}
 body:not(.app-mode) main.wrap{overflow-x:clip}
+
+/* ---------- 3D Sky bridge ---------- */
+.vx-3d-btn,.hm-3d{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--gold-dim);background:linear-gradient(135deg,rgba(212,175,55,.2),rgba(94,196,183,.12));color:var(--gold-bright);border-radius:999px;padding:9px 16px;font:600 13px var(--font-sans);cursor:pointer;transition:all .18s;white-space:nowrap}
+.vx-3d-btn:hover,.hm-3d:hover{border-color:var(--gold);box-shadow:0 8px 22px rgba(212,175,55,.22);transform:translateY(-1px)}
+.hm-3d{margin-left:auto;align-self:flex-start;padding:8px 13px;font-size:12px}
 </style>
 
 
@@ -14795,7 +14849,7 @@ function buildHomePanel(name){
   try{
     const asc=SIGNS[ch.ascendant.sign],mo=ch.planets.Moon,su=ch.planets.Sun,nk=mo.nakshatra,act=findActiveDasha(ch.dashaData.mahadashas,new Date());
     const big=(l,s,sub)=>`<button type="button" class="hm-b" data-go="panel-overview"><small>${l}</small><b>${s.symbol} ${s.name}</b><span>${sub}</span></button>`;
-    top+=`<section class="hm-hero"><div class="hm-top"><div class="hm-av">${escapeHtml((name||'✦').trim().charAt(0).toUpperCase()||'✦')}</div><div class="hm-id"><small>Namaste 🙏</small><h2>${escapeHtml(name||'Your chart')}</h2><p>${pr.dob?'🗓 '+fd(pr.dob):''}${pr.tob?' · 🕒 '+pr.tob.slice(0,5):''}${pr.place?' · 📍 '+escapeHtml(String(pr.place).split(',')[0]):''}</p></div></div>
+    top+=`<section class="hm-hero"><div class="hm-top"><div class="hm-av">${escapeHtml((name||'✦').trim().charAt(0).toUpperCase()||'✦')}</div><div class="hm-id"><small>Namaste 🙏</small><h2>${escapeHtml(name||'Your chart')}</h2><p>${pr.dob?'🗓 '+fd(pr.dob):''}${pr.tob?' · 🕒 '+pr.tob.slice(0,5):''}${pr.place?' · 📍 '+escapeHtml(String(pr.place).split(',')[0]):''}</p></div><button type="button" class="hm-3d" data-3d="1">🌌 3D Sky</button></div>
       <div class="hm-big">${big('Rising',asc,asc.sk)}${big('Moon',SIGNS[mo.sign],nk.name+' · pada '+nk.pada)}${big('Sun',SIGNS[su.sign],su.nakshatra?su.nakshatra.name:SIGNS[su.sign].sk)}</div></section>`;
     if(act&&act.antardasha){const m=act.mahadasha,ad=act.antardasha;
       top+=`<button type="button" class="hm-now" data-go="panel-dasha"><div class="hm-now-h"><span>⏳ Running now</span><em>Open timeline ›</em></div><div class="hm-now-t">${PLANET_GLYPHS[m.lord]} ${m.lord} <i>›</i> ${PLANET_GLYPHS[ad.lord]} ${ad.lord}</div>
@@ -34889,7 +34943,7 @@ document.addEventListener('click', e => {
     } catch(e){}
     const place = String(p.place||'').split(',')[0];
     hero.innerHTML = `<div class="vx-av">${escapeHtml(initial(p.name)||'✦')}</div><h3>${escapeHtml(p.name||'Your chart')}</h3><p>${fd(p.dob)}${p.tob?' · '+escapeHtml(String(p.tob).slice(0,5)):''}${place?' · '+escapeHtml(place):''}</p>${facts}
-      <div class="vx-quick">${a.i>=0?'<button type="button" data-vx="edit">Edit</button><button type="button" data-vx="share">Share</button>':''}<button type="button" data-vx="report">Report</button></div>`;
+      <div class="vx-quick">${a.i>=0?'<button type="button" data-vx="edit">Edit</button><button type="button" data-vx="share">Share</button>':''}<button type="button" data-vx="sky">3D Sky</button><button type="button" data-vx="report">Report</button></div>`;
     hero.dataset.i = a.i;
   }
   document.addEventListener('click', e => {
@@ -34897,11 +34951,53 @@ document.addEventListener('click', e => {
     const i = +$('vxProfHero').dataset.i, k = b.dataset.vx;
     if (k === 'edit' && typeof openProfEdit === 'function') openProfEdit(i);
     else if (k === 'share'){ const s = document.querySelector(`[data-prof-share="${i}"]`); if (s) s.click(); }
+    else if (k === 'sky'){ const m = $('mainMenuModal'); if (m) m.classList.remove('show'); window.vxSend3D && window.vxSend3D('D1'); }
     else if (k === 'report'){ const r = $('exportReportBtn'); if (r) r.click(); }
   });
   $('openMenuBtn').addEventListener('click', () => setTimeout(paintHero, 0));
   if (typeof renderProfileCards === 'function'){ const o = renderProfileCards; renderProfileCards = function(){ o.apply(this, arguments); paintHero(); paintAvatar(); }; }
   paintHero();
+  // bridge to the 3D Sky app: tell it which chart is open (it follows)
+  if (typeof renderResults === 'function'){ const rr = renderResults; renderResults = function(profile){ const r = rr.apply(this, arguments); try { localStorage.setItem('vax_active_profile_v1', JSON.stringify(profile)); } catch(e){} return r; }; }
+})();
+<\/script>
+<script>
+/* ===== Bridge: send the open chart (any divisional chart D1–D144) to the 3D Sky app ===== */
+(function(){
+  'use strict';
+  const KEY = 'vax_bridge_3d';
+  function build(varKey){
+    const ch = (typeof currentChartForModal !== 'undefined') ? currentChartForModal : null, pr = window.__vgProf;
+    if (!ch || !pr || !ch.vargas) return null;
+    const vargas = {};
+    Object.keys(ch.vargas).forEach(k => {
+      const v = ch.vargas[k], m = (typeof VARGAS !== 'undefined' && VARGAS[k]) || {};
+      vargas[k] = { name: m.name || k, full: m.full || '', asc: v.ascendantSign, planets: Object.assign({}, v.planetVargaSign) };
+    });
+    return { ts: Date.now(), key: vargas[varKey] ? varKey : 'D1', vargas,
+      profile: { name: pr.name, dob: pr.dob, tob: String(pr.tob).slice(0,5), tz: +pr.tz, lat: +pr.lat, lon: +pr.lon, place: pr.place || '' } };
+  }
+  window.vxSend3D = function(varKey){
+    const p = build(varKey || 'D1');
+    if (!p){ alert('Open a chart first, then send it to 3D Sky.'); return; }
+    try { localStorage.setItem(KEY, JSON.stringify(p)); } catch(e){}
+    if (window.parent && window.parent !== window) window.parent.postMessage('vedic-open-3d', '*');
+    else window.location.href = '../sky3d/index.html';
+  };
+  // button in the Divisional Charts toolbar
+  function inject(){
+    const tb = document.querySelector('#panel-vargas .varga-toolbar');
+    if (!tb || document.getElementById('vx3dBtn')) return;
+    const g = document.createElement('div'); g.className = 'varga-control-group';
+    g.innerHTML = '<span class="varga-control-label">3D Sky:</span><button type="button" class="vx-3d-btn" id="vx3dBtn">🌌 View this chart in 3D</button>';
+    tb.appendChild(g);
+  }
+  const res = document.getElementById('results');
+  if (res) new MutationObserver(inject).observe(res, { childList: true, subtree: true });
+  document.addEventListener('click', e => {
+    if (e.target.closest('#vx3dBtn')) window.vxSend3D(typeof currentSelectedVarga !== 'undefined' ? currentSelectedVarga : 'D1');
+    else if (e.target.closest('[data-3d]')) window.vxSend3D('D1');
+  });
 })();
 <\/script>
 </body>
@@ -36219,7 +36315,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
     devF.classList.add('on');
   }
   function closeDev(){ if (devF) devF.classList.remove('on'); }
-  window.addEventListener('message', e=>{ if (e.data === 'vedic-dev-close') closeDev(); else if (e.data === 'vedic-open-chart') show('B'); });
+  window.addEventListener('message', e=>{ if (e.data === 'vedic-dev-close') closeDev(); else if (e.data === 'vedic-open-chart') show('B'); else if (e.data === 'vedic-open-3d'){ show('A'); [300, 1500].forEach(t=>setTimeout(()=>{ try{ frames.A.contentWindow.postMessage('vedic-bridge-ping','*'); }catch(x){} }, t)); } });
 
   /* ---- floating, draggable switcher ---- */
   const SZ = 40, M = 10;

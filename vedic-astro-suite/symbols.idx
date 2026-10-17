@@ -67,6 +67,7 @@ build	fn	apps/birth-chart/js/70-chart-reading.js:43	birth-chart
 build	fn	apps/birth-chart/js/73-tithi-pravesh.js:18	birth-chart
 build	fn	apps/birth-chart/js/75-fate-meter.js:46	birth-chart
 build	fn	apps/birth-chart/js/76-share-link-qr.js:106	birth-chart
+build	fn	apps/birth-chart/js/84-bridge-3d.js:5	birth-chart
 build	fn	apps/sky3d/js/45-vimshottari-dasha.js:29	sky3d
 build	fn	shell/js/locpicker.js:129	shell
 buildActivationPanel	fn	apps/birth-chart/js/71-life-activation.js:42	birth-chart
@@ -362,6 +363,7 @@ fmtSpan	fn	apps/sky3d/js/43-degree-finder-returns.js:18	sky3d
 fmtTz	fn	apps/birth-chart/js/18-ui-location-profiles.js:5	birth-chart
 fmtTz	fn	apps/sky3d/js/37-natal-form-location.js:3	sky3d
 focusBody	fn	apps/sky3d/js/31-outer-planet-popup.js:2	sky3d
+followMain	fn	apps/sky3d/js/48-profile-bridge.js:34	sky3d
 formatDashaDate	fn	apps/birth-chart/js/38-dasha-navigator.js:118	birth-chart
 formatDashaDatePrecise	fn	apps/birth-chart/js/38-dasha-navigator.js:122	birth-chart
 formatDashaDateTime	fn	apps/birth-chart/js/38-dasha-navigator.js:126	birth-chart
@@ -478,6 +480,7 @@ initPlanetPicker	fn	apps/sky3d/js/41-quick-planet-picker.js:4	sky3d
 initRectStudio	fn	apps/birth-chart/js/26-rectification-studio.js:127	birth-chart
 initScene	fn	apps/sky3d/js/08-scene-setup-and-camera.js:226	sky3d
 initTimelineWindow	fn	apps/sky3d/js/16-app-state.js:13	sky3d
+inject	fn	apps/birth-chart/js/84-bridge-3d.js:24	birth-chart
 inject	fn	shared/export-addon.js:154	shared
 ins	fn	apps/notepad/js/01-notepad.js:133	notepad
 insBlock	fn	apps/notepad/js/01-notepad.js:136	notepad
@@ -543,10 +546,12 @@ listForAll	fn	apps/notepad/js/01-notepad.js:79	notepad
 load	fn	apps/notepad/js/01-notepad.js:20	notepad
 loadMember	fn	apps/birth-chart/js/77-cloud-account.js:52	birth-chart
 loadNatalProfiles	fn	apps/sky3d/js/21-natal-profile.js:5	sky3d
+loadNatalProfiles	fn	apps/sky3d/js/48-profile-bridge.js:17	sky3d
 loadProfileIntoForm	fn	apps/birth-chart/js/34-relationships-tab.js:157	birth-chart
 loadProfiles	fn	apps/birth-chart/js/18-ui-location-profiles.js:106	birth-chart
 lockNow	fn	apps/notepad/js/01-notepad.js:198	notepad
 lordOf	fn	apps/birth-chart/js/78-dasha-systems-core.js:45	birth-chart
+mainList	fn	apps/sky3d/js/48-profile-bridge.js:10	sky3d
 makeSphere	fn	apps/sky3d/js/10-procedural-textures.js:109	sky3d
 MALE_PLANETS	const	apps/birth-chart/js/14-shadbala-engine.js:39	birth-chart
 mandookaOrder	fn	apps/birth-chart/js/81-dasha-systems-ayur-special.js:70	birth-chart
@@ -809,6 +814,7 @@ refresh	fn	shared/export-addon.js:475	shared
 refreshAll	fn	apps/sky3d/js/34-main-refresh-loop.js:4	sky3d
 refreshProfileSelect	fn	apps/birth-chart/js/18-ui-location-profiles.js:108	birth-chart
 refreshProfileSelect	fn	apps/sky3d/js/21-natal-profile.js:8	sky3d
+refreshProfileSelect	fn	apps/sky3d/js/48-profile-bridge.js:29	sky3d
 refreshUI	fn	apps/birth-chart/js/33-quick-search.js:19	birth-chart
 related	fn	apps/birth-chart/js/70-chart-reading.js:39	birth-chart
 remove	fn	apps/birth-chart/js/77-cloud-account.js:27	birth-chart
@@ -905,6 +911,7 @@ safeJSON	fn	shared/export-addon.js:197	shared
 SAPTAVARGA_KEYS	const	apps/birth-chart/js/14-shadbala-engine.js:50	birth-chart
 save	fn	shell/js/shell.js:91	shell
 saveNatalProfiles	fn	apps/sky3d/js/21-natal-profile.js:6	sky3d
+saveNatalProfiles	fn	apps/sky3d/js/48-profile-bridge.js:21	sky3d
 saveProfiles	fn	apps/birth-chart/js/18-ui-location-profiles.js:107	birth-chart
 SB_COMPS	const	apps/birth-chart/js/40-shadbala.js:2	birth-chart
 scan	fn	apps/birth-chart/js/73-tithi-pravesh.js:10	birth-chart
@@ -1122,6 +1129,7 @@ VERB	const	apps/birth-chart/js/71-life-activation.js:8	birth-chart
 view	fn	apps/birth-chart/js/41-ashtakavarga-section.js:9	birth-chart
 view	fn	apps/birth-chart/js/72-bhava-bala.js:25	birth-chart
 vsD1	fn	apps/birth-chart/js/69-divisional-areas.js:60	birth-chart
+vxSend3D	fn	apps/birth-chart/js/84-bridge-3d.js:16	birth-chart
 walk	fn	shared/export-addon.js:81	shared
 WAR_ELIGIBLE	const	apps/birth-chart/js/08-combustion-and-war.js:15	birth-chart
 WEAK	const	apps/birth-chart/js/72-bhava-bala.js:7	birth-chart

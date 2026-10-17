@@ -48,7 +48,7 @@
     } catch(e){}
     const place = String(p.place||'').split(',')[0];
     hero.innerHTML = `<div class="vx-av">${escapeHtml(initial(p.name)||'✦')}</div><h3>${escapeHtml(p.name||'Your chart')}</h3><p>${fd(p.dob)}${p.tob?' · '+escapeHtml(String(p.tob).slice(0,5)):''}${place?' · '+escapeHtml(place):''}</p>${facts}
-      <div class="vx-quick">${a.i>=0?'<button type="button" data-vx="edit">Edit</button><button type="button" data-vx="share">Share</button>':''}<button type="button" data-vx="report">Report</button></div>`;
+      <div class="vx-quick">${a.i>=0?'<button type="button" data-vx="edit">Edit</button><button type="button" data-vx="share">Share</button>':''}<button type="button" data-vx="sky">3D Sky</button><button type="button" data-vx="report">Report</button></div>`;
     hero.dataset.i = a.i;
   }
   document.addEventListener('click', e => {
@@ -56,9 +56,12 @@
     const i = +$('vxProfHero').dataset.i, k = b.dataset.vx;
     if (k === 'edit' && typeof openProfEdit === 'function') openProfEdit(i);
     else if (k === 'share'){ const s = document.querySelector(`[data-prof-share="${i}"]`); if (s) s.click(); }
+    else if (k === 'sky'){ const m = $('mainMenuModal'); if (m) m.classList.remove('show'); window.vxSend3D && window.vxSend3D('D1'); }
     else if (k === 'report'){ const r = $('exportReportBtn'); if (r) r.click(); }
   });
   $('openMenuBtn').addEventListener('click', () => setTimeout(paintHero, 0));
   if (typeof renderProfileCards === 'function'){ const o = renderProfileCards; renderProfileCards = function(){ o.apply(this, arguments); paintHero(); paintAvatar(); }; }
   paintHero();
+  // bridge to the 3D Sky app: tell it which chart is open (it follows)
+  if (typeof renderResults === 'function'){ const rr = renderResults; renderResults = function(profile){ const r = rr.apply(this, arguments); try { localStorage.setItem('vax_active_profile_v1', JSON.stringify(profile)); } catch(e){} return r; }; }
 })();

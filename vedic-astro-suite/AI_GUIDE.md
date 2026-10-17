@@ -131,6 +131,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Added RTN (Rasi Tulya Navamsa) as a varga key: planets = D9 signs, lagna = D1 lagna (special-cased in `computeChart`); `noTimer:true` keeps it out of the transit/sandhi/timeline pickers.
 - 3D Sky: new "Triggers" tab (Vimshottari dasha + Jupiter/Saturn double-transit life-area triggers, window scan) — sky3d js 45/46/47, css 22.
 - Birth chart UI overhaul: input page = full screen, no header (floating profile button); app header = [back][search pill][avatar]; Home = segmented section chips (All / sections / Ask AI) + tiles, Smart-Search "Ask AI" topics and Tap-to-search moved into Home as sections; profile sheet with hero. css 36, js 83, edits in js 25.
+- Bridge main ⇄ 3D: sky3d js 48 merges the main app's saved profiles (key "Vedic Astrology_profiles_v1") into its dropdown and follows "vax_active_profile_v1" (written by birth-chart js 83 on every renderResults); 3D-only profiles stay in their own key.
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 
@@ -138,13 +139,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-16 - 1146 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-17 - 1154 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 120 files, 14035 lines, 976 KB
+**birth-chart** - 121 files, 14082 lines, 979 KB
 ```
-index.html                                         533 lines   30 KB
+index.html                                         534 lines   30 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -227,7 +228,8 @@ js/79-dasha-systems-nakshatra.js                   150 lines    9 KB
 js/80-dasha-systems-rasi.js                        149 lines    8 KB
 js/81-dasha-systems-ayur-special.js                146 lines    7 KB
 js/82-dasha-systems-ui.js                          200 lines   14 KB
-js/83-ui-overhaul.js                                65 lines    4 KB
+js/83-ui-overhaul.js                                68 lines    5 KB
+js/84-bridge-3d.js                                  38 lines    2 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
@@ -263,7 +265,7 @@ css/32-date-finder.css                              66 lines    6 KB
 css/33-friendly-input-page.css                      47 lines    4 KB
 css/34-smart-search.css                             30 lines    3 KB
 css/35-dasha-systems.css                            96 lines    8 KB
-css/36-ui-overhaul.css                             121 lines   11 KB
+css/36-ui-overhaul.css                             126 lines   11 KB
 ```
 
 **developer** - 4 files, 180 lines, 13 KB
@@ -281,9 +283,9 @@ js/01-notepad.js                                   319 lines   65 KB
 css/01-notepad.css                                 168 lines   25 KB
 ```
 
-**sky3d** - 70 files, 6281 lines, 345 KB
+**sky3d** - 71 files, 6330 lines, 347 KB
 ```
-index.html                                         447 lines   26 KB
+index.html                                         448 lines   26 KB
 js/01-astro-engine.js                              143 lines    7 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -331,6 +333,7 @@ js/44-retrograde-planner.js                         41 lines    7 KB
 js/45-vimshottari-dasha.js                          60 lines    2 KB
 js/46-dasha-transit-engine.js                      250 lines   13 KB
 js/47-dasha-transit-ui.js                          134 lines    9 KB
+js/48-profile-bridge.js                             48 lines    2 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
