@@ -225,6 +225,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/46-dasha-transit-engine.js` — Dasha + Transit trigger engine (DTrig): dasha link per house, Jupiter+Saturn double transit, dasha-lord activation, window scan
 - `apps/sky3d/js/47-dasha-transit-ui.js` — Triggers tab UI: running dashas, live strength per life area, scan windows, why details, tap = jump to date
 - `apps/sky3d/js/48-profile-bridge.js` — Profile bridge: all Birth Chart profiles appear in 3D (marked ✦, live), and the chart opened in the main app is auto-selected in 3D
+- `apps/sky3d/js/49-time-machine.js` — Time Machine date picker (year slider, hold-to-repeat steps, typed dates, month/day tiles, birth jump) + draggable, zoomable timeline
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
 - `apps/sky3d/css/03-3d-viewport.css` — 3D viewport
@@ -247,6 +248,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/css/20-hud-ascendant-rising.css` — HUD ascendant/rising chips, popups
 - `apps/sky3d/css/21-premium-polish.css` — premium gold glass, magnetic hover
 - `apps/sky3d/css/22-dasha-transit-triggers.css` — Triggers tab (dasha + transit) styles
+- `apps/sky3d/css/23-time-machine-polish.css` — Time Machine styles + 3D Sky visual polish (top bar, tabs, timeline dock, buttons)
 
 ### apps/notepad/ — Notepad
 - `apps/notepad/index.html` — markup of this app; lists its css/js in load order
