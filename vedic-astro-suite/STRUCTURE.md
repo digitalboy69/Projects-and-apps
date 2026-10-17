@@ -140,6 +140,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/84-bridge-3d.js` — "View this chart in 3D" button: stores the open chart (all vargas) under `vax_bridge_3d` and asks the shell to open 3D Sky
 - `apps/birth-chart/js/85-popular-charts-data.js` — Popular charts data: 100 public figures (10 groups x 10), birth date/place/tz, Lahiri Sun/Moon/nakshatra/rising, Wikipedia titles; add a person = append a row
 - `apps/birth-chart/js/86-popular-charts.js` — Popular charts UI under the 3-step form on the input page: group chips, photo cards (Wikipedia, lazy), detail sheet, "Show this chart" casts it via loadProfileIntoForm + submit
+- `apps/birth-chart/js/87-vedic-knowledge-db.js` — Vedic Knowledge Database (VDB): 625 entries — planet-in-house 108, planet-in-sign 108, house-lord-in-house 144, planet-aspect-on-house 108, planet-aspects-planet 72, conjunctions 35, 27 nakshatras, 23 yogas, dasha lords, status modifiers, functional nature by rising sign; lookup API + `VDB.reading(chart)`
 - `apps/birth-chart/css/01-premium-tokens-reset.css` — design tokens (colors, fonts) and reset
 - `apps/birth-chart/css/02-header.css` — header
 - `apps/birth-chart/css/03-hero-intake-form.css` — hero and birth intake form
@@ -287,6 +288,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/_helpers.py` — shared Playwright helpers (VAX_TARGET=hosted tests the folder version)
 - `tests/smoke.py` — main end-to-end smoke test
 - `tests/popular_charts_test.py` — Popular charts section: 10 groups x 10 people, lazy Wikipedia photos (wrong-person guard), detail sheet, casting a chart incl. old-timezone option, no JS errors
+- `tests/knowledge_db_test.py` — Knowledge database: completeness, quality gates, cross-check of signs/nakshatras/aspects/dignity against the app tables, `VDB.reading()` on real charts
 - `tests/customer_smoke.py` — customer edition smoke test
 - `tests/datefinder_test.py` — Date Finder test
 - `tests/syntax_check.py` — node --check over every js file

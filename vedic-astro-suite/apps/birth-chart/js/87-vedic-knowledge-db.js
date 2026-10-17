@@ -1,0 +1,2267 @@
+/* ============================================================================
+   VEDIC KNOWLEDGE DATABASE (VDB)  -  one file: the data (VDB_DATA) + a small lookup API (VDB).
+   Used by: nothing yet (ready for Chart Reading / reports). Load order: after js/05 (needs nothing else to look things up;
+   VDB.reading(chart) expects the chart object from computeChart()).
+
+   WHAT IS IN HERE (625 entries, all keys are plain names so any file/AI can use them):
+     planets (9)            significations, body, day, gem*, direction, strong/weak, aspects, relations, own/exalt/debil signs
+     houses (12)            Sanskrit name, themes, kind (kendra/trikona...), body part, karakas, what to check
+     signs (12)             ruler, element, quality, body, style, outlet     rising (12), moonSign (12)   short readings
+     planetInHouse          9 x 12  = 108   hand-written     VDB.planetInHouse('Sun', 10)
+     planetInSign           9 x 12  = 108   rule-based       VDB.planetInSign('Moon', 1)  (0 = Aries) + dignity
+     lordInHouse            12 x 12 = 144   rule-based       VDB.lordInHouse(7, 1)  "7th lord placed in the 1st"
+     aspectOnHouse          9 x 12  = 108   rule-based       VDB.aspectOnHouse('Saturn', 10)
+     planetAspect           9 x 8   =  72   rule-based       VDB.planetAspect('Jupiter', 'Moon')   "Jupiter aspects the Moon"
+     conjunction            35 pairs        hand-written     VDB.conjunction('Sun', 'Mercury')
+     nakshatras (27)        lord, deity, symbol, gana, trait, careers, watch-out, span, navamsa signs per pada
+     yogas (23)             how it forms + what it tends to give
+     dasha (9)              what each Mahadasha lord tends to bring     status: retrograde / combust / vargottama / dignity
+     tone                   rule-of-thumb + / 0 / - per planet per house
+     functionalNature       VDB.functionalNature(lagnaSign) -> yogakaraka / functional benefic / malefic by rising sign (rule-based)
+   "hand-written" = edit the text directly. "rule-based" = generated from small tables (planet drive x sign style x dignity,
+   house themes x relative position, planet gifts/risks x house themes); to change the wording of a whole family, change the
+   sentence everywhere you see it, or edit single entries directly (nothing else depends on them).
+   These are traditional Jyotish significations, not scientific facts or predictions. Aspects: every planet aspects the 7th;
+   Mars also 4th/8th, Jupiter 5th/9th, Saturn 3rd/10th. This app counts Rahu/Ketu as 7th only; text for every pair exists regardless.
+   *gem / metal / colour are traditional associations for reference, not medical or financial advice.
+   ============================================================================ */
+const VDB_DATA = {
+ "meta": {
+  "name": "Vedic Knowledge Database",
+  "version": 1,
+  "note": "Traditional Jyotish (Vedic astrology) significations written for reading charts. These are interpretive traditions, not scientific facts or predictions; a chart reading always combines sign, house, dignity, aspects, dasha and transits.",
+  "sections": {
+   "planets": "hand-written",
+   "houses": "hand-written",
+   "signs": "hand-written",
+   "planetInHouse": "hand-written (108)",
+   "planetInSign": "rule-based from planet drive x sign style x dignity (108)",
+   "lordInHouse": "rule-based from house themes x relative position x classical lord rules (144)",
+   "aspectOnHouse": "rule-based from planet gifts/risks x house themes (108)",
+   "planetAspect": "rule-based from planet verb x natural relationship (72)",
+   "conjunction": "hand-written (35)",
+   "nakshatras": "hand-written (27)",
+   "yogas": "hand-written (23)",
+   "dasha": "hand-written (9)",
+   "status": "hand-written",
+   "rising": "hand-written (12)",
+   "moonSign": "hand-written (12)"
+  },
+  "indexing": {
+   "planetInHouse": "planetInHouse[planet][house-1]",
+   "planetInSign": "planetInSign[planet][signIndex 0=Aries]",
+   "lordInHouse": "lordInHouse[lordOfHouse-1][placedInHouse-1]",
+   "aspectOnHouse": "aspectOnHouse[planet][house-1]",
+   "planetAspect": "planetAspect['From>To']",
+   "conjunction": "conjunction['A+B'] in planet order Sun,Moon,Mars,Mercury,Jupiter,Venus,Saturn,Rahu,Ketu"
+  }
+ },
+ "planets": {
+  "Sun": {
+   "sk": "Surya",
+   "nature": "Natural malefic (hot, royal)",
+   "element": "Fire",
+   "day": "Sunday",
+   "direction": "East",
+   "color": "copper-red, gold",
+   "gem": "ruby",
+   "metal": "gold / copper",
+   "signifies": "soul, vitality, authority, father, government, confidence, leadership, status",
+   "body": "heart, bones, spine, right eye, head",
+   "strong": "clear purpose, good health, respect from authority",
+   "weak": "ego clashes, low confidence, problems with father figures or authority",
+   "aspects": [
+    7
+   ],
+   "relations": {
+    "friends": [
+     "Moon",
+     "Mars",
+     "Jupiter"
+    ],
+    "enemies": [
+     "Venus",
+     "Saturn"
+    ],
+    "neutrals": [
+     "Mercury"
+    ]
+   },
+   "exaltSign": "Aries",
+   "debilitationSign": "Libra",
+   "ownSigns": [
+    "Leo"
+   ]
+  },
+  "Moon": {
+   "sk": "Chandra",
+   "nature": "Natural benefic (waxing) / mild malefic (waning, dark)",
+   "element": "Water",
+   "day": "Monday",
+   "direction": "North-west",
+   "color": "white, cream",
+   "gem": "pearl",
+   "metal": "silver",
+   "signifies": "mind, emotions, mother, public, comfort, memory, nourishment, home",
+   "body": "mind, blood and body fluids, chest, left eye, stomach",
+   "strong": "emotional steadiness, popularity, good memory and sleep",
+   "weak": "mood swings, worry, dependence on others for comfort",
+   "aspects": [
+    7
+   ],
+   "relations": {
+    "friends": [
+     "Sun",
+     "Mercury"
+    ],
+    "enemies": [],
+    "neutrals": [
+     "Mars",
+     "Jupiter",
+     "Venus",
+     "Saturn"
+    ]
+   },
+   "exaltSign": "Taurus",
+   "debilitationSign": "Scorpio",
+   "ownSigns": [
+    "Cancer"
+   ]
+  },
+  "Mars": {
+   "sk": "Mangala",
+   "nature": "Natural malefic (fiery, energetic)",
+   "element": "Fire",
+   "day": "Tuesday",
+   "direction": "South",
+   "color": "red",
+   "gem": "red coral",
+   "metal": "copper",
+   "signifies": "energy, courage, action, siblings (younger), land and property, sports, surgery, defence",
+   "body": "blood, muscles, bone marrow, head injuries, heat in the body",
+   "strong": "stamina, courage, decisive action, winning competitions",
+   "weak": "anger, accidents, haste, conflicts and inflammation",
+   "aspects": [
+    4,
+    7,
+    8
+   ],
+   "relations": {
+    "friends": [
+     "Sun",
+     "Moon",
+     "Jupiter"
+    ],
+    "enemies": [
+     "Mercury"
+    ],
+    "neutrals": [
+     "Venus",
+     "Saturn"
+    ]
+   },
+   "exaltSign": "Capricorn",
+   "debilitationSign": "Cancer",
+   "ownSigns": [
+    "Aries",
+    "Scorpio"
+   ]
+  },
+  "Mercury": {
+   "sk": "Budha",
+   "nature": "Neutral, takes on the company it keeps",
+   "element": "Earth",
+   "day": "Wednesday",
+   "direction": "North",
+   "color": "green",
+   "gem": "emerald",
+   "metal": "brass / bronze",
+   "signifies": "intellect, speech, writing, trade, analysis, skills, humour, youthful energy",
+   "body": "nerves, skin, lungs, speech, hands",
+   "strong": "quick learning, clear speech, business sense",
+   "weak": "nervousness, scattered focus, anxiety, skin or nerve sensitivity",
+   "aspects": [
+    7
+   ],
+   "relations": {
+    "friends": [
+     "Sun",
+     "Venus"
+    ],
+    "enemies": [
+     "Moon"
+    ],
+    "neutrals": [
+     "Mars",
+     "Jupiter",
+     "Saturn"
+    ]
+   },
+   "exaltSign": "Virgo",
+   "debilitationSign": "Pisces",
+   "ownSigns": [
+    "Gemini",
+    "Virgo"
+   ]
+  },
+  "Jupiter": {
+   "sk": "Guru (Brihaspati)",
+   "nature": "Greatest natural benefic",
+   "element": "Ether",
+   "day": "Thursday",
+   "direction": "North-east",
+   "color": "yellow",
+   "gem": "yellow sapphire",
+   "metal": "gold",
+   "signifies": "wisdom, teachers, children, fortune, faith, wealth, advice, expansion, dharma",
+   "body": "liver, fat, thighs, hips, ears",
+   "strong": "guidance, growth, protection and good judgment",
+   "weak": "over-optimism, excess, missed chances, weight gain",
+   "aspects": [
+    5,
+    7,
+    9
+   ],
+   "relations": {
+    "friends": [
+     "Sun",
+     "Moon",
+     "Mars"
+    ],
+    "enemies": [
+     "Mercury",
+     "Venus"
+    ],
+    "neutrals": [
+     "Saturn"
+    ]
+   },
+   "exaltSign": "Cancer",
+   "debilitationSign": "Capricorn",
+   "ownSigns": [
+    "Sagittarius",
+    "Pisces"
+   ]
+  },
+  "Venus": {
+   "sk": "Shukra",
+   "nature": "Natural benefic",
+   "element": "Water",
+   "day": "Friday",
+   "direction": "South-east",
+   "color": "white, pink",
+   "gem": "diamond / white sapphire",
+   "metal": "silver",
+   "signifies": "love, marriage, comforts, art, beauty, vehicles, luxury, harmony, pleasure",
+   "body": "kidneys, reproductive system, face, throat, skin glow",
+   "strong": "charm, harmony, artistic gift, comfortable relationships",
+   "weak": "indulgence, relationship friction, overspending on pleasure",
+   "aspects": [
+    7
+   ],
+   "relations": {
+    "friends": [
+     "Mercury",
+     "Saturn"
+    ],
+    "enemies": [
+     "Sun",
+     "Moon"
+    ],
+    "neutrals": [
+     "Mars",
+     "Jupiter"
+    ]
+   },
+   "exaltSign": "Pisces",
+   "debilitationSign": "Virgo",
+   "ownSigns": [
+    "Taurus",
+    "Libra"
+   ]
+  },
+  "Saturn": {
+   "sk": "Shani",
+   "nature": "Natural malefic (cold, slow, disciplined)",
+   "element": "Air",
+   "day": "Saturday",
+   "direction": "West",
+   "color": "blue-black",
+   "gem": "blue sapphire",
+   "metal": "iron",
+   "signifies": "discipline, karma, delay, hard work, service, longevity, sorrow and maturity, laborers",
+   "body": "bones, joints, knees, teeth, nerves, chronic conditions",
+   "strong": "lasting success through effort, patience, mature responsibility",
+   "weak": "delays, burden, isolation, pessimism and chronic strain",
+   "aspects": [
+    3,
+    7,
+    10
+   ],
+   "relations": {
+    "friends": [
+     "Mercury",
+     "Venus"
+    ],
+    "enemies": [
+     "Sun",
+     "Moon",
+     "Mars"
+    ],
+    "neutrals": [
+     "Jupiter"
+    ]
+   },
+   "exaltSign": "Libra",
+   "debilitationSign": "Aries",
+   "ownSigns": [
+    "Capricorn",
+    "Aquarius"
+   ]
+  },
+  "Rahu": {
+   "sk": "Rahu (north node)",
+   "nature": "Shadow planet, acts like a malefic (amplifier)",
+   "element": "Air",
+   "day": "Saturday",
+   "direction": "South-west",
+   "color": "smoky, dark blue",
+   "gem": "hessonite (gomed)",
+   "metal": "mixed metals",
+   "signifies": "ambition, foreign things, technology, obsession, illusion, sudden rise, unconventional paths",
+   "body": "nerves, skin, poisons and allergies, phobias",
+   "strong": "bold rise, innovation, success through the unconventional",
+   "weak": "confusion, craving, deception, restlessness",
+   "aspects": [
+    7
+   ],
+   "relations": {
+    "friends": [
+     "Mercury",
+     "Venus",
+     "Saturn"
+    ],
+    "enemies": [
+     "Sun",
+     "Moon",
+     "Mars"
+    ],
+    "neutrals": [
+     "Jupiter"
+    ]
+   },
+   "exaltSign": "Taurus",
+   "debilitationSign": "Scorpio",
+   "ownSigns": []
+  },
+  "Ketu": {
+   "sk": "Ketu (south node)",
+   "nature": "Shadow planet, acts like a malefic (detacher)",
+   "element": "Fire",
+   "day": "Tuesday",
+   "direction": "",
+   "color": "grey, multi-coloured",
+   "gem": "cat's eye",
+   "metal": "mixed metals",
+   "signifies": "detachment, past-life skills, spirituality, intuition, research, liberation, loss of interest",
+   "body": "nerves, wounds, mysterious or hard-to-diagnose ailments",
+   "strong": "deep insight, healing, freedom from attachment",
+   "weak": "withdrawal, scattered energy, sudden separations",
+   "aspects": [
+    7
+   ],
+   "relations": {
+    "friends": [
+     "Mars",
+     "Venus",
+     "Saturn"
+    ],
+    "enemies": [
+     "Sun",
+     "Moon"
+    ],
+    "neutrals": [
+     "Mercury",
+     "Jupiter"
+    ]
+   },
+   "exaltSign": "Scorpio",
+   "debilitationSign": "Taurus",
+   "ownSigns": []
+  }
+ },
+ "planetsNote": "Gem, metal, colour, day and direction are traditional associations given for reference; they are not medical or financial advice. Rahu/Ketu friend/enemy lists follow a commonly used scheme and only feed the wording of planet-to-planet aspects; schools differ.",
+ "houses": [
+  {
+   "n": 1,
+   "sk": "Tanu bhava",
+   "short": "self, body and personality",
+   "name": "Self",
+   "kind": "Kendra, Trikona",
+   "body": "head",
+   "karaka": "Sun",
+   "rules": "body, appearance, temperament, vitality, life direction, how the world first sees you",
+   "ask": "How strong is the Lagna lord? Which planets sit in or aspect the 1st?"
+  },
+  {
+   "n": 2,
+   "sk": "Dhana bhava",
+   "short": "money, speech and family",
+   "name": "Wealth",
+   "kind": "Maraka (marak)",
+   "body": "face, mouth, right eye",
+   "karaka": "Jupiter",
+   "rules": "savings, income kept, speech, food, early family, values, eyes and face",
+   "ask": "How does the 2nd lord sit? Is Jupiter supporting the house?"
+  },
+  {
+   "n": 3,
+   "sk": "Sahaja bhava",
+   "short": "courage, effort and siblings",
+   "name": "Courage",
+   "kind": "Upachaya",
+   "body": "arms, shoulders, hands, ears",
+   "karaka": "Mars",
+   "rules": "initiative, courage, younger siblings, short journeys, skills, writing and communication",
+   "ask": "Is Mars or the 3rd lord strong? Malefics here usually help."
+  },
+  {
+   "n": 4,
+   "sk": "Sukha bhava",
+   "short": "home, mother and inner peace",
+   "name": "Home",
+   "kind": "Kendra",
+   "body": "chest, heart region",
+   "karaka": "Moon",
+   "rules": "mother, home, property, vehicles, education base, inner happiness, roots",
+   "ask": "How are the Moon and the 4th lord? Is the home life peaceful?"
+  },
+  {
+   "n": 5,
+   "sk": "Putra bhava",
+   "short": "children, creativity and intelligence",
+   "name": "Children",
+   "kind": "Trikona",
+   "body": "stomach, upper abdomen",
+   "karaka": "Jupiter",
+   "rules": "children, creativity, romance, intelligence, mantra, past-life merit, speculation",
+   "ask": "Where is Jupiter? What is the condition of the 5th lord?"
+  },
+  {
+   "n": 6,
+   "sk": "Ari bhava",
+   "short": "work, service, health issues and rivals",
+   "name": "Service",
+   "kind": "Dusthana, Upachaya",
+   "body": "intestines, digestion",
+   "karaka": "Mars, Saturn",
+   "rules": "daily work, service, debts, disease, enemies and competition, pets, discipline",
+   "ask": "Malefics here fight problems well. Is the 6th lord placed in a dusthana?"
+  },
+  {
+   "n": 7,
+   "sk": "Kalatra bhava",
+   "short": "marriage and partnerships",
+   "name": "Partnership",
+   "kind": "Kendra, Maraka",
+   "body": "lower abdomen, kidneys",
+   "karaka": "Venus",
+   "rules": "spouse, marriage, business partners, open dealings, the public you meet",
+   "ask": "Venus, the 7th lord and aspects on the 7th together describe partnership."
+  },
+  {
+   "n": 8,
+   "sk": "Ayu bhava",
+   "short": "change, research and sudden events",
+   "name": "Transformation",
+   "kind": "Dusthana",
+   "body": "reproductive organs, excretory system",
+   "karaka": "Saturn",
+   "rules": "longevity, sudden change, hidden matters, research, inheritance, occult, in-laws money",
+   "ask": "Is the 8th lord placed in a dusthana (Viparita pattern) or in a kendra?"
+  },
+  {
+   "n": 9,
+   "sk": "Bhagya bhava",
+   "short": "luck, dharma and mentors",
+   "name": "Fortune",
+   "kind": "Trikona",
+   "body": "thighs, hips",
+   "karaka": "Jupiter, Sun",
+   "rules": "fortune, father, teachers, higher learning, faith, long journeys, pilgrimage",
+   "ask": "How placed are Jupiter and the 9th lord? Any benefic aspect on the 9th?"
+  },
+  {
+   "n": 10,
+   "sk": "Karma bhava",
+   "short": "career and public status",
+   "name": "Career",
+   "kind": "Kendra, Upachaya",
+   "body": "knees, joints",
+   "karaka": "Sun, Mercury, Jupiter, Saturn",
+   "rules": "career, authority, reputation, public actions, status, responsibilities",
+   "ask": "Where is the 10th lord? Is Saturn or the Sun helping the house?"
+  },
+  {
+   "n": 11,
+   "sk": "Labha bhava",
+   "short": "gains, friends and ambitions",
+   "name": "Gains",
+   "kind": "Upachaya",
+   "body": "calves, ankles",
+   "karaka": "Jupiter",
+   "rules": "income and gains, friends, elder siblings, networks, fulfilment of desires",
+   "ask": "Do planets in the 11th and its lord support steady income?"
+  },
+  {
+   "n": 12,
+   "sk": "Vyaya bhava",
+   "short": "losses, foreign lands and release",
+   "name": "Liberation",
+   "kind": "Dusthana",
+   "body": "feet, sleep, left eye",
+   "karaka": "Saturn, Ketu",
+   "rules": "expenses, foreign residence, isolation, sleep, hospitals, ashrams, spiritual liberation",
+   "ask": "Is the 12th lord supported? Benefics here often show charity and spiritual growth."
+  }
+ ],
+ "signs": [
+  {
+   "name": "Aries",
+   "lord": "Mars",
+   "sk": "Mesha",
+   "element": "Fire",
+   "quality": "Movable",
+   "gender": "Male",
+   "body": "head, face",
+   "style": "bold, direct, pioneering",
+   "channel": "initiative and direct action",
+   "look": "athletic, alert, strong brow"
+  },
+  {
+   "name": "Taurus",
+   "lord": "Venus",
+   "sk": "Vrishabha",
+   "element": "Earth",
+   "quality": "Fixed",
+   "gender": "Female",
+   "body": "face, throat, neck",
+   "style": "steady, sensual, determined",
+   "channel": "steadiness, resources and the senses",
+   "look": "sturdy, pleasant face, strong neck"
+  },
+  {
+   "name": "Gemini",
+   "lord": "Mercury",
+   "sk": "Mithuna",
+   "element": "Air",
+   "quality": "Dual",
+   "gender": "Male",
+   "body": "shoulders, arms, lungs",
+   "style": "curious, witty, adaptable",
+   "channel": "ideas, speech and versatility",
+   "look": "slim, youthful, expressive hands"
+  },
+  {
+   "name": "Cancer",
+   "lord": "Moon",
+   "sk": "Karka",
+   "element": "Water",
+   "quality": "Movable",
+   "gender": "Female",
+   "body": "chest, stomach",
+   "style": "nurturing, emotional, protective",
+   "channel": "care, memory and belonging",
+   "look": "round face, soft features"
+  },
+  {
+   "name": "Leo",
+   "lord": "Sun",
+   "sk": "Simha",
+   "element": "Fire",
+   "quality": "Fixed",
+   "gender": "Male",
+   "body": "heart, spine",
+   "style": "proud, generous, commanding",
+   "channel": "leadership and creative self-expression",
+   "look": "regal bearing, strong frame, thick hair"
+  },
+  {
+   "name": "Virgo",
+   "lord": "Mercury",
+   "sk": "Kanya",
+   "element": "Earth",
+   "quality": "Dual",
+   "gender": "Female",
+   "body": "intestines, digestion",
+   "style": "analytical, practical, perfectionist",
+   "channel": "detail, service and improvement",
+   "look": "neat, modest, youthful look"
+  },
+  {
+   "name": "Libra",
+   "lord": "Venus",
+   "sk": "Tula",
+   "element": "Air",
+   "quality": "Movable",
+   "gender": "Male",
+   "body": "kidneys, lower back",
+   "style": "charming, fair-minded, partnership-focused",
+   "channel": "balance, relationships and aesthetics",
+   "look": "pleasing face, graceful movement"
+  },
+  {
+   "name": "Scorpio",
+   "lord": "Mars",
+   "sk": "Vrischika",
+   "element": "Water",
+   "quality": "Fixed",
+   "gender": "Female",
+   "body": "reproductive organs",
+   "style": "intense, private, transformative",
+   "channel": "depth, focus and hidden strength",
+   "look": "magnetic eyes, intense presence"
+  },
+  {
+   "name": "Sagittarius",
+   "lord": "Jupiter",
+   "sk": "Dhanu",
+   "element": "Fire",
+   "quality": "Dual",
+   "gender": "Male",
+   "body": "thighs, hips",
+   "style": "optimistic, freedom-loving, philosophical",
+   "channel": "belief, exploration and teaching",
+   "look": "tall, open, friendly face"
+  },
+  {
+   "name": "Capricorn",
+   "lord": "Saturn",
+   "sk": "Makara",
+   "element": "Earth",
+   "quality": "Movable",
+   "gender": "Female",
+   "body": "knees, bones",
+   "style": "disciplined, ambitious, patient",
+   "channel": "structure, responsibility and long-term effort",
+   "look": "lean, bony, serious look"
+  },
+  {
+   "name": "Aquarius",
+   "lord": "Saturn",
+   "sk": "Kumbha",
+   "element": "Air",
+   "quality": "Fixed",
+   "gender": "Male",
+   "body": "calves, ankles",
+   "style": "original, humanitarian, independent",
+   "channel": "ideas, community and unconventional thinking",
+   "look": "tall, distinctive, friendly eyes"
+  },
+  {
+   "name": "Pisces",
+   "lord": "Jupiter",
+   "sk": "Meena",
+   "element": "Water",
+   "quality": "Dual",
+   "gender": "Female",
+   "body": "feet",
+   "style": "compassionate, intuitive, dreamy",
+   "channel": "intuition, compassion and imagination",
+   "look": "soft eyes, gentle expression"
+  }
+ ],
+ "aspectRules": {
+  "all": "Every planet aspects the 7th house from itself.",
+  "special": {
+   "Mars": [
+    4,
+    8
+   ],
+   "Jupiter": [
+    5,
+    9
+   ],
+   "Saturn": [
+    3,
+    10
+   ]
+  },
+  "nodes": "Rahu and Ketu: this app counts only the 7th. Many schools also give them the 5th and 9th; the text for every planet/house pair is provided either way.",
+  "offsets": {
+   "Sun": [
+    7
+   ],
+   "Moon": [
+    7
+   ],
+   "Mars": [
+    4,
+    7,
+    8
+   ],
+   "Mercury": [
+    7
+   ],
+   "Jupiter": [
+    5,
+    7,
+    9
+   ],
+   "Venus": [
+    7
+   ],
+   "Saturn": [
+    3,
+    7,
+    10
+   ],
+   "Rahu": [
+    7
+   ],
+   "Ketu": [
+    7
+   ]
+  }
+ },
+ "tone": {
+  "Sun": "0 0 + - 0 + - - + + + -",
+  "Moon": "+ + 0 + + - + - + + + -",
+  "Mars": "0 - + - 0 + - - 0 + + -",
+  "Mercury": "+ + 0 + + 0 + 0 + + + -",
+  "Jupiter": "+ + 0 + + 0 + 0 + + + 0",
+  "Venus": "+ + 0 + + - + 0 + + + +",
+  "Saturn": "0 - + - - + 0 0 - + + -",
+  "Rahu": "0 - + - - + - - - + + 0",
+  "Ketu": "0 - + - 0 + - 0 0 0 + +"
+ },
+ "planetInHouse": {
+  "Sun": [
+   "A strong sense of self, pride and natural leadership. Vitality is good and the person likes to be in charge, though ego and a dominating manner need watching.",
+   "Income and status come through authority, government or the father's side. Speech is commanding and family pride is strong; family harmony and savings can fluctuate.",
+   "Courageous, self-made and willing to take the lead. Success comes through personal effort and communication; ties with siblings may be formal or distant.",
+   "Pride in roots but little inner ease at first. Property or support may come through the father or government; the mother bond is formal and peace comes later in life.",
+   "Intelligent, creative and fond of leading and advising. Strong pride in children and talents; pressure around children and risky speculation call for care.",
+   "Excellent for defeating rivals and clearing debts. Strong stamina and digestion; suits government, health or service work. Humility keeps colleagues on side.",
+   "A strong-willed partner or ego clashes inside partnerships. Status can come through business or marriage; marriage often comes later, and shared leadership works best.",
+   "Drawn to research, hidden knowledge and transformation. Sudden changes and health matters (heart, eyes) deserve care; the ego softens with experience.",
+   "Strongly principled and drawn to dharma, teachers and higher learning. Fortune follows integrity; the father or a mentor is influential and beliefs are independent.",
+   "One of the best places for career and public recognition. Natural authority, responsibility and fame; success in government, management or leadership roles.",
+   "Gains through influential people and positions of power. Ambitions are fulfilled steadily; elder siblings and friends are respected and helpful.",
+   "A retiring nature that works best away from the spotlight. Expenses, foreign lands, hospitals or retreats feature; spiritual growth through ego surrender, and eyesight needs care."
+  ],
+  "Moon": [
+   "Sensitive, adaptable and people-oriented, with a strongly emotional personality. The mind shapes the body; moods mirror surroundings and the person is easy to like.",
+   "Nurturing speech and a strong tie to family and food. Wealth rises and falls with moods and the Moon's phase; a strong, bright Moon supports steady savings.",
+   "An imaginative communicator who enjoys short trips and sibling bonds, especially with sisters. Courage rises and falls with mood; good for writing and media.",
+   "Strong placement: deep contentment from home, mother and family. Good for property, vehicles and emotional security; peace of mind is a central theme.",
+   "A creative, romantic mind with intuitive intelligence. Warm bond with children, and a talent for the arts; decisions can be mood-driven.",
+   "Emotional stress shows up in digestion and daily routines. Caring or service work suits well; worry over rivals and uneven relations with colleagues.",
+   "An attractive, caring partner and strong emotional dependence on relationships. Good for dealing with the public; relationships can swing with moods.",
+   "Strong intuition and intense emotions with sudden mood shifts. Interest in the occult and research; the mother's health and inheritance themes may arise.",
+   "Faith, travel and a bond with teachers feed the mind. Fortune comes and goes in cycles; the mother shapes beliefs and values.",
+   "A public career with fame that rises and falls. Work involving people, women, care or nourishment suits; a popular reputation but frequent career changes.",
+   "Many friends and gains through the public or women. Wishes tend to be fulfilled; income fluctuates but the social circle is supportive.",
+   "A rich inner world, vivid dreams and need for privacy. Expenses, foreign residence or solitude feature; compassion is deep but sleep needs care."
+  ],
+  "Mars": [
+   "Energetic, bold and competitive, with an athletic drive. A quick temper and a tendency to head injuries or scars; natural leader who needs outlets for energy.",
+   "Blunt, forceful speech and family arguments. Money comes through effort, property or technical work; guard the temper in speech and watch spicy food.",
+   "Excellent courage, initiative and stamina; good for sports, defence and bold ventures. Rivals are defeated; siblings are brave but can quarrel.",
+   "Interest in land, property and vehicles, with some friction at home. Inner restlessness and a heated atmosphere; the mother relationship needs patience.",
+   "Passionate, competitive intelligence with a gift for strategy and sports. Children may be bold or delayed; temper in romance and speculative risks need caution.",
+   "Superb for beating enemies, winning disputes and building immunity. Competitive service work suits; injuries, surgery or inflammation need attention.",
+   "Passionate, strong-willed partnership dynamics with arguments. Competitive business partnerships; the partner is energetic and marriage timing needs care.",
+   "Intensity, endurance and an investigative streak. Accidents, surgery or sudden events are possible; shared money and inheritance may bring disputes.",
+   "Dynamic pursuit of beliefs and a readiness to fight for dharma. Possible clashes with father or teachers; fortune through bold effort and adventurous travel.",
+   "A strong career drive that suits engineering, defence, police, sports or surgery. Authority is earned through action and the placement gives directional strength.",
+   "Gains through effort and healthy competition. Supportive, energetic friends and elder siblings; ambitions are realised through action.",
+   "Hidden anger and expenses through conflict. Foreign lands, hospitals or retreats feature; hidden rivals and disturbed sleep need care, bed pleasures are intense."
+  ],
+  "Mercury": [
+   "Quick, witty and youthful with a strong intellect. Talkative, with good business sense and nervous energy that needs rest.",
+   "Eloquent speech and a talent for accounts, trade and writing. Wealth comes through intelligence and communication; family life is lively and humorous.",
+   "A writer, communicator or marketer with skilled hands. Supportive siblings, frequent short trips and strong initiative through the intellect.",
+   "A study-oriented home life and an intellectual mother. Property dealings and multiple residences; inner restlessness unless the mind is occupied.",
+   "Sharp, analytical intelligence and a gift for teaching, counselling or mantra. Clever children and speculation done by analysis; wit and humour.",
+   "Analytical skills in service, health, accounts and law. Wins through reasoning; watch nervous digestion, paperwork and debts.",
+   "A youthful, communicative partner and business partnerships built on talk. Good for trade and contracts; relationships rest on shared ideas.",
+   "A research mind with interest in psychology, the occult and insurance. Sudden information and secrets; watch nerves and skin.",
+   "A philosophical mind that learns languages and enjoys writing or publishing. Teachers and travel feed intellectual faith.",
+   "Careers in communication, business, writing, accounts or technology. A versatile career with a reputation for skill and cleverness.",
+   "Gains through intelligence and business networks. Communicative friends and several income streams.",
+   "A dreamy, inward mind with expenses on education and travel. Foreign communication and writing in solitude; watch sleep and nerves."
+  ],
+  "Jupiter": [
+   "Wise, optimistic and generous, with a protective aura and good fortune. A teacher at heart with strong ethics; watch weight and over-confidence.",
+   "Growing wealth, truthful speech and a harmonious family. Good savings and a love of good food; a learned, respected voice.",
+   "Optimistic initiative and a mentoring bond with siblings. Courage grows from faith; good for teaching and writing, with purposeful short trips.",
+   "A contented, comfortable home, good education and a blessed mother. Vehicles and property; deep inner peace and emotional security.",
+   "Excellent for intelligence, children, creativity and mantra. A natural counsellor, with fortune that grows through merit; own-karaka strength.",
+   "Protects against enemies, but may lessen gains from service. Helping professions suit; watch the liver, weight and debts from generosity.",
+   "A wise, supportive partner and blessings in marriage. Good for counselling and partnerships, which grow steadily; a dignified relationship.",
+   "Longevity, spiritual depth and protection in crises. Inheritance and research; delayed gains and an interest in deeper wisdom.",
+   "Superb for dharma, teachers, higher learning and fortune. A blessed father, pilgrimages and a wise outlook.",
+   "A respected career in teaching, law, finance or counselling. Honest authority, ethical leadership and a good reputation.",
+   "Strong gains, fulfilled wishes and influential friends. Supportive elder siblings and profits that keep growing.",
+   "A spiritual leaning with charity and foreign settlement. Expenses go to good causes; peaceful sleep and a path to liberation."
+  ],
+  "Venus": [
+   "Charming, attractive and artistic with a pleasing manner. Love of comfort and beauty; good relationships and an easy-going health.",
+   "Sweet speech, wealth and luxuries. A beautiful family life; talents in food, art, jewellery or singing, with steady accumulation.",
+   "Artistic expression and creative communication. Sensual hobbies, sisters, media and entertainment; gentle courage.",
+   "A beautiful home, vehicles and comforts. A harmonious bond with the mother and deep contentment; good for real estate.",
+   "Romance, creativity and entertainment flourish. Joyful children, speculative luck and a charming intellect.",
+   "Uneven relationships at work and in love. Watch the kidneys and sugar, debts through luxury; service in beauty or health fields.",
+   "Strongly supportive of marriage with a loving, attractive partner. Diplomacy, sensual harmony and good business partnerships.",
+   "Hidden wealth and inheritance through the spouse. Intense love, secret relations and research in the arts; marriage with ups and downs.",
+   "A love of art, philosophy and foreign culture. Fortune through spouse or women, devotion and travel.",
+   "Careers in the arts, fashion, luxury, finance or hospitality. A graceful public image and a reputation for charm.",
+   "Gains through art, luxury and women. A fulfilling social life and a popular, desire-fulfilling placement.",
+   "Excellent: private comforts, bed pleasures and foreign luxuries. Expenses on pleasure; a spiritual, selfless kind of love."
+  ],
+  "Saturn": [
+   "Serious, disciplined and mature early. A late bloomer with slow but lasting rise; care for bones and a tendency to feel alone, with great resilience.",
+   "Frugal, measured speech and slow growth of wealth. Heavy family responsibilities; savings come late; care for teeth and face.",
+   "Persevering courage and hard work. Siblings few or distant; disciplined communication and long-term gains from patient effort.",
+   "Contentment is delayed by heavy duties at home. Mother strain, old property or ancestral homes; inner coldness, late home ownership.",
+   "Caution and delay around children; a serious, disciplined intellect. Good for mature teaching; avoid speculation.",
+   "Excellent for defeating enemies through persistence. Strong in service and labor; manages debts, with chronic health needing steady care.",
+   "A late, serious marriage with a mature or older partner. Responsibilities in partnership; slow relationships that last.",
+   "Longevity and endurance but chronic issues and obstacles. Research and slow transformation; delayed inheritance.",
+   "Strict, conventional beliefs and delayed fortune. Distance from the father, late higher learning, strong sense of duty.",
+   "Strong directional placement: success through hard work. Authority comes slowly but lasts; suits public service, industry and responsibility.",
+   "Gains grow steadily over time. Older friends, late fulfilment of ambitions and a disciplined income.",
+   "Isolation, foreign work and losses through delay. Spiritual discipline; hospitals, retreats or prison themes; controlled expenses, disturbed sleep."
+  ],
+  "Rahu": [
+   "Magnetic, unconventional and ambitious. Identity can feel unclear; strong foreign influences, image-consciousness and sudden changes.",
+   "Unusual speech and wealth by unconventional means. Family with outside influences; unusual food habits and truth can bend.",
+   "Bold risk-taking in media, technology and communication. Strong initiative; siblings distant and short journeys frequent.",
+   "Restlessness at home and an unusual or foreign residence. The mother's health needs care; inner peace is hard to find.",
+   "An unconventional intelligence. Speculation or technology; children come late or in an unusual way, and romance is intense.",
+   "Strong against enemies, competitive and effective in service. Unusual health issues; foreign service and litigation wins.",
+   "An unusual or foreign partner and intense partnerships. Ambition in business abroad; confusion in marriage.",
+   "Interest in the occult, sudden gains and losses. Research, mysterious ailments and deep transformation.",
+   "Unconventional beliefs and foreign teachers. Travel abroad, questioning of tradition and tension with the father.",
+   "Ambitious career with fame and a sudden rise. Politics, technology or media suit; the path is unconventional.",
+   "Excellent for gains, wide networks and fulfilled ambitions. An influential social circle; income grows quickly.",
+   "Foreign settlement and large expenses. Spiritual seeking, isolation, vivid dreams and hidden activities."
+  ],
+  "Ketu": [
+   "Detached, intuitive and spiritual. Identity searching, an unusual body and past-life skills; introverted.",
+   "Reserved speech and detachment from wealth and family. Fluctuating finances and spiritual speech.",
+   "Fearless and independent with sharp intuition. Distant siblings, spiritual writing and quiet courage.",
+   "Detachment from home and a deep inner search. A distant mother and an unconventional or spiritual home; contentment is hard.",
+   "Past-life intelligence and spiritual practice. Detachment from children and romance; good for mantra and research.",
+   "Strong against enemies and good at healing. Service work, mysterious health issues and victory in competition.",
+   "Detachment in partnership and a spiritual partner. Confusion, separations and a strong need for independence.",
+   "Interest in moksha, the occult and deep research. Sudden events and protection through spiritual practice.",
+   "Spiritual wisdom beyond dogma. Detachment from rituals, a distant father and mystical teachers.",
+   "A detached career, work behind the scenes and spiritual vocations. Unconventional or sudden changes in profession.",
+   "Unexpected gains and detachment from desires. Few but spiritual friends and circles.",
+   "The house of liberation: excellent for meditation and moksha. Foreign stays, seclusion and quiet expenses."
+  ]
+ },
+ "planetInSign": {
+  "Sun": [
+   "Sun in Aries (Exalted): The Sun's confidence and need for recognition show up in a bold, direct, pioneering way, finding their outlet through initiative and direct action. At its best: results come easily and strongly in the planet's field.",
+   "Sun in Taurus (Enemy's sign): The Sun's confidence and need for recognition show up in a steady, sensual, determined way, finding their outlet through steadiness, resources and the senses. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Sun in Gemini (Neutral sign): The Sun's confidence and need for recognition show up in a curious, witty, adaptable way, finding their outlet through ideas, speech and versatility. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Sun in Cancer (Friend's sign): The Sun's confidence and need for recognition show up in a nurturing, emotional, protective way, finding their outlet through care, memory and belonging. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Sun in Leo (Own sign / Moolatrikona range): The Sun's confidence and need for recognition show up in a proud, generous, commanding way, finding their outlet through leadership and creative self-expression. Comfortable at home: stable, dependable results and good support for the houses it rules.",
+   "Sun in Virgo (Neutral sign): The Sun's confidence and need for recognition show up in an analytical, practical, perfectionist way, finding their outlet through detail, service and improvement. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Sun in Libra (Debilitated): The Sun's confidence and need for recognition show up in a charming, fair-minded, partnership-focused way, finding their outlet through balance, relationships and aesthetics. At its weakest: struggles in the planet's field early on, often turning into resilience when cancelled (Neecha Bhanga) or well supported.",
+   "Sun in Scorpio (Friend's sign): The Sun's confidence and need for recognition show up in an intense, private, transformative way, finding their outlet through depth, focus and hidden strength. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Sun in Sagittarius (Friend's sign): The Sun's confidence and need for recognition show up in an optimistic, freedom-loving, philosophical way, finding their outlet through belief, exploration and teaching. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Sun in Capricorn (Enemy's sign): The Sun's confidence and need for recognition show up in a disciplined, ambitious, patient way, finding their outlet through structure, responsibility and long-term effort. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Sun in Aquarius (Enemy's sign): The Sun's confidence and need for recognition show up in an original, humanitarian, independent way, finding their outlet through ideas, community and unconventional thinking. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Sun in Pisces (Friend's sign): The Sun's confidence and need for recognition show up in a compassionate, intuitive, dreamy way, finding their outlet through intuition, compassion and imagination. In a friend's sign: supported and cooperative; results flow with mild ease."
+  ],
+  "Moon": [
+   "Moon in Aries (Neutral sign): The Moon's feelings and need for security show up in a bold, direct, pioneering way, finding their outlet through initiative and direct action. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Moon in Taurus (Exalted): The Moon's feelings and need for security show up in a steady, sensual, determined way, finding their outlet through steadiness, resources and the senses. At its best: results come easily and strongly in the planet's field.",
+   "Moon in Gemini (Friend's sign): The Moon's feelings and need for security show up in a curious, witty, adaptable way, finding their outlet through ideas, speech and versatility. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Moon in Cancer (Own sign): The Moon's feelings and need for security show up in a nurturing, emotional, protective way, finding their outlet through care, memory and belonging. Comfortable at home: stable, dependable results and good support for the houses it rules.",
+   "Moon in Leo (Friend's sign): The Moon's feelings and need for security show up in a proud, generous, commanding way, finding their outlet through leadership and creative self-expression. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Moon in Virgo (Friend's sign): The Moon's feelings and need for security show up in an analytical, practical, perfectionist way, finding their outlet through detail, service and improvement. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Moon in Libra (Neutral sign): The Moon's feelings and need for security show up in a charming, fair-minded, partnership-focused way, finding their outlet through balance, relationships and aesthetics. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Moon in Scorpio (Debilitated): The Moon's feelings and need for security show up in an intense, private, transformative way, finding their outlet through depth, focus and hidden strength. At its weakest: struggles in the planet's field early on, often turning into resilience when cancelled (Neecha Bhanga) or well supported.",
+   "Moon in Sagittarius (Neutral sign): The Moon's feelings and need for security show up in an optimistic, freedom-loving, philosophical way, finding their outlet through belief, exploration and teaching. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Moon in Capricorn (Neutral sign): The Moon's feelings and need for security show up in a disciplined, ambitious, patient way, finding their outlet through structure, responsibility and long-term effort. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Moon in Aquarius (Neutral sign): The Moon's feelings and need for security show up in an original, humanitarian, independent way, finding their outlet through ideas, community and unconventional thinking. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Moon in Pisces (Neutral sign): The Moon's feelings and need for security show up in a compassionate, intuitive, dreamy way, finding their outlet through intuition, compassion and imagination. In a neutral sign: results depend mostly on house, aspects and company."
+  ],
+  "Mars": [
+   "Mars in Aries (Own sign / Moolatrikona range): Mars's energy and courage show up in a bold, direct, pioneering way, finding their outlet through initiative and direct action. Comfortable at home: stable, dependable results and good support for the houses it rules.",
+   "Mars in Taurus (Neutral sign): Mars's energy and courage show up in a steady, sensual, determined way, finding their outlet through steadiness, resources and the senses. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Mars in Gemini (Enemy's sign): Mars's energy and courage show up in a curious, witty, adaptable way, finding their outlet through ideas, speech and versatility. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Mars in Cancer (Debilitated): Mars's energy and courage show up in a nurturing, emotional, protective way, finding their outlet through care, memory and belonging. At its weakest: struggles in the planet's field early on, often turning into resilience when cancelled (Neecha Bhanga) or well supported.",
+   "Mars in Leo (Friend's sign): Mars's energy and courage show up in a proud, generous, commanding way, finding their outlet through leadership and creative self-expression. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Mars in Virgo (Enemy's sign): Mars's energy and courage show up in an analytical, practical, perfectionist way, finding their outlet through detail, service and improvement. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Mars in Libra (Neutral sign): Mars's energy and courage show up in a charming, fair-minded, partnership-focused way, finding their outlet through balance, relationships and aesthetics. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Mars in Scorpio (Own sign): Mars's energy and courage show up in an intense, private, transformative way, finding their outlet through depth, focus and hidden strength. Comfortable at home: stable, dependable results and good support for the houses it rules.",
+   "Mars in Sagittarius (Friend's sign): Mars's energy and courage show up in an optimistic, freedom-loving, philosophical way, finding their outlet through belief, exploration and teaching. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Mars in Capricorn (Exalted): Mars's energy and courage show up in a disciplined, ambitious, patient way, finding their outlet through structure, responsibility and long-term effort. At its best: results come easily and strongly in the planet's field.",
+   "Mars in Aquarius (Neutral sign): Mars's energy and courage show up in an original, humanitarian, independent way, finding their outlet through ideas, community and unconventional thinking. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Mars in Pisces (Friend's sign): Mars's energy and courage show up in a compassionate, intuitive, dreamy way, finding their outlet through intuition, compassion and imagination. In a friend's sign: supported and cooperative; results flow with mild ease."
+  ],
+  "Mercury": [
+   "Mercury in Aries (Neutral sign): Mercury's thinking and communication show up in a bold, direct, pioneering way, finding their outlet through initiative and direct action. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Mercury in Taurus (Friend's sign): Mercury's thinking and communication show up in a steady, sensual, determined way, finding their outlet through steadiness, resources and the senses. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Mercury in Gemini (Own sign): Mercury's thinking and communication show up in a curious, witty, adaptable way, finding their outlet through ideas, speech and versatility. Comfortable at home: stable, dependable results and good support for the houses it rules.",
+   "Mercury in Cancer (Enemy's sign): Mercury's thinking and communication show up in a nurturing, emotional, protective way, finding their outlet through care, memory and belonging. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Mercury in Leo (Friend's sign): Mercury's thinking and communication show up in a proud, generous, commanding way, finding their outlet through leadership and creative self-expression. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Mercury in Virgo (Exalted): Mercury's thinking and communication show up in an analytical, practical, perfectionist way, finding their outlet through detail, service and improvement. At its best: results come easily and strongly in the planet's field.",
+   "Mercury in Libra (Friend's sign): Mercury's thinking and communication show up in a charming, fair-minded, partnership-focused way, finding their outlet through balance, relationships and aesthetics. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Mercury in Scorpio (Neutral sign): Mercury's thinking and communication show up in an intense, private, transformative way, finding their outlet through depth, focus and hidden strength. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Mercury in Sagittarius (Neutral sign): Mercury's thinking and communication show up in an optimistic, freedom-loving, philosophical way, finding their outlet through belief, exploration and teaching. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Mercury in Capricorn (Neutral sign): Mercury's thinking and communication show up in a disciplined, ambitious, patient way, finding their outlet through structure, responsibility and long-term effort. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Mercury in Aquarius (Neutral sign): Mercury's thinking and communication show up in an original, humanitarian, independent way, finding their outlet through ideas, community and unconventional thinking. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Mercury in Pisces (Debilitated): Mercury's thinking and communication show up in a compassionate, intuitive, dreamy way, finding their outlet through intuition, compassion and imagination. At its weakest: struggles in the planet's field early on, often turning into resilience when cancelled (Neecha Bhanga) or well supported."
+  ],
+  "Jupiter": [
+   "Jupiter in Aries (Friend's sign): Jupiter's wisdom and optimism show up in a bold, direct, pioneering way, finding their outlet through initiative and direct action. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Jupiter in Taurus (Enemy's sign): Jupiter's wisdom and optimism show up in a steady, sensual, determined way, finding their outlet through steadiness, resources and the senses. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Jupiter in Gemini (Enemy's sign): Jupiter's wisdom and optimism show up in a curious, witty, adaptable way, finding their outlet through ideas, speech and versatility. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Jupiter in Cancer (Exalted): Jupiter's wisdom and optimism show up in a nurturing, emotional, protective way, finding their outlet through care, memory and belonging. At its best: results come easily and strongly in the planet's field.",
+   "Jupiter in Leo (Friend's sign): Jupiter's wisdom and optimism show up in a proud, generous, commanding way, finding their outlet through leadership and creative self-expression. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Jupiter in Virgo (Enemy's sign): Jupiter's wisdom and optimism show up in an analytical, practical, perfectionist way, finding their outlet through detail, service and improvement. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Jupiter in Libra (Enemy's sign): Jupiter's wisdom and optimism show up in a charming, fair-minded, partnership-focused way, finding their outlet through balance, relationships and aesthetics. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Jupiter in Scorpio (Friend's sign): Jupiter's wisdom and optimism show up in an intense, private, transformative way, finding their outlet through depth, focus and hidden strength. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Jupiter in Sagittarius (Own sign / Moolatrikona range): Jupiter's wisdom and optimism show up in an optimistic, freedom-loving, philosophical way, finding their outlet through belief, exploration and teaching. Comfortable at home: stable, dependable results and good support for the houses it rules.",
+   "Jupiter in Capricorn (Debilitated): Jupiter's wisdom and optimism show up in a disciplined, ambitious, patient way, finding their outlet through structure, responsibility and long-term effort. At its weakest: struggles in the planet's field early on, often turning into resilience when cancelled (Neecha Bhanga) or well supported.",
+   "Jupiter in Aquarius (Neutral sign): Jupiter's wisdom and optimism show up in an original, humanitarian, independent way, finding their outlet through ideas, community and unconventional thinking. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Jupiter in Pisces (Own sign): Jupiter's wisdom and optimism show up in a compassionate, intuitive, dreamy way, finding their outlet through intuition, compassion and imagination. Comfortable at home: stable, dependable results and good support for the houses it rules."
+  ],
+  "Venus": [
+   "Venus in Aries (Neutral sign): Venus's affection and sense of beauty show up in a bold, direct, pioneering way, finding their outlet through initiative and direct action. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Venus in Taurus (Own sign): Venus's affection and sense of beauty show up in a steady, sensual, determined way, finding their outlet through steadiness, resources and the senses. Comfortable at home: stable, dependable results and good support for the houses it rules.",
+   "Venus in Gemini (Friend's sign): Venus's affection and sense of beauty show up in a curious, witty, adaptable way, finding their outlet through ideas, speech and versatility. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Venus in Cancer (Enemy's sign): Venus's affection and sense of beauty show up in a nurturing, emotional, protective way, finding their outlet through care, memory and belonging. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Venus in Leo (Enemy's sign): Venus's affection and sense of beauty show up in a proud, generous, commanding way, finding their outlet through leadership and creative self-expression. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Venus in Virgo (Debilitated): Venus's affection and sense of beauty show up in an analytical, practical, perfectionist way, finding their outlet through detail, service and improvement. At its weakest: struggles in the planet's field early on, often turning into resilience when cancelled (Neecha Bhanga) or well supported.",
+   "Venus in Libra (Own sign / Moolatrikona range): Venus's affection and sense of beauty show up in a charming, fair-minded, partnership-focused way, finding their outlet through balance, relationships and aesthetics. Comfortable at home: stable, dependable results and good support for the houses it rules.",
+   "Venus in Scorpio (Neutral sign): Venus's affection and sense of beauty show up in an intense, private, transformative way, finding their outlet through depth, focus and hidden strength. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Venus in Sagittarius (Neutral sign): Venus's affection and sense of beauty show up in an optimistic, freedom-loving, philosophical way, finding their outlet through belief, exploration and teaching. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Venus in Capricorn (Friend's sign): Venus's affection and sense of beauty show up in a disciplined, ambitious, patient way, finding their outlet through structure, responsibility and long-term effort. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Venus in Aquarius (Friend's sign): Venus's affection and sense of beauty show up in an original, humanitarian, independent way, finding their outlet through ideas, community and unconventional thinking. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Venus in Pisces (Exalted): Venus's affection and sense of beauty show up in a compassionate, intuitive, dreamy way, finding their outlet through intuition, compassion and imagination. At its best: results come easily and strongly in the planet's field."
+  ],
+  "Saturn": [
+   "Saturn in Aries (Debilitated): Saturn's discipline and sense of duty show up in a bold, direct, pioneering way, finding their outlet through initiative and direct action. At its weakest: struggles in the planet's field early on, often turning into resilience when cancelled (Neecha Bhanga) or well supported.",
+   "Saturn in Taurus (Friend's sign): Saturn's discipline and sense of duty show up in a steady, sensual, determined way, finding their outlet through steadiness, resources and the senses. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Saturn in Gemini (Friend's sign): Saturn's discipline and sense of duty show up in a curious, witty, adaptable way, finding their outlet through ideas, speech and versatility. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Saturn in Cancer (Enemy's sign): Saturn's discipline and sense of duty show up in a nurturing, emotional, protective way, finding their outlet through care, memory and belonging. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Saturn in Leo (Enemy's sign): Saturn's discipline and sense of duty show up in a proud, generous, commanding way, finding their outlet through leadership and creative self-expression. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Saturn in Virgo (Friend's sign): Saturn's discipline and sense of duty show up in an analytical, practical, perfectionist way, finding their outlet through detail, service and improvement. In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Saturn in Libra (Exalted): Saturn's discipline and sense of duty show up in a charming, fair-minded, partnership-focused way, finding their outlet through balance, relationships and aesthetics. At its best: results come easily and strongly in the planet's field.",
+   "Saturn in Scorpio (Enemy's sign): Saturn's discipline and sense of duty show up in an intense, private, transformative way, finding their outlet through depth, focus and hidden strength. In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Saturn in Sagittarius (Neutral sign): Saturn's discipline and sense of duty show up in an optimistic, freedom-loving, philosophical way, finding their outlet through belief, exploration and teaching. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Saturn in Capricorn (Own sign): Saturn's discipline and sense of duty show up in a disciplined, ambitious, patient way, finding their outlet through structure, responsibility and long-term effort. Comfortable at home: stable, dependable results and good support for the houses it rules.",
+   "Saturn in Aquarius (Own sign / Moolatrikona range): Saturn's discipline and sense of duty show up in an original, humanitarian, independent way, finding their outlet through ideas, community and unconventional thinking. Comfortable at home: stable, dependable results and good support for the houses it rules.",
+   "Saturn in Pisces (Neutral sign): Saturn's discipline and sense of duty show up in a compassionate, intuitive, dreamy way, finding their outlet through intuition, compassion and imagination. In a neutral sign: results depend mostly on house, aspects and company."
+  ],
+  "Rahu": [
+   "Rahu in Aries (Neutral sign): Rahu's ambition and hunger for the new show up in a bold, direct, pioneering way, finding their outlet through initiative and direct action. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Rahu in Taurus (Exalted): Rahu's ambition and hunger for the new show up in a steady, sensual, determined way, finding their outlet through steadiness, resources and the senses. At its best: results come easily and strongly in the planet's field. (Rahu and Ketu exaltation signs vary between schools; this app uses Taurus for Rahu and Scorpio for Ketu.)",
+   "Rahu in Gemini (Neutral sign): Rahu's ambition and hunger for the new show up in a curious, witty, adaptable way, finding their outlet through ideas, speech and versatility. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Rahu in Cancer (Neutral sign): Rahu's ambition and hunger for the new show up in a nurturing, emotional, protective way, finding their outlet through care, memory and belonging. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Rahu in Leo (Neutral sign): Rahu's ambition and hunger for the new show up in a proud, generous, commanding way, finding their outlet through leadership and creative self-expression. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Rahu in Virgo (Neutral sign): Rahu's ambition and hunger for the new show up in an analytical, practical, perfectionist way, finding their outlet through detail, service and improvement. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Rahu in Libra (Neutral sign): Rahu's ambition and hunger for the new show up in a charming, fair-minded, partnership-focused way, finding their outlet through balance, relationships and aesthetics. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Rahu in Scorpio (Debilitated): Rahu's ambition and hunger for the new show up in an intense, private, transformative way, finding their outlet through depth, focus and hidden strength. At its weakest: struggles in the planet's field early on, often turning into resilience when cancelled (Neecha Bhanga) or well supported. (Rahu and Ketu exaltation signs vary between schools; this app uses Taurus for Rahu and Scorpio for Ketu.)",
+   "Rahu in Sagittarius (Neutral sign): Rahu's ambition and hunger for the new show up in an optimistic, freedom-loving, philosophical way, finding their outlet through belief, exploration and teaching. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Rahu in Capricorn (Neutral sign): Rahu's ambition and hunger for the new show up in a disciplined, ambitious, patient way, finding their outlet through structure, responsibility and long-term effort. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Rahu in Aquarius (Neutral sign): Rahu's ambition and hunger for the new show up in an original, humanitarian, independent way, finding their outlet through ideas, community and unconventional thinking. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Rahu in Pisces (Neutral sign): Rahu's ambition and hunger for the new show up in a compassionate, intuitive, dreamy way, finding their outlet through intuition, compassion and imagination. In a neutral sign: results depend mostly on house, aspects and company."
+  ],
+  "Ketu": [
+   "Ketu in Aries (Neutral sign): Ketu's detachment and inner knowing show up in a bold, direct, pioneering way, finding their outlet through initiative and direct action. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Ketu in Taurus (Debilitated): Ketu's detachment and inner knowing show up in a steady, sensual, determined way, finding their outlet through steadiness, resources and the senses. At its weakest: struggles in the planet's field early on, often turning into resilience when cancelled (Neecha Bhanga) or well supported. (Rahu and Ketu exaltation signs vary between schools; this app uses Taurus for Rahu and Scorpio for Ketu.)",
+   "Ketu in Gemini (Neutral sign): Ketu's detachment and inner knowing show up in a curious, witty, adaptable way, finding their outlet through ideas, speech and versatility. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Ketu in Cancer (Neutral sign): Ketu's detachment and inner knowing show up in a nurturing, emotional, protective way, finding their outlet through care, memory and belonging. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Ketu in Leo (Neutral sign): Ketu's detachment and inner knowing show up in a proud, generous, commanding way, finding their outlet through leadership and creative self-expression. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Ketu in Virgo (Neutral sign): Ketu's detachment and inner knowing show up in an analytical, practical, perfectionist way, finding their outlet through detail, service and improvement. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Ketu in Libra (Neutral sign): Ketu's detachment and inner knowing show up in a charming, fair-minded, partnership-focused way, finding their outlet through balance, relationships and aesthetics. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Ketu in Scorpio (Exalted): Ketu's detachment and inner knowing show up in an intense, private, transformative way, finding their outlet through depth, focus and hidden strength. At its best: results come easily and strongly in the planet's field. (Rahu and Ketu exaltation signs vary between schools; this app uses Taurus for Rahu and Scorpio for Ketu.)",
+   "Ketu in Sagittarius (Neutral sign): Ketu's detachment and inner knowing show up in an optimistic, freedom-loving, philosophical way, finding their outlet through belief, exploration and teaching. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Ketu in Capricorn (Neutral sign): Ketu's detachment and inner knowing show up in a disciplined, ambitious, patient way, finding their outlet through structure, responsibility and long-term effort. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Ketu in Aquarius (Neutral sign): Ketu's detachment and inner knowing show up in an original, humanitarian, independent way, finding their outlet through ideas, community and unconventional thinking. In a neutral sign: results depend mostly on house, aspects and company.",
+   "Ketu in Pisces (Neutral sign): Ketu's detachment and inner knowing show up in a compassionate, intuitive, dreamy way, finding their outlet through intuition, compassion and imagination. In a neutral sign: results depend mostly on house, aspects and company."
+  ]
+ },
+ "planetInSignDignity": {
+  "Sun": [
+   "Exalted",
+   "Enemy",
+   "Neutral",
+   "Friend",
+   "Moolatrikona",
+   "Neutral",
+   "Debilitated",
+   "Friend",
+   "Friend",
+   "Enemy",
+   "Enemy",
+   "Friend"
+  ],
+  "Moon": [
+   "Neutral",
+   "Exalted",
+   "Friend",
+   "Own",
+   "Friend",
+   "Friend",
+   "Neutral",
+   "Debilitated",
+   "Neutral",
+   "Neutral",
+   "Neutral",
+   "Neutral"
+  ],
+  "Mars": [
+   "Moolatrikona",
+   "Neutral",
+   "Enemy",
+   "Debilitated",
+   "Friend",
+   "Enemy",
+   "Neutral",
+   "Own",
+   "Friend",
+   "Exalted",
+   "Neutral",
+   "Friend"
+  ],
+  "Mercury": [
+   "Neutral",
+   "Friend",
+   "Own",
+   "Enemy",
+   "Friend",
+   "Exalted",
+   "Friend",
+   "Neutral",
+   "Neutral",
+   "Neutral",
+   "Neutral",
+   "Debilitated"
+  ],
+  "Jupiter": [
+   "Friend",
+   "Enemy",
+   "Enemy",
+   "Exalted",
+   "Friend",
+   "Enemy",
+   "Enemy",
+   "Friend",
+   "Moolatrikona",
+   "Debilitated",
+   "Neutral",
+   "Own"
+  ],
+  "Venus": [
+   "Neutral",
+   "Own",
+   "Friend",
+   "Enemy",
+   "Enemy",
+   "Debilitated",
+   "Moolatrikona",
+   "Neutral",
+   "Neutral",
+   "Friend",
+   "Friend",
+   "Exalted"
+  ],
+  "Saturn": [
+   "Debilitated",
+   "Friend",
+   "Friend",
+   "Enemy",
+   "Enemy",
+   "Friend",
+   "Exalted",
+   "Enemy",
+   "Neutral",
+   "Own",
+   "Moolatrikona",
+   "Neutral"
+  ],
+  "Rahu": [
+   "Neutral",
+   "Exalted",
+   "Neutral",
+   "Neutral",
+   "Neutral",
+   "Neutral",
+   "Neutral",
+   "Debilitated",
+   "Neutral",
+   "Neutral",
+   "Neutral",
+   "Neutral"
+  ],
+  "Ketu": [
+   "Neutral",
+   "Debilitated",
+   "Neutral",
+   "Neutral",
+   "Neutral",
+   "Neutral",
+   "Neutral",
+   "Exalted",
+   "Neutral",
+   "Neutral",
+   "Neutral",
+   "Neutral"
+  ]
+ },
+ "lordInHouse": [
+  [
+   "The Lagna lord shows where the person's energy and life direction go. Here it sits in its own house (self, body and personality), so those matters get concentrated attention, for better or worse depending on the planet's strength. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The Lagna lord shows where the person's energy and life direction go. Here it sits in the 2nd house (money, speech and family), so matters of self, body and personality are worked out through money, speech and family. Counted from its own house this is the 2nd, which adds a practical, resource-minded note.",
+   "The Lagna lord shows where the person's energy and life direction go. Here it sits in the 3rd house (courage, effort and siblings), so matters of self, body and personality are worked out through courage, effort and siblings. Counted from its own house this is the 3rd, which adds a note of personal effort, initiative and communication.",
+   "The Lagna lord shows where the person's energy and life direction go. Here it sits in the 4th house (home, mother and inner peace), so matters of self, body and personality are worked out through home, mother and inner peace. Counted from its own house this is the 4th (angular), which adds stability and a strong, visible footing. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The Lagna lord shows where the person's energy and life direction go. Here it sits in the 5th house (children, creativity and intelligence), so matters of self, body and personality are worked out through children, creativity and intelligence. Counted from its own house this is the 5th (trine), which tends to add ease and good fortune. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The Lagna lord shows where the person's energy and life direction go. Here it sits in the 6th house (work, service, health issues and rivals), so matters of self, body and personality are worked out through work, service, health issues and rivals. Counted from its own house this is the 6th, which adds a note of obstacles, competition or service that asks for steady effort. A fortunate house's lord sits in a difficult house, so benefits arrive with effort, delay or distance.",
+   "The Lagna lord shows where the person's energy and life direction go. Here it sits in the 7th house (marriage and partnerships), so matters of self, body and personality are worked out through marriage and partnerships. Counted from its own house this is the 7th (opposite), which brings in other people and open dealings. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The Lagna lord shows where the person's energy and life direction go. Here it sits in the 8th house (change, research and sudden events), so matters of self, body and personality are worked out through change, research and sudden events. Counted from its own house this is the 8th, which adds a hidden or intense note, with delays and sudden turns, but also depth and research. A fortunate house's lord sits in a difficult house, so benefits arrive with effort, delay or distance.",
+   "The Lagna lord shows where the person's energy and life direction go. Here it sits in the 9th house (luck, dharma and mentors), so matters of self, body and personality are worked out through luck, dharma and mentors. Counted from its own house this is the 9th (trine), which adds fortune, belief and good guidance. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The Lagna lord shows where the person's energy and life direction go. Here it sits in the 10th house (career and public status), so matters of self, body and personality are worked out through career and public status. Counted from its own house this is the 10th (angular), which adds visibility through action and public standing. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The Lagna lord shows where the person's energy and life direction go. Here it sits in the 11th house (gains, friends and ambitions), so matters of self, body and personality are worked out through gains, friends and ambitions. Counted from its own house this is the 11th, which adds a note of gains, networks and fulfilled hopes.",
+   "The Lagna lord shows where the person's energy and life direction go. Here it sits in the 12th house (losses, foreign lands and release), so matters of self, body and personality are worked out through losses, foreign lands and release. Counted from its own house this is the 12th, which adds a note of expense, distance or letting go. A fortunate house's lord sits in a difficult house, so benefits arrive with effort, delay or distance."
+  ],
+  [
+   "The 2nd lord shows how income, speech and family values are handled. Here it sits in the 1st house (self, body and personality), so matters of money, speech and family are worked out through self, body and personality. Counted from its own house this is the 12th, which adds a note of expense, distance or letting go.",
+   "The 2nd lord shows how income, speech and family values are handled. Here it sits in its own house (money, speech and family), so those matters get concentrated attention, for better or worse depending on the planet's strength.",
+   "The 2nd lord shows how income, speech and family values are handled. Here it sits in the 3rd house (courage, effort and siblings), so matters of money, speech and family are worked out through courage, effort and siblings. Counted from its own house this is the 2nd, which adds a practical, resource-minded note.",
+   "The 2nd lord shows how income, speech and family values are handled. Here it sits in the 4th house (home, mother and inner peace), so matters of money, speech and family are worked out through home, mother and inner peace. Counted from its own house this is the 3rd, which adds a note of personal effort, initiative and communication.",
+   "The 2nd lord shows how income, speech and family values are handled. Here it sits in the 5th house (children, creativity and intelligence), so matters of money, speech and family are worked out through children, creativity and intelligence. Counted from its own house this is the 4th (angular), which adds stability and a strong, visible footing.",
+   "The 2nd lord shows how income, speech and family values are handled. Here it sits in the 6th house (work, service, health issues and rivals), so matters of money, speech and family are worked out through work, service, health issues and rivals. Counted from its own house this is the 5th (trine), which tends to add ease and good fortune. The wealth house lord in a difficult house means money comes with effort or fluctuations.",
+   "The 2nd lord shows how income, speech and family values are handled. Here it sits in the 7th house (marriage and partnerships), so matters of money, speech and family are worked out through marriage and partnerships. Counted from its own house this is the 6th, which adds a note of obstacles, competition or service that asks for steady effort.",
+   "The 2nd lord shows how income, speech and family values are handled. Here it sits in the 8th house (change, research and sudden events), so matters of money, speech and family are worked out through change, research and sudden events. Counted from its own house this is the 7th (opposite), which brings in other people and open dealings. The wealth house lord in a difficult house means money comes with effort or fluctuations.",
+   "The 2nd lord shows how income, speech and family values are handled. Here it sits in the 9th house (luck, dharma and mentors), so matters of money, speech and family are worked out through luck, dharma and mentors. Counted from its own house this is the 8th, which adds a hidden or intense note, with delays and sudden turns, but also depth and research.",
+   "The 2nd lord shows how income, speech and family values are handled. Here it sits in the 10th house (career and public status), so matters of money, speech and family are worked out through career and public status. Counted from its own house this is the 9th (trine), which adds fortune, belief and good guidance.",
+   "The 2nd lord shows how income, speech and family values are handled. Here it sits in the 11th house (gains, friends and ambitions), so matters of money, speech and family are worked out through gains, friends and ambitions. Counted from its own house this is the 10th (angular), which adds visibility through action and public standing.",
+   "The 2nd lord shows how income, speech and family values are handled. Here it sits in the 12th house (losses, foreign lands and release), so matters of money, speech and family are worked out through losses, foreign lands and release. Counted from its own house this is the 11th, which adds a note of gains, networks and fulfilled hopes. The wealth house lord in a difficult house means money comes with effort or fluctuations."
+  ],
+  [
+   "The 3rd lord shows where effort, courage and sibling matters are directed. Here it sits in the 1st house (self, body and personality), so matters of courage, effort and siblings are worked out through self, body and personality. Counted from its own house this is the 11th, which adds a note of gains, networks and fulfilled hopes.",
+   "The 3rd lord shows where effort, courage and sibling matters are directed. Here it sits in the 2nd house (money, speech and family), so matters of courage, effort and siblings are worked out through money, speech and family. Counted from its own house this is the 12th, which adds a note of expense, distance or letting go.",
+   "The 3rd lord shows where effort, courage and sibling matters are directed. Here it sits in its own house (courage, effort and siblings), so those matters get concentrated attention, for better or worse depending on the planet's strength.",
+   "The 3rd lord shows where effort, courage and sibling matters are directed. Here it sits in the 4th house (home, mother and inner peace), so matters of courage, effort and siblings are worked out through home, mother and inner peace. Counted from its own house this is the 2nd, which adds a practical, resource-minded note.",
+   "The 3rd lord shows where effort, courage and sibling matters are directed. Here it sits in the 5th house (children, creativity and intelligence), so matters of courage, effort and siblings are worked out through children, creativity and intelligence. Counted from its own house this is the 3rd, which adds a note of personal effort, initiative and communication.",
+   "The 3rd lord shows where effort, courage and sibling matters are directed. Here it sits in the 6th house (work, service, health issues and rivals), so matters of courage, effort and siblings are worked out through work, service, health issues and rivals. Counted from its own house this is the 4th (angular), which adds stability and a strong, visible footing.",
+   "The 3rd lord shows where effort, courage and sibling matters are directed. Here it sits in the 7th house (marriage and partnerships), so matters of courage, effort and siblings are worked out through marriage and partnerships. Counted from its own house this is the 5th (trine), which tends to add ease and good fortune.",
+   "The 3rd lord shows where effort, courage and sibling matters are directed. Here it sits in the 8th house (change, research and sudden events), so matters of courage, effort and siblings are worked out through change, research and sudden events. Counted from its own house this is the 6th, which adds a note of obstacles, competition or service that asks for steady effort.",
+   "The 3rd lord shows where effort, courage and sibling matters are directed. Here it sits in the 9th house (luck, dharma and mentors), so matters of courage, effort and siblings are worked out through luck, dharma and mentors. Counted from its own house this is the 7th (opposite), which brings in other people and open dealings.",
+   "The 3rd lord shows where effort, courage and sibling matters are directed. Here it sits in the 10th house (career and public status), so matters of courage, effort and siblings are worked out through career and public status. Counted from its own house this is the 8th, which adds a hidden or intense note, with delays and sudden turns, but also depth and research.",
+   "The 3rd lord shows where effort, courage and sibling matters are directed. Here it sits in the 11th house (gains, friends and ambitions), so matters of courage, effort and siblings are worked out through gains, friends and ambitions. Counted from its own house this is the 9th (trine), which adds fortune, belief and good guidance.",
+   "The 3rd lord shows where effort, courage and sibling matters are directed. Here it sits in the 12th house (losses, foreign lands and release), so matters of courage, effort and siblings are worked out through losses, foreign lands and release. Counted from its own house this is the 10th (angular), which adds visibility through action and public standing."
+  ],
+  [
+   "The 4th lord shows where the search for peace, home and comfort goes. Here it sits in the 1st house (self, body and personality), so matters of home, mother and inner peace are worked out through self, body and personality. Counted from its own house this is the 10th (angular), which adds visibility through action and public standing. An angular lord placed in a trikona tends to support fortune and status.",
+   "The 4th lord shows where the search for peace, home and comfort goes. Here it sits in the 2nd house (money, speech and family), so matters of home, mother and inner peace are worked out through money, speech and family. Counted from its own house this is the 11th, which adds a note of gains, networks and fulfilled hopes.",
+   "The 4th lord shows where the search for peace, home and comfort goes. Here it sits in the 3rd house (courage, effort and siblings), so matters of home, mother and inner peace are worked out through courage, effort and siblings. Counted from its own house this is the 12th, which adds a note of expense, distance or letting go.",
+   "The 4th lord shows where the search for peace, home and comfort goes. Here it sits in its own house (home, mother and inner peace), so those matters get concentrated attention, for better or worse depending on the planet's strength.",
+   "The 4th lord shows where the search for peace, home and comfort goes. Here it sits in the 5th house (children, creativity and intelligence), so matters of home, mother and inner peace are worked out through children, creativity and intelligence. Counted from its own house this is the 2nd, which adds a practical, resource-minded note. An angular lord placed in a trikona tends to support fortune and status.",
+   "The 4th lord shows where the search for peace, home and comfort goes. Here it sits in the 6th house (work, service, health issues and rivals), so matters of home, mother and inner peace are worked out through work, service, health issues and rivals. Counted from its own house this is the 3rd, which adds a note of personal effort, initiative and communication. Angular matters drift into struggle or transformation and need steady handling.",
+   "The 4th lord shows where the search for peace, home and comfort goes. Here it sits in the 7th house (marriage and partnerships), so matters of home, mother and inner peace are worked out through marriage and partnerships. Counted from its own house this is the 4th (angular), which adds stability and a strong, visible footing.",
+   "The 4th lord shows where the search for peace, home and comfort goes. Here it sits in the 8th house (change, research and sudden events), so matters of home, mother and inner peace are worked out through change, research and sudden events. Counted from its own house this is the 5th (trine), which tends to add ease and good fortune. Angular matters drift into struggle or transformation and need steady handling.",
+   "The 4th lord shows where the search for peace, home and comfort goes. Here it sits in the 9th house (luck, dharma and mentors), so matters of home, mother and inner peace are worked out through luck, dharma and mentors. Counted from its own house this is the 6th, which adds a note of obstacles, competition or service that asks for steady effort. An angular lord placed in a trikona tends to support fortune and status.",
+   "The 4th lord shows where the search for peace, home and comfort goes. Here it sits in the 10th house (career and public status), so matters of home, mother and inner peace are worked out through career and public status. Counted from its own house this is the 7th (opposite), which brings in other people and open dealings.",
+   "The 4th lord shows where the search for peace, home and comfort goes. Here it sits in the 11th house (gains, friends and ambitions), so matters of home, mother and inner peace are worked out through gains, friends and ambitions. Counted from its own house this is the 8th, which adds a hidden or intense note, with delays and sudden turns, but also depth and research.",
+   "The 4th lord shows where the search for peace, home and comfort goes. Here it sits in the 12th house (losses, foreign lands and release), so matters of home, mother and inner peace are worked out through losses, foreign lands and release. Counted from its own house this is the 9th (trine), which adds fortune, belief and good guidance. Angular matters drift into struggle or transformation and need steady handling."
+  ],
+  [
+   "The 5th lord shows where creativity, intelligence and merit are directed. Here it sits in the 1st house (self, body and personality), so matters of children, creativity and intelligence are worked out through self, body and personality. Counted from its own house this is the 9th (trine), which adds fortune, belief and good guidance. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The 5th lord shows where creativity, intelligence and merit are directed. Here it sits in the 2nd house (money, speech and family), so matters of children, creativity and intelligence are worked out through money, speech and family. Counted from its own house this is the 10th (angular), which adds visibility through action and public standing.",
+   "The 5th lord shows where creativity, intelligence and merit are directed. Here it sits in the 3rd house (courage, effort and siblings), so matters of children, creativity and intelligence are worked out through courage, effort and siblings. Counted from its own house this is the 11th, which adds a note of gains, networks and fulfilled hopes.",
+   "The 5th lord shows where creativity, intelligence and merit are directed. Here it sits in the 4th house (home, mother and inner peace), so matters of children, creativity and intelligence are worked out through home, mother and inner peace. Counted from its own house this is the 12th, which adds a note of expense, distance or letting go. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The 5th lord shows where creativity, intelligence and merit are directed. Here it sits in its own house (children, creativity and intelligence), so those matters get concentrated attention, for better or worse depending on the planet's strength. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The 5th lord shows where creativity, intelligence and merit are directed. Here it sits in the 6th house (work, service, health issues and rivals), so matters of children, creativity and intelligence are worked out through work, service, health issues and rivals. Counted from its own house this is the 2nd, which adds a practical, resource-minded note. A fortunate house's lord sits in a difficult house, so benefits arrive with effort, delay or distance.",
+   "The 5th lord shows where creativity, intelligence and merit are directed. Here it sits in the 7th house (marriage and partnerships), so matters of children, creativity and intelligence are worked out through marriage and partnerships. Counted from its own house this is the 3rd, which adds a note of personal effort, initiative and communication. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The 5th lord shows where creativity, intelligence and merit are directed. Here it sits in the 8th house (change, research and sudden events), so matters of children, creativity and intelligence are worked out through change, research and sudden events. Counted from its own house this is the 4th (angular), which adds stability and a strong, visible footing. A fortunate house's lord sits in a difficult house, so benefits arrive with effort, delay or distance.",
+   "The 5th lord shows where creativity, intelligence and merit are directed. Here it sits in the 9th house (luck, dharma and mentors), so matters of children, creativity and intelligence are worked out through luck, dharma and mentors. Counted from its own house this is the 5th (trine), which tends to add ease and good fortune. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The 5th lord shows where creativity, intelligence and merit are directed. Here it sits in the 10th house (career and public status), so matters of children, creativity and intelligence are worked out through career and public status. Counted from its own house this is the 6th, which adds a note of obstacles, competition or service that asks for steady effort. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The 5th lord shows where creativity, intelligence and merit are directed. Here it sits in the 11th house (gains, friends and ambitions), so matters of children, creativity and intelligence are worked out through gains, friends and ambitions. Counted from its own house this is the 7th (opposite), which brings in other people and open dealings.",
+   "The 5th lord shows where creativity, intelligence and merit are directed. Here it sits in the 12th house (losses, foreign lands and release), so matters of children, creativity and intelligence are worked out through losses, foreign lands and release. Counted from its own house this is the 8th, which adds a hidden or intense note, with delays and sudden turns, but also depth and research. A fortunate house's lord sits in a difficult house, so benefits arrive with effort, delay or distance."
+  ],
+  [
+   "The 6th lord shows where conflict, service and health habits show up. Here it sits in the 1st house (self, body and personality), so matters of work, service, health issues and rivals are worked out through self, body and personality. Counted from its own house this is the 8th, which adds a hidden or intense note, with delays and sudden turns, but also depth and research. A difficult house's lord in an angular house can bring struggle, change or loss into that area of life, which calls for care.",
+   "The 6th lord shows where conflict, service and health habits show up. Here it sits in the 2nd house (money, speech and family), so matters of work, service, health issues and rivals are worked out through money, speech and family. Counted from its own house this is the 9th (trine), which adds fortune, belief and good guidance.",
+   "The 6th lord shows where conflict, service and health habits show up. Here it sits in the 3rd house (courage, effort and siblings), so matters of work, service, health issues and rivals are worked out through courage, effort and siblings. Counted from its own house this is the 10th (angular), which adds visibility through action and public standing.",
+   "The 6th lord shows where conflict, service and health habits show up. Here it sits in the 4th house (home, mother and inner peace), so matters of work, service, health issues and rivals are worked out through home, mother and inner peace. Counted from its own house this is the 11th, which adds a note of gains, networks and fulfilled hopes. A difficult house's lord in an angular house can bring struggle, change or loss into that area of life, which calls for care.",
+   "The 6th lord shows where conflict, service and health habits show up. Here it sits in the 5th house (children, creativity and intelligence), so matters of work, service, health issues and rivals are worked out through children, creativity and intelligence. Counted from its own house this is the 12th, which adds a note of expense, distance or letting go.",
+   "The 6th lord shows where conflict, service and health habits show up. Here it sits in its own house (work, service, health issues and rivals), so those matters get concentrated attention, for better or worse depending on the planet's strength. A dusthana lord in a dusthana is the classical Viparita Raja pattern: reversals tend to turn into protection or unexpected gain when the planet itself is unharmed.",
+   "The 6th lord shows where conflict, service and health habits show up. Here it sits in the 7th house (marriage and partnerships), so matters of work, service, health issues and rivals are worked out through marriage and partnerships. Counted from its own house this is the 2nd, which adds a practical, resource-minded note. A difficult house's lord in an angular house can bring struggle, change or loss into that area of life, which calls for care.",
+   "The 6th lord shows where conflict, service and health habits show up. Here it sits in the 8th house (change, research and sudden events), so matters of work, service, health issues and rivals are worked out through change, research and sudden events. Counted from its own house this is the 3rd, which adds a note of personal effort, initiative and communication. A dusthana lord in a dusthana is the classical Viparita Raja pattern: reversals tend to turn into protection or unexpected gain when the planet itself is unharmed.",
+   "The 6th lord shows where conflict, service and health habits show up. Here it sits in the 9th house (luck, dharma and mentors), so matters of work, service, health issues and rivals are worked out through luck, dharma and mentors. Counted from its own house this is the 4th (angular), which adds stability and a strong, visible footing.",
+   "The 6th lord shows where conflict, service and health habits show up. Here it sits in the 10th house (career and public status), so matters of work, service, health issues and rivals are worked out through career and public status. Counted from its own house this is the 5th (trine), which tends to add ease and good fortune. A difficult house's lord in an angular house can bring struggle, change or loss into that area of life, which calls for care.",
+   "The 6th lord shows where conflict, service and health habits show up. Here it sits in the 11th house (gains, friends and ambitions), so matters of work, service, health issues and rivals are worked out through gains, friends and ambitions. Counted from its own house this is the 6th, which adds a note of obstacles, competition or service that asks for steady effort.",
+   "The 6th lord shows where conflict, service and health habits show up. Here it sits in the 12th house (losses, foreign lands and release), so matters of work, service, health issues and rivals are worked out through losses, foreign lands and release. Counted from its own house this is the 7th (opposite), which brings in other people and open dealings. A dusthana lord in a dusthana is the classical Viparita Raja pattern: reversals tend to turn into protection or unexpected gain when the planet itself is unharmed."
+  ],
+  [
+   "The 7th lord shows where partnerships and open dealings are pulled. Here it sits in the 1st house (self, body and personality), so matters of marriage and partnerships are worked out through self, body and personality. Counted from its own house this is the 7th (opposite), which brings in other people and open dealings. An angular lord placed in a trikona tends to support fortune and status.",
+   "The 7th lord shows where partnerships and open dealings are pulled. Here it sits in the 2nd house (money, speech and family), so matters of marriage and partnerships are worked out through money, speech and family. Counted from its own house this is the 8th, which adds a hidden or intense note, with delays and sudden turns, but also depth and research.",
+   "The 7th lord shows where partnerships and open dealings are pulled. Here it sits in the 3rd house (courage, effort and siblings), so matters of marriage and partnerships are worked out through courage, effort and siblings. Counted from its own house this is the 9th (trine), which adds fortune, belief and good guidance.",
+   "The 7th lord shows where partnerships and open dealings are pulled. Here it sits in the 4th house (home, mother and inner peace), so matters of marriage and partnerships are worked out through home, mother and inner peace. Counted from its own house this is the 10th (angular), which adds visibility through action and public standing.",
+   "The 7th lord shows where partnerships and open dealings are pulled. Here it sits in the 5th house (children, creativity and intelligence), so matters of marriage and partnerships are worked out through children, creativity and intelligence. Counted from its own house this is the 11th, which adds a note of gains, networks and fulfilled hopes. An angular lord placed in a trikona tends to support fortune and status.",
+   "The 7th lord shows where partnerships and open dealings are pulled. Here it sits in the 6th house (work, service, health issues and rivals), so matters of marriage and partnerships are worked out through work, service, health issues and rivals. Counted from its own house this is the 12th, which adds a note of expense, distance or letting go. Angular matters drift into struggle or transformation and need steady handling.",
+   "The 7th lord shows where partnerships and open dealings are pulled. Here it sits in its own house (marriage and partnerships), so those matters get concentrated attention, for better or worse depending on the planet's strength.",
+   "The 7th lord shows where partnerships and open dealings are pulled. Here it sits in the 8th house (change, research and sudden events), so matters of marriage and partnerships are worked out through change, research and sudden events. Counted from its own house this is the 2nd, which adds a practical, resource-minded note. Angular matters drift into struggle or transformation and need steady handling.",
+   "The 7th lord shows where partnerships and open dealings are pulled. Here it sits in the 9th house (luck, dharma and mentors), so matters of marriage and partnerships are worked out through luck, dharma and mentors. Counted from its own house this is the 3rd, which adds a note of personal effort, initiative and communication. An angular lord placed in a trikona tends to support fortune and status.",
+   "The 7th lord shows where partnerships and open dealings are pulled. Here it sits in the 10th house (career and public status), so matters of marriage and partnerships are worked out through career and public status. Counted from its own house this is the 4th (angular), which adds stability and a strong, visible footing.",
+   "The 7th lord shows where partnerships and open dealings are pulled. Here it sits in the 11th house (gains, friends and ambitions), so matters of marriage and partnerships are worked out through gains, friends and ambitions. Counted from its own house this is the 5th (trine), which tends to add ease and good fortune.",
+   "The 7th lord shows where partnerships and open dealings are pulled. Here it sits in the 12th house (losses, foreign lands and release), so matters of marriage and partnerships are worked out through losses, foreign lands and release. Counted from its own house this is the 6th, which adds a note of obstacles, competition or service that asks for steady effort. Angular matters drift into struggle or transformation and need steady handling."
+  ],
+  [
+   "The 8th lord shows where change, research and the unexpected are felt. Here it sits in the 1st house (self, body and personality), so matters of change, research and sudden events are worked out through self, body and personality. Counted from its own house this is the 6th, which adds a note of obstacles, competition or service that asks for steady effort. A difficult house's lord in an angular house can bring struggle, change or loss into that area of life, which calls for care.",
+   "The 8th lord shows where change, research and the unexpected are felt. Here it sits in the 2nd house (money, speech and family), so matters of change, research and sudden events are worked out through money, speech and family. Counted from its own house this is the 7th (opposite), which brings in other people and open dealings.",
+   "The 8th lord shows where change, research and the unexpected are felt. Here it sits in the 3rd house (courage, effort and siblings), so matters of change, research and sudden events are worked out through courage, effort and siblings. Counted from its own house this is the 8th, which adds a hidden or intense note, with delays and sudden turns, but also depth and research.",
+   "The 8th lord shows where change, research and the unexpected are felt. Here it sits in the 4th house (home, mother and inner peace), so matters of change, research and sudden events are worked out through home, mother and inner peace. Counted from its own house this is the 9th (trine), which adds fortune, belief and good guidance. A difficult house's lord in an angular house can bring struggle, change or loss into that area of life, which calls for care.",
+   "The 8th lord shows where change, research and the unexpected are felt. Here it sits in the 5th house (children, creativity and intelligence), so matters of change, research and sudden events are worked out through children, creativity and intelligence. Counted from its own house this is the 10th (angular), which adds visibility through action and public standing.",
+   "The 8th lord shows where change, research and the unexpected are felt. Here it sits in the 6th house (work, service, health issues and rivals), so matters of change, research and sudden events are worked out through work, service, health issues and rivals. Counted from its own house this is the 11th, which adds a note of gains, networks and fulfilled hopes. A dusthana lord in a dusthana is the classical Viparita Raja pattern: reversals tend to turn into protection or unexpected gain when the planet itself is unharmed.",
+   "The 8th lord shows where change, research and the unexpected are felt. Here it sits in the 7th house (marriage and partnerships), so matters of change, research and sudden events are worked out through marriage and partnerships. Counted from its own house this is the 12th, which adds a note of expense, distance or letting go. A difficult house's lord in an angular house can bring struggle, change or loss into that area of life, which calls for care.",
+   "The 8th lord shows where change, research and the unexpected are felt. Here it sits in its own house (change, research and sudden events), so those matters get concentrated attention, for better or worse depending on the planet's strength. A dusthana lord in a dusthana is the classical Viparita Raja pattern: reversals tend to turn into protection or unexpected gain when the planet itself is unharmed.",
+   "The 8th lord shows where change, research and the unexpected are felt. Here it sits in the 9th house (luck, dharma and mentors), so matters of change, research and sudden events are worked out through luck, dharma and mentors. Counted from its own house this is the 2nd, which adds a practical, resource-minded note.",
+   "The 8th lord shows where change, research and the unexpected are felt. Here it sits in the 10th house (career and public status), so matters of change, research and sudden events are worked out through career and public status. Counted from its own house this is the 3rd, which adds a note of personal effort, initiative and communication. A difficult house's lord in an angular house can bring struggle, change or loss into that area of life, which calls for care.",
+   "The 8th lord shows where change, research and the unexpected are felt. Here it sits in the 11th house (gains, friends and ambitions), so matters of change, research and sudden events are worked out through gains, friends and ambitions. Counted from its own house this is the 4th (angular), which adds stability and a strong, visible footing.",
+   "The 8th lord shows where change, research and the unexpected are felt. Here it sits in the 12th house (losses, foreign lands and release), so matters of change, research and sudden events are worked out through losses, foreign lands and release. Counted from its own house this is the 5th (trine), which tends to add ease and good fortune. A dusthana lord in a dusthana is the classical Viparita Raja pattern: reversals tend to turn into protection or unexpected gain when the planet itself is unharmed."
+  ],
+  [
+   "The 9th lord shows where fortune, belief and guidance are channelled. Here it sits in the 1st house (self, body and personality), so matters of luck, dharma and mentors are worked out through self, body and personality. Counted from its own house this is the 5th (trine), which tends to add ease and good fortune. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The 9th lord shows where fortune, belief and guidance are channelled. Here it sits in the 2nd house (money, speech and family), so matters of luck, dharma and mentors are worked out through money, speech and family. Counted from its own house this is the 6th, which adds a note of obstacles, competition or service that asks for steady effort.",
+   "The 9th lord shows where fortune, belief and guidance are channelled. Here it sits in the 3rd house (courage, effort and siblings), so matters of luck, dharma and mentors are worked out through courage, effort and siblings. Counted from its own house this is the 7th (opposite), which brings in other people and open dealings.",
+   "The 9th lord shows where fortune, belief and guidance are channelled. Here it sits in the 4th house (home, mother and inner peace), so matters of luck, dharma and mentors are worked out through home, mother and inner peace. Counted from its own house this is the 8th, which adds a hidden or intense note, with delays and sudden turns, but also depth and research. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The 9th lord shows where fortune, belief and guidance are channelled. Here it sits in the 5th house (children, creativity and intelligence), so matters of luck, dharma and mentors are worked out through children, creativity and intelligence. Counted from its own house this is the 9th (trine), which adds fortune, belief and good guidance. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The 9th lord shows where fortune, belief and guidance are channelled. Here it sits in the 6th house (work, service, health issues and rivals), so matters of luck, dharma and mentors are worked out through work, service, health issues and rivals. Counted from its own house this is the 10th (angular), which adds visibility through action and public standing. A fortunate house's lord sits in a difficult house, so benefits arrive with effort, delay or distance.",
+   "The 9th lord shows where fortune, belief and guidance are channelled. Here it sits in the 7th house (marriage and partnerships), so matters of luck, dharma and mentors are worked out through marriage and partnerships. Counted from its own house this is the 11th, which adds a note of gains, networks and fulfilled hopes. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The 9th lord shows where fortune, belief and guidance are channelled. Here it sits in the 8th house (change, research and sudden events), so matters of luck, dharma and mentors are worked out through change, research and sudden events. Counted from its own house this is the 12th, which adds a note of expense, distance or letting go. A fortunate house's lord sits in a difficult house, so benefits arrive with effort, delay or distance.",
+   "The 9th lord shows where fortune, belief and guidance are channelled. Here it sits in its own house (luck, dharma and mentors), so those matters get concentrated attention, for better or worse depending on the planet's strength. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The 9th lord shows where fortune, belief and guidance are channelled. Here it sits in the 10th house (career and public status), so matters of luck, dharma and mentors are worked out through career and public status. Counted from its own house this is the 2nd, which adds a practical, resource-minded note. A trikona lord linked with a kendra or trikona is a Raja Yoga-type link that supports status and fortune.",
+   "The 9th lord shows where fortune, belief and guidance are channelled. Here it sits in the 11th house (gains, friends and ambitions), so matters of luck, dharma and mentors are worked out through gains, friends and ambitions. Counted from its own house this is the 3rd, which adds a note of personal effort, initiative and communication.",
+   "The 9th lord shows where fortune, belief and guidance are channelled. Here it sits in the 12th house (losses, foreign lands and release), so matters of luck, dharma and mentors are worked out through losses, foreign lands and release. Counted from its own house this is the 4th (angular), which adds stability and a strong, visible footing. A fortunate house's lord sits in a difficult house, so benefits arrive with effort, delay or distance."
+  ],
+  [
+   "The 10th lord shows where career effort and public standing are directed. Here it sits in the 1st house (self, body and personality), so matters of career and public status are worked out through self, body and personality. Counted from its own house this is the 4th (angular), which adds stability and a strong, visible footing. An angular lord placed in a trikona tends to support fortune and status.",
+   "The 10th lord shows where career effort and public standing are directed. Here it sits in the 2nd house (money, speech and family), so matters of career and public status are worked out through money, speech and family. Counted from its own house this is the 5th (trine), which tends to add ease and good fortune.",
+   "The 10th lord shows where career effort and public standing are directed. Here it sits in the 3rd house (courage, effort and siblings), so matters of career and public status are worked out through courage, effort and siblings. Counted from its own house this is the 6th, which adds a note of obstacles, competition or service that asks for steady effort.",
+   "The 10th lord shows where career effort and public standing are directed. Here it sits in the 4th house (home, mother and inner peace), so matters of career and public status are worked out through home, mother and inner peace. Counted from its own house this is the 7th (opposite), which brings in other people and open dealings.",
+   "The 10th lord shows where career effort and public standing are directed. Here it sits in the 5th house (children, creativity and intelligence), so matters of career and public status are worked out through children, creativity and intelligence. Counted from its own house this is the 8th, which adds a hidden or intense note, with delays and sudden turns, but also depth and research. An angular lord placed in a trikona tends to support fortune and status.",
+   "The 10th lord shows where career effort and public standing are directed. Here it sits in the 6th house (work, service, health issues and rivals), so matters of career and public status are worked out through work, service, health issues and rivals. Counted from its own house this is the 9th (trine), which adds fortune, belief and good guidance. Angular matters drift into struggle or transformation and need steady handling.",
+   "The 10th lord shows where career effort and public standing are directed. Here it sits in the 7th house (marriage and partnerships), so matters of career and public status are worked out through marriage and partnerships. Counted from its own house this is the 10th (angular), which adds visibility through action and public standing.",
+   "The 10th lord shows where career effort and public standing are directed. Here it sits in the 8th house (change, research and sudden events), so matters of career and public status are worked out through change, research and sudden events. Counted from its own house this is the 11th, which adds a note of gains, networks and fulfilled hopes. Angular matters drift into struggle or transformation and need steady handling.",
+   "The 10th lord shows where career effort and public standing are directed. Here it sits in the 9th house (luck, dharma and mentors), so matters of career and public status are worked out through luck, dharma and mentors. Counted from its own house this is the 12th, which adds a note of expense, distance or letting go. An angular lord placed in a trikona tends to support fortune and status.",
+   "The 10th lord shows where career effort and public standing are directed. Here it sits in its own house (career and public status), so those matters get concentrated attention, for better or worse depending on the planet's strength.",
+   "The 10th lord shows where career effort and public standing are directed. Here it sits in the 11th house (gains, friends and ambitions), so matters of career and public status are worked out through gains, friends and ambitions. Counted from its own house this is the 2nd, which adds a practical, resource-minded note.",
+   "The 10th lord shows where career effort and public standing are directed. Here it sits in the 12th house (losses, foreign lands and release), so matters of career and public status are worked out through losses, foreign lands and release. Counted from its own house this is the 3rd, which adds a note of personal effort, initiative and communication. Angular matters drift into struggle or transformation and need steady handling."
+  ],
+  [
+   "The 11th lord shows where gains and the social circle are focused. Here it sits in the 1st house (self, body and personality), so matters of gains, friends and ambitions are worked out through self, body and personality. Counted from its own house this is the 3rd, which adds a note of personal effort, initiative and communication.",
+   "The 11th lord shows where gains and the social circle are focused. Here it sits in the 2nd house (money, speech and family), so matters of gains, friends and ambitions are worked out through money, speech and family. Counted from its own house this is the 4th (angular), which adds stability and a strong, visible footing.",
+   "The 11th lord shows where gains and the social circle are focused. Here it sits in the 3rd house (courage, effort and siblings), so matters of gains, friends and ambitions are worked out through courage, effort and siblings. Counted from its own house this is the 5th (trine), which tends to add ease and good fortune.",
+   "The 11th lord shows where gains and the social circle are focused. Here it sits in the 4th house (home, mother and inner peace), so matters of gains, friends and ambitions are worked out through home, mother and inner peace. Counted from its own house this is the 6th, which adds a note of obstacles, competition or service that asks for steady effort.",
+   "The 11th lord shows where gains and the social circle are focused. Here it sits in the 5th house (children, creativity and intelligence), so matters of gains, friends and ambitions are worked out through children, creativity and intelligence. Counted from its own house this is the 7th (opposite), which brings in other people and open dealings.",
+   "The 11th lord shows where gains and the social circle are focused. Here it sits in the 6th house (work, service, health issues and rivals), so matters of gains, friends and ambitions are worked out through work, service, health issues and rivals. Counted from its own house this is the 8th, which adds a hidden or intense note, with delays and sudden turns, but also depth and research. The wealth house lord in a difficult house means money comes with effort or fluctuations.",
+   "The 11th lord shows where gains and the social circle are focused. Here it sits in the 7th house (marriage and partnerships), so matters of gains, friends and ambitions are worked out through marriage and partnerships. Counted from its own house this is the 9th (trine), which adds fortune, belief and good guidance.",
+   "The 11th lord shows where gains and the social circle are focused. Here it sits in the 8th house (change, research and sudden events), so matters of gains, friends and ambitions are worked out through change, research and sudden events. Counted from its own house this is the 10th (angular), which adds visibility through action and public standing. The wealth house lord in a difficult house means money comes with effort or fluctuations.",
+   "The 11th lord shows where gains and the social circle are focused. Here it sits in the 9th house (luck, dharma and mentors), so matters of gains, friends and ambitions are worked out through luck, dharma and mentors. Counted from its own house this is the 11th, which adds a note of gains, networks and fulfilled hopes.",
+   "The 11th lord shows where gains and the social circle are focused. Here it sits in the 10th house (career and public status), so matters of gains, friends and ambitions are worked out through career and public status. Counted from its own house this is the 12th, which adds a note of expense, distance or letting go.",
+   "The 11th lord shows where gains and the social circle are focused. Here it sits in its own house (gains, friends and ambitions), so those matters get concentrated attention, for better or worse depending on the planet's strength.",
+   "The 11th lord shows where gains and the social circle are focused. Here it sits in the 12th house (losses, foreign lands and release), so matters of gains, friends and ambitions are worked out through losses, foreign lands and release. Counted from its own house this is the 2nd, which adds a practical, resource-minded note. The wealth house lord in a difficult house means money comes with effort or fluctuations."
+  ],
+  [
+   "The 12th lord shows where expenses, withdrawal and letting go occur. Here it sits in the 1st house (self, body and personality), so matters of losses, foreign lands and release are worked out through self, body and personality. Counted from its own house this is the 2nd, which adds a practical, resource-minded note. A difficult house's lord in an angular house can bring struggle, change or loss into that area of life, which calls for care.",
+   "The 12th lord shows where expenses, withdrawal and letting go occur. Here it sits in the 2nd house (money, speech and family), so matters of losses, foreign lands and release are worked out through money, speech and family. Counted from its own house this is the 3rd, which adds a note of personal effort, initiative and communication.",
+   "The 12th lord shows where expenses, withdrawal and letting go occur. Here it sits in the 3rd house (courage, effort and siblings), so matters of losses, foreign lands and release are worked out through courage, effort and siblings. Counted from its own house this is the 4th (angular), which adds stability and a strong, visible footing.",
+   "The 12th lord shows where expenses, withdrawal and letting go occur. Here it sits in the 4th house (home, mother and inner peace), so matters of losses, foreign lands and release are worked out through home, mother and inner peace. Counted from its own house this is the 5th (trine), which tends to add ease and good fortune. A difficult house's lord in an angular house can bring struggle, change or loss into that area of life, which calls for care.",
+   "The 12th lord shows where expenses, withdrawal and letting go occur. Here it sits in the 5th house (children, creativity and intelligence), so matters of losses, foreign lands and release are worked out through children, creativity and intelligence. Counted from its own house this is the 6th, which adds a note of obstacles, competition or service that asks for steady effort.",
+   "The 12th lord shows where expenses, withdrawal and letting go occur. Here it sits in the 6th house (work, service, health issues and rivals), so matters of losses, foreign lands and release are worked out through work, service, health issues and rivals. Counted from its own house this is the 7th (opposite), which brings in other people and open dealings. A dusthana lord in a dusthana is the classical Viparita Raja pattern: reversals tend to turn into protection or unexpected gain when the planet itself is unharmed.",
+   "The 12th lord shows where expenses, withdrawal and letting go occur. Here it sits in the 7th house (marriage and partnerships), so matters of losses, foreign lands and release are worked out through marriage and partnerships. Counted from its own house this is the 8th, which adds a hidden or intense note, with delays and sudden turns, but also depth and research. A difficult house's lord in an angular house can bring struggle, change or loss into that area of life, which calls for care.",
+   "The 12th lord shows where expenses, withdrawal and letting go occur. Here it sits in the 8th house (change, research and sudden events), so matters of losses, foreign lands and release are worked out through change, research and sudden events. Counted from its own house this is the 9th (trine), which adds fortune, belief and good guidance. A dusthana lord in a dusthana is the classical Viparita Raja pattern: reversals tend to turn into protection or unexpected gain when the planet itself is unharmed.",
+   "The 12th lord shows where expenses, withdrawal and letting go occur. Here it sits in the 9th house (luck, dharma and mentors), so matters of losses, foreign lands and release are worked out through luck, dharma and mentors. Counted from its own house this is the 10th (angular), which adds visibility through action and public standing.",
+   "The 12th lord shows where expenses, withdrawal and letting go occur. Here it sits in the 10th house (career and public status), so matters of losses, foreign lands and release are worked out through career and public status. Counted from its own house this is the 11th, which adds a note of gains, networks and fulfilled hopes. A difficult house's lord in an angular house can bring struggle, change or loss into that area of life, which calls for care.",
+   "The 12th lord shows where expenses, withdrawal and letting go occur. Here it sits in the 11th house (gains, friends and ambitions), so matters of losses, foreign lands and release are worked out through gains, friends and ambitions. Counted from its own house this is the 12th, which adds a note of expense, distance or letting go.",
+   "The 12th lord shows where expenses, withdrawal and letting go occur. Here it sits in its own house (losses, foreign lands and release), so those matters get concentrated attention, for better or worse depending on the planet's strength. A dusthana lord in a dusthana is the classical Viparita Raja pattern: reversals tend to turn into protection or unexpected gain when the planet itself is unharmed."
+  ]
+ ],
+ "aspectOnHouse": {
+  "Sun": [
+   "Sun's aspect on the 1st house touches self, body and personality. The Sun tends to bring confidence, authority and clarity here when well placed; if weak or afflicted, expect ego friction, pride and heat. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Sun's aspect on the 2nd house touches money, speech and family. The Sun tends to bring confidence, authority and clarity here when well placed; if weak or afflicted, expect ego friction, pride and heat. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Sun's aspect on the 3rd house touches courage, effort and siblings. The Sun tends to bring confidence, authority and clarity here when well placed; if weak or afflicted, expect ego friction, pride and heat. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Sun's aspect on the 4th house touches home, mother and inner peace. The Sun tends to bring confidence, authority and clarity here when well placed; if weak or afflicted, expect ego friction, pride and heat. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Sun's aspect on the 5th house touches children, creativity and intelligence. The Sun tends to bring confidence, authority and clarity here when well placed; if weak or afflicted, expect ego friction, pride and heat. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Sun's aspect on the 6th house touches work, service, health issues and rivals. The Sun tends to bring confidence, authority and clarity here when well placed; if weak or afflicted, expect ego friction, pride and heat. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Sun's aspect on the 7th house touches marriage and partnerships. The Sun tends to bring confidence, authority and clarity here when well placed; if weak or afflicted, expect ego friction, pride and heat. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Sun's aspect on the 8th house touches change, research and sudden events. The Sun tends to bring confidence, authority and clarity here when well placed; if weak or afflicted, expect ego friction, pride and heat. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Sun's aspect on the 9th house touches luck, dharma and mentors. The Sun tends to bring confidence, authority and clarity here when well placed; if weak or afflicted, expect ego friction, pride and heat. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Sun's aspect on the 10th house touches career and public status. The Sun tends to bring confidence, authority and clarity here when well placed; if weak or afflicted, expect ego friction, pride and heat. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Sun's aspect on the 11th house touches gains, friends and ambitions. The Sun tends to bring confidence, authority and clarity here when well placed; if weak or afflicted, expect ego friction, pride and heat. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Sun's aspect on the 12th house touches losses, foreign lands and release. The Sun tends to bring confidence, authority and clarity here when well placed; if weak or afflicted, expect ego friction, pride and heat. As a natural malefic its gaze pressures the house but also toughens it."
+  ],
+  "Moon": [
+   "Moon's aspect on the 1st house touches self, body and personality. The Moon tends to bring care, adaptability and public support here when well placed; if weak or afflicted, expect mood swings, worry and dependence. As a natural benefic its gaze is generally supportive.",
+   "Moon's aspect on the 2nd house touches money, speech and family. The Moon tends to bring care, adaptability and public support here when well placed; if weak or afflicted, expect mood swings, worry and dependence. As a natural benefic its gaze is generally supportive.",
+   "Moon's aspect on the 3rd house touches courage, effort and siblings. The Moon tends to bring care, adaptability and public support here when well placed; if weak or afflicted, expect mood swings, worry and dependence. As a natural benefic its gaze is generally supportive.",
+   "Moon's aspect on the 4th house touches home, mother and inner peace. The Moon tends to bring care, adaptability and public support here when well placed; if weak or afflicted, expect mood swings, worry and dependence. As a natural benefic its gaze is generally supportive.",
+   "Moon's aspect on the 5th house touches children, creativity and intelligence. The Moon tends to bring care, adaptability and public support here when well placed; if weak or afflicted, expect mood swings, worry and dependence. As a natural benefic its gaze is generally supportive.",
+   "Moon's aspect on the 6th house touches work, service, health issues and rivals. The Moon tends to bring care, adaptability and public support here when well placed; if weak or afflicted, expect mood swings, worry and dependence. As a natural benefic its gaze is generally supportive, and it softens the troubles of a dusthana.",
+   "Moon's aspect on the 7th house touches marriage and partnerships. The Moon tends to bring care, adaptability and public support here when well placed; if weak or afflicted, expect mood swings, worry and dependence. As a natural benefic its gaze is generally supportive.",
+   "Moon's aspect on the 8th house touches change, research and sudden events. The Moon tends to bring care, adaptability and public support here when well placed; if weak or afflicted, expect mood swings, worry and dependence. As a natural benefic its gaze is generally supportive, and it softens the troubles of a dusthana.",
+   "Moon's aspect on the 9th house touches luck, dharma and mentors. The Moon tends to bring care, adaptability and public support here when well placed; if weak or afflicted, expect mood swings, worry and dependence. As a natural benefic its gaze is generally supportive.",
+   "Moon's aspect on the 10th house touches career and public status. The Moon tends to bring care, adaptability and public support here when well placed; if weak or afflicted, expect mood swings, worry and dependence. As a natural benefic its gaze is generally supportive.",
+   "Moon's aspect on the 11th house touches gains, friends and ambitions. The Moon tends to bring care, adaptability and public support here when well placed; if weak or afflicted, expect mood swings, worry and dependence. As a natural benefic its gaze is generally supportive.",
+   "Moon's aspect on the 12th house touches losses, foreign lands and release. The Moon tends to bring care, adaptability and public support here when well placed; if weak or afflicted, expect mood swings, worry and dependence. As a natural benefic its gaze is generally supportive, and it softens the troubles of a dusthana."
+  ],
+  "Mars": [
+   "Mars's aspect on the 1st house touches self, body and personality. Mars tends to bring drive, courage and protection here when well placed; if weak or afflicted, expect conflict, haste and injury. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Mars's aspect on the 2nd house touches money, speech and family. Mars tends to bring drive, courage and protection here when well placed; if weak or afflicted, expect conflict, haste and injury. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Mars's aspect on the 3rd house touches courage, effort and siblings. Mars tends to bring drive, courage and protection here when well placed; if weak or afflicted, expect conflict, haste and injury. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Mars's aspect on the 4th house touches home, mother and inner peace. Mars tends to bring drive, courage and protection here when well placed; if weak or afflicted, expect conflict, haste and injury. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Mars's aspect on the 5th house touches children, creativity and intelligence. Mars tends to bring drive, courage and protection here when well placed; if weak or afflicted, expect conflict, haste and injury. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Mars's aspect on the 6th house touches work, service, health issues and rivals. Mars tends to bring drive, courage and protection here when well placed; if weak or afflicted, expect conflict, haste and injury. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Mars's aspect on the 7th house touches marriage and partnerships. Mars tends to bring drive, courage and protection here when well placed; if weak or afflicted, expect conflict, haste and injury. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Mars's aspect on the 8th house touches change, research and sudden events. Mars tends to bring drive, courage and protection here when well placed; if weak or afflicted, expect conflict, haste and injury. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Mars's aspect on the 9th house touches luck, dharma and mentors. Mars tends to bring drive, courage and protection here when well placed; if weak or afflicted, expect conflict, haste and injury. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Mars's aspect on the 10th house touches career and public status. Mars tends to bring drive, courage and protection here when well placed; if weak or afflicted, expect conflict, haste and injury. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Mars's aspect on the 11th house touches gains, friends and ambitions. Mars tends to bring drive, courage and protection here when well placed; if weak or afflicted, expect conflict, haste and injury. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Mars's aspect on the 12th house touches losses, foreign lands and release. Mars tends to bring drive, courage and protection here when well placed; if weak or afflicted, expect conflict, haste and injury. As a natural malefic its gaze pressures the house but also toughens it."
+  ],
+  "Mercury": [
+   "Mercury's aspect on the 1st house touches self, body and personality. Mercury tends to bring intelligence, communication and skill here when well placed; if weak or afflicted, expect overthinking and scattered effort. As a natural benefic its gaze is generally supportive.",
+   "Mercury's aspect on the 2nd house touches money, speech and family. Mercury tends to bring intelligence, communication and skill here when well placed; if weak or afflicted, expect overthinking and scattered effort. As a natural benefic its gaze is generally supportive.",
+   "Mercury's aspect on the 3rd house touches courage, effort and siblings. Mercury tends to bring intelligence, communication and skill here when well placed; if weak or afflicted, expect overthinking and scattered effort. As a natural benefic its gaze is generally supportive.",
+   "Mercury's aspect on the 4th house touches home, mother and inner peace. Mercury tends to bring intelligence, communication and skill here when well placed; if weak or afflicted, expect overthinking and scattered effort. As a natural benefic its gaze is generally supportive.",
+   "Mercury's aspect on the 5th house touches children, creativity and intelligence. Mercury tends to bring intelligence, communication and skill here when well placed; if weak or afflicted, expect overthinking and scattered effort. As a natural benefic its gaze is generally supportive.",
+   "Mercury's aspect on the 6th house touches work, service, health issues and rivals. Mercury tends to bring intelligence, communication and skill here when well placed; if weak or afflicted, expect overthinking and scattered effort. As a natural benefic its gaze is generally supportive, and it softens the troubles of a dusthana.",
+   "Mercury's aspect on the 7th house touches marriage and partnerships. Mercury tends to bring intelligence, communication and skill here when well placed; if weak or afflicted, expect overthinking and scattered effort. As a natural benefic its gaze is generally supportive.",
+   "Mercury's aspect on the 8th house touches change, research and sudden events. Mercury tends to bring intelligence, communication and skill here when well placed; if weak or afflicted, expect overthinking and scattered effort. As a natural benefic its gaze is generally supportive, and it softens the troubles of a dusthana.",
+   "Mercury's aspect on the 9th house touches luck, dharma and mentors. Mercury tends to bring intelligence, communication and skill here when well placed; if weak or afflicted, expect overthinking and scattered effort. As a natural benefic its gaze is generally supportive.",
+   "Mercury's aspect on the 10th house touches career and public status. Mercury tends to bring intelligence, communication and skill here when well placed; if weak or afflicted, expect overthinking and scattered effort. As a natural benefic its gaze is generally supportive.",
+   "Mercury's aspect on the 11th house touches gains, friends and ambitions. Mercury tends to bring intelligence, communication and skill here when well placed; if weak or afflicted, expect overthinking and scattered effort. As a natural benefic its gaze is generally supportive.",
+   "Mercury's aspect on the 12th house touches losses, foreign lands and release. Mercury tends to bring intelligence, communication and skill here when well placed; if weak or afflicted, expect overthinking and scattered effort. As a natural benefic its gaze is generally supportive, and it softens the troubles of a dusthana."
+  ],
+  "Jupiter": [
+   "Jupiter's aspect on the 1st house touches self, body and personality. Jupiter tends to bring growth, guidance and protection here when well placed; if weak or afflicted, expect excess, complacency and over-promising. As a natural benefic its gaze is generally supportive.",
+   "Jupiter's aspect on the 2nd house touches money, speech and family. Jupiter tends to bring growth, guidance and protection here when well placed; if weak or afflicted, expect excess, complacency and over-promising. As a natural benefic its gaze is generally supportive.",
+   "Jupiter's aspect on the 3rd house touches courage, effort and siblings. Jupiter tends to bring growth, guidance and protection here when well placed; if weak or afflicted, expect excess, complacency and over-promising. As a natural benefic its gaze is generally supportive.",
+   "Jupiter's aspect on the 4th house touches home, mother and inner peace. Jupiter tends to bring growth, guidance and protection here when well placed; if weak or afflicted, expect excess, complacency and over-promising. As a natural benefic its gaze is generally supportive.",
+   "Jupiter's aspect on the 5th house touches children, creativity and intelligence. Jupiter tends to bring growth, guidance and protection here when well placed; if weak or afflicted, expect excess, complacency and over-promising. As a natural benefic its gaze is generally supportive.",
+   "Jupiter's aspect on the 6th house touches work, service, health issues and rivals. Jupiter tends to bring growth, guidance and protection here when well placed; if weak or afflicted, expect excess, complacency and over-promising. As a natural benefic its gaze is generally supportive, and it softens the troubles of a dusthana.",
+   "Jupiter's aspect on the 7th house touches marriage and partnerships. Jupiter tends to bring growth, guidance and protection here when well placed; if weak or afflicted, expect excess, complacency and over-promising. As a natural benefic its gaze is generally supportive.",
+   "Jupiter's aspect on the 8th house touches change, research and sudden events. Jupiter tends to bring growth, guidance and protection here when well placed; if weak or afflicted, expect excess, complacency and over-promising. As a natural benefic its gaze is generally supportive, and it softens the troubles of a dusthana.",
+   "Jupiter's aspect on the 9th house touches luck, dharma and mentors. Jupiter tends to bring growth, guidance and protection here when well placed; if weak or afflicted, expect excess, complacency and over-promising. As a natural benefic its gaze is generally supportive.",
+   "Jupiter's aspect on the 10th house touches career and public status. Jupiter tends to bring growth, guidance and protection here when well placed; if weak or afflicted, expect excess, complacency and over-promising. As a natural benefic its gaze is generally supportive.",
+   "Jupiter's aspect on the 11th house touches gains, friends and ambitions. Jupiter tends to bring growth, guidance and protection here when well placed; if weak or afflicted, expect excess, complacency and over-promising. As a natural benefic its gaze is generally supportive.",
+   "Jupiter's aspect on the 12th house touches losses, foreign lands and release. Jupiter tends to bring growth, guidance and protection here when well placed; if weak or afflicted, expect excess, complacency and over-promising. As a natural benefic its gaze is generally supportive, and it softens the troubles of a dusthana."
+  ],
+  "Venus": [
+   "Venus's aspect on the 1st house touches self, body and personality. Venus tends to bring harmony, affection and comfort here when well placed; if weak or afflicted, expect indulgence and relationship friction. As a natural benefic its gaze is generally supportive.",
+   "Venus's aspect on the 2nd house touches money, speech and family. Venus tends to bring harmony, affection and comfort here when well placed; if weak or afflicted, expect indulgence and relationship friction. As a natural benefic its gaze is generally supportive.",
+   "Venus's aspect on the 3rd house touches courage, effort and siblings. Venus tends to bring harmony, affection and comfort here when well placed; if weak or afflicted, expect indulgence and relationship friction. As a natural benefic its gaze is generally supportive.",
+   "Venus's aspect on the 4th house touches home, mother and inner peace. Venus tends to bring harmony, affection and comfort here when well placed; if weak or afflicted, expect indulgence and relationship friction. As a natural benefic its gaze is generally supportive.",
+   "Venus's aspect on the 5th house touches children, creativity and intelligence. Venus tends to bring harmony, affection and comfort here when well placed; if weak or afflicted, expect indulgence and relationship friction. As a natural benefic its gaze is generally supportive.",
+   "Venus's aspect on the 6th house touches work, service, health issues and rivals. Venus tends to bring harmony, affection and comfort here when well placed; if weak or afflicted, expect indulgence and relationship friction. As a natural benefic its gaze is generally supportive, and it softens the troubles of a dusthana.",
+   "Venus's aspect on the 7th house touches marriage and partnerships. Venus tends to bring harmony, affection and comfort here when well placed; if weak or afflicted, expect indulgence and relationship friction. As a natural benefic its gaze is generally supportive.",
+   "Venus's aspect on the 8th house touches change, research and sudden events. Venus tends to bring harmony, affection and comfort here when well placed; if weak or afflicted, expect indulgence and relationship friction. As a natural benefic its gaze is generally supportive, and it softens the troubles of a dusthana.",
+   "Venus's aspect on the 9th house touches luck, dharma and mentors. Venus tends to bring harmony, affection and comfort here when well placed; if weak or afflicted, expect indulgence and relationship friction. As a natural benefic its gaze is generally supportive.",
+   "Venus's aspect on the 10th house touches career and public status. Venus tends to bring harmony, affection and comfort here when well placed; if weak or afflicted, expect indulgence and relationship friction. As a natural benefic its gaze is generally supportive.",
+   "Venus's aspect on the 11th house touches gains, friends and ambitions. Venus tends to bring harmony, affection and comfort here when well placed; if weak or afflicted, expect indulgence and relationship friction. As a natural benefic its gaze is generally supportive.",
+   "Venus's aspect on the 12th house touches losses, foreign lands and release. Venus tends to bring harmony, affection and comfort here when well placed; if weak or afflicted, expect indulgence and relationship friction. As a natural benefic its gaze is generally supportive, and it softens the troubles of a dusthana."
+  ],
+  "Saturn": [
+   "Saturn's aspect on the 1st house touches self, body and personality. Saturn tends to bring discipline, durability and maturity here when well placed; if weak or afflicted, expect delay, restriction and heaviness. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Saturn's aspect on the 2nd house touches money, speech and family. Saturn tends to bring discipline, durability and maturity here when well placed; if weak or afflicted, expect delay, restriction and heaviness. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Saturn's aspect on the 3rd house touches courage, effort and siblings. Saturn tends to bring discipline, durability and maturity here when well placed; if weak or afflicted, expect delay, restriction and heaviness. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Saturn's aspect on the 4th house touches home, mother and inner peace. Saturn tends to bring discipline, durability and maturity here when well placed; if weak or afflicted, expect delay, restriction and heaviness. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Saturn's aspect on the 5th house touches children, creativity and intelligence. Saturn tends to bring discipline, durability and maturity here when well placed; if weak or afflicted, expect delay, restriction and heaviness. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Saturn's aspect on the 6th house touches work, service, health issues and rivals. Saturn tends to bring discipline, durability and maturity here when well placed; if weak or afflicted, expect delay, restriction and heaviness. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Saturn's aspect on the 7th house touches marriage and partnerships. Saturn tends to bring discipline, durability and maturity here when well placed; if weak or afflicted, expect delay, restriction and heaviness. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Saturn's aspect on the 8th house touches change, research and sudden events. Saturn tends to bring discipline, durability and maturity here when well placed; if weak or afflicted, expect delay, restriction and heaviness. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Saturn's aspect on the 9th house touches luck, dharma and mentors. Saturn tends to bring discipline, durability and maturity here when well placed; if weak or afflicted, expect delay, restriction and heaviness. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Saturn's aspect on the 10th house touches career and public status. Saturn tends to bring discipline, durability and maturity here when well placed; if weak or afflicted, expect delay, restriction and heaviness. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Saturn's aspect on the 11th house touches gains, friends and ambitions. Saturn tends to bring discipline, durability and maturity here when well placed; if weak or afflicted, expect delay, restriction and heaviness. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Saturn's aspect on the 12th house touches losses, foreign lands and release. Saturn tends to bring discipline, durability and maturity here when well placed; if weak or afflicted, expect delay, restriction and heaviness. As a natural malefic its gaze pressures the house but also toughens it."
+  ],
+  "Rahu": [
+   "Rahu's aspect on the 1st house touches self, body and personality. Rahu tends to bring ambition, innovation and unusual openings here when well placed; if weak or afflicted, expect obsession, confusion and shortcuts. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Rahu's aspect on the 2nd house touches money, speech and family. Rahu tends to bring ambition, innovation and unusual openings here when well placed; if weak or afflicted, expect obsession, confusion and shortcuts. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Rahu's aspect on the 3rd house touches courage, effort and siblings. Rahu tends to bring ambition, innovation and unusual openings here when well placed; if weak or afflicted, expect obsession, confusion and shortcuts. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Rahu's aspect on the 4th house touches home, mother and inner peace. Rahu tends to bring ambition, innovation and unusual openings here when well placed; if weak or afflicted, expect obsession, confusion and shortcuts. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Rahu's aspect on the 5th house touches children, creativity and intelligence. Rahu tends to bring ambition, innovation and unusual openings here when well placed; if weak or afflicted, expect obsession, confusion and shortcuts. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Rahu's aspect on the 6th house touches work, service, health issues and rivals. Rahu tends to bring ambition, innovation and unusual openings here when well placed; if weak or afflicted, expect obsession, confusion and shortcuts. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Rahu's aspect on the 7th house touches marriage and partnerships. Rahu tends to bring ambition, innovation and unusual openings here when well placed; if weak or afflicted, expect obsession, confusion and shortcuts. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Rahu's aspect on the 8th house touches change, research and sudden events. Rahu tends to bring ambition, innovation and unusual openings here when well placed; if weak or afflicted, expect obsession, confusion and shortcuts. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Rahu's aspect on the 9th house touches luck, dharma and mentors. Rahu tends to bring ambition, innovation and unusual openings here when well placed; if weak or afflicted, expect obsession, confusion and shortcuts. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Rahu's aspect on the 10th house touches career and public status. Rahu tends to bring ambition, innovation and unusual openings here when well placed; if weak or afflicted, expect obsession, confusion and shortcuts. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Rahu's aspect on the 11th house touches gains, friends and ambitions. Rahu tends to bring ambition, innovation and unusual openings here when well placed; if weak or afflicted, expect obsession, confusion and shortcuts. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Rahu's aspect on the 12th house touches losses, foreign lands and release. Rahu tends to bring ambition, innovation and unusual openings here when well placed; if weak or afflicted, expect obsession, confusion and shortcuts. As a natural malefic its gaze pressures the house but also toughens it."
+  ],
+  "Ketu": [
+   "Ketu's aspect on the 1st house touches self, body and personality. Ketu tends to bring insight, detachment and sharp intuition here when well placed; if weak or afflicted, expect withdrawal and loss of interest. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Ketu's aspect on the 2nd house touches money, speech and family. Ketu tends to bring insight, detachment and sharp intuition here when well placed; if weak or afflicted, expect withdrawal and loss of interest. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Ketu's aspect on the 3rd house touches courage, effort and siblings. Ketu tends to bring insight, detachment and sharp intuition here when well placed; if weak or afflicted, expect withdrawal and loss of interest. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Ketu's aspect on the 4th house touches home, mother and inner peace. Ketu tends to bring insight, detachment and sharp intuition here when well placed; if weak or afflicted, expect withdrawal and loss of interest. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Ketu's aspect on the 5th house touches children, creativity and intelligence. Ketu tends to bring insight, detachment and sharp intuition here when well placed; if weak or afflicted, expect withdrawal and loss of interest. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Ketu's aspect on the 6th house touches work, service, health issues and rivals. Ketu tends to bring insight, detachment and sharp intuition here when well placed; if weak or afflicted, expect withdrawal and loss of interest. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Ketu's aspect on the 7th house touches marriage and partnerships. Ketu tends to bring insight, detachment and sharp intuition here when well placed; if weak or afflicted, expect withdrawal and loss of interest. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Ketu's aspect on the 8th house touches change, research and sudden events. Ketu tends to bring insight, detachment and sharp intuition here when well placed; if weak or afflicted, expect withdrawal and loss of interest. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Ketu's aspect on the 9th house touches luck, dharma and mentors. Ketu tends to bring insight, detachment and sharp intuition here when well placed; if weak or afflicted, expect withdrawal and loss of interest. As a natural malefic its gaze pressures the house but also toughens it.",
+   "Ketu's aspect on the 10th house touches career and public status. Ketu tends to bring insight, detachment and sharp intuition here when well placed; if weak or afflicted, expect withdrawal and loss of interest. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Ketu's aspect on the 11th house touches gains, friends and ambitions. Ketu tends to bring insight, detachment and sharp intuition here when well placed; if weak or afflicted, expect withdrawal and loss of interest. As a natural malefic its gaze pressures the house but also toughens it, and malefic influence on an upachaya house usually helps with time.",
+   "Ketu's aspect on the 12th house touches losses, foreign lands and release. Ketu tends to bring insight, detachment and sharp intuition here when well placed; if weak or afflicted, expect withdrawal and loss of interest. As a natural malefic its gaze pressures the house but also toughens it."
+  ]
+ },
+ "planetAspect": {
+  "Sun>Moon": "The Sun aspecting the Moon: The Sun illuminates and tests the Moon's matters (mind, emotions, mother, public). As natural friends, the influence is cooperative and supportive.",
+  "Sun>Mars": "The Sun aspecting Mars: The Sun illuminates and tests Mars's matters (energy, courage, action, siblings (younger)). As natural friends, the influence is cooperative and supportive.",
+  "Sun>Mercury": "The Sun aspecting Mercury: The Sun illuminates and tests Mercury's matters (intellect, speech, writing, trade). As neutral planets, the result depends on signs, houses and strength.",
+  "Sun>Jupiter": "The Sun aspecting Jupiter: The Sun illuminates and tests Jupiter's matters (wisdom, teachers, children, fortune). As natural friends, the influence is cooperative and supportive.",
+  "Sun>Venus": "The Sun aspecting Venus: The Sun illuminates and tests Venus's matters (love, marriage, comforts, art). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Sun>Saturn": "The Sun aspecting Saturn: The Sun illuminates and tests Saturn's matters (discipline, karma, delay, hard work). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Sun>Rahu": "The Sun aspecting Rahu: The Sun illuminates and tests Rahu's matters (ambition, foreign things, technology, obsession). As neutral planets, the result depends on signs, houses and strength.",
+  "Sun>Ketu": "The Sun aspecting Ketu: The Sun illuminates and tests Ketu's matters (detachment, past-life skills, spirituality, intuition). As neutral planets, the result depends on signs, houses and strength.",
+  "Moon>Sun": "The Moon aspecting the Sun: The Moon softens and sensitises the Sun's matters (soul, vitality, authority, father). As natural friends, the influence is cooperative and supportive.",
+  "Moon>Mars": "The Moon aspecting Mars: The Moon softens and sensitises Mars's matters (energy, courage, action, siblings (younger)). As neutral planets, the result depends on signs, houses and strength.",
+  "Moon>Mercury": "The Moon aspecting Mercury: The Moon softens and sensitises Mercury's matters (intellect, speech, writing, trade). As natural friends, the influence is cooperative and supportive.",
+  "Moon>Jupiter": "The Moon aspecting Jupiter: The Moon softens and sensitises Jupiter's matters (wisdom, teachers, children, fortune). As neutral planets, the result depends on signs, houses and strength.",
+  "Moon>Venus": "The Moon aspecting Venus: The Moon softens and sensitises Venus's matters (love, marriage, comforts, art). As neutral planets, the result depends on signs, houses and strength.",
+  "Moon>Saturn": "The Moon aspecting Saturn: The Moon softens and sensitises Saturn's matters (discipline, karma, delay, hard work). As neutral planets, the result depends on signs, houses and strength.",
+  "Moon>Rahu": "The Moon aspecting Rahu: The Moon softens and sensitises Rahu's matters (ambition, foreign things, technology, obsession). As neutral planets, the result depends on signs, houses and strength.",
+  "Moon>Ketu": "The Moon aspecting Ketu: The Moon softens and sensitises Ketu's matters (detachment, past-life skills, spirituality, intuition). As neutral planets, the result depends on signs, houses and strength.",
+  "Mars>Sun": "Mars aspecting the Sun: Mars energises and provokes the Sun's matters (soul, vitality, authority, father). As natural friends, the influence is cooperative and supportive.",
+  "Mars>Moon": "Mars aspecting the Moon: Mars energises and provokes the Moon's matters (mind, emotions, mother, public). As natural friends, the influence is cooperative and supportive.",
+  "Mars>Mercury": "Mars aspecting Mercury: Mars energises and provokes Mercury's matters (intellect, speech, writing, trade). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Mars>Jupiter": "Mars aspecting Jupiter: Mars energises and provokes Jupiter's matters (wisdom, teachers, children, fortune). As natural friends, the influence is cooperative and supportive.",
+  "Mars>Venus": "Mars aspecting Venus: Mars energises and provokes Venus's matters (love, marriage, comforts, art). As neutral planets, the result depends on signs, houses and strength.",
+  "Mars>Saturn": "Mars aspecting Saturn: Mars energises and provokes Saturn's matters (discipline, karma, delay, hard work). As neutral planets, the result depends on signs, houses and strength.",
+  "Mars>Rahu": "Mars aspecting Rahu: Mars energises and provokes Rahu's matters (ambition, foreign things, technology, obsession). As neutral planets, the result depends on signs, houses and strength.",
+  "Mars>Ketu": "Mars aspecting Ketu: Mars energises and provokes Ketu's matters (detachment, past-life skills, spirituality, intuition). As neutral planets, the result depends on signs, houses and strength.",
+  "Mercury>Sun": "Mercury aspecting the Sun: Mercury analyses and informs the Sun's matters (soul, vitality, authority, father). As natural friends, the influence is cooperative and supportive.",
+  "Mercury>Moon": "Mercury aspecting the Moon: Mercury analyses and informs the Moon's matters (mind, emotions, mother, public). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Mercury>Mars": "Mercury aspecting Mars: Mercury analyses and informs Mars's matters (energy, courage, action, siblings (younger)). As neutral planets, the result depends on signs, houses and strength.",
+  "Mercury>Jupiter": "Mercury aspecting Jupiter: Mercury analyses and informs Jupiter's matters (wisdom, teachers, children, fortune). As neutral planets, the result depends on signs, houses and strength.",
+  "Mercury>Venus": "Mercury aspecting Venus: Mercury analyses and informs Venus's matters (love, marriage, comforts, art). As natural friends, the influence is cooperative and supportive.",
+  "Mercury>Saturn": "Mercury aspecting Saturn: Mercury analyses and informs Saturn's matters (discipline, karma, delay, hard work). As neutral planets, the result depends on signs, houses and strength.",
+  "Mercury>Rahu": "Mercury aspecting Rahu: Mercury analyses and informs Rahu's matters (ambition, foreign things, technology, obsession). As neutral planets, the result depends on signs, houses and strength.",
+  "Mercury>Ketu": "Mercury aspecting Ketu: Mercury analyses and informs Ketu's matters (detachment, past-life skills, spirituality, intuition). As neutral planets, the result depends on signs, houses and strength.",
+  "Jupiter>Sun": "Jupiter aspecting the Sun: Jupiter expands and protects the Sun's matters (soul, vitality, authority, father). As natural friends, the influence is cooperative and supportive.",
+  "Jupiter>Moon": "Jupiter aspecting the Moon: Jupiter expands and protects the Moon's matters (mind, emotions, mother, public). As natural friends, the influence is cooperative and supportive.",
+  "Jupiter>Mars": "Jupiter aspecting Mars: Jupiter expands and protects Mars's matters (energy, courage, action, siblings (younger)). As natural friends, the influence is cooperative and supportive.",
+  "Jupiter>Mercury": "Jupiter aspecting Mercury: Jupiter expands and protects Mercury's matters (intellect, speech, writing, trade). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Jupiter>Venus": "Jupiter aspecting Venus: Jupiter expands and protects Venus's matters (love, marriage, comforts, art). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Jupiter>Saturn": "Jupiter aspecting Saturn: Jupiter expands and protects Saturn's matters (discipline, karma, delay, hard work). As neutral planets, the result depends on signs, houses and strength.",
+  "Jupiter>Rahu": "Jupiter aspecting Rahu: Jupiter expands and protects Rahu's matters (ambition, foreign things, technology, obsession). As neutral planets, the result depends on signs, houses and strength.",
+  "Jupiter>Ketu": "Jupiter aspecting Ketu: Jupiter expands and protects Ketu's matters (detachment, past-life skills, spirituality, intuition). As neutral planets, the result depends on signs, houses and strength.",
+  "Venus>Sun": "Venus aspecting the Sun: Venus harmonises and attracts the Sun's matters (soul, vitality, authority, father). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Venus>Moon": "Venus aspecting the Moon: Venus harmonises and attracts the Moon's matters (mind, emotions, mother, public). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Venus>Mars": "Venus aspecting Mars: Venus harmonises and attracts Mars's matters (energy, courage, action, siblings (younger)). As neutral planets, the result depends on signs, houses and strength.",
+  "Venus>Mercury": "Venus aspecting Mercury: Venus harmonises and attracts Mercury's matters (intellect, speech, writing, trade). As natural friends, the influence is cooperative and supportive.",
+  "Venus>Jupiter": "Venus aspecting Jupiter: Venus harmonises and attracts Jupiter's matters (wisdom, teachers, children, fortune). As neutral planets, the result depends on signs, houses and strength.",
+  "Venus>Saturn": "Venus aspecting Saturn: Venus harmonises and attracts Saturn's matters (discipline, karma, delay, hard work). As natural friends, the influence is cooperative and supportive.",
+  "Venus>Rahu": "Venus aspecting Rahu: Venus harmonises and attracts Rahu's matters (ambition, foreign things, technology, obsession). As neutral planets, the result depends on signs, houses and strength.",
+  "Venus>Ketu": "Venus aspecting Ketu: Venus harmonises and attracts Ketu's matters (detachment, past-life skills, spirituality, intuition). As neutral planets, the result depends on signs, houses and strength.",
+  "Saturn>Sun": "Saturn aspecting the Sun: Saturn restrains and matures the Sun's matters (soul, vitality, authority, father). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Saturn>Moon": "Saturn aspecting the Moon: Saturn restrains and matures the Moon's matters (mind, emotions, mother, public). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Saturn>Mars": "Saturn aspecting Mars: Saturn restrains and matures Mars's matters (energy, courage, action, siblings (younger)). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Saturn>Mercury": "Saturn aspecting Mercury: Saturn restrains and matures Mercury's matters (intellect, speech, writing, trade). As natural friends, the influence is cooperative and supportive.",
+  "Saturn>Jupiter": "Saturn aspecting Jupiter: Saturn restrains and matures Jupiter's matters (wisdom, teachers, children, fortune). As neutral planets, the result depends on signs, houses and strength.",
+  "Saturn>Venus": "Saturn aspecting Venus: Saturn restrains and matures Venus's matters (love, marriage, comforts, art). As natural friends, the influence is cooperative and supportive.",
+  "Saturn>Rahu": "Saturn aspecting Rahu: Saturn restrains and matures Rahu's matters (ambition, foreign things, technology, obsession). As neutral planets, the result depends on signs, houses and strength.",
+  "Saturn>Ketu": "Saturn aspecting Ketu: Saturn restrains and matures Ketu's matters (detachment, past-life skills, spirituality, intuition). As neutral planets, the result depends on signs, houses and strength.",
+  "Rahu>Sun": "Rahu aspecting the Sun: Rahu amplifies and distorts the Sun's matters (soul, vitality, authority, father). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Rahu>Moon": "Rahu aspecting the Moon: Rahu amplifies and distorts the Moon's matters (mind, emotions, mother, public). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Rahu>Mars": "Rahu aspecting Mars: Rahu amplifies and distorts Mars's matters (energy, courage, action, siblings (younger)). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Rahu>Mercury": "Rahu aspecting Mercury: Rahu amplifies and distorts Mercury's matters (intellect, speech, writing, trade). As natural friends, the influence is cooperative and supportive.",
+  "Rahu>Jupiter": "Rahu aspecting Jupiter: Rahu amplifies and distorts Jupiter's matters (wisdom, teachers, children, fortune). As neutral planets, the result depends on signs, houses and strength.",
+  "Rahu>Venus": "Rahu aspecting Venus: Rahu amplifies and distorts Venus's matters (love, marriage, comforts, art). As natural friends, the influence is cooperative and supportive.",
+  "Rahu>Saturn": "Rahu aspecting Saturn: Rahu amplifies and distorts Saturn's matters (discipline, karma, delay, hard work). As natural friends, the influence is cooperative and supportive.",
+  "Rahu>Ketu": "Rahu aspecting Ketu: Rahu amplifies and distorts Ketu's matters (detachment, past-life skills, spirituality, intuition). As neutral planets, the result depends on signs, houses and strength.",
+  "Ketu>Sun": "Ketu aspecting the Sun: Ketu detaches and sharpens the Sun's matters (soul, vitality, authority, father). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Ketu>Moon": "Ketu aspecting the Moon: Ketu detaches and sharpens the Moon's matters (mind, emotions, mother, public). As natural enemies, the influence tends to feel like friction or pressure.",
+  "Ketu>Mars": "Ketu aspecting Mars: Ketu detaches and sharpens Mars's matters (energy, courage, action, siblings (younger)). As natural friends, the influence is cooperative and supportive.",
+  "Ketu>Mercury": "Ketu aspecting Mercury: Ketu detaches and sharpens Mercury's matters (intellect, speech, writing, trade). As neutral planets, the result depends on signs, houses and strength.",
+  "Ketu>Jupiter": "Ketu aspecting Jupiter: Ketu detaches and sharpens Jupiter's matters (wisdom, teachers, children, fortune). As neutral planets, the result depends on signs, houses and strength.",
+  "Ketu>Venus": "Ketu aspecting Venus: Ketu detaches and sharpens Venus's matters (love, marriage, comforts, art). As natural friends, the influence is cooperative and supportive.",
+  "Ketu>Saturn": "Ketu aspecting Saturn: Ketu detaches and sharpens Saturn's matters (discipline, karma, delay, hard work). As natural friends, the influence is cooperative and supportive.",
+  "Ketu>Rahu": "Ketu aspecting Rahu: Ketu detaches and sharpens Rahu's matters (ambition, foreign things, technology, obsession). As neutral planets, the result depends on signs, houses and strength."
+ },
+ "conjunction": {
+  "Sun+Moon": "Born around the new Moon: strong will joined with emotion, a powerful mind that can feel overwhelmed. The Moon is weak in light, so peace of mind needs deliberate care.",
+  "Sun+Mars": "Fiery, courageous and competitive; a natural fighter and leader. Strong energy, but heat and temper need cooling; good for defence, sports and surgery.",
+  "Sun+Mercury": "Budhaditya pattern: sharp intellect, skill in speech and administration. Mercury is nearly always close to the Sun, so the yoga is strongest when Mercury is not combust.",
+  "Sun+Jupiter": "Wisdom with authority: ethical leadership, respect for teachers and a strong sense of purpose. Pride in beliefs can make the person preachy.",
+  "Sun+Venus": "Creative charm with a need for recognition. Love of art and status; the Sun's heat can scorch Venus, so relationships may feel pressured by ego.",
+  "Sun+Saturn": "Father and authority themes are tense: duty versus ego. Delayed recognition that grows through persistence; discipline is learned early.",
+  "Sun+Rahu": "Eclipse-type pattern (Grahan): ambition and a strong, unusual drive for status. Identity or relations with father and authority can feel unsettled.",
+  "Sun+Ketu": "Detached from ego and worldly status. Spiritual insight and research ability; self-confidence can come and go.",
+  "Moon+Mars": "Chandra-Mangala pattern: emotional drive, courage and an earning instinct. Passionate and quick-tempered; good for business and property.",
+  "Moon+Mercury": "Quick, adaptable mind with wit and a gift for words. Emotions are processed by talking; can be anxious or changeable.",
+  "Moon+Jupiter": "A wise, kind and optimistic mind (the strongest form is the Gajakesari pattern when it falls in a kendra). Good for counselling, teaching and good name.",
+  "Moon+Venus": "Soft, artistic and pleasure-loving. Attractive, with strong romantic feelings and a love of comfort; emotional dependence on partners.",
+  "Moon+Saturn": "Vish-type pattern: a serious, reserved or melancholic mind. Emotional maturity and endurance; watch pessimism and loneliness.",
+  "Moon+Rahu": "Restless, intense emotions with a highly imaginative mind. Anxiety, fears or obsession can occur; strong interest in the unusual or foreign.",
+  "Moon+Ketu": "A deeply intuitive but detached mind. Spiritual sensitivity, vivid inner life and emotional confusion at times.",
+  "Mars+Mercury": "A sharp, argumentative mind with quick wit. Good for technical or debating work; speech can turn harsh or hasty.",
+  "Mars+Jupiter": "Courage guided by wisdom: a strong, principled drive (a protective combination). Good for leadership, law, sports and teaching.",
+  "Mars+Venus": "Passionate and magnetic; strong romantic and creative energy. Desire and impulse can complicate relationships.",
+  "Mars+Saturn": "Disciplined force and endurance, but frustration and friction. Hard work and technical skill; accidents and conflicts need care.",
+  "Mars+Rahu": "Angarak-type pattern: explosive energy and bold ambition. Strong drive and risk-taking; temper, accidents and sudden conflicts.",
+  "Mars+Ketu": "Fearless and impulsive with a spiritual warrior streak. Sudden actions and wounds; good for surgery, research and martial arts.",
+  "Mercury+Jupiter": "Intellect and wisdom together: analytical yet philosophical. Good for teaching, law and publishing; the two are natural rivals, so judgement can swing between logic and belief.",
+  "Mercury+Venus": "Artistic intelligence with a charming way of speaking. Good for design, writing, music and trade in beautiful things.",
+  "Mercury+Saturn": "A serious, methodical and practical mind. Slow but deep thinking; good for analysis, research and accounts; worry and over-caution.",
+  "Mercury+Rahu": "Clever, unconventional thinking with a talent for technology and trade. Over-thinking, restlessness or sharp practice can appear.",
+  "Mercury+Ketu": "An intuitive, research-oriented mind that sees through surface detail. Can be scattered or withdrawn in speech.",
+  "Jupiter+Venus": "The two great benefics: ideals meet pleasure. Generous, refined and fortunate; guidance and harmony in relationships, with risk of overindulgence.",
+  "Jupiter+Saturn": "Expansion meets restriction: patient, responsible growth. Slow but solid success; a serious, philosophical outlook.",
+  "Jupiter+Rahu": "Guru-Chandala type pattern: big ambition mixed with unconventional beliefs. Can break from tradition or exaggerate; strong for foreign learning.",
+  "Jupiter+Ketu": "Deep spiritual wisdom with detachment from rituals. Strong intuition and mystical learning; worldly gains need effort.",
+  "Venus+Saturn": "A disciplined, loyal approach to love and pleasure. Mature relationships and good for long-term artistic or business work; delayed romance.",
+  "Venus+Rahu": "Intense desire and a taste for luxury, glamour and the foreign. Strong attractions; relationships and finances need discipline.",
+  "Venus+Ketu": "Detachment in love and comfort. Spiritual or unconventional relationships; sensitivity to pleasure that can turn into withdrawal.",
+  "Saturn+Rahu": "Shrapit-type pattern in some traditions: heavy, ambitious and karmic. Strong drive for results, yet delays, fear or obstacles teach patience.",
+  "Saturn+Ketu": "Karmic detachment: strong spiritual discipline and quiet endurance. Loneliness or chronic feelings of lack until acceptance grows."
+ },
+ "nodalAxis": "Rahu and Ketu are always exactly opposite, so they never share a sign. Whatever occupies the Rahu house feeds ambition; the Ketu house asks for detachment. Planets near either node take on its flavour.",
+ "nakshatras": [
+  {
+   "i": 1,
+   "name": "Ashwini",
+   "lord": "Ketu",
+   "deity": "Ashwini Kumaras",
+   "symbol": "horse's head",
+   "gana": "Deva",
+   "span": [
+    0.0,
+    13.3333
+   ],
+   "trait": "Swift, energetic and a natural healer or starter; acts quickly and loves new beginnings.",
+   "careers": "medicine, emergency work, sports, transport",
+   "watch": "impatience and haste"
+  },
+  {
+   "i": 2,
+   "name": "Bharani",
+   "lord": "Venus",
+   "deity": "Yama",
+   "symbol": "yoni (the womb)",
+   "gana": "Manushya",
+   "span": [
+    13.3333,
+    26.6667
+   ],
+   "trait": "Intense, determined and able to carry heavy responsibilities; strong feelings and a sense of justice.",
+   "careers": "law, care of others, transformation work, the arts",
+   "watch": "extremes and burdens"
+  },
+  {
+   "i": 3,
+   "name": "Krittika",
+   "lord": "Sun",
+   "deity": "Agni",
+   "symbol": "razor / flame",
+   "gana": "Rakshasa",
+   "span": [
+    26.6667,
+    40.0
+   ],
+   "trait": "Sharp, purifying and direct; strong will and a gift for cutting through falsehood.",
+   "careers": "teaching, cooking, military, editing, leadership",
+   "watch": "sharp tongue and criticism"
+  },
+  {
+   "i": 4,
+   "name": "Rohini",
+   "lord": "Moon",
+   "deity": "Brahma",
+   "symbol": "chariot / ox-cart",
+   "gana": "Manushya",
+   "span": [
+    40.0,
+    53.3333
+   ],
+   "trait": "Charming, creative and sensual; loves growth, beauty and material comfort. A Moon-favoured star.",
+   "careers": "arts, agriculture, fashion, hospitality, business",
+   "watch": "possessiveness and indulgence"
+  },
+  {
+   "i": 5,
+   "name": "Mrigashira",
+   "lord": "Mars",
+   "deity": "Soma",
+   "symbol": "deer's head",
+   "gana": "Deva",
+   "span": [
+    53.3333,
+    66.6667
+   ],
+   "trait": "Curious, gentle and always searching; restless, with a love of travel, learning and variety.",
+   "careers": "research, writing, travel, design",
+   "watch": "restlessness and indecision"
+  },
+  {
+   "i": 6,
+   "name": "Ardra",
+   "lord": "Rahu",
+   "deity": "Rudra",
+   "symbol": "teardrop",
+   "gana": "Manushya",
+   "span": [
+    66.6667,
+    80.0
+   ],
+   "trait": "Stormy, intense and transformative; sharp intellect that grows through struggle and renewal.",
+   "careers": "technology, research, crisis work, healing",
+   "watch": "emotional storms and harshness"
+  },
+  {
+   "i": 7,
+   "name": "Punarvasu",
+   "lord": "Jupiter",
+   "deity": "Aditi",
+   "symbol": "quiver of arrows",
+   "gana": "Deva",
+   "span": [
+    80.0,
+    93.3333
+   ],
+   "trait": "Optimistic, forgiving and renewing; bounces back and likes simple, kind living.",
+   "careers": "teaching, counselling, writing, travel",
+   "watch": "over-trust and drifting"
+  },
+  {
+   "i": 8,
+   "name": "Pushya",
+   "lord": "Saturn",
+   "deity": "Brihaspati",
+   "symbol": "cow's udder / lotus",
+   "gana": "Deva",
+   "span": [
+    93.3333,
+    106.6667
+   ],
+   "trait": "Nourishing, wise and dependable; widely considered the most auspicious star for growth and care.",
+   "careers": "teaching, healing, advising, public service",
+   "watch": "rigidity and over-responsibility"
+  },
+  {
+   "i": 9,
+   "name": "Ashlesha",
+   "lord": "Mercury",
+   "deity": "Nagas",
+   "symbol": "coiled serpent",
+   "gana": "Rakshasa",
+   "span": [
+    106.6667,
+    120.0
+   ],
+   "trait": "Perceptive, magnetic and secretive; sharp mind with strategic and psychological insight.",
+   "careers": "psychology, medicine, research, politics",
+   "watch": "manipulation and mistrust"
+  },
+  {
+   "i": 10,
+   "name": "Magha",
+   "lord": "Ketu",
+   "deity": "Pitrs",
+   "symbol": "royal throne",
+   "gana": "Rakshasa",
+   "span": [
+    120.0,
+    133.3333
+   ],
+   "trait": "Regal, proud and tied to ancestry; natural authority and a respect for tradition.",
+   "careers": "government, leadership, history, administration",
+   "watch": "pride and entitlement"
+  },
+  {
+   "i": 11,
+   "name": "Purva Phalguni",
+   "lord": "Venus",
+   "deity": "Bhaga",
+   "symbol": "front legs of a bed",
+   "gana": "Manushya",
+   "span": [
+    133.3333,
+    146.6667
+   ],
+   "trait": "Pleasure-loving, creative and sociable; strong charm, romance and love of rest and celebration.",
+   "careers": "entertainment, arts, hospitality, luxury trade",
+   "watch": "laziness and indulgence"
+  },
+  {
+   "i": 12,
+   "name": "Uttara Phalguni",
+   "lord": "Sun",
+   "deity": "Aryaman",
+   "symbol": "back legs of a bed",
+   "gana": "Manushya",
+   "span": [
+    146.6667,
+    160.0
+   ],
+   "trait": "Dependable, helpful and generous; builds lasting friendships and contracts.",
+   "careers": "management, service, counselling, partnerships",
+   "watch": "over-giving and stubbornness"
+  },
+  {
+   "i": 13,
+   "name": "Hasta",
+   "lord": "Moon",
+   "deity": "Savitar",
+   "symbol": "hand",
+   "gana": "Deva",
+   "span": [
+    160.0,
+    173.3333
+   ],
+   "trait": "Skilled, clever and resourceful; good with the hands, with a witty, practical mind.",
+   "careers": "crafts, healing, trade, writing, design",
+   "watch": "over-cleverness and nervous energy"
+  },
+  {
+   "i": 14,
+   "name": "Chitra",
+   "lord": "Mars",
+   "deity": "Tvashtar",
+   "symbol": "bright jewel",
+   "gana": "Rakshasa",
+   "span": [
+    173.3333,
+    186.6667
+   ],
+   "trait": "Artistic, striking and perfection-seeking; a builder and designer with strong visual sense.",
+   "careers": "architecture, design, engineering, fashion",
+   "watch": "vanity and restlessness"
+  },
+  {
+   "i": 15,
+   "name": "Swati",
+   "lord": "Rahu",
+   "deity": "Vayu",
+   "symbol": "young shoot swaying in wind",
+   "gana": "Deva",
+   "span": [
+    186.6667,
+    200.0
+   ],
+   "trait": "Independent, flexible and diplomatic; thrives in trade and freedom, adapting like the wind.",
+   "careers": "trade, diplomacy, aviation, law",
+   "watch": "indecision and detachment"
+  },
+  {
+   "i": 16,
+   "name": "Vishakha",
+   "lord": "Jupiter",
+   "deity": "Indragni",
+   "symbol": "triumphal arch",
+   "gana": "Rakshasa",
+   "span": [
+    200.0,
+    213.3333
+   ],
+   "trait": "Determined, goal-driven and competitive; single-minded pursuit until the objective is reached.",
+   "careers": "politics, sales, leadership, research",
+   "watch": "jealousy and obsession"
+  },
+  {
+   "i": 17,
+   "name": "Anuradha",
+   "lord": "Saturn",
+   "deity": "Mitra",
+   "symbol": "lotus",
+   "gana": "Deva",
+   "span": [
+    213.3333,
+    226.6667
+   ],
+   "trait": "Devoted, friendly and organised; builds networks and thrives far from home.",
+   "careers": "organising, travel, foreign trade, community",
+   "watch": "strain from self-sacrifice"
+  },
+  {
+   "i": 18,
+   "name": "Jyeshtha",
+   "lord": "Mercury",
+   "deity": "Indra",
+   "symbol": "circular amulet",
+   "gana": "Rakshasa",
+   "span": [
+    226.6667,
+    240.0
+   ],
+   "trait": "Protective, senior-minded and proud; natural elder with sharp intellect and a sense of duty.",
+   "careers": "administration, security, investigation, leadership",
+   "watch": "loneliness and pride"
+  },
+  {
+   "i": 19,
+   "name": "Mula",
+   "lord": "Ketu",
+   "deity": "Nirriti",
+   "symbol": "bunch of roots",
+   "gana": "Rakshasa",
+   "span": [
+    240.0,
+    253.3333
+   ],
+   "trait": "Rooted, truth-seeking and uprooting; gets to the bottom of things, even if it means starting over.",
+   "careers": "research, medicine, philosophy, investigation",
+   "watch": "upheaval and extremes"
+  },
+  {
+   "i": 20,
+   "name": "Purva Ashadha",
+   "lord": "Venus",
+   "deity": "Apas",
+   "symbol": "winnowing fan",
+   "gana": "Manushya",
+   "span": [
+    253.3333,
+    266.6667
+   ],
+   "trait": "Invincible spirit and persuasive; refreshing, optimistic and able to inspire others.",
+   "careers": "teaching, persuasion, water-related work, public speaking",
+   "watch": "stubborn pride"
+  },
+  {
+   "i": 21,
+   "name": "Uttara Ashadha",
+   "lord": "Sun",
+   "deity": "Vishvadevas",
+   "symbol": "elephant tusk",
+   "gana": "Manushya",
+   "span": [
+    266.6667,
+    280.0
+   ],
+   "trait": "Principled, steady and ultimately victorious; lasting achievement through ethics and patience.",
+   "careers": "government, law, large organisations, leadership",
+   "watch": "over-seriousness"
+  },
+  {
+   "i": 22,
+   "name": "Shravana",
+   "lord": "Moon",
+   "deity": "Vishnu",
+   "symbol": "ear / three footprints",
+   "gana": "Deva",
+   "span": [
+    280.0,
+    293.3333
+   ],
+   "trait": "A listener and learner; wise, connected and good at communication and guidance.",
+   "careers": "teaching, media, counselling, languages",
+   "watch": "gossip and over-listening"
+  },
+  {
+   "i": 23,
+   "name": "Dhanishta",
+   "lord": "Mars",
+   "deity": "Vasus",
+   "symbol": "drum",
+   "gana": "Rakshasa",
+   "span": [
+    293.3333,
+    306.6667
+   ],
+   "trait": "Rhythmic, ambitious and prosperous; strong sense of timing, with talent for music and wealth-building.",
+   "careers": "music, real estate, sports, engineering",
+   "watch": "arrogance and impulsiveness"
+  },
+  {
+   "i": 24,
+   "name": "Shatabhisha",
+   "lord": "Rahu",
+   "deity": "Varuna",
+   "symbol": "empty circle / 100 healers",
+   "gana": "Rakshasa",
+   "span": [
+    306.6667,
+    320.0
+   ],
+   "trait": "Secretive, healing and independent; deep researcher who prefers solitude and the unusual.",
+   "careers": "research, medicine, astrology, technology",
+   "watch": "isolation and secrecy"
+  },
+  {
+   "i": 25,
+   "name": "Purva Bhadrapada",
+   "lord": "Jupiter",
+   "deity": "Aja Ekapada",
+   "symbol": "front of a funeral cot / sword",
+   "gana": "Manushya",
+   "span": [
+    320.0,
+    333.3333
+   ],
+   "trait": "Intense, idealistic and transformative; strong convictions and a mystical, passionate streak.",
+   "careers": "research, spirituality, activism, finance",
+   "watch": "extremes and fanaticism"
+  },
+  {
+   "i": 26,
+   "name": "Uttara Bhadrapada",
+   "lord": "Saturn",
+   "deity": "Ahir Budhnya",
+   "symbol": "back of a funeral cot",
+   "gana": "Manushya",
+   "span": [
+    333.3333,
+    346.6667
+   ],
+   "trait": "Deep, calm and compassionate; wisdom, restraint and the power to endure.",
+   "careers": "counselling, charity, spirituality, research",
+   "watch": "passivity and withdrawal"
+  },
+  {
+   "i": 27,
+   "name": "Revati",
+   "lord": "Mercury",
+   "deity": "Pushan",
+   "symbol": "fish / drum",
+   "gana": "Deva",
+   "span": [
+    346.6667,
+    360.0
+   ],
+   "trait": "Gentle, guiding and caring; travellers' star with kindness and a protective, artistic nature.",
+   "careers": "travel, care work, arts, teaching",
+   "watch": "naivety and over-dependence"
+  }
+ ],
+ "yogas": [
+  {
+   "id": "ruchaka",
+   "n": "Ruchaka (Mahapurusha)",
+   "how": "Mars in own or exalted sign (Aries, Scorpio, Capricorn) in a kendra from the Lagna.",
+   "gives": "Courage, physical strength, leadership and success in competitive or protective fields."
+  },
+  {
+   "id": "bhadra",
+   "n": "Bhadra (Mahapurusha)",
+   "how": "Mercury in own or exalted sign (Gemini, Virgo) in a kendra.",
+   "gives": "A sharp intellect, eloquence, business skill and a youthful, long-lasting vitality."
+  },
+  {
+   "id": "hamsa",
+   "n": "Hamsa (Mahapurusha)",
+   "how": "Jupiter in own or exalted sign (Sagittarius, Pisces, Cancer) in a kendra.",
+   "gives": "Wisdom, moral stature, good fortune, and respect from others."
+  },
+  {
+   "id": "malavya",
+   "n": "Malavya (Mahapurusha)",
+   "how": "Venus in own or exalted sign (Taurus, Libra, Pisces) in a kendra.",
+   "gives": "Charm, comfort, artistic gifts, a harmonious home and refined tastes."
+  },
+  {
+   "id": "sasa",
+   "n": "Sasa (Mahapurusha)",
+   "how": "Saturn in own or exalted sign (Capricorn, Aquarius, Libra) in a kendra.",
+   "gives": "Discipline, authority over many people, endurance and success through persistent effort."
+  },
+  {
+   "id": "gajakesari",
+   "n": "Gaja Kesari",
+   "how": "Jupiter in a kendra (1, 4, 7, 10) from the Moon.",
+   "gives": "Good name, wisdom, steady support and the ability to rise above difficulties."
+  },
+  {
+   "id": "budhaditya",
+   "n": "Budhaditya",
+   "how": "Sun and Mercury in the same sign (best when Mercury is not combust).",
+   "gives": "Intelligence, skill in speech and administration, and recognition for ability."
+  },
+  {
+   "id": "chandramangala",
+   "n": "Chandra-Mangala",
+   "how": "Moon and Mars in the same sign or in mutual aspect.",
+   "gives": "Earning drive, courage and an enterprising nature, especially in business or property."
+  },
+  {
+   "id": "sunapha",
+   "n": "Sunapha",
+   "how": "A planet (other than the Sun) in the 2nd house from the Moon.",
+   "gives": "Self-earned wealth, a good reputation and a capable mind."
+  },
+  {
+   "id": "anapha",
+   "n": "Anapha",
+   "how": "A planet (other than the Sun) in the 12th house from the Moon.",
+   "gives": "Good health, a pleasant personality and a generous, comfortable life."
+  },
+  {
+   "id": "durudhara",
+   "n": "Durudhara",
+   "how": "Planets (other than the Sun) on both sides of the Moon, in the 2nd and 12th from it.",
+   "gives": "Comforts, wealth, generosity and a well-supported life."
+  },
+  {
+   "id": "kemadruma",
+   "n": "Kemadruma",
+   "how": "No planet (other than the Sun) in the 2nd or 12th from the Moon, and none with the Moon; cancelled by planets in kendras or by aspect.",
+   "gives": "Feelings of isolation or insecurity until cancelled; strength comes through self-reliance."
+  },
+  {
+   "id": "raja",
+   "n": "Raja Yoga",
+   "how": "The lord of a kendra and the lord of a trikona connect by conjunction, aspect or exchange.",
+   "gives": "Power, status and success; strongest when the planets are well placed and dignified."
+  },
+  {
+   "id": "dhana",
+   "n": "Dhana Yoga",
+   "how": "Lords of the 2nd, 5th, 9th and 11th link with each other or with the Lagna lord.",
+   "gives": "Wealth and financial growth, through the areas the planets rule."
+  },
+  {
+   "id": "parivartana",
+   "n": "Parivartana (Exchange)",
+   "how": "Two planets are in each other's signs.",
+   "gives": "A powerful link between the two houses; results of both houses become closely tied."
+  },
+  {
+   "id": "viparita",
+   "n": "Viparita Raja Yoga",
+   "how": "The lord of the 6th, 8th or 12th sits in another dusthana (6, 8 or 12).",
+   "gives": "Success that rises from hardship; reversals turn into gain once the planet is unharmed."
+  },
+  {
+   "id": "neechabhanga",
+   "n": "Neecha Bhanga",
+   "how": "A debilitated planet whose weakness is cancelled (e.g. the sign lord or exaltation lord is in a kendra).",
+   "gives": "Strength after struggle: an early weakness turning into a resilient advantage."
+  },
+  {
+   "id": "saraswati",
+   "n": "Saraswati",
+   "how": "Jupiter, Venus and Mercury in kendras, trikonas or the 2nd house, with Jupiter strong.",
+   "gives": "Learning, creativity, eloquence and artistic or scholarly distinction."
+  },
+  {
+   "id": "lakshmi",
+   "n": "Lakshmi",
+   "how": "The 9th lord strong in a kendra or trikona with a strong Lagna lord.",
+   "gives": "Wealth, fortune and an easy, comfortable life."
+  },
+  {
+   "id": "amala",
+   "n": "Amala",
+   "how": "A natural benefic in the 10th house from the Lagna or from the Moon.",
+   "gives": "A spotless reputation, good deeds and lasting fame."
+  },
+  {
+   "id": "guruchandala",
+   "n": "Guru-Chandala",
+   "how": "Jupiter conjunct Rahu (and, in some schools, Ketu).",
+   "gives": "Unconventional beliefs and ambition; wisdom can be tested, with benefits for foreign learning."
+  },
+  {
+   "id": "grahana",
+   "n": "Grahana",
+   "how": "Sun or Moon conjunct Rahu or Ketu.",
+   "gives": "An unsettled sense of identity or mind, with intense experiences; strong sensitivity."
+  },
+  {
+   "id": "kalasarpa",
+   "n": "Kala Sarpa (disputed)",
+   "how": "All seven planets lie between Rahu and Ketu on one side of the axis. Not all schools accept it.",
+   "gives": "A life of intense, karmic ups and downs with a single-minded focus; many successful people have it."
+  }
+ ],
+ "dasha": {
+  "Sun": {
+   "years": "6 years",
+   "text": "Focus on identity, career standing and authority; relations with the father or superiors take centre stage. Good if the Sun is strong; ego and health (heart, eyes) need care otherwise."
+  },
+  "Moon": {
+   "years": "10 years",
+   "text": "Emotions, home, mother and the public come forward. A time of nurturing and popularity when strong; mood swings and uncertainty when weak."
+  },
+  "Mars": {
+   "years": "7 years",
+   "text": "Energy, action, property and competition. Boldness brings progress when disciplined; accidents, anger and conflicts need care."
+  },
+  "Rahu": {
+   "years": "18 years",
+   "text": "Ambition, foreign contact, technology and sudden change. Big rises are possible through unconventional paths; confusion, obsession and risk need watching."
+  },
+  "Jupiter": {
+   "years": "16 years",
+   "text": "Growth, teachers, children, wealth and wisdom. Generally supportive when strong; weight, over-optimism and complacency are the risks."
+  },
+  "Saturn": {
+   "years": "19 years",
+   "text": "Hard work, structure, responsibility and karmic lessons. Results come slowly but last; delays, burdens and health strain when afflicted."
+  },
+  "Mercury": {
+   "years": "17 years",
+   "text": "Learning, business, communication and skills. Good for study and trade when strong; nervousness and scattered effort otherwise."
+  },
+  "Ketu": {
+   "years": "7 years",
+   "text": "Detachment, spiritual interest, research and letting go. Sudden separations or losses can occur; deep inner growth comes from simplifying."
+  },
+  "Venus": {
+   "years": "20 years",
+   "text": "Love, comforts, creativity and relationships. Pleasant and productive when strong; indulgence and relationship friction are the risks."
+  }
+ },
+ "dashaNote": "A dasha lord gives results according to its sign, house, dignity, aspects and the houses it rules. Read the Mahadasha together with the Antardasha lord and the transits.",
+ "status": {
+  "retrograde": {
+   "general": "A retrograde planet works inward: results come late, are revisited, or show up through delay and reflection. It is often strong in effort but unconventional in expression.",
+   "Mars": "Energy turns inward: anger or drive is held back, then released suddenly; good for persistence, poor for quick action.",
+   "Mercury": "Thinking is reflective and unconventional; rechecking, rewriting and second thoughts. Good for research and editing; communication may stall.",
+   "Jupiter": "Wisdom is inward and independent; questions conventional beliefs. Blessings can come late or from unexpected sources.",
+   "Venus": "Love and values are reconsidered; relationships need rethinking. Taste is unusual and affection is private.",
+   "Saturn": "Heavy karmic work turned inward; strong sense of duty with late reward. Lessons repeat until learned.",
+   "Rahu": "Rahu and Ketu are always retrograde (mean nodes); their effects are karmic and unconventional by nature.",
+   "Ketu": "Rahu and Ketu are always retrograde (mean nodes); their effects are karmic and unconventional by nature."
+  },
+  "combust": {
+   "general": "A planet very close to the Sun is combust: its own voice is dimmed and ego (the Sun) colours its results. Effects depend on the planet's other strengths and how close it is.",
+   "Moon": "The mind is overpowered by the ego; emotional expression is weak, especially near the new Moon.",
+   "Mars": "Energy is overshadowed by authority or pride; courage is present but can be channelled into ego battles.",
+   "Mercury": "Intelligence is strong but speech and nerve expression are muted; Mercury is often close to the Sun, so look at the degree.",
+   "Jupiter": "Guidance and fortune are dimmed by ego; wisdom is present but may be underused.",
+   "Venus": "Love and comfort are dimmed by pride or duty; relationships take effort to express.",
+   "Saturn": "Discipline and humility are overshadowed by ego; results come with a sense of burden."
+  },
+  "vargottama": "A planet in the same sign in the D1 and D9 charts (Vargottama) is strengthened: its results are more reliable and clearly expressed.",
+  "dignity": {
+   "Exalted": "At its best: results come easily and strongly in the planet's field.",
+   "Moolatrikona": "Very strong, nearly as good as exaltation; the planet works with confidence and clarity.",
+   "Own": "Comfortable at home: stable, dependable results and good support for the houses it rules.",
+   "Friend": "In a friend's sign: supported and cooperative; results flow with mild ease.",
+   "Neutral": "In a neutral sign: results depend mostly on house, aspects and company.",
+   "Enemy": "In an enemy's sign: uncomfortable; results come with friction or extra effort.",
+   "Debilitated": "At its weakest: struggles in the planet's field early on, often turning into resilience when cancelled (Neecha Bhanga) or well supported."
+  }
+ },
+ "rising": {
+  "Aries": "Quick, competitive and self-starting; acts first and thinks later. The Lagna lord Mars sets the pace.",
+  "Taurus": "Calm, patient and comfort-loving; slow to start but very hard to move. The Lagna lord Venus brings taste and charm.",
+  "Gemini": "Curious, talkative and quick; likes variety and learning. The Lagna lord Mercury keeps the mind busy.",
+  "Cancer": "Sensitive, caring and protective; strongly tied to home and family. The Lagna lord Moon makes moods visible.",
+  "Leo": "Confident, warm and dignified; needs to be respected and to lead. The Lagna lord Sun gives presence.",
+  "Virgo": "Practical, observant and modest; notices every detail and wants to be useful. The Lagna lord Mercury sharpens the mind.",
+  "Libra": "Gracious, fair-minded and sociable; seeks balance and company. The Lagna lord Venus gives charm.",
+  "Scorpio": "Intense, private and determined; deep emotions kept under control. The Lagna lord Mars gives endurance.",
+  "Sagittarius": "Optimistic, honest and freedom-loving; looks for meaning and adventure. The Lagna lord Jupiter brings goodwill.",
+  "Capricorn": "Serious, ambitious and responsible; matures early and builds step by step. The Lagna lord Saturn rewards patience.",
+  "Aquarius": "Independent, original and friendly yet detached; thinks of the group. The Lagna lord Saturn adds discipline.",
+  "Pisces": "Gentle, imaginative and compassionate; absorbs the mood around. The Lagna lord Jupiter brings faith and kindness."
+ },
+ "moonSign": {
+  "Aries": "Feelings are fast and fiery; quick to react, quick to forgive. Needs action to feel settled.",
+  "Taurus": "Exalted Moon: emotionally steady and loyal; security, food and comfort matter a lot.",
+  "Gemini": "A restless, curious mind; feelings are processed by talking and learning. Needs mental stimulation.",
+  "Cancer": "Own sign: deeply sensitive, nurturing and attached to home; strong memory and empathy.",
+  "Leo": "A proud, warm heart; needs appreciation and a stage. Generous and loyal when respected.",
+  "Virgo": "A careful, analytical mind; feelings are managed through routine and usefulness. Prone to worry.",
+  "Libra": "Feelings need harmony and company; dislikes conflict, weighs everything before deciding.",
+  "Scorpio": "Debilitated Moon: very deep, intense feelings; loyal but secretive. Emotional growth comes through transformation.",
+  "Sagittarius": "An optimistic, restless heart; needs freedom, faith and movement to feel well.",
+  "Capricorn": "Reserved feelings; seeks security through achievement and duty. Slow to open up.",
+  "Aquarius": "A detached, thoughtful heart; values friends and ideals; needs space and intellectual freedom.",
+  "Pisces": "Highly intuitive and compassionate; absorbs others' feelings. Needs quiet, art or devotion to recharge."
+ }
+};
+
+const VDB = (function(D){
+  'use strict';
+  const PL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+  const SIGN = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const TONE_WORD = {'+':'supportive','0':'mixed','-':'challenging'};
+  const okH = h => Number.isInteger(h) && h >= 1 && h <= 12;
+  const okS = s => Number.isInteger(s) && s >= 0 && s <= 11;
+
+  function planetInHouse(p, h){
+    if (!D.planetInHouse[p] || !okH(h)) return null;
+    const c = D.tone[p].split(' ')[h-1];
+    return { text: D.planetInHouse[p][h-1], toneCode: c, tone: TONE_WORD[c] };
+  }
+  function planetInSign(p, s){
+    if (!D.planetInSign[p] || !okS(s)) return null;
+    return { text: D.planetInSign[p][s], dignity: D.planetInSignDignity[p][s] };
+  }
+  function lordInHouse(lordOf, placedIn){
+    return (okH(lordOf) && okH(placedIn)) ? D.lordInHouse[lordOf-1][placedIn-1] : null;
+  }
+  function aspectOnHouse(p, h){ return (D.aspectOnHouse[p] && okH(h)) ? D.aspectOnHouse[p][h-1] : null; }
+  function planetAspect(from, to){ return D.planetAspect[from + '>' + to] || null; }
+  function conjunction(a, b){
+    const i = PL.indexOf(a), j = PL.indexOf(b);
+    if (i < 0 || j < 0 || i === j) return null;
+    return D.conjunction[i < j ? a + '+' + b : b + '+' + a] || null;     // Rahu+Ketu never conjoin
+  }
+  // nakshatra by index 0..26 (the app's getNakshatra().index) and optional pada 1..4
+  function nakshatra(idx, pada){
+    const n = D.nakshatras[idx]; if (!n) return null;
+    const out = Object.assign({}, n);
+    if (pada >= 1 && pada <= 4){ out.pada = pada; out.navamsaSign = SIGN[(idx * 4 + pada - 1) % 12]; }
+    return out;
+  }
+  // houses a planet aspects from `house`; opts.nodes579 = give Rahu/Ketu the 5th and 9th too
+  function aspectedHouses(p, house, opts){
+    let offs = D.aspectRules.offsets[p]; if (!offs || !okH(house)) return [];
+    if (opts && opts.nodes579 && (p === 'Rahu' || p === 'Ketu')) offs = [5,7,9];
+    return offs.map(o => ((house - 1 + o - 1) % 12) + 1).sort((a,b) => a - b);
+  }
+  // rule-of-thumb functional nature of the 7 planets for a rising sign (0 = Aries)
+  function functionalNature(lagnaSign){
+    if (!okS(lagnaSign)) return null;
+    const out = {};
+    ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'].forEach(p => {
+      const ruled = []; for (let h = 1; h <= 12; h++) if (D.signs[(lagnaSign + h - 1) % 12].lord === p) ruled.push(h);
+      const has = set => ruled.some(h => set.includes(h));
+      const tags = []; if (ruled.includes(1)) tags.push('Lagna lord'); if (has([5,9])) tags.push('trikona lord'); if (has([4,7,10])) tags.push('kendra lord');
+      if (has([6,8,12])) tags.push('dusthana lord'); if (has([3,11])) tags.push('3rd/11th lord'); if (has([2,7])) tags.push('maraka (2nd/7th) lord');
+      let score = 0; ruled.forEach(h => { score += ({1:2,5:2,9:2,4:0,7:-0.5,10:0,2:-0.5,3:-1,11:-1,6:-1,12:-1,8:-2})[h]; });
+      const yogakaraka = has([4,7,10]) && has([5,9]);
+      // order matters: yogakaraka > Lagna lord (always auspicious) > trikona lord (unless it also rules the 8th) > the rest by score
+      const kind = yogakaraka ? 'Yogakaraka' : ruled.includes(1) ? 'Functional benefic' : has([5,9]) ? (ruled.includes(8) ? 'Mixed / neutral' : 'Functional benefic') : score <= -1 ? 'Functional malefic' : 'Mixed / neutral';
+      out[p] = { rules: ruled, tags, kind };
+    });
+    return out;
+  }
+
+  // Everything that applies to one computed chart (chart = computeChart() result).
+  function reading(chart, opts){
+    const P = chart.planets, asc = chart.ascendant.sign, out = { lagna: { sign: SIGN[asc], text: D.rising[SIGN[asc]] }, planets: {}, houseLords: [] };
+    PL.forEach(n => {
+      const p = P[n]; if (!p) return;
+      const ent = { house: p.house, sign: SIGN[p.sign], inHouse: planetInHouse(n, p.house), inSign: planetInSign(n, p.sign),
+        nakshatra: p.nakshatra ? nakshatra(p.nakshatra.index, p.nakshatra.pada) : null,
+        status: [], conjunct: [], aspectedBy: [], aspectsPlanets: [], aspectsHouses: [], lordOf: [] };
+      if (p.retrograde && n !== 'Rahu' && n !== 'Ketu') ent.status.push({ key: 'retrograde', text: D.status.retrograde[n] || D.status.retrograde.general });
+      if (p.combustion && p.combustion.combust) ent.status.push({ key: 'combust', text: D.status.combust[n] || D.status.combust.general });
+      if (chart.vargas && chart.vargas.D9 && chart.vargas.D9.planetVargaSign && chart.vargas.D9.planetVargaSign[n] === p.sign) ent.status.push({ key: 'vargottama', text: D.status.vargottama });
+      PL.forEach(o => {
+        if (o === n || !P[o]) return;
+        if (P[o].sign === p.sign){ const t = conjunction(n, o); if (t) ent.conjunct.push({ with: o, text: t }); }
+        if ((P[o].aspectsHouses || []).includes(p.house)) ent.aspectedBy.push({ from: o, text: planetAspect(o, n) });
+        if ((p.aspectsHouses || []).includes(P[o].house)) ent.aspectsPlanets.push({ to: o, text: planetAspect(n, o) });
+      });
+      (p.aspectsHouses || []).forEach(h => ent.aspectsHouses.push({ house: h, text: aspectOnHouse(n, h) }));
+      for (let y = 1; y <= 12; y++) if (D.signs[(asc + y - 1) % 12].lord === n) ent.lordOf.push(y);
+      out.planets[n] = ent;
+    });
+    for (let y = 1; y <= 12; y++){
+      const lord = D.signs[(asc + y - 1) % 12].lord, at = P[lord] && P[lord].house;
+      out.houseLords.push({ house: y, lord, placedIn: at, text: at ? lordInHouse(y, at) : null });
+    }
+    out.functional = functionalNature(asc);
+    return out;
+  }
+
+  return { data: D, planetInHouse, planetInSign, lordInHouse, aspectOnHouse, planetAspect, conjunction, nakshatra, aspectedHouses, functionalNature, reading };
+})(VDB_DATA);
