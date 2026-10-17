@@ -16,33 +16,34 @@ function model(c,k,v0){const v=v0||c.vargas[k],m=VARGAS[k],asc=v.ascendantSign,h
   return {c,k,v,m,asc,hs,rows,cu:!!v0};}
 const chips=(a,cl)=>a.length?a.map(x=>`<span class="vx-chip ${cl||''}">${x}</span>`).join(''):'<span class="vx-chip">None</span>';
 const g=n=>`${PLANET_GLYPHS[n]} ${n}`;
-function overview(M){const {rows,hs,asc,m,k}=M,sg=SIGNS[asc],ll=rows.find(r=>r.n===sg.lord);
-  const cnt=f=>rows.filter(r=>f(r)).length, by=s=>rows.filter(r=>dc(r.dig.status)===s&&/Exalt|Own|Moola|Debil/i.test(r.dig.status));
-  const ex=rows.filter(r=>/Exalt/i.test(r.dig.status)),ow=rows.filter(r=>/Own|Moola/i.test(r.dig.status)),de=rows.filter(r=>/Debil/i.test(r.dig.status)),vg=rows.filter(r=>r.vg),rt=rows.filter(r=>r.ret);
-  const emp=hs.filter(h=>h.isEmpty).map(h=>'H'+h.houseNum),groups={};rows.forEach(r=>(groups[r.s]=groups[r.s]||[]).push(r.n));
-  const conj=Object.keys(groups).filter(s=>groups[s].length>1).map(s=>`${SIGNS[s].symbol} ${SIGNS[s].name}: ${groups[s].join(' + ')}`);
-  const bars=(title,keys,f)=>`<div class="vx-t wide"><label>${title}</label>${keys.map(x=>{const n=cnt(r=>f(r)===x);return `<div class="vx-bar"><span>${x}</span><i><u style="width:${n/9*100}%"></u></i><b>${n}</b></div>`}).join('')}</div>`;
+function overview(M){const {rows,hs,asc,m,k,c}=M,sg=SIGNS[asc],ll=rows.find(r=>r.n===sg.lord),a1=c.vargas.D1.ascendantSign,isD1=k==='D1'&&!M.cu;
+  const tag=h=>KEND.includes(h)?['K','Kendra']:TRI.includes(h)?['T','Trikona']:DUS.includes(h)?['D','Dusthana']:UPA.includes(h)?['U','Upachaya']:['','Neutral'];
+  const cls=h=>KEND.includes(h)?'k':TRI.includes(h)?'t':DUS.includes(h)?'d':'';
+  const emp=hs.filter(h=>h.isEmpty).map(h=>h.houseNum),ex=rows.filter(r=>/Exalt/i.test(r.dig.status)),ow=rows.filter(r=>/Own|Moola/i.test(r.dig.status)),de=rows.filter(r=>/Debil/i.test(r.dig.status)),vg=rows.filter(r=>r.vg);
+  const groups={};rows.forEach(r=>(groups[r.s]=groups[r.s]||[]).push(r.n));
+  const conj=Object.keys(groups).filter(s=>groups[s].length>1).map(s=>`<span class="gl-cj">${SIGNS[s].symbol}︎ ${SIGNS[s].name}<b>${groups[s].map(n=>PLANET_GLYPHS[n]).join(' ')}</b></span>`);
   const inH=a=>rows.filter(r=>a.includes(r.h)).length;
+  const stack=(keys,f,cols)=>{const tot=rows.length;return `<div class="gl-stack">${keys.map((x,i)=>{const n=rows.filter(r=>f(r)===x).length;return n?`<i style="flex:${n};background:${cols[i]}" title="${x}: ${n}"><b>${n}</b></i>`:''}).join('')}</div><div class="gl-lg">${keys.map((x,i)=>`<span><u style="background:${cols[i]}"></u>${x} ${rows.filter(r=>f(r)===x).length}</span>`).join('')}</div>`;};
   const notes=[];
-  if(ex.length)notes.push(['g',`⭐ Exalted: ${ex.map(r=>g(r.n)+' in H'+r.h).join(', ')} — peak strength in ${k}.`]);
-  if(ow.length)notes.push(['g',`🏠 Own/Moolatrikona sign: ${ow.map(r=>g(r.n)+' (H'+r.h+')').join(', ')} — steady and self-reliant.`]);
-  if(de.length)notes.push(['b',`⚠️ Debilitated: ${de.map(r=>g(r.n)+' in H'+r.h).join(', ')} — needs support from other planets.`]);
-  if(vg.length)notes.push(['g',`🔱 Vargottama (same sign as D1): ${vg.map(r=>g(r.n)).join(', ')} — results of these planets are strengthened.`]);
-  notes.push(['',`🧭 ${sg.name} ascendant: lord ${sg.lord} sits in your ${ord(ll.h)} house (${ll.sg.name}) — ${KEND.includes(ll.h)?'a Kendra, supportive':TRI.includes(ll.h)?'a Trikona, fortunate':DUS.includes(ll.h)?'a Dusthana, brings challenge and growth':'a neutral house'}.`]);
-  return `<div class="vx-grid">
-   <div class="vx-t"><label>Lagna</label><b>${sg.symbol} ${sg.name}</b><small>${sg.sk} · ${sg.element} · ${sg.modality}</small></div>
-   <div class="vx-t"><label>Lagna lord</label><b>${g(sg.lord)}</b><small>H${ll.h} · ${ll.sg.symbol} ${ll.sg.name}${ll.dig.label?' · '+ll.dig.label:''}</small></div>
-   <div class="vx-t"><label>Division</label><b>1/${m.n} · ${m.name}</b><small>${m.full}</small></div>
-   <div class="vx-t"><label>Houses occupied</label><b>${12-emp.length} of 12</b><small>Empty: ${emp.join(', ')||'none'}</small></div>
-   <div class="vx-t"><label>Vargottama ★</label>${chips(vg.map(r=>g(r.n)),'g')}</div>
-   <div class="vx-t"><label>Retrograde ℞</label>${chips(rt.map(r=>g(r.n)),'t')}</div>
-   <div class="vx-t"><label>Strong signs</label>${chips(ex.concat(ow).map(r=>g(r.n)),'g')}</div>
-   <div class="vx-t"><label>Debilitated</label>${chips(de.map(r=>g(r.n)),'b')}</div>
-   <div class="vx-t"><label>Kendra · Trikona</label><b>${inH(KEND)} · ${inH(TRI)}</b><small>planets in 1-4-7-10 · 1-5-9</small></div>
-   <div class="vx-t"><label>Dusthana · Upachaya</label><b>${inH(DUS)} · ${inH(UPA)}</b><small>planets in 6-8-12 · 3-6-10-11</small></div>
-   <div class="vx-t wide"><label>Conjunctions (same sign)</label>${conj.length?conj.map(x=>`<span class="vx-chip t">${x}</span>`).join(''):'<small>No two planets share a sign.</small>'}</div>
-   ${bars('Element balance',['Fire','Earth','Air','Water'],r=>r.sg.element)}${bars('Modality balance',['Movable','Fixed','Dual'],r=>r.sg.modality)}</div>
-   ${notes.map(x=>`<div class="vx-note ${x[0]}">${x[1]}</div>`).join('')}`;}
+  if(ex.length)notes.push(['g','⭐',`Exalted: ${ex.map(r=>g(r.n)+' (H'+r.h+')').join(', ')}`]);
+  if(ow.length)notes.push(['g','🏠',`Own sign: ${ow.map(r=>g(r.n)+' (H'+r.h+')').join(', ')}`]);
+  if(de.length)notes.push(['b','⚠️',`Debilitated: ${de.map(r=>g(r.n)+' (H'+r.h+')').join(', ')} — needs support`]);
+  if(vg.length&&!isD1)notes.push(['g','🔱',`Vargottama: ${vg.map(r=>g(r.n)).join(', ')} — same sign as D1, strengthened`]);
+  notes.push(['','🧭',`Lagna lord ${g(sg.lord)} sits in the ${ord(ll.h)} house (${ll.sg.name}) — ${tag(ll.h)[1]}${KEND.includes(ll.h)?', supportive':TRI.includes(ll.h)?', fortunate':DUS.includes(ll.h)?', brings challenge and growth':''}`]);
+  const row=r=>{const p=r.p,t=tag(r.h),st=(r.dig.label||r.dig.status||'').replace(/ \(.*\)/,'').replace(/ sign$/i,'');
+    return `<div class="gl-r ${cls(r.h)}"><span class="gl-p"><i>${PLANET_GLYPHS[r.n]}</i><b>${r.n}</b>${r.ret?'<em title="Retrograde">℞</em>':''}</span>
+     <span class="gl-s">${r.sg.symbol}︎ ${r.sg.name}</span><span class="gl-h"><b>${r.h}</b>${t[0]?`<small title="${t[1]}">${t[0]}</small>`:''}</span>
+     ${isD1?'':`<span class="gl-d1${r.vg?' same':''}">${r.vg?'★ same':SIGNS[p.sign].symbol+'︎ '+SIGNS[p.sign].name}</span>`}
+     <span class="gl-st">${st&&st!=='Neutral'?`<span class="vx-chip ${dc(r.dig.status)}">${st}</span>`:'<small>—</small>'}${p.combustion&&p.combustion.combust?'<span class="vx-chip b" title="Combust">🔥</span>':''}</span></div>`;};
+  return `<div class="gl">
+   <section class="gl-hero"><div class="gl-asc"><span class="gl-sym">${sg.symbol}︎</span><div><small>Lagna · ${k}</small><b>${sg.name}</b><em>${sg.sk} · ${sg.element} · ${sg.modality}</em></div></div>
+    <div class="gl-meta"><div><small>Lagna lord</small><b>${g(sg.lord)}</b><em>H${ll.h} · ${ll.sg.name}</em></div><div><small>Division</small><b>${k} · 1/${m.n}</b><em>${m.name}</em></div><div><small>Houses filled</small><b>${12-emp.length}/12</b><em>${emp.length?'empty '+emp.join(', '):'none empty'}</em></div>${isD1?'':`<div><small>Lagna in D1</small><b>${SIGNS[a1].symbol}︎ ${SIGNS[a1].name}</b><em>${asc===a1?'★ same':'differs'}</em></div>`}</div></section>
+   <section class="gl-card"><h5>Planets <span>sign · house · strength${isD1?'':' · D1 sign'}</span></h5><div class="gl-pt${isD1?' d1':''}">${rows.map(row).join('')}</div></section>
+   <section class="gl-card"><h5>12 houses <span>who sits where</span></h5><div class="gl-hs">${hs.map(h=>`<div class="gl-hc ${cls(h.houseNum)}${h.isEmpty?' e':''}"><header><em>${h.houseNum}</em><span>${h.signSymbol}︎</span></header><b>${h.signName}</b><div>${h.isEmpty?'<small>empty</small>':h.planets.map(q=>`<i class="${dc(q.dignity.status)}" title="${q.name}">${PLANET_GLYPHS[q.name]}</i>`).join('')}</div></div>`).join('')}</div>
+    <div class="gl-lg"><span><u style="background:#D4AF37"></u>Kendra</span><span><u style="background:#5EC4B7"></u>Trikona</span><span><u style="background:#E25555"></u>Dusthana</span></div></section>
+   <div class="gl-two"><section class="gl-card"><h5>Balance</h5><label>Element</label>${stack(['Fire','Earth','Air','Water'],r=>r.sg.element,['#E8704A','#8DB36B','#7FB7E6','#5B7FD6'])}<label>Mode</label>${stack(['Movable','Fixed','Dual'],r=>r.sg.modality,['#D4AF37','#A98BD6','#5EC4B7'])}</section>
+    <section class="gl-card"><h5>Planets by house type</h5><div class="gl-cnt"><div><b>${inH(KEND)}</b><small>Kendra</small></div><div><b>${inH(TRI)}</b><small>Trikona</small></div><div><b>${inH(DUS)}</b><small>Dusthana</small></div><div><b>${inH(UPA)}</b><small>Upachaya</small></div></div>${conj.length?`<label>Together in one sign</label><div class="gl-cjs">${conj.join('')}</div>`:''}</section></div>
+   <section class="gl-card"><h5>Highlights</h5>${notes.map(x=>`<div class="gl-n ${x[0]}"><i>${x[1]}</i><span>${x[2]}</span></div>`).join('')}</section></div>`;}
 function planets(M){const {rows,m,k,c}=M;
   return rows.map(r=>{const p=r.p,nk=p.nakshatra,sb=r.sb,kv=(l,v,w)=>`<div class="vx-kv${w?' w':''}"><label>${l}</label><span>${v}</span></div>`;
    return `<details class="vx-pl"><summary><span class="vx-gl">${PLANET_GLYPHS[r.n]}</span><div><b>${r.n}${r.ret?' ℞':''}${r.vg?' ★':''}</b><small>${r.sg.symbol} ${r.sg.name} · H${r.h}</small></div><span class="vx-chip ${dc(r.dig.status)}">${r.dig.status||'—'}</span></summary><div class="vx-body">
@@ -61,7 +62,7 @@ function vsD1(M){const {rows,k,asc,c}=M;const a1=c.vargas.D1.ascendantSign;
   return `<div class="vx-note">Compare each planet's Rashi (D1) sign with its ${k} sign. Same sign = <b>Vargottama ★</b>.</div>
    <div class="vx-row ${asc===a1?'vg':''}"><span class="vx-gl">⬆</span><span>Lagna: ${SIGNS[a1].symbol} ${SIGNS[a1].name} → ${SIGNS[asc].symbol} ${SIGNS[asc].name}</span><b>${asc===a1?'★':''}</b></div>`+
    rows.map(r=>`<div class="vx-row ${r.vg?'vg':''}"><span class="vx-gl">${PLANET_GLYPHS[r.n]}</span><span>${SIGNS[r.p.sign].symbol} ${SIGNS[r.p.sign].name} → ${r.sg.symbol} ${r.sg.name}<br><small style="color:var(--text-muted)">House ${r.p.house} → ${r.h} · ${r.dig.label||''}</small></span><b>${r.vg?'★':''}</b></div>`).join('');}
-function build(c,k,v){const M=model(c,k,v),T=['Overview','Planets','Houses','vs D1'],B=[overview,planets,houses,vsD1];
+function build(c,k,v){const M=model(c,k,v),T=['At a glance','Planet details','House details','vs D1'],B=[overview,planets,houses,vsD1];
   return `<div class="vx"><div class="vx-tabs">${T.map((t,i)=>`<button type="button" data-i="${i}" class="${i===tab?'on':''}">${['✨','🪐','🏠','⚖️'][i]} ${t}</button>`).join('')}</div>${B.map((f,i)=>`<div class="vx-pane ${i===tab?'on':''}">${f(M)}</div>`).join('')}</div>`;}
 const GRP={core:['🌅','Core','#F9D976'],arudha:['🪞','Arudha','#5EC4B7'],karaka:['🧿','Karaka','#A98BD6'],kala:['⏳','Kala','#7F95C4']};
 const ab=k=>k==='UL_LAGNA'?'Lagna':k;

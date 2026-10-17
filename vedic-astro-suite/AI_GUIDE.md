@@ -145,9 +145,9 @@ _Generated 2026-10-17 - 1164 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 121 files, 14082 lines, 979 KB
+**birth-chart** - 122 files, 14140 lines, 985 KB
 ```
-index.html                                         534 lines   30 KB
+index.html                                         535 lines   30 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -216,7 +216,7 @@ js/65-error-boundaries.js                           32 lines    1 KB
 js/66-modal-accessibility.js                        23 lines    1 KB
 js/67-friendly-input-page.js                        96 lines    8 KB
 js/68-intake-progress.js                            65 lines    3 KB
-js/69-divisional-areas.js                          131 lines   20 KB
+js/69-divisional-areas.js                          132 lines   22 KB
 js/70-chart-reading.js                              75 lines   16 KB
 js/71-life-activation.js                            50 lines    9 KB
 js/72-bhava-bala.js                                 47 lines    7 KB
@@ -268,6 +268,7 @@ css/33-friendly-input-page.css                      47 lines    4 KB
 css/34-smart-search.css                             30 lines    3 KB
 css/35-dasha-systems.css                            96 lines    8 KB
 css/36-ui-overhaul.css                             126 lines   11 KB
+css/37-d-chart-overview.css                         56 lines    4 KB
 ```
 
 **developer** - 4 files, 180 lines, 13 KB
@@ -378,3 +379,4 @@ shared/meta.css                                     98 lines    5 KB
 ```
 <!-- AUTO:END -->
 - Door v2 (login→Razorpay pay→app + local admin): see docs/DOOR.md and ../door-site/. Customer edition is DERIVED by tools/build_customer.py (editions/customer/customer-layer.js, customer_top.js); originals untouched. Old gate/ (encrypted blob) is superseded.
+- D-chart info redesigned as one 'At a glance' dashboard (js/69 overview(), css/37).
