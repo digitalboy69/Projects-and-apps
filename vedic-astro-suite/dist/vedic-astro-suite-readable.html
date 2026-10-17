@@ -11537,6 +11537,42 @@ body:not(.app-mode) main.wrap{overflow-x:clip}
 #panel-vargas{scroll-behavior:auto}
 html{scroll-behavior:auto!important}
 </style>
+<style>
+/* ===== Popular charts (below the 3-step form on the input page) ===== */
+.pc-wrap{margin-top:34px;padding-top:26px;border-top:1px solid var(--border-light)}
+.pc-h{text-align:center;margin-bottom:14px}
+.pc-k{font:700 11px var(--font-sans);letter-spacing:.28em;color:var(--gold-bright)}
+.pc-t{margin-top:6px;font:700 22px var(--font-serif,Georgia,serif);color:var(--text-main)}
+.pc-s{margin:6px auto 0;max-width:460px;font-size:13px;line-height:1.55;color:var(--text-muted)}
+.pc-chips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.pc-chips::-webkit-scrollbar{display:none}
+.pc-chip{flex:0 0 auto;border:1px solid var(--border-light);background:rgba(255,255,255,.04);color:var(--text-main);border-radius:var(--radius-full);padding:9px 14px;font:600 13px var(--font-sans);cursor:pointer;white-space:nowrap;opacity:.82;transition:all .2s}
+.pc-chip.on{background:linear-gradient(135deg,#f2d675,var(--gold));color:#1a1405;border-color:transparent;opacity:1}
+.pc-row{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 14px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.pc-card{flex:0 0 158px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;padding:16px 10px 14px;border-radius:22px;border:1px solid var(--border-light);color:var(--text-main);cursor:pointer;font-family:inherit;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01)),var(--bg-card);transition:transform .18s,border-color .2s}
+.pc-card:hover{border-color:var(--border-lighter);transform:translateY(-3px)}.pc-card:active{transform:scale(.97)}
+.pc-av{position:relative;width:78px;height:78px;margin:0 auto 10px;border-radius:50%;overflow:hidden;display:grid;place-items:center;font:700 24px var(--font-serif,Georgia,serif);color:#1a1405;background:radial-gradient(circle at 30% 25%,#fff3c4,var(--gold-bright) 45%,var(--gold-dim));box-shadow:0 0 0 2px rgba(249,217,118,.55),0 8px 22px rgba(0,0,0,.45)}
+.pc-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s}.pc-av img.ok{opacity:1}
+.pc-n{font:700 14px var(--font-sans);line-height:1.25}
+.pc-d{margin-top:3px;font-size:11.5px;line-height:1.35;color:var(--text-muted);min-height:31px}
+.pc-p{margin-top:8px;font-size:12px;line-height:1.4;color:var(--gold-bright)}
+.pc-note{margin:6px auto 0;max-width:520px;text-align:center;font-size:11.5px;line-height:1.55;color:var(--text-subtle)}
+.pc-bg{position:fixed;inset:0;z-index:1200;background:rgba(2,4,10,.74);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;animation:pcf .2s}
+@keyframes pcf{from{opacity:0}to{opacity:1}}@keyframes pcu{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.pc-sheet{position:relative;width:100%;max-width:440px;max-height:92dvh;overflow:auto;padding:24px 20px 22px;border-radius:28px 28px 0 0;text-align:center;color:var(--text-main);background:linear-gradient(180deg,#141a2c,#0b0e1a);border:1px solid var(--border-light);animation:pcu .28s cubic-bezier(.2,.8,.2,1)}
+@media(min-width:560px){.pc-bg{align-items:center}.pc-sheet{border-radius:28px}}
+.pc-sheet .pc-av{width:96px;height:96px;font-size:30px}
+.pc-sheet h3{font:700 20px var(--font-serif,Georgia,serif);margin-top:2px}
+.pc-sd{margin-top:3px;font-size:13px;color:var(--text-muted)}
+.pc-x{position:absolute;top:12px;right:14px;width:34px;height:34px;border-radius:50%;border:1px solid var(--border-light);background:rgba(255,255,255,.06);color:var(--text-main);font-size:16px;cursor:pointer}
+.pc-tb{margin:16px 0 4px;border-radius:16px;border:1px solid var(--border-light);overflow:hidden;text-align:left}
+.pc-tb div{display:flex;justify-content:space-between;gap:14px;padding:10px 14px;font-size:13px;border-top:1px solid var(--border-light)}
+.pc-tb div:first-child{border-top:0}.pc-tb span{color:var(--text-muted)}.pc-tb b{text-align:right;font-weight:600}
+.pc-w{margin-top:12px;font-size:12px;line-height:1.55;color:var(--text-muted);text-align:left}
+.pc-go{display:block;width:100%;margin-top:14px;border:0;border-radius:999px;padding:15px;font:700 15px var(--font-sans);color:#1a1405;cursor:pointer;background:linear-gradient(135deg,#f2d675,var(--gold));box-shadow:var(--shadow-btn)}
+.pc-go:active{transform:scale(.97)}
+.pc-src{display:inline-block;margin-top:12px;font-size:12px;color:var(--gold-bright)}
+</style>
 
 
 
@@ -11947,6 +11983,9 @@ html{scroll-behavior:auto!important}
         <div class="in-micro">Takes a few seconds · You can change anything later</div>
       </div>
     </form>
+
+    <\!-- POPULAR CHARTS: filled by js/86-popular-charts.js -->
+    <section class="pc-wrap" id="popCharts" aria-label="Popular charts"></section>
   </section>
 
   <div class="loading-overlay" id="loadingOverlay">
@@ -35407,6 +35446,244 @@ document.addEventListener('click', e => {
     if (e.target.closest('#vx3dBtn')) window.vxSend3D(typeof currentSelectedVarga !== 'undefined' ? currentSelectedVarga : 'D1');
     else if (e.target.closest('[data-3d]')) window.vxSend3D('D1');
   });
+})();
+<\/script>
+<script>
+/* ============================================================================
+   POPULAR CHARTS: data (100 public figures, 10 groups x 10). Used by js/86-popular-charts.js.
+   - dob/place/lat/lon/tz: public records (tz = UTC offset at birth, from historical timezone rules; old dates use local mean time).
+   - tob: ONLY set where a birth certificate / record is documented (Obama 19:24, Einstein 11:30). Everyone else: null (shown as "not recorded", cast at noon).
+   - sun / moon: sidereal (Lahiri) sign(s) computed with this app's own engine. Two names = the Moon (or Sun) changes sign during that birth day.
+   - nak: Moon nakshatra, only when it is the same all day. lagna: Rising sign, only when stable for +/-20 min of a documented time.
+   - wiki: English Wikipedia page title (photo + "read more" link are loaded from it at runtime).
+   To add a person: append a row (cat must be one of PC_CATS). Keep 10 per group so the rows stay even.
+   ============================================================================ */
+const PC_CATS = [
+  ['wealth','💰','Wealthiest'],['genius','🧠','Geniuses'],['leaders','🏛️','World leaders'],['sports','🏆','Sports legends'],['screen','🎬','Film & TV'],
+  ['music','🎵','Music icons'],['spirit','🕉️','Spiritual masters'],['arts','🎨','Writers & artists'],['india','🇮🇳','Indian icons'],['tech','🚀','Tech founders']
+];
+const PC_PEOPLE = [
+  {"cat":"wealth","name":"Warren Buffett","wiki":"Warren_Buffett","dob":"1930-08-30","place":"Omaha, USA","lat":41.2565,"lon":-95.9345,"tz":-5,"desc":"Investor · Berkshire Hathaway","tob":null,"sun":["Leo"],"moon":["Scorpio"],"nak":"Anuradha","lagna":null},
+  {"cat":"wealth","name":"Bill Gates","wiki":"Bill_Gates","dob":"1955-10-28","place":"Seattle, USA","lat":47.6062,"lon":-122.3321,"tz":-8,"desc":"Co-founder of Microsoft","tob":null,"sun":["Libra"],"moon":["Pisces"],"nak":null,"lagna":null},
+  {"cat":"wealth","name":"Jeff Bezos","wiki":"Jeff_Bezos","dob":"1964-01-12","place":"Albuquerque, USA","lat":35.0844,"lon":-106.6504,"tz":-7,"desc":"Founder of Amazon","tob":null,"sun":["Sagittarius"],"moon":["Scorpio","Sagittarius"],"nak":null,"lagna":null},
+  {"cat":"wealth","name":"Elon Musk","wiki":"Elon_Musk","dob":"1971-06-28","place":"Pretoria, South Africa","lat":-25.7479,"lon":28.2293,"tz":2,"desc":"Tesla · SpaceX","tob":null,"sun":["Gemini"],"moon":["Leo"],"nak":null,"lagna":null},
+  {"cat":"wealth","name":"Mark Zuckerberg","wiki":"Mark_Zuckerberg","dob":"1984-05-14","place":"White Plains, USA","lat":41.034,"lon":-73.7629,"tz":-4,"desc":"Co-founder of Facebook","tob":null,"sun":["Aries","Taurus"],"moon":["Libra","Scorpio"],"nak":null,"lagna":null},
+  {"cat":"wealth","name":"Larry Ellison","wiki":"Larry_Ellison","dob":"1944-08-17","place":"New York, USA","lat":40.7128,"lon":-74.006,"tz":-4,"desc":"Co-founder of Oracle","tob":null,"sun":["Leo"],"moon":["Cancer"],"nak":null,"lagna":null},
+  {"cat":"wealth","name":"Bernard Arnault","wiki":"Bernard_Arnault","dob":"1949-03-05","place":"Roubaix, France","lat":50.6927,"lon":3.1778,"tz":1,"desc":"Chairman of LVMH","tob":null,"sun":["Aquarius"],"moon":["Aries"],"nak":null,"lagna":null},
+  {"cat":"wealth","name":"Mukesh Ambani","wiki":"Mukesh_Ambani","dob":"1957-04-19","place":"Aden, Yemen","lat":12.7855,"lon":45.0187,"tz":3,"desc":"Reliance Industries","tob":null,"sun":["Aries"],"moon":["Sagittarius"],"nak":"Mula","lagna":null},
+  {"cat":"wealth","name":"Carlos Slim","wiki":"Carlos_Slim","dob":"1940-01-28","place":"Mexico City, Mexico","lat":19.4326,"lon":-99.1332,"tz":-6,"desc":"Telecom magnate","tob":null,"sun":["Capricorn"],"moon":["Leo","Virgo"],"nak":null,"lagna":null},
+  {"cat":"wealth","name":"Amancio Ortega","wiki":"Amancio_Ortega","dob":"1936-03-28","place":"Busdongo, Spain","lat":42.9886,"lon":-5.7556,"tz":0,"desc":"Founder of Zara (Inditex)","tob":null,"sun":["Pisces"],"moon":["Taurus","Gemini"],"nak":null,"lagna":null},
+  {"cat":"genius","name":"Albert Einstein","wiki":"Albert_Einstein","dob":"1879-03-14","place":"Ulm, Germany","lat":48.4011,"lon":9.9876,"tz":0.6667,"desc":"Theory of relativity","tob":"11:30","sun":["Pisces"],"moon":["Scorpio"],"nak":"Jyeshtha","lagna":"Gemini"},
+  {"cat":"genius","name":"Stephen Hawking","wiki":"Stephen_Hawking","dob":"1942-01-08","place":"Oxford, UK","lat":51.752,"lon":-1.2577,"tz":1,"desc":"Black holes and cosmology","tob":null,"sun":["Sagittarius"],"moon":["Leo","Virgo"],"nak":null,"lagna":null},
+  {"cat":"genius","name":"Nikola Tesla","wiki":"Nikola_Tesla","dob":"1856-07-10","place":"Smiljan, Croatia","lat":44.5544,"lon":15.3144,"tz":1.0667,"desc":"Pioneer of AC electricity","tob":null,"sun":["Gemini"],"moon":["Virgo","Libra"],"nak":null,"lagna":null},
+  {"cat":"genius","name":"Marie Curie","wiki":"Marie_Curie","dob":"1867-11-07","place":"Warsaw, Poland","lat":52.2297,"lon":21.0122,"tz":1.4,"desc":"Radioactivity · two Nobel Prizes","tob":null,"sun":["Libra"],"moon":["Aquarius","Pisces"],"nak":null,"lagna":null},
+  {"cat":"genius","name":"Alan Turing","wiki":"Alan_Turing","dob":"1912-06-23","place":"London, UK","lat":51.5074,"lon":-0.1278,"tz":0,"desc":"Father of computer science","tob":null,"sun":["Gemini"],"moon":["Virgo","Libra"],"nak":null,"lagna":null},
+  {"cat":"genius","name":"Isaac Newton","wiki":"Isaac_Newton","dob":"1643-01-04","place":"Woolsthorpe, England","lat":52.8053,"lon":-0.6097,"tz":-0.0167,"desc":"Laws of motion and gravity","tob":null,"sun":["Sagittarius"],"moon":["Gemini"],"nak":null,"lagna":null},
+  {"cat":"genius","name":"Srinivasa Ramanujan","wiki":"Srinivasa_Ramanujan","dob":"1887-12-22","place":"Erode, India","lat":11.341,"lon":77.7172,"tz":5.35,"desc":"Mathematical genius","tob":null,"sun":["Sagittarius"],"moon":["Pisces"],"nak":null,"lagna":null},
+  {"cat":"genius","name":"Richard Feynman","wiki":"Richard_Feynman","dob":"1918-05-11","place":"New York, USA","lat":40.7128,"lon":-74.006,"tz":-4,"desc":"Quantum physicist","tob":null,"sun":["Aries"],"moon":["Taurus"],"nak":null,"lagna":null},
+  {"cat":"genius","name":"John von Neumann","wiki":"John_von_Neumann","dob":"1903-12-28","place":"Budapest, Hungary","lat":47.4979,"lon":19.0402,"tz":1,"desc":"Polymath · game theory","tob":null,"sun":["Sagittarius"],"moon":["Pisces","Aries"],"nak":null,"lagna":null},
+  {"cat":"genius","name":"Terence Tao","wiki":"Terence_Tao","dob":"1975-07-17","place":"Adelaide, Australia","lat":-34.9285,"lon":138.6007,"tz":9.5,"desc":"Fields Medal mathematician","tob":null,"sun":["Gemini","Cancer"],"moon":["Libra"],"nak":null,"lagna":null},
+  {"cat":"leaders","name":"Mahatma Gandhi","wiki":"Mahatma_Gandhi","dob":"1869-10-02","place":"Porbandar, India","lat":21.6417,"lon":69.6293,"tz":5.8833,"desc":"Leader of India's independence","tob":null,"sun":["Virgo"],"moon":["Cancer","Leo"],"nak":null,"lagna":null},
+  {"cat":"leaders","name":"Nelson Mandela","wiki":"Nelson_Mandela","dob":"1918-07-18","place":"Mvezo, South Africa","lat":-31.9667,"lon":28.5167,"tz":2,"desc":"Anti-apartheid icon · President","tob":null,"sun":["Cancer"],"moon":["Libra","Scorpio"],"nak":null,"lagna":null},
+  {"cat":"leaders","name":"Abraham Lincoln","wiki":"Abraham_Lincoln","dob":"1809-02-12","place":"Hodgenville, USA","lat":37.5736,"lon":-85.7391,"tz":-5.7167,"desc":"16th US President","tob":null,"sun":["Aquarius"],"moon":["Capricorn"],"nak":null,"lagna":null},
+  {"cat":"leaders","name":"Winston Churchill","wiki":"Winston_Churchill","dob":"1874-11-30","place":"Woodstock, UK","lat":51.8414,"lon":-1.3612,"tz":0,"desc":"UK wartime Prime Minister","tob":null,"sun":["Scorpio"],"moon":["Leo"],"nak":null,"lagna":null},
+  {"cat":"leaders","name":"Barack Obama","wiki":"Barack_Obama","dob":"1961-08-04","place":"Honolulu, USA","lat":21.3069,"lon":-157.8583,"tz":-10,"desc":"44th US President","tob":"19:24","sun":["Cancer"],"moon":["Taurus"],"nak":"Rohini","lagna":null},
+  {"cat":"leaders","name":"John F. Kennedy","wiki":"John_F._Kennedy","dob":"1917-05-29","place":"Brookline, USA","lat":42.3318,"lon":-71.1212,"tz":-5,"desc":"35th US President","tob":null,"sun":["Taurus"],"moon":["Leo"],"nak":null,"lagna":null},
+  {"cat":"leaders","name":"Martin Luther King Jr.","wiki":"Martin_Luther_King_Jr.","dob":"1929-01-15","place":"Atlanta, USA","lat":33.749,"lon":-84.388,"tz":-5,"desc":"Civil rights leader","tob":null,"sun":["Capricorn"],"moon":["Aquarius","Pisces"],"nak":null,"lagna":null},
+  {"cat":"leaders","name":"Indira Gandhi","wiki":"Indira_Gandhi","dob":"1917-11-19","place":"Prayagraj, India","lat":25.4358,"lon":81.8463,"tz":5.5,"desc":"India's first woman Prime Minister","tob":null,"sun":["Scorpio"],"moon":["Sagittarius","Capricorn"],"nak":null,"lagna":null},
+  {"cat":"leaders","name":"A. P. J. Abdul Kalam","wiki":"A._P._J._Abdul_Kalam","dob":"1931-10-15","place":"Rameswaram, India","lat":9.2876,"lon":79.3129,"tz":5.5,"desc":"Missile scientist · President of India","tob":null,"sun":["Virgo"],"moon":["Scorpio"],"nak":null,"lagna":null},
+  {"cat":"leaders","name":"Napoleon Bonaparte","wiki":"Napoleon","dob":"1769-08-15","place":"Ajaccio, France","lat":41.9192,"lon":8.7386,"tz":0.15,"desc":"Emperor of the French","tob":null,"sun":["Leo"],"moon":["Capricorn"],"nak":null,"lagna":null},
+  {"cat":"sports","name":"Sachin Tendulkar","wiki":"Sachin_Tendulkar","dob":"1973-04-24","place":"Mumbai, India","lat":19.076,"lon":72.8777,"tz":5.5,"desc":"Cricket's run machine","tob":null,"sun":["Aries"],"moon":["Sagittarius","Capricorn"],"nak":null,"lagna":null},
+  {"cat":"sports","name":"Virat Kohli","wiki":"Virat_Kohli","dob":"1988-11-05","place":"Delhi, India","lat":28.6139,"lon":77.209,"tz":5.5,"desc":"Cricket superstar","tob":null,"sun":["Libra"],"moon":["Leo","Virgo"],"nak":null,"lagna":null},
+  {"cat":"sports","name":"M. S. Dhoni","wiki":"MS_Dhoni","dob":"1981-07-07","place":"Ranchi, India","lat":23.3441,"lon":85.3096,"tz":5.5,"desc":"World Cup-winning captain","tob":null,"sun":["Gemini"],"moon":["Leo","Virgo"],"nak":null,"lagna":null},
+  {"cat":"sports","name":"Lionel Messi","wiki":"Lionel_Messi","dob":"1987-06-24","place":"Rosario, Argentina","lat":-32.9468,"lon":-60.6393,"tz":-3,"desc":"World Cup-winning footballer","tob":null,"sun":["Gemini"],"moon":["Taurus"],"nak":null,"lagna":null},
+  {"cat":"sports","name":"Cristiano Ronaldo","wiki":"Cristiano_Ronaldo","dob":"1985-02-05","place":"Funchal, Portugal","lat":32.6669,"lon":-16.9241,"tz":0,"desc":"Football's record goalscorer","tob":null,"sun":["Capricorn"],"moon":["Cancer"],"nak":null,"lagna":null},
+  {"cat":"sports","name":"Muhammad Ali","wiki":"Muhammad_Ali","dob":"1942-01-17","place":"Louisville, USA","lat":38.2527,"lon":-85.7585,"tz":-6,"desc":"Boxing's \"The Greatest\"","tob":null,"sun":["Capricorn"],"moon":["Capricorn"],"nak":null,"lagna":null},
+  {"cat":"sports","name":"Michael Jordan","wiki":"Michael_Jordan","dob":"1963-02-17","place":"Brooklyn, USA","lat":40.6782,"lon":-73.9442,"tz":-5,"desc":"Basketball icon","tob":null,"sun":["Aquarius"],"moon":["Scorpio"],"nak":null,"lagna":null},
+  {"cat":"sports","name":"Usain Bolt","wiki":"Usain_Bolt","dob":"1986-08-21","place":"Trelawny, Jamaica","lat":18.35,"lon":-77.65,"tz":-5,"desc":"World's fastest man","tob":null,"sun":["Leo"],"moon":["Aquarius","Pisces"],"nak":null,"lagna":null},
+  {"cat":"sports","name":"Roger Federer","wiki":"Roger_Federer","dob":"1981-08-08","place":"Basel, Switzerland","lat":47.5596,"lon":7.5886,"tz":2,"desc":"20 Grand Slam titles","tob":null,"sun":["Cancer"],"moon":["Libra","Scorpio"],"nak":null,"lagna":null},
+  {"cat":"sports","name":"Serena Williams","wiki":"Serena_Williams","dob":"1981-09-26","place":"Saginaw, USA","lat":43.4195,"lon":-83.9508,"tz":-4,"desc":"23 Grand Slam titles","tob":null,"sun":["Virgo"],"moon":["Leo"],"nak":null,"lagna":null},
+  {"cat":"screen","name":"Amitabh Bachchan","wiki":"Amitabh_Bachchan","dob":"1942-10-11","place":"Prayagraj, India","lat":25.4358,"lon":81.8463,"tz":6.5,"desc":"Bollywood's Big B","tob":null,"sun":["Virgo"],"moon":["Libra"],"nak":null,"lagna":null},
+  {"cat":"screen","name":"Shah Rukh Khan","wiki":"Shah_Rukh_Khan","dob":"1965-11-02","place":"New Delhi, India","lat":28.6139,"lon":77.209,"tz":5.5,"desc":"King of Bollywood","tob":null,"sun":["Libra"],"moon":["Capricorn","Aquarius"],"nak":null,"lagna":null},
+  {"cat":"screen","name":"Marilyn Monroe","wiki":"Marilyn_Monroe","dob":"1926-06-01","place":"Los Angeles, USA","lat":34.0522,"lon":-118.2437,"tz":-8,"desc":"Hollywood legend","tob":null,"sun":["Taurus"],"moon":["Capricorn","Aquarius"],"nak":null,"lagna":null},
+  {"cat":"screen","name":"Audrey Hepburn","wiki":"Audrey_Hepburn","dob":"1929-05-04","place":"Brussels, Belgium","lat":50.8503,"lon":4.3517,"tz":1,"desc":"Screen and style icon","tob":null,"sun":["Aries"],"moon":["Aquarius"],"nak":null,"lagna":null},
+  {"cat":"screen","name":"Charlie Chaplin","wiki":"Charlie_Chaplin","dob":"1889-04-16","place":"London, UK","lat":51.5074,"lon":-0.1278,"tz":0,"desc":"Silent-film genius","tob":null,"sun":["Aries"],"moon":["Libra"],"nak":null,"lagna":null},
+  {"cat":"screen","name":"Leonardo DiCaprio","wiki":"Leonardo_DiCaprio","dob":"1974-11-11","place":"Los Angeles, USA","lat":34.0522,"lon":-118.2437,"tz":-8,"desc":"Oscar-winning actor","tob":null,"sun":["Libra"],"moon":["Virgo","Libra"],"nak":null,"lagna":null},
+  {"cat":"screen","name":"Brad Pitt","wiki":"Brad_Pitt","dob":"1963-12-18","place":"Shawnee, USA","lat":35.3273,"lon":-96.9253,"tz":-6,"desc":"Actor and producer","tob":null,"sun":["Sagittarius"],"moon":["Sagittarius","Capricorn"],"nak":null,"lagna":null},
+  {"cat":"screen","name":"Oprah Winfrey","wiki":"Oprah_Winfrey","dob":"1954-01-29","place":"Kosciusko, USA","lat":33.0576,"lon":-89.5876,"tz":-6,"desc":"Media mogul","tob":null,"sun":["Capricorn"],"moon":["Scorpio"],"nak":null,"lagna":null},
+  {"cat":"screen","name":"Rajinikanth","wiki":"Rajinikanth","dob":"1950-12-12","place":"Bengaluru, India","lat":12.9716,"lon":77.5946,"tz":5.5,"desc":"Superstar of Indian cinema","tob":null,"sun":["Scorpio"],"moon":["Sagittarius","Capricorn"],"nak":null,"lagna":null},
+  {"cat":"screen","name":"Priyanka Chopra","wiki":"Priyanka_Chopra","dob":"1982-07-18","place":"Jamshedpur, India","lat":22.8046,"lon":86.2029,"tz":5.5,"desc":"Global film star","tob":null,"sun":["Cancer"],"moon":["Taurus","Gemini"],"nak":null,"lagna":null},
+  {"cat":"music","name":"Michael Jackson","wiki":"Michael_Jackson","dob":"1958-08-29","place":"Gary, USA","lat":41.5934,"lon":-87.3464,"tz":-5,"desc":"King of Pop","tob":null,"sun":["Leo"],"moon":["Aquarius"],"nak":null,"lagna":null},
+  {"cat":"music","name":"Elvis Presley","wiki":"Elvis_Presley","dob":"1935-01-08","place":"Tupelo, USA","lat":34.2576,"lon":-88.7034,"tz":-6,"desc":"King of Rock and Roll","tob":null,"sun":["Sagittarius"],"moon":["Aquarius"],"nak":null,"lagna":null},
+  {"cat":"music","name":"John Lennon","wiki":"John_Lennon","dob":"1940-10-09","place":"Liverpool, UK","lat":53.4084,"lon":-2.9916,"tz":1,"desc":"The Beatles","tob":null,"sun":["Virgo"],"moon":["Capricorn"],"nak":null,"lagna":null},
+  {"cat":"music","name":"Freddie Mercury","wiki":"Freddie_Mercury","dob":"1946-09-05","place":"Zanzibar, Tanzania","lat":-6.1659,"lon":39.2026,"tz":3,"desc":"Queen frontman","tob":null,"sun":["Leo"],"moon":["Sagittarius"],"nak":null,"lagna":null},
+  {"cat":"music","name":"Madonna","wiki":"Madonna","dob":"1958-08-16","place":"Bay City, USA","lat":43.5945,"lon":-83.8889,"tz":-5,"desc":"Queen of Pop","tob":null,"sun":["Cancer","Leo"],"moon":["Leo"],"nak":null,"lagna":null},
+  {"cat":"music","name":"Beyoncé","wiki":"Beyoncé","dob":"1981-09-04","place":"Houston, USA","lat":29.7604,"lon":-95.3698,"tz":-5,"desc":"Global pop star","tob":null,"sun":["Leo"],"moon":["Libra","Scorpio"],"nak":null,"lagna":null},
+  {"cat":"music","name":"Taylor Swift","wiki":"Taylor_Swift","dob":"1989-12-13","place":"Reading, USA","lat":40.3356,"lon":-75.9269,"tz":-5,"desc":"Record-breaking songwriter","tob":null,"sun":["Scorpio"],"moon":["Gemini"],"nak":null,"lagna":null},
+  {"cat":"music","name":"Lata Mangeshkar","wiki":"Lata_Mangeshkar","dob":"1929-09-28","place":"Indore, India","lat":22.7196,"lon":75.8577,"tz":5.5,"desc":"Nightingale of India","tob":null,"sun":["Virgo"],"moon":["Cancer"],"nak":null,"lagna":null},
+  {"cat":"music","name":"A. R. Rahman","wiki":"A._R._Rahman","dob":"1967-01-06","place":"Chennai, India","lat":13.0827,"lon":80.2707,"tz":5.5,"desc":"Oscar-winning composer","tob":null,"sun":["Sagittarius"],"moon":["Libra","Scorpio"],"nak":null,"lagna":null},
+  {"cat":"music","name":"Wolfgang A. Mozart","wiki":"Wolfgang_Amadeus_Mozart","dob":"1756-01-27","place":"Salzburg, Austria","lat":47.8095,"lon":13.055,"tz":1.0833,"desc":"Classical prodigy","tob":null,"sun":["Capricorn"],"moon":["Scorpio"],"nak":null,"lagna":null},
+  {"cat":"spirit","name":"Swami Vivekananda","wiki":"Swami_Vivekananda","dob":"1863-01-12","place":"Kolkata, India","lat":22.5726,"lon":88.3639,"tz":5.8833,"desc":"Took Vedanta to the world","tob":null,"sun":["Sagittarius","Capricorn"],"moon":["Virgo"],"nak":null,"lagna":null},
+  {"cat":"spirit","name":"Sri Ramakrishna","wiki":"Ramakrishna","dob":"1836-02-18","place":"Kamarpukur, India","lat":22.9,"lon":87.65,"tz":5.8833,"desc":"Mystic of Dakshineswar","tob":null,"sun":["Aquarius"],"moon":["Aquarius","Pisces"],"nak":null,"lagna":null},
+  {"cat":"spirit","name":"Paramahansa Yogananda","wiki":"Paramahansa_Yogananda","dob":"1893-01-05","place":"Gorakhpur, India","lat":26.7606,"lon":83.3732,"tz":5.35,"desc":"Autobiography of a Yogi","tob":null,"sun":["Sagittarius"],"moon":["Cancer","Leo"],"nak":null,"lagna":null},
+  {"cat":"spirit","name":"Sathya Sai Baba","wiki":"Sathya_Sai_Baba","dob":"1926-11-23","place":"Puttaparthi, India","lat":14.1651,"lon":77.8113,"tz":5.5,"desc":"Spiritual teacher","tob":null,"sun":["Scorpio"],"moon":["Gemini"],"nak":null,"lagna":null},
+  {"cat":"spirit","name":"Sri Aurobindo","wiki":"Sri_Aurobindo","dob":"1872-08-15","place":"Kolkata, India","lat":22.5726,"lon":88.3639,"tz":5.35,"desc":"Yogi and philosopher","tob":null,"sun":["Leo"],"moon":["Sagittarius"],"nak":null,"lagna":null},
+  {"cat":"spirit","name":"Ramana Maharshi","wiki":"Ramana_Maharshi","dob":"1879-12-30","place":"Tiruchuli, India","lat":9.54,"lon":78.23,"tz":5.35,"desc":"Sage of Arunachala","tob":null,"sun":["Sagittarius"],"moon":["Gemini","Cancer"],"nak":null,"lagna":null},
+  {"cat":"spirit","name":"Mother Teresa","wiki":"Mother_Teresa","dob":"1910-08-26","place":"Skopje, N. Macedonia","lat":41.9981,"lon":21.4254,"tz":1,"desc":"Saint of Kolkata","tob":null,"sun":["Leo"],"moon":["Aries","Taurus"],"nak":null,"lagna":null},
+  {"cat":"spirit","name":"Sadhguru","wiki":"Sadhguru","dob":"1957-09-03","place":"Mysuru, India","lat":12.2958,"lon":76.6394,"tz":5.5,"desc":"Isha Foundation founder","tob":null,"sun":["Leo"],"moon":["Sagittarius"],"nak":null,"lagna":null},
+  {"cat":"spirit","name":"Sri Sri Ravi Shankar","wiki":"Ravi_Shankar_(spiritual_leader)","dob":"1956-05-13","place":"Papanasam, India","lat":10.9248,"lon":79.2724,"tz":5.5,"desc":"Art of Living founder","tob":null,"sun":["Aries"],"moon":["Taurus","Gemini"],"nak":null,"lagna":null},
+  {"cat":"spirit","name":"Thich Nhat Hanh","wiki":"Thích_Nhất_Hạnh","dob":"1926-10-11","place":"Hue, Vietnam","lat":16.4637,"lon":107.5909,"tz":7,"desc":"Zen master","tob":null,"sun":["Virgo"],"moon":["Scorpio"],"nak":null,"lagna":null},
+  {"cat":"arts","name":"Rabindranath Tagore","wiki":"Rabindranath_Tagore","dob":"1861-05-07","place":"Kolkata, India","lat":22.5726,"lon":88.3639,"tz":5.8833,"desc":"Nobel-winning poet","tob":null,"sun":["Aries"],"moon":["Pisces","Aries"],"nak":null,"lagna":null},
+  {"cat":"arts","name":"Pablo Picasso","wiki":"Pablo_Picasso","dob":"1881-10-25","place":"Málaga, Spain","lat":36.7213,"lon":-4.4214,"tz":-0.25,"desc":"Co-founder of Cubism","tob":null,"sun":["Libra"],"moon":["Scorpio"],"nak":null,"lagna":null},
+  {"cat":"arts","name":"Vincent van Gogh","wiki":"Vincent_van_Gogh","dob":"1853-03-30","place":"Zundert, Netherlands","lat":51.4722,"lon":4.6592,"tz":0.3333,"desc":"Post-Impressionist painter","tob":null,"sun":["Pisces"],"moon":["Scorpio","Sagittarius"],"nak":null,"lagna":null},
+  {"cat":"arts","name":"Frida Kahlo","wiki":"Frida_Kahlo","dob":"1907-07-06","place":"Coyoacán, Mexico","lat":19.35,"lon":-99.162,"tz":-6.6167,"desc":"Mexican icon painter","tob":null,"sun":["Gemini"],"moon":["Taurus"],"nak":null,"lagna":null},
+  {"cat":"arts","name":"Leo Tolstoy","wiki":"Leo_Tolstoy","dob":"1828-09-09","place":"Yasnaya Polyana, Russia","lat":54.0759,"lon":37.5231,"tz":2.5,"desc":"War and Peace","tob":null,"sun":["Leo"],"moon":["Leo","Virgo"],"nak":null,"lagna":null},
+  {"cat":"arts","name":"J. K. Rowling","wiki":"J._K._Rowling","dob":"1965-07-31","place":"Yate, UK","lat":51.54,"lon":-2.41,"tz":1,"desc":"Harry Potter author","tob":null,"sun":["Cancer"],"moon":["Leo","Virgo"],"nak":null,"lagna":null},
+  {"cat":"arts","name":"Mark Twain","wiki":"Mark_Twain","dob":"1835-11-30","place":"Florida, USA","lat":39.495,"lon":-91.784,"tz":-5.85,"desc":"Tom Sawyer author","tob":null,"sun":["Scorpio"],"moon":["Pisces","Aries"],"nak":null,"lagna":null},
+  {"cat":"arts","name":"Maya Angelou","wiki":"Maya_Angelou","dob":"1928-04-04","place":"St. Louis, USA","lat":38.627,"lon":-90.1994,"tz":-6,"desc":"Poet and activist","tob":null,"sun":["Pisces"],"moon":["Virgo"],"nak":null,"lagna":null},
+  {"cat":"arts","name":"Ernest Hemingway","wiki":"Ernest_Hemingway","dob":"1899-07-21","place":"Oak Park, USA","lat":41.885,"lon":-87.7845,"tz":-6,"desc":"Nobel-winning novelist","tob":null,"sun":["Cancer"],"moon":["Sagittarius"],"nak":null,"lagna":null},
+  {"cat":"arts","name":"Salvador Dalí","wiki":"Salvador_Dalí","dob":"1904-05-11","place":"Figueres, Spain","lat":42.2662,"lon":2.9611,"tz":0,"desc":"Surrealist master","tob":null,"sun":["Aries"],"moon":["Pisces"],"nak":null,"lagna":null},
+  {"cat":"india","name":"Subhas Chandra Bose","wiki":"Subhas_Chandra_Bose","dob":"1897-01-23","place":"Cuttack, India","lat":20.4625,"lon":85.8828,"tz":5.35,"desc":"Netaji · Indian National Army","tob":null,"sun":["Capricorn"],"moon":["Virgo"],"nak":null,"lagna":null},
+  {"cat":"india","name":"Jawaharlal Nehru","wiki":"Jawaharlal_Nehru","dob":"1889-11-14","place":"Prayagraj, India","lat":25.4358,"lon":81.8463,"tz":5.35,"desc":"First Prime Minister of India","tob":null,"sun":["Libra","Scorpio"],"moon":["Cancer"],"nak":null,"lagna":null},
+  {"cat":"india","name":"Sardar Vallabhbhai Patel","wiki":"Vallabhbhai_Patel","dob":"1875-10-31","place":"Nadiad, India","lat":22.6916,"lon":72.8634,"tz":5.35,"desc":"Iron Man of India","tob":null,"sun":["Libra"],"moon":["Scorpio"],"nak":null,"lagna":null},
+  {"cat":"india","name":"B. R. Ambedkar","wiki":"B._R._Ambedkar","dob":"1891-04-14","place":"Mhow, India","lat":22.553,"lon":75.76,"tz":5.35,"desc":"Architect of the Constitution","tob":null,"sun":["Aries"],"moon":["Gemini"],"nak":null,"lagna":null},
+  {"cat":"india","name":"Major Dhyan Chand","wiki":"Dhyan_Chand","dob":"1905-08-29","place":"Prayagraj, India","lat":25.4358,"lon":81.8463,"tz":5.35,"desc":"Hockey wizard","tob":null,"sun":["Leo"],"moon":["Cancer","Leo"],"nak":null,"lagna":null},
+  {"cat":"india","name":"Dhirubhai Ambani","wiki":"Dhirubhai_Ambani","dob":"1932-12-28","place":"Chorwad, India","lat":21,"lon":70.23,"tz":5.5,"desc":"Founder of Reliance","tob":null,"sun":["Sagittarius"],"moon":["Sagittarius","Capricorn"],"nak":null,"lagna":null},
+  {"cat":"india","name":"Satyajit Ray","wiki":"Satyajit_Ray","dob":"1921-05-02","place":"Kolkata, India","lat":22.5726,"lon":88.3639,"tz":5.5,"desc":"Oscar-honoured filmmaker","tob":null,"sun":["Aries"],"moon":["Aquarius"],"nak":null,"lagna":null},
+  {"cat":"india","name":"Ratan Tata","wiki":"Ratan_Tata","dob":"1937-12-28","place":"Mumbai, India","lat":19.076,"lon":72.8777,"tz":5.5,"desc":"Tata Group chairman emeritus","tob":null,"sun":["Sagittarius"],"moon":["Libra","Scorpio"],"nak":null,"lagna":null},
+  {"cat":"india","name":"Kishore Kumar","wiki":"Kishore_Kumar","dob":"1929-08-04","place":"Khandwa, India","lat":21.8333,"lon":76.35,"tz":5.5,"desc":"Legendary playback singer","tob":null,"sun":["Cancer"],"moon":["Gemini","Cancer"],"nak":null,"lagna":null},
+  {"cat":"india","name":"M. S. Subbulakshmi","wiki":"M._S._Subbulakshmi","dob":"1916-09-16","place":"Madurai, India","lat":9.9252,"lon":78.1198,"tz":5.5,"desc":"Queen of Carnatic music","tob":null,"sun":["Leo","Virgo"],"moon":["Aries","Taurus"],"nak":null,"lagna":null},
+  {"cat":"tech","name":"Steve Jobs","wiki":"Steve_Jobs","dob":"1955-02-24","place":"San Francisco, USA","lat":37.7749,"lon":-122.4194,"tz":-8,"desc":"Co-founder of Apple","tob":null,"sun":["Aquarius"],"moon":["Pisces"],"nak":null,"lagna":null},
+  {"cat":"tech","name":"Larry Page","wiki":"Larry_Page","dob":"1973-03-26","place":"East Lansing, USA","lat":42.737,"lon":-84.4839,"tz":-5,"desc":"Co-founder of Google","tob":null,"sun":["Pisces"],"moon":["Sagittarius"],"nak":null,"lagna":null},
+  {"cat":"tech","name":"Sergey Brin","wiki":"Sergey_Brin","dob":"1973-08-21","place":"Moscow, Russia","lat":55.7558,"lon":37.6173,"tz":3,"desc":"Co-founder of Google","tob":null,"sun":["Leo"],"moon":["Aries","Taurus"],"nak":null,"lagna":null},
+  {"cat":"tech","name":"Jack Ma","wiki":"Jack_Ma","dob":"1964-09-10","place":"Hangzhou, China","lat":30.2741,"lon":120.1551,"tz":8,"desc":"Founder of Alibaba","tob":null,"sun":["Leo"],"moon":["Libra"],"nak":null,"lagna":null},
+  {"cat":"tech","name":"Sundar Pichai","wiki":"Sundar_Pichai","dob":"1972-06-10","place":"Madurai, India","lat":9.9252,"lon":78.1198,"tz":5.5,"desc":"CEO of Google","tob":null,"sun":["Taurus"],"moon":["Taurus"],"nak":null,"lagna":null},
+  {"cat":"tech","name":"Satya Nadella","wiki":"Satya_Nadella","dob":"1967-08-19","place":"Hyderabad, India","lat":17.385,"lon":78.4867,"tz":5.5,"desc":"CEO of Microsoft","tob":null,"sun":["Leo"],"moon":["Capricorn"],"nak":null,"lagna":null},
+  {"cat":"tech","name":"Jensen Huang","wiki":"Jensen_Huang","dob":"1963-02-17","place":"Tainan, Taiwan","lat":22.9999,"lon":120.227,"tz":8,"desc":"Founder of NVIDIA","tob":null,"sun":["Aquarius"],"moon":["Scorpio"],"nak":null,"lagna":null},
+  {"cat":"tech","name":"Tim Cook","wiki":"Tim_Cook","dob":"1960-11-01","place":"Mobile, USA","lat":30.6954,"lon":-88.0399,"tz":-6,"desc":"CEO of Apple","tob":null,"sun":["Libra"],"moon":["Pisces","Aries"],"nak":null,"lagna":null},
+  {"cat":"tech","name":"Sam Altman","wiki":"Sam_Altman","dob":"1985-04-22","place":"Chicago, USA","lat":41.8781,"lon":-87.6298,"tz":-6,"desc":"CEO of OpenAI","tob":null,"sun":["Aries"],"moon":["Taurus"],"nak":null,"lagna":null},
+  {"cat":"tech","name":"Walt Disney","wiki":"Walt_Disney","dob":"1901-12-05","place":"Chicago, USA","lat":41.8781,"lon":-87.6298,"tz":-6,"desc":"Founder of Disney","tob":null,"sun":["Scorpio"],"moon":["Virgo"],"nak":null,"lagna":null}
+];
+<\/script>
+<script>
+/* ============================================================================
+   POPULAR CHARTS (input page, below the 3-step form). Data: js/85-popular-charts-data.js. Styles: css/38-popular-charts.css.
+   Tap a person -> detail sheet -> "Show this chart" fills the form with their birth data and casts it, exactly like opening a
+   shared link (loadProfileIntoForm + submit). Like any cast chart it is saved in "Welcome back" (delete it from the profile list).
+   Photos come from Wikipedia's REST summary API at runtime; if one is missing/wrong the card keeps the initials.
+   ============================================================================ */
+(function(){
+'use strict';
+const host = document.getElementById('popCharts');
+if (!host || typeof PC_PEOPLE === 'undefined') return;
+
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate = d => { const a = d.split('-'); return +a[2] + ' ' + MON[+a[1]-1] + ' ' + a[0]; };
+const initials = n => { const w = n.replace(/[^\p{L}\s]/gu,'').split(/\s+/).filter(Boolean); return (w[0]||'')[0] + (w.length>1 ? w[w.length-1][0] : ''); };
+const signs = a => a.join(' or ');
+const wikiUrl = p => 'https://en.wikipedia.org/wiki/' + encodeURIComponent(p.wiki);
+let cur = PC_CATS[0][0], sheet = null;
+
+/* ---------- photos (lazy, cached, 4 at a time) ---------- */
+const imgCache = {}, queue = []; let active = 0;
+const strip = s => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function fetchImg(p){
+  if (imgCache[p.wiki] !== undefined) return Promise.resolve(imgCache[p.wiki]);
+  return fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(p.wiki))
+    .then(r => r.ok ? r.json() : null).then(j => {
+      let url = null;
+      if (j && j.type === 'standard' && j.thumbnail && j.thumbnail.source){
+        // safety: the page must really be about this person (a name token of 4+ letters appears in its title/summary)
+        const hay = strip((j.title||'') + ' ' + (j.extract||'')), toks = strip(p.name).split(/[^a-z]+/).filter(t => t.length >= 4);
+        if (!toks.length || toks.some(t => hay.includes(t))) url = j.thumbnail.source;
+      }
+      return (imgCache[p.wiki] = url);
+    }).catch(() => (imgCache[p.wiki] = null));
+}
+function loadInto(p, box){ queue.push({p, box}); pump(); }
+function pump(){
+  while (active < 4 && queue.length){
+    const job = queue.shift(); active++;
+    fetchImg(job.p).then(url => {
+      if (url && document.body.contains(job.box)){
+        const im = new Image(); im.alt = ''; im.referrerPolicy = 'no-referrer'; im.decoding = 'async';
+        im.onload = () => { im.className = 'ok'; }; im.src = url; job.box.appendChild(im);
+      }
+    }).then(() => { active--; pump(); });
+  }
+}
+
+/* ---------- gallery ---------- */
+const posLine = p => '☉ ' + signs(p.sun) + ' · ☽ ' + signs(p.moon);
+const cardHtml = (p, i) => `<button type="button" class="pc-card" data-i="${i}"><div class="pc-av" data-w="${i}">${esc(initials(p.name))}</div>` +
+  `<div class="pc-n">${esc(p.name)}</div><div class="pc-d">${esc(p.desc)}</div><div class="pc-p">${esc(posLine(p))}</div></button>`;
+function render(){
+  const list = PC_PEOPLE.filter(p => p.cat === cur);
+  const row = document.getElementById('pcRow');
+  row.innerHTML = list.map(p => cardHtml(p, PC_PEOPLE.indexOf(p))).join(''); row.scrollLeft = 0;
+  document.querySelectorAll('#pcChips .pc-chip').forEach(c => c.classList.toggle('on', c.dataset.c === cur));
+  row.querySelectorAll('.pc-av').forEach(box => loadInto(PC_PEOPLE[+box.dataset.w], box));
+}
+host.innerHTML =
+  '<div class="pc-h"><div class="pc-k">POPULAR CHARTS</div><div class="pc-t">See how the famous are placed</div>' +
+  '<p class="pc-s">100 well-known people in 10 groups, shown in the Vedic (Lahiri) zodiac. Tap anyone for details, or open their full chart right here.</p></div>' +
+  '<div class="pc-chips" id="pcChips" role="tablist">' + PC_CATS.map(c => `<button type="button" role="tab" class="pc-chip" data-c="${c[0]}">${c[1]} ${esc(c[2])}</button>`).join('') + '</div>' +
+  '<div class="pc-row" id="pcRow"></div>' +
+  '<p class="pc-note">Birth dates are public records. Most birth times were never recorded, so a sign shown as “A or B” means it changed during that day. Photos come from Wikipedia.</p>';
+
+/* ---------- detail sheet + cast ---------- */
+function closeSheet(){ if (sheet){ sheet.remove(); sheet = null; document.removeEventListener('keydown', onKey); } }
+function onKey(e){ if (e.key === 'Escape') closeSheet(); }
+
+// The timezone list only has today's standard offsets. Old births (local mean time) need their own entry, otherwise the
+// previous selection would silently stay and the chart would be cast in the wrong zone.
+function ensureTzOption(tz){
+  const sel = document.getElementById('tzInput');
+  sel.querySelectorAll('option[data-pc]').forEach(o => o.remove());
+  if (![...sel.options].some(o => parseFloat(o.value) === tz)){
+    const o = document.createElement('option'); o.value = tz; o.dataset.pc = '1';
+    o.textContent = (typeof fmtTz === 'function' ? fmtTz(tz) : 'UTC' + tz) + ' (local mean time)'; sel.appendChild(o);
+  }
+}
+function cast(p){
+  const prof = { name: p.name.slice(0,40), dob: p.dob, tob: p.tob || '12:00', place: p.place, lat: +p.lat, lon: +p.lon, tz: +p.tz };
+  closeSheet(); ensureTzOption(prof.tz); loadProfileIntoForm(prof);
+  const f = document.getElementById('birthForm');
+  f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', {cancelable:true}));
+}
+function openSheet(i){
+  const p = PC_PEOPLE[i]; closeSheet();
+  const timed = !!p.tob;
+  const rows = [['Born', fmtDate(p.dob) + (timed ? ', ' + p.tob : '')], ['Place', p.place], ['Sun sign', signs(p.sun)], ['Moon sign', signs(p.moon)]];
+  if (p.nak) rows.push(['Moon nakshatra', p.nak]);
+  rows.push(['Rising sign', p.lagna || (timed ? 'Too close to a sign edge' : 'Needs a birth time')]);
+  const why = timed ? 'Birth time is documented, so the full chart can be cast.' :
+    'No reliable birth time is recorded. The chart opens as a noon chart, so the Moon and Rising sign are approximate.';
+  const bg = document.createElement('div'); bg.className = 'pc-bg'; bg.setAttribute('role','dialog'); bg.setAttribute('aria-modal','true'); bg.setAttribute('aria-label', p.name);
+  bg.innerHTML = `<div class="pc-sheet"><button type="button" class="pc-x" aria-label="Close">✕</button>` +
+    `<div class="pc-av">${esc(initials(p.name))}</div><h3>${esc(p.name)}</h3><div class="pc-sd">${esc(p.desc)}</div>` +
+    `<div class="pc-tb">${rows.map(r => `<div><span>${esc(r[0])}</span><b>${esc(r[1])}</b></div>`).join('')}</div>` +
+    `<p class="pc-w">${esc(why)}</p><button type="button" class="pc-go">✨ Show this chart</button>` +
+    `<a class="pc-src" href="${wikiUrl(p)}" target="_blank" rel="noopener noreferrer">Read about ${esc(p.name)} on Wikipedia ↗</a></div>`;
+  document.body.appendChild(bg); sheet = bg;
+  loadInto(p, bg.querySelector('.pc-av'));
+  bg.addEventListener('click', e => { if (e.target === bg || e.target.closest('.pc-x')) closeSheet(); });
+  bg.querySelector('.pc-go').addEventListener('click', () => cast(p));
+  document.addEventListener('keydown', onKey);
+}
+
+host.addEventListener('click', e => {
+  const chip = e.target.closest('.pc-chip'); if (chip){ cur = chip.dataset.c; render(); return; }
+  const card = e.target.closest('.pc-card'); if (card) openSheet(+card.dataset.i);
+});
+
+// photos are only requested when the gallery scrolls near the screen (the input page is long; most visitors never get here)
+let started = false;
+function start(){ if (started) return; started = true; render(); }
+if ('IntersectionObserver' in window){
+  new IntersectionObserver((en, ob) => { if (en.some(x => x.isIntersecting)){ ob.disconnect(); start(); } }, {rootMargin:'400px'}).observe(host);
+} else start();
 })();
 <\/script>
 </body>

@@ -138,6 +138,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/82-dasha-systems-ui.js` — 36 Dasha Systems panel `buildDashaSystemsPanel` (7 groups → side-by-side compare of each group's systems → per-system running-now ladder + level-by-level drill-down with start/end of every period; gender + sub-period toggles; conditional dashas sorted by whether the chart qualifies)
 - `apps/birth-chart/js/83-ui-overhaul.js` — UI overhaul glue: floating profile button (input page), search pill label, avatar initial, profile sheet hero (rising/moon/sun/star)
 - `apps/birth-chart/js/84-bridge-3d.js` — "View this chart in 3D" button: stores the open chart (all vargas) under `vax_bridge_3d` and asks the shell to open 3D Sky
+- `apps/birth-chart/js/85-popular-charts-data.js` — Popular charts data: 100 public figures (10 groups x 10), birth date/place/tz, Lahiri Sun/Moon/nakshatra/rising, Wikipedia titles; add a person = append a row
+- `apps/birth-chart/js/86-popular-charts.js` — Popular charts UI under the 3-step form on the input page: group chips, photo cards (Wikipedia, lazy), detail sheet, "Show this chart" casts it via loadProfileIntoForm + submit
 - `apps/birth-chart/css/01-premium-tokens-reset.css` — design tokens (colors, fonts) and reset
 - `apps/birth-chart/css/02-header.css` — header
 - `apps/birth-chart/css/03-hero-intake-form.css` — hero and birth intake form
@@ -175,6 +177,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/35-dasha-systems.css` — 36 Dasha Systems panel styles (`ds-*`)
 - `apps/birth-chart/css/36-ui-overhaul.css` — UI overhaul: clean full-screen input page, search-first header, segmented tile Home, profile sheet
 - `apps/birth-chart/css/37-d-chart-overview.css` — Divisional charts "At a glance" dashboard (hero, planet table, 12-house grid, balance bars, highlights)
+- `apps/birth-chart/css/38-popular-charts.css` — Popular charts section + detail sheet styles
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order
@@ -283,6 +286,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 ### tests/
 - `tests/_helpers.py` — shared Playwright helpers (VAX_TARGET=hosted tests the folder version)
 - `tests/smoke.py` — main end-to-end smoke test
+- `tests/popular_charts_test.py` — Popular charts section: 10 groups x 10 people, lazy Wikipedia photos (wrong-person guard), detail sheet, casting a chart incl. old-timezone option, no JS errors
 - `tests/customer_smoke.py` — customer edition smoke test
 - `tests/datefinder_test.py` — Date Finder test
 - `tests/syntax_check.py` — node --check over every js file
