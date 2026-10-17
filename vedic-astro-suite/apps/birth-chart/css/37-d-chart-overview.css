@@ -65,3 +65,11 @@
 @media(hover:hover){.gl-r:hover{background:rgba(212,162,74,.09);transform:translateX(2px)}.gl-hc:hover{transform:translateY(-2px);border-color:rgba(212,162,74,.5)}}
 @media(hover:none){.gl-r:hover,.gl-hc:hover{transform:none;background:inherit}}
 #panel-vargas{overflow-anchor:none}
+/* Divisional Charts: everything stays fixed on tap, no lift/shift/slide animations */
+#panel-vargas :where(*:not(svg):not(svg *)):is(:hover,:active,:focus,:focus-visible){transform:none!important}
+#panel-vargas .varga-card,#panel-vargas .vx-pane.on,#panel-vargas .gl,#panel-vargas .vx-t{animation:none!important}
+#panel-vargas .vx-pane.on{animation:vxFade .2s both!important}
+#panel-vargas .gl-r,#panel-vargas .gl-hc,#panel-vargas .vg-tile{transition:background .2s,border-color .2s,color .2s!important}
+#panel-vargas :where(button,a,.vg-tile,[role=button]){-webkit-tap-highlight-color:transparent;outline:none}
+#panel-vargas{scroll-behavior:auto}
+html{scroll-behavior:auto!important}
