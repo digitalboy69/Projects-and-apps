@@ -302,6 +302,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 ### docs/, dist/
 - `docs/DOOR.md` — door / licensing site notes
 - `docs/HANDOFF.md` — handoff notes
+- `docs/FULL_READING_PLAN.md` — Plan for the PDF-grade full reading: audit of what exists, gaps, architecture, 12 sessions with checklist, working rules, decisions. READ FIRST in every reading session
 - `docs/SUPABASE.md` — Supabase cloud-sync notes
 - `docs/THIRD_PARTY_LICENSES.md` — third-party licences
 - `dist/vedic-astro-suite-readable.html` — GENERATED single-file build (plain code). Never read or hand-edit
