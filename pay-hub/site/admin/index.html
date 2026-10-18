@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex"><meta name="theme-color" content="#12100d">
+<title>Pay Hub admin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Figtree:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#12100d;--card:#1b1814;--card2:#26211a;--line:#3a332a;--fg:#f1ebdf;--muted:#aaa190;--gold:#d4a24a;--gold2:#f0c46a;--ink:#1a1405;--bad:#ef8a7a;--good:#8fd19e;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(900px 420px at 50% -120px,rgba(212,162,74,.16),transparent 70%),var(--bg);color:var(--fg);font:15px/1.5 'Figtree',system-ui,sans-serif;padding:max(18px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 60px max(16px,env(safe-area-inset-left))}
+.wrap{max-width:900px;margin:0 auto}
+h1{font:600 26px 'Fraunces',Georgia,serif;margin:0}
+h2{font:600 20px 'Fraunces',Georgia,serif;margin:0 0 10px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.muted{color:var(--muted)}
+.card{background:linear-gradient(170deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+button{font-family:inherit}
+.tab{background:none;border:1px solid var(--line);color:var(--muted);border-radius:99px;padding:8px 16px;font-weight:600;cursor:pointer}
+.tab[aria-pressed=true]{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.btn{background:var(--gold);color:var(--ink);border:0;border-radius:11px;padding:10px 16px;font-weight:600;font-size:15px;cursor:pointer;min-height:42px}
+.btn.g{background:none;color:var(--fg);border:1.5px solid var(--line)}
+.btn.s{padding:7px 12px;min-height:0;font-size:13.5px;border-radius:9px}
+.btn.d{background:none;color:var(--bad);border:1.5px solid var(--bad)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:1px}
+label{display:block;font-weight:600;font-size:13.5px;margin:12px 0 5px}
+input,textarea,select{width:100%;font:15px inherit;font-family:inherit;color:var(--fg);background:#14110d;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px}
+.chk{display:flex;gap:10px;align-items:center;margin:10px 0}.chk input{width:auto}.chk label{margin:0;font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+.pg{display:grid;gap:8px}
+.pgh{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.pgh b{font:600 19px 'Fraunces',Georgia,serif}
+.badge{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:2px 9px;color:var(--muted)}
+.badge.on{color:var(--good);border-color:var(--good)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.stats{display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
+.stats b{color:var(--gold2)}
+.msg{min-height:1.4em;margin:10px 0 0;font-size:14px}.msg.bad{color:var(--bad)}.msg.good{color:var(--good)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 8px;border-top:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;border-top:0}
+.sc{overflow-x:auto}
+.st{font-weight:600}.st.paid{color:var(--good)}.st.failed,.st.refunded{color:var(--bad)}.st.created{color:var(--muted)}
+pre{white-space:pre-wrap;word-break:break-all;background:#14110d;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12.5px;margin:8px 0}
+[hidden]{display:none!important}
+</style></head>
+<body><div class="wrap">
+<div class="top"><div><h1>Pay Hub</h1><div class="muted" id="who">Your payment pages</div></div><button class="btn g s" id="out" hidden>Sign out</button></div>
+
+<section id="vLogin" class="card" hidden>
+  <h2>Sign in</h2>
+  <label for="em">Email</label><input id="em" type="email" autocomplete="username">
+  <label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password">
+  <div class="acts"><button class="btn" id="signin">Sign in</button><button class="btn g" id="signup">Create account</button></div>
+  <p class="msg" id="loginMsg" role="status"></p>
+</section>
+
+<section id="vClaim" class="card" hidden>
+  <h2>Become the owner</h2>
+  <p class="muted">This account is signed in but is not an admin yet. If nobody has claimed the owner spot, you can claim it now. It only works once.</p>
+  <button class="btn" id="claim">Make me the owner</button>
+  <p class="msg" id="claimMsg" role="status"></p>
+</section>
+
+<div id="vApp" hidden>
+  <div class="tabs"><button class="tab" id="tPages" aria-pressed="true">Pages</button><button class="tab" id="tPay" aria-pressed="false">Payments</button><button class="tab" id="tHelp" aria-pressed="false">Help</button></div>
+
+  <section id="pPages">
+    <div class="acts" style="margin:0 0 12px"><button class="btn" id="newPage">New payment page</button></div>
+    <div id="form" class="card" hidden></div>
+    <div id="list"></div>
+  </section>
+
+  <section id="pPay" hidden>
+    <div class="card"><div class="stats" id="payStats"></div>
+      <div class="acts"><select id="fStatus" style="width:auto"><option value="">All statuses</option><option>paid</option><option>created</option><option>failed</option><option>refunded</option></select><button class="btn g s" id="csv">Copy as CSV</button></div>
+      <p class="msg" id="payMsg" role="status"></p></div>
+    <div class="card sc"><table><thead><tr><th>Date</th><th>Page</th><th>Name</th><th>Contact</th><th>Amount</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </section>
+
+  <section id="pHelp" hidden>
+    <div class="card"><h2>How it works</h2>
+      <p>Make a page, copy its link or button, and share it anywhere: WhatsApp, Instagram bio, your website. When someone pays, it appears under Payments within seconds.</p>
+      <label for="linkStyle">Link style</label>
+      <select id="linkStyle"><option value="plain">Works everywhere: pay.html?p=name</option><option value="pretty">Short links: /p/name (needs Cloudflare Pages or Netlify)</option></select>
+      <p class="muted">Only use short links if your host supports the rewrite in <code>_redirects</code>.</p>
+    </div>
+  </section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../config.js"></script>
+<script>
+(function(){
+var C=window.PAYHUB,sb=supabase.createClient(C.supabaseUrl,C.anonKey),$=function(i){return document.getElementById(i)};
+var pages=[],orders=[],editing=null,pendingDelete=null;
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function inr(p){return '₹'+(p/100).toLocaleString('en-IN',{minimumFractionDigits:p%100?2:0,maximumFractionDigits:2})}
+function show(id){['vLogin','vClaim','vApp'].forEach(function(v){$(v).hidden=v!==id})}
+function say(id,t,k){var e=$(id);e.textContent=t;e.className='msg'+(k?' '+k:'')}
+function lsGet(k,d){try{return localStorage.getItem(k)||d}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function base(){return location.origin+location.pathname.replace(/admin\/?(index\.html)?$/,'')}
+function link(p){return lsGet('ph_link','plain')==='pretty'?base()+'p/'+p.slug:base()+'pay.html?p='+p.slug}
+function buttonCode(p){var l=p.pay_what_you_want?p.button_text:p.button_text+' · '+inr(p.amount_paise);return '<a href="'+link(p)+'" target="_blank" rel="noopener" style="display:inline-block;padding:12px 22px;border-radius:12px;background:#d4a24a;color:#1a1405;font:600 16px system-ui,sans-serif;text-decoration:none">'+esc(l)+'</a>'}
+function copy(text,msgId){
+  function done(ok){say(msgId,ok?'Copied.':'Select the text and copy it.',ok?'good':'')}
+  function fb(){var t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}document.body.removeChild(t);done(ok)}
+  try{navigator.clipboard.writeText(text).then(function(){done(true)},fb)}catch(e){fb()}
+}
+/* ---- sign in ---- */
+function auth(kind){
+  var e=$('em').value.trim(),p=$('pw').value;
+  if(!e||!p){say('loginMsg','Enter your email and password.','bad');return}
+  say('loginMsg','Please wait…');
+  var call=kind==='in'?sb.auth.signInWithPassword({email:e,password:p}):sb.auth.signUp({email:e,password:p});
+  call.then(function(r){
+    if(r.error){say('loginMsg',r.error.message,'bad');return}
+    if(kind==='up'&&!r.data.session){say('loginMsg','Account created. Check your email to confirm it, then sign in.','good');return}
+    boot()
+  })
+}
+function boot(){
+  sb.auth.getSession().then(function(r){
+    var s=r.data&&r.data.session;
+    if(!s){show('vLogin');$('out').hidden=true;return}
+    $('out').hidden=false;$('who').textContent=s.user.email;
+    sb.rpc('ph_is_admin').then(function(a){
+      if(a.data===true){show('vApp');loadAll()}else show('vClaim')
+    })
+  })
+}
+/* ---- data ---- */
+function loadAll(){
+  sb.from('ph_pages').select('*').order('created_at',{ascending:false}).then(function(r){pages=r.data||[];renderList()});
+  sb.from('ph_orders').select('*, ph_pages(title,slug)').order('created_at',{ascending:false}).limit(500).then(function(r){orders=r.data||[];renderList();renderPay()})
+}
+function statsFor(id){var n=0,sum=0;orders.forEach(function(o){if(o.page_id===id&&o.status==='paid'){n++;sum+=o.amount_paise}});return {n:n,sum:sum}}
+function renderList(){
+  if(!pages.length){$('list').innerHTML='<div class="card muted">No pages yet. Press "New payment page" to make your first one.</div>';return}
+  $('list').innerHTML=pages.map(function(p){var s=statsFor(p.id);
+    return '<div class="card pg"><div class="pgh"><b>'+esc(p.title)+'</b><span class="badge'+(p.active?' on':'')+'">'+(p.active?'Live':'Paused')+'</span></div>'+
+    '<div class="muted">'+esc(link(p))+'</div>'+
+    '<div class="stats"><span>Price <b>'+(p.pay_what_you_want?'Any amount from '+inr(p.min_paise):inr(p.amount_paise))+'</b></span><span>Paid <b>'+s.n+'</b></span><span>Earned <b>'+inr(s.sum)+'</b></span></div>'+
+    '<div class="acts"><button class="btn s" data-a="link" data-id="'+p.id+'">Copy link</button><button class="btn s g" data-a="btn" data-id="'+p.id+'">Copy button code</button><a class="btn s g" style="text-decoration:none;display:inline-flex;align-items:center" href="'+esc(link(p))+'" target="_blank" rel="noopener">Open</a><button class="btn s g" data-a="edit" data-id="'+p.id+'">Edit</button><button class="btn s g" data-a="tog" data-id="'+p.id+'">'+(p.active?'Pause':'Make live')+'</button>'+
+    (pendingDelete===p.id?'<span class="muted">Delete this page?</span><button class="btn s d" data-a="delyes" data-id="'+p.id+'">Yes, delete</button><button class="btn s g" data-a="delno" data-id="'+p.id+'">Keep</button>':'<button class="btn s d" data-a="del" data-id="'+p.id+'">Delete</button>')+'</div>'+
+    '<p class="msg" id="m-'+p.id+'" role="status"></p></div>'}).join('')
+}
+function slugify(t){return t.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,50)}
+function openForm(p){
+  editing=p?p.id:null;var v=p||{title:'',slug:'',description:'',amount_paise:50000,pay_what_you_want:false,min_paise:100,button_text:'Pay now',collect_phone:false,collect_note:false,success_message:'Thank you! Your payment was received.',redirect_url:'',active:true};
+  $('form').hidden=false;
+  $('form').innerHTML='<h2>'+(p?'Edit page':'New payment page')+'</h2>'+
+  '<label for="fTitle">Title</label><input id="fTitle" maxlength="120" value="'+esc(v.title)+'">'+
+  '<label for="fSlug">Link name (letters, numbers, dashes)</label><input id="fSlug" maxlength="61" value="'+esc(v.slug)+'">'+
+  '<label for="fDesc">Description (shown on the page)</label><textarea id="fDesc" rows="3" maxlength="2000">'+esc(v.description)+'</textarea>'+
+  '<div class="grid2"><div><label for="fAmt">Price (₹)</label><input id="fAmt" inputmode="decimal" value="'+(v.amount_paise/100)+'"></div><div><label for="fBtn">Button text</label><input id="fBtn" maxlength="40" value="'+esc(v.button_text)+'"></div></div>'+
+  '<div class="chk"><input type="checkbox" id="fPwyw"'+(v.pay_what_you_want?' checked':'')+'><label for="fPwyw">Let the customer choose the amount (tips, donations)</label></div>'+
+  '<div id="minRow"'+(v.pay_what_you_want?'':' hidden')+'><label for="fMin">Minimum amount (₹)</label><input id="fMin" inputmode="decimal" value="'+(v.min_paise/100)+'"></div>'+
+  '<div class="chk"><input type="checkbox" id="fPhone"'+(v.collect_phone?' checked':'')+'><label for="fPhone">Ask for phone number</label></div>'+
+  '<div class="chk"><input type="checkbox" id="fNote"'+(v.collect_note?' checked':'')+'><label for="fNote">Ask for a note</label></div>'+
+  '<label for="fOk">Message after payment</label><input id="fOk" maxlength="500" value="'+esc(v.success_message)+'">'+
+  '<label for="fRed">Send them to this link after payment (optional, must start with https://)</label><input id="fRed" value="'+esc(v.redirect_url||'')+'">'+
+  '<div class="chk"><input type="checkbox" id="fAct"'+(v.active?' checked':'')+'><label for="fAct">Page is live</label></div>'+
+  '<div class="acts"><button class="btn" id="fSave">Save page</button><button class="btn g" id="fCancel">Cancel</button></div><p class="msg" id="fMsg" role="alert"></p>';
+  $('fTitle').oninput=function(){if(!editing&&!$('fSlug').dataset.touched)$('fSlug').value=slugify(this.value)};
+  $('fSlug').oninput=function(){this.dataset.touched=1};
+  $('fPwyw').onchange=function(){$('minRow').hidden=!this.checked};
+  $('fCancel').onclick=function(){$('form').hidden=true};
+  $('fSave').onclick=save;$('form').scrollIntoView({behavior:'smooth',block:'start'})
+}
+function save(){
+  var amt=Math.round(parseFloat($('fAmt').value)*100),min=Math.round(parseFloat($('fMin')?$('fMin').value:'1')*100);
+  var row={title:$('fTitle').value.trim(),slug:$('fSlug').value.trim().toLowerCase(),description:$('fDesc').value.trim(),amount_paise:amt,button_text:$('fBtn').value.trim()||'Pay now',pay_what_you_want:$('fPwyw').checked,min_paise:isFinite(min)?min:100,collect_phone:$('fPhone').checked,collect_note:$('fNote').checked,success_message:$('fOk').value.trim()||'Thank you! Your payment was received.',redirect_url:$('fRed').value.trim()||null,active:$('fAct').checked};
+  if(!row.title)return say('fMsg','Please add a title.','bad');
+  if(!/^[a-z0-9][a-z0-9-]{1,60}$/.test(row.slug))return say('fMsg','Link name: 2 to 61 characters, only letters, numbers and dashes.','bad');
+  if(!isFinite(amt)||amt<100)return say('fMsg','Price must be at least ₹1.','bad');
+  if(row.redirect_url&&!/^https:\/\//.test(row.redirect_url))return say('fMsg','The after-payment link must start with https://','bad');
+  say('fMsg','Saving…');
+  var q=editing?sb.from('ph_pages').update(row).eq('id',editing):sb.from('ph_pages').insert(row);
+  q.then(function(r){
+    if(r.error){say('fMsg',/duplicate|unique/i.test(r.error.message)?'That link name is already used. Try another.':r.error.message,'bad');return}
+    $('form').hidden=true;loadAll()
+  })
+}
+function pageById(id){return pages.filter(function(p){return p.id===id})[0]}
+function renderPay(){
+  var f=$('fStatus').value,list=orders.filter(function(o){return !f||o.status===f}),paid=orders.filter(function(o){return o.status==='paid'});
+  var sum=paid.reduce(function(a,o){return a+o.amount_paise},0);
+  $('payStats').innerHTML='<span>Total earned <b>'+inr(sum)+'</b></span><span>Paid orders <b>'+paid.length+'</b></span><span>All attempts <b>'+orders.length+'</b></span>';
+  $('rows').innerHTML=list.length?list.map(function(o){
+    return '<tr><td>'+esc(new Date(o.created_at).toLocaleString([], {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))+'</td><td>'+esc(o.ph_pages?o.ph_pages.title:'')+'</td><td>'+esc(o.name)+(o.note?'<div class="muted">'+esc(o.note)+'</div>':'')+'</td><td>'+esc(o.email)+(o.phone?'<div class="muted">'+esc(o.phone)+'</div>':'')+'</td><td>'+inr(o.amount_paise)+'</td><td><span class="st '+esc(o.status)+'">'+esc(o.status)+'</span></td></tr>'}).join(''):'<tr><td colspan="6" class="muted">Nothing here yet.</td></tr>'
+}
+function csvCell(v){v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
+function tab(t){['Pages','Pay','Help'].forEach(function(n){$('p'+n).hidden=n!==t;$('t'+n).setAttribute('aria-pressed',n===t)})}
+/* ---- wiring ---- */
+$('signin').onclick=function(){auth('in')};$('signup').onclick=function(){auth('up')};
+$('pw').addEventListener('keydown',function(e){if(e.key==='Enter')auth('in')});
+$('out').onclick=function(){sb.auth.signOut().then(boot)};
+$('claim').onclick=function(){sb.rpc('ph_claim_admin').then(function(r){if(r.data===true)boot();else say('claimMsg','Someone else is already the owner of this Pay Hub.','bad')})};
+$('tPages').onclick=function(){tab('Pages')};$('tPay').onclick=function(){tab('Pay')};$('tHelp').onclick=function(){tab('Help')};
+$('newPage').onclick=function(){openForm(null)};
+$('fStatus').onchange=renderPay;
+$('csv').onclick=function(){var f=$('fStatus').value,rows=[['date','page','name','email','phone','note','amount_rupees','status','payment_id']].concat(orders.filter(function(o){return !f||o.status===f}).map(function(o){return [o.created_at,o.ph_pages?o.ph_pages.title:'',o.name,o.email,o.phone,o.note,o.amount_paise/100,o.status,o.payment_id]}));copy(rows.map(function(r){return r.map(csvCell).join(',')}).join('\n'),'payMsg')};
+$('linkStyle').value=lsGet('ph_link','plain');$('linkStyle').onchange=function(){lsSet('ph_link',this.value);renderList()};
+$('list').addEventListener('click',function(ev){
+  var b=ev.target.closest('[data-a]');if(!b)return;var p=pageById(b.dataset.id),a=b.dataset.a;if(!p)return;
+  if(a==='link')copy(link(p),'m-'+p.id);
+  else if(a==='btn')copy(buttonCode(p),'m-'+p.id);
+  else if(a==='edit')openForm(p);
+  else if(a==='tog')sb.from('ph_pages').update({active:!p.active}).eq('id',p.id).then(function(r){if(r.error)say('m-'+p.id,r.error.message,'bad');else loadAll()});
+  else if(a==='del'){pendingDelete=p.id;renderList()}
+  else if(a==='delno'){pendingDelete=null;renderList()}
+  else if(a==='delyes')sb.from('ph_pages').delete().eq('id',p.id).then(function(r){pendingDelete=null;if(r.error){renderList();say('m-'+p.id,/foreign|violates/i.test(r.error.message)?'This page has payments, so it cannot be deleted. Pause it instead.':r.error.message,'bad')}else loadAll()})
+});
+boot()
+})();
+</script>
+</body></html>
