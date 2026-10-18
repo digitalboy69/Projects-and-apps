@@ -70,6 +70,9 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
 .sw{transition:opacity .5s ease}
 .booting .sw,.booting .sw-back{opacity:0;pointer-events:none;visibility:hidden}
 .load.instant{transition:none}
+.load .retry{display:none;position:relative;margin-top:-6px;padding:9px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:#e8edf7;font:500 12px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:.04em;cursor:pointer}
+.load.slow .retry{display:inline-block}
+.load .retry:focus-visible{outline:2px solid #00F0D5;outline-offset:2px}
 </style><style>
 /* ============================================================================
    META LAYER  ·  shared/meta.css
@@ -333,7 +336,7 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
   document.addEventListener('DOMContentLoaded', function(){ scan(document.body); });
   window.VXI = { icons: I, map: MAP, scan: scan };
 })();
-</script></head><body><div class="shell"><div class="stage" id="stage"><div class="load" id="load"><div class="orb"><div class="zring" id="zring"></div><i class="o1"></i><i class="o2"></i><i class="o3"></i><b class="p1"></b><b class="p2"></b><b class="p3"></b><em></em></div><div class="wel" id="wel"><div class="pray">🙏</div><div class="wel-hi" id="welHi">Namaste 🙏</div><div class="wel-sub" id="welSub">Welcome to your sky</div></div><h1>VEDIC ASTRO SUITE</h1><span id="loadTxt">LOADING…</span><div class="bar"></div></div></div></div><div class="sw-back" id="swBack"></div><div class="sw" id="sw" data-x="r" data-y="t"><button class="sw-btn" id="swBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="swMenu" title="Switch view (drag to move)"><span id="swIco">🧭</span></button><div class="sw-menu" id="swMenu" role="menu"><button class="sw-item" type="button" role="menuitemradio" aria-checked="false" data-act="A"><span class="e">🌌</span>3D Sky</button><button class="sw-item on" type="button" role="menuitemradio" aria-checked="true" data-act="B"><span class="e">🧭</span>Birth Chart</button><button class="sw-item" type="button" role="menuitemradio" aria-checked="false" data-act="N"><span class="e">📝</span>Notepad</button><div class="sw-sep"></div><button class="sw-item" type="button" role="menuitem" data-act="dev"><span class="e">💬</span>Developer</button></div></div><script>try{window.__vaxHash=location.hash;}catch(e){}</script><script>
+</script></head><body><div class="shell"><div class="stage" id="stage"><div class="load" id="load"><div class="orb"><div class="zring" id="zring"></div><i class="o1"></i><i class="o2"></i><i class="o3"></i><b class="p1"></b><b class="p2"></b><b class="p3"></b><em></em></div><div class="wel" id="wel"><div class="pray">🙏</div><div class="wel-hi" id="welHi">Namaste 🙏</div><div class="wel-sub" id="welSub">Welcome to your sky</div></div><h1>VEDIC ASTRO SUITE</h1><span id="loadTxt">LOADING…</span><div class="bar"></div><button class="retry" id="retry" type="button">Taking long? Tap to reload</button></div></div></div><div class="sw-back" id="swBack"></div><div class="sw" id="sw" data-x="r" data-y="t"><button class="sw-btn" id="swBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="swMenu" title="Switch view (drag to move)"><span id="swIco">🧭</span></button><div class="sw-menu" id="swMenu" role="menu"><button class="sw-item" type="button" role="menuitemradio" aria-checked="false" data-act="A"><span class="e">🌌</span>3D Sky</button><button class="sw-item on" type="button" role="menuitemradio" aria-checked="true" data-act="B"><span class="e">🧭</span>Birth Chart</button><button class="sw-item" type="button" role="menuitemradio" aria-checked="false" data-act="N"><span class="e">📝</span>Notepad</button><div class="sw-sep"></div><button class="sw-item" type="button" role="menuitem" data-act="dev"><span class="e">💬</span>Developer</button></div></div><script>try{window.__vaxHash=location.hash;}catch(e){}</script><script>
 /* ===== LocPicker — shared location popup (map + search + manual coordinates) =====
    Lives in the top window; apps call parent.LocPicker.attach(...) / .open(...).
    Map engine is built in (no external library); tiles come from OpenStreetMap / CARTO / Esri at run time. */
@@ -544,7 +547,7 @@ window.LocPicker={open,attach,parse,fmt,close};
 <meta name="theme-color" content="#010308">
 <title>Ephemeris — Live Sky & Transit Console</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"></noscript>
 <style>
 :root {
   --void: #010308;
@@ -8050,7 +8053,7 @@ document.querySelector('[data-tab="triggers"]').addEventListener('click', ()=> s
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%23050507%27/%3E%3Ctext x=%2750%27 y=%2770%27 font-size=%2770%27 text-anchor=%27middle%27 fill=%27%23D4AF37%27%3E%E0%A5%90%3C/text%3E%3C/svg%3E">
 <title>Birth Time Rectification — Vedic Astrology</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <style>
 /* ==========================================================================
    PREMIUM TOKENS & RESET
@@ -39959,7 +39962,7 @@ window.__np={S:()=>S,ui,TPL,sr:()=>savedRange&&[savedRange.startContainer.nodeNa
 </script>
 <script type="text/plain" id="srcDev" data-enc="plain">
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet"></noscript>
 <style>
 :root {
   --bg-dark: #050507;
@@ -40426,28 +40429,47 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
     const L = ['Welcome to your sky', 'Charts, planets and time, in one place', 'Preparing the heavens\u2026', 'Aligning the planets\u2026'], sub = document.getElementById('welSub'); let k = 0;
     const t = setInterval(()=>{ if (firstDone){ clearInterval(t); return; } sub.style.opacity = 0; setTimeout(()=>{ k = (k+1) % L.length; sub.textContent = L[k]; sub.style.opacity = 1; }, 380); }, 1700);
   })();
+  /* Loader state: ready[k] = that view finished starting up. The loader hides whenever the CURRENT view is ready
+     (also when you switch back to a view that finished while you were away), so it can never stay stuck. */
+  const ready = {}; let revT = 0, slowT = 0; const retryBtn = document.getElementById('retry');
+  function hideLoader(){ load.classList.add('hide'); load.classList.remove('slow'); firstDone = true; document.documentElement.classList.remove('booting'); setTimeout(()=>load.classList.add('compact'), 800); }
+  function reveal(){ clearTimeout(slowT); clearTimeout(revT); const wait0 = firstDone ? 0 : Math.max(0, 1500 - (performance.now() - T0)); revT = setTimeout(()=>{ if (ready[cur]) hideLoader(); }, wait0); }
+  function finish(k){ ready[k] = true; if (cur === k) reveal(); }
+  function showLoader(k){
+    clearTimeout(slowT); clearTimeout(revT);
+    load.classList.remove('slow'); load.classList.add('instant'); load.classList.remove('hide'); void load.offsetWidth; load.classList.remove('instant'); txt.textContent = 'LOADING ' + NAME[k].toUpperCase() + '\u2026';
+    slowT = setTimeout(()=>{ if (!ready[cur]){ load.classList.add('slow'); txt.textContent = 'STILL LOADING\u2026'; } }, 10000);   /* slow connection: offer a reload */
+  }
+  function reloadView(k){
+    const f = frames[k]; if (f){ f.remove(); delete frames[k]; }
+    ready[k] = false; show(k);
+  }
+  if (retryBtn) retryBtn.addEventListener('click', ()=>reloadView(cur));
   function mount(k){
     if (frames[k]) return frames[k];
-    load.classList.add('instant'); load.classList.remove('hide'); void load.offsetWidth; load.classList.remove('instant'); txt.textContent = 'LOADING ' + NAME[k].toUpperCase() + '…';
     const f = document.createElement('iframe'); f.title = NAME[k]; f.setAttribute('allow', 'fullscreen; camera');
-    f.addEventListener('load', ()=>{
+    /* Start as soon as the app's scripts have run (DOMContentLoaded). Do not wait for the frame's 'load' event: it also waits for fonts/images, so one slow request used to keep the loader up. 'load' stays as a fallback. */
+    let started = false, poll = 0;
+    const begin = ()=>{
+      if (started) return; started = true; clearInterval(poll);
       try{ f.contentWindow.dispatchEvent(new Event('resize')); }catch(e){}
-      /* one loader only: stay until the inner app has finished its own start-up (max 9s) */
-      let n = 0; const done = ()=>{ if (cur !== k) return; const wait0 = firstDone ? 0 : Math.max(0, 1500 - (performance.now() - T0)); setTimeout(()=>{ if (cur === k){ load.classList.add('hide'); firstDone = true; document.documentElement.classList.remove('booting'); setTimeout(()=>load.classList.add('compact'), 800); } }, wait0); };
-      (function wait(){ let ready = true; try{ const m = f.contentDocument.getElementById('loadingMask'); ready = !m || m.classList.contains('hide'); }catch(e){}
-        if (ready || ++n > 90) settle(); else setTimeout(wait, 100); })();
-      /* keep the loader up until the heavy scene is rendering smoothly (10 quick frames in a row, max 6s) */
+      /* stay until the inner app has finished its own start-up (max 6s), then reveal */
+      let n = 0;
+      (function wait(){ let rdy = true; try{ const m = f.contentDocument.getElementById('loadingMask'); rdy = !m || m.classList.contains('hide'); }catch(e){}
+        if (rdy || ++n > 60) settle(); else setTimeout(wait, 100); })();
+      /* 3D Sky: keep the loader until the scene runs smoothly (10 quick frames in a row, max 3s) */
       function settle(){
-        if (k !== 'A'){ done(); return; }
-        txt.textContent = 'WARMING UP THE SKY\u2026';
-        let good = 0, last = 0; const t0 = performance.now(); let w; try{ w = f.contentWindow; }catch(e){ done(); return; }
+        if (k !== 'A'){ finish(k); return; }
+        if (cur === k) txt.textContent = 'WARMING UP THE SKY\u2026';
+        let good = 0, last = 0; const t0 = performance.now(); let w; try{ w = f.contentWindow; }catch(e){ finish(k); return; }
         (function f1(ts){
-          if (cur !== k){ done(); return; }
           if (last){ good = (ts - last) < 45 ? good + 1 : 0; } last = ts;
-          if (good >= 10 || performance.now() - t0 > 6000) done(); else w.requestAnimationFrame(f1);
+          if (good >= 10 || performance.now() - t0 > 3000) finish(k); else w.requestAnimationFrame(f1);
         })(0);
       }
-    });
+    };
+    f.addEventListener('load', begin);
+    poll = setInterval(()=>{ if (!f.isConnected){ clearInterval(poll); return; } try{ const d = f.contentDocument; if (d && d.URL !== 'about:blank' && d.readyState !== 'loading') begin(); }catch(e){} }, 100);
     setSource(f, k); stage.appendChild(f); frames[k] = f; return f;
   }
   const sw = document.getElementById('sw'), swBtn = document.getElementById('swBtn'), swBack = document.getElementById('swBack'), swIco = document.getElementById('swIco');
@@ -40461,6 +40483,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
   function show(k){
     cur = k; closeDev();
     const f = mount(k);
+    if (ready[k]) reveal(); else showLoader(k);
     for (const j in frames) frames[j].classList.toggle('on', j === k);
     sw.querySelectorAll('.sw-item[data-act="A"],.sw-item[data-act="B"],.sw-item[data-act="N"]').forEach(b=>{ const on = b.dataset.act === k; b.classList.toggle('on', on); b.setAttribute('aria-checked', on ? 'true' : 'false'); });
     swIco.textContent = ICON[k];

@@ -23,28 +23,47 @@
     const L = ['Welcome to your sky', 'Charts, planets and time, in one place', 'Preparing the heavens\u2026', 'Aligning the planets\u2026'], sub = document.getElementById('welSub'); let k = 0;
     const t = setInterval(()=>{ if (firstDone){ clearInterval(t); return; } sub.style.opacity = 0; setTimeout(()=>{ k = (k+1) % L.length; sub.textContent = L[k]; sub.style.opacity = 1; }, 380); }, 1700);
   })();
+  /* Loader state: ready[k] = that view finished starting up. The loader hides whenever the CURRENT view is ready
+     (also when you switch back to a view that finished while you were away), so it can never stay stuck. */
+  const ready = {}; let revT = 0, slowT = 0; const retryBtn = document.getElementById('retry');
+  function hideLoader(){ load.classList.add('hide'); load.classList.remove('slow'); firstDone = true; document.documentElement.classList.remove('booting'); setTimeout(()=>load.classList.add('compact'), 800); }
+  function reveal(){ clearTimeout(slowT); clearTimeout(revT); const wait0 = firstDone ? 0 : Math.max(0, 1500 - (performance.now() - T0)); revT = setTimeout(()=>{ if (ready[cur]) hideLoader(); }, wait0); }
+  function finish(k){ ready[k] = true; if (cur === k) reveal(); }
+  function showLoader(k){
+    clearTimeout(slowT); clearTimeout(revT);
+    load.classList.remove('slow'); load.classList.add('instant'); load.classList.remove('hide'); void load.offsetWidth; load.classList.remove('instant'); txt.textContent = 'LOADING ' + NAME[k].toUpperCase() + '\u2026';
+    slowT = setTimeout(()=>{ if (!ready[cur]){ load.classList.add('slow'); txt.textContent = 'STILL LOADING\u2026'; } }, 10000);   /* slow connection: offer a reload */
+  }
+  function reloadView(k){
+    const f = frames[k]; if (f){ f.remove(); delete frames[k]; }
+    ready[k] = false; show(k);
+  }
+  if (retryBtn) retryBtn.addEventListener('click', ()=>reloadView(cur));
   function mount(k){
     if (frames[k]) return frames[k];
-    load.classList.add('instant'); load.classList.remove('hide'); void load.offsetWidth; load.classList.remove('instant'); txt.textContent = 'LOADING ' + NAME[k].toUpperCase() + '…';
     const f = document.createElement('iframe'); f.title = NAME[k]; f.setAttribute('allow', 'fullscreen; camera');
-    f.addEventListener('load', ()=>{
+    /* Start as soon as the app's scripts have run (DOMContentLoaded). Do not wait for the frame's 'load' event: it also waits for fonts/images, so one slow request used to keep the loader up. 'load' stays as a fallback. */
+    let started = false, poll = 0;
+    const begin = ()=>{
+      if (started) return; started = true; clearInterval(poll);
       try{ f.contentWindow.dispatchEvent(new Event('resize')); }catch(e){}
-      /* one loader only: stay until the inner app has finished its own start-up (max 9s) */
-      let n = 0; const done = ()=>{ if (cur !== k) return; const wait0 = firstDone ? 0 : Math.max(0, 1500 - (performance.now() - T0)); setTimeout(()=>{ if (cur === k){ load.classList.add('hide'); firstDone = true; document.documentElement.classList.remove('booting'); setTimeout(()=>load.classList.add('compact'), 800); } }, wait0); };
-      (function wait(){ let ready = true; try{ const m = f.contentDocument.getElementById('loadingMask'); ready = !m || m.classList.contains('hide'); }catch(e){}
-        if (ready || ++n > 90) settle(); else setTimeout(wait, 100); })();
-      /* keep the loader up until the heavy scene is rendering smoothly (10 quick frames in a row, max 6s) */
+      /* stay until the inner app has finished its own start-up (max 6s), then reveal */
+      let n = 0;
+      (function wait(){ let rdy = true; try{ const m = f.contentDocument.getElementById('loadingMask'); rdy = !m || m.classList.contains('hide'); }catch(e){}
+        if (rdy || ++n > 60) settle(); else setTimeout(wait, 100); })();
+      /* 3D Sky: keep the loader until the scene runs smoothly (10 quick frames in a row, max 3s) */
       function settle(){
-        if (k !== 'A'){ done(); return; }
-        txt.textContent = 'WARMING UP THE SKY\u2026';
-        let good = 0, last = 0; const t0 = performance.now(); let w; try{ w = f.contentWindow; }catch(e){ done(); return; }
+        if (k !== 'A'){ finish(k); return; }
+        if (cur === k) txt.textContent = 'WARMING UP THE SKY\u2026';
+        let good = 0, last = 0; const t0 = performance.now(); let w; try{ w = f.contentWindow; }catch(e){ finish(k); return; }
         (function f1(ts){
-          if (cur !== k){ done(); return; }
           if (last){ good = (ts - last) < 45 ? good + 1 : 0; } last = ts;
-          if (good >= 10 || performance.now() - t0 > 6000) done(); else w.requestAnimationFrame(f1);
+          if (good >= 10 || performance.now() - t0 > 3000) finish(k); else w.requestAnimationFrame(f1);
         })(0);
       }
-    });
+    };
+    f.addEventListener('load', begin);
+    poll = setInterval(()=>{ if (!f.isConnected){ clearInterval(poll); return; } try{ const d = f.contentDocument; if (d && d.URL !== 'about:blank' && d.readyState !== 'loading') begin(); }catch(e){} }, 100);
     setSource(f, k); stage.appendChild(f); frames[k] = f; return f;
   }
   const sw = document.getElementById('sw'), swBtn = document.getElementById('swBtn'), swBack = document.getElementById('swBack'), swIco = document.getElementById('swIco');
@@ -58,6 +77,7 @@
   function show(k){
     cur = k; closeDev();
     const f = mount(k);
+    if (ready[k]) reveal(); else showLoader(k);
     for (const j in frames) frames[j].classList.toggle('on', j === k);
     sw.querySelectorAll('.sw-item[data-act="A"],.sw-item[data-act="B"],.sw-item[data-act="N"]').forEach(b=>{ const on = b.dataset.act === k; b.classList.toggle('on', on); b.setAttribute('aria-checked', on ? 'true' : 'false'); });
     swIco.textContent = ICON[k];

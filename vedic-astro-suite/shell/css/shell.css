@@ -69,3 +69,6 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
 .sw{transition:opacity .5s ease}
 .booting .sw,.booting .sw-back{opacity:0;pointer-events:none;visibility:hidden}
 .load.instant{transition:none}
+.load .retry{display:none;position:relative;margin-top:-6px;padding:9px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:#e8edf7;font:500 12px/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:.04em;cursor:pointer}
+.load.slow .retry{display:inline-block}
+.load .retry:focus-visible{outline:2px solid #00F0D5;outline-offset:2px}

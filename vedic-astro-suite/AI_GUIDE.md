@@ -150,7 +150,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-18 - 1209 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-18 - 1214 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -379,12 +379,12 @@ css/22-dasha-transit-triggers.css                   31 lines    3 KB
 css/23-time-machine-polish.css                     110 lines   10 KB
 ```
 
-**shell** - 4 files, 399 lines, 52 KB
+**shell** - 4 files, 422 lines, 53 KB
 ```
 index.html                                           2 lines    2 KB
-shell/css/shell.css                                 72 lines    8 KB
+shell/css/shell.css                                 75 lines    8 KB
 shell/js/locpicker.js                              202 lines   34 KB
-shell/js/shell.js                                  123 lines    8 KB
+shell/js/shell.js                                  143 lines    9 KB
 ```
 
 **shared** - 3 files, 906 lines, 69 KB
@@ -398,3 +398,4 @@ shared/meta.css                                     98 lines    5 KB
 - D-chart info redesigned as one 'At a glance' dashboard (js/69 overview(), css/37).
 - D-chart tabs: no jump on switch (fade only, scroll+height locked), touch-friendly, hover motion only on mouse devices.
 - Divisional Charts: all hover/tap lift, slide animations and page-scrolling rail removed so nothing jumps on tap.
+- Loader fix (shell/js/shell.js): per-view ready state so the loader hides whenever the current view is ready (switching views mid-load no longer leaves it stuck); starts on DOMContentLoaded not frame load (slow fonts/images no longer hold it); after 10 s shows a "Taking long? Tap to reload" button; shorter waits (6 s / 3 s). Google Fonts links in birth-chart, sky3d, developer are non-blocking (media=print swap).
