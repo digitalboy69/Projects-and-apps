@@ -142,6 +142,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/86-popular-charts.js` — Popular charts UI under the 3-step form on the input page: group chips, photo cards (Wikipedia, lazy), detail sheet, "Show this chart" casts it via loadProfileIntoForm + submit
 - `apps/birth-chart/js/87-vedic-knowledge-db.js` — Vedic Knowledge Database (VDB): 625 entries — planet-in-house 108, planet-in-sign 108, house-lord-in-house 144, planet-aspect-on-house 108, planet-aspects-planet 72, conjunctions 35, 27 nakshatras, 23 yogas, dasha lords, status modifiers, functional nature by rising sign; lookup API + `VDB.reading(chart)`
 - `apps/birth-chart/js/88-deep-reading.js` — Deep reading (window.VDR): the "📖 Deep reading" tab (rising, Moon, functional nature, conjunctions, 12 house cards), extra block in each Planets-tab card, dasha-lord text in the Now tab, and the DEEP READING section of the full report; all text from VDB
+- `apps/birth-chart/js/89-vedic-nakshatra-db.js` — Nakshatra layer (global VNK), layer schema v1: structured facets for 27 nakshatras + 9 planets, composes 972 planet placements + Lagna + Moon birth star on demand (relation to nakshatra lord, pada -> navamsa -> Purushartha, scores, tags); used by Deep reading
 - `apps/birth-chart/css/01-premium-tokens-reset.css` — design tokens (colors, fonts) and reset
 - `apps/birth-chart/css/02-header.css` — header
 - `apps/birth-chart/css/03-hero-intake-form.css` — hero and birth intake form
@@ -292,6 +293,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/popular_charts_test.py` — Popular charts section: 10 groups x 10 people, lazy Wikipedia photos (wrong-person guard), detail sheet, casting a chart incl. old-timezone option, no JS errors
 - `tests/knowledge_db_test.py` — Knowledge database: completeness, quality gates, cross-check of signs/nakshatras/aspects/dignity against the app tables, `VDB.reading()` on real charts
 - `tests/deep_reading_test.py` — Deep reading: 6 tabs, 12 house cards, every on-screen text equals the database text for the chart's real placements, report section + export checkbox, 6 more charts, phone layout
+- `tests/nakshatra_db_test.py` — Nakshatra layer: 972 unique placements, wording gates (no fatalistic/absolute words), pada->navamsa equals the app's D9 on 8 charts, Moon star = dasha start, on-screen check
 - `tests/customer_smoke.py` — customer edition smoke test
 - `tests/datefinder_test.py` — Date Finder test
 - `tests/syntax_check.py` — node --check over every js file

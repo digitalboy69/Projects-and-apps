@@ -47,6 +47,7 @@ You are working on the **Vedic Astro Suite**: a folder project made of a shell +
 | Popular charts gallery (famous people under the 3-step form), add/change a person | `birth-chart/85-popular-charts-data.js`, `birth-chart/86-popular-charts.js` | `PC_PEOPLE` (add a row), `PC_CATS`, `cast()` (tz option + `loadProfileIntoForm`), `fetchImg` (Wikipedia photo) |
 | Interpretation texts: planet in house/sign, house lord in house, aspects, conjunctions, nakshatras, yogas | `birth-chart/87-vedic-knowledge-db.js` | `VDB_DATA` (edit text), `VDB.planetInHouse/planetInSign/lordInHouse/aspectOnHouse/planetAspect/conjunction/nakshatra`, `VDB.reading(chart)`, `VDB.functionalNature` |
 | Deep reading tab / planet-card text / report section (how the database is shown) | `birth-chart/88-deep-reading.js`, hooks in `70-chart-reading.js`, `43-full-report-text.js` | `VDR.pane`, `VDR.planetBlock`, `VDR.dashaBlock`, `VDR.reportText` |
+| Nakshatra facets / any planet-in-nakshatra-pada text, birth star, rising nakshatra | `birth-chart/89-vedic-nakshatra-db.js` | `VNK_DATA` (edit facets), `VNK.placement/lagna/moon/forChart/each/find` |
 | Planet popup (Birth Chart) | `birth-chart/19-planets-panel.js`, `sky3d/29-planet-detail-content.js` | `openPlanetDetail`, `openOuterDetail`, `buildPlanetsPanel` |
 | Uranus/Neptune/Pluto | `birth-chart/05-ascendant-nakshatra-vargas.js`, `sky3d/02-planetary-dignity.js`, `birth-chart/06-outer-planet-knowledge.js`, `sky3d/30-outer-planet-knowledge.js` | `OUTER_LIST`, `OUTER_INFO`, `outerAspectsTo`, `planetGeocentricLongitude` (elements in `PLANET_ELEMENTS`), A: `openOuterPlanetDetail`, B: `openOuterDetail`, `chOuter`. They are **not** in `PLANET_LIST` on purpose (no Vedic aspects/yogas/dasha). |
 | Export / Copy for AI / JSON | `birth-chart/43-full-report-text.js`, `shared/export-addon.js`, `birth-chart/44-export-modal.js` | `buildFullReportText`, `openExportModal`, add-on `window.VAX` |
@@ -141,6 +142,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Knowledge database: `js/87-vedic-knowledge-db.js` = `VDB_DATA` (625 entries) + `VDB` lookup API, NOT yet used by any UI. planet-in-house 9x12 (hand-written), planet-in-sign 9x12, house-lord-in-house 12x12, planet-aspect-on-house 9x12, planet-aspects-planet 9x8 (all rule-based, wording from small tables), 35 conjunctions, 27 nakshatras (name/lord/deity equal `NAKSHATRAS`), 23 yogas, dasha lords, retro/combust/vargottama/dignity texts, `functionalNature(lagna)`. `VDB.reading(computeChart(...))` returns every applicable entry for a chart. Keys/aspect rule/dignity/relations are cross-checked against the app's own tables in `tests/knowledge_db_test.py` (0 differences; nodes follow the app: only exalted/debilitated/neutral). Next step if wanted: feed `VDB.reading()` into `70-chart-reading.js` (`planetRead`) and the full report.
 - Deep reading (wired): `js/88-deep-reading.js` (`window.VDR`) shows the knowledge database in the app. Hooks: `70-chart-reading.js` (planet cards get `VDR.planetBlock`, 6th tab `📖 Deep reading` = `VDR.pane`, Now tab gets `VDR.dashaBlock`) and `43-full-report-text.js` (section `deepReading`, checkbox `data-section="deepReading"` in the export dialog, text = `VDR.reportText`). No new calculation: planets/houses/aspects come from `computeChart`, wording from `VDB.reading(chart)` (cached per chart in a WeakMap). `functionalNature` no longer calls the Sun/Moon 8th lord malefic. Test: `tests/deep_reading_test.py` (asserts every on-screen text equals the VDB text for the chart's real placements).
 - Full reading plan: see `docs/FULL_READING_PLAN.md` (audit, gaps, 12 sessions S1-S12 with checklist, merge milestones M1-M4, decisions). Read it first when working on readings/PDF; update its checklist each session.
+- Nakshatra layer (S1 of docs/FULL_READING_PLAN.md): `js/89-vedic-nakshatra-db.js` (`VNK`) = Layer schema v1: facets (style/keywords/strengths/shadows/relating/wellbeing/practices) + ease score + tone + tags, text composed on demand for all 972 planet-nakshatra-pada placements, Lagna and the Moon birth star; shown by `88-deep-reading` (planet cards, birth-star and rising-nakshatra notes, report). Test `tests/nakshatra_db_test.py` (pada->navamsa = app D9, Moon star = dasha start). Wording rule for all reading layers: tendencies, never fate; tests ban absolute words.
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 
@@ -148,13 +150,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-18 - 1196 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-18 - 1209 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 128 files, 16857 lines, 1238 KB
+**birth-chart** - 129 files, 17909 lines, 1271 KB
 ```
-index.html                                         548 lines   31 KB
+index.html                                         549 lines   31 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -242,7 +244,8 @@ js/84-bridge-3d.js                                  38 lines    2 KB
 js/85-popular-charts-data.js                       116 lines   26 KB
 js/86-popular-charts.js                            120 lines    7 KB
 js/87-vedic-knowledge-db.js                       2268 lines  202 KB
-js/88-deep-reading.js                              129 lines   11 KB
+js/88-deep-reading.js                              157 lines   14 KB
+js/89-vedic-nakshatra-db.js                       1023 lines   30 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB

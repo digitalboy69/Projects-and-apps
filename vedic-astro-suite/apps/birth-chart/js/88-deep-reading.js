@@ -25,6 +25,11 @@ const toneCls = t => t === 'supportive' ? 'g' : t === 'challenging' ? 'b' : '';
 const DIG = { Exalted:['Exalted','g'], Debilitated:['Debilitated','b'], Own:['Own sign','g'], Moolatrikona:['Own sign','g'], Friend:["Friend's sign",''], Enemy:["Enemy's sign",'b'], Neutral:['Neutral sign',''] };
 const line = (head, chipHtml, body, small) => `<div class="dr-l"><b>${head}</b>${chipHtml || ''}<div>${esc(body)}</div>${small ? `<small>${small}</small>` : ''}</div>`;
 const note = (cls, html) => `<div class="vx-note ${cls || ''}"><div>${html}</div></div>`;
+const NKC = new WeakMap();
+const NK = c => { if (typeof VNK === 'undefined' || !VNK) return null; let r = NKC.get(c); if (!r){ r = VNK.forChart(c); NKC.set(c, r); } return r; };
+const TONE_CLS = { supportive: 'g', challenging: 'b', mixed: '' };
+const RELLAB = { own: 'own star', friend: "friend's star", neutral: 'neutral star', enemy: "enemy's star" };
+const lst = a => a.map(esc).join(', ');
 const nakMeta = n => `${esc(n.name)}${n.pada ? ' pada ' + n.pada : ''} · ruled by ${esc(n.lord)} · deity ${esc(n.deity)} · symbol ${esc(n.symbol)} · ${esc(n.gana)} gana`;
 
 /* ---------- Planets tab: extra block inside each planet card ---------- */
@@ -33,7 +38,18 @@ function planetBlock(c, n){
   const L = [], dg = DIG[e.inSign.dignity] || ['', ''];
   L.push(line(`In the ${ordn(e.house)} house`, chip(toneCls(e.inHouse.tone), e.inHouse.tone), e.inHouse.text));
   L.push(line(`In ${e.sign}`, chip(dg[1], dg[0]), strip(e.inSign.text)));
-  if (e.nakshatra) L.push(line('Nakshatra', '', e.nakshatra.trait, `${nakMeta(e.nakshatra)}<br>Suits: ${esc(e.nakshatra.careers)} · Watch: ${esc(e.nakshatra.watch)}`));
+  if (e.nakshatra){
+    const pl = NK(c) && NK(c).planets[n];
+    if (pl){
+      const nk = VNK.nakshatra(pl.nakIndex), ni = nk.natureInfo;
+      L.push(`<div class="dr-l"><b>Nakshatra: ${esc(pl.nakshatra)}, pada ${pl.pada.pada}</b>${chip(TONE_CLS[pl.tone], RELLAB[pl.relation.kind])}<div>${esc(nk.trait)}</div>` +
+        `<div>${esc(pl.how)} ${esc(pl.relationText)}</div>` +
+        `<small>${nakMeta(e.nakshatra)} · ${esc(pl.nature)} nature (${esc(ni.sk)}): ${esc(ni.tendency)}</small>` +
+        `<small>Pada ${pl.pada.pada}: ${esc(pl.pada.navamsaSign)} navamsa · ${esc(pl.pada.purushartha)} flavour (${esc(pl.pada.focus)})</small>` +
+        `<small><b>Strengths:</b> ${lst(pl.strengths)}<br><b>Points to watch:</b> ${lst(pl.shadows)}<br><b>Supportive practice:</b> ${esc(pl.practices[0])} ${esc(pl.practices[1])}</small>` +
+        `<small>${esc(pl.lordNote || '')}<br>Suits: ${esc(nk.careers)} · Watch: ${esc(nk.watch)}</small></div>`);
+    } else L.push(line('Nakshatra', '', e.nakshatra.trait, `${nakMeta(e.nakshatra)}<br>Suits: ${esc(e.nakshatra.careers)} · Watch: ${esc(e.nakshatra.watch)}`));
+  }
   e.status.forEach(s => L.push(line({ retrograde:'Retrograde', combust:'Combust', vargottama:'Vargottama' }[s.key] || s.key, '', s.text)));
   e.conjunct.forEach(x => L.push(line(`Conjunct ${esc(x.with)}`, '', x.text)));
   e.aspectedBy.forEach(x => L.push(line(`Aspected by ${esc(x.from)}`, HELPFUL.includes(x.from) ? chip('g', 'helpful') : PRESS.includes(x.from) ? chip('b', 'pressuring') : '', strip(x.text))));
@@ -59,6 +75,11 @@ function pane(c){
   out.push(note('g', `📖 <b>Deep reading</b>: classical meanings for every placement in this chart, house by house. Texts come from the built-in knowledge base; read them together, since each planet's result depends on its sign, house, aspects and the running period.`));
   out.push(note('', `🧭 <b>${esc(asc)} rising.</b> ${esc(r.lagna.text)}<br><small>${esc(ll.lord)}: ${esc(ll.text)}</small>`));
   out.push(note('', `🌙 <b>Moon in ${esc(mo.sign)}${mo.nakshatra ? ', ' + esc(mo.nakshatra.name) : ''}.</b> ${esc(D.moonSign[mo.sign])}${mo.nakshatra ? ' ' + esc(mo.nakshatra.trait) + `<br><small>${nakMeta(mo.nakshatra)} · Suits: ${esc(mo.nakshatra.careers)} · Watch: ${esc(mo.nakshatra.watch)}</small>` : ''}`));
+  const nkc = NK(c);
+  if (nkc && nkc.moon){ const m = nkc.moon;
+    out.push(note('', `🌟 <b>Birth star: ${esc(m.nakshatra)}, pada ${m.pada.pada}.</b> ${esc(m.how)} In close relationships you tend to be ${esc(m.relating)}.<br><small><b>Wellbeing theme:</b> ${esc(m.wellbeing)}. <b>Strengths:</b> ${lst(m.strengths)}. <b>Points to watch:</b> ${lst(m.shadows)}. <b>Supportive practice:</b> ${esc(m.practices[0])}<br>Pada ${m.pada.pada} falls in ${esc(m.pada.navamsaSign)} navamsa, adding a ${esc(m.pada.purushartha)} flavour (${esc(m.pada.focus)}). Life began in a ${esc(m.dashaStart.lord)} Mahadasha${m.dashaStart.balanceYears != null ? ' with about ' + (Math.round(m.dashaStart.balanceYears * 10) / 10) + ' years left in it' : ''}.</small>`)); }
+  if (nkc && nkc.lagna){ const g = nkc.lagna;
+    out.push(note('', `🧭 <b>Rising nakshatra: ${esc(g.nakshatra)}, pada ${g.pada.pada}.</b> ${esc(g.how)} In dealings with others you tend to be ${esc(g.relating)}.<br><small><b>Strengths:</b> ${lst(g.strengths)}. <b>Points to watch:</b> ${lst(g.shadows)}. <b>Supportive practice:</b> ${esc(g.practices[0])} Pada ${g.pada.pada}: ${esc(g.pada.navamsaSign)} navamsa, ${esc(g.pada.purushartha)} flavour (${esc(g.pada.focus)}).</small>`)); }
   const chips = Object.entries(r.functional).map(([p, v]) => chip(v.kind === 'Yogakaraka' || v.kind === 'Functional benefic' ? 'g' : v.kind === 'Functional malefic' ? 'b' : '', `${glyph(p)} ${p}: ${v.kind.replace('Functional ', '')}`)).join('');
   out.push(note('g', `⚖️ <b>Functional nature for ${esc(asc)} rising</b> (rule of thumb from the houses each planet rules)<br>${chips}`));
   PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) out.push(note('', `🔗 <b>${esc(a)} + ${esc(x.with)} together in ${esc(P[a].sign)}.</b> ${esc(x.text)}`)); }));
@@ -98,6 +119,9 @@ function reportText(c){
   para(`${asc} rising.`, r.lagna.text);
   para(`${r.houseLords[0].lord} (Lagna lord):`, r.houseLords[0].text);
   const mo = P.Moon; para(`Moon in ${mo.sign}${mo.nakshatra ? ', ' + mo.nakshatra.name + ' pada ' + mo.nakshatra.pada : ''}.`, D.moonSign[mo.sign] + (mo.nakshatra ? ' ' + mo.nakshatra.trait : ''));
+  const nkr = NK(c);
+  if (nkr && nkr.moon) para('Birth star:', nkr.moon.text.replace(/^[^.]*\.\)? ?/, ''));
+  if (nkr && nkr.lagna) para('Rising nakshatra:', nkr.lagna.text);
   para(`Functional nature for ${asc} rising:`, Object.entries(r.functional).map(([p, v]) => `${p} ${v.kind.replace('Functional ', '').toLowerCase()}`).join('; ') + '.');
   PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) para(`${a} + ${x.with} in ${P[a].sign}:`, x.text); }));
   PL.forEach(n => {
@@ -105,7 +129,11 @@ function reportText(c){
     sub(`${n.toUpperCase()}: ${e.sign}, ${ordn(e.house)} house`);
     para(`In the ${ordn(e.house)} house [${e.inHouse.tone}]:`, e.inHouse.text);
     para(`In ${e.sign} (${(DIG[e.inSign.dignity] || [''])[0]}):`, strip(e.inSign.text));
-    if (e.nakshatra) para(`Nakshatra ${e.nakshatra.name} pada ${e.nakshatra.pada} (deity ${e.nakshatra.deity}, ${e.nakshatra.gana} gana):`, `${e.nakshatra.trait} Suits: ${e.nakshatra.careers}. Watch: ${e.nakshatra.watch}.`);
+    if (e.nakshatra){
+      const pl = nkr && nkr.planets[n];
+      if (pl) para(`Nakshatra ${pl.nakshatra} pada ${pl.pada.pada} (deity ${e.nakshatra.deity}, ${e.nakshatra.gana} gana, ${pl.nature} nature) [${pl.tone}]:`, `${e.nakshatra.trait} ${pl.text.replace(/^[^.]*\. /, '')} ${pl.lordNote || ''} Suits: ${e.nakshatra.careers}. Watch: ${e.nakshatra.watch}.`);
+      else para(`Nakshatra ${e.nakshatra.name} pada ${e.nakshatra.pada} (deity ${e.nakshatra.deity}, ${e.nakshatra.gana} gana):`, `${e.nakshatra.trait} Suits: ${e.nakshatra.careers}. Watch: ${e.nakshatra.watch}.`);
+    }
     e.status.forEach(s => para(`${s.key[0].toUpperCase() + s.key.slice(1)}:`, s.text));
     e.conjunct.forEach(x => para(`Conjunct ${x.with}:`, x.text));
     e.aspectedBy.forEach(x => para(`Aspected by ${x.from}:`, strip(x.text)));
