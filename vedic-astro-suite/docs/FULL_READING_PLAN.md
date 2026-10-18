@@ -25,6 +25,12 @@ cover + summary 3p | foundation (rising, Moon, nakshatra, functional nature) 6p 
 dasha life timeline 12p | 9 life areas 14p | divisional charts 6p | transits next 3 years 5p | appendix + disclaimer 3p  (~89p)
 
 ## 4. Architecture
+**Layer schema v1 (decided in S1; every layer follows it).** A layer is a database keyed by *placements*, not a list of finished sentences:
+facts in (planet, nakshatra, pada, house, sign...) -> **facets** out (style, keywords, strengths[], shadows[] = points to watch, relating, wellbeing,
+practices[] = supportive actions) + a numeric **score/ease** and a **tone** (supportive / mixed / challenging) + **tags** for filtering ->
+**text composed from the facets**. Why: it covers every combination (e.g. 972 nakshatra placements from 27 + 9 small tables), a future rules
+engine (S6) can add the scores of different layers, and the wording stays about tendencies and potential ("tends to", "can"), never fixed fate.
+Rules: no absolute/fatalistic words (tests enforce), facets are hand-written, composition is rule-based and unit-tested against the app's own engine.
 1. **Database** (hand-written core + rule-based fill), split into small files, each with tests: see phases.
 2. **Rules engine**: factor scores -> bands (very strong / strong / mixed / weak / very weak) -> narrative variants. All weights in one table per file (like `W` in the Triggers engine), tunable.
 3. **Report builder**: one data model (`sections[]`) rendered three ways: screen tabs, TXT, PDF.
@@ -35,7 +41,7 @@ Size budget: app is ~2.8 MB single file; allow +2 MB; if exceeded, lazy-load rea
 ## 5. Sessions (each = one "Continue" block; ~12 total)
 Every session: build -> its own test -> commit -> push to `feature/full-reading` -> tick the box. Merge to `main` only at milestones (M1-M4).
 
-- [ ] **S1 Nakshatra layer**: planet-in-nakshatra 9x27 (rule-based from nakshatra trait x planet drive), Lagna-nakshatra 27, Moon-nakshatra pada 27x4 (short, hand-written). Wire into Deep reading + report. Test vs `NAKSHATRAS`.
+- [x] **S1 Nakshatra layer** (`js/89-vedic-nakshatra-db.js`, `VNK`): 27 nakshatra facet records + 7 nature groups + 9 planet facets; 972 placements (9 planets x 27 x 4 padas) + Lagna 108 + Moon birth star composed on demand; relation to the nakshatra lord (own/friend/neutral/enemy) gives ease/tone; pada -> navamsa sign -> Purushartha flavour. Wired into Deep reading (planet cards, birth-star + rising-nakshatra notes) and the report. `tests/nakshatra_db_test.py`: pada->navamsa equals the app's D9 for 8 charts, Moon star = dasha start lord.
 - [ ] **S2 Lagna layer**: planet role by rising sign 9x12 (from lordship rules + notes), 12 long rising-sign profiles (~300 words), Moon-by-sign 12 long, Lagna lord by house 12 long. Wire.
 - [ ] **S3 Dasha text layer**: Mahadasha planet x house 9x12 (hand-written ~60 words), MD x rising-sign function, Antardasha pairs 9x9, "life timeline" section (every Mahadasha with dates + theme; next 5 years Antardasha table). Wire into Now tab + report. **-> M1 (merge)**
 - [ ] **S4 Yogas I**: ~40 yogas with exact detectors (Chandra yogas incl. Kemadruma + cancellation, Budhaditya, Chandra-Mangala, Vesi/Vasi/Ubhayachari, Adhi, Dhana, Lakshmi, Saraswati, Amala, Parivartana types, Vipareeta types, Neecha Bhanga rules).
@@ -71,3 +77,4 @@ Every session: build -> its own test -> commit -> push to `feature/full-reading`
 
 ## 8. Decisions log / progress notes
 - Session 0: audit done, plan written, defaults set. Nothing built yet.
+- Session 1: nakshatra layer built under Layer schema v1 (facets + scores + tags, composed text). User asked for databases that work for all placements instead of fixed fate sentences; later layers (S2+) follow the same schema, and S2 will also restate the existing VDB planet-in-house/sign tables as facets where useful. Pushed to `feature/full-reading` (not merged; next merge is M1 after S3).
