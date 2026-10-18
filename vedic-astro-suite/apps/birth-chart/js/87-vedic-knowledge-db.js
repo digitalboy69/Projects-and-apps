@@ -2225,7 +2225,7 @@ const VDB = (function(D){
       const has = set => ruled.some(h => set.includes(h));
       const tags = []; if (ruled.includes(1)) tags.push('Lagna lord'); if (has([5,9])) tags.push('trikona lord'); if (has([4,7,10])) tags.push('kendra lord');
       if (has([6,8,12])) tags.push('dusthana lord'); if (has([3,11])) tags.push('3rd/11th lord'); if (has([2,7])) tags.push('maraka (2nd/7th) lord');
-      let score = 0; ruled.forEach(h => { score += ({1:2,5:2,9:2,4:0,7:-0.5,10:0,2:-0.5,3:-1,11:-1,6:-1,12:-1,8:-2})[h]; });
+      let score = 0; ruled.forEach(h => { score += ((p === 'Sun' || p === 'Moon') && h === 8) ? 0 : ({1:2,5:2,9:2,4:0,7:-0.5,10:0,2:-0.5,3:-1,11:-1,6:-1,12:-1,8:-2})[h]; });   // the Sun and Moon owning the 8th are not made malefic by it (classical exemption)
       const yogakaraka = has([4,7,10]) && has([5,9]);
       // order matters: yogakaraka > Lagna lord (always auspicious) > trikona lord (unless it also rules the 8th) > the rest by score
       const kind = yogakaraka ? 'Yogakaraka' : ruled.includes(1) ? 'Functional benefic' : has([5,9]) ? (ruled.includes(8) ? 'Mixed / neutral' : 'Functional benefic') : score <= -1 ? 'Functional malefic' : 'Mixed / neutral';

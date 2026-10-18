@@ -141,6 +141,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/85-popular-charts-data.js` — Popular charts data: 100 public figures (10 groups x 10), birth date/place/tz, Lahiri Sun/Moon/nakshatra/rising, Wikipedia titles; add a person = append a row
 - `apps/birth-chart/js/86-popular-charts.js` — Popular charts UI under the 3-step form on the input page: group chips, photo cards (Wikipedia, lazy), detail sheet, "Show this chart" casts it via loadProfileIntoForm + submit
 - `apps/birth-chart/js/87-vedic-knowledge-db.js` — Vedic Knowledge Database (VDB): 625 entries — planet-in-house 108, planet-in-sign 108, house-lord-in-house 144, planet-aspect-on-house 108, planet-aspects-planet 72, conjunctions 35, 27 nakshatras, 23 yogas, dasha lords, status modifiers, functional nature by rising sign; lookup API + `VDB.reading(chart)`
+- `apps/birth-chart/js/88-deep-reading.js` — Deep reading (window.VDR): the "📖 Deep reading" tab (rising, Moon, functional nature, conjunctions, 12 house cards), extra block in each Planets-tab card, dasha-lord text in the Now tab, and the DEEP READING section of the full report; all text from VDB
 - `apps/birth-chart/css/01-premium-tokens-reset.css` — design tokens (colors, fonts) and reset
 - `apps/birth-chart/css/02-header.css` — header
 - `apps/birth-chart/css/03-hero-intake-form.css` — hero and birth intake form
@@ -179,6 +180,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/36-ui-overhaul.css` — UI overhaul: clean full-screen input page, search-first header, segmented tile Home, profile sheet
 - `apps/birth-chart/css/37-d-chart-overview.css` — Divisional charts "At a glance" dashboard (hero, planet table, 12-house grid, balance bars, highlights)
 - `apps/birth-chart/css/38-popular-charts.css` — Popular charts section + detail sheet styles
+- `apps/birth-chart/css/39-deep-reading.css` — Deep reading lines (dr-l) and small text in notes/cards
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order
@@ -289,6 +291,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/smoke.py` — main end-to-end smoke test
 - `tests/popular_charts_test.py` — Popular charts section: 10 groups x 10 people, lazy Wikipedia photos (wrong-person guard), detail sheet, casting a chart incl. old-timezone option, no JS errors
 - `tests/knowledge_db_test.py` — Knowledge database: completeness, quality gates, cross-check of signs/nakshatras/aspects/dignity against the app tables, `VDB.reading()` on real charts
+- `tests/deep_reading_test.py` — Deep reading: 6 tabs, 12 house cards, every on-screen text equals the database text for the chart's real placements, report section + export checkbox, 6 more charts, phone layout
 - `tests/customer_smoke.py` — customer edition smoke test
 - `tests/datefinder_test.py` — Date Finder test
 - `tests/syntax_check.py` — node --check over every js file

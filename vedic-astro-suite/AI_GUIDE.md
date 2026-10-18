@@ -46,6 +46,7 @@ You are working on the **Vedic Astro Suite**: a folder project made of a shell +
 | Home dashboard, tab bar, new panel/tool | `birth-chart/25-home-and-tabs.js`, `birth-chart/65-error-boundaries.js`, `birth-chart/58-render-results.js` | `HOME_ITEMS` (add a row), `switchAppTab`, panels are `html += \`<div class="app-panel" id="panel-X">\`` in `renderResults` |
 | Popular charts gallery (famous people under the 3-step form), add/change a person | `birth-chart/85-popular-charts-data.js`, `birth-chart/86-popular-charts.js` | `PC_PEOPLE` (add a row), `PC_CATS`, `cast()` (tz option + `loadProfileIntoForm`), `fetchImg` (Wikipedia photo) |
 | Interpretation texts: planet in house/sign, house lord in house, aspects, conjunctions, nakshatras, yogas | `birth-chart/87-vedic-knowledge-db.js` | `VDB_DATA` (edit text), `VDB.planetInHouse/planetInSign/lordInHouse/aspectOnHouse/planetAspect/conjunction/nakshatra`, `VDB.reading(chart)`, `VDB.functionalNature` |
+| Deep reading tab / planet-card text / report section (how the database is shown) | `birth-chart/88-deep-reading.js`, hooks in `70-chart-reading.js`, `43-full-report-text.js` | `VDR.pane`, `VDR.planetBlock`, `VDR.dashaBlock`, `VDR.reportText` |
 | Planet popup (Birth Chart) | `birth-chart/19-planets-panel.js`, `sky3d/29-planet-detail-content.js` | `openPlanetDetail`, `openOuterDetail`, `buildPlanetsPanel` |
 | Uranus/Neptune/Pluto | `birth-chart/05-ascendant-nakshatra-vargas.js`, `sky3d/02-planetary-dignity.js`, `birth-chart/06-outer-planet-knowledge.js`, `sky3d/30-outer-planet-knowledge.js` | `OUTER_LIST`, `OUTER_INFO`, `outerAspectsTo`, `planetGeocentricLongitude` (elements in `PLANET_ELEMENTS`), A: `openOuterPlanetDetail`, B: `openOuterDetail`, `chOuter`. They are **not** in `PLANET_LIST` on purpose (no Vedic aspects/yogas/dasha). |
 | Export / Copy for AI / JSON | `birth-chart/43-full-report-text.js`, `shared/export-addon.js`, `birth-chart/44-export-modal.js` | `buildFullReportText`, `openExportModal`, add-on `window.VAX` |
@@ -138,6 +139,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Triggers: 15 new life areas (love, infatuation, luck, promotion, fame, relationship strain, windfall/inheritance, legal, debt, father, mother, siblings, business, job change, spiritual) in sky3d js 46 THEMES; per-area transit style `tp` (dbl/jup/sat/press/node), `rule` text and `src` links (checked against astromedha, jagannathhora, astrologertripathi, Parashara, shreekundli) shown in the UI.
 - Popular charts: new section UNDER the 3-step form on the Birth Chart input page (`#popCharts` inside `#intakeSection`, after `</form>`). 100 public figures in 10 groups x 10 (`PC_CATS`, `PC_PEOPLE` in `js/85-popular-charts-data.js`; UI `js/86-popular-charts.js`; `css/38`). Cards show Lahiri Sun/Moon (precomputed with the app engine; two names = the sign changed that day, nakshatra/rising only when stable); birth TIME only for Obama 19:24 and Einstein 11:30 (documented), everyone else cast at noon and labelled so. Photos = Wikipedia REST summary at runtime (guarded: must be a standard page mentioning the name; initials fallback), lazy via IntersectionObserver. "Show this chart" = `cast()`: adds a one-off `<option data-pc>` to `#tzInput` when the offset is not in `TZ_OPTIONS` (25 old births use local mean time) then `loadProfileIntoForm` + submit, so it is saved in profiles like any chart. Test: `tests/popular_charts_test.py` (also cross-checked all 100 Sun/Moon sign sets against `getSiderealLongitudeAt`, 0 differences).
 - Knowledge database: `js/87-vedic-knowledge-db.js` = `VDB_DATA` (625 entries) + `VDB` lookup API, NOT yet used by any UI. planet-in-house 9x12 (hand-written), planet-in-sign 9x12, house-lord-in-house 12x12, planet-aspect-on-house 9x12, planet-aspects-planet 9x8 (all rule-based, wording from small tables), 35 conjunctions, 27 nakshatras (name/lord/deity equal `NAKSHATRAS`), 23 yogas, dasha lords, retro/combust/vargottama/dignity texts, `functionalNature(lagna)`. `VDB.reading(computeChart(...))` returns every applicable entry for a chart. Keys/aspect rule/dignity/relations are cross-checked against the app's own tables in `tests/knowledge_db_test.py` (0 differences; nodes follow the app: only exalted/debilitated/neutral). Next step if wanted: feed `VDB.reading()` into `70-chart-reading.js` (`planetRead`) and the full report.
+- Deep reading (wired): `js/88-deep-reading.js` (`window.VDR`) shows the knowledge database in the app. Hooks: `70-chart-reading.js` (planet cards get `VDR.planetBlock`, 6th tab `📖 Deep reading` = `VDR.pane`, Now tab gets `VDR.dashaBlock`) and `43-full-report-text.js` (section `deepReading`, checkbox `data-section="deepReading"` in the export dialog, text = `VDR.reportText`). No new calculation: planets/houses/aspects come from `computeChart`, wording from `VDB.reading(chart)` (cached per chart in a WeakMap). `functionalNature` no longer calls the Sun/Moon 8th lord malefic. Test: `tests/deep_reading_test.py` (asserts every on-screen text equals the VDB text for the chart's real placements).
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 
@@ -145,13 +147,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-17 - 1189 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-18 - 1196 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 126 files, 16706 lines, 1226 KB
+**birth-chart** - 128 files, 16857 lines, 1238 KB
 ```
-index.html                                         542 lines   30 KB
+index.html                                         548 lines   31 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -194,7 +196,7 @@ js/39-yogas.js                                      67 lines    4 KB
 js/40-shadbala.js                                   55 lines    3 KB
 js/41-ashtakavarga-section.js                       35 lines    5 KB
 js/42-relationships-section.js                      21 lines    1 KB
-js/43-full-report-text.js                          244 lines   13 KB
+js/43-full-report-text.js                          249 lines   13 KB
 js/44-export-modal.js                              203 lines    9 KB
 js/45-panchanga-engine.js                          107 lines    7 KB
 js/46-transit-stays-engine.js                       43 lines    2 KB
@@ -221,7 +223,7 @@ js/66-modal-accessibility.js                        23 lines    1 KB
 js/67-friendly-input-page.js                        96 lines    8 KB
 js/68-intake-progress.js                            65 lines    3 KB
 js/69-divisional-areas.js                          132 lines   22 KB
-js/70-chart-reading.js                              75 lines   16 KB
+js/70-chart-reading.js                              76 lines   16 KB
 js/71-life-activation.js                            50 lines    9 KB
 js/72-bhava-bala.js                                 47 lines    7 KB
 js/73-tithi-pravesh.js                              62 lines   14 KB
@@ -239,6 +241,7 @@ js/84-bridge-3d.js                                  38 lines    2 KB
 js/85-popular-charts-data.js                       116 lines   26 KB
 js/86-popular-charts.js                            120 lines    7 KB
 js/87-vedic-knowledge-db.js                       2268 lines  202 KB
+js/88-deep-reading.js                              129 lines   11 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
@@ -277,6 +280,7 @@ css/35-dasha-systems.css                            96 lines    8 KB
 css/36-ui-overhaul.css                             126 lines   11 KB
 css/37-d-chart-overview.css                         76 lines    6 KB
 css/38-popular-charts.css                           35 lines    4 KB
+css/39-deep-reading.css                             10 lines    0 KB
 ```
 
 **developer** - 4 files, 180 lines, 13 KB
