@@ -11631,6 +11631,15 @@ html{scroll-behavior:auto!important}
 .rd-w.dr-ask{background:rgba(212,175,55,.07);color:var(--text-muted);font-size:12px}
 .vx-note small{font-size:11.5px;line-height:1.5;color:var(--text-muted)}
 </style>
+<style>
+.yt-wrap{padding:4px 2px}
+.yt-row{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;align-items:center}
+.yt-row label{font-size:.85rem;color:var(--text-muted);display:flex;gap:6px;align-items:center}
+.yt-row input[type=date]{background:var(--bg-card);color:var(--text-main);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:8px;font:inherit}
+.yt-chk{width:100%}
+.yt-go{margin:6px 0 10px}
+.yt-pre{max-height:320px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:.72rem;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:10px}
+</style>
 
 
 
@@ -15324,6 +15333,7 @@ const HOME_ITEMS=[
  ['panel-panchanga','🌙','Panchanga','Tithi, nakshatra, yoga, karana & day timings','Time & Cycles','home'],
  ['panel-vbday','🎂','Vedic Birthday','Tithi, Nakshatra & solar birthday for any year','Time & Cycles','home'],
  ['panel-active','🔥','Life Activation','Houses lit up now · pick any date','Time & Cycles','home'],
+ ['panel-yeartimeline','🗓️','Year Timeline File','Pick two dates: planet moves, transits & dashas as one file for AI','Time & Cycles','home'],
  ['panel-dasha','◷','Dasha','120-year life-period timeline','Time & Cycles','home'],
  ['panel-dashasys','🎡','36 Dasha Systems','Vimshottari, Yogini, Chara, Narayana & more','Time & Cycles','home'],
  ['panel-tithi','🪔','Tithi Pravesh','Your yearly lunar-birthday chart','Time & Cycles','home'],
@@ -19398,6 +19408,7 @@ function renderResults(profile){
   html += `<div class="app-panel" id="panel-tithi">${window.buildTithiPraveshPanel(chart, profile)}</div>`;
   html += `<div class="app-panel" id="panel-bhavabala">${window.buildBhavaBalaPanel(chart, profile)}</div>`;
   html += `<div class="app-panel" id="panel-active">${window.buildActivationPanel(chart)}</div>`;
+  try { html += `<div class="app-panel" id="panel-yeartimeline">${window.buildYearTimelinePanel(chart, profile)}</div>`; } catch(e) { console.warn('year timeline panel', e); }
   html += `<div class="app-panel" id="panel-ashtakavarga">`;
   html += buildAshtakavargaSection(chart);
   html += `</div>`;
@@ -39204,6 +39215,521 @@ window.VNK = (function(D){
   }
   return { data: D, nakshatra, pada, placement, lagna, moon, forChart, each, find, relation };
 })(VNK_DATA);
+<\/script>
+<script>
+/* ============================================================================
+   YEAR TIMELINE ENGINE  (data only, no wording about life)
+   Scans a date range and returns facts for the "Year Timeline File": sign changes, nakshatra changes, stations,
+   transit contacts with the natal chart (with orb windows), lunations and eclipses, Vimshottari changes at three levels,
+   Sade Sati / Dhaiya periods and slow-planet "touch" segments (Jupiter + Saturn + nodes on each house).
+   Plan and sources: docs/YEAR_TIMELINE_RESEARCH.md.  Exposes one global: YT.
+   Depends on: getSiderealLongitudeAt, planetGeocentricLongitude, lahiriAyanamsa, isRetrograde, getPlanetSpeed, angDiffSigned,
+   normDeg, getSignIndex, getDegInSign, getNakshatra, NAKSHATRAS, SIGNS, getAspectedHouses, jdToDate, computeTransits,
+   calculateSubPeriods, findActiveDasha, dfMoonLat (optional: eclipse flag), DF_LIM_SOLAR / DF_LIM_LUNAR (optional).
+   Conventions: sidereal Lahiri, whole-sign houses from the Lagna (and from the natal Moon), 365.25-day dasha years.
+   ============================================================================ */
+const YT = (function(){
+  'use strict';
+  const VERSION = 1;
+  const GRAHA = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+  const OUTER = ['Uranus','Neptune','Pluto'];
+  const KAKSHYA = ['Saturn','Jupiter','Mars','Sun','Venus','Mercury','Moon','Lagna'];   // eight 3d45m parts of a sign, in this order
+  const ORB = 1.0;                                                                       // degrees, for transit contacts
+  const SAMPLE = { Sun:1, Moon:0.05, Mars:0.5, Mercury:0.5, Venus:1, Jupiter:1, Saturn:1, Rahu:2, Ketu:2, Uranus:2, Neptune:2, Pluto:2 };   // days between samples
+  const HIT_PLANETS = ['Saturn','Jupiter','Mars','Rahu','Ketu'];
+  // exact-angle offsets of each transiting planet's aspects: 7th = 180; Mars 4th/8th; Jupiter 5th/9th; Saturn 3rd/10th (graha drishti). Nodes: conjunction only.
+  const HIT_OFFSETS = { Saturn:[[0,'conjunct'],[180,'7th aspect'],[60,'3rd aspect'],[270,'10th aspect']],
+                        Jupiter:[[0,'conjunct'],[180,'7th aspect'],[120,'5th aspect'],[240,'9th aspect']],
+                        Mars:[[0,'conjunct'],[180,'7th aspect'],[90,'4th aspect'],[210,'8th aspect']],
+                        Rahu:[[0,'conjunct']], Ketu:[[0,'conjunct']] };
+  const TYPE_ORDER = { 'DASHA-CHANGE':0, INGRESS:1, STATION:2, NAKSHATRA:3, HIT:4, LUNATION:5, ECLIPSE:5, 'SADE-SATI':6 };
+
+  const lc = s => s.toLowerCase();
+  function lon(name, jd){
+    if (OUTER.indexOf(name) >= 0) return normDeg(planetGeocentricLongitude(lc(name), jd) - lahiriAyanamsa(jd));
+    return getSiderealLongitudeAt(name, jd);
+  }
+  function retro(name, jd){
+    if (name === 'Rahu' || name === 'Ketu') return true;      // mean node: always retrograde (same as the chart engine)
+    if (name === 'Sun' || name === 'Moon') return false;
+    return isRetrograde(lc(name), jd);
+  }
+  function speed(name, jd){
+    if (OUTER.indexOf(name) >= 0){ const d = angDiffSigned(lon(name, jd + 0.5), lon(name, jd - 0.5)); return d; }
+    return getPlanetSpeed(name, jd);
+  }
+  function bisect(pred, a, b){                                  // pred(a) !== pred(b); returns the switch time
+    const pa = pred(a);
+    for (let i = 0; i < 38; i++){ const m = (a + b) / 2; if (pred(m) === pa) a = m; else b = m; }
+    return (a + b) / 2;
+  }
+  const jsToJD = ms => ms / 86400000 + 2440587.5;
+  const dateToJD = d => jsToJD(d.getTime());
+  function series(name, s0, e0){
+    const st = SAMPLE[name], t = [], l = [], r = [];
+    for (let x = s0; x < e0 + st * 0.999; x += st){ const tt = Math.min(x, e0); t.push(tt); l.push(lon(name, tt)); r.push(retro(name, tt)); if (tt >= e0) break; }
+    return { t, l, r };
+  }
+
+  /* where a longitude sits: sign, degree, nakshatra, pada, houses from Lagna and from natal Moon, Ashtakavarga points, Kakshya part */
+  function place(chart, name, L, jd){
+    const asc = chart.ascendant.sign, moon = chart.planets.Moon.sign, sg = getSignIndex(L), nk = getNakshatra(L), deg = getDegInSign(L);
+    const out = { name, lon: L, sign: sg, deg, nak: nk.index, pada: nk.pada, houseL: ((sg - asc + 12) % 12) + 1, houseM: ((sg - moon + 12) % 12) + 1,
+                  rx: jd == null ? null : retro(name, jd), sav: chart.ashtakavarga.sav[sg],
+                  kakshyaIdx: Math.floor(deg / 3.75) };
+    out.kakshya = KAKSHYA[Math.min(7, out.kakshyaIdx)];
+    const tb = chart.ashtakavarga.bavTables[name]; out.bav = tb ? tb[sg] : null;
+    return out;
+  }
+
+  function natalPoints(chart){
+    const pts = GRAHA.map(n => ({ name: n, lon: chart.siderealLongitudes[n] }));
+    pts.push({ name: 'Lagna', lon: chart.ascendant.longitude });
+    return pts;
+  }
+
+  /* ---- sign / nakshatra / station events from a sampled series ---- */
+  function bodyEvents(chart, name, ser, ev, s0, e0){
+    const sgOf = L => getSignIndex(L), nkOf = L => Math.floor(normDeg(L) / (360 / 27));
+    for (let k = 1; k < ser.t.length; k++){
+      const a = ser.t[k - 1], b = ser.t[k];
+      if (sgOf(ser.l[k]) !== sgOf(ser.l[k - 1])){
+        const x = bisect(j => sgOf(lon(name, j)) === sgOf(ser.l[k - 1]), a, b);
+        if (x > s0 && x <= e0) ev.push({ type: 'INGRESS', planet: name, jd: x, from: sgOf(ser.l[k - 1]), to: sgOf(ser.l[k]), at: place(chart, name, lon(name, x + 1e-6), x + 1e-6) });
+      }
+      if (nkOf(ser.l[k]) !== nkOf(ser.l[k - 1])){
+        const x = bisect(j => nkOf(lon(name, j)) === nkOf(ser.l[k - 1]), a, b);
+        if (x > s0 && x <= e0) ev.push({ type: 'NAKSHATRA', planet: name, jd: x, from: nkOf(ser.l[k - 1]), to: nkOf(ser.l[k]), at: place(chart, name, lon(name, x + 1e-6), x + 1e-6) });
+      }
+      if (name !== 'Rahu' && name !== 'Ketu' && name !== 'Sun' && name !== 'Moon' && ser.r[k] !== ser.r[k - 1]){
+        const x = bisect(j => retro(name, j), a, b);
+        if (x > s0 && x <= e0) ev.push({ type: 'STATION', planet: name, jd: x, to: ser.r[k] ? 'retrograde' : 'direct', at: place(chart, name, lon(name, x), null) });
+      }
+    }
+  }
+
+  /* ---- transit planet hitting a natal point: orb windows with exact passes ---- */
+  function hitEvents(chart, name, ser, pts, ev, s0, e0){
+    HIT_OFFSETS[name].forEach(([off, label]) => {
+      pts.forEach(p => {
+        const g = j => angDiffSigned(normDeg(lon(name, j) + off), p.lon);
+        const gs = ser.l.map(l => angDiffSigned(normDeg(l + off), p.lon));
+        const n = gs.length; let k = 0;
+        while (k < n){
+          if (Math.abs(gs[k]) >= ORB){ k++; continue; }
+          let i0 = k; while (k + 1 < n && Math.abs(gs[k + 1]) < ORB) k++; const i1 = k; k++;
+          const clipS = i0 === 0, clipE = i1 === n - 1;
+          const enter = clipS ? ser.t[0] : bisect(j => Math.abs(g(j)) < ORB, ser.t[i0 - 1], ser.t[i0]);
+          const leave = clipE ? ser.t[n - 1] : bisect(j => Math.abs(g(j)) < ORB, ser.t[i1], ser.t[i1 + 1]);
+          const exact = []; let minAbs = 99;
+          for (let q = i0; q <= i1; q++) minAbs = Math.min(minAbs, Math.abs(gs[q]));
+          for (let q = Math.max(i0 - 1, 0); q <= Math.min(i1, n - 2); q++){
+            if (gs[q] * gs[q + 1] < 0 && Math.abs(gs[q]) < 30 && Math.abs(gs[q + 1]) < 30){
+              const neg = gs[q] < 0; const x = bisect(j => (g(j) < 0) === neg, ser.t[q], ser.t[q + 1]);
+              if (x >= s0 && x <= e0) exact.push(x);
+            }
+          }
+          if (exact.length) minAbs = 0;
+          ev.push({ type: 'HIT', planet: name, aspect: label, natal: p.name, natalLon: p.lon, jd: enter, enter, leave, exact, minOrb: minAbs,
+                    clipS, clipE, at: place(chart, name, lon(name, exact[0] || enter), exact[0] || enter) });
+        }
+      });
+    });
+  }
+
+  /* ---- new / full moons, eclipses ---- */
+  function lunationEvents(chart, pts, ev, s0, e0){
+    const el = j => normDeg(lon('Moon', j) - lon('Sun', j));
+    let prevT = s0 - 0.25, prev = el(prevT);
+    for (let x = s0; x <= e0 + 0.25; x += 0.25){
+      const cur = el(x); let kind = null, pred = null;
+      if (prev > 300 && cur < 60){ kind = 'new'; pred = j => el(j) < 180; }
+      else if (prev < 180 && cur >= 180){ kind = 'full'; pred = j => el(j) >= 180; }
+      if (kind){
+        const t = bisect(pred, prevT, x);
+        if (t > s0 && t <= e0){
+          const sun = lon('Sun', t), moon = lon('Moon', t);
+          let ecl = null;
+          if (typeof dfMoonLat === 'function'){
+            const lat = Math.abs(dfMoonLat(t));
+            if (kind === 'new' && lat < (typeof DF_LIM_SOLAR === 'number' ? DF_LIM_SOLAR : 1.55)) ecl = 'solar';
+            if (kind === 'full' && lat < (typeof DF_LIM_LUNAR === 'number' ? DF_LIM_LUNAR : 1.0)) ecl = 'lunar';
+          }
+          const key = kind === 'new' ? sun : moon;                  // the degree where the lunation / eclipse happens
+          const contacts = [];
+          pts.forEach(p => { const d = Math.abs(angDiffSigned(key, p.lon)); if (d <= 3) contacts.push({ natal: p.name, orb: d, how: 'conjunct' }); });
+          ev.push({ type: ecl ? 'ECLIPSE' : 'LUNATION', kind, eclipse: ecl, jd: t, at: place(chart, kind === 'new' ? 'Sun' : 'Moon', key, null), contacts });
+        }
+      }
+      prevT = x; prev = cur;
+    }
+  }
+
+  /* ---- Vimshottari: every period that touches the range, and the change points ---- */
+  function dashaPeriods(chart, jd0, jd1){
+    const d0 = jdToDate(jd0), d1 = jdToDate(jd1), out = [];
+    chart.dashaData.mahadashas.forEach(m => {
+      if (m.endDate <= d0 || m.startDate >= d1) return;
+      calculateSubPeriods(m).forEach(a => {
+        if (a.endDate <= d0 || a.startDate >= d1) return;
+        calculateSubPeriods(a).forEach(p => {
+          if (p.endDate <= d0 || p.startDate >= d1) return;
+          out.push({ md: m.lord, ad: a.lord, pd: p.lord, start: dateToJD(p.startDate), end: dateToJD(p.endDate),
+                     mdStart: dateToJD(m.startDate), mdEnd: dateToJD(m.endDate), adStart: dateToJD(a.startDate), adEnd: dateToJD(a.endDate) });
+        });
+      });
+    });
+    out.sort((x, y) => x.start - y.start);
+    return out;
+  }
+  function dashaEvents(pds, ev, s0, e0){
+    for (let i = 1; i < pds.length; i++){
+      const a = pds[i - 1], b = pds[i];
+      if (b.start > s0 && b.start <= e0){
+        const level = a.md !== b.md ? 'Mahadasha' : a.ad !== b.ad ? 'Antardasha' : 'Pratyantardasha';
+        ev.push({ type: 'DASHA-CHANGE', level, jd: b.start, from: [a.md, a.ad, a.pd], to: [b.md, b.ad, b.pd] });
+      }
+    }
+  }
+
+  /* how a natal planet links to a house: rules it (sign lord), sits in it, aspects it (graha drishti) */
+  function links(chart, planet, house){
+    const out = [], asc = chart.ascendant.sign;
+    if (SIGNS[(asc + house - 1) % 12].lord === planet) out.push('rules');
+    const P = chart.planets[planet];
+    if (P){
+      if (P.house === house) out.push('sits in');
+      else if (getAspectedHouses(planet, P.house).indexOf(house) >= 0) out.push('aspects');
+    }
+    return out;
+  }
+
+  /* ---- slow-planet touch segments: Jupiter and Saturn (occupy or aspect) + nodes (occupy), per house ---- */
+  function segments(chart, pds, ev, s0, e0){
+    const cut = [s0, e0];
+    ev.forEach(x => { if (x.type === 'INGRESS' && (x.planet === 'Jupiter' || x.planet === 'Saturn' || x.planet === 'Rahu')) cut.push(x.jd); });
+    pds.forEach(p => { if (p.start > s0 && p.start < e0) cut.push(p.start); });
+    cut.sort((a, b) => a - b);
+    const asc = chart.ascendant.sign, moon = chart.planets.Moon.sign, out = [];
+    for (let i = 0; i < cut.length - 1; i++){
+      const a = cut[i], b = cut[i + 1]; if (b - a < 1e-4) continue;
+      const mid = (a + b) / 2, pd = pds.find(p => mid >= p.start && mid < p.end) || null;
+      const sg = n => getSignIndex(lon(n, mid));
+      const J = sg('Jupiter'), S = sg('Saturn'), Ra = sg('Rahu'), Ke = sg('Ketu');
+      const frame = base => {
+        const hs = s => ((s - base + 12) % 12) + 1, hJ = hs(J), hS = hs(S), hRa = hs(Ra), hKe = hs(Ke), rows = [];
+        for (let h = 1; h <= 12; h++){
+          const jt = (h - hJ + 12) % 12, st = (h - hS + 12) % 12;
+          const j = jt === 0 ? 'occupies' : [4, 6, 8].indexOf(jt) >= 0 ? 'aspects' : null;
+          const s = st === 0 ? 'occupies' : [2, 6, 9].indexOf(st) >= 0 ? 'aspects' : null;
+          const nodes = []; if (h === hRa) nodes.push('Rahu'); if (h === hKe) nodes.push('Ketu');
+          if (j && s) rows.push({ house: h, jupiter: j, saturn: s, nodes });
+        }
+        return { hJ, hS, hRa, hKe, rows };
+      };
+      const fL = frame(asc), fM = frame(moon);
+      const chain = pd ? [['Mahadasha', pd.md], ['Antardasha', pd.ad], ['Pratyantardasha', pd.pd]] : [];
+      const dl = h => chain.map(([lv, pl]) => ({ lv, pl, l: links(chart, pl, h) })).filter(x => x.l.length);
+      fL.rows.forEach(r => r.dasha = dl(r.house));
+      out.push({ start: a, end: b, J, S, Ra, Ke, chain: pd ? [pd.md, pd.ad, pd.pd] : null, fromLagna: fL, fromMoon: fM });
+    }
+    return out;
+  }
+
+  /* ---- main ---- */
+  function scan(chart, profile, o){
+    o = o || {};
+    const s0 = o.startJD, e0 = o.endJD, tz = chart.tzOffsetHours;
+    const warnings = [];
+    if (!(e0 > s0)) throw new Error('End date must be after the start date');
+    const yr = jd => jdToDate(jd).getUTCFullYear();
+    if (yr(s0) < 1801 || yr(e0) > 2049) warnings.push('Part of this range is outside 1801-2049, where the planet formulas are not reliable.');
+    const bodies = GRAHA.filter(n => n !== 'Moon' || o.moon).concat(o.outer ? OUTER : []);
+    const ev = [], pts = natalPoints(chart), serByName = {};
+    bodies.forEach(n => {
+      const ser = series(n, s0, e0); serByName[n] = ser;
+      bodyEvents(chart, n, ser, ev, s0, e0);
+    });
+    HIT_PLANETS.forEach(n => hitEvents(chart, n, serByName[n], pts, ev, s0, e0));
+    lunationEvents(chart, pts, ev, s0, e0);
+    const pdsAll = dashaPeriods(chart, s0, e0 + 3 * 365.25);
+    const pds = pdsAll.filter(p => p.start < e0 && p.end > s0);
+    dashaEvents(pdsAll, ev, s0, e0);
+
+    // Sade Sati and Dhaiya periods that touch the range
+    const tr = computeTransits(chart, profile), cyc = [];
+    const addCycles = (list, kind) => list.forEach(c => { if ((c.end == null || c.end > s0) && c.start < e0) cyc.push({ kind, start: c.start, end: c.end, phases: c.phases.map(p => ({ rel: p.rel + 1, sign: p.sign, start: p.start, end: p.end })) }); });
+    addCycles(tr.sadeSati, 'Sade Sati'); addCycles(tr.kantaka, 'Dhaiya (Saturn 4th from Moon)'); addCycles(tr.ashtama, 'Dhaiya (Saturn 8th from Moon)');
+    cyc.forEach(c => c.phases.forEach(p => {
+      [['start', p.start], ['end', p.end]].forEach(([w, t]) => { if (t != null && t > s0 && t <= e0) ev.push({ type: 'SADE-SATI', cycle: c.kind, phase: p.rel, sign: p.sign, edge: w, jd: t }); });
+    }));
+
+    ev.sort((a, b) => a.jd - b.jd || TYPE_ORDER[a.type] - TYPE_ORDER[b.type]);
+    ev.forEach((e, i) => { e.id = 'E' + String(i + 1).padStart(3, '0'); });
+
+    // state at the start
+    const startState = bodies.map(n => { const L = lon(n, s0); const p = place(chart, n, L, s0); p.speed = speed(n, s0); return p; });
+    const active = findActiveDasha(chart.dashaData.mahadashas, jdToDate(s0));
+    const startDasha = active ? { md: active.mahadasha.lord, ad: active.antardasha && active.antardasha.lord, pd: active.pratyantardasha && active.pratyantardasha.lord, sd: active.sookshmaDasha && active.sookshmaDasha.lord } : null;
+    const nextAfter = pdsAll.filter(p => p.start >= e0).sort((a, b) => a.start - b.start)[0] || null;
+    const counts = {}; ev.forEach(e => { counts[e.type] = (counts[e.type] || 0) + 1; });
+    return { version: VERSION, startJD: s0, endJD: e0, tz, orb: ORB, opts: { moon: !!o.moon, outer: !!o.outer, ask: o.ask !== false }, warnings, bodies,
+             events: ev, startState, startDasha, nextAfter, periods: pds, cycles: cyc, segments: segments(chart, pds, ev, s0, e0), counts,
+             ayanamsaStart: lahiriAyanamsa(s0) };
+  }
+
+  return { scan, lon, place, links, GRAHA, OUTER, KAKSHYA, ORB, VERSION };
+})();
+if (typeof window !== 'undefined') window.YT = YT;
+<\/script>
+<script>
+/* ============================================================================
+   YEAR TIMELINE WRITER  (turns YT.scan() output into one structured Markdown file for an AI)
+   Facts only. No life predictions are written here. Plan: docs/YEAR_TIMELINE_RESEARCH.md
+   Exposes: YTW.write(chart, profile, result) -> { text, tokens }
+   Depends on: YT (90-), SIGNS, NAKSHATRAS, AREAS (70-), VDB (87-, optional), jdToLocalParts, getAspectedHouses, getNakshatra.
+   ============================================================================ */
+const YTW = (function(){
+  'use strict';
+  const HOUSE_WORDS = { 1:'self, body, vitality', 2:'money, family, speech, food', 3:'effort, courage, siblings, skills', 4:'home, mother, property, peace of mind',
+    5:'children, intellect, creativity, romance', 6:'work/service, health problems, debts, enemies', 7:'spouse, partnerships, public dealings', 8:'sudden change, hidden matters, longevity, shared money',
+    9:'luck, father, teachers, long journeys, belief', 10:'career, status, action in the world', 11:'gains, income, friends, wishes fulfilled', 12:'expenses, loss, foreign lands, sleep, retreat' };
+  const NATURAL = { Sun:'soul, authority, father, government', Moon:'mind, mother, emotions, public', Mars:'energy, courage, brothers, property, conflict', Mercury:'speech, trade, learning, nerves',
+    Jupiter:'wisdom, children, wealth, teachers, luck', Venus:'love, spouse, comfort, arts, vehicles', Saturn:'work, delay, discipline, servants, long effort', Rahu:'obsession, foreign things, sudden rise, illusion', Ketu:'detachment, loss, spiritual cutting-off, past-life skill' };
+  const sn = i => SIGNS[i].name;
+  const ord = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
+  let TZ = 0;
+  const T = jd => { const p = jdToLocalParts(jd, TZ); return p.dateStr + ' ' + p.timeStr.slice(0, 5); };
+  const D = jd => jdToLocalParts(jd, TZ).dateStr;
+  const dg = (L) => { const d = L % 30; return Math.floor(d) + '°' + String(Math.round((d % 1) * 60)).padStart(2, '0') + "'"; };
+  const nakName = i => NAKSHATRAS[i].name;
+  const tzLabel = tz => 'UTC' + (tz >= 0 ? '+' : '-') + String(Math.floor(Math.abs(tz))).padStart(2, '0') + ':' + String(Math.round((Math.abs(tz) % 1) * 60)).padStart(2, '0');
+
+  function roleTable(chart){
+    const asc = chart.ascendant.sign, fn = (typeof VDB !== 'undefined' && VDB.functionalNature) ? VDB.functionalNature(asc) : null, R = {};
+    ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'].forEach(n => {
+      const p = chart.planets[n], rules = []; for (let h = 1; h <= 12; h++) if (SIGNS[(asc + h - 1) % 12].lord === n) rules.push(h);
+      const kar = (typeof AREAS !== 'undefined' ? AREAS : []).filter(a => a.k.indexOf(n) >= 0).map(a => a.n);
+      const disp = SIGNS[p.sign].lord, dp = chart.planets[disp];
+      const sb = chart.shadbala && chart.shadbala.planets && chart.shadbala.planets[n];
+      R[n] = { rules, house: p.house, sign: p.sign, kar, disp, dispHouse: dp ? dp.house : null, fn: fn && fn[n] ? fn[n] : null,
+               dignity: (p.dignity && p.dignity.status) || '', rx: !!p.retrograde && n !== 'Rahu' && n !== 'Ketu', comb: !!(p.combustion && p.combustion.combust),
+               shad: sb ? Math.round(sb.percentOfRequired) + '% of required (' + (sb.isStrong ? 'strong' : 'weak') + ')' : null,
+               bavOwn: chart.ashtakavarga.bavTables[n] ? chart.ashtakavarga.bavTables[n][p.sign] : null };
+    });
+    return R;
+  }
+  const tag = (R, n) => R[n] ? '[' + n + (R[n].rules.length ? ' rules H' + R[n].rules.join(',H') : (n === 'Rahu' || n === 'Ketu') ? ' node' : '') + '; natal H' + R[n].house + ']' : '';
+  const nat = (R, n) => n === 'Lagna' ? '' : tag(R, n);
+
+  function write(chart, profile, res){
+    TZ = chart.tzOffsetHours; const R = roleTable(chart), asc = chart.ascendant.sign, L = [];
+    const name = (profile && profile.name) || 'Native', P = chart.planets;
+    const push = s => L.push(s);
+    // ---------- 0
+    push('# YEAR TIMELINE FILE: ' + name);
+    push('Range: ' + T(res.startJD) + ' to ' + T(res.endJD) + ' (' + tzLabel(TZ) + ', birth-place time). Made by Vedic Astro Suite, file format v' + res.version + '.');
+    push('');
+    push('## 0. HOW TO READ THIS FILE (rules for the AI)');
+    push('1. Everything below is calculated data. Nothing is a prediction. You do the interpreting.');
+    push('2. Use only the facts in this file. If something is not here, say it is not known. Do not invent dates.');
+    push('3. Sidereal zodiac, Lahiri ayanamsa. Houses are whole-sign: house 1 is the Lagna sign. "H" = house from the Lagna unless the text says "from Moon".');
+    push('4. Section 3 says what each planet controls in THIS native\'s life (houses it rules, where it sits, strength). Judge every event through that role, not through generic planet meaning.');
+    push('5. Vimshottari dasha (Section 6) is the main timer: events matter most when they touch the running dasha lords or the houses those lords rule or sit in.');
+    push('6. "Double transit" in Section 11 only means Jupiter and Saturn both occupy or aspect the same house at the same time. It is a fact, not a verdict.');
+    push('7. Event IDs (E001...) are in time order. Cite them when you explain. Times are approximate to about one minute; "orb" is the angle in degrees between the two points.');
+    push('8. Give themes as possibilities with the dates that support them. Mention what is uncertain.');
+    push('');
+    // ---------- 1
+    push('## 1. NATIVE');
+    push('- Name: ' + name + (profile && profile.dob ? ' | Born: ' + profile.dob + (profile.tob ? ' ' + profile.tob : '') + ' (' + tzLabel(TZ) + ')' : ''));
+    push('- Lagna: ' + sn(asc) + ' ' + dg(chart.ascendant.longitude) + ', nakshatra ' + nakName(chart.ascendant.nakshatra.index) + ' pada ' + chart.ascendant.nakshatra.pada + ' | Lagna lord: ' + SIGNS[asc].lord + ' in H' + P[SIGNS[asc].lord].house);
+    push('- Moon sign (Rashi): ' + sn(P.Moon.sign) + ', nakshatra ' + nakName(P.Moon.nakshatra.index) + ' pada ' + P.Moon.nakshatra.pada + ' | Sun sign: ' + sn(P.Sun.sign));
+    push('- Ayanamsa (Lahiri) at start of range: ' + res.ayanamsaStart.toFixed(4) + '°');
+    push('');
+    // ---------- 2
+    push('## 2. NATAL PLANETS');
+    push('| Planet | Sign | Degree | House | Nakshatra (pada) | Motion | Dignity | Notes |');
+    push('|---|---|---|---|---|---|---|---|');
+    ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'].forEach(n => {
+      const p = P[n], r = R[n], nt = [];
+      if (r.comb) nt.push('combust'); if (p.war) nt.push('planetary war');
+      push('| ' + n + ' | ' + sn(p.sign) + ' | ' + dg(p.longitude) + ' | H' + p.house + ' | ' + nakName(p.nakshatra.index) + ' (' + p.nakshatra.pada + ') | ' + (n === 'Rahu' || n === 'Ketu' ? 'node' : r.rx ? 'retrograde' : 'direct') + ' | ' + (r.dignity || '-') + ' | ' + nt.join(', ') + ' |');
+    });
+    push('');
+    // ---------- 3
+    push('## 3. WHAT EACH PLANET CONTROLS IN THIS LIFE');
+    push('Running dasha lords at the start: ' + (res.startDasha ? 'Mahadasha ' + res.startDasha.md + ', Antardasha ' + res.startDasha.ad + ', Pratyantardasha ' + res.startDasha.pd : 'unknown') + '. They are flagged "RUNNING" below.');
+    const run = res.startDasha ? [res.startDasha.md, res.startDasha.ad, res.startDasha.pd] : [];
+    const during = {}; res.periods.forEach(p => { [p.md, p.ad, p.pd].forEach(x => during[x] = true); });
+    ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'].forEach(n => {
+      const r = R[n]; push('');
+      push('### ' + n + (run.indexOf(n) >= 0 ? '  (RUNNING dasha lord at start)' : during[n] ? '  (a dasha lord during this range)' : ''));
+      if (r.rules.length) push('- Rules: ' + r.rules.map(h => 'H' + h + ' (' + HOUSE_WORDS[h] + ')').join('; '));
+      else push('- Rules no house (shadow planet). It acts through its sign lord ' + r.disp + ' and the house it sits in.');
+      push('- Sits in: H' + r.house + ' (' + HOUSE_WORDS[r.house] + '), ' + sn(r.sign) + (r.dignity ? ', ' + r.dignity : '') + (r.rx ? ', retrograde' : '') + (r.comb ? ', combust' : ''));
+      push('- Sign lord (dispositor): ' + r.disp + (r.dispHouse ? ' in H' + r.dispHouse : ''));
+      if (r.fn && r.fn.tags.length) push('- Lordship type for this Lagna: ' + r.fn.tags.join(', '));
+      push('- Natural meaning: ' + NATURAL[n]);
+      if (r.kar.length) push('- Life areas it is a natural indicator for: ' + r.kar.join(', '));
+      if (r.shad) push('- Shadbala: ' + r.shad);
+      if (r.bavOwn != null) push('- Ashtakavarga points in its own natal sign: ' + r.bavOwn + '/8');
+    });
+    push('');
+    // ---------- 4
+    push('## 4. HOUSE MAP');
+    push('| House | Sign | Lord (sits in) | Occupants | Aspected by (graha drishti) | SAV points | Themes |');
+    push('|---|---|---|---|---|---|---|');
+    for (let h = 1; h <= 12; h++){
+      const sg = (asc + h - 1) % 12, lord = SIGNS[sg].lord, occ = Object.keys(P).filter(n => P[n].house === h);
+      const asp = Object.keys(P).filter(n => P[n].house !== h && getAspectedHouses(n, P[n].house).indexOf(h) >= 0);
+      push('| H' + h + ' | ' + sn(sg) + ' | ' + lord + ' (H' + P[lord].house + ') | ' + (occ.join(', ') || '-') + ' | ' + (asp.join(', ') || '-') + ' | ' + chart.ashtakavarga.sav[sg] + ' | ' + HOUSE_WORDS[h] + ' |');
+    }
+    push('Ashtakavarga note: total 337 points, average 28 per sign. Individual planet scores run 0-8.');
+    push('');
+    // ---------- 5
+    push('## 5. NATAL LINKS BETWEEN PLANETS');
+    const pn = Object.keys(P), seen = {};
+    pn.forEach(a => pn.forEach(b => {
+      if (a === b) return;
+      if (P[a].sign === P[b].sign){ const k = [a, b].sort().join('+'); if (!seen[k]){ seen[k] = 1; push('- Conjunction: ' + a + ' + ' + b + ' in ' + sn(P[a].sign) + ' (H' + P[a].house + ')'); } }
+      else if (getAspectedHouses(a, P[a].house).indexOf(P[b].house) >= 0 && a !== 'Rahu' && a !== 'Ketu') push('- ' + a + ' (H' + P[a].house + ') aspects ' + b + ' (H' + P[b].house + ')');
+    }));
+    push('');
+    // ---------- 6
+    push('## 6. VIMSHOTTARI DASHA IN THIS RANGE');
+    push('Dasha years are 365.25 days. Each line is one Pratyantardasha (the third level) that touches the range.');
+    push('| Mahadasha | Antardasha | Pratyantardasha | From | To |');
+    push('|---|---|---|---|---|');
+    res.periods.forEach(p => push('| ' + p.md + ' (to ' + D(p.mdEnd) + ') | ' + p.ad + ' (to ' + D(p.adEnd) + ') | ' + p.pd + ' | ' + D(p.start) + ' | ' + D(p.end) + ' |'));
+    if (res.nextAfter) push('Next change after this range: ' + res.nextAfter.md + '/' + res.nextAfter.ad + '/' + res.nextAfter.pd + ' begins ' + D(res.nextAfter.start) + '.');
+    push('');
+    // ---------- 7
+    push('## 7. STATE AT THE START (' + T(res.startJD) + ')');
+    push('| Planet | Sign | Degree | Nakshatra (pada) | H from Lagna | H from Moon | Motion | SAV of sign | Own BAV there | Kakshya part |');
+    push('|---|---|---|---|---|---|---|---|---|---|');
+    res.startState.forEach(s => push('| ' + s.name + ' | ' + sn(s.sign) + ' | ' + dg(s.lon) + ' | ' + nakName(s.nak) + ' (' + s.pada + ') | H' + s.houseL + ' | ' + s.houseM + ' | ' + (s.name === 'Rahu' || s.name === 'Ketu' ? 'node' : s.rx ? 'retrograde' : 'direct') + ' | ' + s.sav + ' | ' + (s.bav == null ? '-' : s.bav) + ' | ' + s.kakshya + ' |'));
+    push('');
+    // ---------- 8
+    push('## 8. MASTER TIMELINE (every event, in time order)');
+    push('Types: DASHA-CHANGE, INGRESS (planet changes sign), NAKSHATRA (planet changes nakshatra), STATION (turns retrograde or direct), HIT (transiting planet contacts a natal point within ' + res.orb + '° orb), LUNATION / ECLIPSE (new or full moon), SADE-SATI (phase change).');
+    push('Role tags in [brackets] are the natal role from Section 3.');
+    push('');
+    const hitLeaveTxt = e => (e.clipS ? '(already active at range start) ' : '') + D(e.enter) + ' to ' + D(e.leave) + (e.clipE ? ' (continues after range end)' : '');
+    res.events.forEach(e => {
+      const w = T(e.jd); let s = '';
+      if (e.type === 'DASHA-CHANGE') s = e.level + ' changes: ' + e.from.join('/') + ' -> ' + e.to.join('/') + '. New lord roles: ' + e.to.map(x => nat(R, x)).join(' ');
+      else if (e.type === 'INGRESS'){ const a = e.at; s = e.planet + ' ' + nat(R, e.planet) + ' enters ' + sn(e.to) + ' (from ' + sn(e.from) + ') | H' + a.houseL + ' from Lagna, ' + a.houseM + ' from Moon | SAV ' + a.sav + (a.bav != null ? ', own BAV ' + a.bav : '') + (a.rx ? ' | retrograde' : ''); }
+      else if (e.type === 'NAKSHATRA'){ const a = e.at; s = e.planet + ' ' + nat(R, e.planet) + ' moves into ' + nakName(e.to) + ' (lord ' + NAKSHATRAS[e.to].lord + '), pada ' + a.pada + ' | in ' + sn(a.sign) + ', H' + a.houseL + ' from Lagna'; }
+      else if (e.type === 'STATION'){ const a = e.at; s = e.planet + ' ' + nat(R, e.planet) + ' turns ' + e.to.toUpperCase() + ' at ' + dg(a.lon) + ' ' + sn(a.sign) + ' (' + nakName(a.nak) + ') | H' + a.houseL + ' from Lagna, ' + a.houseM + ' from Moon'; }
+      else if (e.type === 'HIT'){ const a = e.at; s = e.planet + ' (transit) ' + e.aspect + ' natal ' + e.natal + ' ' + nat(R, e.natal) + ' at ' + dg(e.natalLon) + ' ' + sn(Math.floor(e.natalLon / 30)) + ' | within ' + res.orb + '°: ' + hitLeaveTxt(e) + ' | ' + (e.exact.length ? 'exact: ' + e.exact.map(T).join(', ') : 'closest orb ' + e.minOrb.toFixed(2) + '°') + ' | transiting planet in ' + sn(a.sign) + ', H' + a.houseL; }
+      else if (e.type === 'LUNATION' || e.type === 'ECLIPSE'){ const a = e.at; s = (e.kind === 'new' ? 'New Moon' : 'Full Moon') + (e.eclipse ? ' = ' + e.eclipse.toUpperCase() + ' ECLIPSE' : '') + ' at ' + dg(a.lon) + ' ' + sn(a.sign) + ' (' + nakName(a.nak) + ') | H' + a.houseL + ' from Lagna, ' + a.houseM + ' from Moon' + (e.contacts.length ? ' | within 3° of natal: ' + e.contacts.map(c => c.natal + ' (' + c.orb.toFixed(1) + '°)').join(', ') : ''); }
+      else if (e.type === 'SADE-SATI') s = e.cycle + ': Saturn in the ' + ord(e.phase) + ' sign from natal Moon (' + sn(e.sign) + ') ' + (e.edge === 'start' ? 'begins' : 'ends');
+      push('- **' + e.id + '** | ' + w + ' | ' + e.type + ' | ' + s);
+    });
+    push('');
+    // ---------- 9
+    push('## 9. PERIODS ACTIVE DURING THE RANGE');
+    const stat = res.events.filter(e => e.type === 'STATION');
+    if (res.cycles.length){ push('### Saturn cycles from natal Moon'); res.cycles.forEach(c => push('- ' + c.kind + ': ' + D(c.start) + ' to ' + (c.end ? D(c.end) : 'open') + '; phases: ' + c.phases.map(p => p.rel + ' = Saturn in ' + sn(p.sign) + ' (' + D(p.start) + ' to ' + (p.end ? D(p.end) : '?') + ')').join('; '))); }
+    else push('- No Sade Sati or Dhaiya period touches this range.');
+    push('### Retrograde stretches (from the station events above)');
+    if (!stat.length) push('- No station in this range.'); else stat.forEach(e => push('- ' + e.id + ': ' + e.planet + ' ' + e.to + ' on ' + D(e.jd)));
+    push('### Longest contacts with natal points (30 days or more inside the orb)');
+    const lg = res.events.filter(e => e.type === 'HIT' && e.leave - e.enter >= 30);
+    if (!lg.length) push('- None.'); else lg.forEach(e => push('- ' + e.id + ': ' + e.planet + ' ' + e.aspect + ' natal ' + e.natal + ', ' + hitLeaveTxt(e)));
+    push('');
+    // ---------- 10
+    push('## 10. MONTH INDEX');
+    const byM = {}; res.events.forEach(e => { const m = D(e.jd).slice(0, 7); (byM[m] = byM[m] || []).push(e); });
+    Object.keys(byM).sort().forEach(m => {
+      const c = {}; byM[m].forEach(e => c[e.type] = (c[e.type] || 0) + 1);
+      push('- ' + m + ': ' + byM[m][0].id + '-' + byM[m][byM[m].length - 1].id + ' (' + Object.keys(c).map(k => c[k] + ' ' + k).join(', ') + ')');
+    });
+    push('');
+    // ---------- 11
+    push('## 11. HOUSE ACTIVATION SEGMENTS (Jupiter + Saturn + nodes + dasha)');
+    push('Each block is a stretch of time in which Jupiter, Saturn, Rahu and Ketu stay in the same signs and the dasha chain is unchanged. A house is listed only when BOTH Jupiter and Saturn touch it (occupy or aspect). Dasha links show how each running dasha lord connects to that house (rules it / sits in it / aspects it).');
+    res.segments.forEach(g => {
+      push('');
+      push('### ' + D(g.start) + ' to ' + D(g.end) + ' | dasha ' + (g.chain ? g.chain.join('/') : '?'));
+      push('- Positions: Jupiter in ' + sn(g.J) + ', Saturn in ' + sn(g.S) + ', Rahu in ' + sn(g.Ra) + ', Ketu in ' + sn(g.Ke) + '. From Lagna: Jupiter H' + g.fromLagna.hJ + ', Saturn H' + g.fromLagna.hS + ', Rahu H' + g.fromLagna.hRa + ', Ketu H' + g.fromLagna.hKe + '. From Moon: Jupiter H' + g.fromMoon.hJ + ', Saturn H' + g.fromMoon.hS + '.');
+      const rowTxt = (r, ds) => 'H' + r.house + ' (' + HOUSE_WORDS[r.house] + '): Jupiter ' + r.jupiter + ', Saturn ' + r.saturn + (r.nodes.length ? ', ' + r.nodes.join('+') + ' there' : '') + (ds && r.dasha && r.dasha.length ? ' | dasha links: ' + r.dasha.map(x => x.lv + ' lord ' + x.pl + ' ' + x.l.join(' & ')).join('; ') : '');
+      if (!g.fromLagna.rows.length) push('- Double transit from Lagna: none.'); else g.fromLagna.rows.forEach(r => push('- Double transit from Lagna: ' + rowTxt(r, true)));
+      if (!g.fromMoon.rows.length) push('- Double transit from Moon: none.'); else g.fromMoon.rows.forEach(r => push('- Double transit from Moon: ' + rowTxt(r, false)));
+    });
+    push('');
+    // ---------- 12
+    if (res.opts.ask !== false){
+    push('## 12. WHAT TO ASK');
+    push('(Edit this block.) Using only the data above, describe the main themes of ' + D(res.startJD) + ' to ' + D(res.endJD) + ' for ' + name + '. Go period by period. For each theme name the planets, houses and event IDs behind it, say which life areas are touched, what looks supportive and what needs care, and which dates matter most. Do not predict exact outcomes.');
+    }
+    if (res.warnings.length){ push(''); push('## NOTES ON ACCURACY'); res.warnings.forEach(w => push('- ' + w)); }
+    push('- Planet positions come from the app\'s own ephemeris formulas (accurate to about a minute of arc for the Sun and Moon, a little less for others). Moon layer: ' + (res.opts.moon ? 'included' : 'not included (Moon sign and nakshatra changes are left out to keep the file short)') + '. Outer planets: ' + (res.opts.outer ? 'included' : 'not included') + '.');
+    const text = L.join('\n');
+    return { text, tokens: Math.round(text.length / 4) };
+  }
+  return { write };
+})();
+if (typeof window !== 'undefined') window.YTW = YTW;
+<\/script>
+<script>
+/* Year Timeline File: screen. Pick two dates, make one structured file (Markdown) to give to any AI. Engine 90-, writer 91-. */
+(function(){
+  let cur = null, last = null;
+  const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  function toJD(dateStr, tz){ const p = dateStr.split('-').map(Number); return toJulianDay(p[0], p[1], p[2], 0, 0, 0) - tz / 24; }
+  window.buildYearTimelinePanel = function(c, P){
+    cur = { c, P };
+    const t = new Date(), e = new Date(t.getFullYear(), t.getMonth() + 12, t.getDate());
+    return `<div class="yt-wrap">
+      <h3 class="section-heading">Year Timeline File</h3>
+      <p class="vx-note">Pick two dates. You get one file with every planet move, nakshatra change, transit contact and dasha change in that time, plus what each planet rules in this chart. Give the file to any AI to read. This file only has facts.</p>
+      <div class="yt-row"><label>From <input type="date" id="ytFrom" value="${iso(t)}"></label><label>To <input type="date" id="ytTo" value="${iso(e)}"></label></div>
+      <div class="yt-row"><label class="yt-chk"><input type="checkbox" id="ytMoon"> Add Moon moves (makes the file much longer)</label>
+      <label class="yt-chk"><input type="checkbox" id="ytOuter"> Add Uranus, Neptune, Pluto</label>
+      <label class="yt-chk"><input type="checkbox" id="ytAsk" checked> Add a "what to ask" note at the end</label></div>
+      <button class="filter-chip yt-go" id="ytGo">Create file</button>
+      <div id="ytOut" class="yt-out"></div></div>`;
+  };
+  document.addEventListener('click', function(ev){
+    const go = ev.target.closest && ev.target.closest('#ytGo');
+    if (go){
+      const out = document.getElementById('ytOut'); if (!cur){ return; }
+      try {
+        const f = document.getElementById('ytFrom').value, t = document.getElementById('ytTo').value;
+        if (!f || !t) { out.innerHTML = '<p class="vx-note">Please pick both dates.</p>'; return; }
+        const tz = cur.c.tzOffsetHours, s = toJD(f, tz), e = toJD(t, tz) + 1;
+        if (!(e > s)) { out.innerHTML = '<p class="vx-note">The end date must be after the start date.</p>'; return; }
+        const days = e - s;
+        if (days > 1100) { out.innerHTML = '<p class="vx-note">Please keep it to 3 years or less.</p>'; return; }
+        out.innerHTML = '<p class="vx-note">Working…</p>';
+        setTimeout(function(){
+          try {
+            const res = YT.scan(cur.c, cur.P, { startJD: s, endJD: e, moon: document.getElementById('ytMoon').checked, outer: document.getElementById('ytOuter').checked, ask: document.getElementById('ytAsk').checked });
+            const w = YTW.write(cur.c, cur.P, res); last = { text: w.text, name: (cur.P && cur.P.name) || 'chart', f, t };
+            const cnt = Object.keys(res.counts).map(k => res.counts[k] + ' ' + k.toLowerCase()).join(', ');
+            out.innerHTML = '<p class="vx-note g">Ready: ' + res.events.length + ' events (' + cnt + '). About ' + w.tokens.toLocaleString() + ' tokens' + (w.tokens > 40000 ? ' – long. Try a shorter range if your AI cuts it off.' : '.') + '</p>' +
+              (days > 730 ? '<p class="vx-note">Over 2 years: the file is big.</p>' : '') +
+              res.warnings.map(x => '<p class="vx-note">' + x + '</p>').join('') +
+              '<div class="yt-row"><button class="filter-chip" id="ytCopy"><span>📋</span> Copy</button><button class="filter-chip" id="ytDl"><span>⬇</span> Download .md</button></div>' +
+              '<details><summary>Preview</summary><pre class="yt-pre"></pre></details>';
+            out.querySelector('.yt-pre').textContent = w.text;
+          } catch (err) { out.innerHTML = '<p class="vx-note">Could not make the file: ' + String(err.message || err).replace(/</g, '&lt;') + '</p>'; }
+        }, 30);
+      } catch (err) { out.innerHTML = '<p class="vx-note">Could not make the file.</p>'; }
+      return;
+    }
+    const cp = ev.target.closest && ev.target.closest('#ytCopy');
+    if (cp && last){ copyTextToClipboard(last.text, cp, '<span>📋</span> Copy'); return; }
+    const dl = ev.target.closest && ev.target.closest('#ytDl');
+    if (dl && last){
+      const b = new Blob([last.text], { type: 'text/markdown' }), a = document.createElement('a');
+      a.href = URL.createObjectURL(b); a.download = 'year-timeline-' + last.name.replace(/[^\w-]+/g, '_') + '-' + last.f + '_to_' + last.t + '.md';
+      document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    }
+  });
+})();
 <\/script>
 </body>
 </html>

@@ -1,0 +1,7 @@
+.yt-wrap{padding:4px 2px}
+.yt-row{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;align-items:center}
+.yt-row label{font-size:.85rem;color:var(--text-muted);display:flex;gap:6px;align-items:center}
+.yt-row input[type=date]{background:var(--bg-card);color:var(--text-main);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:8px;font:inherit}
+.yt-chk{width:100%}
+.yt-go{margin:6px 0 10px}
+.yt-pre{max-height:320px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:.72rem;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:10px}

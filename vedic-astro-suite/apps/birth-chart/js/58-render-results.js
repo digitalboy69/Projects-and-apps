@@ -234,6 +234,7 @@ function renderResults(profile){
   html += `<div class="app-panel" id="panel-tithi">${window.buildTithiPraveshPanel(chart, profile)}</div>`;
   html += `<div class="app-panel" id="panel-bhavabala">${window.buildBhavaBalaPanel(chart, profile)}</div>`;
   html += `<div class="app-panel" id="panel-active">${window.buildActivationPanel(chart)}</div>`;
+  try { html += `<div class="app-panel" id="panel-yeartimeline">${window.buildYearTimelinePanel(chart, profile)}</div>`; } catch(e) { console.warn('year timeline panel', e); }
   html += `<div class="app-panel" id="panel-ashtakavarga">`;
   html += buildAshtakavargaSection(chart);
   html += `</div>`;

@@ -150,13 +150,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-19 - 1221 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-19 - 1242 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 129 files, 17909 lines, 1271 KB
+**birth-chart** - 133 files, 18435 lines, 1308 KB
 ```
-index.html                                         549 lines   31 KB
+index.html                                         553 lines   31 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -181,7 +181,7 @@ js/21-transit-timer-tab.js                         100 lines    4 KB
 js/22-sandhi-table-tab.js                           68 lines    2 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             117 lines   12 KB
+js/25-home-and-tabs.js                             118 lines   12 KB
 js/26-rectification-studio.js                      227 lines   13 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -214,7 +214,7 @@ js/54-vedic-birthday-ui.js                         152 lines   12 KB
 js/55-numerology-engine.js                          54 lines    9 KB
 js/56-numerology-ui.js                             126 lines   13 KB
 js/57-my-chart-overview.js                         100 lines    6 KB
-js/58-render-results.js                            752 lines   34 KB
+js/58-render-results.js                            753 lines   34 KB
 js/59-live-transit-form.js                         150 lines    7 KB
 js/60-interactive-varga-svg.js                     162 lines    6 KB
 js/61-varga-chart-svg.js                            61 lines    9 KB
@@ -246,6 +246,9 @@ js/86-popular-charts.js                            120 lines    7 KB
 js/87-vedic-knowledge-db.js                       2268 lines  202 KB
 js/88-deep-reading.js                              157 lines   14 KB
 js/89-vedic-nakshatra-db.js                       1023 lines   30 KB
+js/90-year-timeline-engine.js                      265 lines   15 KB
+js/91-year-timeline-writer.js                      190 lines   18 KB
+js/92-year-timeline-ui.js                           57 lines    4 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
@@ -285,6 +288,7 @@ css/36-ui-overhaul.css                             126 lines   11 KB
 css/37-d-chart-overview.css                         76 lines    6 KB
 css/38-popular-charts.css                           35 lines    4 KB
 css/39-deep-reading.css                             10 lines    0 KB
+css/40-year-timeline.css                             8 lines    0 KB
 ```
 
 **developer** - 4 files, 180 lines, 13 KB
@@ -402,3 +406,4 @@ shared/meta.css                                     98 lines    5 KB
 - 3D Sky phone controls: new "Hide controls" eye button (`#clearViewBtn`, right column; css/13-tablet.css mobile block, js/36-mobile-bottom-sheet.js). Hides sub-lines, view switch, time dock and tab strip (thin handle stays; opening the sheet still shows tabs). Remembered in localStorage `vedic3dClean`; short landscape phones start hidden. Desktop unchanged.
 - Quick note (shell/js/shell.js, shell/css/shell.css, apps/notepad/js/01-notepad.js `vedicQuickAdd`): long-press (or right-click) the Notepad item in the switcher menu opens a small draggable note window over any view; Save adds a note ("quick note" tag, unfiled; chart name in title) to the Notepad data (`vedicNotepad_v1`) via the open app or straight to storage; draft kept in `vedicQuickDraft`. A short tap still opens Notepad.
 - Year Timeline Pack: research + plan only (docs/YEAR_TIMELINE_RESEARCH.md). Data-only file for a chosen date range for any AI; no code yet. Next: S1 range scanner.
+- Year Timeline File (Birth Chart): js/90-year-timeline-engine.js (scan, facts only) + 91-writer (Markdown) + 92-ui (panel-yeartimeline, Home > Time & Cycles); test tests/year_timeline_test.py; v1 has no Tajika, no auto-split for very long ranges.
