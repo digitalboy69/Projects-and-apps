@@ -150,11 +150,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-19 - 1252 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-19 - 1270 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 133 files, 18435 lines, 1308 KB
+**birth-chart** - 135 files, 18660 lines, 1323 KB
 ```
 index.html                                         553 lines   31 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -249,6 +249,7 @@ js/89-vedic-nakshatra-db.js                       1023 lines   30 KB
 js/90-year-timeline-engine.js                      265 lines   15 KB
 js/91-year-timeline-writer.js                      190 lines   18 KB
 js/92-year-timeline-ui.js                           57 lines    4 KB
+js/93-dasha-time-finder.js                         162 lines   10 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
@@ -289,6 +290,7 @@ css/37-d-chart-overview.css                         76 lines    6 KB
 css/38-popular-charts.css                           35 lines    4 KB
 css/39-deep-reading.css                             10 lines    0 KB
 css/40-year-timeline.css                             8 lines    0 KB
+css/41-dasha-time-finder.css                        63 lines    5 KB
 ```
 
 **developer** - 4 files, 180 lines, 13 KB

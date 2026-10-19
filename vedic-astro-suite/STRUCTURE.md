@@ -146,6 +146,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/90-year-timeline-engine.js` — Year Timeline scanner (global YT): date range -> sign/nakshatra changes, stations, transit contacts with natal points, lunations/eclipses, dasha changes (3 levels), Sade Sati edges, Jupiter+Saturn house segments; facts only
 - `apps/birth-chart/js/91-year-timeline-writer.js` — Year Timeline writer (global YTW): turns scan result into one structured Markdown file for an AI (planet role map, house map, dasha table, event list)
 - `apps/birth-chart/js/92-year-timeline-ui.js` — "Year Timeline File" panel (panel-yeartimeline): two dates, options, Copy / Download .md
+- `apps/birth-chart/js/93-dasha-time-finder.js` — Dasha Time Finder: five cards (Mahadasha to Prana) showing exact start/end date and time of the chosen period; uses the existing dasha engine only
 - `apps/birth-chart/css/01-premium-tokens-reset.css` — design tokens (colors, fonts) and reset
 - `apps/birth-chart/css/02-header.css` — header
 - `apps/birth-chart/css/03-hero-intake-form.css` — hero and birth intake form
@@ -186,6 +187,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/38-popular-charts.css` — Popular charts section + detail sheet styles
 - `apps/birth-chart/css/39-deep-reading.css` — Deep reading lines (dr-l) and small text in notes/cards
 - `apps/birth-chart/css/40-year-timeline.css` — Year Timeline File panel styles
+- `apps/birth-chart/css/41-dasha-time-finder.css` — Dasha Time Finder styles
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order
