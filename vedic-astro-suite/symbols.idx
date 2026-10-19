@@ -153,6 +153,7 @@ CHALDEAN_SEQUENCE	const	apps/birth-chart/js/14-shadbala-engine.js:117	birth-char
 changed	fn	apps/notepad/js/01-notepad.js:135	notepad
 changeHmsUnit	fn	apps/birth-chart/js/20-rectification-scan-tab.js:163	birth-chart
 chartModal	fn	apps/notepad/js/01-notepad.js:152	notepad
+chartName	fn	shell/js/shell.js:139	shell
 chartSVG	fn	apps/notepad/js/01-notepad.js:156	notepad
 chAspects	fn	apps/birth-chart/js/61-varga-chart-svg.js:11	birth-chart
 chBadge	fn	apps/birth-chart/js/61-varga-chart-svg.js:5	birth-chart
@@ -837,7 +838,11 @@ pump	fn	apps/birth-chart/js/86-popular-charts.js:37	birth-chart
 PUSH	const	apps/birth-chart/js/75-fate-meter.js:6	birth-chart
 pushDate	fn	apps/birth-chart/js/67-friendly-input-page.js:28	birth-chart
 pushTime	fn	apps/birth-chart/js/67-friendly-input-page.js:35	birth-chart
+qnStatus	fn	shell/js/shell.js:142	shell
 qrCanvas	fn	apps/birth-chart/js/76-share-link-qr.js:31	birth-chart
+quickClose	fn	shell/js/shell.js:162	shell
+quickOpen	fn	shell/js/shell.js:163	shell
+quickSave	fn	shell/js/shell.js:143	shell
 rahuLongitude	fn	apps/birth-chart/js/03-ephemeris-engine.js:126	birth-chart
 rahuLongitude	fn	apps/sky3d/js/01-astro-engine.js:137	sky3d
 rail	fn	apps/birth-chart/js/69-divisional-areas.js:72	birth-chart
@@ -1184,6 +1189,7 @@ vbTithi	fn	apps/birth-chart/js/53-vedic-birthday-engine.js:32	birth-chart
 vbYear	fn	apps/birth-chart/js/53-vedic-birthday-engine.js:71	birth-chart
 VDB	const	apps/birth-chart/js/87-vedic-knowledge-db.js:2179	birth-chart
 VDB_DATA	const	apps/birth-chart/js/87-vedic-knowledge-db.js:28	birth-chart
+vedicQuickAdd	fn	apps/notepad/js/01-notepad.js:318	notepad
 VERB	const	apps/birth-chart/js/71-life-activation.js:8	birth-chart
 view	fn	apps/birth-chart/js/41-ashtakavarga-section.js:9	birth-chart
 view	fn	apps/birth-chart/js/72-bhava-bala.js:25	birth-chart

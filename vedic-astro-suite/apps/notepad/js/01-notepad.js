@@ -314,5 +314,7 @@ function welcome(){const t=Date.now();const w=newNote({title:'Welcome to your Jy
 S=load();applyTheme();if(!S.notes.length&&!S.set.welcomed)welcome();
 if(S.set.pin)lockNow();
 $('#app').classList.add('edit');render();
+/* Quick note from the shell (long-press on the Notepad button): add a note while this app is already open, so its in-memory copy stays correct */
+window.vedicQuickAdd=function(o){o=o||{};const n=newNote({title:o.title||'',html:o.html||'',tags:o.tags||['quick note']});n.nb=null;persist();render();return n.id;};
 window.__np={S:()=>S,ui,TPL,sr:()=>savedRange&&[savedRange.startContainer.nodeName,savedRange.startOffset,savedRange.startContainer.textContent]};
 })();

@@ -132,8 +132,75 @@
 
   swBack.addEventListener('click', ()=> setMenu(false));
   document.addEventListener('keydown', e=>{ if (e.key === 'Escape' && sw.classList.contains('open')){ setMenu(false); swBtn.focus(); } });
+  /* ---- Quick note: long-press the Notepad button to jot a note in a small window, without leaving the chart ---- */
+  const NP_KEY = 'vedicNotepad_v1', QN_DRAFT = 'vedicQuickDraft';
+  let qn = null, qnT = null, qnSt = null, qnStT = 0, lpT = 0, lpFired = false;
+  const qesc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function chartName(){   /* name of the chart open in Birth Chart (if any) */
+    try{ const w = frames.B && frames.B.contentWindow; const p = w && w.eval('typeof currentProfileForExport!=="undefined"?currentProfileForExport:null'); return p && p.name ? String(p.name) : ''; }catch(e){ return ''; }
+  }
+  function qnStatus(msg, bad){ qnSt.textContent = msg; qnSt.classList.toggle('bad', !!bad); clearTimeout(qnStT); if (msg) qnStT = setTimeout(()=>{ qnSt.textContent = ''; }, 3000); }
+  function quickSave(){
+    const raw = qnT.value.replace(/\s+$/, ''); if (!raw.trim()){ qnStatus('Write something first', true); return; }
+    const nm = chartName(), d = new Date();
+    const title = (nm ? nm + ' \u00b7 ' : '') + 'Quick note \u00b7 ' + d.toLocaleDateString(undefined, { day:'numeric', month:'short' }) + ', ' + d.toLocaleTimeString(undefined, { hour:'numeric', minute:'2-digit' });
+    const html = raw.split(/\n/).map(l => '<p>' + (qesc(l) || '<br>') + '</p>').join('');
+    let ok = false;
+    try{ const w = frames.N && frames.N.contentWindow; if (w && typeof w.vedicQuickAdd === 'function'){ w.vedicQuickAdd({ title, html, tags:['quick note'] }); ok = true; } }catch(e){}
+    if (!ok){   /* Notepad not open yet: add to its saved notes (same shape as Notepad's newNote) */
+      try{
+        const now = Date.now(); let S = null; try{ S = JSON.parse(localStorage.getItem(NP_KEY) || 'null'); }catch(e){}
+        if (!S || !Array.isArray(S.notes)) S = { v:1, notes:[], nbs:[{id:'nb_clients',name:'Clients',ic:'\ud83d\udc64'},{id:'nb_study',name:'Study',ic:'\ud83d\udcda'},{id:'nb_journal',name:'Journal',ic:'\ud83c\udf19'}], preds:[], set:{ theme:'dark', acc:'gold', fs:16, pin:null, welcomed:false }, created:now };
+        S.notes.unshift({ id: now.toString(36) + Math.random().toString(36).slice(2,7), title, html, nb:null, tags:['quick note'], pin:false, color:'', created:now, updated:now, trash:false, client:null, ver:[] });
+        localStorage.setItem(NP_KEY, JSON.stringify(S)); ok = true;
+      }catch(e){}
+    }
+    if (!ok){ qnStatus('Could not save (browser storage is blocked)', true); return; }
+    qnT.value = ''; try{ localStorage.removeItem(QN_DRAFT); }catch(e){}
+    qnStatus('Saved to Notepad \u2713');
+  }
+  function quickClose(){ if (qn) qn.classList.remove('on'); }
+  function quickOpen(){
+    if (!qn){
+      qn = document.createElement('div'); qn.id = 'qnote'; qn.setAttribute('role', 'dialog'); qn.setAttribute('aria-label', 'Quick note');
+      qn.innerHTML = '<div class="qn-h" id="qnH"><b>Quick note</b><span class="qn-chart" id="qnChart"></span><button type="button" class="qn-x" id="qnX" aria-label="Close quick note">\u2715</button></div>'
+        + '<textarea id="qnT" placeholder="Write a note while you look at the chart\u2026" aria-label="Quick note text"></textarea>'
+        + '<div class="qn-f"><span class="qn-st" id="qnSt" role="status"></span><button type="button" class="qn-b" id="qnOpen">Open Notepad</button><button type="button" class="qn-b pri" id="qnSave">Save to Notepad</button></div>';
+      document.body.appendChild(qn);
+      qnT = qn.querySelector('#qnT'); qnSt = qn.querySelector('#qnSt');
+      try{ qnT.value = localStorage.getItem(QN_DRAFT) || ''; }catch(e){}
+      qnT.addEventListener('input', ()=>{ try{ localStorage.setItem(QN_DRAFT, qnT.value); }catch(e){} });
+      qn.addEventListener('keydown', e=>{ if (e.key === 'Escape'){ quickClose(); } else if ((e.ctrlKey || e.metaKey) && e.key === 'Enter'){ quickSave(); } });
+      qn.querySelector('#qnX').addEventListener('click', quickClose);
+      qn.querySelector('#qnSave').addEventListener('click', quickSave);
+      qn.querySelector('#qnOpen').addEventListener('click', ()=>{ quickClose(); show('N'); });
+      /* drag by the title bar */
+      const hd = qn.querySelector('#qnH'); let dg = null;
+      hd.addEventListener('pointerdown', e=>{ if (e.target.closest('button')) return; const r = qn.getBoundingClientRect(); dg = { sx:e.clientX, sy:e.clientY, ox:r.left, oy:r.top }; try{ hd.setPointerCapture(e.pointerId); }catch(_){} });
+      hd.addEventListener('pointermove', e=>{ if (!dg) return; const r = qn.getBoundingClientRect();
+        qn.style.left = Math.min(Math.max(dg.ox + e.clientX - dg.sx, 4), innerWidth - r.width - 4) + 'px';
+        qn.style.top = Math.min(Math.max(dg.oy + e.clientY - dg.sy, 4), innerHeight - 60) + 'px'; });
+      const end = ()=>{ dg = null; }; hd.addEventListener('pointerup', end); hd.addEventListener('pointercancel', end);
+      qn.classList.add('on');
+      qn.style.left = Math.max(8, Math.round((innerWidth - qn.offsetWidth) / 2)) + 'px';
+      qn.style.top = 'calc(env(safe-area-inset-top, 0px) + 64px)';   /* near the top so the phone keyboard does not cover it */
+    }
+    qn.querySelector('#qnChart').textContent = chartName();
+    qn.classList.add('on'); qnStatus('');
+    qnT.focus();
+  }
+  const npItem = sw.querySelector('.sw-item[data-act="N"]');
+  let lpX = 0, lpY = 0;
+  npItem.addEventListener('pointerdown', e=>{ lpFired = false; lpX = e.clientX; lpY = e.clientY; clearTimeout(lpT); lpT = setTimeout(()=>{ lpFired = true; setMenu(false); quickOpen(); }, 500); });
+  npItem.addEventListener('pointermove', e=>{ if (Math.hypot(e.clientX - lpX, e.clientY - lpY) > 12) clearTimeout(lpT); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => npItem.addEventListener(ev, ()=>clearTimeout(lpT)));
+  npItem.addEventListener('contextmenu', e=>{ e.preventDefault(); });   /* no browser menu on long-press / right-click */
+  npItem.addEventListener('keydown', e=>{ if (e.key === 'q' || e.key === 'Q'){ e.preventDefault(); setMenu(false); quickOpen(); } });
+
   sw.querySelectorAll('.sw-item').forEach(b=> b.addEventListener('click', ()=>{
-    const a = b.dataset.act; setMenu(false);
+    const a = b.dataset.act;
+    if (a === 'N' && lpFired){ lpFired = false; return; }   /* the long-press already opened the quick note */
+    setMenu(false);
     if (a === 'dev') openDev(); else show(a);
   }));
   place();

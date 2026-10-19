@@ -150,7 +150,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-19 - 1215 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-19 - 1221 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -295,10 +295,10 @@ css/01-base.css                                     62 lines    2 KB
 css/02-developer-card.css                           66 lines    8 KB
 ```
 
-**notepad** - 3 files, 534 lines, 92 KB
+**notepad** - 3 files, 536 lines, 92 KB
 ```
 index.html                                          47 lines    2 KB
-js/01-notepad.js                                   319 lines   65 KB
+js/01-notepad.js                                   321 lines   65 KB
 css/01-notepad.css                                 168 lines   25 KB
 ```
 
@@ -379,12 +379,12 @@ css/22-dasha-transit-triggers.css                   31 lines    3 KB
 css/23-time-machine-polish.css                     110 lines   10 KB
 ```
 
-**shell** - 4 files, 422 lines, 53 KB
+**shell** - 4 files, 509 lines, 61 KB
 ```
 index.html                                           2 lines    2 KB
-shell/css/shell.css                                 75 lines    8 KB
+shell/css/shell.css                                 95 lines   10 KB
 shell/js/locpicker.js                              202 lines   34 KB
-shell/js/shell.js                                  143 lines    9 KB
+shell/js/shell.js                                  210 lines   15 KB
 ```
 
 **shared** - 3 files, 906 lines, 69 KB
@@ -400,3 +400,4 @@ shared/meta.css                                     98 lines    5 KB
 - Divisional Charts: all hover/tap lift, slide animations and page-scrolling rail removed so nothing jumps on tap.
 - Loader fix (shell/js/shell.js): per-view ready state so the loader hides whenever the current view is ready (switching views mid-load no longer leaves it stuck); starts on DOMContentLoaded not frame load (slow fonts/images no longer hold it); after 10 s shows a "Taking long? Tap to reload" button; shorter waits (6 s / 3 s). Google Fonts links in birth-chart, sky3d, developer are non-blocking (media=print swap).
 - 3D Sky phone controls: new "Hide controls" eye button (`#clearViewBtn`, right column; css/13-tablet.css mobile block, js/36-mobile-bottom-sheet.js). Hides sub-lines, view switch, time dock and tab strip (thin handle stays; opening the sheet still shows tabs). Remembered in localStorage `vedic3dClean`; short landscape phones start hidden. Desktop unchanged.
+- Quick note (shell/js/shell.js, shell/css/shell.css, apps/notepad/js/01-notepad.js `vedicQuickAdd`): long-press (or right-click) the Notepad item in the switcher menu opens a small draggable note window over any view; Save adds a note ("quick note" tag, unfiled; chart name in title) to the Notepad data (`vedicNotepad_v1`) via the open app or straight to storage; draft kept in `vedicQuickDraft`. A short tap still opens Notepad.
