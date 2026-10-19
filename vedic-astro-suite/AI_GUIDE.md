@@ -150,7 +150,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-18 - 1214 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-19 - 1215 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -302,9 +302,9 @@ js/01-notepad.js                                   319 lines   65 KB
 css/01-notepad.css                                 168 lines   25 KB
 ```
 
-**sky3d** - 73 files, 6661 lines, 378 KB
+**sky3d** - 73 files, 6686 lines, 380 KB
 ```
-index.html                                         450 lines   27 KB
+index.html                                         451 lines   27 KB
 js/01-astro-engine.js                              143 lines    7 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -340,7 +340,7 @@ js/32-aspect-explorer-popup.js                      74 lines    4 KB
 js/33-timeline-scrubber.js                          58 lines    2 KB
 js/34-main-refresh-loop.js                          60 lines    2 KB
 js/35-ui-wiring.js                                  21 lines    1 KB
-js/36-mobile-bottom-sheet.js                        75 lines    3 KB
+js/36-mobile-bottom-sheet.js                        90 lines    4 KB
 js/37-natal-form-location.js                        90 lines    5 KB
 js/38-data-export-wiring.js                        124 lines    4 KB
 js/39-smoothness.js                                 51 lines    3 KB
@@ -366,7 +366,7 @@ css/09-mobile-free-fly-joystick.css                 42 lines    2 KB
 css/10-planet-detail-header.css                     48 lines    3 KB
 css/11-sign-selector-dropdown.css                   31 lines    2 KB
 css/12-polish-layer.css                             54 lines    4 KB
-css/13-tablet.css                                  111 lines    6 KB
+css/13-tablet.css                                  120 lines    7 KB
 css/14-structure-visual-layer.css                   54 lines    4 KB
 css/15-smoothness.css                               36 lines    3 KB
 css/16-astro-layers.css                             52 lines    6 KB
@@ -399,3 +399,4 @@ shared/meta.css                                     98 lines    5 KB
 - D-chart tabs: no jump on switch (fade only, scroll+height locked), touch-friendly, hover motion only on mouse devices.
 - Divisional Charts: all hover/tap lift, slide animations and page-scrolling rail removed so nothing jumps on tap.
 - Loader fix (shell/js/shell.js): per-view ready state so the loader hides whenever the current view is ready (switching views mid-load no longer leaves it stuck); starts on DOMContentLoaded not frame load (slow fonts/images no longer hold it); after 10 s shows a "Taking long? Tap to reload" button; shorter waits (6 s / 3 s). Google Fonts links in birth-chart, sky3d, developer are non-blocking (media=print swap).
+- 3D Sky phone controls: new "Hide controls" eye button (`#clearViewBtn`, right column; css/13-tablet.css mobile block, js/36-mobile-bottom-sheet.js). Hides sub-lines, view switch, time dock and tab strip (thin handle stays; opening the sheet still shows tabs). Remembered in localStorage `vedic3dClean`; short landscape phones start hidden. Desktop unchanged.

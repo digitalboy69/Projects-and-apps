@@ -1196,6 +1196,8 @@ input[type="date"], input[type="time"] { color-scheme: dark; }
 }
 
 /* ============================== MOBILE (phones, small tablets, landscape phones) ============================== */
+/* Clear view button: phones only */
+#clearViewBtn { display: none; align-items: center; justify-content: center; }
 @media (max-width: 820px), (max-height: 500px) and (pointer: coarse) {
   :root { --safe-t: env(safe-area-inset-top, 0px); --safe-b: env(safe-area-inset-bottom, 0px); --sheet-h: 78px; --dock-gap: 10px; }
   .app { display: block; position: relative; width: 100%; height: 100vh; height: 100dvh; overflow: hidden; }
@@ -1285,6 +1287,13 @@ input[type="date"], input[type="time"] { color-scheme: dark; }
   .pd-stat-value { font-size: 15px; }
   .modal-box { margin: 0; max-width: 100%; border-radius: 24px 24px 0 0; padding: 24px 20px calc(24px + var(--safe-b)); }
   .modal-actions button { flex: 1; padding: 14px; }
+
+  /* Clear view: hide the floating controls so more of the sky shows (button in the right column) */
+  #clearViewBtn { display: flex; }
+  .app.clean .hud-sub, .app.clean .hud-asc, .app.clean .hud-moon, .app.clean .view-switch-wrap, .app.clean .timeline { display: none; }
+  .app.clean .sidepanel:not(.expanded) { height: calc(26px + var(--safe-b)); }
+  .app.clean .sidepanel:not(.expanded) .panel-tabs { display: none; }
+  .app.clean .freefly-stick.move, .app.clean .freefly-vert { bottom: calc(26px + var(--safe-b) + 24px); }
 }
 
 
@@ -2108,6 +2117,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
       <button class="vp-btn" id="aspExpBtn" title="Aspect Explorer" aria-label="Aspect Explorer">☍</button>
       <button class="vp-btn" id="planetPickBtn" title="Select a planet" aria-label="Select a planet">🪐</button>
       <button class="vp-btn" id="resetViewBtn" title="Reset view">⟲</button>
+      <button class="vp-btn" id="clearViewBtn" type="button" title="Hide controls" aria-label="Hide controls" aria-pressed="false"></button>
     </div>
     <div id="planetLabels"></div>
     <div class="freefly-stick move" id="ffMoveStick">
@@ -5912,6 +5922,21 @@ document.querySelectorAll('.panel-tab').forEach(tab=>{
   document.getElementById('canvas3d').addEventListener('pointerdown', ()=>{
     if (mq.matches) sheet.classList.remove('expanded');
   });
+
+  // Clear view: hide/show the floating controls on small screens (remembered; short landscape phones start hidden)
+  const clr = document.getElementById('clearViewBtn'), appEl = document.querySelector('.app');
+  const EYE = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', EYE_OFF = EYE + '<path d="M3 3l18 18"/></svg>';
+  /* eye = "show controls", eye with a line = "hide controls" */
+  function setClean(on, remember){
+    appEl.classList.toggle('clean', on); clr.classList.toggle('active', on);
+    clr.setAttribute('aria-pressed', on ? 'true' : 'false');
+    const t = on ? 'Show controls' : 'Hide controls'; clr.title = t; clr.setAttribute('aria-label', t);
+    clr.innerHTML = on ? EYE + '</svg>' : EYE_OFF;
+    if (remember){ try{ localStorage.setItem('vedic3dClean', on ? '1' : '0'); }catch(e){} }
+  }
+  let savedClean = null; try{ savedClean = localStorage.getItem('vedic3dClean'); }catch(e){}
+  setClean(savedClean === null ? window.matchMedia('(max-height: 500px) and (pointer: coarse)').matches : savedClean === '1', false);
+  clr.addEventListener('click', ()=> setClean(!appEl.classList.contains('clean'), true));
 
   // Timeline: collapsible "jump to date" row on mobile
   const dock = document.getElementById('timelineDock');
