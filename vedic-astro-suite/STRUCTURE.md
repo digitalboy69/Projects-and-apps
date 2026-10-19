@@ -264,7 +264,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 
 ### apps/notepad/ — Notepad
 - `apps/notepad/index.html` — markup of this app; lists its css/js in load order
-- `apps/notepad/js/01-notepad.js` — notepad: notes, templates, client cards (key vedicNotepad_v1)
+- `apps/notepad/js/01-notepad.js` — notepad: notes, templates, client cards (key vedicNotepad_v1); Settings tab (view "settings", on/off switches in S.set.o, OPT_DEF defaults) and per-line / per-card copy buttons (off by default)
 - `apps/notepad/css/01-notepad.css` — notepad styles
 
 ### apps/developer/ — Developer card overlay
@@ -298,6 +298,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/knowledge_db_test.py` — Knowledge database: completeness, quality gates, cross-check of signs/nakshatras/aspects/dignity against the app tables, `VDB.reading()` on real charts
 - `tests/deep_reading_test.py` — Deep reading: 6 tabs, 12 house cards, every on-screen text equals the database text for the chart's real placements, report section + export checkbox, 6 more charts, phone layout
 - `tests/year_timeline_test.py` — Year Timeline File test: scan + file on a real chart (ids, order, known Saturn/Rahu ingress dates, dasha changes, size) and the panel at 400 px
+- `tests/notepad_test.py` — Notepad test: typing order, note links, templates from every view, side menu, Settings tab switches (copy buttons off by default), at 390 px and 1280 px
 - `tests/nakshatra_db_test.py` — Nakshatra layer: 972 unique placements, wording gates (no fatalistic/absolute words), pada->navamsa equals the app's D9 on 8 charts, Moon star = dasha start, on-screen check
 - `tests/customer_smoke.py` — customer edition smoke test
 - `tests/datefinder_test.py` — Date Finder test

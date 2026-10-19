@@ -150,7 +150,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-19 - 1242 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-19 - 1252 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -299,11 +299,11 @@ css/01-base.css                                     62 lines    2 KB
 css/02-developer-card.css                           66 lines    8 KB
 ```
 
-**notepad** - 3 files, 536 lines, 92 KB
+**notepad** - 3 files, 586 lines, 100 KB
 ```
 index.html                                          47 lines    2 KB
-js/01-notepad.js                                   321 lines   65 KB
-css/01-notepad.css                                 168 lines   25 KB
+js/01-notepad.js                                   351 lines   71 KB
+css/01-notepad.css                                 188 lines   27 KB
 ```
 
 **sky3d** - 73 files, 6686 lines, 380 KB
@@ -407,3 +407,4 @@ shared/meta.css                                     98 lines    5 KB
 - Quick note (shell/js/shell.js, shell/css/shell.css, apps/notepad/js/01-notepad.js `vedicQuickAdd`): long-press (or right-click) the Notepad item in the switcher menu opens a small draggable note window over any view; Save adds a note ("quick note" tag, unfiled; chart name in title) to the Notepad data (`vedicNotepad_v1`) via the open app or straight to storage; draft kept in `vedicQuickDraft`. A short tap still opens Notepad.
 - Year Timeline Pack: research + plan only (docs/YEAR_TIMELINE_RESEARCH.md). Data-only file for a chosen date range for any AI; no code yet. Next: S1 range scanner.
 - Year Timeline File (Birth Chart): js/90-year-timeline-engine.js (scan, facts only) + 91-writer (Markdown) + 92-ui (panel-yeartimeline, Home > Time & Cycles); test tests/year_timeline_test.py; v1 has no Tajika, no auto-split for very long ranges.
+- Notepad: fixed typing cursor jump, note-link exit, template-from-Tasks, open side menu; new Settings tab (view settings) with switches stored in S.set.o (defaults in OPT_DEF; line copy + card copy OFF); test tests/notepad_test.py.
