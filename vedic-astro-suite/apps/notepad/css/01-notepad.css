@@ -185,3 +185,6 @@ input,select,textarea{font:inherit;color:inherit}
 #lineCopy{position:fixed;z-index:40;width:28px;height:28px;border-radius:8px;border:1px solid var(--line2);background:var(--panel2);color:var(--acc);font-size:15px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
 #lineCopy[hidden]{display:none}
 @media print{#lineCopy{display:none!important}}
+
+.lmenu{display:none}
+@media(max-width:760px){.lmenu{display:grid}.focus .app.sidev .side{display:flex}}

@@ -330,8 +330,8 @@ document.addEventListener('click',e=>{const h=e.target.closest('[data-hc]'),t=e.
  if(w){const x=N(w.dataset.wk);closeModal();ins(`<a class="wl" data-note="${x.id}" contenteditable="false">${esc(x.title||'Untitled')}</a>&nbsp;`);}},true);
 document.addEventListener('input',e=>{if(e.target.id==='wq'){const q=e.target.value.toLowerCase();$$('#wl button').forEach(b=>b.style.display=b.textContent.toLowerCase().includes(q)?'':'none');}});
 const shut=f=>()=>{$('#app').classList.remove('sidev');f();};$('#bNew').onclick=shut(doNew);$('#bNew2').onclick=doNew;$('#bTpl').onclick=shut(tplModal);$('#bSet').onclick=shut(setModal);$('#bCmd').onclick=shut(cmdOpen);$('#bLock').onclick=shut(lockNow);
-document.addEventListener('click',e=>{const a=$('#app');if(a.classList.contains('sidev')&&!e.target.closest('#side,#bMenu'))a.classList.remove('sidev');},true);
-$('#bMenu').onclick=()=>$('#app').classList.toggle('sidev');$('#bBack').onclick=()=>{$('#app').classList.remove('edit');};
+document.addEventListener('click',e=>{const a=$('#app');if(a.classList.contains('sidev')&&!e.target.closest('#side,#bMenu,#bMenu2'))a.classList.remove('sidev');},true);
+$('#bMenu').onclick=()=>$('#app').classList.toggle('sidev');$('#bMenu2').onclick=()=>$('#app').classList.toggle('sidev');$('#bBack').onclick=()=>{$('#app').classList.remove('edit');};
 $('#q').addEventListener('keydown',e=>{if(e.key==='Escape'){e.target.value='';ui.q='';renderList();e.target.blur();}else if(e.key==='Enter'){const f=$('#items .it');if(f)f.click();}});
 async function tryUnlock(){const v=$('#lpin').value;if(!v)return;const h=await sha(v);if(h===S.set.pin){$('#lock').classList.remove('on');}else{$('#lerr').textContent='Wrong PIN';$('#lpin').value='';}}
 $('#lpin').addEventListener('input',e=>{if(e.target.value.length>=4&&e.target.value.length<=8){clearTimeout(e.target._t);e.target._t=setTimeout(tryUnlock,350);}});
