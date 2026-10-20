@@ -154,7 +154,7 @@ _Generated 2026-10-20 - 1274 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 135 files, 18661 lines, 1323 KB
+**birth-chart** - 135 files, 18672 lines, 1324 KB
 ```
 index.html                                         554 lines   31 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -223,7 +223,7 @@ js/63-profile-cards.js                              32 lines    2 KB
 js/64-edit-saved-profile.js                         32 lines    2 KB
 js/65-error-boundaries.js                           32 lines    1 KB
 js/66-modal-accessibility.js                        23 lines    1 KB
-js/67-friendly-input-page.js                        96 lines    8 KB
+js/67-friendly-input-page.js                       107 lines    9 KB
 js/68-intake-progress.js                            65 lines    3 KB
 js/69-divisional-areas.js                          132 lines   22 KB
 js/70-chart-reading.js                              76 lines   16 KB

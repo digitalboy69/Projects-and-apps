@@ -20658,6 +20658,7 @@ function inBuildFriendly(){
   const days = opt(Array.from({length:31},(_,i)=>[i+1,i+1])), mons = opt(IN_MON.map((m,i)=>[i+1,m]));
   const yrs = opt(Array.from({length:yr-1899},(_,i)=>[yr-i,yr-i]));
   const hrs = opt(Array.from({length:12},(_,i)=>[i+1,i+1])), mins = opt(Array.from({length:60},(_,i)=>[i,String(i).padStart(2,'0')]));
+  const secs = opt(Array.from({length:60},(_,i)=>[i,String(i).padStart(2,'0')]));
   const box = document.createElement('div'); box.className = 'in-friendly';
   box.innerHTML = `
     <div class="in-q">🎂 Date you were born</div>
@@ -20665,6 +20666,7 @@ function inBuildFriendly(){
     <div class="in-bad" id="inBadDate" hidden>That date does not exist. Please check the day and month.</div>
     <div class="in-q">⏰ Time you were born</div>
     <div class="in-row3 t"><select id="inHr" aria-label="Hour"><option value="">Hour</option>${hrs}</select><select id="inMin" aria-label="Minute"><option value="">Minute</option>${mins}</select><div class="in-ampm" id="inAp"><button type="button" data-ap="AM">AM</button><button type="button" data-ap="PM">PM</button></div></div>
+    <div class="in-row3 t"><select id="inSec" aria-label="Second"><option value="">Second</option>${secs}</select><div class="in-q2" style="grid-column:span 2;margin:0;align-self:center">Seconds are optional. Leave blank for :00. They make your Lagna and Dasha timing exact.</div></div>
     <div class="in-q2">Don't know the exact time? Tap the closest:</div>
     <div class="in-chips" id="inChips"><button type="button" data-t="08:00">🌅 Morning</button><button type="button" data-t="13:00">☀️ Afternoon</button><button type="button" data-t="18:00">🌇 Evening</button><button type="button" data-t="22:00">🌙 Night</button><button type="button" data-t="12:00">🤷 No idea</button></div>
     <div class="in-guess" id="inGuess" hidden></div>`;
@@ -20684,15 +20686,19 @@ function inBuildFriendly(){
     const h = +$('inHr').value, mi = $('inMin').value, ap = ($('inAp').querySelector('.on')||{}).dataset;
     if (h && mi === ''){ $('inMin').value = '0'; }
     ['inHr','inMin'].forEach(i=> $(i).classList.toggle('ok', !!$(i).value));
+    $('inSec').classList.toggle('ok', $('inSec').value !== '');
     const m2 = $('inMin').value;
     if (!(h && m2 !== '' && ap)) { if (tob.value){ tob.value = ''; fire(tob); } return; }
     const h24 = (h % 12) + (ap.ap === 'PM' ? 12 : 0);
-    tob.value = `${String(h24).padStart(2,'0')}:${String(+m2).padStart(2,'0')}`; fire(tob);
+    const s = Math.min(59, Math.max(0, parseInt($('inSec').value, 10) || 0));   // blank = :00
+    // seconds are only appended when non-zero, so older saved profiles ("10:30") still match
+    tob.value = `${String(h24).padStart(2,'0')}:${String(+m2).padStart(2,'0')}` + (s ? ':' + String(s).padStart(2,'0') : ''); fire(tob);
   }
   // the native 'input' event bubbles to the form and re-syncs the controls from the OLD hidden values (undoing the pick) -> stop it
-  ['inDay','inMon','inYear','inHr','inMin'].forEach(i=> $(i).addEventListener('input', e=>e.stopPropagation()));
+  ['inDay','inMon','inYear','inHr','inMin','inSec'].forEach(i=> $(i).addEventListener('input', e=>e.stopPropagation()));
   ['inDay','inMon','inYear'].forEach(i=> $(i).addEventListener('change', pushDate));
   ['inHr','inMin'].forEach(i=> $(i).addEventListener('change', ()=>{ $('inGuess').hidden = true; $('inChips').querySelectorAll('.on').forEach(b=>b.classList.remove('on')); pushTime(); }));
+  $('inSec').addEventListener('change', pushTime);
   $('inAp').addEventListener('click', e=>{ const b = e.target.closest('[data-ap]'); if (!b) return; $('inAp').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x===b)); $('inGuess').hidden = true; pushTime(); });
   $('inChips').addEventListener('click', e=>{
     const b = e.target.closest('[data-t]'); if (!b) return;
@@ -20701,15 +20707,20 @@ function inBuildFriendly(){
     const g = $('inGuess'); g.hidden = false;
     g.innerHTML = `We will use about <b>${$('inHr').value}:${String($('inMin').value).padStart(2,'0')} ${H>=12?'PM':'AM'}</b>. Your Sun and Moon sign will still be right. Open <b>Rectify</b> later to find your exact time.`;
   });
-  window.inSetTime = function(H, M){
-    $('inHr').value = (H % 12) || 12; $('inMin').value = M; $('inAp').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x.dataset.ap === (H>=12?'PM':'AM'))); pushTime();
+  window.inSetTime = function(H, M, S){
+    $('inHr').value = (H % 12) || 12; $('inMin').value = M; $('inSec').value = S ? String(S) : '';
+    $('inAp').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x.dataset.ap === (H>=12?'PM':'AM'))); pushTime();
   };
-  document.getElementById('birthForm').addEventListener('reset', ()=> setTimeout(()=>{ ['inDay','inMon','inYear','inHr','inMin'].forEach(i=>{ $(i).value=''; $(i).classList.remove('ok'); }); $('inAp').querySelectorAll('button').forEach(x=>x.classList.remove('on')); $('inGuess').hidden=true; $('inChips').querySelectorAll('.on').forEach(x=>x.classList.remove('on')); },0));
+  document.getElementById('birthForm').addEventListener('reset', ()=> setTimeout(()=>{ ['inDay','inMon','inYear','inHr','inMin','inSec'].forEach(i=>{ $(i).value=''; $(i).classList.remove('ok'); }); $('inAp').querySelectorAll('button').forEach(x=>x.classList.remove('on')); $('inGuess').hidden=true; $('inChips').querySelectorAll('.on').forEach(x=>x.classList.remove('on')); },0));
   window.inSyncFriendly = function(){
     const dv = (dob.value||'').split('-').map(Number), tv = (tob.value||'').split(':').map(Number);
     if (dv.length>=3 && dv[0]){ $('inYear').value = dv[0]; $('inMon').value = dv[1]; $('inDay').value = dv[2]; }
-    if (tv.length>=2 && !isNaN(tv[0]) && tob.value){ const H = tv[0], M = tv[1]; $('inHr').value = (H%12)||12; $('inMin').value = M; $('inAp').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x.dataset.ap === (H>=12?'PM':'AM'))); }
-    ['inDay','inMon','inYear','inHr','inMin'].forEach(i=> $(i).classList.toggle('ok', !!$(i).value));
+    if (tv.length>=2 && !isNaN(tv[0]) && tob.value){
+      const H = tv[0], M = tv[1], S = tv.length>=3 && !isNaN(tv[2]) ? Math.floor(tv[2]) : 0;
+      $('inHr').value = (H%12)||12; $('inMin').value = M; $('inSec').value = S ? String(S) : '';
+      $('inAp').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x.dataset.ap === (H>=12?'PM':'AM')));
+    }
+    ['inDay','inMon','inYear','inHr','inMin','inSec'].forEach(i=> $(i).classList.toggle('ok', !!$(i).value));
   };
   // place step: tuck timezone + coordinates away, show a friendly confirmation
   const tz = document.getElementById('tzInput'), co = document.getElementById('coordReadout');
