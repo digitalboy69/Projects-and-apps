@@ -279,6 +279,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `shared/meta.css` — META LAYER: one global file for feel (smooth transitions, touch press feedback, gold focus/selection/scrollbars, text wrapping, safe areas, reduced motion). Linked LAST by the shell and every app; all rules are `:where()` zero-specificity so app css always wins. Edit this file for any app-wide smoothness/responsiveness change
 - `shared/icons.js` — ICON LIBRARY: premium duotone line SVG icons that automatically replace UI emojis in every app + shell (MutationObserver, original emoji kept as hidden text). To add/change an icon edit `I` (svg) and `M` (emoji map) in this file. Astro glyphs, arrows, ✓ ✕ are intentionally left as text. Styles in `shared/meta.css`
 - `shared/export-addon.js` — export add-on UI used by apps (window.VAX); do not edit unless asked
+- `shared/copy-toggle.js` — hides every "Copy ..." button in an app while the main-menu Settings switch "Copy buttons" is off (default off; key vedicCopyBtns); loaded by all 4 apps
 - `vendor/qrlibs.js` — QR code libraries (third party)
 - `editions/customer/customer-layer.js` — customer edition behaviour layer
 - `editions/customer/customer-top.js` — customer edition top-of-page code

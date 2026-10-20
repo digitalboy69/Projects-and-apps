@@ -197,11 +197,30 @@
   npItem.addEventListener('contextmenu', e=>{ e.preventDefault(); });   /* no browser menu on long-press / right-click */
   npItem.addEventListener('keydown', e=>{ if (e.key === 'q' || e.key === 'Q'){ e.preventDefault(); setMenu(false); quickOpen(); } });
 
+  /* Settings (main menu): one switch for now, "Copy buttons" (off by default). Apps hide/show their copy buttons through shared/copy-toggle.js */
+  let vs = null;
+  function copyOn(){ try { return localStorage.getItem('vedicCopyBtns') === '1'; } catch (e) { return false; } }
+  function openSettings(){
+    if (!vs){
+      vs = document.createElement('div'); vs.id = 'vset'; vs.setAttribute('role', 'dialog'); vs.setAttribute('aria-label', 'Settings');
+      vs.innerHTML = '<div class="vs-box"><div class="vs-h"><b>⚙️ Settings</b><button type="button" class="vs-x" aria-label="Close">✕</button></div>' +
+        '<label class="vs-row"><span><b>Copy buttons</b><small>Show the "Copy" buttons across the apps. Off by default.</small></span><input type="checkbox" id="vsCopy"><i></i></label></div>';
+      document.body.appendChild(vs);
+      vs.addEventListener('click', e=>{ if (e.target === vs || e.target.closest('.vs-x')) vs.classList.remove('on'); });
+      document.addEventListener('keydown', e=>{ if (e.key === 'Escape') vs.classList.remove('on'); });
+      vs.querySelector('#vsCopy').addEventListener('change', e=>{
+        try { localStorage.setItem('vedicCopyBtns', e.target.checked ? '1' : '0'); } catch (x) {}
+        for (const k in frames){ try { frames[k].contentWindow.postMessage('vedic-copy-toggle', '*'); } catch (x) {} }
+      });
+    }
+    vs.querySelector('#vsCopy').checked = copyOn(); vs.classList.add('on');
+  }
+
   sw.querySelectorAll('.sw-item').forEach(b=> b.addEventListener('click', ()=>{
     const a = b.dataset.act;
     if (a === 'N' && lpFired){ lpFired = false; return; }   /* the long-press already opened the quick note */
     setMenu(false);
-    if (a === 'dev') openDev(); else show(a);
+    if (a === 'dev') openDev(); else if (a === 'set') openSettings(); else show(a);
   }));
   place();
   show(location.hash === '#sky' ? 'A' : location.hash === '#notes' ? 'N' : 'B');

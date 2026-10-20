@@ -150,13 +150,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-20 - 1270 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-20 - 1274 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 135 files, 18660 lines, 1323 KB
+**birth-chart** - 135 files, 18661 lines, 1323 KB
 ```
-index.html                                         553 lines   31 KB
+index.html                                         554 lines   31 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -293,24 +293,24 @@ css/40-year-timeline.css                             8 lines    0 KB
 css/41-dasha-time-finder.css                        63 lines    5 KB
 ```
 
-**developer** - 4 files, 180 lines, 13 KB
+**developer** - 4 files, 181 lines, 13 KB
 ```
-index.html                                          40 lines    3 KB
+index.html                                          41 lines    3 KB
 js/01-dev-card.js                                   12 lines    0 KB
 css/01-base.css                                     62 lines    2 KB
 css/02-developer-card.css                           66 lines    8 KB
 ```
 
-**notepad** - 3 files, 589 lines, 100 KB
+**notepad** - 3 files, 590 lines, 100 KB
 ```
-index.html                                          47 lines    2 KB
+index.html                                          48 lines    2 KB
 js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 73 files, 6686 lines, 380 KB
+**sky3d** - 73 files, 6687 lines, 380 KB
 ```
-index.html                                         451 lines   27 KB
+index.html                                         452 lines   27 KB
 js/01-astro-engine.js                              143 lines    7 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -385,16 +385,17 @@ css/22-dasha-transit-triggers.css                   31 lines    3 KB
 css/23-time-machine-polish.css                     110 lines   10 KB
 ```
 
-**shell** - 4 files, 509 lines, 61 KB
+**shell** - 4 files, 543 lines, 64 KB
 ```
 index.html                                           2 lines    2 KB
-shell/css/shell.css                                 95 lines   10 KB
+shell/css/shell.css                                110 lines   11 KB
 shell/js/locpicker.js                              202 lines   34 KB
-shell/js/shell.js                                  210 lines   15 KB
+shell/js/shell.js                                  229 lines   17 KB
 ```
 
-**shared** - 3 files, 906 lines, 69 KB
+**shared** - 4 files, 933 lines, 70 KB
 ```
+shared/copy-toggle.js                               27 lines    1 KB
 shared/export-addon.js                             643 lines   47 KB
 shared/icons.js                                    165 lines   17 KB
 shared/meta.css                                     98 lines    5 KB
@@ -411,3 +412,4 @@ shared/meta.css                                     98 lines    5 KB
 - Year Timeline File (Birth Chart): js/90-year-timeline-engine.js (scan, facts only) + 91-writer (Markdown) + 92-ui (panel-yeartimeline, Home > Time & Cycles); test tests/year_timeline_test.py; v1 has no Tajika, no auto-split for very long ranges.
 - Notepad: fixed typing cursor jump, note-link exit, template-from-Tasks, open side menu; new Settings tab (view settings) with switches stored in S.set.o (defaults in OPT_DEF; line copy + card copy OFF); test tests/notepad_test.py.
 - Notepad phone: added a menu button (☰) to the note-list header and made the drawer open in focus mode, so every screen has a way back to the menu (not tested).
+- Main menu Settings (shell): popup with one switch "Copy buttons" (off by default, key vedicCopyBtns); shared/copy-toggle.js in every app hides/shows buttons whose label starts with "Copy" (not tested).

@@ -34,6 +34,7 @@ angleErrorForTarget	fn	apps/birth-chart/js/09-aspect-events.js:14	birth-chart
 animationTick	fn	apps/sky3d/js/34-main-refresh-loop.js:16	sky3d
 annual	fn	apps/birth-chart/js/74-sahams.js:53	birth-chart
 APP	const	apps/birth-chart/js/02-app-meta-layer.js:20	birth-chart
+apply	fn	shared/copy-toggle.js:10	shared
 applyLineToggles	fn	apps/sky3d/js/14-line-visibility-toggles.js:15	sky3d
 applyOpts	fn	apps/notepad/js/01-notepad.js:68	notepad
 applyTheme	fn	apps/notepad/js/01-notepad.js:67	notepad
@@ -219,6 +220,7 @@ CONTRIBUTORS	const	apps/birth-chart/js/11-ashtakavarga-engine.js:12	birth-chart
 copy	fn	apps/birth-chart/js/02-app-meta-layer.js:47	birth-chart
 copyDevNumber	fn	apps/birth-chart/js/01-dev-contact.js:2	birth-chart
 copyDevNumber	fn	apps/developer/js/01-dev-card.js:2	developer
+copyOn	fn	shell/js/shell.js:202	shell
 copyText	fn	apps/notepad/js/01-notepad.js:324	notepad
 copyText	fn	shared/export-addon.js:68	shared
 copyTextToClipboard	fn	apps/birth-chart/js/62-clipboard-download-helpers.js:3	birth-chart
@@ -726,6 +728,7 @@ openProfEdit	fn	apps/birth-chart/js/64-edit-saved-profile.js:2	birth-chart
 openProfileDataModal	fn	apps/birth-chart/js/24-profile-backup.js:4	birth-chart
 openRising	fn	apps/sky3d/js/18-rising-sign-timeline.js:71	sky3d
 openSearch	fn	apps/birth-chart/js/33-quick-search.js:76	birth-chart
+openSettings	fn	shell/js/shell.js:203	shell
 openShared	fn	apps/birth-chart/js/76-share-link-qr.js:26	birth-chart
 openSheet	fn	apps/birth-chart/js/86-popular-charts.js:87	birth-chart
 openSignDetail	fn	apps/sky3d/js/25-rich-sign-detail.js:9	sky3d
@@ -1122,6 +1125,7 @@ srcHtml	fn	apps/sky3d/js/47-dasha-transit-ui.js:43	sky3d
 srchTopicBox	fn	apps/birth-chart/js/32-ask-ai.js:308	birth-chart
 srchVargaPos	fn	apps/birth-chart/js/32-ask-ai.js:222	birth-chart
 start	fn	apps/birth-chart/js/86-popular-charts.js:115	birth-chart
+start	fn	shared/copy-toggle.js:22	shared
 stations	fn	apps/sky3d/js/44-retrograde-planner.js:11	sky3d
 stats	fn	apps/notepad/js/01-notepad.js:146	notepad
 status	fn	apps/notepad/js/01-notepad.js:25	notepad
