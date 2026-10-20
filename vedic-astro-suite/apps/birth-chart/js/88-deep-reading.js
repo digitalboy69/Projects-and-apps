@@ -30,12 +30,55 @@ const NK = c => { if (typeof VNK === 'undefined' || !VNK) return null; let r = N
 const TONE_CLS = { supportive: 'g', challenging: 'b', mixed: '' };
 const RELLAB = { own: 'own star', friend: "friend's star", neutral: 'neutral star', enemy: "enemy's star" };
 const lst = a => a.map(esc).join(', ');
+const VMFC = new WeakMap();
+const SG = c => { if (typeof VMF === 'undefined' || !VMF) return null; let r = VMFC.get(c); if (!r){ r = VMF.signature(c); VMFC.set(c, r); } return r; };
+const sigNote = s => note('g', `✨ <b>Your signature at a glance</b>` + s.items.map(x => `<div class="dr-sig">${x.icon} <b>${esc(x.title)}.</b> ${esc(x.text)}</div>`).join(''));
+// ---- dasha layer (VDA): life timeline, running period, next 5 years ----
+const DVC = new WeakMap();
+const DVA = c => { if (typeof VDA === 'undefined' || !VDA) return null; let r = DVC.get(c); if (!r){ r = VDA.current(c); DVC.set(c, r); } return r; };
+function periodBody(p){
+  return `<div class="rd-w"><b>This stage tends to be about</b> ${esc(p.theme)}. It often feels like ${esc(p.feelsLike)}.</div><div class="rd-w">${esc(p.arenaText)}</div>` +
+    `<div class="rd-w"><ul class="dr-ul">${p.scenes.map(s => `<li>${esc(s)}</li>`).join('')}</ul></div>` +
+    `<div class="rd-w"><b>Helps:</b> ${esc(p.helps.join(' '))} <b>Watch for:</b> ${esc(p.watch.join(' and '))}.</div>` +
+    `<div class="dr-check"><b>Check this against your life</b><br>• ${esc(p.reflect)}</div><div class="rd-w"><small>Tone: ${esc(p.tone)} (${esc(p.why.join('; '))}). A rule of thumb from the rising sign, dignity and house.</small></div>`;
+}
+function dashaBlockV(dv){
+  const out = [note('', `📖 <b>${esc(dv.md.lord)} Mahadasha, ${VDA.fmt(dv.md.start)} to ${VDA.fmt(dv.md.end)}</b> ${chip(toneCls(dv.md.tone), dv.md.tone)}<br>${esc(dv.md.arenaText)} It tends to be about ${esc(dv.md.theme)}.<br><small>${esc(dv.md.reflect)}</small>`)];
+  if (dv.ad) out.push(note('', `📖 <b>${esc(dv.ad.lord)} Antardasha, ${VDA.fmt(dv.ad.start)} to ${VDA.fmt(dv.ad.end)}</b> ${chip(toneCls(dv.ad.tone), dv.ad.tone)}<br>${esc(dv.ad.blend)} ${esc(dv.ad.houseNote)}<br><small>${esc(dv.ad.scene)}</small>`));
+  return out.join('');
+}
+function timelineHtml(c){
+  if (typeof VDA === 'undefined' || !VDA) return '';
+  const T = VDA.timeline(c), up = VDA.upcoming(c, 5);
+  const cards = T.periods.map((p, i) => `<details class="vx-pl"${p.status === 'now' ? ' open' : ''}><summary><span class="vx-gl">${glyph(p.lord)}</span><div><b>${esc(p.lord)} Mahadasha: ${p.startYear} to ${p.endYear}</b><small>age ${p.ageStart} to ${p.ageEnd} · ${esc(p.tone)}</small></div>${chip(p.status === 'now' ? 'g' : '', p.status === 'now' ? 'now' : p.status)}</summary><div class="rd-b">${periodBody(p)}</div></details>`).join('');
+  const rows = up.map(r => `<div class="rd-w"><b>${VDA.fmt(r.start)} to ${VDA.fmt(r.end)}</b> · ${esc(r.mdLord)}–${esc(r.lord)} ${chip(toneCls(r.tone), r.tone)}<br><small>${esc(r.blend)} ${esc(r.houseNote)}</small></div>`).join('');
+  return `<div class="rd-h">⏳ Life timeline</div>` + note('g', esc(VDA.data.intro)) + cards + (up.length ? `<div class="rd-h">Next 5 years, sub-period by sub-period</div><div class="rd-b">${rows}</div>` : note('', 'This chart is past the 120-year Vimshottari cycle, so there is no running period to look ahead from.'));
+}
+function timelineText(c, sub, para){
+  if (typeof VDA === 'undefined' || !VDA) return;
+  const T = VDA.timeline(c); sub('LIFE TIMELINE (Vimshottari dasha)');
+  para('How to read this:', VDA.data.intro);
+  T.periods.forEach(p => { para(`[${p.status}]`, p.text); para('Check this against your life:', p.reflect); });
+  const upc = VDA.upcoming(c, 5); if (upc.length) sub('NEXT 5 YEARS, SUB-PERIOD BY SUB-PERIOD');
+  upc.forEach(r => para(`${VDA.fmt(r.start)} to ${VDA.fmt(r.end)}, ${r.mdLord}-${r.lord} [${r.tone}]:`, `${r.blend} ${r.houseNote}`));
+}
+// "in real life": planet (what you do) x house (where) x sign (how), with self-check questions
+function realLife(c, n){
+  if (typeof VMF === 'undefined' || !VMF) return '';
+  const pe = c.planets[n], m = pe && VMF.placement(n, pe.house, pe.sign, pe.dignity && pe.dignity.status); if (!m) return '';
+  return `<div class="dr-l dr-live"><b>🔎 In real life: ${esc(m.headline)}</b>` +
+    `<ul class="dr-ul">${m.practice.map(x => `<li>${esc(x.line)}</li>`).join('')}</ul>` +
+    `<div>${esc(m.others)} ${esc(m.inside)}</div>` +
+    `<small>${esc(m.atBest)} ${esc(m.underStress)} ${esc(m.styleLine)}${m.cue ? ' ' + esc(m.cue) : ''}</small>` +
+    `<div class="dr-check"><b>Check this against your life</b><br>• ${esc(m.reflect[0])}<br>• ${esc(m.reflect[1])}<br><small>${esc(m.note)}</small></div></div>`;
+}
 const nakMeta = n => `${esc(n.name)}${n.pada ? ' pada ' + n.pada : ''} · ruled by ${esc(n.lord)} · deity ${esc(n.deity)} · symbol ${esc(n.symbol)} · ${esc(n.gana)} gana`;
 
 /* ---------- Planets tab: extra block inside each planet card ---------- */
 function planetBlock(c, n){
   const e = R(c).planets[n]; if (!e) return '';
   const L = [], dg = DIG[e.inSign.dignity] || ['', ''];
+  const rl = realLife(c, n); if (rl) L.push(rl);
   L.push(line(`In the ${ordn(e.house)} house`, chip(toneCls(e.inHouse.tone), e.inHouse.tone), e.inHouse.text));
   L.push(line(`In ${e.sign}`, chip(dg[1], dg[0]), strip(e.inSign.text)));
   if (e.nakshatra){
@@ -44,6 +87,8 @@ function planetBlock(c, n){
       const nk = VNK.nakshatra(pl.nakIndex), ni = nk.natureInfo;
       L.push(`<div class="dr-l"><b>Nakshatra: ${esc(pl.nakshatra)}, pada ${pl.pada.pada}</b>${chip(TONE_CLS[pl.tone], RELLAB[pl.relation.kind])}<div>${esc(nk.trait)}</div>` +
         `<div>${esc(pl.how)} ${esc(pl.relationText)}</div>` +
+        `<div>In everyday life, you may ${esc(pl.manifest.scene)}.</div>` +
+        `<small>Others may experience you as ${esc(pl.manifest.others)}. At its best you ${esc(pl.manifest.atBest)}; under strain you may ${esc(pl.manifest.underStress)}.</small>` +
         `<small>${nakMeta(e.nakshatra)} · ${esc(pl.nature)} nature (${esc(ni.sk)}): ${esc(ni.tendency)}</small>` +
         `<small>Pada ${pl.pada.pada}: ${esc(pl.pada.navamsaSign)} navamsa · ${esc(pl.pada.purushartha)} flavour (${esc(pl.pada.focus)})</small>` +
         `<small><b>Strengths:</b> ${lst(pl.strengths)}<br><b>Points to watch:</b> ${lst(pl.shadows)}<br><b>Supportive practice:</b> ${esc(pl.practices[0])} ${esc(pl.practices[1])}</small>` +
@@ -60,6 +105,7 @@ function planetBlock(c, n){
 
 /* ---------- Now tab: what the running dasha lords tend to bring ---------- */
 function dashaBlock(c, md, ad){
+  const dv = DVA(c); if (dv) return dashaBlockV(dv);
   const r = R(c), out = [];
   [[md, 'Mahadasha'], [ad, 'Antardasha']].forEach(([n, role]) => {
     const e = n && r.planets[n], d = n && D.dasha[n]; if (!e || !d) return;
@@ -73,6 +119,7 @@ function pane(c){
   const r = R(c), asc = r.lagna.sign, ascIdx = SIGN.indexOf(asc), P = r.planets, out = [];
   const ll = r.houseLords[0], mo = P.Moon;
   out.push(note('g', `📖 <b>Deep reading</b>: classical meanings for every placement in this chart, house by house. Texts come from the built-in knowledge base; read them together, since each planet's result depends on its sign, house, aspects and the running period.`));
+  const sg = SG(c); if (sg) out.push(sigNote(sg));
   out.push(note('', `🧭 <b>${esc(asc)} rising.</b> ${esc(r.lagna.text)}<br><small>${esc(ll.lord)}: ${esc(ll.text)}</small>`));
   out.push(note('', `🌙 <b>Moon in ${esc(mo.sign)}${mo.nakshatra ? ', ' + esc(mo.nakshatra.name) : ''}.</b> ${esc(D.moonSign[mo.sign])}${mo.nakshatra ? ' ' + esc(mo.nakshatra.trait) + `<br><small>${nakMeta(mo.nakshatra)} · Suits: ${esc(mo.nakshatra.careers)} · Watch: ${esc(mo.nakshatra.watch)}</small>` : ''}`));
   const nkc = NK(c);
@@ -99,6 +146,7 @@ function pane(c){
     const tag = occ.length ? occ.map(glyph).join(' ') : 'empty';
     cards.push(`<details class="vx-pl"${n === 1 ? ' open' : ''}><summary><span class="vx-gl">${n}</span><div><b>${ordn(n)} house: ${esc(H.name)}</b><small>${esc(S.name)} · lord ${esc(hl.lord)} in the ${ordn(hl.placedIn)}</small></div>${chip(occ.length ? 'g' : '', tag)}</summary><div class="rd-b">${body.join('')}</div></details>`);
   }
+  out.push(timelineHtml(c));
   out.push(`<div class="rd-h">House by house</div>`);
   return out.join('') + cards.join('');
 }
@@ -115,6 +163,8 @@ function reportText(c){
   const para = (label, text, ind) => o.push(wrap(label + ' ' + text, W, ind || '    '));
   const sub = t => { o.push(''); o.push(t); o.push('-'.repeat(t.length)); };
   o.push(wrap('Classical interpretations from the built-in knowledge base. Read the texts together: each planet\'s result depends on its sign, house, aspects and the running dasha. A starting point for a reading, not a final verdict.', W, ''));
+  const sgr = SG(c);
+  if (sgr){ sub('YOUR SIGNATURE AT A GLANCE'); sgr.items.forEach(x => para(x.title + ':', x.text)); }
   sub('FOUNDATION');
   para(`${asc} rising.`, r.lagna.text);
   para(`${r.houseLords[0].lord} (Lagna lord):`, r.houseLords[0].text);
@@ -127,6 +177,8 @@ function reportText(c){
   PL.forEach(n => {
     const e = P[n]; if (!e) return;
     sub(`${n.toUpperCase()}: ${e.sign}, ${ordn(e.house)} house`);
+    if (typeof VMF !== 'undefined' && VMF){ const pe = c.planets[n], m = VMF.placement(n, pe.house, pe.sign, pe.dignity && pe.dignity.status);
+      if (m){ para('In real life:', m.practice.map(x => x.line).join(' ') + ' ' + m.others + ' ' + m.inside + ' ' + m.atBest + ' ' + m.underStress); para('Check this against your life:', m.reflect.join(' ')); } }
     para(`In the ${ordn(e.house)} house [${e.inHouse.tone}]:`, e.inHouse.text);
     para(`In ${e.sign} (${(DIG[e.inSign.dignity] || [''])[0]}):`, strip(e.inSign.text));
     if (e.nakshatra){
@@ -149,6 +201,7 @@ function reportText(c){
     occ.forEach(p => para(`${p} here [${P[p].inHouse.tone}]:`, P[p].inHouse.text));
     PL.filter(p => P[p] && P[p].house !== n && P[p].aspectsHouses.some(a => a.house === n)).forEach(p => para(`${p} aspects this house:`, D.aspectOnHouse[p][n - 1]));
   }
+  timelineText(c, sub, para);
   return o.join('\n');
 }
 

@@ -143,6 +143,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/87-vedic-knowledge-db.js` — Vedic Knowledge Database (VDB): 625 entries — planet-in-house 108, planet-in-sign 108, house-lord-in-house 144, planet-aspect-on-house 108, planet-aspects-planet 72, conjunctions 35, 27 nakshatras, 23 yogas, dasha lords, status modifiers, functional nature by rising sign; lookup API + `VDB.reading(chart)`
 - `apps/birth-chart/js/88-deep-reading.js` — Deep reading (window.VDR): the "📖 Deep reading" tab (rising, Moon, functional nature, conjunctions, 12 house cards), extra block in each Planets-tab card, dasha-lord text in the Now tab, and the DEEP READING section of the full report; all text from VDB
 - `apps/birth-chart/js/89-vedic-nakshatra-db.js` — Nakshatra layer (global VNK), layer schema v1: structured facets for 27 nakshatras + 9 planets, composes 972 planet placements + Lagna + Moon birth star on demand (relation to nakshatra lord, pada -> navamsa -> Purushartha, scores, tags); used by Deep reading
+- `apps/birth-chart/js/90-reading-manifest.js` — Manifestation layer (global VMF), schema v1.1: planet (what you do) x house (arena scenes) x sign (manner) for 1296 combinations in second person with self-check questions; 12 rising-sign profiles; Lagna-lord arc; `signature(chart)` = personal summary; used by Deep reading
+- `apps/birth-chart/js/91-dasha-reading.js` — Dasha layer (global VDA), schema v1.1: life timeline (every Mahadasha: theme, arena, ruled houses, real-life lines, tone with reasons, self-check), 9 Antardashas each, next-5-years rows, 81 main x sub blends; dates/lords from the app's dasha engine; used by Deep reading and the report
 - `apps/birth-chart/js/90-year-timeline-engine.js` — Year Timeline scanner (global YT): date range -> sign/nakshatra changes, stations, transit contacts with natal points, lunations/eclipses, dasha changes (3 levels), Sade Sati edges, Jupiter+Saturn house segments; facts only
 - `apps/birth-chart/js/91-year-timeline-writer.js` — Year Timeline writer (global YTW): turns scan result into one structured Markdown file for an AI (planet role map, house map, dasha table, event list)
 - `apps/birth-chart/js/92-year-timeline-ui.js` — "Year Timeline File" panel (panel-yeartimeline): two dates, options, Copy / Download .md
@@ -306,6 +308,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/notepad_test.py` — Notepad test: typing order, note links, templates from every view, side menu, Settings tab switches (copy buttons off by default), at 390 px and 1280 px
 - `tests/rising_navamsha_test.py` — 3D rising view Navamsha test: current Navamsha line, 12 signs x 9 Navamshas, order rule per sign type, boundary accuracy, tap and back
 - `tests/nakshatra_db_test.py` — Nakshatra layer: 972 unique placements, wording gates (no fatalistic/absolute words), pada->navamsa equals the app's D9 on 8 charts, Moon star = dasha start, on-screen check
+- `tests/manifest_test.py` — Manifestation layer: 1296 unique combinations, grammar/voice/wording gates, signature matches real chart data on 8 charts, on-screen blocks and report
+- `tests/dasha_reading_test.py` — Dasha layer: all Mahadashas + Antardashas equal the app's engine on 8 charts, current period, gap-free 5-year window, clean texts, screens + report
 - `tests/customer_smoke.py` — customer edition smoke test
 - `tests/datefinder_test.py` — Date Finder test
 - `tests/syntax_check.py` — node --check over every js file

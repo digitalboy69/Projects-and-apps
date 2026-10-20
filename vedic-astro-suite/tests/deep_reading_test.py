@@ -22,12 +22,12 @@ with sync_playwright() as p:
         pg.goto(PAGE); pg.wait_for_selector('#birthForm'); return pg, errs
     pg, errs = new(); pg.evaluate(CAST, OBAMA); pg.wait_for_selector('#results.show', timeout=15000)
     t = pg.evaluate("""()=>{const rd=document.querySelector('#panel-reading .rd'),tabs=[...rd.querySelectorAll('.vx-tabs button')].map(b=>b.textContent),panes=[...rd.querySelectorAll(':scope>.vx-pane')];
-      return {tabs,np:panes.length,houses:panes[5].querySelectorAll('details.vx-pl').length,planets:panes[2].querySelectorAll('details.vx-pl').length,failed:/Could not build/.test(rd.innerHTML)}}""")
+      return {tabs,np:panes.length,houses:panes[5].querySelectorAll('details.vx-pl').length-currentChartForModal.dashaData.mahadashas.length,planets:panes[2].querySelectorAll('details.vx-pl').length,failed:/Could not build/.test(rd.innerHTML)}}""")
     ok('Chart Reading now has 6 tabs; the new one is "📖 Deep reading"', len(t['tabs']) == 6 and t['tabs'][5] == '📖 Deep reading' and t['np'] == 6 and not t['failed'], t['tabs'])
     ok('Deep tab: 12 house cards; Planets tab: 9 planet cards', t['houses'] == 12 and t['planets'] == 9, t)
     # every text on screen must be the database's text for THIS chart's real placements
     v = pg.evaluate("""()=>{const c=currentChartForModal,R=VDB.reading(c),rd=document.querySelector('#panel-reading .rd'),panes=[...rd.querySelectorAll(':scope>.vx-pane')];
-      const bad=[],norm=s=>s.replace(/\\s+/g,' ');const deep=norm(panes[5].textContent),cards=[...panes[5].querySelectorAll('details.vx-pl')].map(d=>norm(d.textContent));
+      const bad=[],norm=s=>s.replace(/\\s+/g,' ');const deep=norm(panes[5].textContent),cards=[...panes[5].querySelectorAll('details.vx-pl')].slice(-12).map(d=>norm(d.textContent));
       if(!deep.includes(R.lagna.sign+' rising'))bad.push('rising');if(!deep.includes(norm(VDB.data.rising[R.lagna.sign])))bad.push('rising text');
       for(let i=0;i<12;i++){const hl=R.houseLords[i];if(!cards[i].includes(norm(hl.text)))bad.push('lord text H'+(i+1));
         const occ=Object.keys(R.planets).filter(n=>R.planets[n].house===i+1);occ.forEach(n=>{if(!cards[i].includes(norm(R.planets[n].inHouse.text)))bad.push(n+' in H'+(i+1));});
@@ -39,7 +39,7 @@ with sync_playwright() as p:
         e.conjunct.forEach(x=>{if(!pcards[i].includes(norm(x.text)))bad.push(n+' conj');});e.aspectedBy.forEach(x=>{if(!pcards[i].includes(norm(x.text.replace(/^[^:]{1,90}: /,''))))bad.push(n+' aspBy '+x.from);});
         e.lordOf.forEach(y=>{if(!pcards[i].includes(norm(R.houseLords[y-1].text)))bad.push(n+' lordOf '+y);});});
       const act=findActiveDasha(c.dashaData.mahadashas,new Date()),now=norm(panes[3].textContent),ml=act.mahadasha.lord,al=act.antardasha.lord;
-      if(!now.includes(norm(VDB.data.dasha[ml].text)))bad.push('dasha MD');if(!now.includes(norm(VDB.data.dasha[al].text)))bad.push('dasha AD');
+      const cur=VDA.current(c);if(!now.includes(norm(cur.md.arenaText)))bad.push('dasha MD');if(!now.includes(norm(cur.ad.blend)))bad.push('dasha AD');
       return {bad,lagna:R.lagna.sign,md:ml,ad:al,conjPairs:(deep.match(/together in/g)||[]).length,chips:panes[5].querySelectorAll('.vx-note.g .vx-chip').length}}""")
     ok('Deep tab, Planets tab and Now tab show exactly the database text for this chart\'s real houses, lords, aspects, conjunctions, nakshatras and dashas', not v['bad'], v['bad'][:8])
     ok('rising sign Capricorn; functional-nature chips for all 7 planets', v['lagna'] == 'Capricorn' and v['chips'] >= 7, v)
@@ -59,7 +59,7 @@ with sync_playwright() as p:
         pg.evaluate("document.querySelectorAll('.app-panel').forEach(p=>p.classList.remove('active'))")
         pg.evaluate("(p)=>{newProfileBtn&&newProfileBtn.click();}", {}) if False else None
         pg2, e2 = new(); pg2.evaluate(CAST, dict(name=nm, dob=d, tob=tm, place='x', lat=la, lon=lo, tz=tz)); pg2.wait_for_selector('#results.show', timeout=15000)
-        o = pg2.evaluate("""()=>{const rd=document.querySelector('#panel-reading .rd'),panes=[...rd.querySelectorAll(':scope>.vx-pane')];return {tabs:panes.length,h:panes[5].querySelectorAll('details.vx-pl').length,pl:panes[2].querySelectorAll('details.vx-pl').length,
+        o = pg2.evaluate("""()=>{const rd=document.querySelector('#panel-reading .rd'),panes=[...rd.querySelectorAll(':scope>.vx-pane')];return {tabs:panes.length,h:panes[5].querySelectorAll('details.vx-pl').length-currentChartForModal.dashaData.mahadashas.length,pl:panes[2].querySelectorAll('details.vx-pl').length,
           txt:/undefined|NaN|\\[object|null/.test(panes[5].textContent+panes[2].textContent),fail:/Could not build/.test(rd.innerHTML),rep:/DEEP READING/.test(buildFullReportText(currentChartForModal,currentProfileForExport,{}))}}""")
         if o['tabs'] != 6 or o['h'] != 12 or o['pl'] != 9 or o['txt'] or o['fail'] or not o['rep'] or e2: bads.append((nm, o, e2[:1]))
         pg2.close()

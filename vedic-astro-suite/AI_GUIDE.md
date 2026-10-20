@@ -48,6 +48,8 @@ You are working on the **Vedic Astro Suite**: a folder project made of a shell +
 | Interpretation texts: planet in house/sign, house lord in house, aspects, conjunctions, nakshatras, yogas | `birth-chart/87-vedic-knowledge-db.js` | `VDB_DATA` (edit text), `VDB.planetInHouse/planetInSign/lordInHouse/aspectOnHouse/planetAspect/conjunction/nakshatra`, `VDB.reading(chart)`, `VDB.functionalNature` |
 | Deep reading tab / planet-card text / report section (how the database is shown) | `birth-chart/88-deep-reading.js`, hooks in `70-chart-reading.js`, `43-full-report-text.js` | `VDR.pane`, `VDR.planetBlock`, `VDR.dashaBlock`, `VDR.reportText` |
 | Nakshatra facets / any planet-in-nakshatra-pada text, birth star, rising nakshatra | `birth-chart/89-vedic-nakshatra-db.js` | `VNK_DATA` (edit facets), `VNK.placement/lagna/moon/forChart/each/find` |
+| "In real life" scenes / self-check questions / rising profile / signature at a glance | `birth-chart/90-reading-manifest.js` | `VMF_DATA` (behave, arena, manner, rising), `VMF.placement/lagna/lagnaArc/signature` |
+| What a Mahadasha/Antardasha feels like, life timeline, next 5 years | `birth-chart/91-dasha-reading.js` | `VDA_DATA` (planet theme/feelsLike/helps/watch/lens, houseRel), `VDA.timeline/antardashas/upcoming/current/pair` |
 | Planet popup (Birth Chart) | `birth-chart/19-planets-panel.js`, `sky3d/29-planet-detail-content.js` | `openPlanetDetail`, `openOuterDetail`, `buildPlanetsPanel` |
 | Uranus/Neptune/Pluto | `birth-chart/05-ascendant-nakshatra-vargas.js`, `sky3d/02-planetary-dignity.js`, `birth-chart/06-outer-planet-knowledge.js`, `sky3d/30-outer-planet-knowledge.js` | `OUTER_LIST`, `OUTER_INFO`, `outerAspectsTo`, `planetGeocentricLongitude` (elements in `PLANET_ELEMENTS`), A: `openOuterPlanetDetail`, B: `openOuterDetail`, `chOuter`. They are **not** in `PLANET_LIST` on purpose (no Vedic aspects/yogas/dasha). |
 | Export / Copy for AI / JSON | `birth-chart/43-full-report-text.js`, `shared/export-addon.js`, `birth-chart/44-export-modal.js` | `buildFullReportText`, `openExportModal`, add-on `window.VAX` |
@@ -143,6 +145,8 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Deep reading (wired): `js/88-deep-reading.js` (`window.VDR`) shows the knowledge database in the app. Hooks: `70-chart-reading.js` (planet cards get `VDR.planetBlock`, 6th tab `📖 Deep reading` = `VDR.pane`, Now tab gets `VDR.dashaBlock`) and `43-full-report-text.js` (section `deepReading`, checkbox `data-section="deepReading"` in the export dialog, text = `VDR.reportText`). No new calculation: planets/houses/aspects come from `computeChart`, wording from `VDB.reading(chart)` (cached per chart in a WeakMap). `functionalNature` no longer calls the Sun/Moon 8th lord malefic. Test: `tests/deep_reading_test.py` (asserts every on-screen text equals the VDB text for the chart's real placements).
 - Full reading plan: see `docs/FULL_READING_PLAN.md` (audit, gaps, 12 sessions S1-S12 with checklist, merge milestones M1-M4, decisions). Read it first when working on readings/PDF; update its checklist each session.
 - Nakshatra layer (S1 of docs/FULL_READING_PLAN.md): `js/89-vedic-nakshatra-db.js` (`VNK`) = Layer schema v1: facets (style/keywords/strengths/shadows/relating/wellbeing/practices) + ease score + tone + tags, text composed on demand for all 972 planet-nakshatra-pada placements, Lagna and the Moon birth star; shown by `88-deep-reading` (planet cards, birth-star and rising-nakshatra notes, report). Test `tests/nakshatra_db_test.py` (pada->navamsa = app D9, Moon star = dasha start). Wording rule for all reading layers: tendencies, never fate; tests ban absolute words.
+- Manifestation layer (S2 of docs/FULL_READING_PLAN.md, schema v1.1): `js/90-reading-manifest.js` (`VMF`) makes readings personal: planet=what you do, house=arena scenes, sign=manner -> 3 concrete everyday lines + others/inside/at best/under strain + 2 self-check questions for every planet-house-sign (1296), 12 rising profiles, `lagnaArc`, `signature(chart)`. `js/89` nakshatras also carry manifest facets. Shown by `88-deep-reading` (signature at top, `In real life` block first in each planet card, report). Rule for ALL future layers: second person, tendencies, concrete scenes, self-check questions. Test `tests/manifest_test.py`.
+- Dasha layer (S3): `js/91-dasha-reading.js` (`VDA`) = timeline of every Mahadasha (theme/feelsLike per planet + arena + ruled houses + VMF lines + tone from functional nature/dignity/house + self-check), Antardashas via the app's `calculateAntardashas`, `upcoming(chart,5)`, `current(chart)`, `pair(md,ad)`. Deep reading tab: Life timeline cards + next-5-years rows; Now tab: running MD+AD (old generic VDB dasha text superseded); report: LIFE TIMELINE. Charts older than the 120-year cycle have no running period (handled). Test `tests/dasha_reading_test.py`.
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 
@@ -150,13 +154,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-20 - 1282 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-20 - 1305 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 135 files, 18674 lines, 1325 KB
+**birth-chart** - 137 files, 19570 lines, 1372 KB
 ```
-index.html                                         556 lines   32 KB
+index.html                                         558 lines   32 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -244,9 +248,11 @@ js/84-bridge-3d.js                                  38 lines    2 KB
 js/85-popular-charts-data.js                       116 lines   26 KB
 js/86-popular-charts.js                            120 lines    7 KB
 js/87-vedic-knowledge-db.js                       2268 lines  202 KB
-js/88-deep-reading.js                              157 lines   14 KB
-js/89-vedic-nakshatra-db.js                       1023 lines   30 KB
+js/88-deep-reading.js                              210 lines   19 KB
+js/89-vedic-nakshatra-db.js                       1186 lines   38 KB
+js/90-reading-manifest.js                          400 lines   19 KB
 js/90-year-timeline-engine.js                      265 lines   15 KB
+js/91-dasha-reading.js                             273 lines   14 KB
 js/91-year-timeline-writer.js                      190 lines   18 KB
 js/92-year-timeline-ui.js                           57 lines    4 KB
 js/93-dasha-time-finder.js                         162 lines   10 KB
@@ -288,7 +294,7 @@ css/35-dasha-systems.css                            96 lines    8 KB
 css/36-ui-overhaul.css                             126 lines   11 KB
 css/37-d-chart-overview.css                         76 lines    6 KB
 css/38-popular-charts.css                           35 lines    4 KB
-css/39-deep-reading.css                             10 lines    0 KB
+css/39-deep-reading.css                             15 lines    1 KB
 css/40-year-timeline.css                             8 lines    0 KB
 css/41-dasha-time-finder.css                        63 lines    5 KB
 ```

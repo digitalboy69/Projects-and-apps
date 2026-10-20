@@ -4,6 +4,7 @@
      facets   = style, keywords, strengths[], shadows[] (points to watch), relating, wellbeing, practices[] (supportive actions)
      scores   = ease (-0.5 .. +1) and tone (supportive / mixed / challenging), so a rules engine can combine layers later
      tags     = ['planet:Mars','nakshatra:Rohini','pada:2','nature:Fixed','purushartha:Artha','relation:friend'] for filtering/search
+   Schema v1.1 adds MANIFEST facets (how it shows up in real life, second person): others / atBest / underStress / scene.
    Wording is about tendencies and potential ("tends to", "can"), never fixed fate.
 
    COVERAGE: 27 nakshatras x 4 padas x 9 planets = 972 placements, plus Lagna (108) and Moon birth star, all generated on demand.
@@ -246,7 +247,13 @@ const VNK_DATA = {
    "practices": [
     "Finish one thing before starting the next.",
     "Build a short daily movement habit."
-   ]
+   ],
+   "manifest": {
+    "others": "quick, energetic and eager to help",
+    "atBest": "start things and settle situations fast",
+    "underStress": "rush ahead, skip steps and leave things unfinished",
+    "scene": "be the first to volunteer, jump into action or fix a problem on the spot, then lose interest once it is running smoothly"
+   }
   },
   {
    "nature": "Fierce",
@@ -272,7 +279,13 @@ const VNK_DATA = {
    "practices": [
     "Share the load instead of carrying it alone.",
     "Give strong feelings a creative outlet."
-   ]
+   ],
+   "manifest": {
+    "others": "intense, serious and dependable",
+    "atBest": "carry real responsibility and see things through",
+    "underStress": "swing between holding everything in and a sudden outburst",
+    "scene": "quietly take on more than your share, then feel the weight when nobody notices"
+   }
   },
   {
    "nature": "Mixed",
@@ -298,7 +311,13 @@ const VNK_DATA = {
    "practices": [
     "Pause before correcting others.",
     "Balance high standards with warmth."
-   ]
+   ],
+   "manifest": {
+    "others": "sharp, honest and a little intimidating",
+    "atBest": "cut through confusion and protect what matters",
+    "underStress": "criticise harshly or run hot and cold",
+    "scene": "say the thing nobody else will say, and notice that people either respect it or flinch"
+   }
   },
   {
    "nature": "Fixed",
@@ -324,7 +343,13 @@ const VNK_DATA = {
    "practices": [
     "Treat comfort as a tool, not a goal.",
     "Practise letting go of small things."
-   ]
+   ],
+   "manifest": {
+    "others": "attractive, warm and comfortable to be around",
+    "atBest": "build something beautiful and lasting",
+    "underStress": "hold on tightly to people, comforts or routines",
+    "scene": "make a place feel welcoming and find it hard to leave a comfortable setup even after you have outgrown it"
+   }
   },
   {
    "nature": "Soft",
@@ -350,7 +375,13 @@ const VNK_DATA = {
    "practices": [
     "Pick one question and follow it deeply.",
     "Schedule unplanned time to wander."
-   ]
+   ],
+   "manifest": {
+    "others": "curious, light and a little hard to pin down",
+    "atBest": "explore widely and find what is worth keeping",
+    "underStress": "keep searching instead of settling",
+    "scene": "have many plans, tabs and interests open at once, always sure a better option is just ahead"
+   }
   },
   {
    "nature": "Sharp",
@@ -376,7 +407,13 @@ const VNK_DATA = {
    "practices": [
     "Let feelings settle before big decisions.",
     "Channel intensity into problem-solving or writing."
-   ]
+   ],
+   "manifest": {
+    "others": "intense, clever and occasionally stormy",
+    "atBest": "break through old patterns and renew things",
+    "underStress": "feel overwhelmed and say harsh things",
+    "scene": "go through a period of upheaval and notice that you think more clearly afterwards"
+   }
   },
   {
    "nature": "Movable",
@@ -402,7 +439,13 @@ const VNK_DATA = {
    "practices": [
     "Give optimism a clear plan.",
     "Say no early and kindly."
-   ]
+   ],
+   "manifest": {
+    "others": "kind, patient and easy to be with",
+    "atBest": "bounce back and help others start again",
+    "underStress": "drift or avoid conflict",
+    "scene": "get back up quickly after a setback and tell yourself it will work out, sometimes without a clear plan"
+   }
   },
   {
    "nature": "Swift",
@@ -428,7 +471,13 @@ const VNK_DATA = {
    "practices": [
     "Schedule rest as if it were a responsibility.",
     "Let others support you too."
-   ]
+   ],
+   "manifest": {
+    "others": "dependable, caring and quietly wise",
+    "atBest": "nourish people and keep things steady",
+    "underStress": "become rigid or worn out by duty",
+    "scene": "be the one people come to for help or advice, and forget to ask for any yourself"
+   }
   },
   {
    "nature": "Sharp",
@@ -454,7 +503,13 @@ const VNK_DATA = {
    "practices": [
     "Test trust gradually instead of expecting betrayal.",
     "Use insight to help, not to control."
-   ]
+   ],
+   "manifest": {
+    "others": "magnetic, private and perceptive",
+    "atBest": "read people and situations with striking accuracy",
+    "underStress": "become guarded or suspicious",
+    "scene": "notice what is left unsaid in a conversation and keep some thoughts to yourself until you trust someone"
+   }
   },
   {
    "nature": "Fierce",
@@ -480,7 +535,13 @@ const VNK_DATA = {
    "practices": [
     "Earn authority through service.",
     "Ask for feedback you may not enjoy."
-   ]
+   ],
+   "manifest": {
+    "others": "dignified, proud and authoritative",
+    "atBest": "lead with honour and respect those who came before",
+    "underStress": "demand respect or cling to status",
+    "scene": "feel the weight of a family name, tradition or position and want to do right by it"
+   }
   },
   {
    "nature": "Fierce",
@@ -506,7 +567,13 @@ const VNK_DATA = {
    "practices": [
     "Pair every pleasure with one productive habit.",
     "Create regularly, even when not inspired."
-   ]
+   ],
+   "manifest": {
+    "others": "warm, playful and sociable",
+    "atBest": "make life more enjoyable for everyone around you",
+    "underStress": "drift into laziness or indulgence",
+    "scene": "look forward to rest, company and celebration, and have to push yourself to start the dull part"
+   }
   },
   {
    "nature": "Fixed",
@@ -532,7 +599,13 @@ const VNK_DATA = {
    "practices": [
     "State your own needs, not only others'.",
     "Revisit decisions when the facts change."
-   ]
+   ],
+   "manifest": {
+    "others": "helpful, fair and reliable",
+    "atBest": "build friendships and agreements that last",
+    "underStress": "over-give, then feel unappreciated",
+    "scene": "help others so often that your own plans slide down the list"
+   }
   },
   {
    "nature": "Swift",
@@ -558,7 +631,13 @@ const VNK_DATA = {
    "practices": [
     "Turn cleverness into craft through long practice.",
     "Take regular screen-free breaks."
-   ]
+   ],
+   "manifest": {
+    "others": "clever, practical and witty",
+    "atBest": "turn skill into real craft",
+    "underStress": "get restless and over-busy",
+    "scene": "fix things, make things or find a neat workaround, usually with a joke"
+   }
   },
   {
    "nature": "Soft",
@@ -584,7 +663,13 @@ const VNK_DATA = {
    "practices": [
     "Define what 'finished' looks like.",
     "Value substance as much as appearance."
-   ]
+   ],
+   "manifest": {
+    "others": "stylish, striking and expressive",
+    "atBest": "design and build with real flair",
+    "underStress": "chase appearances or perfect every detail",
+    "scene": "care how things look, spend extra time on the finish and enjoy being noticed for it"
+   }
   },
   {
    "nature": "Movable",
@@ -610,7 +695,13 @@ const VNK_DATA = {
    "practices": [
     "Choose a few values and decide by them.",
     "Commit to one routine that grounds you."
-   ]
+   ],
+   "manifest": {
+    "others": "friendly, independent and adaptable",
+    "atBest": "negotiate and adapt without losing your independence",
+    "underStress": "feel indecisive and blown about",
+    "scene": "need your own space, adapt to whoever you are with and sometimes struggle to say what you actually want"
+   }
   },
   {
    "nature": "Mixed",
@@ -636,7 +727,13 @@ const VNK_DATA = {
    "practices": [
     "Celebrate others' wins on purpose.",
     "Set goals that include relationships."
-   ]
+   ],
+   "manifest": {
+    "others": "driven, focused and persuasive",
+    "atBest": "keep going until the goal is reached",
+    "underStress": "get jealous or fixated on winning",
+    "scene": "set a goal and give it everything, noticing less and less of what else is around you"
+   }
   },
   {
    "nature": "Soft",
@@ -662,7 +759,13 @@ const VNK_DATA = {
    "practices": [
     "Keep a few close friendships alive on purpose.",
     "Set limits on what you give."
-   ]
+   ],
+   "manifest": {
+    "others": "loyal, organised and friendly",
+    "atBest": "build strong networks and deep friendships",
+    "underStress": "over-give or feel left out",
+    "scene": "stay in touch with friends, organise people well and feel most yourself among close companions, often far from where you started"
+   }
   },
   {
    "nature": "Sharp",
@@ -688,7 +791,13 @@ const VNK_DATA = {
    "practices": [
     "Delegate and let others lead sometimes.",
     "Share worries with a trusted person."
-   ]
+   ],
+   "manifest": {
+    "others": "protective, senior and proud",
+    "atBest": "take responsibility and protect others",
+    "underStress": "carry worries alone and guard your status",
+    "scene": "end up as the one in charge or the elder in the room, whether or not you asked for it"
+   }
   },
   {
    "nature": "Sharp",
@@ -714,7 +823,13 @@ const VNK_DATA = {
    "practices": [
     "Rebuild deliberately after every clearing.",
     "Ground yourself in a steady routine."
-   ]
+   ],
+   "manifest": {
+    "others": "intense, truth-seeking and unconventional",
+    "atBest": "find the root cause and start fresh",
+    "underStress": "tear things down too fast",
+    "scene": "keep asking why until you reach the root of a problem, even when it upsets how things used to be done"
+   }
   },
   {
    "nature": "Fierce",
@@ -740,7 +855,13 @@ const VNK_DATA = {
    "practices": [
     "Listen fully before persuading.",
     "Rest between big pushes."
-   ]
+   ],
+   "manifest": {
+    "others": "spirited, persuasive and warm",
+    "atBest": "inspire and refresh the people around you",
+    "underStress": "argue to win or dig in",
+    "scene": "talk people round with enthusiasm and hate to admit defeat"
+   }
   },
   {
    "nature": "Fixed",
@@ -766,7 +887,13 @@ const VNK_DATA = {
    "practices": [
     "Schedule play and rest on purpose.",
     "Let standards bend for people you love."
-   ]
+   ],
+   "manifest": {
+    "others": "principled, steady and serious",
+    "atBest": "win slowly through patience and integrity",
+    "underStress": "become over-serious or inflexible",
+    "scene": "stick to a principle even when it costs you in the short run, then watch it pay off years later"
+   }
   },
   {
    "nature": "Movable",
@@ -792,7 +919,13 @@ const VNK_DATA = {
    "practices": [
     "Reflect in silence each day.",
     "Separate others' opinions from your own."
-   ]
+   ],
+   "manifest": {
+    "others": "attentive, thoughtful and well informed",
+    "atBest": "listen well and pass on what you know",
+    "underStress": "absorb other people's views and lose your own",
+    "scene": "learn by listening, remember what people tell you and become the person who connects others"
+   }
   },
   {
    "nature": "Movable",
@@ -818,7 +951,13 @@ const VNK_DATA = {
    "practices": [
     "Slow down on money decisions.",
     "Keep a steady daily rhythm."
-   ]
+   ],
+   "manifest": {
+    "others": "lively, ambitious and rhythmic",
+    "atBest": "build prosperity with good timing",
+    "underStress": "spend or speak impulsively",
+    "scene": "sense the beat of a situation, know when to act and enjoy being part of a lively group"
+   }
   },
   {
    "nature": "Movable",
@@ -844,7 +983,13 @@ const VNK_DATA = {
    "practices": [
     "Share ideas before they feel finished.",
     "Schedule regular time with people."
-   ]
+   ],
+   "manifest": {
+    "others": "reserved, independent and unusual",
+    "atBest": "research, heal and think independently",
+    "underStress": "isolate yourself and keep secrets",
+    "scene": "retreat to work something out alone and share only the result"
+   }
   },
   {
    "nature": "Fierce",
@@ -870,7 +1015,13 @@ const VNK_DATA = {
    "practices": [
     "Test big beliefs against real-world results.",
     "Balance fire with regular calm."
-   ]
+   ],
+   "manifest": {
+    "others": "intense, idealistic and unconventional",
+    "atBest": "transform things through conviction",
+    "underStress": "swing to extremes",
+    "scene": "hold strong convictions, feel restless with half-measures and go through intense phases of change"
+   }
   },
   {
    "nature": "Fixed",
@@ -896,7 +1047,13 @@ const VNK_DATA = {
    "practices": [
     "Voice needs earlier.",
     "Act on what you already know."
-   ]
+   ],
+   "manifest": {
+    "others": "calm, deep and compassionate",
+    "atBest": "stay steady and wise under pressure",
+    "underStress": "withdraw or bottle things up",
+    "scene": "stay calm when others panic and keep your own needs quiet until they build up"
+   }
   },
   {
    "nature": "Soft",
@@ -922,7 +1079,13 @@ const VNK_DATA = {
    "practices": [
     "Set boundaries kindly.",
     "Finish projects and close chapters."
-   ]
+   ],
+   "manifest": {
+    "others": "gentle, kind and imaginative",
+    "atBest": "guide others safely through change",
+    "underStress": "absorb others' moods or avoid endings",
+    "scene": "look after people through a transition and find it hard to close a chapter yourself"
+   }
   }
  ]
 };
@@ -974,7 +1137,7 @@ window.VNK = (function(D){
     const padaText = `Pada ${p} falls in ${pd.navamsaSign} navamsa (${pd.navamsaStyle}), which adds a ${pd.purushartha} flavour: ${pd.focus}.`;
     const text = `${planet} in ${n.name}, pada ${p}. ${how} ${relText} ${padaText} Likely strengths: ${list(strengths)}. Points to watch: ${list(shadows)}. Supportive practice: ${practices[0]} ${practices[1]}`;
     return { key: `${planet}|${i}|${p}`, planet, nakshatra: n.name, nakIndex: i, nakLord: n.lord, nature: n.nature, pada: pd, relation: { kind: rel, lord: n.lord, ease },
-      how, relationText: relText, relating: n.relating, strengths, shadows, practices, ease, score: ease, tone: toneOf(ease), keywords: n.keywords,
+      how, relationText: relText, relating: n.relating, strengths, shadows, practices, ease, score: ease, tone: toneOf(ease), keywords: n.keywords, manifest: n.manifest,
       tags: [`planet:${planet}`, `nakshatra:${n.name}`, `pada:${p}`, `nature:${n.nature}`, `purushartha:${pd.purushartha}`, `relation:${rel}`], text };
   }
   function lagna(i, p){
@@ -982,7 +1145,7 @@ window.VNK = (function(D){
     const strengths = rot(n.strengths, k), shadows = rot(n.shadows, k), practices = [n.practices[k % 2]];
     const how = `Your approach to life tends to be ${n.style}.`;
     const text = `Rising in ${n.name}, pada ${p}. ${how} In dealings with others you tend to be ${n.relating}. Pada ${p} falls in ${pd.navamsaSign} navamsa, adding a ${pd.purushartha} flavour: ${pd.focus}. Likely strengths: ${list(strengths)}. Points to watch: ${list(shadows)}. Supportive practice: ${practices[0]}`;
-    return { key: `Lagna|${i}|${p}`, planet: 'Lagna', nakshatra: n.name, nakIndex: i, nakLord: n.lord, nature: n.nature, pada: pd, how, relating: n.relating, strengths, shadows, practices, keywords: n.keywords,
+    return { key: `Lagna|${i}|${p}`, planet: 'Lagna', nakshatra: n.name, nakIndex: i, nakLord: n.lord, nature: n.nature, pada: pd, how, relating: n.relating, strengths, shadows, practices, keywords: n.keywords, manifest: n.manifest,
       tags: ['planet:Lagna', `nakshatra:${n.name}`, `pada:${p}`, `nature:${n.nature}`, `purushartha:${pd.purushartha}`], text };
   }
   function moon(i, p, dasha){
@@ -991,7 +1154,7 @@ window.VNK = (function(D){
     const start = dasha ? { lord: dasha.lord || n.lord, balanceYears: dasha.balanceYears } : { lord: n.lord };
     const how = `Emotionally you tend to respond ${n.style}.`;
     const text = `Moon in ${n.name}, pada ${p} (the birth star). ${how} In close relationships you tend to be ${n.relating}. Wellbeing theme: ${n.wellbeing}. Pada ${p} falls in ${pd.navamsaSign} navamsa, adding a ${pd.purushartha} flavour: ${pd.focus}. Likely strengths: ${list(strengths)}. Points to watch: ${list(shadows)}. Supportive practice: ${practices[0]} Because ${n.lord} rules this nakshatra, life began in a ${start.lord} Mahadasha${start.balanceYears != null ? ' with about ' + (Math.round(start.balanceYears * 10) / 10) + ' years left in it' : ''}.`;
-    return { key: `Moon|${i}|${p}`, planet: 'Moon', nakshatra: n.name, nakIndex: i, nakLord: n.lord, nature: n.nature, pada: pd, how, relating: n.relating, wellbeing: n.wellbeing, strengths, shadows, practices, keywords: n.keywords, dashaStart: start,
+    return { key: `Moon|${i}|${p}`, planet: 'Moon', nakshatra: n.name, nakIndex: i, nakLord: n.lord, nature: n.nature, pada: pd, how, relating: n.relating, wellbeing: n.wellbeing, strengths, shadows, practices, keywords: n.keywords, manifest: n.manifest, dashaStart: start,
       tags: ['planet:Moon', 'role:birth-star', `nakshatra:${n.name}`, `pada:${p}`, `nature:${n.nature}`, `purushartha:${pd.purushartha}`], text };
   }
 
