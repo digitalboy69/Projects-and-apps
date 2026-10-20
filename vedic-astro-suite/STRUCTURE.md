@@ -208,7 +208,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/15-planet-labels.js` — 3D planet labels
 - `apps/sky3d/js/16-app-state.js` — global app state
 - `apps/sky3d/js/17-render-sky-table.js` — sky table renderer
-- `apps/sky3d/js/18-rising-sign-timeline.js` — rising-sign timings (long-press popup + Rising tab)
+- `apps/sky3d/js/18-rising-sign-timeline.js` — rising-sign timings (long-press popup + Rising tab); Navamsha now + tap a sign for its 9 Navamshas with times to the second
 - `apps/sky3d/js/19-hud-render.js` — HUD (ascendant chip, rising chip) rendering
 - `apps/sky3d/js/20-transit-conjunction-scanner.js` — transit/conjunction scanner UI
 - `apps/sky3d/js/21-natal-profile.js` — natal profile
@@ -302,6 +302,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/deep_reading_test.py` — Deep reading: 6 tabs, 12 house cards, every on-screen text equals the database text for the chart's real placements, report section + export checkbox, 6 more charts, phone layout
 - `tests/year_timeline_test.py` — Year Timeline File test: scan + file on a real chart (ids, order, known Saturn/Rahu ingress dates, dasha changes, size) and the panel at 400 px
 - `tests/notepad_test.py` — Notepad test: typing order, note links, templates from every view, side menu, Settings tab switches (copy buttons off by default), at 390 px and 1280 px
+- `tests/rising_navamsha_test.py` — 3D rising view Navamsha test: current Navamsha line, 12 signs x 9 Navamshas, order rule per sign type, boundary accuracy, tap and back
 - `tests/nakshatra_db_test.py` — Nakshatra layer: 972 unique placements, wording gates (no fatalistic/absolute words), pada->navamsa equals the app's D9 on 8 charts, Moon star = dasha start, on-screen check
 - `tests/customer_smoke.py` — customer edition smoke test
 - `tests/datefinder_test.py` — Date Finder test

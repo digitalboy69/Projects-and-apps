@@ -48,3 +48,8 @@
 .rs-note{ font-size:11.5px; color:var(--text-faint); line-height:1.55; margin-top:12px; }
 .rs-btn{ display:block; width:100%; margin-top:12px; padding:10px; border-radius:12px; cursor:pointer; background:rgba(244,196,92,.12); border:1px solid rgba(244,196,92,.4); color:var(--gold); font:600 13px var(--font-ui); }
 .rs-btn:active{ transform:scale(.98); }
+
+/* Navamsha in the rising view */
+.rs-nav{margin:6px 0 2px;font-size:13px;color:#c9d3e8}.rs-nav b{color:#d4a24a}
+.rs-row.rs-tap{cursor:pointer}.rs-row.rs-tap:hover{background:rgba(255,255,255,.05)}.rs-go{margin-left:6px;color:#d4a24a;font-weight:700}
+.rs-back{margin:0 0 8px}

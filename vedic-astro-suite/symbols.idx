@@ -6,9 +6,13 @@ _ascEdge	fn	apps/sky3d/js/18-rising-sign-timeline.js:5	sky3d
 _ascSign	fn	apps/sky3d/js/18-rising-sign-timeline.js:4	sky3d
 _atmo	fn	apps/sky3d/js/11-planet-visuals.js:4	sky3d
 _glowTex	fn	apps/sky3d/js/11-planet-visuals.js:159	sky3d
+_navBounds	fn	apps/sky3d/js/18-rising-sign-timeline.js:37	sky3d
+_navIdx	fn	apps/sky3d/js/18-rising-sign-timeline.js:35	sky3d
+_navSign	fn	apps/sky3d/js/18-rising-sign-timeline.js:34	sky3d
 _rsD	fn	apps/sky3d/js/18-rising-sign-timeline.js:30	sky3d
 _rsDur	fn	apps/sky3d/js/18-rising-sign-timeline.js:31	sky3d
 _rsT	fn	apps/sky3d/js/18-rising-sign-timeline.js:29	sky3d
+_rsTs	fn	apps/sky3d/js/18-rising-sign-timeline.js:36	sky3d
 _sharedMat	fn	apps/sky3d/js/11-planet-visuals.js:157	sky3d
 _strip	fn	apps/sky3d/js/11-planet-visuals.js:65	sky3d
 _updateOverlays	fn	apps/sky3d/js/40-3d-astro-layers.js:73	sky3d
@@ -183,7 +187,7 @@ closeExportModal	fn	apps/birth-chart/js/44-export-modal.js:13	birth-chart
 closeModal	fn	apps/birth-chart/js/76-share-link-qr.js:40	birth-chart
 closeModal	fn	apps/notepad/js/01-notepad.js:171	notepad
 closePlanetDetail	fn	apps/sky3d/js/31-outer-planet-popup.js:95	sky3d
-closeRising	fn	apps/sky3d/js/18-rising-sign-timeline.js:72	sky3d
+closeRising	fn	apps/sky3d/js/18-rising-sign-timeline.js:102	sky3d
 closeSheet	fn	apps/birth-chart/js/86-popular-charts.js:68	birth-chart
 closeSignDetail	fn	apps/sky3d/js/25-rich-sign-detail.js:42	sky3d
 clusters	fn	apps/sky3d/js/43-degree-finder-returns.js:163	sky3d
@@ -671,6 +675,7 @@ natalPoints	fn	apps/birth-chart/js/90-year-timeline-engine.js:66	birth-chart
 NATURAL_BENEFICS	const	apps/birth-chart/js/14-shadbala-engine.js:164	birth-chart
 NATURAL_MALEFICS	const	apps/birth-chart/js/14-shadbala-engine.js:165	birth-chart
 NATURAL_RELATIONS	const	apps/birth-chart/js/07-planetary-dignity.js:32	birth-chart
+navDetailHTML	fn	apps/sky3d/js/18-rising-sign-timeline.js:44	sky3d
 nestedVargaLon	fn	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:90	birth-chart
 NEUTER_PLANETS	const	apps/birth-chart/js/14-shadbala-engine.js:41	birth-chart
 newClient	fn	apps/notepad/js/01-notepad.js:222	notepad
@@ -726,7 +731,7 @@ openPlanetDetail	fn	apps/sky3d/js/29-planet-detail-content.js:55	sky3d
 openPlanetDetailLegacy	fn	apps/sky3d/js/28-planet-detail-popup.js:23	sky3d
 openProfEdit	fn	apps/birth-chart/js/64-edit-saved-profile.js:2	birth-chart
 openProfileDataModal	fn	apps/birth-chart/js/24-profile-backup.js:4	birth-chart
-openRising	fn	apps/sky3d/js/18-rising-sign-timeline.js:71	sky3d
+openRising	fn	apps/sky3d/js/18-rising-sign-timeline.js:101	sky3d
 openSearch	fn	apps/birth-chart/js/33-quick-search.js:76	birth-chart
 openSettings	fn	shell/js/shell.js:203	shell
 openShared	fn	apps/birth-chart/js/76-share-link-qr.js:26	birth-chart
@@ -944,7 +949,7 @@ renderRectificationDetail	fn	apps/birth-chart/js/20-rectification-scan-tab.js:10
 renderRectificationTable	fn	apps/birth-chart/js/20-rectification-scan-tab.js:52	birth-chart
 renderResults	fn	apps/birth-chart/js/58-render-results.js:2	birth-chart
 renderReturns	fn	apps/sky3d/js/43-degree-finder-returns.js:177	sky3d
-renderRising	fn	apps/sky3d/js/18-rising-sign-timeline.js:58	sky3d
+renderRising	fn	apps/sky3d/js/18-rising-sign-timeline.js:88	sky3d
 renderSandhiTable	fn	apps/birth-chart/js/22-sandhi-table-tab.js:38	birth-chart
 renderSignAspectList	fn	apps/sky3d/js/26-sign-aspects.js:6	sky3d
 renderSignSelector	fn	apps/sky3d/js/24-sign-selector.js:7	sky3d
@@ -968,7 +973,7 @@ retRow	fn	apps/sky3d/js/43-degree-finder-returns.js:171	sky3d
 reveal	fn	shell/js/shell.js:30	shell
 reverse	fn	shell/js/locpicker.js:150	shell
 riseTimeline	fn	apps/sky3d/js/18-rising-sign-timeline.js:13	sky3d
-risingHTML	fn	apps/sky3d/js/18-rising-sign-timeline.js:32	sky3d
+risingHTML	fn	apps/sky3d/js/18-rising-sign-timeline.js:60	sky3d
 roleTable	fn	apps/birth-chart/js/91-year-timeline-writer.js:23	birth-chart
 rowHtml	fn	apps/birth-chart/js/82-dasha-systems-ui.js:67	birth-chart
 RS_CATS	const	apps/birth-chart/js/26-rectification-studio.js:19	birth-chart

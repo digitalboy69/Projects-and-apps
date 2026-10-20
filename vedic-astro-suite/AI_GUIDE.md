@@ -150,7 +150,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-20 - 1274 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-20 - 1279 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -308,7 +308,7 @@ js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 73 files, 6687 lines, 380 KB
+**sky3d** - 73 files, 6728 lines, 384 KB
 ```
 index.html                                         452 lines   27 KB
 js/01-astro-engine.js                              143 lines    7 KB
@@ -328,7 +328,7 @@ js/14-line-visibility-toggles.js                    68 lines    2 KB
 js/15-planet-labels.js                              58 lines    2 KB
 js/16-app-state.js                                  34 lines    1 KB
 js/17-render-sky-table.js                           23 lines    1 KB
-js/18-rising-sign-timeline.js                       73 lines    4 KB
+js/18-rising-sign-timeline.js                      109 lines    8 KB
 js/19-hud-render.js                                 63 lines    2 KB
 js/20-transit-conjunction-scanner.js               152 lines    6 KB
 js/21-natal-profile.js                              50 lines    2 KB
@@ -379,7 +379,7 @@ css/16-astro-layers.css                             52 lines    6 KB
 css/17-polish-rest-of-app.css                       27 lines    3 KB
 css/18-planet-picker.css                            40 lines    3 KB
 css/19-retrograde-planner.css                       35 lines    4 KB
-css/20-hud-ascendant-rising.css                     51 lines    4 KB
+css/20-hud-ascendant-rising.css                     56 lines    4 KB
 css/21-premium-polish.css                           32 lines    3 KB
 css/22-dasha-transit-triggers.css                   31 lines    3 KB
 css/23-time-machine-polish.css                     110 lines   10 KB
@@ -413,3 +413,4 @@ shared/meta.css                                     98 lines    5 KB
 - Notepad: fixed typing cursor jump, note-link exit, template-from-Tasks, open side menu; new Settings tab (view settings) with switches stored in S.set.o (defaults in OPT_DEF; line copy + card copy OFF); test tests/notepad_test.py.
 - Notepad phone: added a menu button (☰) to the note-list header and made the drawer open in focus mode, so every screen has a way back to the menu (not tested).
 - Main menu Settings (shell): popup with one switch "Copy buttons" (off by default, key vedicCopyBtns); shared/copy-toggle.js in every app hides/shows buttons whose label starts with "Copy" (not tested).
+- 3D Rising view: "Navamsha now" line + tap any of the 12 signs for its 9 Navamshas with start/end to the second (`_navSign`, `_navBounds`, `navDetailHTML`, `risingSel` in sky3d/js/18); test tests/rising_navamsha_test.py.
