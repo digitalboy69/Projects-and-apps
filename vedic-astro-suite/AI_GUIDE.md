@@ -150,13 +150,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-20 - 1279 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-20 - 1282 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 135 files, 18672 lines, 1324 KB
+**birth-chart** - 135 files, 18674 lines, 1325 KB
 ```
-index.html                                         554 lines   31 KB
+index.html                                         556 lines   32 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -293,24 +293,24 @@ css/40-year-timeline.css                             8 lines    0 KB
 css/41-dasha-time-finder.css                        63 lines    5 KB
 ```
 
-**developer** - 4 files, 181 lines, 13 KB
+**developer** - 4 files, 183 lines, 13 KB
 ```
-index.html                                          41 lines    3 KB
+index.html                                          43 lines    3 KB
 js/01-dev-card.js                                   12 lines    0 KB
 css/01-base.css                                     62 lines    2 KB
 css/02-developer-card.css                           66 lines    8 KB
 ```
 
-**notepad** - 3 files, 590 lines, 100 KB
+**notepad** - 3 files, 592 lines, 100 KB
 ```
-index.html                                          48 lines    2 KB
+index.html                                          50 lines    2 KB
 js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 73 files, 6728 lines, 384 KB
+**sky3d** - 73 files, 6730 lines, 384 KB
 ```
-index.html                                         452 lines   27 KB
+index.html                                         454 lines   27 KB
 js/01-astro-engine.js                              143 lines    7 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -385,19 +385,21 @@ css/22-dasha-transit-triggers.css                   31 lines    3 KB
 css/23-time-machine-polish.css                     110 lines   10 KB
 ```
 
-**shell** - 4 files, 543 lines, 64 KB
+**shell** - 4 files, 551 lines, 64 KB
 ```
 index.html                                           2 lines    2 KB
 shell/css/shell.css                                110 lines   11 KB
 shell/js/locpicker.js                              202 lines   34 KB
-shell/js/shell.js                                  229 lines   17 KB
+shell/js/shell.js                                  237 lines   17 KB
 ```
 
-**shared** - 4 files, 933 lines, 70 KB
+**shared** - 6 files, 1023 lines, 79 KB
 ```
 shared/copy-toggle.js                               27 lines    1 KB
 shared/export-addon.js                             643 lines   47 KB
 shared/icons.js                                    165 lines   17 KB
+shared/liquid-glass.css                             74 lines    9 KB
+shared/liquid-glass.js                              16 lines    0 KB
 shared/meta.css                                     98 lines    5 KB
 ```
 <!-- AUTO:END -->
@@ -414,3 +416,4 @@ shared/meta.css                                     98 lines    5 KB
 - Notepad phone: added a menu button (☰) to the note-list header and made the drawer open in focus mode, so every screen has a way back to the menu (not tested).
 - Main menu Settings (shell): popup with one switch "Copy buttons" (off by default, key vedicCopyBtns); shared/copy-toggle.js in every app hides/shows buttons whose label starts with "Copy" (not tested).
 - 3D Rising view: "Navamsha now" line + tap any of the 12 signs for its 9 Navamshas with start/end to the second (`_navSign`, `_navBounds`, `navDetailHTML`, `risingSel` in sky3d/js/18); test tests/rising_navamsha_test.py.
+- Liquid glass UI: shared/liquid-glass.css + .js loaded by shell and all 4 apps (<html data-app="bc|3d|np|dev">); rules only under `html.lg`; switch in main-menu Settings (vedicGlass, default on). To restyle a new card class, add it to the :is(...) list for its app. Copy-toggle now also hides the floating `.vax-fb` button.

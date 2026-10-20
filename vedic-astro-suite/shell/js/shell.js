@@ -199,21 +199,29 @@
 
   /* Settings (main menu): one switch for now, "Copy buttons" (off by default). Apps hide/show their copy buttons through shared/copy-toggle.js */
   let vs = null;
+  function glassOn(){ try { return localStorage.getItem('vedicGlass') !== '0'; } catch (e) { return true; } }
   function copyOn(){ try { return localStorage.getItem('vedicCopyBtns') === '1'; } catch (e) { return false; } }
   function openSettings(){
     if (!vs){
       vs = document.createElement('div'); vs.id = 'vset'; vs.setAttribute('role', 'dialog'); vs.setAttribute('aria-label', 'Settings');
       vs.innerHTML = '<div class="vs-box"><div class="vs-h"><b>⚙️ Settings</b><button type="button" class="vs-x" aria-label="Close">✕</button></div>' +
+        '<label class="vs-row"><span><b>Liquid glass look</b><small>Frosted, see-through style across all apps. Turn off if your phone feels slow.</small></span><input type="checkbox" id="vsGlass"><i></i></label>' +
         '<label class="vs-row"><span><b>Copy buttons</b><small>Show the "Copy" buttons across the apps. Off by default.</small></span><input type="checkbox" id="vsCopy"><i></i></label></div>';
       document.body.appendChild(vs);
       vs.addEventListener('click', e=>{ if (e.target === vs || e.target.closest('.vs-x')) vs.classList.remove('on'); });
       document.addEventListener('keydown', e=>{ if (e.key === 'Escape') vs.classList.remove('on'); });
+      vs.querySelector('#vsGlass').addEventListener('change', e=>{
+        try { localStorage.setItem('vedicGlass', e.target.checked ? '1' : '0'); } catch (x) {}
+        if (window.vedicGlassApply) window.vedicGlassApply();
+        for (const k in frames){ try { frames[k].contentWindow.postMessage('vedic-glass-toggle', '*'); } catch (x) {} }
+      });
       vs.querySelector('#vsCopy').addEventListener('change', e=>{
         try { localStorage.setItem('vedicCopyBtns', e.target.checked ? '1' : '0'); } catch (x) {}
         for (const k in frames){ try { frames[k].contentWindow.postMessage('vedic-copy-toggle', '*'); } catch (x) {} }
       });
     }
-    vs.querySelector('#vsCopy').checked = copyOn(); vs.classList.add('on');
+    vs.querySelector('#vsCopy').checked = copyOn();
+    vs.querySelector('#vsGlass').checked = glassOn(); vs.classList.add('on');
   }
 
   sw.querySelectorAll('.sw-item').forEach(b=> b.addEventListener('click', ()=>{
