@@ -299,6 +299,18 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tools/encrypt.py` — encryption helper for the customer edition
 - `tools/guide.py` — generates symbols.idx and the AI_GUIDE auto map
 - `tools/check_structure.py` — verifies STRUCTURE.md lists every project file
+- `tools/reading_gen/p1_masters.py` — master tables (planets, houses, signs, vocabulary) for the knowledge database
+- `tools/reading_gen/p2_planet_house.py` — the 108 hand-written planet-in-house texts + tone markers
+- `tools/reading_gen/p3_more.py` — conjunctions, nakshatras, yogas, dasha lords, status modifiers (hand-written)
+- `tools/reading_gen/p4_build.py` — rule-based tables (planet-in-sign, house lord in house, aspects) + quality gates -> temp json
+- `tools/reading_gen/p5_write.py` — writes js/87-vedic-knowledge-db.js (data + VDB API)
+- `tools/reading_gen/nk_data.py` — nakshatra / planet / purushartha facet tables (+ manifest facets)
+- `tools/reading_gen/build_nk.py` — writes js/89-vedic-nakshatra-db.js
+- `tools/reading_gen/build_vmf.py` — manifestation tables (behave, arena, manner, rising) + writes js/90-reading-manifest.js
+- `tools/reading_gen/build_vda.py` — dasha planet table + house relations + writes js/91-dasha-reading.js
+- `tools/reading_gen/regen.sh` — regenerates all four reading databases (js/87, 89, 90, 91); afterwards `git status` must show no change unless a table was edited
+- `tools/reading_gen/regen.sh — regenerates all four reading databases; afterwards `git status` must show no change unless a table was edited`
+- `tools/ai/session.sh` — AI session helper: start / check / test / ship (commit, rebase on moved main, check, push branch, fast-forward main; token only via GH_TOKEN env)
 
 ### tests/
 - `tests/_helpers.py` — shared Playwright helpers (VAX_TARGET=hosted tests the folder version)
@@ -314,6 +326,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/nakshatra_db_test.py` — Nakshatra layer: 972 unique placements, wording gates (no fatalistic/absolute words), pada->navamsa equals the app's D9 on 8 charts, Moon star = dasha start, on-screen check
 - `tests/manifest_test.py` — Manifestation layer: 1296 unique combinations, grammar/voice/wording gates, signature matches real chart data on 8 charts, on-screen blocks and report
 - `tests/dasha_reading_test.py` — Dasha layer: all Mahadashas + Antardashas equal the app's engine on 8 charts, current period, gap-free 5-year window, clean texts, screens + report
+- `tests/prod_forms_check.py` — Deep reading inside the real production forms (single-file build + customer edition): 6 tabs, 12 house cards, 9 planet blocks, all layers loaded, report section
 - `tests/customer_smoke.py` — customer edition smoke test
 - `tests/datefinder_test.py` — Date Finder test
 - `tests/syntax_check.py` — node --check over every js file
@@ -325,6 +338,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `docs/DOOR.md` — door / licensing site notes
 - `docs/HANDOFF.md` — handoff notes
 - `docs/FULL_READING_PLAN.md` — Plan for the PDF-grade full reading: audit of what exists, gaps, architecture, 12 sessions with checklist, working rules, decisions. READ FIRST in every reading session
+- `docs/AI_START_HERE.md` — The repeatable AI session system: start prompt, session loop (session.sh start/check/test/ship), token hygiene, where things are, layer rules, lessons learned. READ FIRST in every new chat
 - `docs/YEAR_TIMELINE_RESEARCH.md` — Research + plan for the "Year Timeline Pack" (date-range, AI-ready data file: timeline, transits, dasha changes, planet role map); sources, file layout, reuse map, build order
 - `docs/SUPABASE.md` — Supabase cloud-sync notes
 - `docs/THIRD_PARTY_LICENSES.md` — third-party licences

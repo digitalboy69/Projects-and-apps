@@ -1,0 +1,142 @@
+import os, sys, tempfile
+HERE = os.path.dirname(os.path.abspath(__file__)); REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
+TMPJSON = os.path.join(tempfile.gettempdir(), 'vdb_data.json')
+sys.path.insert(0, HERE)
+import json
+PL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu']
+BEHAVE = {
+ 'Sun':    dict(does=["want to take the lead or be recognised","hold yourself to a high standard of dignity","need to feel your effort is seen","stand firm on matters of principle"],
+                atBest="lead with warmth and clear purpose", underStress="become proud, controlling or hurt when not acknowledged", others="confident, dignified and responsible", inside="a steady wish to matter and to act with integrity"),
+ 'Moon':   dict(does=["react with your feelings first","look for comfort and a sense of belonging","soak up the mood of the people around you","need familiar routines to feel settled"],
+                atBest="nurture others and read situations kindly", underStress="swing in mood or withdraw into worry", others="caring, sensitive and easy to talk to", inside="an inner tide that rises and falls with your feelings"),
+ 'Mars':   dict(does=["act first and think later","push back when challenged","put a lot of physical energy into things","lose patience with delays"],
+                atBest="protect others and finish hard tasks with courage", underStress="turn irritable or confrontational", others="direct, energetic and sometimes intense", inside="a drive that wants action now"),
+ 'Mercury':dict(does=["think things through out loud","ask questions and compare options","pick up skills quickly","explain, write or negotiate your way through things"],
+                atBest="learn quickly and make complex things clear", underStress="overthink or scatter your attention", others="quick, witty and curious", inside="a mind that rarely stops thinking"),
+ 'Jupiter':dict(does=["look for the bigger meaning","give advice or guidance","take a generous, hopeful view","trust that things will work out"],
+                atBest="teach, guide and bring generous good judgement", underStress="overpromise, overindulge or drift without a plan", others="warm, wise and optimistic", inside="a sense that life is meant to expand"),
+ 'Venus':  dict(does=["seek harmony and avoid harsh clashes","care how things look and feel","value affection and fair exchange","enjoy comfort and beauty"],
+                atBest="create harmony, charm and lasting affection", underStress="people-please or overspend on comfort", others="pleasant, graceful and easy to like", inside="a pull toward beauty, closeness and peace"),
+ 'Saturn': dict(does=["take things seriously and plan ahead","carry more responsibility than others notice","build slowly and check the details","delay gratification and keep to a routine"],
+                atBest="become the dependable person others lean on", underStress="feel burdened, doubtful or too hard on yourself", others="mature, reserved and reliable", inside="a quiet sense of duty and of being tested"),
+ 'Rahu':   dict(does=["chase something new or out of the ordinary","push past the usual limits","get fascinated by what is unfamiliar or foreign","want more than you have now"],
+                atBest="innovate and open doors others have not tried", underStress="get restless, obsessive or cut corners", others="unconventional, magnetic and hard to predict", inside="a hunger to reach for more"),
+ 'Ketu':   dict(does=["step back and observe before joining in","let go of things quickly","trust intuition over argument","feel a little apart even in company"],
+                atBest="see through the noise and stay unattached", underStress="withdraw or lose interest", others="quiet, perceptive and a bit mysterious", inside="a feeling of already knowing and of loosening your grip"),
+}
+ARENA = [
+ dict(theme="who you are and how you present yourself", scenes=["When you introduce yourself or walk into a room","In how you look after your body and appearance","When you start something new on your own","When you decide who you are and what you want"]),
+ dict(theme="money, family and what you say", scenes=["With money, savings and spending decisions","At the family table and in what you say to relatives","When you put a price on your time and skills","With food, speech and everyday habits that come from your family"]),
+ dict(theme="effort, courage and everyday communication", scenes=["When you take initiative or a small risk","With siblings, cousins and close neighbours","In writing, messaging and everyday conversations","When you practise a skill through repeated effort"]),
+ dict(theme="home, family roots and inner peace", scenes=["At home and with your mother or the person who raised you","When you look for peace of mind and a place to feel safe","In decisions about property, vehicles and where to live","In how you learn and recharge emotionally"]),
+ dict(theme="creativity, romance and children", scenes=["In creative projects and things you do for joy","With children, students or anyone you mentor","In romance and the early stage of attraction","When you study, plan or take a chance on an idea"]),
+ dict(theme="daily work, health routines and problem-solving", scenes=["In daily work routines and with colleagues","With health habits, food and exercise","When there is conflict, competition or a problem to solve","With debts, obligations and small chores"]),
+ dict(theme="partnership and close one-to-one relationships", scenes=["With a partner or spouse","In business partnerships and negotiations","When dealing with clients or the public","In close one-to-one disagreements and agreements"]),
+ dict(theme="deep change, shared resources and what is hidden", scenes=["With shared money, loans, joint property and inheritances","When life forces a sudden change or loss","When you research, investigate or dig into secrets","In intimate trust and the topics you rarely discuss"]),
+ dict(theme="beliefs, learning and mentors", scenes=["In your beliefs, studies and long-term learning","With teachers, mentors and your father or father figures","When you travel far or deal with other cultures","When you look for meaning and guidance"]),
+ dict(theme="career, status and public role", scenes=["At work, in your career and in public roles","With bosses, authority and responsibility","When you are judged on results","In decisions about reputation and long-term goals"]),
+ dict(theme="friends, income and long-term goals", scenes=["In friendships and social circles","With income, profits and goals you hope to reach","In groups, communities and networks","With elder siblings and people who open doors"]),
+ dict(theme="solitude, release and distant places", scenes=["In quiet, solitude and sleep","With expenses, losses and what you let go of","In foreign places, retreats or institutions","In hidden worries and your private inner life"]),
+]
+MANNER = ["at a fast, direct pace","at a slow, steady pace","at a quick, shifting pace","at a pace set by your feelings","at a confident, expressive pace","at a careful, measured pace",
+          "at a considered, balanced pace","at an intense, focused pace","at a brisk, restless pace","at a patient, deliberate pace","at an independent, uneven pace","at a drifting, intuitive pace"]
+RISING = [  # first impression, body language, first reaction, how others describe you, what life keeps asking
+ ("direct, energetic and quick to engage","brisk movements, a forward-leaning stance and direct eye contact","act or respond straight away","bold, competitive and honest","life keeps asking you to start things and stand up for yourself"),
+ ("calm, grounded and pleasant","unhurried, steady movement and a solid presence","pause and take your time before moving","reliable, sensual and stubborn","life keeps asking you to build something stable and to learn when to change"),
+ ("chatty, curious and youthful","expressive hands, quick glances and light movement","ask a question or make a joke","clever, talkative and changeable","life keeps asking you to learn, connect and choose one direction"),
+ ("gentle, attentive and a little guarded","a soft, protective posture and an expressive face","feel first and read the room","caring, moody and loyal","life keeps asking you to create safety for yourself and others"),
+ ("warm, confident and noticeable","an upright posture, open gestures and a strong voice","take the stage or take charge","generous, proud and dramatic","life keeps asking you to lead from the heart and to share the spotlight"),
+ ("neat, modest and observant","tidy, careful movements and attentive eyes","check the details and look for what needs fixing","helpful, precise and self-critical","life keeps asking you to be useful and to accept imperfection"),
+ ("graceful, friendly and tactful","smooth movement, a pleasant smile and balanced posture","weigh both sides and keep the peace","charming, fair and indecisive","life keeps asking you to balance your needs with other people's"),
+ ("intense, private and magnetic","a steady gaze, controlled movement and a composed face","watch and wait before showing your hand","deep, loyal and secretive","life keeps asking you to go deep, to trust and to let go"),
+ ("open, cheerful and restless","long strides, a hearty laugh and an open posture","look for the bigger picture and move toward it","honest, adventurous and blunt","life keeps asking you to explore and to find what you truly believe"),
+ ("serious, reserved and capable","composed, economical movement and a steady voice","plan and take responsibility","disciplined, ambitious and dry-humoured","life keeps asking you to build something lasting and to let yourself rest"),
+ ("friendly, unusual and a little detached","an original style, a relaxed posture and a thoughtful look","step back and think about the principle","independent, inventive and aloof","life keeps asking you to be yourself and to stay close to people"),
+ ("gentle, dreamy and sensitive","soft eyes, flowing movement and a quiet voice","sense the mood and follow your intuition","kind, imaginative and hard to pin down","life keeps asking you to trust your intuition and to keep your boundaries"),
+]
+DATA = dict(schema='layer-v1.1', behave=BEHAVE, arena=ARENA, manner=MANNER,
+            rising=[dict(first=r[0], body=r[1], reaction=r[2], described=r[3], arc=r[4]) for r in RISING],
+            note="If a line does not match your life, that is useful information: look at the sign lord, the aspects and the running dasha, because placements show tendencies, not rules.")
+assert set(BEHAVE) == set(PL) and all(len(v['does']) == 4 for v in BEHAVE.values()) and len(ARENA) == 12 and all(len(a['scenes']) == 4 for a in ARENA) and len(MANNER) == 12 and len(RISING) == 12
+HEAD = '''/* ============================================================================
+   GENERATED by tools/reading_gen (edit the tables there, then run tools/reading_gen/regen.sh). Do not hand-edit this file.
+   MANIFESTATION LAYER (VMF): how a placement shows up in REAL LIFE, in second person. Layer schema v1.1.
+   Three small hand-written tables combine for any chart, so nothing here is a fixed prediction:
+     planet  = what you DO       (behave: 4 habits, at best, under strain, how others experience it, how it feels inside)
+     house   = WHERE it happens  (arena: a theme + 4 concrete everyday scenes)
+     sign    = HOW it is carried (manner: pace; style comes from VDB signs)
+   VMF.placement(planet, house, signIndex, dignity?)   3 concrete everyday lines, others / inside / at best / under strain,
+                                                       2 self-check questions to test the text against your own life (108 x 12 = 1296 combinations)
+   VMF.lagna(signIndex)                                first impression, body language, first reaction, how others describe you, what life keeps asking
+   VMF.lagnaArc(chart)                                 where the Lagna lord points your life direction
+   VMF.signature(chart)                                "your signature at a glance": 4-7 personal lines picked from the whole chart
+                                                       (how you come across, inner weather, drive, direction, strongly supported planets,
+                                                       planets that need extra care, houses where energy gathers)
+   Voice: "you" + tendencies ("you tend to", "you may"). The self-check questions invite the reader to confirm or reject each line.
+   Needs js/87 (VDB) and, for the Moon line, js/89 (VNK). Edit the tables in tools/reading_gen/build_vmf.py, run regen.sh, and every placement that uses them updates.
+   ============================================================================ */
+const VMF_DATA = '''
+API = r'''
+
+window.VMF = (function(D){
+  'use strict';
+  if (typeof VDB === 'undefined') return null;
+  const PL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+  const SIGN = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
+  const lc = s => s.charAt(0).toLowerCase() + s.slice(1);
+  const CONNECT = ['you tend to', 'you often', 'it is common for you to'];
+  const okH = h => Number.isInteger(h) && h >= 1 && h <= 12, okS = s => Number.isInteger(s) && s >= 0 && s <= 11;
+  const STRONG = /exalted|own|moolatrikona/i, WEAK = /debilitated/i;
+
+  function placement(planet, house, signIdx, dignity){
+    const B = D.behave[planet]; if (!B || !okH(house) || !okS(signIdx)) return null;
+    const A = D.arena[house - 1], S = VDB.data.signs[signIdx];
+    const a = (house + signIdx) % 4, c = (PL.indexOf(planet) * 3 + signIdx) % 4;
+    const practice = [0, 1, 2].map(i => { const scene = A.scenes[(a + i) % 4], does = B.does[(c + i) % 4]; return { scene, does, line: `${scene}, ${CONNECT[i]} ${does}.` }; });
+    const styleLine = `${S.name} colours the style: ${S.style}, ${D.manner[signIdx]}.`;
+    const cue = dignity && STRONG.test(dignity) ? 'This planet is comfortable here, so the best side tends to show more often.'
+              : dignity && WEAK.test(dignity) ? 'This planet is under some strain here, so the pressure side tends to show sooner when you are tired or stressed.' : '';
+    const reflect = [`Does this ring true: ${lc(practice[0].scene)}, ${CONNECT[0]} ${practice[0].does}?`, `Under pressure, do you sometimes ${B.underStress}?`];
+    const headline = `${planet} in the ${ordn(house)} house in ${S.name}`;
+    const others = `People tend to experience this part of you as ${B.others}.`, inside = `Inside, it can feel like ${B.inside}.`;
+    const atBest = `At its best, you ${B.atBest}.`, underStress = `Under strain, you may ${B.underStress}.`;
+    const text = `${headline}. ${practice.map(x => x.line).join(' ')} ${others} ${inside} ${atBest} ${underStress} ${styleLine}${cue ? ' ' + cue : ''}`;
+    return { key: `${planet}|${house}|${signIdx}`, planet, house, sign: S.name, theme: A.theme, headline, practice, others, inside, atBest, underStress, styleLine, cue, reflect, note: D.note, text };
+  }
+  function lagna(signIdx){
+    const R = D.rising[signIdx]; if (!okS(signIdx)) return null;
+    const text = `When people first meet you, you come across as ${R.first}. Your body language tends to show ${R.body}. Faced with something new, you tend to ${R.reaction}. Others often describe you as ${R.described}, and ${R.arc}.`;
+    return { sign: SIGN[signIdx], first: R.first, body: R.body, reaction: R.reaction, described: R.described, arc: R.arc, text };
+  }
+  function lagnaArc(chart){
+    const asc = chart.ascendant.sign, lord = VDB.data.signs[asc].lord, e = chart.planets[lord]; if (!e) return null;
+    const A = D.arena[e.house - 1];
+    return { lord, house: e.house, theme: A.theme, text: `Your Lagna lord ${lord} sits in the ${ordn(e.house)} house, so your life direction tends to move toward ${A.theme}. ${A.scenes[0]} is a good place to notice it.` };
+  }
+  const nm = (p, arr) => arr.length < 2 ? arr.join('') : arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1];
+  function signature(chart){
+    const P = chart.planets, asc = chart.ascendant.sign, items = [], lg = lagna(asc);
+    items.push({ icon: '✨', title: 'How you come across', text: `You tend to come across as ${lg.first}, and others often describe you as ${lg.described}. ${lg.arc.charAt(0).toUpperCase() + lg.arc.slice(1)}.` });
+    const mo = P.Moon, mn = (typeof VNK !== 'undefined' && VNK && mo.nakshatra) ? VNK.moon(mo.nakshatra.index, mo.nakshatra.pada, chart.dashaData ? { lord: chart.dashaData.startLord, balanceYears: chart.dashaData.balanceYears } : null) : null;
+    items.push({ icon: '🌙', title: 'Your inner weather', text: mn ? `With the Moon in ${SIGN[mo.sign]} and ${mn.nakshatra}, ${lc(mn.how.replace(/^Emotionally you/, 'you'))} Others may experience you as ${mn.manifest.others}. Inside, it can feel like ${D.behave.Moon.inside}.`
+      : `With the Moon in ${SIGN[mo.sign]}, ${VDB.data.moonSign[SIGN[mo.sign]]}` });
+    const su = P.Sun, sp = placement('Sun', su.house, su.sign, su.dignity && su.dignity.status);
+    items.push({ icon: '☉', title: 'What drives you', text: `Your Sun is in ${SIGN[su.sign]} in the ${ordn(su.house)} house, so your sense of purpose is drawn to ${sp.theme}. Inside, it can feel like ${D.behave.Sun.inside}.` });
+    const la = lagnaArc(chart); if (la) items.push({ icon: '🧭', title: 'Your life direction', text: la.text });
+    const dig = n => (P[n] && P[n].dignity && P[n].dignity.status) || '';
+    const strong = PL.filter(n => P[n] && STRONG.test(dig(n))).slice(0, 2), weak = PL.filter(n => P[n] && WEAK.test(dig(n))).slice(0, 2);
+    if (strong.length) items.push({ icon: '💪', title: 'Where you are strongly supported', text: strong.map(n => `${n} is strongly placed (${dig(n).replace('OwnSign', 'own sign')}), so you find it easier to ${D.behave[n].atBest}.`).join(' ') });
+    if (weak.length) items.push({ icon: '🌱', title: 'Where you may need extra care', text: weak.map(n => `${n} sits in a weaker sign, so under strain you may ${D.behave[n].underStress}; supportive habits help here.`).join(' ') });
+    const byHouse = {}; PL.forEach(n => { if (P[n]) (byHouse[P[n].house] = byHouse[P[n].house] || []).push(n); });
+    const busy = Object.keys(byHouse).map(Number).filter(h => byHouse[h].length >= 3).sort((x, y) => byHouse[y].length - byHouse[x].length)[0];
+    if (busy) items.push({ icon: '🔥', title: 'Where your energy gathers', text: `A lot of your energy gathers in the ${ordn(busy)} house (${D.arena[busy - 1].theme}), with ${nm(null, byHouse[busy])} there. Expect this area to feel busy and important.` });
+    return { items: items.slice(0, 7), text: items.map(x => `${x.title}: ${x.text}`).join('\n') };
+  }
+  function each(cb){ PL.forEach(p => { for (let h = 1; h <= 12; h++) for (let s = 0; s < 12; s++) cb(placement(p, h, s)); }); }
+  return { data: D, placement, lagna, lagnaArc, signature, each };
+})(VMF_DATA);
+'''
+out = HEAD + json.dumps(DATA, ensure_ascii=False, indent=1) + ';' + API
+open(os.path.join(REPO, 'apps/birth-chart/js/90-reading-manifest.js'), 'w', encoding='utf-8').write(out)
+print('written KB:', len(out.encode()) // 1024)

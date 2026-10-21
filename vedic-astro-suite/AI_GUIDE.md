@@ -147,6 +147,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Nakshatra layer (S1 of docs/FULL_READING_PLAN.md): `js/89-vedic-nakshatra-db.js` (`VNK`) = Layer schema v1: facets (style/keywords/strengths/shadows/relating/wellbeing/practices) + ease score + tone + tags, text composed on demand for all 972 planet-nakshatra-pada placements, Lagna and the Moon birth star; shown by `88-deep-reading` (planet cards, birth-star and rising-nakshatra notes, report). Test `tests/nakshatra_db_test.py` (pada->navamsa = app D9, Moon star = dasha start). Wording rule for all reading layers: tendencies, never fate; tests ban absolute words.
 - Manifestation layer (S2 of docs/FULL_READING_PLAN.md, schema v1.1): `js/90-reading-manifest.js` (`VMF`) makes readings personal: planet=what you do, house=arena scenes, sign=manner -> 3 concrete everyday lines + others/inside/at best/under strain + 2 self-check questions for every planet-house-sign (1296), 12 rising profiles, `lagnaArc`, `signature(chart)`. `js/89` nakshatras also carry manifest facets. Shown by `88-deep-reading` (signature at top, `In real life` block first in each planet card, report). Rule for ALL future layers: second person, tendencies, concrete scenes, self-check questions. Test `tests/manifest_test.py`.
 - Dasha layer (S3): `js/91-dasha-reading.js` (`VDA`) = timeline of every Mahadasha (theme/feelsLike per planet + arena + ruled houses + VMF lines + tone from functional nature/dignity/house + self-check), Antardashas via the app's `calculateAntardashas`, `upcoming(chart,5)`, `current(chart)`, `pair(md,ad)`. Deep reading tab: Life timeline cards + next-5-years rows; Now tab: running MD+AD (old generic VDB dasha text superseded); report: LIFE TIMELINE. Charts older than the 120-year cycle have no running period (handled). Test `tests/dasha_reading_test.py`.
+- AI session system: start every session with `docs/AI_START_HERE.md` (session loop, `tools/ai/session.sh start|check|test|ship`, token hygiene, lessons). The four reading databases (js/87, 89, 90, 91) are GENERATED from `tools/reading_gen/*.py`: edit the tables there and run `regen.sh`, never the JS. `.gitattributes` auto-merges STRUCTURE.md/AI_GUIDE.md (union) and dist/symbols.idx (ours, then build.py).
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 
@@ -155,10 +156,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
 _Generated 2026-10-21 - 1317 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-21 - 1305 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 137 files, 19570 lines, 1372 KB
+**birth-chart** - 137 files, 19574 lines, 1372 KB
 ```
 index.html                                         558 lines   32 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -247,12 +249,12 @@ js/83-ui-overhaul.js                                68 lines    5 KB
 js/84-bridge-3d.js                                  38 lines    2 KB
 js/85-popular-charts-data.js                       116 lines   26 KB
 js/86-popular-charts.js                            120 lines    7 KB
-js/87-vedic-knowledge-db.js                       2268 lines  202 KB
+js/87-vedic-knowledge-db.js                       2269 lines  202 KB
 js/88-deep-reading.js                              210 lines   19 KB
-js/89-vedic-nakshatra-db.js                       1186 lines   38 KB
-js/90-reading-manifest.js                          400 lines   19 KB
+js/89-vedic-nakshatra-db.js                       1187 lines   38 KB
+js/90-reading-manifest.js                          401 lines   19 KB
 js/90-year-timeline-engine.js                      265 lines   15 KB
-js/91-dasha-reading.js                             273 lines   14 KB
+js/91-dasha-reading.js                             274 lines   14 KB
 js/91-year-timeline-writer.js                      190 lines   18 KB
 js/92-year-timeline-ui.js                           57 lines    4 KB
 js/93-dasha-time-finder.js                         162 lines   10 KB

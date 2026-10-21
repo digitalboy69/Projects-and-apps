@@ -85,6 +85,7 @@ Every session: build -> its own test -> commit -> push to `feature/full-reading`
 
 ## 8. Decisions log / progress notes
 - Session 0: audit done, plan written, defaults set. Nothing built yet.
+- System session: generators moved into tools/reading_gen (reproduce the 4 databases byte for byte), tools/ai/session.sh (start/check/test/ship), tests/prod_forms_check.py, docs/AI_START_HERE.md, .gitattributes merge rules. M1 (S2+S3) merged to main (875b075). Next: S2b, then S4 yogas.
 - Session 3: dasha layer built on VMF/VDB (small per-planet table + composition). Deep reading tab now has a Life timeline (card per Mahadasha, current open) + next-5-years rows; test counts house cards as the last 12. M1 = merge of S2 + S3 to main.
 - Session 2 (part 1): user feedback: "something is missing - how it manifests in reality; it doesn't feel personal". Added schema v1.1 (manifestation + self-check questions + second-person voice) and the signature summary; rising-sign profiles done as part of it. Voice rule: second person for manifestation text; the older VDB texts stay third person for now (S2b/S3 restate them where useful).
 - Session 1: nakshatra layer built under Layer schema v1 (facets + scores + tags, composed text). User asked for databases that work for all placements instead of fixed fate sentences; later layers (S2+) follow the same schema, and S2 will also restate the existing VDB planet-in-house/sign tables as facets where useful. Pushed to `feature/full-reading` (not merged; next merge is M1 after S3).
