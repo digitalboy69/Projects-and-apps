@@ -154,7 +154,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-20 - 1305 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-21 - 1309 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -314,7 +314,7 @@ js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 73 files, 6730 lines, 384 KB
+**sky3d** - 73 files, 6776 lines, 388 KB
 ```
 index.html                                         454 lines   27 KB
 js/01-astro-engine.js                              143 lines    7 KB
@@ -365,7 +365,7 @@ js/45-vimshottari-dasha.js                          60 lines    2 KB
 js/46-dasha-transit-engine.js                      319 lines   21 KB
 js/47-dasha-transit-ui.js                          145 lines   10 KB
 js/48-profile-bridge.js                             48 lines    2 KB
-js/49-time-machine.js                              139 lines   11 KB
+js/49-time-machine.js                              169 lines   13 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -388,7 +388,7 @@ css/19-retrograde-planner.css                       35 lines    4 KB
 css/20-hud-ascendant-rising.css                     56 lines    4 KB
 css/21-premium-polish.css                           32 lines    3 KB
 css/22-dasha-transit-triggers.css                   31 lines    3 KB
-css/23-time-machine-polish.css                     110 lines   10 KB
+css/23-time-machine-polish.css                     126 lines   12 KB
 ```
 
 **shell** - 4 files, 551 lines, 64 KB
@@ -423,3 +423,4 @@ shared/meta.css                                     98 lines    5 KB
 - Main menu Settings (shell): popup with one switch "Copy buttons" (off by default, key vedicCopyBtns); shared/copy-toggle.js in every app hides/shows buttons whose label starts with "Copy" (not tested).
 - 3D Rising view: "Navamsha now" line + tap any of the 12 signs for its 9 Navamshas with start/end to the second (`_navSign`, `_navBounds`, `navDetailHTML`, `risingSel` in sky3d/js/18); test tests/rising_navamsha_test.py.
 - Liquid glass UI: shared/liquid-glass.css + .js loaded by shell and all 4 apps (<html data-app="bc|3d|np|dev">); rules only under `html.lg`; switch in main-menu Settings (vedicGlass, default on). To restyle a new card class, add it to the :is(...) list for its app. Copy-toggle now also hides the floating `.vax-fb` button.
+- 3D date picker redesigned (sky3d/js/49): five snap-scroll wheels (`W`, `pick`, `place`, `paint`), steppers, year scrub, typed date; test tests/time_wheels_test.py. HUD buttons hide while it is open (`body.tm-open`).
