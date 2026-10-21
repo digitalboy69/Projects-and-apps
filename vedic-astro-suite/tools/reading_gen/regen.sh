@@ -7,3 +7,4 @@ python3 p4_build.py | tail -2 && python3 p5_write.py   # js/87-vedic-knowledge-d
 python3 build_nk.py                                    # js/89-vedic-nakshatra-db.js  (table: nk_data)
 python3 build_vmf.py                                   # js/90-reading-manifest.js    (tables inside build_vmf.py)
 python3 build_vda.py                                   # js/91-dasha-reading.js       (tables inside build_vda.py)
+python3 build_yg.py                                    # js/92-yoga-engine.js         (table inside build_yg.py)
