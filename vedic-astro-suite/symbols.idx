@@ -39,7 +39,7 @@ animationTick	fn	apps/sky3d/js/34-main-refresh-loop.js:16	sky3d
 annual	fn	apps/birth-chart/js/74-sahams.js:53	birth-chart
 antardashas	fn	apps/birth-chart/js/91-dasha-reading.js:255	birth-chart
 APP	const	apps/birth-chart/js/02-app-meta-layer.js:20	birth-chart
-apply	fn	shared/copy-toggle.js:10	shared
+apply	fn	shared/copy-toggle.js:11	shared
 apply	fn	shared/liquid-glass.js:10	shared
 applyLineToggles	fn	apps/sky3d/js/14-line-visibility-toggles.js:15	sky3d
 applyOpts	fn	apps/notepad/js/01-notepad.js:68	notepad
@@ -1152,7 +1152,7 @@ srcHtml	fn	apps/sky3d/js/47-dasha-transit-ui.js:43	sky3d
 srchTopicBox	fn	apps/birth-chart/js/32-ask-ai.js:308	birth-chart
 srchVargaPos	fn	apps/birth-chart/js/32-ask-ai.js:222	birth-chart
 start	fn	apps/birth-chart/js/86-popular-charts.js:115	birth-chart
-start	fn	shared/copy-toggle.js:22	shared
+start	fn	shared/copy-toggle.js:23	shared
 stations	fn	apps/sky3d/js/44-retrograde-planner.js:11	sky3d
 stats	fn	apps/notepad/js/01-notepad.js:146	notepad
 status	fn	apps/notepad/js/01-notepad.js:25	notepad

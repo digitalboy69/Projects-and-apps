@@ -399,9 +399,9 @@ shell/js/locpicker.js                              202 lines   34 KB
 shell/js/shell.js                                  237 lines   17 KB
 ```
 
-**shared** - 6 files, 995 lines, 75 KB
+**shared** - 6 files, 996 lines, 75 KB
 ```
-shared/copy-toggle.js                               27 lines    1 KB
+shared/copy-toggle.js                               28 lines    1 KB
 shared/export-addon.js                             643 lines   47 KB
 shared/icons.js                                    165 lines   17 KB
 shared/liquid-glass.css                             46 lines    5 KB

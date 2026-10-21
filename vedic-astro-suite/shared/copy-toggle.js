@@ -5,7 +5,8 @@
   const KEY = 'vedicCopyBtns', FLAG = 'data-cp-hid';
   const on = () => { try { return localStorage.getItem(KEY) === '1'; } catch (e) { return false; } };
   const label = el => (el.textContent || '').replace(/^[^A-Za-z]+/, '').trim();
-  const isCopy = el => /^copy\b/i.test(label(el)) || /aspect-copy-btn|dc-copy|\bcc\b|lineCopy|vax-fb/.test((el.className && el.className.baseVal === undefined ? el.className : '') + ' ' + el.id) || (el.getAttribute && /copy/i.test(el.getAttribute('title') || '') && !/^(dup|dupl)/i.test(label(el)) && label(el).length < 14);
+  const own = el => document.documentElement.getAttribute('data-app') === 'np' && (el.id === 'lineCopy' || el.classList.contains('cc')); /* notepad has its own switches */
+  const isCopy = el => !own(el) && (/^copy\b/i.test(label(el)) || /aspect-copy-btn|dc-copy|\bcc\b|lineCopy|vax-fb/.test((el.className && el.className.baseVal === undefined ? el.className : '') + ' ' + el.id) || (el.getAttribute && /copy/i.test(el.getAttribute('title') || '') && !/^(dup|dupl)/i.test(label(el)) && label(el).length < 14));
   let busy = false;
   function apply(){
     if (busy) return; busy = true;
