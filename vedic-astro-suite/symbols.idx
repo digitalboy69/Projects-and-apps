@@ -263,7 +263,7 @@ DEG	const	apps/birth-chart/js/03-ephemeris-engine.js:4	birth-chart
 DEG	const	apps/sky3d/js/01-astro-engine.js:6	sky3d
 degreeInSign	fn	apps/sky3d/js/06-planet-detail-helpers.js:5	sky3d
 designModal	fn	shared/export-addon.js:380	shared
-detect	fn	apps/birth-chart/js/92-yoga-engine.js:611	birth-chart
+detect	fn	apps/birth-chart/js/92-yoga-engine.js:1201	birth-chart
 detectGajaKesariYoga	fn	apps/birth-chart/js/12-yoga-detection.js:25	birth-chart
 detectNeechaBhanga	fn	apps/birth-chart/js/12-yoga-detection.js:93	birth-chart
 detectPanchaMahapurushaYogas	fn	apps/birth-chart/js/12-yoga-detection.js:11	birth-chart

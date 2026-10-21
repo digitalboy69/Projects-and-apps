@@ -2,7 +2,7 @@ import os, json
 HERE = os.path.dirname(os.path.abspath(__file__)); REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 # Yoga facets (layer schema v1.1): id -> (name, category, tone, meaning, [2 real-life scenes], at best, watch, self-check question)
 # Detectors (exact rules, shown to the reader as "why it shows in your chart") live in the JS API below.
-CATS = ['Moon yogas', 'Sun yogas', 'Planet combinations', 'Wealth and learning', 'Exchanges', 'Reversals and recoveries', 'Status and power', 'Great-person yogas', 'Surrounding yogas', 'Cautions']
+CATS = ['Moon yogas', 'Sun yogas', 'Planet combinations', 'Wealth and learning', 'Exchanges', 'Reversals and recoveries', 'Status and power', 'Great-person yogas', 'Surrounding yogas', 'Cautions', 'Pattern yogas (Nabhasa)', 'Doshas (points that need care)']
 Y = [
  ('sunapha', 'Sunapha Yoga', 0, 'support', 'a planet stands next to your Moon in the 2nd house from it, which tends to give your mind resources of its own', ['you often find your own ideas, savings or skills to lean on', 'people may notice that you recover on your own after a low patch'], 'turn self-reliance into steady earnings and a calm mind', 'relying on yourself so much that you do not ask for help', 'Do you tend to find your own way through a hard patch?'),
  ('anapha', 'Anapha Yoga', 0, 'support', 'a planet stands in the 12th house from your Moon, which tends to give a composed, well-mannered way of carrying yourself', ['you may be known for a calm, dignified manner', 'you often look after your health, comfort and reputation without fuss'], 'carry yourself with grace and a settled mind', 'drifting into comfort when effort is needed', 'Do others describe you as composed and well-mannered?'),
@@ -45,14 +45,56 @@ Y = [
  ('papa_kartari_m', 'Papa Kartari Yoga (from Moon)', 8, 'challenge', 'harsh planets stand on both sides of your Moon, which tends to bring emotional pressure', ['you may feel tense and watchful', 'you may build resilience through it'], 'build calm habits that keep you steady', 'carrying tension without noticing', 'Do you sometimes feel tense without a clear reason?'),
  ('chatussagara', 'Chatussagara Yoga', 6, 'support', 'all four kendras are occupied, which tends to give wide reach and a well-known name', ['you may be involved in many areas at once', 'you often have a broad network'], 'use your reach with purpose', 'spreading yourself too thin', 'Do you tend to be involved in many areas at once?'),
  ('daridra', 'Daridra Yoga (income strain)', 9, 'challenge', 'the 11th lord stands in a difficult house (6th, 8th or 12th), which tends to make income need extra care', ['you may find gains arrive with extra effort', 'you may need to plan around uneven income'], 'build steady habits around money', 'living hand to mouth', 'Does your income tend to need extra planning?'),
+ ('kahala', 'Kahala Yoga', 6, 'support', 'the 4th and 9th lords stand in kendra to each other with a strong Lagna lord, which tends to give courage, drive and a loyal following', ['you may be bold about leading others', 'you often hold your ground under pressure'], 'lead with courage and loyalty', 'stubbornness', 'Do you tend to hold your ground under pressure?'),
+ ('parvata', 'Parvata Yoga', 6, 'support', 'benefic planets stand in kendras and the 6th and 8th houses are free of harsh planets, which tends to give a good name and steady comfort', ['you may be seen as generous and well-regarded', 'you often feel things settle in the long run'], 'be generous and keep a clean name', 'taking comfort for granted', 'Do you tend to be seen as generous and well-regarded?'),
+ ('mridanga', 'Mridanga Yoga', 6, 'support', 'the Lagna lord is in its own or exalted sign in a kendra or trikona, which tends to give a firm, steady base for your whole life', ['you may feel anchored in who you are', 'you often recover your footing quickly'], 'use a firm base to take on bigger things', 'resting on what you already have', 'Do you tend to feel anchored in who you are?'),
+ ('lagnadhi', 'Lagnadhi Yoga', 6, 'support', 'benefic planets stand in the 6th, 7th or 8th from the Lagna, which tends to give a gift for leading and for handling rivals with tact', ['you may find that rivals soften toward you', 'you often lead without raising your voice'], 'lead with tact and fairness', 'relying on charm when substance is needed', 'Do you tend to lead without raising your voice?'),
+ ('yogakaraka', 'Yogakaraka Planet', 6, 'support', 'one planet rules both a kendra and a trikona for your rising sign, which tends to make that planet a steady ally for the whole chart', ['you may find that things linked to that planet go better than expected', 'you often get support when you work with its themes'], 'work with this planet themes on purpose', 'assuming it works without effort', 'Do things linked to this planet tend to go well for you?'),
+ ('trikona_link', 'Trikona Lords Yoga', 6, 'support', 'the 5th and 9th lords are linked, which tends to join good ideas with good timing', ['you may find that good ideas arrive at the right moment', 'you often have lucky timing in learning and growth'], 'turn good timing into real progress', 'waiting for luck to do the work', 'Does good timing tend to help your plans?'),
+ ('labha_dhana', 'Labha-Dhana Yoga', 3, 'support', 'the 2nd and 11th houses are tied together through their lords, which tends to link what you keep with what you gain', ['you may find savings grow when you stay patient', 'you often turn gains into lasting assets'], 'turn gains into savings', 'spending income as it arrives', 'Does income tend to turn into savings for you?'),
+ ('bhagya', 'Bhagya Yoga', 3, 'support', 'the 9th lord stands in a kendra or trikona and is not weak, which tends to bring support from luck, teachers and elders', ['you may feel guided by teachers, mentors or elders', 'you often get a break when you need one'], 'use help from mentors well', 'ignoring good advice', 'Do mentors or elders tend to help you at the right moment?'),
+ ('karma_yoga', 'Karma Yoga', 6, 'support', 'the 10th lord stands in a kendra or trikona and is not weak, which tends to give steady progress in your work', ['you may feel your career moves forward in steps', 'you often get recognised for being reliable'], 'build a career on reliability', 'overworking for status', 'Does your career tend to move forward in steady steps?'),
+ ('amavasya', 'Sun-Moon Conjunction (new-moon birth)', 9, 'mixed', 'the Sun and Moon are together, which tends to blend mind and purpose into one strong signal but can make it hard to tell a mood from a goal', ['you may find it hard to tell a mood from a goal', 'you may feel pulled to act on one idea at a time'], 'use the single-minded focus', 'confusing feelings with direction', 'Do you sometimes find it hard to tell a mood from a goal?'),
+ ('purnima', 'Sun-Moon Opposition (full-moon birth)', 1, 'support', 'the Sun and Moon face each other, which tends to give a visible, public side and strong feelings about your goals', ['you may feel your inner life and outer role pull in different directions', 'you often notice others reacting to you quite strongly'], 'balance heart and role', 'swinging between the two', 'Do your inner life and your outer role sometimes pull apart?'),
+ ('lakshmi_narayana', 'Lakshmi-Narayana Yoga', 2, 'support', 'Mercury and Venus are together, which tends to combine intelligence with charm and artistry', ['you may have a way with words, style or design', 'you often get along well in business'], 'combine skill with charm', 'relying on charm over depth', 'Do you tend to have a knack for style, words or business?'),
+ ('shani_mangal', 'Shani-Mangal Yoga', 2, 'challenge', 'Saturn and Mars are together or face each other, which tends to mix strong drive with strong restraint', ['you may feel pushed to act and held back at the same time', 'you may have great stamina for hard work'], 'channel the tension into disciplined effort', 'frustration that comes out suddenly', 'Do you sometimes feel pushed to act and held back at once?'),
+ ('surya_shani', 'Surya-Shani Yoga', 2, 'challenge', 'the Sun and Saturn are together or face each other, which tends to pull between authority and duty', ['you may feel your efforts are slow to be noticed', 'you may become steadier and more respected with age'], 'build quiet authority over time', 'feeling unseen or being hard on yourself', 'Do you sometimes feel your efforts are slow to be noticed?'),
+ ('vish', 'Vish Yoga (Moon with Saturn)', 9, 'challenge', 'the Moon and Saturn are together, which tends to make feelings heavy and careful', ['you may keep your feelings to yourself', 'you may have carried a lot of responsibility early in life'], 'build emotional steadiness through routine', 'heaviness or low mood', 'Do you tend to carry your feelings quietly?'),
+ ('digbala', 'Digbala Yoga', 7, 'support', 'a planet stands in the house where it has directional strength, which tends to make that planet speak clearly in your life', ['you may find that planet themes come easily', 'you often feel at home with its style'], 'use the planet that has directional strength', 'relying on one strength only', 'Is one planet style especially easy for you?'),
+ ('manglik', 'Manglik Dosha (Mars placement)', 11, 'challenge', 'Mars stands in a house that is said to add heat to close partnerships, which tends to bring strong energy, impatience or intensity into relationship matters', ['you may feel intense in close relationships', 'you may need to slow down arguments'], 'bring energy and loyalty into partnership', 'temper or impatience with a partner', 'Do you tend to feel intense in close relationships?'),
+ ('kaal_sarp', 'Kaal Sarp Dosha', 11, 'challenge', 'all seven planets lie on one side of the Rahu-Ketu axis, which tends to give a sense that life moves in big waves and themes', ['you may feel your life comes in big cycles', 'you may feel driven toward a few big themes'], 'channel the focus into long-term work', 'feeling that events are out of your hands', 'Do you feel your life moves in big cycles?'),
+ ('guru_chandala', 'Guru Chandala Yoga', 11, 'mixed', 'Jupiter is with Rahu or Ketu, which tends to mix wisdom with unconventional views', ['you may question what you were taught', 'you may seek your own path in belief and learning'], 'turn questioning into original thinking', 'doubting good advice', 'Do you tend to question what you were taught?'),
+ ('surya_grahan', 'Surya Grahan Dosha', 11, 'challenge', 'the Sun is with Rahu or Ketu in the same house, which tends to make self-confidence and authority themes feel complicated', ['you may question your place or your role', 'you may take time to feel truly seen'], 'build confidence through steady achievements', 'doubting your own worth', 'Do you sometimes question your place or role?'),
+ ('chandra_grahan', 'Chandra Grahan Dosha', 11, 'challenge', 'the Moon is with Rahu or Ketu in the same house, which tends to make moods and home themes feel intense', ['you may feel your moods run strong', 'you may be sensitive to the atmosphere around you'], 'build calm routines', 'worry or restless thinking', 'Do your moods tend to run strong?'),
+ ('shrapit', 'Shrapit Dosha', 11, 'challenge', 'Saturn is with Rahu, which tends to bring delays, heavy responsibility and a push to settle old patterns', ['you may feel that some matters move slowly', 'you may feel you carry a family pattern'], 'work steadily through old patterns', 'giving up when things move slowly', 'Do some matters in your life tend to move slowly?'),
+ ('angaraka', 'Angaraka Yoga', 11, 'challenge', 'Mars is with Rahu, which tends to give a fiery, restless drive', ['you may act fast and boldly', 'you may be drawn to risk'], 'turn restless drive into focused action', 'impulsive risk', 'Do you tend to act fast and take risks?'),
+ ('rajju', 'Rajju Yoga', 10, 'mixed', 'all seven planets stand in movable signs, which tends to give an active, restless and travelling nature', ['you may like to keep moving', 'you may start many things'], 'use your energy to begin and to travel', 'leaving things unfinished', 'Do you tend to start many things and keep moving?'),
+ ('musala', 'Musala Yoga', 10, 'mixed', 'all seven planets stand in fixed signs, which tends to give a steady, proud and determined nature', ['you may hold on to your views', 'you may build things that last'], 'build with patience and loyalty', 'stubbornness', 'Do you tend to hold on to your views and plans?'),
+ ('nala', 'Nala Yoga', 10, 'mixed', 'all seven planets stand in dual signs, which tends to give an adaptable, skilful and changeable nature', ['you may adapt quickly to new people and places', 'you may be good at many things'], 'use adaptability as a skill', 'scattering your focus', 'Do you tend to adapt quickly to new situations?'),
+ ('maala', 'Maala Yoga', 10, 'support', 'benefic planets fill three kendras with no harsh planet in any of them, which tends to give comfort and goodwill', ['you may feel supported in everyday matters', 'you often meet kind people'], 'enjoy comfort and share it', 'taking ease for granted', 'Do you tend to feel supported in everyday matters?'),
+ ('sarpa_dala', 'Sarpa Yoga (pattern)', 10, 'challenge', 'harsh planets fill three kendras with no benefic in any of them, which tends to give a life of strong effort and tests', ['you may feel you have to work hard for comfort', 'you may build strength through challenges'], 'turn effort into resilience', 'feeling that nothing comes easily', 'Do you feel you have to work hard for comfort?'),
+ ('gada', 'Gada Yoga', 10, 'mixed', 'all seven planets stand in two neighbouring kendras, which tends to give a focused life centred on those two areas', ['you may pour energy into two main areas', 'you may feel little interest in the rest'], 'go deep in the two areas that matter most', 'neglecting the rest of life', 'Do two areas of life take most of your energy?'),
+ ('sakata_n', 'Sakata Yoga (pattern)', 10, 'challenge', 'all seven planets stand in the 1st and 7th houses, which tends to put the whole chart into self and partnership', ['you may define yourself through your partnerships', 'you may feel life swings between self and others'], 'balance self and partnership', 'feeling stuck in one cycle', 'Do you define yourself through your partnerships?'),
+ ('vihaga', 'Vihaga Yoga', 10, 'mixed', 'all seven planets stand in the 4th and 10th houses, which tends to put the whole chart into home and career', ['you may move between home and work', 'you may feel pulled by both'], 'balance home and career', 'feeling split between the two', 'Do you feel pulled between home and work?'),
+ ('sringataka', 'Sringataka Yoga', 10, 'support', 'all seven planets stand in trikona houses (1st, 5th, 9th), which tends to give a sense of purpose, learning and good fortune', ['you may feel a strong sense of purpose', 'you often learn easily from experience'], 'follow your sense of purpose', 'overconfidence', 'Do you tend to feel a strong sense of purpose?'),
+ ('hala', 'Hala Yoga', 10, 'mixed', 'all seven planets stand in one group of three houses (2-6-10, 3-7-11 or 4-8-12), which tends to give a life centred on one theme such as work, effort or home', ['you may feel one theme runs through your life', 'you may be steady and practical'], 'follow the one theme with commitment', 'working too hard on one thing', 'Does one theme seem to run through your whole life?'),
+ ('vajra', 'Vajra Yoga', 10, 'support', 'benefic planets stand in the 1st and 7th and harsh planets in the 4th and 10th, which tends to give a happy early and late life with effort in between', ['you may enjoy good early and late years', 'you may meet tests in the middle'], 'use the middle years to build', 'losing patience when effort is needed', 'Do your early and late years feel easier than the middle?'),
+ ('yava', 'Yava Yoga', 10, 'mixed', 'harsh planets stand in the 1st and 7th and benefic planets in the 4th and 10th, which tends to give effort early and late with comfort in the middle', ['you may work hard early and enjoy the middle years', 'you may find that comfort arrives later'], 'use early effort to build comfort', 'losing heart in the early years', 'Did your early years take more effort than the middle?'),
+ ('gola', 'Gola Yoga', 10, 'challenge', 'all seven planets stand in one sign, which tends to give a very focused but sometimes narrow life', ['you may focus on one thing at a time', 'you may find it hard to see other options'], 'use deep focus for mastery', 'tunnel vision', 'Do you tend to focus on one thing at a time?'),
+ ('yuga', 'Yuga Yoga', 10, 'mixed', 'the seven planets stand in only two signs, which tends to give a life of strong contrasts', ['you may feel two strong sides to your nature', 'you may swing between them'], 'bring the two sides together', 'feeling divided', 'Do you feel two strong sides to your nature?'),
+ ('sula', 'Sula Yoga', 10, 'mixed', 'the seven planets stand in only three signs, which tends to give sharp, focused energy', ['you may be quick and sharp in a few areas', 'you may feel intense about your priorities'], 'aim your sharp focus well', 'impatience', 'Do you feel sharp and intense about your priorities?'),
+ ('kedara', 'Kedara Yoga', 10, 'support', 'the seven planets stand in four signs, which tends to give a hard-working, productive nature', ['you may be a steady worker', 'you may take care of family and land'], 'work steadily and share the results', 'working without rest', 'Do you tend to be a steady worker?'),
+ ('pasha', 'Pasha Yoga', 10, 'mixed', 'the seven planets stand in five signs, which tends to give a busy life full of responsibilities', ['you may feel tied by many duties', 'you may be good at organising'], 'organise duties well and ask for help', 'feeling bound by obligations', 'Do many duties tend to tie you down?'),
+ ('dama', 'Dama Yoga', 10, 'support', 'the seven planets stand in six signs, which tends to give a generous, widely-connected nature', ['you may help many people', 'you may have a wide circle'], 'share your gifts widely', 'giving too much', 'Do you tend to help many people?'),
+ ('veena', 'Veena Yoga', 10, 'support', 'the seven planets stand in seven different signs, which tends to give a wide range of talents and a love of the arts', ['you may enjoy music, art or learning', 'you may have many interests'], 'follow your many interests', 'spreading yourself too thin', 'Do you tend to have many interests and talents?'),
 ]
-assert len({y[0] for y in Y}) == len(Y) == 41 and all(len(y) == 9 and len(y[5]) == 2 and y[2] < len(CATS) for y in Y)
+assert len({y[0] for y in Y}) == len(Y) == 83 and all(len(y) == 9 and len(y[5]) == 2 and y[2] < len(CATS) for y in Y)
 DATA = dict(schema='layer-v1.1', cats=CATS, yogas=[dict(id=y[0], name=y[1], cat=y[2], tone=y[3], meaning=y[4], scenes=y[5], best=y[6], watch=y[7], ask=y[8]) for y in Y],
             note='A yoga is a tendency, not a promise: it shows where the chart leans, and the running dasha, the strength of the planets and your own choices decide how much of it you see.')
 HEAD = '''/* ============================================================================
    GENERATED by tools/reading_gen (edit the table in tools/reading_gen/build_yg.py, then run tools/reading_gen/regen.sh). Do not hand-edit this file.
-   YOGA ENGINE (YGE): 41 yogas with exact detectors + real-life facets, layer schema v1.1.
-   YGE.detect(chart)  -> [{id, name, cat, tone, planets, houses, why, cancelled?, text, ...}] for the yogas present in a computed chart.
+   YOGA ENGINE (YGE): 83 yogas and doshas with exact detectors + real-life facets, layer schema v1.1.
+   YGE.detect(chart, {now})  -> [{id, name, cat, tone, planets, houses, why, cancelled?, text, ...}] for the yogas present in a computed chart.
    Every item shows the rule it matched ("why") with the actual placements, then meaning, 2 real-life scenes, at best, watch, a self-check question.
    Whole-sign houses from the Lagna; aspects come from the app's own planet.aspectsHouses. Needs js/07 (OWN_SIGNS, EXALTATION), js/87 (VDB).
    ============================================================================ */
@@ -69,7 +111,7 @@ window.YGE = (function(D){
   const nm = arr => arr.length < 2 ? arr.join('') : arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1];
   const byId = {}; D.yogas.forEach(y => byId[y.id] = y);
 
-  function detect(chart){
+  function detect(chart, opts){
     const P = chart.planets, asc = chart.ascendant.sign, out = [];
     const lord = h => VDB.data.signs[(asc + h - 1) % 12].lord;
     const H = n => P[n] && P[n].house;
@@ -157,9 +199,90 @@ window.YGE = (function(D){
     sides(1, 'l'); sides(0, 'm');
     if (KEN.every(h => occ(h).length)) add('chatussagara', ALL.filter(n => KEN.includes(H(n))), KEN, 'all four kendras (1st, 4th, 7th, 10th) hold planets');
     if (P[L(11)] && DUS.includes(H(L(11)))) add('daridra', [L(11)], [H(L(11))], `the 11th lord ${L(11)} in the ${ordn(H(L(11)))} house`);
+    // ---- S5: more combinations ----
+    const MALN = ['Sun','Mars','Saturn'], BN = BEN.concat(['Moon']), okH = [1,4,5,7,9,10];
+    const kd = (a, b) => ((H(b) - H(a) + 12) % 12) + 1;
+    if (strong(lg) && L(4) !== L(9) && P[L(4)] && P[L(9)] && KEN.includes(kd(L(4), L(9)))) add('kahala', [L(4), L(9), lg], [H(L(4)), H(L(9))], `the 4th lord ${L(4)} and the 9th lord ${L(9)} stand in kendra to each other, and the Lagna lord ${lg} is in its own or exalted sign`);
+    const kb = BEN.filter(n => KEN.includes(H(n)));
+    if (kb.length >= 2 && !occ(6, MAL).length && !occ(8, MAL).length) add('parvata', kb, kb.map(H), `${nm(kb)} in kendras, with no harsh planet in the 6th or 8th house`);
+    if (strong(lg) && (KEN.includes(H(lg)) || TRI.includes(H(lg)))) add('mridanga', [lg], [H(lg)], `the Lagna lord ${lg} in its own or exalted sign in the ${ordn(H(lg))} house`);
+    const ld = BEN.filter(n => [6,7,8].includes(H(n)));
+    if (ld.length >= 2) add('lagnadhi', ld, ld.map(H), `${nm(ld)} in the 6th, 7th or 8th from the Lagna`);
+    const FN = VDB.functionalNature(asc), yk = CP.filter(n => FN && FN[n] && FN[n].kind === 'Yogakaraka');
+    if (yk.length) add('yogakaraka', yk, yk.map(H), yk.map(n => `${n} rules the ${FN[n].rules.map(ordn).join(' and ')} houses (a kendra and a trikona)`).join('; '));
+    if (L(5) !== L(9) && P[L(5)] && P[L(9)] && (link(L(5), L(9)) || exch(5, 9))) add('trikona_link', [L(5), L(9)], [H(L(5)), H(L(9))], `the 5th lord ${L(5)} and the 9th lord ${L(9)} are linked`);
+    if ((P[L(2)] && H(L(2)) === 11) || (P[L(11)] && H(L(11)) === 2)) add('labha_dhana', [L(2), L(11)], [H(L(2)), H(L(11))], H(L(2)) === 11 ? `the 2nd lord ${L(2)} stands in the 11th house` : `the 11th lord ${L(11)} stands in the 2nd house`);
+    if (P[L(9)] && okH.includes(H(L(9))) && !weak(L(9))) add('bhagya', [L(9)], [H(L(9))], `the 9th lord ${L(9)} in the ${ordn(H(L(9)))} house and not in a weak sign`);
+    if (P[L(10)] && okH.includes(H(L(10))) && !weak(L(10))) add('karma_yoga', [L(10)], [H(L(10))], `the 10th lord ${L(10)} in the ${ordn(H(L(10)))} house and not in a weak sign`);
+    if (H('Sun') === H(mo)) add('amavasya', ['Sun', mo], [H(mo)], `the Sun and Moon together in the ${ordn(H(mo))} house`);
+    if (((H(mo) - H('Sun') + 12) % 12) === 6) add('purnima', ['Sun', mo], [H('Sun'), H(mo)], 'the Sun and Moon in opposite houses (7th from each other)');
+    if (H('Mercury') === H('Venus')) add('lakshmi_narayana', ['Mercury', 'Venus'], [H('Mercury')], `Mercury and Venus together in the ${ordn(H('Mercury'))} house`);
+    if (H('Saturn') === H('Mars') || (asp('Saturn', 'Mars') && asp('Mars', 'Saturn'))) add('shani_mangal', ['Saturn', 'Mars'], [H('Saturn'), H('Mars')], H('Saturn') === H('Mars') ? `Saturn and Mars together in the ${ordn(H('Mars'))} house` : 'Saturn and Mars facing each other');
+    if (H('Saturn') === H('Sun') || (asp('Saturn', 'Sun') && asp('Sun', 'Saturn'))) add('surya_shani', ['Sun', 'Saturn'], [H('Sun'), H('Saturn')], H('Saturn') === H('Sun') ? `the Sun and Saturn together in the ${ordn(H('Sun'))} house` : 'the Sun and Saturn facing each other');
+    if (H('Saturn') === H(mo)) add('vish', [mo, 'Saturn'], [H(mo)], `the Moon and Saturn together in the ${ordn(H(mo))} house`);
+    const DB = [['Jupiter',1],['Mercury',1],['Moon',4],['Venus',4],['Saturn',7],['Sun',10],['Mars',10]].filter(([n, h]) => H(n) === h);
+    if (DB.length) add('digbala', DB.map(x => x[0]), DB.map(x => x[1]), DB.map(([n, h]) => `${n} in the ${ordn(h)} house (its direction of strength)`).join('; '));
+    // ---- S5: doshas ----
+    {
+      const MG = [1,2,4,7,8,12], rf = x => (x === 'Lagna') ? H('Mars') : ((H('Mars') - H(x) + 12) % 12) + 1, refs = ['Lagna', mo, 'Venus'].filter(x => MG.includes(rf(x)));
+      if (MG.includes(rf('Lagna')) || MG.includes(rf(mo))){
+        const ms = P.Mars.sign, rel = [];
+        if (strong('Mars')) rel.push('Mars is in its own or exalted sign');
+        if (H('Jupiter') === H('Mars')) rel.push('Jupiter joins Mars'); else if (asp('Jupiter', 'Mars')) rel.push('Jupiter looks at Mars');
+        if (H(mo) === H('Mars')) rel.push('the Moon joins Mars');
+        const SAFE = { 2: [2,5], 4: [0,7], 7: [9,3], 8: [11], 12: [1,6] }; if ((SAFE[H('Mars')] || []).includes(ms)) rel.push('Mars is in a sign where this placement is classically eased');
+        const where = ['Lagna', mo].filter(x => MG.includes(rf(x))).map(x => x === 'Lagna' ? `${ordn(rf(x))} from the Lagna` : `${ordn(rf(x))} from the Moon`);
+        add('manglik', ['Mars'], [H('Mars')], `Mars is in the ${where.join(' and ')}${MG.includes(rf('Venus')) ? ' (and also from Venus)' : ''}`, { cancelled: rel.length > 0, note: rel.length ? `This is eased because ${nm(rel)}.` : '', level: rel.length ? 'mild' : refs.length >= 2 ? 'strong' : 'moderate' });
+      }
+      const rl = P.Rahu && P.Rahu.longitude;
+      if (rl != null && CP.every(n => P[n] && P[n].longitude != null)){
+        const d = CP.map(n => (P[n].longitude - rl + 720) % 360);
+        if (d.every(x => x > 0 && x < 180) || d.every(x => x > 180 && x < 360)) add('kaal_sarp', CP.slice(), CP.map(H), d.every(x => x < 180) ? 'all seven planets lie between Rahu and Ketu' : 'all seven planets lie between Ketu and Rahu', { level: 'moderate' });
+      }
+      const nodeWith = n => (H(n) === H('Rahu') || H(n) === H('Ketu')) ? (H(n) === H('Rahu') ? 'Rahu' : 'Ketu') : null;
+      const gc = nodeWith('Jupiter'); if (gc) add('guru_chandala', ['Jupiter', gc], [H('Jupiter')], `Jupiter together with ${gc} in the ${ordn(H('Jupiter'))} house`);
+      const sg2 = nodeWith('Sun'); if (sg2) add('surya_grahan', ['Sun', sg2], [H('Sun')], `the Sun together with ${sg2} in the ${ordn(H('Sun'))} house`);
+      const cg = nodeWith(mo); if (cg) add('chandra_grahan', [mo, cg], [H(mo)], `the Moon together with ${cg} in the ${ordn(H(mo))} house`);
+      if (H('Saturn') === H('Rahu')) add('shrapit', ['Saturn', 'Rahu'], [H('Saturn')], `Saturn together with Rahu in the ${ordn(H('Saturn'))} house`);
+      if (H('Mars') === H('Rahu')) add('angaraka', ['Mars', 'Rahu'], [H('Mars')], `Mars together with Rahu in the ${ordn(H('Mars'))} house`);
+    }
+    // ---- S5: pattern (Nabhasa) yogas: the seven classical planets as a whole ----
+    {
+      const sgs = CP.map(n => P[n].sign), hs = CP.map(H), hset = new Set(hs), sset = new Set(sgs), allIn = set => hs.every(h => set.includes(h)), pat = (id, why, extra) => add(id, CP.slice(), [...hset].sort((a, b) => a - b), why, Object.assign({ pattern: true }, extra || {}));
+      if (sgs.every(s => s % 3 === sgs[0] % 3)) pat(['rajju','musala','nala'][sgs[0] % 3], `all seven planets stand in ${['movable','fixed','dual'][sgs[0] % 3]} signs`);
+      const kBen = KEN.filter(h => occ(h, BEN).length), kMal = KEN.filter(h => occ(h, MALN).length);
+      if (kBen.length >= 3 && !kMal.length) pat('maala', `benefic planets in ${kBen.length} kendras with no harsh planet in a kendra`);
+      if (kMal.length >= 3 && !kBen.length) pat('sarpa_dala', `harsh planets in ${kMal.length} kendras with no benefic in a kendra`);
+      const hh = [...hset].sort((a, b) => a - b).join(' and ');
+      if (hset.size === 2 && [[1,4],[4,7],[7,10],[1,10]].some(p2 => p2.every(h => hset.has(h)))) pat('gada', `all seven planets in the ${hh} houses (neighbouring kendras)`);
+      if (hset.size === 2 && hset.has(1) && hset.has(7)) pat('sakata_n', 'all seven planets in the 1st and 7th houses');
+      if (hset.size === 2 && hset.has(4) && hset.has(10)) pat('vihaga', 'all seven planets in the 4th and 10th houses');
+      if (hset.size >= 2 && allIn([1,5,9])) pat('sringataka', 'all seven planets in the 1st, 5th and 9th houses');
+      const hl = [[2,6,10],[3,7,11],[4,8,12]].find(g => hset.size >= 2 && allIn(g)); if (hl) pat('hala', `all seven planets in the ${hl.map(ordn).join(', ')} houses`);
+      const bs = BN.filter(n => n !== mo || true), ben7 = BN.map(H), mal7 = MALN.map(H);
+      if (BN.every(n => [1,7].includes(H(n))) && MALN.every(n => [4,10].includes(H(n))) && [1,7].every(h => BN.some(n => H(n) === h)) && [4,10].every(h => MALN.some(n => H(n) === h))) pat('vajra', 'benefic planets in the 1st and 7th, harsh planets in the 4th and 10th');
+      if (MALN.every(n => [1,7].includes(H(n))) && BN.every(n => [4,10].includes(H(n))) && [1,7].every(h => MALN.some(n => H(n) === h)) && [4,10].every(h => BN.some(n => H(n) === h))) pat('yava', 'harsh planets in the 1st and 7th, benefic planets in the 4th and 10th');
+      const SK = { 1: 'gola', 2: 'yuga', 3: 'sula', 4: 'kedara', 5: 'pasha', 6: 'dama', 7: 'veena' };
+      pat(SK[sset.size], `the seven planets occupy ${sset.size === 1 ? 'only one sign' : sset.size + ' different signs'}`);
+    }
+    // ---- strength rating + timing hint ----
+    const now = (opts && opts.now) || new Date(), MD = (chart.dashaData && chart.dashaData.mahadashas) || [];
+    out.forEach(x => {
+      if (!x.pattern && !x.level){
+        let sc = 0; const w = [];
+        x.planets.filter(n => CP.includes(n)).forEach(n => { if (strong(n)) { sc++; w.push(`${n} strong`); } else if (weak(n)) { sc--; w.push(`${n} weak`); } if (n !== 'Sun' && P[n].combustion && P[n].combustion.combust) { sc--; w.push(`${n} close to the Sun`); } });
+        x.level = sc >= 1 ? 'strong' : sc === 0 ? 'moderate' : 'mild'; x.levelWhy = w.length ? w.join(', ') : 'no planet in a notably strong or weak sign';
+      } else if (x.level && !x.levelWhy) x.levelWhy = x.cancelled ? 'eased by the conditions listed' : x.id === 'manglik' ? 'based on how many reference points (Lagna, Moon, Venus) it touches' : 'a single whole-chart pattern';
+      if (!x.pattern && x.planets.length < 7){
+        const hit = MD.filter(m => x.planets.includes(m.lord)), cur = hit.find(m => m.startDate <= now && m.endDate > now), nxt = hit.find(m => m.startDate > now);
+        if (cur) x.timing = `This theme is easier to notice in a ${cur.lord} Mahadasha, which is running now (until ${cur.endDate.getFullYear()}).`;
+        else if (nxt) x.timing = `This theme is easier to notice in a ${nxt.lord} Mahadasha, next from ${nxt.startDate.getFullYear()}.`;
+      }
+    });
     out.forEach(x => {
       const cl = x.note ? ' ' + x.note : '';
-      x.text = `${x.name}. Why it shows in your chart: ${x.why}. In plain words: ${x.meaning.charAt(0).toUpperCase() + x.meaning.slice(1)}. In real life, ${x.scenes[0]}; ${x.scenes[1]}. At its best, you ${x.best}. Watch for ${x.watch}.${cl} Check this against your life: ${x.ask}`;
+      const st = x.level ? ` How strongly it shows: ${x.level} (${x.levelWhy}).` : '', tm = x.timing ? ' ' + x.timing : '';
+      x.text = `${x.name}. Why it shows in your chart: ${x.why}. In plain words: ${x.meaning.charAt(0).toUpperCase() + x.meaning.slice(1)}. In real life, ${x.scenes[0]}; ${x.scenes[1]}. At its best, you ${x.best}. Watch for ${x.watch}.${cl}${st}${tm} Check this against your life: ${x.ask}`;
       x.reflect = [x.ask];
     });
     return out;

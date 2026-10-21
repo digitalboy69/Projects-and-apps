@@ -58,34 +58,80 @@ FX = {
  'papa_kartari_m': (0, [8,5,4,10,0,11,6,2,8], [8,5,3,10,0,11,6,2,8]),
  'chatussagara': (0, [0,3,6,9,10,11,1,2,8], [0,3,6,10,10,11,1,2,8]),
  'daridra': (0, [4,0,9,11,10,7,5,2,8], [4,0,9,11,10,7,1,2,8]),
+ 'kahala': (0, [4,0,9,11,3,7,1,2,8], [4,0,9,11,4,7,1,2,8]),
+ 'parvata': (0, [4,0,9,11,3,6,1,2,8], [4,0,9,11,3,6,5,2,8]),
+ 'mridanga': (0, [4,1,0,11,10,7,5,2,8], [4,1,1,11,10,7,5,2,8]),
+ 'lagnadhi': (0, [4,0,9,7,10,6,1,2,8], [4,0,9,11,10,9,1,2,8]),
+ 'yogakaraka': (1, [4,0,9,11,10,7,1,2,8], [4,0,9,11,10,7,1,2,8], 0),
+ 'trikona_link': (0, [4,0,9,11,4,7,1,2,8], [4,0,9,11,8,7,1,2,8]),
+ 'labha_dhana': (0, [4,0,9,11,8,10,5,2,8], [4,0,9,11,8,9,5,2,8]),
+ 'bhagya': (0, [4,0,9,11,8,7,1,2,8], [4,0,9,11,7,7,1,2,8]),
+ 'karma_yoga': (0, [4,0,5,11,10,7,9,2,8], [4,0,5,11,10,7,10,2,8]),
+ 'amavasya': (0, [4,4,9,11,10,7,1,2,8], [4,5,9,11,10,7,1,2,8]),
+ 'purnima': (0, [4,10,9,11,8,7,1,2,8], [4,9,9,11,8,7,1,2,8]),
+ 'lakshmi_narayana': (0, [4,0,9,7,10,7,1,2,8], [4,0,9,5,10,7,1,2,8]),
+ 'shani_mangal': (0, [4,0,9,11,10,7,9,2,8], [4,0,9,11,10,7,1,2,8]),
+ 'surya_shani': (0, [4,0,9,11,10,7,4,2,8], [4,0,9,11,10,7,1,2,8]),
+ 'vish': (0, [4,0,9,11,10,7,0,2,8], [4,0,9,11,10,7,1,2,8]),
+ 'digbala': (0, [4,1,5,11,0,7,5,2,8], [4,1,5,11,1,7,5,2,8]),
+ 'manglik': (0, [4,0,6,11,8,7,1,2,8], [4,0,4,11,8,7,1,2,8]),
+ 'kaal_sarp': (0, [3,4,5,6,7,5,4,2,8], [3,4,5,6,7,5,9,2,8]),
+ 'guru_chandala': (0, [4,0,9,11,2,7,1,2,8], [4,0,9,11,10,7,1,2,8]),
+ 'surya_grahan': (0, [2,0,9,11,10,7,1,2,8], [4,0,9,11,10,7,1,2,8]),
+ 'chandra_grahan': (0, [4,2,9,11,10,7,1,2,8], [4,0,9,11,10,7,1,2,8]),
+ 'shrapit': (0, [4,0,9,11,10,7,2,2,8], [4,0,9,11,10,7,1,2,8]),
+ 'angaraka': (0, [4,0,2,11,10,7,1,2,8], [4,0,9,11,10,7,1,2,8]),
+ 'rajju': (0, [0,3,6,9,0,3,6,2,8], [0,3,6,9,0,3,1,2,8]),
+ 'musala': (0, [1,4,7,10,1,4,7,2,8], [1,4,7,10,1,4,8,2,8]),
+ 'nala': (0, [2,5,8,11,2,5,8,2,8], [2,5,8,11,2,5,7,2,8]),
+ 'maala': (0, [4,2,5,6,0,3,1,2,8], [4,2,5,6,0,3,9,2,8]),
+ 'sarpa_dala': (0, [0,2,3,5,4,1,6,2,8], [0,2,3,5,9,1,6,2,8]),
+ 'gada': (0, [0,3,0,3,0,3,0,2,8], [0,3,0,3,0,3,6,2,8]),
+ 'sakata_n': (0, [0,6,0,6,0,6,0,2,8], [0,6,0,6,0,6,3,2,8]),
+ 'vihaga': (0, [3,9,3,9,3,9,3,2,8], [3,9,3,9,3,9,0,2,8]),
+ 'sringataka': (0, [0,4,8,0,4,8,0,2,8], [0,4,8,0,4,8,1,2,8]),
+ 'hala': (0, [1,5,9,1,5,9,1,2,8], [1,5,9,1,5,9,0,2,8]),
+ 'vajra': (0, [3,0,9,6,6,0,3,2,8], [3,0,9,6,6,0,1,2,8]),
+ 'yava': (0, [0,3,6,9,3,9,0,2,8], [0,3,6,9,3,1,0,2,8]),
+ 'gola': (0, [4,4,4,4,4,4,4,2,8], [4,4,4,4,4,4,5,2,8]),
+ 'yuga': (0, [4,4,5,5,4,5,4,2,8], [4,4,5,5,4,5,6,2,8]),
+ 'sula': (0, [4,5,6,4,5,6,4,2,8], [4,5,6,4,5,6,7,2,8]),
+ 'kedara': (0, [4,5,6,7,4,5,6,2,8], [4,5,6,7,8,5,6,2,8]),
+ 'pasha': (0, [4,5,6,7,8,4,5,2,8], [4,5,6,7,4,4,5,2,8]),
+ 'dama': (0, [4,5,6,7,8,9,4,2,8], [4,5,6,7,8,4,4,2,8]),
+ 'veena': (0, [0,1,2,3,4,5,6,2,8], [0,1,2,3,4,5,5,2,8]),
 }
 with sync_playwright() as p:
     b = p.chromium.launch(executable_path=CHROME); pg = b.new_page(viewport={'width': 430, 'height': 900}); errs = []
     pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.route('**/*', lambda r: r.continue_() if r.request.url.startswith(('http://127.0.0.1', 'data:', 'blob:')) else r.abort())
     pg.goto(PAGE); pg.wait_for_selector('#birthForm')
-    ok('YGE loaded with 41 yogas', pg.evaluate("typeof YGE==='object'&&YGE!==null&&YGE.ids.length===41&&YGE.data.yogas.every(y=>y.name&&y.meaning&&y.scenes.length===2&&y.best&&y.watch&&y.ask&&/\\?$/.test(y.ask))"))
-    ok('fixtures cover all 41 yogas', sorted(FX) == sorted(pg.evaluate("YGE.ids")))
+    ok('YGE loaded with 83 yogas and doshas', pg.evaluate("typeof YGE==='object'&&YGE!==null&&YGE.ids.length===83&&YGE.data.yogas.every(y=>y.name&&y.meaning&&y.scenes.length===2&&y.best&&y.watch&&y.ask&&/\\?$/.test(y.ask))"))
+    ok('fixtures cover all 83 yogas and doshas', sorted(FX) == sorted(pg.evaluate("YGE.ids")))
     # ---- hand-built charts: each yoga present where it should be, absent where it should not ----
     r = pg.evaluate("""(FX)=>{
       const NAMES=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'],OFF={Mars:[4,7,8],Jupiter:[5,7,9],Saturn:[3,7,10]};
       const mk=(asc,signs)=>{const planets={};NAMES.forEach((n,i)=>{const sign=signs[i],house=((sign-asc+12)%12)+1,offs=OFF[n]||[7];
         const st=(OWN_SIGNS[n]||[]).includes(sign)?'OwnSign':(EXALTATION[n]&&EXALTATION[n].sign===sign)?'Exalted':(EXALTATION[n]&&getDebilitation(n).sign===sign)?'Debilitated':'Neutral';
-        planets[n]={name:n,sign,house,aspectsHouses:offs.map(o=>((house-1+o-1)%12)+1),dignity:{status:st},combustion:{combust:false}};});
-        return {planets,ascendant:{sign:asc}}};
+        planets[n]={name:n,sign,house,longitude:sign*30+10+i*0.5,aspectsHouses:offs.map(o=>((house-1+o-1)%12)+1),dignity:{status:st},combustion:{combust:false}};});
+        return {planets,ascendant:{sign:asc},dashaData:{mahadashas:[{lord:'Venus',startDate:new Date(1990,0,1),endDate:new Date(2010,0,1)},{lord:'Sun',startDate:new Date(2010,0,1),endDate:new Date(2016,0,1)},{lord:'Moon',startDate:new Date(2016,0,1),endDate:new Date(2026,0,1)},{lord:'Mars',startDate:new Date(2026,0,1),endDate:new Date(2033,0,1)}]}}};
       const miss=[],leak=[];
-      for(const id in FX){const [asc,pos,neg]=FX[id];
-        const a=YGE.detect(mk(asc,pos)).filter(x=>x.id===id),c=YGE.detect(mk(asc,neg)).filter(x=>x.id===id);
+      for(const id in FX){const [asc,pos,neg,nasc]=FX[id];
+        const a=YGE.detect(mk(asc,pos)).filter(x=>x.id===id),c=YGE.detect(mk(nasc===undefined?asc:nasc,neg)).filter(x=>x.id===id);
         if(!a.length)miss.push(id);if(c.length)leak.push(id);}
       const kc=YGE.detect(mk(0,FX.kemadruma[1])).find(x=>x.id==='kemadruma'),kcc=YGE.detect(mk(0,[4,1,6,5,8,7,10,2,8])).find(x=>x.id==='kemadruma');
       const sk=YGE.detect(mk(0,FX.shakata[1])).find(x=>x.id==='shakata'),skc=YGE.detect(mk(0,[4,3,9,11,10,7,2,1,7])).find(x=>x.id==='shakata');
       const nb=YGE.detect(mk(0,FX.neecha_bhanga[1])).find(x=>x.id==='neecha_bhanga');
+      const mgc=YGE.detect(mk(0,[4,0,7,11,8,7,1,2,8])).find(x=>x.id==='manglik'),mgo=YGE.detect(mk(0,FX.manglik[1])).find(x=>x.id==='manglik');
+      const hm=YGE.detect(mk(0,FX.hamsa[1]),{now:new Date(2012,5,1)}).find(x=>x.id==='hamsa'),hm2=YGE.detect(mk(0,[4,0,9,11,3,7,5,2,8]),{now:new Date(2012,5,1)}).find(x=>x.id==='hamsa');
+      const sunY=YGE.detect(mk(0,FX.vesi[1]),{now:new Date(2012,5,1)}).find(x=>x.id==='vesi'),strongY=YGE.detect(mk(0,FX.malavya[1])).find(x=>x.id==='malavya'),mildY=YGE.detect(mk(0,[4,0,5,11,10,6,1,2,8])).find(x=>x.id==='malavya');
       const du=YGE.detect(mk(0,FX.durudhara[1])).map(x=>x.id);
-      return {miss,leak,kemOpen:kc&&!kc.cancelled,kemCancel:kcc&&kcc.cancelled&&/eased/.test(kcc.note),shakOpen:sk&&!sk.cancelled,shakCancel:skc&&skc.cancelled,nbPlanet:nb&&nb.planet,duOnly:du.includes('durudhara')&&!du.includes('sunapha')&&!du.includes('anapha')}}""", FX)
-    ok('each yoga is found in its chart (41/41)', not r['miss'], r['miss'])
-    ok('each yoga is absent from the chart built without it (41/41)', not r['leak'], r['leak'])
+      return {miss,leak,kemOpen:kc&&!kc.cancelled,kemCancel:kcc&&kcc.cancelled&&/eased/.test(kcc.note),shakOpen:sk&&!sk.cancelled,shakCancel:skc&&skc.cancelled,nbPlanet:nb&&nb.planet,mgCancel:mgc&&mgc.cancelled&&mgc.level==='mild'&&mgo&&!mgo.cancelled&&mgo.level==='strong',strongLvl:strongY&&strongY.level==='strong'&&/Venus strong/.test(strongY.levelWhy),timingNow:!!(sunY&&/Sun Mahadasha|Mars Mahadasha|Moon Mahadasha|Venus Mahadasha/.test(sunY.timing||'')),duOnly:du.includes('durudhara')&&!du.includes('sunapha')&&!du.includes('anapha')}}""", FX)
+    ok('each yoga is found in its chart (83/83)', not r['miss'], r['miss'])
+    ok('each yoga is absent from the chart built without it (83/83)', not r['leak'], r['leak'])
     ok('Kemadruma: open when nothing supports it, cancelled (with a reason) when a planet is in a kendra; Shakata cancelled when the Moon is in a kendra', r['kemOpen'] and r['kemCancel'] and r['shakOpen'] and r['shakCancel'], r)
     ok('Neecha Bhanga names the weak planet; Durudhara replaces Sunapha/Anapha', r['nbPlanet'] == 'Mars' and r['duOnly'], r)
+    ok('Manglik: eased (mild) when Mars is in its own sign, strong when it touches Lagna, Moon and Venus; strength rating reads planet dignity; timing hint names a Mahadasha', r['mgCancel'] and r['strongLvl'] and r['timingNow'], r)
     # ---- real charts: cross-check against the app's own detectors, clean texts ----
     BAN = "/\\b(always|never|certainly|definitely|guaranteed|doomed|destined|fatal|cursed|will die|death|you will)\\b/i"
     tot = 0
@@ -103,7 +149,11 @@ with sync_playwright() as p:
           if(new Set(ids).size!==ids.length&&!ids.every(i=>i==='neecha_bhanga'||new Set(ids.filter(j=>j===i)).size))bad.push('dup');
           return {n:Y.length,bad:bad.slice(0,6)}}""" % BAN)
         tot += o['n']; ok('real chart %s %s: yogas consistent with the app\'s own detectors, texts clean (%d found)' % (c[0], c[1], o['n']), not o['bad'], o)
-    ok('real charts together show a spread of yogas (not none, not everything)', 8 <= tot <= 8 * 20, tot)
+    ok('real charts together show a spread of yogas (not none, not everything)', 8 <= tot <= 8 * 45, tot)
+    lt = pg.evaluate("""()=>{const Y=YGE.detect(currentChartForModal),bad=[];Y.forEach(x=>{if(!x.level||!['strong','moderate','mild'].includes(x.level)||!x.levelWhy)bad.push('level '+x.id);
+      if(x.timing&&!/Mahadasha/.test(x.timing))bad.push('timing '+x.id);if(!/How strongly it shows/.test(x.text))bad.push('text level '+x.id)});
+      const past=YGE.detect(currentChartForModal,{now:new Date('2200-01-01')});return {n:Y.length,bad:bad.slice(0,6),noTimingAfterLife:past.every(x=>!x.timing||!/running now/.test(x.timing))}}""")
+    ok('every yoga carries a strength level with its reason; timing hints name a Mahadasha and never say "running now" after the last one', not lt['bad'] and lt['noTimingAfterLife'], lt)
     # ---- on screen + report ----
     s = pg.evaluate("""()=>{const c=currentChartForModal,Y=YGE.detect(c),rd=document.querySelector('#panel-reading .rd'),norm=s=>s.replace(/\\s+/g,' '),panes=[...rd.querySelectorAll(':scope>.vx-pane')],deep=norm(panes[5].textContent),bad=[];
       if(!Y.length)return {bad:['no yogas']};if(!deep.includes('Yogas in your chart'))bad.push('title');Y.forEach(x=>{if(!deep.includes(norm(x.name)))bad.push('name '+x.id);if(!deep.includes(norm(x.why)))bad.push('why '+x.id)});
