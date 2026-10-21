@@ -146,6 +146,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/90-reading-manifest.js` — Manifestation layer (global VMF), schema v1.1: planet (what you do) x house (arena scenes) x sign (manner) for 1296 combinations in second person with self-check questions; 12 rising-sign profiles; Lagna-lord arc; `signature(chart)` = personal summary; used by Deep reading
 - `apps/birth-chart/js/91-dasha-reading.js` — Dasha layer (global VDA), schema v1.1: life timeline (every Mahadasha: theme, arena, ruled houses, real-life lines, tone with reasons, self-check), 9 Antardashas each, next-5-years rows, 81 main x sub blends; dates/lords from the app's dasha engine; used by Deep reading and the report
 - `apps/birth-chart/js/92-yoga-engine.js` — Yoga engine (global YGE), schema v1.1, GENERATED: 41 yogas with exact detectors (Moon, Sun, combinations, wealth, exchanges, reversals, status, Pancha Mahapurusha, surrounding, cautions); each shows the rule it matched plus real-life text
+- `apps/birth-chart/js/93-pdf-report.js` — PDF report (global PDFR): builds a self-contained printable HTML report (cover, contents, 9 sections, inline SVG chart + bars, themes, A4/Letter) and the "PDF Studio" dialog (live preview, Save as PDF via print, Download HTML). No libraries.
 - `apps/birth-chart/js/90-year-timeline-engine.js` — Year Timeline scanner (global YT): date range -> sign/nakshatra changes, stations, transit contacts with natal points, lunations/eclipses, dasha changes (3 levels), Sade Sati edges, Jupiter+Saturn house segments; facts only
 - `apps/birth-chart/js/91-year-timeline-writer.js` — Year Timeline writer (global YTW): turns scan result into one structured Markdown file for an AI (planet role map, house map, dasha table, event list)
 - `apps/birth-chart/js/92-year-timeline-ui.js` — "Year Timeline File" panel (panel-yeartimeline): two dates, options, Copy / Download .md
@@ -189,6 +190,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/37-d-chart-overview.css` — Divisional charts "At a glance" dashboard (hero, planet table, 12-house grid, balance bars, highlights)
 - `apps/birth-chart/css/38-popular-charts.css` — Popular charts section + detail sheet styles
 - `apps/birth-chart/css/39-deep-reading.css` — Deep reading lines (dr-l) and small text in notes/cards
+- `apps/birth-chart/css/40-pdf-studio.css` — PDF Studio dialog styles
 - `apps/birth-chart/css/40-year-timeline.css` — Year Timeline File panel styles
 - `apps/birth-chart/css/41-dasha-time-finder.css` — Dasha Time Finder styles
 
@@ -329,6 +331,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/manifest_test.py` — Manifestation layer: 1296 unique combinations, grammar/voice/wording gates, signature matches real chart data on 8 charts, on-screen blocks and report
 - `tests/dasha_reading_test.py` — Dasha layer: all Mahadashas + Antardashas equal the app's engine on 8 charts, current period, gap-free 5-year window, clean texts, screens + report
 - `tests/yoga_engine_test.py` — Yoga engine: 41 hand-built charts that have each yoga and 41 that do not, cross-check with the app's own detectors on 8 real charts, texts, screen and report
+- `tests/pdf_report_test.py` — PDF report: 4 theme/paper variants x 4 charts clean and self-contained, sections/options, Studio dialog, real PDF render
 - `tests/prod_forms_check.py` — Deep reading inside the real production forms (single-file build + customer edition): 6 tabs, 12 house cards, 9 planet blocks, all layers loaded, report section
 - `tests/customer_smoke.py` — customer edition smoke test
 - `tests/datefinder_test.py` — Date Finder test

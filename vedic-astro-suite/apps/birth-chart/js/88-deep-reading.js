@@ -120,6 +120,7 @@ function pane(c){
   const ll = r.houseLords[0], mo = P.Moon;
   S.intro.push(note('g', `📖 <b>Deep reading</b>: classical meanings for every placement in this chart, house by house. Texts come from the built-in knowledge base; read them together, since each planet's result depends on its sign, house, aspects and the running period.`));
   const sg = SG(c); if (sg) S.intro.push(sigNote(sg));
+  if (typeof PDFR !== 'undefined' && PDFR) S.intro.push(`<button type="button" class="dr-pdf" data-pdf-studio>📄 Create a beautiful PDF of this reading</button>`);
   S.you.push(note('', `🧭 <b>${esc(asc)} rising.</b> ${esc(r.lagna.text)}<br><small>${esc(ll.lord)}: ${esc(ll.text)}</small>`));
   S.you.push(note('', `🌙 <b>Moon in ${esc(mo.sign)}${mo.nakshatra ? ', ' + esc(mo.nakshatra.name) : ''}.</b> ${esc(D.moonSign[mo.sign])}${mo.nakshatra ? ' ' + esc(mo.nakshatra.trait) + `<br><small>${nakMeta(mo.nakshatra)} · Suits: ${esc(mo.nakshatra.careers)} · Watch: ${esc(mo.nakshatra.watch)}</small>` : ''}`));
   const mpf = (typeof VMF !== 'undefined' && VMF) ? VMF.moonProfile(c.planets.Moon.sign) : null;
