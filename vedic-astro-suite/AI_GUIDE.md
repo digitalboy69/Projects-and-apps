@@ -154,7 +154,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-21 - 1309 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-21 - 1317 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -314,9 +314,9 @@ js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 73 files, 6776 lines, 388 KB
+**sky3d** - 75 files, 7083 lines, 413 KB
 ```
-index.html                                         454 lines   27 KB
+index.html                                         457 lines   27 KB
 js/01-astro-engine.js                              143 lines    7 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -366,6 +366,7 @@ js/46-dasha-transit-engine.js                      319 lines   21 KB
 js/47-dasha-transit-ui.js                          145 lines   10 KB
 js/48-profile-bridge.js                             48 lines    2 KB
 js/49-time-machine.js                              169 lines   13 KB
+js/50-sky-dashboard.js                             249 lines   20 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -389,6 +390,7 @@ css/20-hud-ascendant-rising.css                     56 lines    4 KB
 css/21-premium-polish.css                           32 lines    3 KB
 css/22-dasha-transit-triggers.css                   31 lines    3 KB
 css/23-time-machine-polish.css                     126 lines   12 KB
+css/24-sky-dashboard.css                            55 lines    5 KB
 ```
 
 **shell** - 4 files, 551 lines, 64 KB
@@ -425,3 +427,4 @@ shared/meta.css                                     98 lines    5 KB
 - Liquid glass UI: shared/liquid-glass.css + .js loaded by shell and all 4 apps (<html data-app="bc|3d|np|dev">); rules only under `html.lg`; switch in main-menu Settings (vedicGlass, default on). To restyle a new card class, add it to the :is(...) list for its app. Copy-toggle now also hides the floating `.vax-fb` button.
 - 3D date picker redesigned (sky3d/js/49): five snap-scroll wheels (`W`, `pick`, `place`, `paint`), steppers, year scrub, typed date; test tests/time_wheels_test.py. HUD buttons hide while it is open (`body.tm-open`).
 - Glass look redone (shared/liquid-glass.css): calm dark, uniform translucent fills, blur only on bars/menus/popups, gold accents; setting renamed "Glass look".
+- 3D Sky Dashboard (top-right ▦): sky3d/js/50-sky-dashboard.js (`DBX`, `analyse`, `build`), css/24-sky-dashboard.css; test tests/sky_dashboard_test.py. Dasha not included yet; no yogas on purpose.

@@ -242,6 +242,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/47-dasha-transit-ui.js` — Triggers tab UI: running dashas, live strength per life area, scan windows, why details, tap = jump to date
 - `apps/sky3d/js/48-profile-bridge.js` — Profile bridge: all Birth Chart profiles appear in 3D (marked ✦, live), and the chart opened in the main app is auto-selected in 3D
 - `apps/sky3d/js/49-time-machine.js` — Date picker (five snapping wheels: day with weekday, month, year, hour, minute; quick steppers with hold-to-repeat; year scrub bar; typed dates; Now / Birth / Midnight) + draggable, zoomable timeline
+- `apps/sky3d/js/50-sky-dashboard.js` — Sky Dashboard (top-right ▦ button): full-screen page with panchang, highlights, planet cards, who aspects whom, trine/house matrix, sign + nakshatra exchanges, dispositor chains, signs, nakshatras, houses, balance, outer planets; reads the 3D date or the birth chart (`DBX`)
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
 - `apps/sky3d/css/03-3d-viewport.css` — 3D viewport
@@ -265,6 +266,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/css/21-premium-polish.css` — premium gold glass, magnetic hover
 - `apps/sky3d/css/22-dasha-transit-triggers.css` — Triggers tab (dasha + transit) styles
 - `apps/sky3d/css/23-time-machine-polish.css` — Time Machine styles + 3D Sky visual polish (top bar, tabs, timeline dock, buttons)
+- `apps/sky3d/css/24-sky-dashboard.css` — Sky Dashboard page styles
 
 ### apps/notepad/ — Notepad
 - `apps/notepad/index.html` — markup of this app; lists its css/js in load order
@@ -308,6 +310,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/notepad_test.py` — Notepad test: typing order, note links, templates from every view, side menu, Settings tab switches (copy buttons off by default), at 390 px and 1280 px
 - `tests/rising_navamsha_test.py` — 3D rising view Navamsha test: current Navamsha line, 12 signs x 9 Navamshas, order rule per sign type, boundary accuracy, tap and back
 - `tests/time_wheels_test.py` — 3D date picker test: five snap wheels, tap/scroll select, steppers with month-end clamp, typed date
+- `tests/sky_dashboard_test.py` — Sky Dashboard test: button, all sections, 9 cards, 9x9 matrix, summary text, close
 - `tests/nakshatra_db_test.py` — Nakshatra layer: 972 unique placements, wording gates (no fatalistic/absolute words), pada->navamsa equals the app's D9 on 8 charts, Moon star = dasha start, on-screen check
 - `tests/manifest_test.py` — Manifestation layer: 1296 unique combinations, grammar/voice/wording gates, signature matches real chart data on 8 charts, on-screen blocks and report
 - `tests/dasha_reading_test.py` — Dasha layer: all Mahadashas + Antardashas equal the app's engine on 8 charts, current period, gap-free 5-year window, clean texts, screens + report

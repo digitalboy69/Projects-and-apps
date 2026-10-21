@@ -30,6 +30,7 @@ ADV	const	apps/birth-chart/js/71-life-activation.js:9	birth-chart
 ageText	fn	apps/sky3d/js/43-degree-finder-returns.js:25	sky3d
 ALL_BODIES	const	apps/sky3d/js/02-planetary-dignity.js:8	sky3d
 allLagnasToPlainText	fn	apps/birth-chart/js/17-special-lagnas.js:365	birth-chart
+analyse	fn	apps/sky3d/js/50-sky-dashboard.js:45	sky3d
 angDiff	fn	apps/sky3d/js/01-astro-engine.js:8	sky3d
 angDiffLocal	fn	apps/birth-chart/js/08-combustion-and-war.js:13	birth-chart
 angDiffSigned	fn	apps/birth-chart/js/04-transit-timing-engine.js:56	birth-chart
@@ -84,6 +85,7 @@ build	fn	apps/birth-chart/js/76-share-link-qr.js:106	birth-chart
 build	fn	apps/birth-chart/js/84-bridge-3d.js:5	birth-chart
 build	fn	apps/sky3d/js/45-vimshottari-dasha.js:29	sky3d
 build	fn	apps/sky3d/js/49-time-machine.js:58	sky3d
+build	fn	apps/sky3d/js/50-sky-dashboard.js:152	sky3d
 build	fn	shell/js/locpicker.js:129	shell
 buildActivationPanel	fn	apps/birth-chart/js/71-life-activation.js:42	birth-chart
 buildAntardashaChips	fn	apps/birth-chart/js/38-dasha-navigator.js:153	birth-chart
@@ -236,6 +238,7 @@ COVER	const	apps/birth-chart/js/79-dasha-systems-nakshatra.js:6	birth-chart
 CSS	const	shell/js/locpicker.js:74	shell
 ctrlHtml	fn	apps/birth-chart/js/82-dasha-systems-ui.js:84	birth-chart
 ctx	fn	apps/birth-chart/js/73-tithi-pravesh.js:8	birth-chart
+ctx	fn	apps/sky3d/js/50-sky-dashboard.js:33	sky3d
 ctxLine	fn	shared/export-addon.js:121	shared
 current	fn	apps/birth-chart/js/91-dasha-reading.js:265	birth-chart
 currentPos	fn	apps/sky3d/js/43-degree-finder-returns.js:99	sky3d
@@ -250,6 +253,7 @@ dashaBlockV	fn	apps/birth-chart/js/88-deep-reading.js:45	birth-chart
 dashaEvents	fn	apps/birth-chart/js/90-year-timeline-engine.js:166	birth-chart
 dashaPeriods	fn	apps/birth-chart/js/90-year-timeline-engine.js:150	birth-chart
 DAYS	const	apps/notepad/js/01-notepad.js:14	notepad
+DBX	const	apps/sky3d/js/50-sky-dashboard.js:10	sky3d
 debounce	fn	apps/birth-chart/js/02-app-meta-layer.js:57	birth-chart
 decodeFile	fn	apps/birth-chart/js/76-share-link-qr.js:66	birth-chart
 decodeImageData	fn	apps/birth-chart/js/76-share-link-qr.js:65	birth-chart
@@ -513,6 +517,7 @@ heat	fn	apps/birth-chart/js/71-life-activation.js:21	birth-chart
 heliocentricPos	fn	apps/birth-chart/js/03-ephemeris-engine.js:94	birth-chart
 heliocentricPos	fn	apps/sky3d/js/01-astro-engine.js:105	sky3d
 HELPFUL	const	apps/birth-chart/js/88-deep-reading.js:16	birth-chart
+hide	fn	apps/sky3d/js/50-sky-dashboard.js:245	sky3d
 hideLoader	fn	shell/js/shell.js:29	shell
 histModal	fn	apps/notepad/js/01-notepad.js:201	notepad
 hitEvents	fn	apps/birth-chart/js/90-year-timeline-engine.js:93	birth-chart
@@ -634,6 +639,7 @@ Map2	fn	shell/js/locpicker.js:31	shell
 mark	fn	apps/sky3d/js/49-time-machine.js:48	sky3d
 markDirty	fn	apps/sky3d/js/07-position-snapshot.js:25	sky3d
 matches	fn	apps/notepad/js/01-notepad.js:61	notepad
+matrix	fn	apps/sky3d/js/50-sky-dashboard.js:136	sky3d
 md	fn	apps/notepad/js/01-notepad.js:232	notepad
 MEAN	const	apps/birth-chart/js/75-fate-meter.js:5	birth-chart
 MEAN_DAILY_MOTION	const	apps/birth-chart/js/14-shadbala-engine.js:151	birth-chart
@@ -944,6 +950,7 @@ render	fn	apps/notepad/js/01-notepad.js:112	notepad
 render	fn	apps/sky3d/js/41-quick-planet-picker.js:18	sky3d
 render	fn	apps/sky3d/js/44-retrograde-planner.js:15	sky3d
 render	fn	apps/sky3d/js/47-dasha-transit-ui.js:110	sky3d
+render	fn	apps/sky3d/js/50-sky-dashboard.js:223	sky3d
 render0	fn	apps/birth-chart/js/73-tithi-pravesh.js:49	birth-chart
 renderAcct	fn	apps/birth-chart/js/77-cloud-account.js:61	birth-chart
 renderAspectFocusFilter	fn	apps/sky3d/js/25-rich-sign-detail.js:50	sky3d
@@ -1070,6 +1077,7 @@ SEV	const	apps/birth-chart/js/72-bhava-bala.js:5	birth-chart
 sha	fn	apps/notepad/js/01-notepad.js:203	notepad
 shell	fn	apps/sky3d/js/47-dasha-transit-ui.js:78	sky3d
 shiftLocalDateTime	fn	apps/birth-chart/js/16-rectification-engine.js:28	birth-chart
+show	fn	apps/sky3d/js/50-sky-dashboard.js:230	sky3d
 show	fn	shell/js/shell.js:77	shell
 showLoader	fn	shell/js/shell.js:32	shell
 showNakshatraHighlight	fn	apps/sky3d/js/08-scene-setup-and-camera.js:36	sky3d
@@ -1179,19 +1187,19 @@ syncHmsHiddenInput	fn	apps/birth-chart/js/20-rectification-scan-tab.js:148	birth
 syncPickBtn	fn	apps/sky3d/js/41-quick-planet-picker.js:7	sky3d
 systemHtml	fn	apps/birth-chart/js/82-dasha-systems-ui.js:120	birth-chart
 tab	fn	shell/js/locpicker.js:146	shell
-tab-chart	id	apps/sky3d/index.html:259	sky3d
-tab-conjunctions	id	apps/sky3d/index.html:158	sky3d
-tab-degree	id	apps/sky3d/index.html:201	sky3d
-tab-export	id	apps/sky3d/index.html:327	sky3d
-tab-natal	id	apps/sky3d/index.html:169	sky3d
-tab-retro	id	apps/sky3d/index.html:243	sky3d
-tab-returns	id	apps/sky3d/index.html:231	sky3d
-tab-rising	id	apps/sky3d/index.html:295	sky3d
-tab-sky	id	apps/sky3d/index.html:144	sky3d
-tab-solar	id	apps/sky3d/index.html:250	sky3d
-tab-transits	id	apps/sky3d/index.html:150	sky3d
-tab-triggers	id	apps/sky3d/index.html:238	sky3d
-tab-view	id	apps/sky3d/index.html:300	sky3d
+tab-chart	id	apps/sky3d/index.html:261	sky3d
+tab-conjunctions	id	apps/sky3d/index.html:160	sky3d
+tab-degree	id	apps/sky3d/index.html:203	sky3d
+tab-export	id	apps/sky3d/index.html:329	sky3d
+tab-natal	id	apps/sky3d/index.html:171	sky3d
+tab-retro	id	apps/sky3d/index.html:245	sky3d
+tab-returns	id	apps/sky3d/index.html:233	sky3d
+tab-rising	id	apps/sky3d/index.html:297	sky3d
+tab-sky	id	apps/sky3d/index.html:146	sky3d
+tab-solar	id	apps/sky3d/index.html:252	sky3d
+tab-transits	id	apps/sky3d/index.html:152	sky3d
+tab-triggers	id	apps/sky3d/index.html:240	sky3d
+tab-view	id	apps/sky3d/index.html:302	sky3d
 tasksAll	fn	apps/notepad/js/01-notepad.js:69	notepad
 tasksHTML	fn	apps/notepad/js/01-notepad.js:147	notepad
 TCSS	const	shell/js/locpicker.js:127	shell
