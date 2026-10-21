@@ -205,7 +205,7 @@
     if (!vs){
       vs = document.createElement('div'); vs.id = 'vset'; vs.setAttribute('role', 'dialog'); vs.setAttribute('aria-label', 'Settings');
       vs.innerHTML = '<div class="vs-box"><div class="vs-h"><b>⚙️ Settings</b><button type="button" class="vs-x" aria-label="Close">✕</button></div>' +
-        '<label class="vs-row"><span><b>Liquid glass look</b><small>Frosted, see-through style across all apps. Turn off if your phone feels slow.</small></span><input type="checkbox" id="vsGlass"><i></i></label>' +
+        '<label class="vs-row"><span><b>Glass look</b><small>Soft translucent style across all apps. Turn off for the plain flat look.</small></span><input type="checkbox" id="vsGlass"><i></i></label>' +
         '<label class="vs-row"><span><b>Copy buttons</b><small>Show the "Copy" buttons across the apps. Off by default.</small></span><input type="checkbox" id="vsCopy"><i></i></label></div>';
       document.body.appendChild(vs);
       vs.addEventListener('click', e=>{ if (e.target === vs || e.target.closest('.vs-x')) vs.classList.remove('on'); });

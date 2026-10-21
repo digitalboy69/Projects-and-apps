@@ -1,73 +1,45 @@
 /* ==========================================================================
-   LIQUID GLASS  (shared by the shell and all apps; only active while <html class="lg">; every rule is scoped by html.lg + data-app)
-   Recipe: aurora colour behind, translucent gradient fill, blur + saturate, bright top-left edge, soft depth shadow. Static (no motion).
-   Switch: main menu Settings -> "Liquid glass look" (shared/liquid-glass.js).
+   GLASS LOOK  (shared by the shell and all apps; only active while <html class="lg">; every rule is scoped by html.lg + data-app)
+   Calm and mature: deep neutral dark, a faint warm glow, hairline borders, one soft top highlight.
+   Speed: blur is used ONLY on bars, menus and popups (a few big surfaces). Cards are plain translucent fills, no blur.
+   Switch: main menu Settings -> "Glass look" (shared/liquid-glass.js).
    ========================================================================== */
 html.lg{
-  --lg-fill:linear-gradient(150deg,rgba(255,255,255,.115),rgba(255,255,255,.035) 48%,rgba(255,255,255,.065));
-  --lg-fill-strong:linear-gradient(150deg,rgba(255,255,255,.17),rgba(255,255,255,.06) 50%,rgba(255,255,255,.09));
-  --lg-edge:rgba(255,255,255,.16);
-  --lg-blur:blur(20px) saturate(175%);
-  --lg-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -1px 0 rgba(255,255,255,.05),inset 1px 0 0 rgba(255,255,255,.07),0 12px 32px rgba(0,0,0,.34);
-  --lg-aurora:radial-gradient(70% 45% at 8% -5%,rgba(123,110,246,.34),transparent 70%),radial-gradient(55% 40% at 100% 12%,rgba(0,217,192,.20),transparent 72%),radial-gradient(70% 50% at 55% 108%,rgba(212,175,55,.22),transparent 70%),radial-gradient(40% 30% at 0% 70%,rgba(217,95,150,.10),transparent 70%);
+  --g-line:rgba(255,255,255,.09);
+  --g-line2:rgba(255,255,255,.15);
+  --g-fill:rgba(255,255,255,.045);
+  --g-fill2:rgba(255,255,255,.075);
+  --g-top:inset 0 1px 0 rgba(255,255,255,.06);
+  --g-chrome:rgba(12,14,22,.74);
+  --g-pop:rgba(16,18,28,.90);
+  --g-blur:blur(16px);
+  --g-ambient:radial-gradient(90% 55% at 50% -12%,rgba(212,175,55,.10),transparent 70%),radial-gradient(70% 45% at 100% 105%,rgba(80,100,150,.14),transparent 72%);
 }
 /* ---------------- BIRTH CHART ---------------- */
-html.lg[data-app="bc"]{
-  --bg-card:rgba(255,255,255,.055);--bg-card-hover:rgba(255,255,255,.10);
-  --border-light:rgba(255,255,255,.14);--border-lighter:rgba(255,255,255,.26);
-  --shadow-glass:0 14px 36px rgba(0,0,0,.38);
-  --radius-md:16px;--radius-lg:24px;
-  background:#05060d;
-}
-html.lg[data-app="bc"] body{background:var(--lg-aurora),#05060d;background-attachment:fixed}
-html.lg[data-app="bc"] :is(.home-card,.dx-detail,.yg-card,.sb-row,.sb-note,.ov-big,.ov-chartcard,.ov-plist,.ov-nak,.ov-kcard,.ov-tech,.in-card,.pl-card,.pl-arow,.pn-bar,.tr-card,.pn-prow,.tr-cyc,.bh-card,.mt-card,.vb-card,.nm-card,.rs-pane,.dtf-card,.dx-chk,.nm-step,.mt-swap,.vb-table,.yt-pre,.vx-pane){
-  background:var(--lg-fill);border:1px solid var(--lg-edge);-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);box-shadow:var(--lg-shadow);border-radius:20px}
-html.lg[data-app="bc"] .home-card:hover{background:var(--lg-fill-strong)}
-html.lg[data-app="bc"] .site-header{background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border-bottom:1px solid var(--lg-edge);-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);box-shadow:inset 0 -1px 0 rgba(255,255,255,.05),0 8px 28px rgba(0,0,0,.28)}
-html.lg[data-app="bc"] :is(.modal-box,.pd-modal-box,.export-modal-box,.df-modal){background:linear-gradient(150deg,rgba(40,44,70,.78),rgba(14,16,30,.82));border:1px solid var(--lg-edge);-webkit-backdrop-filter:blur(28px) saturate(180%);backdrop-filter:blur(28px) saturate(180%);box-shadow:var(--lg-shadow),0 30px 80px rgba(0,0,0,.55);border-radius:28px}
-html.lg[data-app="bc"] :is(.modal-overlay,.pd-modal-overlay,.export-modal-overlay){background:rgba(4,5,12,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-html.lg[data-app="bc"] :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea){background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.15);box-shadow:inset 0 1px 2px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.05);border-radius:14px}
-html.lg[data-app="bc"] :is(input,select,textarea):focus{border-color:rgba(249,217,118,.65);box-shadow:0 0 0 3px rgba(212,175,55,.16),inset 0 1px 2px rgba(0,0,0,.25)}
-html.lg[data-app="bc"] .filter-chip{background:var(--lg-fill);border:1px solid var(--lg-edge);-webkit-backdrop-filter:blur(12px) saturate(160%);backdrop-filter:blur(12px) saturate(160%);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
-html.lg[data-app="bc"] .filter-chip.active,html.lg[data-app="bc"] .filter-chip.on{background:linear-gradient(150deg,rgba(249,217,118,.34),rgba(212,175,55,.16));border-color:rgba(249,217,118,.55)}
-/* bottom bar -> floating glass pill on phones; glass strip on desktop */
-@media (max-width:880px){
-  html.lg[data-app="bc"] .app-tabbar{left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);border-radius:28px;border:1px solid var(--lg-edge);background:linear-gradient(150deg,rgba(255,255,255,.14),rgba(255,255,255,.05) 55%,rgba(255,255,255,.08));-webkit-backdrop-filter:blur(26px) saturate(190%);backdrop-filter:blur(26px) saturate(190%);box-shadow:var(--lg-shadow),0 16px 40px rgba(0,0,0,.45);padding-bottom:0}
-  html.lg[data-app="bc"] .app-tabbar-inner{padding:6px 8px}
-  html.lg[data-app="bc"] .app-tab{border-radius:20px}
-  html.lg[data-app="bc"] .app-tab.active{background:linear-gradient(150deg,rgba(249,217,118,.26),rgba(212,175,55,.10));box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 4px 14px rgba(212,175,55,.18)}
-  html.lg[data-app="bc"] #results.show{padding-bottom:116px}
-}
-@media (min-width:881px){
-  html.lg[data-app="bc"] .app-tabbar{background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.04));-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);border-bottom:1px solid var(--lg-edge)}
-  html.lg[data-app="bc"] .app-tab.active{background:rgba(249,217,118,.10);border-radius:12px 12px 0 0}
-}
+html.lg[data-app="bc"]{--bg-card:rgba(24,27,38,.72);--bg-card-hover:rgba(34,38,52,.80);--border-light:rgba(255,255,255,.09);--border-lighter:rgba(255,255,255,.18);--shadow-glass:0 10px 28px rgba(0,0,0,.35);background:#07080d}
+html.lg[data-app="bc"] body{background:var(--g-ambient),#07080d;background-attachment:fixed}
+/* cards that had a hard-coded dark colour: same fill as the rest, so everything matches */
+html.lg[data-app="bc"] :is(.ac-card,.ac-date button,.ac-date input,.ac-row,.avx-pr,.avx-tab,.bb-bars,.bb-how,.fm-d,.fm-read,.fm-yrs,.hm-c,.hm-pl,.hm-search,.vg-tile,.vl-cell,.vx-h,.vx-pl,.vxa-h,.vxa-mx,.vxa-p):not(.on,.active,.selected,.current){background-color:rgba(24,27,38,.72);border-color:var(--g-line)}
+/* bars and popups: the only places with blur */
+html.lg[data-app="bc"] .site-header{background:var(--g-chrome);-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur);border-bottom:1px solid var(--g-line);box-shadow:none}
+html.lg[data-app="bc"] .app-tabbar{background:var(--g-chrome);-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur);border-color:var(--g-line)}
+html.lg[data-app="bc"] :is(.modal-box,.pd-modal-box,.export-modal-box,.df-modal){background:var(--g-pop);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid var(--g-line2);box-shadow:var(--g-top),0 24px 60px rgba(0,0,0,.55)}
+html.lg[data-app="bc"] :is(.modal-overlay,.pd-modal-overlay,.export-modal-overlay){background:rgba(4,5,10,.55);-webkit-backdrop-filter:none;backdrop-filter:none}
 /* ---------------- 3D SKY ---------------- */
-html.lg[data-app="3d"] :is(.topbar,.viewport-hud,.vp-btn,.viewport-legend,.timeline,.sidepanel,.view-switch,.sol-sub,.sky-row,.transit-card,.house-row,.aspect-row,.acc){
-  background:var(--lg-fill),rgba(8,12,26,.58);border-color:var(--lg-edge);-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur);box-shadow:var(--lg-shadow)}
-html.lg[data-app="3d"] :is(.timeline,.sidepanel){background:var(--lg-fill),rgba(7,10,22,.72)}
-html.lg[data-app="3d"] :is(.pdmodal,.modal-overlay .modal,.tm-ov>*){background:linear-gradient(150deg,rgba(40,44,70,.78),rgba(14,16,30,.84));border:1px solid var(--lg-edge);-webkit-backdrop-filter:blur(28px) saturate(180%);backdrop-filter:blur(28px) saturate(180%);box-shadow:var(--lg-shadow),0 30px 80px rgba(0,0,0,.55)}
-html.lg[data-app="3d"] .vp-btn{border-radius:14px}
-html.lg[data-app="3d"] :is(.rs-row,.rs-hero){border:1px solid var(--lg-edge);background:var(--lg-fill);box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+html.lg[data-app="3d"] :is(.topbar,.timeline,.sidepanel){background:rgba(8,11,20,.76);border-color:var(--g-line);-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur);box-shadow:var(--g-top)}
+html.lg[data-app="3d"] :is(.viewport-hud,.vp-btn,.viewport-legend,.view-switch,.sol-sub){border-color:var(--g-line)}
+html.lg[data-app="3d"] :is(.pdmodal,.tm-card){background:var(--g-pop);border:1px solid var(--g-line2);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:var(--g-top),0 24px 60px rgba(0,0,0,.55)}
+html.lg[data-app="3d"] .tm-wheels{background:rgba(255,255,255,.035)}
 /* ---------------- NOTEPAD ---------------- */
-html.lg[data-app="np"]:not([data-theme="parch"]){
-  --bg2:rgba(255,255,255,.035);--panel:rgba(255,255,255,.06);--panel2:rgba(255,255,255,.085);
-  --line:rgba(255,255,255,.12);--line2:rgba(255,255,255,.22);--paper:rgba(255,255,255,.05);
-  --sh:0 18px 50px rgba(0,0,0,.5)}
-html.lg[data-app="np"]:not([data-theme="parch"]) body,html.lg[data-app="np"]:not([data-theme="parch"]):not([data-theme="night"]) .app{background:var(--lg-aurora),#05060d;background-attachment:fixed}
-html.lg[data-app="np"][data-theme="night"] body,html.lg[data-app="np"][data-theme="night"] .app{background:#000}
+html.lg[data-app="np"]:not([data-theme="parch"]){--bg2:rgba(255,255,255,.025);--panel:rgba(255,255,255,.045);--panel2:rgba(255,255,255,.07);--line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.16);--paper:rgba(255,255,255,.04);--sh:0 16px 44px rgba(0,0,0,.5)}
+html.lg[data-app="np"]:not([data-theme="parch"]):not([data-theme="night"]) :is(body,.app){background:var(--g-ambient),#07080d;background-attachment:fixed}
+html.lg[data-app="np"][data-theme="night"] :is(body,.app){background:#000}
 html.lg[data-app="np"][data-theme="parch"]{--bg2:rgba(255,255,255,.35);--panel:rgba(255,255,255,.55);--panel2:rgba(255,255,255,.7);--paper:rgba(255,255,255,.6)}
-html.lg[data-app="np"][data-theme="parch"] body,html.lg[data-app="np"][data-theme="parch"] .app{background:radial-gradient(70% 45% at 5% 0%,rgba(212,175,55,.32),transparent 70%),radial-gradient(55% 40% at 100% 20%,rgba(123,110,246,.18),transparent 70%),#efe6d2;background-attachment:fixed}
-html.lg[data-app="np"] :is(.side,.lst,.top,.tb,.paper,.md,.cmd,.pal,.toast,.card,.it,.qb,.st,.hero,.sw){-webkit-backdrop-filter:var(--lg-blur);backdrop-filter:var(--lg-blur)}
-html.lg[data-app="np"]:not([data-theme="parch"]) :is(.it,.qb,.st,.card,.tb,.paper,.hero){background:var(--lg-fill);border:1px solid var(--lg-edge);box-shadow:var(--lg-shadow)}
-html.lg[data-app="np"]:not([data-theme="parch"]) :is(.md,.cmd,.pal){background:linear-gradient(150deg,rgba(40,44,70,.82),rgba(14,16,30,.86));border:1px solid var(--lg-edge);box-shadow:var(--lg-shadow),0 30px 80px rgba(0,0,0,.55)}
-html.lg[data-app="np"]:not([data-theme="parch"]) .side{border-right:1px solid var(--lg-edge)}
-html.lg[data-app="np"] .it.on{background:var(--lg-fill-strong)}
+html.lg[data-app="np"]:not([data-theme="parch"]) :is(.md,.cmd,.pal){background:var(--g-pop);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid var(--g-line2);box-shadow:var(--g-top),0 24px 60px rgba(0,0,0,.55)}
+html.lg[data-app="np"]:not([data-theme="parch"]) .top{background:var(--g-chrome);-webkit-backdrop-filter:var(--g-blur);backdrop-filter:var(--g-blur)}
 /* ---------------- SHELL (menu, popups) ---------------- */
-html.lg .sw-btn{background:var(--lg-fill-strong);border-color:var(--lg-edge);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);box-shadow:var(--lg-shadow)}
-html.lg .sw-menu{background:linear-gradient(150deg,rgba(40,46,74,.74),rgba(14,18,34,.80));border:1px solid var(--lg-edge);-webkit-backdrop-filter:blur(28px) saturate(185%);backdrop-filter:blur(28px) saturate(185%);box-shadow:var(--lg-shadow),0 22px 50px rgba(0,0,0,.5);border-radius:22px}
-html.lg .sw-item{border-radius:15px}
-html.lg .sw-item.on{background:linear-gradient(150deg,rgba(0,240,213,.85),rgba(123,110,246,.85));box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 6px 18px rgba(0,240,213,.25)}
-html.lg #qnote,html.lg .vs-box{background:linear-gradient(150deg,rgba(40,46,74,.74),rgba(14,18,34,.82));border:1px solid var(--lg-edge);-webkit-backdrop-filter:blur(28px) saturate(185%);backdrop-filter:blur(28px) saturate(185%);box-shadow:var(--lg-shadow),0 26px 60px rgba(0,0,0,.55)}
-html.lg #vset{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+html.lg .sw-btn{background:var(--g-chrome);border-color:var(--g-line2);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+html.lg .sw-menu{background:var(--g-pop);border:1px solid var(--g-line2);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:var(--g-top),0 20px 48px rgba(0,0,0,.5)}
+html.lg #qnote,html.lg .vs-box{background:var(--g-pop);border:1px solid var(--g-line2);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:var(--g-top),0 24px 56px rgba(0,0,0,.55)}
+html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:inset 0 0 0 1px rgba(212,162,74,.35)}
 @media print{html.lg *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}

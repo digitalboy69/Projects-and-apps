@@ -399,12 +399,12 @@ shell/js/locpicker.js                              202 lines   34 KB
 shell/js/shell.js                                  237 lines   17 KB
 ```
 
-**shared** - 6 files, 1023 lines, 79 KB
+**shared** - 6 files, 995 lines, 75 KB
 ```
 shared/copy-toggle.js                               27 lines    1 KB
 shared/export-addon.js                             643 lines   47 KB
 shared/icons.js                                    165 lines   17 KB
-shared/liquid-glass.css                             74 lines    9 KB
+shared/liquid-glass.css                             46 lines    5 KB
 shared/liquid-glass.js                              16 lines    0 KB
 shared/meta.css                                     98 lines    5 KB
 ```
@@ -424,3 +424,4 @@ shared/meta.css                                     98 lines    5 KB
 - 3D Rising view: "Navamsha now" line + tap any of the 12 signs for its 9 Navamshas with start/end to the second (`_navSign`, `_navBounds`, `navDetailHTML`, `risingSel` in sky3d/js/18); test tests/rising_navamsha_test.py.
 - Liquid glass UI: shared/liquid-glass.css + .js loaded by shell and all 4 apps (<html data-app="bc|3d|np|dev">); rules only under `html.lg`; switch in main-menu Settings (vedicGlass, default on). To restyle a new card class, add it to the :is(...) list for its app. Copy-toggle now also hides the floating `.vax-fb` button.
 - 3D date picker redesigned (sky3d/js/49): five snap-scroll wheels (`W`, `pick`, `place`, `paint`), steppers, year scrub, typed date; test tests/time_wheels_test.py. HUD buttons hide while it is open (`body.tm-open`).
+- Glass look redone (shared/liquid-glass.css): calm dark, uniform translucent fills, blur only on bars/menus/popups, gold accents; setting renamed "Glass look".
