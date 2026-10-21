@@ -156,7 +156,6 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
 _Generated 2026-10-21 - 1317 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
-_Generated 2026-10-21 - 1305 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
