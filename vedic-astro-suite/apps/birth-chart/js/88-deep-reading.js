@@ -116,27 +116,30 @@ function dashaBlock(c, md, ad){
 
 /* ---------- the "📖 Deep reading" tab ---------- */
 function pane(c){
-  const r = R(c), asc = r.lagna.sign, ascIdx = SIGN.indexOf(asc), P = r.planets, out = [];
+  const r = R(c), asc = r.lagna.sign, ascIdx = SIGN.indexOf(asc), P = r.planets, out = [], S = { intro: [], you: [], planets: [], yogas: [], doshas: [], time: [], houses: [] };
   const ll = r.houseLords[0], mo = P.Moon;
-  out.push(note('g', `📖 <b>Deep reading</b>: classical meanings for every placement in this chart, house by house. Texts come from the built-in knowledge base; read them together, since each planet's result depends on its sign, house, aspects and the running period.`));
-  const sg = SG(c); if (sg) out.push(sigNote(sg));
-  out.push(note('', `🧭 <b>${esc(asc)} rising.</b> ${esc(r.lagna.text)}<br><small>${esc(ll.lord)}: ${esc(ll.text)}</small>`));
-  out.push(note('', `🌙 <b>Moon in ${esc(mo.sign)}${mo.nakshatra ? ', ' + esc(mo.nakshatra.name) : ''}.</b> ${esc(D.moonSign[mo.sign])}${mo.nakshatra ? ' ' + esc(mo.nakshatra.trait) + `<br><small>${nakMeta(mo.nakshatra)} · Suits: ${esc(mo.nakshatra.careers)} · Watch: ${esc(mo.nakshatra.watch)}</small>` : ''}`));
+  S.intro.push(note('g', `📖 <b>Deep reading</b>: classical meanings for every placement in this chart, house by house. Texts come from the built-in knowledge base; read them together, since each planet's result depends on its sign, house, aspects and the running period.`));
+  const sg = SG(c); if (sg) S.intro.push(sigNote(sg));
+  S.you.push(note('', `🧭 <b>${esc(asc)} rising.</b> ${esc(r.lagna.text)}<br><small>${esc(ll.lord)}: ${esc(ll.text)}</small>`));
+  S.you.push(note('', `🌙 <b>Moon in ${esc(mo.sign)}${mo.nakshatra ? ', ' + esc(mo.nakshatra.name) : ''}.</b> ${esc(D.moonSign[mo.sign])}${mo.nakshatra ? ' ' + esc(mo.nakshatra.trait) + `<br><small>${nakMeta(mo.nakshatra)} · Suits: ${esc(mo.nakshatra.careers)} · Watch: ${esc(mo.nakshatra.watch)}</small>` : ''}`));
   const mpf = (typeof VMF !== 'undefined' && VMF) ? VMF.moonProfile(c.planets.Moon.sign) : null;
-  if (mpf) out.push(note('', `🌙 <b>Your Moon in more detail.</b> ${esc(mpf.text)}<br><small>${esc(mpf.reflect)}</small>`));
+  if (mpf) S.you.push(note('', `🌙 <b>Your Moon in more detail.</b> ${esc(mpf.text)}<br><small>${esc(mpf.reflect)}</small>`));
   const nkc = NK(c);
   if (nkc && nkc.moon){ const m = nkc.moon;
-    out.push(note('', `🌟 <b>Birth star: ${esc(m.nakshatra)}, pada ${m.pada.pada}.</b> ${esc(m.how)} In close relationships you tend to be ${esc(m.relating)}.<br><small><b>Wellbeing theme:</b> ${esc(m.wellbeing)}. <b>Strengths:</b> ${lst(m.strengths)}. <b>Points to watch:</b> ${lst(m.shadows)}. <b>Supportive practice:</b> ${esc(m.practices[0])}<br>Pada ${m.pada.pada} falls in ${esc(m.pada.navamsaSign)} navamsa, adding a ${esc(m.pada.purushartha)} flavour (${esc(m.pada.focus)}). Life began in a ${esc(m.dashaStart.lord)} Mahadasha${m.dashaStart.balanceYears != null ? ' with about ' + (Math.round(m.dashaStart.balanceYears * 10) / 10) + ' years left in it' : ''}.</small>`)); }
+    S.you.push(note('', `🌟 <b>Birth star: ${esc(m.nakshatra)}, pada ${m.pada.pada}.</b> ${esc(m.how)} In close relationships you tend to be ${esc(m.relating)}.<br><small><b>Wellbeing theme:</b> ${esc(m.wellbeing)}. <b>Strengths:</b> ${lst(m.strengths)}. <b>Points to watch:</b> ${lst(m.shadows)}. <b>Supportive practice:</b> ${esc(m.practices[0])}<br>Pada ${m.pada.pada} falls in ${esc(m.pada.navamsaSign)} navamsa, adding a ${esc(m.pada.purushartha)} flavour (${esc(m.pada.focus)}). Life began in a ${esc(m.dashaStart.lord)} Mahadasha${m.dashaStart.balanceYears != null ? ' with about ' + (Math.round(m.dashaStart.balanceYears * 10) / 10) + ' years left in it' : ''}.</small>`)); }
   if (nkc && nkc.lagna){ const g = nkc.lagna;
-    out.push(note('', `🧭 <b>Rising nakshatra: ${esc(g.nakshatra)}, pada ${g.pada.pada}.</b> ${esc(g.how)} In dealings with others you tend to be ${esc(g.relating)}.<br><small><b>Strengths:</b> ${lst(g.strengths)}. <b>Points to watch:</b> ${lst(g.shadows)}. <b>Supportive practice:</b> ${esc(g.practices[0])} Pada ${g.pada.pada}: ${esc(g.pada.navamsaSign)} navamsa, ${esc(g.pada.purushartha)} flavour (${esc(g.pada.focus)}).</small>`)); }
+    S.you.push(note('', `🧭 <b>Rising nakshatra: ${esc(g.nakshatra)}, pada ${g.pada.pada}.</b> ${esc(g.how)} In dealings with others you tend to be ${esc(g.relating)}.<br><small><b>Strengths:</b> ${lst(g.strengths)}. <b>Points to watch:</b> ${lst(g.shadows)}. <b>Supportive practice:</b> ${esc(g.practices[0])} Pada ${g.pada.pada}: ${esc(g.pada.navamsaSign)} navamsa, ${esc(g.pada.purushartha)} flavour (${esc(g.pada.focus)}).</small>`)); }
   const chips = Object.entries(r.functional).map(([p, v]) => chip(v.kind === 'Yogakaraka' || v.kind === 'Functional benefic' ? 'g' : v.kind === 'Functional malefic' ? 'b' : '', `${glyph(p)} ${p}: ${v.kind.replace('Functional ', '')}`)).join('');
-  out.push(note('g', `⚖️ <b>Functional nature for ${esc(asc)} rising</b> (rule of thumb from the houses each planet rules)<br>${chips}`));
+  S.planets.push(note('g', `⚖️ <b>Functional nature for ${esc(asc)} rising</b> (rule of thumb from the houses each planet rules)<br>${chips}`));
   if (typeof VMF !== 'undefined' && VMF){ const rl = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'].map(n => VMF.role(n, c.ascendant.sign)).filter(Boolean);
-    out.push(note('', `🎭 <b>What each planet's role means for you</b><br><small>${rl.map(x => `<b>${esc(x.planet)}</b> (${esc(x.kind.replace('Functional ', ''))}, ${x.rules.length > 1 ? 'houses' : 'house'} ${x.rules.join(' and ')}): It ${esc(x.gives)}. It can feel ${esc(x.feels)}. Watch for ${esc(x.watch)}.`).join('<br>')}</small>`)); }
-  PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) out.push(note('', `🔗 <b>${esc(a)} + ${esc(x.with)} together in ${esc(P[a].sign)}.</b> ${esc(x.text)}`)); }));
+    S.planets.push(note('', `🎭 <b>What each planet's role means for you</b><br><small>${rl.map(x => `<b>${esc(x.planet)}</b> (${esc(x.kind.replace('Functional ', ''))}, ${x.rules.length > 1 ? 'houses' : 'house'} ${x.rules.join(' and ')}): It ${esc(x.gives)}. It can feel ${esc(x.feels)}. Watch for ${esc(x.watch)}.`).join('<br>')}</small>`)); }
+  PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) S.planets.push(note('', `🔗 <b>${esc(a)} + ${esc(x.with)} together in ${esc(P[a].sign)}.</b> ${esc(x.text)}`)); }));
   const yg = (typeof YGE !== 'undefined' && YGE) ? YGE.detect(c) : [];
-  if (yg.length){ out.push(note('g', `🔮 <b>Yogas in your chart (${yg.length})</b><br><small>Planet combinations found by exact rules. Each one is a tendency to test against your life, not a promise.</small>`));
-    yg.forEach(x => out.push(note(x.tone === 'challenge' ? 'b' : x.tone === 'mixed' ? '' : 'g', `<b>${esc(x.name)}</b> <small>(${esc(x.cat)})</small><br><small><b>Why it shows:</b> ${esc(x.why)}.</small><br>${esc(x.text.replace(/^[^.]*\.( Why it shows in your chart: [^.]*\.)? /, '').replace(/ Check this against your life: .*$/, ''))}<br><small>${esc(x.ask)}</small>`))); }
+  const isD = x => /^Doshas|^Cautions/.test(x.cat), yOne = x => note(x.tone === 'challenge' ? 'b' : x.tone === 'mixed' ? '' : 'g', `<b>${esc(x.name)}</b>${x.level ? ' ' + chip(x.level === 'strong' ? 'g' : x.level === 'mild' ? 'b' : '', x.level) : ''} <small>(${esc(x.cat)})</small><br><small><b>Why it shows:</b> ${esc(x.why)}.</small><br>${esc(x.text.replace(/^[^.]*\.( Why it shows in your chart: [^.]*\.)? /, '').replace(/ Check this against your life: .*$/, ''))}<br><small>${esc(x.ask)}</small>`);
+  const grp = (list, into) => { const cats = []; list.forEach(x => { if (cats.indexOf(x.cat) < 0) cats.push(x.cat); }); cats.forEach(k => { const m = list.filter(x => x.cat === k); into.push(`<details class="dr-grp" open><summary>${esc(k)} <span class="dr-n">${m.length}</span></summary><div class="dr-grp-b">${m.map(yOne).join('')}</div></details>`); }); };
+  const ygGood = yg.filter(x => !isD(x)), ygDos = yg.filter(isD);
+  if (ygGood.length){ S.yogas.push(note('g', `🔮 <b>Yogas in your chart (${ygGood.length})</b><br><small>Planet combinations found by exact rules, grouped by kind. Each one is a tendency to test against your life, not a promise.</small>`)); grp(ygGood, S.yogas); }
+  if (ygDos.length){ S.doshas.push(note('', `⚠️ <b>Points that need care (${ygDos.length})</b><br><small>These are areas to look after, not verdicts. Many have conditions that ease them; those are listed with each point.</small>`)); grp(ygDos, S.doshas); }
   const cards = [];
   for (let n = 1; n <= 12; n++){
     const H = D.houses[n - 1], si = (ascIdx + n - 1) % 12, S = D.signs[si], hl = r.houseLords[n - 1];
@@ -153,10 +156,16 @@ function pane(c){
     const tag = occ.length ? occ.map(glyph).join(' ') : 'empty';
     cards.push(`<details class="vx-pl"${n === 1 ? ' open' : ''}><summary><span class="vx-gl">${n}</span><div><b>${ordn(n)} house: ${esc(H.name)}</b><small>${esc(S.name)} · lord ${esc(hl.lord)} in the ${ordn(hl.placedIn)}</small></div>${chip(occ.length ? 'g' : '', tag)}</summary><div class="rd-b">${body.join('')}</div></details>`);
   }
-  out.push(timelineHtml(c));
-  out.push(`<div class="rd-h">House by house</div>`);
-  return out.join('') + cards.join('');
+  S.time.push(timelineHtml(c));
+  S.houses = cards;
+  const SEC = [['intro', '✨', 'Overview', 'Start here: what this reading is and your signature at a glance'], ['you', '🧭', 'Who you are', 'Rising sign, Moon and birth star'],
+    ['planets', '🪐', 'Planet roles', 'What each planet does for you, and how they work together'], ['yogas', '🔮', 'Yogas', 'Supportive and notable planet combinations'],
+    ['doshas', '⚠️', 'Points to watch', 'Areas that need extra care, with what eases them'], ['time', '⏳', 'Life timeline', 'Every Mahadasha, now and the next five years'], ['houses', '🏠', 'House by house', 'The twelve areas of life, one card each']]
+    .filter(x => S[x[0]].length), nav = SEC.map((x, i) => `<button type="button" class="dr-nb" data-sec="${x[0]}">${x[1]} ${esc(x[2])}</button>`).join('');
+  return `<nav class="dr-nav" aria-label="Sections of the reading">${nav}</nav>` + SEC.map((x, i) => `<section class="dr-sec" data-sec="${x[0]}"><div class="dr-sh"><span class="dr-sn">${i + 1}</span><div><b>${esc(x[2])}</b><small>${esc(x[3])}</small></div></div>${S[x[0]].join('')}</section>`).join('');
 }
+
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.dr-nb'); if (!b) return; const root = b.closest('.vx-pane') || document, t = root.querySelector('.dr-sec[data-sec="' + b.dataset.sec + '"]'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 
 /* ---------- plain text for the downloadable report ---------- */
 function wrap(s, w, ind){

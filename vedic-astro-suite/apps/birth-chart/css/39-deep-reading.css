@@ -12,3 +12,18 @@
 .rd-w small{font-size:11.5px;color:var(--text-subtle)}
 .rd-w.dr-ask{background:rgba(212,175,55,.07);color:var(--text-muted);font-size:12px}
 .vx-note small{font-size:11.5px;line-height:1.5;color:var(--text-muted)}
+/* sections of the Deep reading */
+.dr-nav{position:sticky;top:57px;z-index:5;display:flex;gap:6px;overflow-x:auto;padding:8px 2px;margin:0 0 4px;background:var(--bg-main,#0b0d14);scrollbar-width:none}
+.dr-nav::-webkit-scrollbar{display:none}
+.dr-nb{flex:0 0 auto;border:1px solid var(--border-lighter,rgba(255,255,255,.12));background:rgba(255,255,255,.04);color:var(--text-muted);border-radius:999px;padding:6px 11px;font-size:12px;cursor:pointer;white-space:nowrap}
+.dr-nb:hover,.dr-nb:focus-visible{color:var(--text-main);border-color:var(--gold,#d4af37)}
+.dr-sec{display:flex;flex-direction:column;gap:10px;margin:0 0 18px;scroll-margin-top:108px}
+.dr-sh{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:linear-gradient(90deg,rgba(212,175,55,.14),rgba(212,175,55,.02));border-left:3px solid var(--gold,#d4af37)}
+.dr-sh b{display:block;font-size:14.5px;color:var(--text-main)}.dr-sh small{display:block;font-size:11.5px;color:var(--text-muted);margin-top:1px}
+.dr-sn{flex:0 0 26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--gold,#d4af37);color:#14110a}
+.dr-grp{border:1px solid var(--border-lighter,rgba(255,255,255,.1));border-radius:12px;background:rgba(255,255,255,.02)}
+.dr-grp>summary{cursor:pointer;padding:9px 12px;font-size:13px;font-weight:600;color:var(--text-main);list-style:none;display:flex;align-items:center;gap:8px}
+.dr-grp>summary::-webkit-details-marker{display:none}
+.dr-grp>summary::before{content:'▸';color:var(--gold,#d4af37);transition:transform .15s}.dr-grp[open]>summary::before{transform:rotate(90deg)}
+.dr-n{margin-left:auto;font-size:11px;padding:1px 8px;border-radius:999px;background:rgba(255,255,255,.07);color:var(--text-muted);font-weight:500}
+.dr-grp-b{display:flex;flex-direction:column;gap:8px;padding:0 10px 10px}

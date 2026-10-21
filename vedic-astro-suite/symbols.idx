@@ -990,7 +990,7 @@ renderTransitFilters	fn	apps/sky3d/js/20-transit-conjunction-scanner.js:135	sky3
 renderTransitTimerResult	fn	apps/birth-chart/js/21-transit-timer-tab.js:50	birth-chart
 repeatFixed	fn	apps/birth-chart/js/78-dasha-systems-core.js:121	birth-chart
 report	fn	apps/birth-chart/js/02-app-meta-layer.js:39	birth-chart
-reportText	fn	apps/birth-chart/js/88-deep-reading.js:168	birth-chart
+reportText	fn	apps/birth-chart/js/88-deep-reading.js:177	birth-chart
 REQUIRED_RUPAS	const	apps/birth-chart/js/14-shadbala-engine.js:171	birth-chart
 rerenderResults	fn	apps/sky3d/js/47-dasha-transit-ui.js:123	sky3d
 rest	fn	apps/birth-chart/js/77-cloud-account.js:19	birth-chart
@@ -1312,7 +1312,7 @@ wireSandhiPanel	fn	apps/birth-chart/js/22-sandhi-table-tab.js:7	birth-chart
 wireTransitTimerPanel	fn	apps/birth-chart/js/21-transit-timer-tab.js:7	birth-chart
 wireVargaTimelinePanel	fn	apps/birth-chart/js/23-varga-timeline-tab.js:4	birth-chart
 withHead	fn	shared/export-addon.js:130	shared
-wrap	fn	apps/birth-chart/js/88-deep-reading.js:162	birth-chart
+wrap	fn	apps/birth-chart/js/88-deep-reading.js:171	birth-chart
 write	fn	apps/birth-chart/js/91-year-timeline-writer.js:40	birth-chart
 X	fn	apps/birth-chart/js/70-chart-reading.js:13	birth-chart
 yearsUntil	fn	apps/birth-chart/js/38-dasha-navigator.js:173	birth-chart

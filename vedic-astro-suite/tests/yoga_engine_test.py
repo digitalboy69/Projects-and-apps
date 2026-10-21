@@ -160,6 +160,16 @@ with sync_playwright() as p:
       const rep=buildFullReportText(c,currentProfileForExport,{}).replace(/\\s+/g,' ');if(!rep.includes('YOGAS IN YOUR CHART'))bad.push('report title');Y.forEach(x=>{if(!rep.includes(norm(x.name)))bad.push('report '+x.id)});
       return {n:Y.length,bad:bad.slice(0,6),overflow:document.documentElement.scrollWidth>window.innerWidth+1}}""")
     ok('Deep reading shows "Yogas in your chart" with every detected yoga and its rule; the report lists them too', not s['bad'], s)
+    sc = pg.evaluate("""()=>{const rd=document.querySelector('#panel-reading .rd'),pane=[...rd.querySelectorAll(':scope>.vx-pane')][5],secs=[...pane.querySelectorAll(':scope>.dr-sec')],nav=[...pane.querySelectorAll('.dr-nb')];
+      const keys=secs.map(x=>x.dataset.sec),bad=[];if(secs.length<5)bad.push('few sections '+secs.length);if(JSON.stringify(keys)!==JSON.stringify(nav.map(b=>b.dataset.sec)))bad.push('nav mismatch');
+      const order=['intro','you','planets','yogas','doshas','time','houses'];if(JSON.stringify(keys)!==JSON.stringify(order.filter(k=>keys.includes(k))))bad.push('order '+keys);
+      if(!keys.includes('intro')||!keys.includes('you')||!keys.includes('houses'))bad.push('core sections');
+      const houses=pane.querySelectorAll('.dr-sec[data-sec=houses] details.vx-pl').length;if(houses!==12)bad.push('houses '+houses);
+      const grp=[...pane.querySelectorAll('.dr-grp')],n=grp.reduce((a,g)=>a+g.querySelectorAll('.vx-note').length,0),Y=YGE.detect(currentChartForModal).length;if(n!==Y)bad.push('yoga notes '+n+' vs '+Y);
+      const dos=pane.querySelector('.dr-sec[data-sec=doshas]');if(dos&&[...dos.querySelectorAll('.dr-grp')].some(g=>!/^(Doshas|Cautions)/.test(g.querySelector('summary').textContent.trim())))bad.push('dosha group');
+      const y=pane.querySelector('.dr-sec[data-sec=yogas]');if(y&&[...y.querySelectorAll('.dr-grp')].some(g=>/^(Doshas|Cautions)/.test(g.querySelector('summary').textContent.trim())))bad.push('dosha in yogas');
+      return {keys,bad}}""")
+    ok('Deep reading is organised: numbered sections in order with a matching jump bar, 12 house cards, every yoga grouped by kind, doshas kept separate', not sc['bad'], sc)
     ok('phone: no horizontal scroll', not s.get('overflow'))
     ok('no JavaScript errors', not errs, errs[:3]); b.close()
 bad = [r for r in res if not r[1]]
