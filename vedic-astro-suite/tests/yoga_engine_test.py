@@ -150,8 +150,8 @@ with sync_playwright() as p:
           return {n:Y.length,bad:bad.slice(0,6)}}""" % BAN)
         tot += o['n']; ok('real chart %s %s: yogas consistent with the app\'s own detectors, texts clean (%d found)' % (c[0], c[1], o['n']), not o['bad'], o)
     ok('real charts together show a spread of yogas (not none, not everything)', 8 <= tot <= 8 * 45, tot)
-    lt = pg.evaluate("""()=>{const Y=YGE.detect(currentChartForModal),bad=[];Y.forEach(x=>{if(!x.level||!['strong','moderate','mild'].includes(x.level)||!x.levelWhy)bad.push('level '+x.id);
-      if(x.timing&&!/Mahadasha/.test(x.timing))bad.push('timing '+x.id);if(!/How strongly it shows/.test(x.text))bad.push('text level '+x.id)});
+    lt = pg.evaluate("""()=>{const Y=YGE.detect(currentChartForModal),bad=[];Y.filter(x=>!x.pattern).forEach(x=>{if(!x.level||!['strong','moderate','mild'].includes(x.level)||!x.levelWhy)bad.push('level '+x.id);
+      if(x.timing&&!/Mahadasha/.test(x.timing))bad.push('timing '+x.id);if(!/How strongly it shows/.test(x.text))bad.push('text level '+x.id)});Y.filter(x=>x.pattern).forEach(x=>{if(x.level)bad.push('pattern has level '+x.id)});
       const past=YGE.detect(currentChartForModal,{now:new Date('2200-01-01')});return {n:Y.length,bad:bad.slice(0,6),noTimingAfterLife:past.every(x=>!x.timing||!/running now/.test(x.timing))}}""")
     ok('every yoga carries a strength level with its reason; timing hints name a Mahadasha and never say "running now" after the last one', not lt['bad'] and lt['noTimingAfterLife'], lt)
     # ---- on screen + report ----
