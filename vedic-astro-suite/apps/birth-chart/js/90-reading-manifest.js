@@ -9,6 +9,8 @@
                                                        2 self-check questions to test the text against your own life (108 x 12 = 1296 combinations)
    VMF.lagna(signIndex)                                first impression, body language, first reaction, how others describe you, what life keeps asking
    VMF.lagnaArc(chart)                                 where the Lagna lord points your life direction
+   VMF.role(planet, risingSign)                        S2b: functional role of a planet for a rising sign (kind + houses it looks after), 7 planets x 12 = 84
+   VMF.moonProfile(signIdx)                            S2b: Moon-sign profile (needs, comfort, stress, close relationships, helpful habit)
    VMF.signature(chart)                                "your signature at a glance": 4-7 personal lines picked from the whole chart
                                                        (how you come across, inner weather, drive, direction, strongly supported planets,
                                                        planets that need extra care, houses where energy gathers)
@@ -251,6 +253,114 @@ const VMF_DATA = {
   "at an independent, uneven pace",
   "at a drifting, intuitive pace"
  ],
+ "role": {
+  "Yogakaraka": {
+   "gives": "turns effort into visible progress and tends to support the rest of your chart",
+   "feels": "like a reliable ally that works best when you use it on purpose",
+   "watch": "taking its help for granted or expecting results without effort"
+  },
+  "Functional benefic": {
+   "gives": "tends to support the areas it looks after, especially when you keep its habits healthy",
+   "feels": "like a friendly background support",
+   "watch": "relaxing so much that its areas drift"
+  },
+  "Functional malefic": {
+   "gives": "tends to bring tests, effort and lessons in the areas it looks after, and strength once you meet them",
+   "feels": "like pressure that asks you to grow up in those areas",
+   "watch": "avoiding its areas, or reading every hard moment as a sign of failure"
+  },
+  "Mixed / neutral": {
+   "gives": "tends to give mixed results: some areas it looks after run smoothly, others need care",
+   "feels": "like an uneven influence that depends on the rest of the chart",
+   "watch": "judging it too fast, since its results depend on its sign, house and running period"
+  }
+ },
+ "moonProf": [
+  {
+   "needs": "action, movement and a clear reason to get up",
+   "comfort": "a quick walk, a challenge or a decisive step",
+   "stress": "get impatient or snap, then recover quickly",
+   "close": "you say what you feel straight away and expect honesty back",
+   "habit": "burn off tension physically before you talk about it"
+  },
+  {
+   "needs": "stability, comfort and things you can trust",
+   "comfort": "good food, a familiar place and a slow pace",
+   "stress": "dig in your heels or hold on to what is no longer working",
+   "close": "you show love through steady presence and small, practical care",
+   "habit": "change one small thing at a time instead of resisting everything"
+  },
+  {
+   "needs": "variety, conversation and something to think about",
+   "comfort": "talking things through, reading, messaging and short trips",
+   "stress": "scatter your attention or talk yourself in circles",
+   "close": "you connect through ideas and humour and need room to breathe",
+   "habit": "write your thoughts down to calm a busy mind"
+  },
+  {
+   "needs": "safety, belonging and emotional closeness",
+   "comfort": "home, family, familiar food and people who feel like shelter",
+   "stress": "withdraw into your shell or take things very personally",
+   "close": "you give a lot of care and hope it is noticed without asking",
+   "habit": "name the feeling first, then decide what you need"
+  },
+  {
+   "needs": "warmth, appreciation and room to be yourself",
+   "comfort": "creative play, praise from people you respect and generous company",
+   "stress": "feel hurt when ignored and cover it with pride",
+   "close": "you love loyally and want to be seen and chosen",
+   "habit": "give credit to others and let yourself be seen without performing"
+  },
+  {
+   "needs": "order, usefulness and a feeling that things are in hand",
+   "comfort": "a tidy space, a clear routine and being helpful",
+   "stress": "worry about details and criticise yourself",
+   "close": "you show care by fixing, helping and noticing what is needed",
+   "habit": "let good enough count and rest without a to-do list"
+  },
+  {
+   "needs": "harmony, fairness and good company",
+   "comfort": "pleasant surroundings, balanced conversation and shared time",
+   "stress": "avoid conflict and put off decisions to keep the peace",
+   "close": "you look for partnership and feel unsettled when things are uneven",
+   "habit": "decide for yourself first, then check how others feel"
+  },
+  {
+   "needs": "depth, honesty and something that really matters",
+   "comfort": "private time, meaningful talk and facing the truth",
+   "stress": "hold back, brood or test people quietly",
+   "close": "you bond deeply, trust slowly and feel betrayal strongly",
+   "habit": "say the hard thing early instead of storing it"
+  },
+  {
+   "needs": "freedom, meaning and room to explore",
+   "comfort": "open spaces, learning, travel and optimistic company",
+   "stress": "feel restless or too blunt when held back",
+   "close": "you want a partner who shares your search and does not fence you in",
+   "habit": "check the details before the next big plan"
+  },
+  {
+   "needs": "purpose, structure and proof that your effort counts",
+   "comfort": "quiet work, clear goals and reliable people",
+   "stress": "tighten up, get stern with yourself and hide the feeling",
+   "close": "you show love through responsibility and are slow to say it out loud",
+   "habit": "let yourself receive help before you are exhausted"
+  },
+  {
+   "needs": "independence, ideas and a sense of being yourself",
+   "comfort": "friends who share your interests, new ideas and space",
+   "stress": "detach and go cool when feelings get too close",
+   "close": "you care about friendship first and need room for your own views",
+   "habit": "let one person see the feeling behind the opinion"
+  },
+  {
+   "needs": "quiet, imagination and a sense of the bigger picture",
+   "comfort": "music, water, solitude and gentle company",
+   "stress": "absorb other people's moods and drift away",
+   "close": "you give generously and can lose your own edges in love",
+   "habit": "keep a daily anchor so your sensitivity has a base"
+  }
+ ],
  "rising": [
   {
    "first": "direct, energetic and quick to engage",
@@ -377,6 +487,22 @@ window.VMF = (function(D){
     return { lord, house: e.house, theme: A.theme, text: `Your Lagna lord ${lord} sits in the ${ordn(e.house)} house, so your life direction tends to move toward ${A.theme}. ${A.scenes[0]} is a good place to notice it.` };
   }
   const nm = (p, arr) => arr.length < 2 ? arr.join('') : arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1];
+  // S2b: a planet's ROLE for a rising sign (from VDB.functionalNature) told through the houses it looks after
+  function role(planet, lagnaSign){
+    if (!okS(lagnaSign) || PL.indexOf(planet) < 0) return null;
+    const F = VDB.functionalNature(lagnaSign), f = F && F[planet];
+    if (!f) return null;   // Rahu and Ketu own no sign, so they have no rulership role (use placement() for them)
+    const K = D.role[f.kind], B = D.behave[planet], themes = f.rules.map(h => D.arena[h - 1].theme);
+    const rules = f.rules.map(ordn).join(' and ') + ' house' + (f.rules.length > 1 ? 's' : '');
+    const text = `For ${SIGN[lagnaSign]} rising, ${planet} looks after your ${rules} (${nm(null, themes)}). As a ${f.kind.toLowerCase()}, it ${K.gives}. It can feel ${K.feels}. At its best you ${B.atBest}. Watch for ${K.watch}.`;
+    return { planet, rising: SIGN[lagnaSign], kind: f.kind, rules: f.rules, tags: f.tags, themes, gives: K.gives, feels: K.feels, watch: K.watch, reflect: `In the areas of ${themes[0]}, does ${planet} feel like ${K.feels}?`, text };
+  }
+  // S2b: longer Moon-sign profile (needs, comfort, stress, close relationships, one helpful habit)
+  function moonProfile(signIdx){
+    const M = D.moonProf[signIdx]; if (!okS(signIdx)) return null;
+    const text = `With the Moon in ${SIGN[signIdx]}, you tend to need ${M.needs}. You feel most at ease with ${M.comfort}. Under stress you may ${M.stress}. In close relationships, ${M.close}. A habit that helps: ${M.habit}.`;
+    return { sign: SIGN[signIdx], needs: M.needs, comfort: M.comfort, stress: M.stress, close: M.close, habit: M.habit, reflect: `Does it ring true that you need ${M.needs}?`, text };
+  }
   function signature(chart){
     const P = chart.planets, asc = chart.ascendant.sign, items = [], lg = lagna(asc);
     items.push({ icon: '✨', title: 'How you come across', text: `You tend to come across as ${lg.first}, and others often describe you as ${lg.described}. ${lg.arc.charAt(0).toUpperCase() + lg.arc.slice(1)}.` });
@@ -396,5 +522,5 @@ window.VMF = (function(D){
     return { items: items.slice(0, 7), text: items.map(x => `${x.title}: ${x.text}`).join('\n') };
   }
   function each(cb){ PL.forEach(p => { for (let h = 1; h <= 12; h++) for (let s = 0; s < 12; s++) cb(placement(p, h, s)); }); }
-  return { data: D, placement, lagna, lagnaArc, signature, each };
+  return { data: D, placement, lagna, lagnaArc, role, moonProfile, signature, each };
 })(VMF_DATA);

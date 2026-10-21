@@ -155,11 +155,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-21 - 1317 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-21 - 1319 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 137 files, 19574 lines, 1372 KB
+**birth-chart** - 137 files, 19706 lines, 1380 KB
 ```
 index.html                                         558 lines   32 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -249,9 +249,9 @@ js/84-bridge-3d.js                                  38 lines    2 KB
 js/85-popular-charts-data.js                       116 lines   26 KB
 js/86-popular-charts.js                            120 lines    7 KB
 js/87-vedic-knowledge-db.js                       2269 lines  202 KB
-js/88-deep-reading.js                              210 lines   19 KB
+js/88-deep-reading.js                              216 lines   20 KB
 js/89-vedic-nakshatra-db.js                       1187 lines   38 KB
-js/90-reading-manifest.js                          401 lines   19 KB
+js/90-reading-manifest.js                          527 lines   26 KB
 js/90-year-timeline-engine.js                      265 lines   15 KB
 js/91-dasha-reading.js                             274 lines   14 KB
 js/91-year-timeline-writer.js                      190 lines   18 KB
@@ -429,3 +429,4 @@ shared/meta.css                                     98 lines    5 KB
 - 3D date picker redesigned (sky3d/js/49): five snap-scroll wheels (`W`, `pick`, `place`, `paint`), steppers, year scrub, typed date; test tests/time_wheels_test.py. HUD buttons hide while it is open (`body.tm-open`).
 - Glass look redone (shared/liquid-glass.css): calm dark, uniform translucent fills, blur only on bars/menus/popups, gold accents; setting renamed "Glass look".
 - 3D Sky Dashboard (top-right ▦): sky3d/js/50-sky-dashboard.js (`DBX`, `analyse`, `build`), css/24-sky-dashboard.css; test tests/sky_dashboard_test.py. Dasha not included yet; no yogas on purpose.
+- Session 4: S2b - VMF.role (84 roles by rising sign) and VMF.moonProfile (12), wired into Deep reading + report; S2 complete. Next: S4 Yogas I.

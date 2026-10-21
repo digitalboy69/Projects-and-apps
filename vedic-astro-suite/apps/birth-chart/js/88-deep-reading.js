@@ -122,6 +122,8 @@ function pane(c){
   const sg = SG(c); if (sg) out.push(sigNote(sg));
   out.push(note('', `🧭 <b>${esc(asc)} rising.</b> ${esc(r.lagna.text)}<br><small>${esc(ll.lord)}: ${esc(ll.text)}</small>`));
   out.push(note('', `🌙 <b>Moon in ${esc(mo.sign)}${mo.nakshatra ? ', ' + esc(mo.nakshatra.name) : ''}.</b> ${esc(D.moonSign[mo.sign])}${mo.nakshatra ? ' ' + esc(mo.nakshatra.trait) + `<br><small>${nakMeta(mo.nakshatra)} · Suits: ${esc(mo.nakshatra.careers)} · Watch: ${esc(mo.nakshatra.watch)}</small>` : ''}`));
+  const mpf = (typeof VMF !== 'undefined' && VMF) ? VMF.moonProfile(c.planets.Moon.sign) : null;
+  if (mpf) out.push(note('', `🌙 <b>Your Moon in more detail.</b> ${esc(mpf.text)}<br><small>${esc(mpf.reflect)}</small>`));
   const nkc = NK(c);
   if (nkc && nkc.moon){ const m = nkc.moon;
     out.push(note('', `🌟 <b>Birth star: ${esc(m.nakshatra)}, pada ${m.pada.pada}.</b> ${esc(m.how)} In close relationships you tend to be ${esc(m.relating)}.<br><small><b>Wellbeing theme:</b> ${esc(m.wellbeing)}. <b>Strengths:</b> ${lst(m.strengths)}. <b>Points to watch:</b> ${lst(m.shadows)}. <b>Supportive practice:</b> ${esc(m.practices[0])}<br>Pada ${m.pada.pada} falls in ${esc(m.pada.navamsaSign)} navamsa, adding a ${esc(m.pada.purushartha)} flavour (${esc(m.pada.focus)}). Life began in a ${esc(m.dashaStart.lord)} Mahadasha${m.dashaStart.balanceYears != null ? ' with about ' + (Math.round(m.dashaStart.balanceYears * 10) / 10) + ' years left in it' : ''}.</small>`)); }
@@ -129,6 +131,8 @@ function pane(c){
     out.push(note('', `🧭 <b>Rising nakshatra: ${esc(g.nakshatra)}, pada ${g.pada.pada}.</b> ${esc(g.how)} In dealings with others you tend to be ${esc(g.relating)}.<br><small><b>Strengths:</b> ${lst(g.strengths)}. <b>Points to watch:</b> ${lst(g.shadows)}. <b>Supportive practice:</b> ${esc(g.practices[0])} Pada ${g.pada.pada}: ${esc(g.pada.navamsaSign)} navamsa, ${esc(g.pada.purushartha)} flavour (${esc(g.pada.focus)}).</small>`)); }
   const chips = Object.entries(r.functional).map(([p, v]) => chip(v.kind === 'Yogakaraka' || v.kind === 'Functional benefic' ? 'g' : v.kind === 'Functional malefic' ? 'b' : '', `${glyph(p)} ${p}: ${v.kind.replace('Functional ', '')}`)).join('');
   out.push(note('g', `⚖️ <b>Functional nature for ${esc(asc)} rising</b> (rule of thumb from the houses each planet rules)<br>${chips}`));
+  if (typeof VMF !== 'undefined' && VMF){ const rl = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'].map(n => VMF.role(n, c.ascendant.sign)).filter(Boolean);
+    out.push(note('', `🎭 <b>What each planet's role means for you</b><br><small>${rl.map(x => `<b>${esc(x.planet)}</b> (${esc(x.kind.replace('Functional ', ''))}, ${x.rules.length > 1 ? 'houses' : 'house'} ${x.rules.join(' and ')}): It ${esc(x.gives)}. It can feel ${esc(x.feels)}. Watch for ${esc(x.watch)}.`).join('<br>')}</small>`)); }
   PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) out.push(note('', `🔗 <b>${esc(a)} + ${esc(x.with)} together in ${esc(P[a].sign)}.</b> ${esc(x.text)}`)); }));
   const cards = [];
   for (let n = 1; n <= 12; n++){
@@ -169,10 +173,12 @@ function reportText(c){
   para(`${asc} rising.`, r.lagna.text);
   para(`${r.houseLords[0].lord} (Lagna lord):`, r.houseLords[0].text);
   const mo = P.Moon; para(`Moon in ${mo.sign}${mo.nakshatra ? ', ' + mo.nakshatra.name + ' pada ' + mo.nakshatra.pada : ''}.`, D.moonSign[mo.sign] + (mo.nakshatra ? ' ' + mo.nakshatra.trait : ''));
+  if (typeof VMF !== 'undefined' && VMF){ const mpr = VMF.moonProfile(c.planets.Moon.sign); if (mpr) para('Your Moon in more detail:', mpr.text); }
   const nkr = NK(c);
   if (nkr && nkr.moon) para('Birth star:', nkr.moon.text.replace(/^[^.]*\.\)? ?/, ''));
   if (nkr && nkr.lagna) para('Rising nakshatra:', nkr.lagna.text);
   para(`Functional nature for ${asc} rising:`, Object.entries(r.functional).map(([p, v]) => `${p} ${v.kind.replace('Functional ', '').toLowerCase()}`).join('; ') + '.');
+  if (typeof VMF !== 'undefined' && VMF) ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'].forEach(n => { const x = VMF.role(n, c.ascendant.sign); if (x) para(`${n} as ${x.kind.toLowerCase()}:`, x.text); });
   PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) para(`${a} + ${x.with} in ${P[a].sign}:`, x.text); }));
   PL.forEach(n => {
     const e = P[n]; if (!e) return;

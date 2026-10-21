@@ -54,10 +54,31 @@ RISING = [  # first impression, body language, first reaction, how others descri
  ("friendly, unusual and a little detached","an original style, a relaxed posture and a thoughtful look","step back and think about the principle","independent, inventive and aloof","life keeps asking you to be yourself and to stay close to people"),
  ("gentle, dreamy and sensitive","soft eyes, flowing movement and a quiet voice","sense the mood and follow your intuition","kind, imaginative and hard to pin down","life keeps asking you to trust your intuition and to keep your boundaries"),
 ]
+ROLEKIND = {  # what a planet's role for your rising sign means in practice (kind comes from VDB.functionalNature)
+ 'Yogakaraka':        dict(gives="turns effort into visible progress and tends to support the rest of your chart", feels="like a reliable ally that works best when you use it on purpose", watch="taking its help for granted or expecting results without effort"),
+ 'Functional benefic':dict(gives="tends to support the areas it looks after, especially when you keep its habits healthy", feels="like a friendly background support", watch="relaxing so much that its areas drift"),
+ 'Functional malefic':dict(gives="tends to bring tests, effort and lessons in the areas it looks after, and strength once you meet them", feels="like pressure that asks you to grow up in those areas", watch="avoiding its areas, or reading every hard moment as a sign of failure"),
+ 'Mixed / neutral':   dict(gives="tends to give mixed results: some areas it looks after run smoothly, others need care", feels="like an uneven influence that depends on the rest of the chart", watch="judging it too fast, since its results depend on its sign, house and running period"),
+}
+MOONPROF = [  # Moon in each sign: needs, comfort, under stress, in close relationships, a habit that helps
+ ("action, movement and a clear reason to get up","a quick walk, a challenge or a decisive step","get impatient or snap, then recover quickly","you say what you feel straight away and expect honesty back","burn off tension physically before you talk about it"),
+ ("stability, comfort and things you can trust","good food, a familiar place and a slow pace","dig in your heels or hold on to what is no longer working","you show love through steady presence and small, practical care","change one small thing at a time instead of resisting everything"),
+ ("variety, conversation and something to think about","talking things through, reading, messaging and short trips","scatter your attention or talk yourself in circles","you connect through ideas and humour and need room to breathe","write your thoughts down to calm a busy mind"),
+ ("safety, belonging and emotional closeness","home, family, familiar food and people who feel like shelter","withdraw into your shell or take things very personally","you give a lot of care and hope it is noticed without asking","name the feeling first, then decide what you need"),
+ ("warmth, appreciation and room to be yourself","creative play, praise from people you respect and generous company","feel hurt when ignored and cover it with pride","you love loyally and want to be seen and chosen","give credit to others and let yourself be seen without performing"),
+ ("order, usefulness and a feeling that things are in hand","a tidy space, a clear routine and being helpful","worry about details and criticise yourself","you show care by fixing, helping and noticing what is needed","let good enough count and rest without a to-do list"),
+ ("harmony, fairness and good company","pleasant surroundings, balanced conversation and shared time","avoid conflict and put off decisions to keep the peace","you look for partnership and feel unsettled when things are uneven","decide for yourself first, then check how others feel"),
+ ("depth, honesty and something that really matters","private time, meaningful talk and facing the truth","hold back, brood or test people quietly","you bond deeply, trust slowly and feel betrayal strongly","say the hard thing early instead of storing it"),
+ ("freedom, meaning and room to explore","open spaces, learning, travel and optimistic company","feel restless or too blunt when held back","you want a partner who shares your search and does not fence you in","check the details before the next big plan"),
+ ("purpose, structure and proof that your effort counts","quiet work, clear goals and reliable people","tighten up, get stern with yourself and hide the feeling","you show love through responsibility and are slow to say it out loud","let yourself receive help before you are exhausted"),
+ ("independence, ideas and a sense of being yourself","friends who share your interests, new ideas and space","detach and go cool when feelings get too close","you care about friendship first and need room for your own views","let one person see the feeling behind the opinion"),
+ ("quiet, imagination and a sense of the bigger picture","music, water, solitude and gentle company","absorb other people's moods and drift away","you give generously and can lose your own edges in love","keep a daily anchor so your sensitivity has a base"),
+]
 DATA = dict(schema='layer-v1.1', behave=BEHAVE, arena=ARENA, manner=MANNER,
+            role=ROLEKIND, moonProf=[dict(needs=m[0], comfort=m[1], stress=m[2], close=m[3], habit=m[4]) for m in MOONPROF],
             rising=[dict(first=r[0], body=r[1], reaction=r[2], described=r[3], arc=r[4]) for r in RISING],
             note="If a line does not match your life, that is useful information: look at the sign lord, the aspects and the running dasha, because placements show tendencies, not rules.")
-assert set(BEHAVE) == set(PL) and all(len(v['does']) == 4 for v in BEHAVE.values()) and len(ARENA) == 12 and all(len(a['scenes']) == 4 for a in ARENA) and len(MANNER) == 12 and len(RISING) == 12
+assert set(BEHAVE) == set(PL) and all(len(v['does']) == 4 for v in BEHAVE.values()) and len(ARENA) == 12 and all(len(a['scenes']) == 4 for a in ARENA) and len(MANNER) == 12 and len(RISING) == 12 and len(MOONPROF) == 12 and all(len(m) == 5 for m in MOONPROF)
 HEAD = '''/* ============================================================================
    GENERATED by tools/reading_gen (edit the tables there, then run tools/reading_gen/regen.sh). Do not hand-edit this file.
    MANIFESTATION LAYER (VMF): how a placement shows up in REAL LIFE, in second person. Layer schema v1.1.
@@ -69,7 +90,7 @@ HEAD = '''/* ===================================================================
                                                        2 self-check questions to test the text against your own life (108 x 12 = 1296 combinations)
    VMF.lagna(signIndex)                                first impression, body language, first reaction, how others describe you, what life keeps asking
    VMF.lagnaArc(chart)                                 where the Lagna lord points your life direction
-   VMF.signature(chart)                                "your signature at a glance": 4-7 personal lines picked from the whole chart
+   VMF.role(planet, risingSign)                        S2b: functional role of a planet for a rising sign (kind + houses it looks after), 7 planets x 12 = 84\n   VMF.moonProfile(signIdx)                            S2b: Moon-sign profile (needs, comfort, stress, close relationships, helpful habit)\n   VMF.signature(chart)                                "your signature at a glance": 4-7 personal lines picked from the whole chart
                                                        (how you come across, inner weather, drive, direction, strongly supported planets,
                                                        planets that need extra care, houses where energy gathers)
    Voice: "you" + tendencies ("you tend to", "you may"). The self-check questions invite the reader to confirm or reject each line.
@@ -115,6 +136,22 @@ window.VMF = (function(D){
     return { lord, house: e.house, theme: A.theme, text: `Your Lagna lord ${lord} sits in the ${ordn(e.house)} house, so your life direction tends to move toward ${A.theme}. ${A.scenes[0]} is a good place to notice it.` };
   }
   const nm = (p, arr) => arr.length < 2 ? arr.join('') : arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1];
+  // S2b: a planet's ROLE for a rising sign (from VDB.functionalNature) told through the houses it looks after
+  function role(planet, lagnaSign){
+    if (!okS(lagnaSign) || PL.indexOf(planet) < 0) return null;
+    const F = VDB.functionalNature(lagnaSign), f = F && F[planet];
+    if (!f) return null;   // Rahu and Ketu own no sign, so they have no rulership role (use placement() for them)
+    const K = D.role[f.kind], B = D.behave[planet], themes = f.rules.map(h => D.arena[h - 1].theme);
+    const rules = f.rules.map(ordn).join(' and ') + ' house' + (f.rules.length > 1 ? 's' : '');
+    const text = `For ${SIGN[lagnaSign]} rising, ${planet} looks after your ${rules} (${nm(null, themes)}). As a ${f.kind.toLowerCase()}, it ${K.gives}. It can feel ${K.feels}. At its best you ${B.atBest}. Watch for ${K.watch}.`;
+    return { planet, rising: SIGN[lagnaSign], kind: f.kind, rules: f.rules, tags: f.tags, themes, gives: K.gives, feels: K.feels, watch: K.watch, reflect: `In the areas of ${themes[0]}, does ${planet} feel like ${K.feels}?`, text };
+  }
+  // S2b: longer Moon-sign profile (needs, comfort, stress, close relationships, one helpful habit)
+  function moonProfile(signIdx){
+    const M = D.moonProf[signIdx]; if (!okS(signIdx)) return null;
+    const text = `With the Moon in ${SIGN[signIdx]}, you tend to need ${M.needs}. You feel most at ease with ${M.comfort}. Under stress you may ${M.stress}. In close relationships, ${M.close}. A habit that helps: ${M.habit}.`;
+    return { sign: SIGN[signIdx], needs: M.needs, comfort: M.comfort, stress: M.stress, close: M.close, habit: M.habit, reflect: `Does it ring true that you need ${M.needs}?`, text };
+  }
   function signature(chart){
     const P = chart.planets, asc = chart.ascendant.sign, items = [], lg = lagna(asc);
     items.push({ icon: '✨', title: 'How you come across', text: `You tend to come across as ${lg.first}, and others often describe you as ${lg.described}. ${lg.arc.charAt(0).toUpperCase() + lg.arc.slice(1)}.` });
@@ -134,7 +171,7 @@ window.VMF = (function(D){
     return { items: items.slice(0, 7), text: items.map(x => `${x.title}: ${x.text}`).join('\n') };
   }
   function each(cb){ PL.forEach(p => { for (let h = 1; h <= 12; h++) for (let s = 0; s < 12; s++) cb(placement(p, h, s)); }); }
-  return { data: D, placement, lagna, lagnaArc, signature, each };
+  return { data: D, placement, lagna, lagnaArc, role, moonProfile, signature, each };
 })(VMF_DATA);
 '''
 out = HEAD + json.dumps(DATA, ensure_ascii=False, indent=1) + ';' + API

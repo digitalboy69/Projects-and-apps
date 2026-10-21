@@ -35,6 +35,14 @@ with sync_playwright() as p:
       return {n,keys:K.size,uniq:new Set(T).size,bad:bad.slice(0,6),lagnaBad:lg,lagnaUniq:new Set([...Array(12).keys()].map(i=>VMF.lagna(i).text)).size}}""")
     ok('1296 combinations (9 planets x 12 houses x 12 signs): unique keys + texts; 3 different scenes and habits each; grammar, voice (you), questions, no absolute words', q['n'] == 1296 and q['keys'] == 1296 and q['uniq'] == 1296 and not q['bad'], q)
     ok('12 rising-sign profiles clean and different', not q['lagnaBad'] and q['lagnaUniq'] == 12, q)
+    # ---- S2b: role by rising sign (84) + Moon-sign profiles (12) ----
+    r = pg.evaluate("""()=>{const BAN=/\\b(always|never|certainly|definitely|guaranteed|doomed|destined|fatal|cursed|will die|death|you will)\\b/i,PL7=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'],bad=[],T=new Set();let n=0;
+      for(let a=0;a<12;a++){const F=VDB.functionalNature(a);PL7.forEach(p=>{const x=VMF.role(p,a);n++;if(!x||!x.text){bad.push('empty '+p+a);return;}T.add(x.text);
+        if(x.kind!==F[p].kind||JSON.stringify(x.rules)!==JSON.stringify(F[p].rules))bad.push('engine mismatch '+p+a);
+        if(/undefined|NaN|\\[object|null|  /.test(x.text)||BAN.test(x.text))bad.push('text '+p+a);if(!/\\?$/.test(x.reflect))bad.push('reflect '+p+a);});}
+      const mp=[];for(let i=0;i<12;i++){const m=VMF.moonProfile(i);if(!m||!m.text||BAN.test(m.text)||/undefined|NaN/.test(m.text)||!/\\?$/.test(m.reflect)||!/\\byou\\b/i.test(m.text))mp.push(i);}
+      return {n,uniq:T.size,bad:bad.slice(0,6),nodes:VMF.role('Rahu',0)===null&&VMF.role('Ketu',5)===null,mp,mpUniq:new Set([...Array(12).keys()].map(i=>VMF.moonProfile(i).text)).size,badIn:VMF.role('Sun',12)===null&&VMF.moonProfile(-1)===null}}""")
+    ok('S2b: 84 roles (7 planets x 12 rising signs) match the engine kind and houses, clean, unique; nodes return null; 12 Moon-sign profiles clean and different', r['n'] == 84 and r['uniq'] == 84 and not r['bad'] and r['nodes'] and not r['mp'] and r['mpUniq'] == 12 and r['badIn'], r)
     v = pg.evaluate("""()=>{const a=VMF.placement('Mars',7,0),b=VMF.placement('Mars',7,1),c=VMF.placement('Saturn',7,0),d=VMF.placement('Mars',10,0),o={};
       o.signChanges=a.text!==b.text;o.planetChanges=a.text!==c.text;o.houseChanges=JSON.stringify(a.practice.map(x=>x.scene))!==JSON.stringify(d.practice.map(x=>x.scene));
       o.scene7=VMF.data.arena[6].scenes.includes(a.practice[0].scene);o.cueS=VMF.placement('Mars',1,9,'Exalted').cue.includes('comfortable');o.cueW=VMF.placement('Mars',1,3,'Debilitated').cue.includes('strain');o.cueN=VMF.placement('Mars',1,3,'Neutral').cue==='';
@@ -65,8 +73,10 @@ with sync_playwright() as p:
       Object.keys(c.planets).forEach((n,i)=>{const e=c.planets[n],m=VMF.placement(n,e.house,e.sign,e.dignity.status);if(!cards[i].includes('In real life: '+m.headline))bad.push(n+' headline');
         m.practice.forEach(x=>{if(!cards[i].includes(norm(x.line)))bad.push(n+' line')});m.reflect.forEach(r=>{if(!cards[i].includes(norm(r)))bad.push(n+' question')});
         if(!cards[i].includes('Check this against your life'))bad.push(n+' check');if(!cards[i].includes('In everyday life, you may'))bad.push(n+' nak scene');});
+      const sf=VMF.moonProfile(c.planets.Moon.sign);if(!deep.includes(norm(sf.text)))bad.push('moon profile');if(!deep.includes("What each planet's role means for you"))bad.push('roles block');
+      const rr=VMF.role('Saturn',c.ascendant.sign);if(!deep.includes(norm(rr.gives)))bad.push('role text');
       const rep=buildFullReportText(c,currentProfileForExport,{}).replace(/\\s+/g,' ');
-      ['YOUR SIGNATURE AT A GLANCE','In real life:','Check this against your life:'].forEach(k=>{if(!rep.includes(k))bad.push('report '+k)});
+      ['YOUR SIGNATURE AT A GLANCE','In real life:','Check this against your life:','Your Moon in more detail:','Saturn as '].forEach(k=>{if(!rep.includes(k))bad.push('report '+k)});
       return {bad:bad.slice(0,6),overflow:document.documentElement.scrollWidth>window.innerWidth+1}}""")
     ok('on screen + in the report: signature at the top of Deep reading; every planet card has the "In real life" block with its 3 lines, self-check questions and the nakshatra scene', not s2['bad'], s2['bad'])
     ok('phone: no horizontal scroll', not s2['overflow'])
