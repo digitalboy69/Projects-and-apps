@@ -7,6 +7,7 @@
 # ship: commit -> rebase on the newest main if it moved (docs/generated files auto-resolve via .gitattributes, then build.py) -> check -> push the
 #       feature branch -> fast-forward main (skipped with --branch-only). The token is read from GH_TOKEN, passed only as a header, never written to disk.
 set -e
+SELF=$(cd "$(dirname "$0")" && pwd)/$(basename "$0")   # absolute: the script changes directory
 ROOT=$(git rev-parse --show-toplevel); S="$ROOT/vedic-astro-suite"; BRANCH=${BRANCH:-feature/full-reading}; REPO_URL=https://github.com/digitalboy69/Projects-and-apps.git
 cd "$S"
 git config merge.ours.driver true
@@ -33,7 +34,7 @@ case "$1" in
   MSG="$2"; MODE="$3"; [ -n "$MSG" ] || { echo "usage: ship \"message\" [--branch-only|--dry]"; exit 2; }
   [ "$MODE" = "--dry" ] || [ -n "$GH_TOKEN" ] || { echo "GH_TOKEN is not set"; exit 2; }
   python3 build.py >/dev/null 2>&1   # generated files must be current BEFORE the commit
-  cd "$ROOT"; git add -A vedic-astro-suite; git -c user.name="Claude" -c user.email="noreply@anthropic.com" commit -q -m "$MSG" 2>/dev/null || echo "(nothing new to commit)"
+  cd "$ROOT"; git add -A vedic-astro-suite .gitattributes; git -c user.name="Claude" -c user.email="noreply@anthropic.com" commit -q -m "$MSG" 2>/dev/null || echo "(nothing new to commit)"
   git fetch -q origin
   if ! git merge-base --is-ancestor origin/main HEAD; then
     echo "main moved: rebasing"; git -c user.name="Claude" -c user.email="noreply@anthropic.com" rebase origin/main >/dev/null 2>&1 || {
@@ -43,14 +44,14 @@ case "$1" in
         U=$(git diff --name-only --diff-filter=U); [ -n "$U" ] && { echo "CONFLICT needs a human/AI merge: $U"; exit 3; }
         GIT_EDITOR=true git -c user.name="Claude" -c user.email="noreply@anthropic.com" rebase --continue >/dev/null 2>&1 || true
       done; }
-    cd "$S"; python3 build.py >/dev/null 2>&1; cd "$ROOT"; git add -A vedic-astro-suite; git -c user.name="Claude" -c user.email="noreply@anthropic.com" commit -q -m "Rebuild generated files after rebase" 2>/dev/null || true
+    cd "$S"; python3 build.py >/dev/null 2>&1; cd "$ROOT"; git add -A vedic-astro-suite .gitattributes; git -c user.name="Claude" -c user.email="noreply@anthropic.com" commit -q -m "Rebuild generated files after rebase" 2>/dev/null || true
   fi
-  cd "$S"; sh "$0" check
+  cd "$S"; sh "$SELF" check
   [ "$MODE" = "--dry" ] && { echo "dry run: not pushing"; exit 0; }
   cd "$ROOT"; AUTH=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0); G="git -c http.extraheader=Authorization:\ Basic\ $AUTH"
   RSHA=$(git ls-remote $REPO_URL refs/heads/$BRANCH | cut -c1-40)
   if [ -n "$RSHA" ]; then eval GIT_TERMINAL_PROMPT=0 $G push --force-with-lease=$BRANCH:$RSHA origin HEAD:refs/heads/$BRANCH 2>&1 | tail -1; else eval GIT_TERMINAL_PROMPT=0 $G push origin HEAD:refs/heads/$BRANCH 2>&1 | tail -1; fi
   if [ "$MODE" != "--branch-only" ]; then git fetch -q origin; if git merge-base --is-ancestor origin/main HEAD; then eval GIT_TERMINAL_PROMPT=0 $G push origin HEAD:refs/heads/main 2>&1 | tail -1; else echo "main moved again: not pushed to main, run ship again"; fi; fi
   echo "remote main @ $(git ls-remote $REPO_URL refs/heads/main | cut -c1-7) | remote $BRANCH @ $(git ls-remote $REPO_URL refs/heads/$BRANCH | cut -c1-7) | token on disk: $(grep -rl "$GH_TOKEN" .git 2>/dev/null | wc -l) files" ;;
- *) sed -n 2,8p "$0" ;;
+ *) sed -n 2,8p "$SELF" ;;
 esac

@@ -1,0 +1,6 @@
+# Additive docs: keep both sides when two sessions add lines (build.py then regenerates the generated parts).
+vedic-astro-suite/STRUCTURE.md merge=union
+vedic-astro-suite/AI_GUIDE.md merge=union
+# Generated files: on a conflict keep the other side; tools/ai/session.sh runs build.py afterwards. (needs: git config merge.ours.driver true)
+vedic-astro-suite/symbols.idx merge=ours
+vedic-astro-suite/dist/*.html merge=ours
