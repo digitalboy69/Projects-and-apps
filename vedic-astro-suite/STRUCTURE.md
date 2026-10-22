@@ -361,6 +361,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `docs/HANDOFF.md` — handoff notes
 - `docs/FULL_READING_PLAN.md` — Plan for the PDF-grade full reading: audit of what exists, gaps, architecture, 12 sessions with checklist, working rules, decisions. READ FIRST in every reading session
 - `docs/AI_START_HERE.md` — The repeatable AI session system: start prompt, session loop (session.sh start/check/test/ship), token hygiene, where things are, layer rules, lessons learned. READ FIRST in every new chat
+- `docs/APP_NAVIGATION_PLAN.md` — Plan to make every tool fast to reach: measured audit (32 tools, Home = 4 screens, 17 tools without a bottom tab), target hubs Start/Chart/Time/Strength/Tools with a place for every tool, 9 sessions N1-N9, acceptance tests, decisions. Read with AI_START_HERE
 - `docs/YEAR_TIMELINE_RESEARCH.md` — Research + plan for the "Year Timeline Pack" (date-range, AI-ready data file: timeline, transits, dasha changes, planet role map); sources, file layout, reuse map, build order
 - `docs/SUPABASE.md` — Supabase cloud-sync notes
 - `docs/THIRD_PARTY_LICENSES.md` — third-party licences

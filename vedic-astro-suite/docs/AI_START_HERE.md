@@ -1,11 +1,13 @@
 # AI start here (read this first, then docs/FULL_READING_PLAN.md and AI_GUIDE.md)
 
 Start prompt the owner pastes in a new chat:
-> Read vedic-astro-suite/docs/AI_START_HERE.md in digitalboy69/Projects-and-apps (main) and follow it. Task: continue the plan. Keep replies short.
+> Read vedic-astro-suite/docs/AI_START_HERE.md in digitalboy69/Projects-and-apps (main) and follow it. Task: continue the READING plan (or: continue the NAVIGATION plan). Keep replies short.
+
+Two plans live in docs/: `FULL_READING_PLAN.md` (deeper readings / PDF) and `APP_NAVIGATION_PLAN.md` (fast, simple navigation: hubs, Start screen, search, one registry). Work on the one the owner names; `session.sh start` shows the next unchecked item of both. Do not mix them in one session.
 
 ## Session loop (the same every time)
 1. `git clone` the repo (GitHub connector is read-only; use plain git). `sh vedic-astro-suite/tools/ai/session.sh start` shows the next plan item and whether main moved.
-2. Build the next unchecked item in docs/FULL_READING_PLAN.md. Hand-written data lives in `tools/reading_gen/*.py` -> run `sh tools/reading_gen/regen.sh` (never hand-edit js/87, 89, 90, 91).
+2. Build the next unchecked item of the plan you were asked to continue. Hand-written data lives in `tools/reading_gen/*.py` -> run `sh tools/reading_gen/regen.sh` (never hand-edit js/87, 89, 90, 91).
 3. `session.sh check` (build + structure + syntax), then `session.sh test <only the tests for what you touched>`.
 4. `GH_TOKEN=... session.sh ship "message"` commits, rebases on a moved main (auto-merge rules in .gitattributes + build.py), checks, pushes `feature/full-reading` and fast-forwards main. Use `--branch-only` mid-session, `--dry` to rehearse.
 5. Tick the box in the plan, add one line to its notes and one to the AI_GUIDE changelog, in the same ship.

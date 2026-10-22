@@ -17,8 +17,7 @@ case "$1" in
  start)
   git fetch -q origin
   echo "branch: $(git rev-parse --abbrev-ref HEAD) @ $(git rev-parse --short HEAD) | origin/main @ $(git rev-parse --short origin/main) | main moved since my base: $(git merge-base --is-ancestor origin/main HEAD && echo no || echo YES)"
-  echo "next unchecked plan item:"; grep -m1 -E '^- \[( |~)\]' docs/FULL_READING_PLAN.md | cut -c1-260
-  echo "last notes:"; tail -n 4 docs/FULL_READING_PLAN.md | cut -c1-220 ;;
+  for PL in FULL_READING_PLAN APP_NAVIGATION_PLAN; do echo "[$PL] next unchecked item:"; grep -m1 -E '^- \[( |~)\]' docs/$PL.md | cut -c1-200; done ;;
  check)
   python3 build.py 2>&1 | tail -1; python3 tools/check_structure.py | tail -1; python3 tests/syntax_check.py | tail -1 ;;
  test)
