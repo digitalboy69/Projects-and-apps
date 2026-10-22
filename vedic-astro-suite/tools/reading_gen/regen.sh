@@ -11,3 +11,4 @@ python3 build_yg.py                                    # js/92-yoga-engine.js   
 python3 build_la.py                                    # js/94-life-areas.js          (table inside build_la.py)
 python3 build_ln.py                                    # js/95-life-narratives.js     (tables inside build_ln.py)
 python3 build_vg.py                                    # js/96-varga-reading.js       (table inside build_vg.py)
+python3 build_ts.py                                    # js/97-transit-reading.js     (table inside build_ts.py)

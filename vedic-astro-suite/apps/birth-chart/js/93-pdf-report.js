@@ -21,7 +21,7 @@ const dig = s => !s ? '' : String(s).replace('OwnSign', 'Own sign').replace(/([a
 const SECTIONS = [
   ['overview', 'Your signature at a glance'], ['chart', 'Birth chart and planet positions'], ['foundation', 'Who you are: rising sign, Moon and birth star'],
   ['roles', 'What each planet does for you'], ['yogas', 'Yogas: notable combinations'], ['cautions', 'Points that need care'],
-  ['areas', 'Nine areas of life, compared'], ['vargas', 'Divisional charts: marriage, career, children and more'], ['timeline', 'Life timeline (Mahadashas)'], ['houses', 'House by house'], ['strength', 'Strength of the twelve houses']];
+  ['areas', 'Nine areas of life, compared'], ['vargas', 'Divisional charts: marriage, career, children and more'], ['timeline', 'Life timeline (Mahadashas)'], ['transits', 'Transits and Sade Sati'], ['houses', 'House by house'], ['strength', 'Strength of the twelve houses']];
 const THEMES = {
   ivory:    { name: 'Ivory & gold', cover1: '#fbf6e9', cover2: '#efe2bd', coverInk: '#2b2418', ink: '#262626', soft: '#6b6355', accent: '#a8801f', accent2: '#e9d9a6', rule: '#e4dcc6', card: '#fdfaf1', page: '#ffffff' },
   midnight: { name: 'Midnight & gold', cover1: '#10142b', cover2: '#2a2350', coverInk: '#f6ecd0', ink: '#20222e', soft: '#626675', accent: '#8a6a17', accent2: '#e3cf8d', rule: '#dedbe8', card: '#f8f7fc', page: '#ffffff' } };
@@ -126,6 +126,18 @@ function bTimeline(c, o){
   return `<p class="lead">${esc(VDA.data.intro)}</p><table class="tb"><thead><tr><th>Mahadasha</th><th>Dates</th><th>Age</th><th>Theme</th><th>Tone</th></tr></thead><tbody>${rows}</tbody></table>` +
     (up.length ? `<h3 class="grp">The next five years, sub-period by sub-period</h3><table class="tb"><thead><tr><th>Dates</th><th>Period</th><th>Tone</th><th>What the blend tends to feel like</th></tr></thead><tbody>${upRows}</tbody></table>` : '') + `<h3 class="grp">Every Mahadasha in words</h3>` + cards;
 }
+function bTransits(c, o){
+  if (typeof TRS === 'undefined' || !TRS) return ''; const T = TRS.assess(c, (typeof currentProfileForExport !== 'undefined') ? currentProfileForExport : null);
+  if (!T.available) return `<p class="lead">${esc(T.notes.join(' '))}</p>`;
+  const fj = jd => jd == null ? 'open' : MON[jdToDate(jd).getUTCMonth()] + ' ' + jdToDate(jd).getUTCFullYear(), LA = LAE.assess(c).areas;
+  const sade = T.sade.active.length ? T.sade.active.map(x => card(`${esc(x.kind)}: ${esc(x.name)} ${chip(x.level, x.level === 'lighter' ? 'g' : x.level === 'heavier' ? 'b' : '')}`, `<p>${esc(x.text)}</p>`, 'now')).join('') : card('Sade Sati and Dhaiya', `<p>Not running now. ${esc(T.sade.next ? T.sade.next.text : '')}</p>`);
+  const cyc = `<table class="tb"><thead><tr><th>Period</th><th>Stage</th><th>Dates</th><th></th></tr></thead><tbody>${T.sade.cycles.map(cy => cy.phases.map(p => `<tr class="${cy.status === 'now' ? 'now' : cy.status === 'past' ? 'past' : ''}"><td>${esc(cy.kind)}</td><td>${esc(p.name)} (${esc(p.sign)})</td><td>${fj(p.start)} – ${fj(p.end)}</td><td>${cy.status === 'now' ? 'running' : cy.status}</td></tr>`).join('')).join('')}</tbody></table>`;
+  const gt = `<table class="tb"><thead><tr><th>Planet</th><th>Sign</th><th>Until</th><th>From the Moon</th><th>Tone</th></tr></thead><tbody>${T.gochar.map(g => `<tr><td><b>${esc(g.planet)}</b></td><td>${esc(g.sign)}</td><td>${fj(g.to)}</td><td>${ordn(g.houseFromMoon)} house</td><td>${chip(g.tone, g.tone === 'helpful' ? 'g' : 'b')}</td></tr>`).join('')}</tbody></table>` + T.gochar.map(g => `<p>${esc(g.text)}</p>`).join('');
+  const cal = `<table class="tb"><thead><tr><th>Date</th><th>Planet</th><th>Enters</th><th>From the Moon</th><th>Tone</th></tr></thead><tbody>${T.calendar.map(x => `<tr><td>${fj(x.jd)}</td><td><b>${esc(x.planet)}</b></td><td>${esc(x.sign)}</td><td>${ordn(x.houseFromMoon)} house</td><td>${chip(x.tone, x.tone === 'helpful' ? 'g' : 'b')}</td></tr>`).join('')}</tbody></table>`;
+  const ol = `<table class="tb"><thead><tr><th>Area</th><th>Year 1</th><th>Year 2</th><th>Year 3</th></tr></thead><tbody>${LA.map(a => `<tr><td><b>${esc(a.icon)} ${esc(a.name)}</b></td>${T.outlook[a.id].map(o => `<td>${chip(o.band + ' ' + o.score, o.bandTone)}</td>`).join('')}</tr>`).join('')}</tbody></table><p class="sm">${esc(T.outlook[LA[0].id].map(o => 'Year ' + o.year + ': ' + o.label).join(' · '))}. Each number blends the natal score of the area, the dasha running in the middle of that year, and how long Jupiter and Saturn together influence its houses (the double transit).</p>`;
+  const dbl = LA.filter(a => T.double[a.id].length).map(a => `<p><b>${esc(a.icon)} ${esc(a.name)}:</b> ${T.double[a.id].map(w => esc(w.text.replace('Jupiter and Saturn both influence your ', '')).replace(/ from /, ', ')).join(' ')}</p>`).join('');
+  return `<p class="lead">${esc(T.note)}</p><p><b>In short.</b> ${esc(T.summary.join(' '))}</p>${sade}<h3 class="grp">Every Sade Sati and Dhaiya in your life</h3>${cyc}<h3 class="grp">Where the slow planets are now</h3>${gt}<h3 class="grp">Sign changes in the next three years</h3>${cal}<h3 class="grp">Year by year, area by area</h3>${ol}${dbl ? `<h3 class="grp">Double-transit windows (Jupiter and Saturn together)</h3>${dbl}` : ''}`;
+}
 function bHouses(c, o){
   const r = VDB.reading(c), D = VDB.data, asc = SIGN.indexOf(r.lagna.sign), out = [];
   for (let n = 1; n <= 12; n++){
@@ -144,8 +156,8 @@ function bStrength(c){
   return `<p class="lead">Sarva Ashtakavarga points for each house, counted from the rising sign. A house above the average of ${avg.toFixed(1)} tends to get more support; below it tends to need more of your own effort.</p>${savSvg(c, o_theme)}` +
     `<p><b>Best supported:</b> ${hi.map(x => `${nmh(x[1])}, ${x[0]} points`).join('; ')}.</p><p><b>Needs more effort:</b> ${lo.map(x => `${nmh(x[1])}, ${x[0]} points`).join('; ')}.</p>`;
 }
-const BUILD = { overview: bOverview, chart: bChart, foundation: bFoundation, roles: bRoles, yogas: bYogas, cautions: bCautions, areas: bAreas, vargas: bVargas, timeline: bTimeline, houses: bHouses, strength: bStrength };
-const SUB = { overview: 'The main threads of your chart in plain language', chart: 'Where every planet stands at your birth', foundation: 'The base layer of the whole reading', roles: 'How each planet works for your rising sign', yogas: 'Supportive and notable planet combinations', cautions: 'Areas that deserve extra care', areas: 'Career, money, marriage and six more, scored and explained', vargas: 'Six zoom-in charts for the main areas of life', timeline: 'The stages of your life, with dates', houses: 'The twelve areas of life, one by one', strength: 'Where your chart has more or less support' };
+const BUILD = { overview: bOverview, chart: bChart, foundation: bFoundation, roles: bRoles, yogas: bYogas, cautions: bCautions, areas: bAreas, vargas: bVargas, timeline: bTimeline, transits: bTransits, houses: bHouses, strength: bStrength };
+const SUB = { overview: 'The main threads of your chart in plain language', chart: 'Where every planet stands at your birth', foundation: 'The base layer of the whole reading', roles: 'How each planet works for your rising sign', yogas: 'Supportive and notable planet combinations', cautions: 'Areas that deserve extra care', areas: 'Career, money, marriage and six more, scored and explained', vargas: 'Six zoom-in charts for the main areas of life', timeline: 'The stages of your life, with dates', transits: 'What the slow planets are doing now and over the next three years', houses: 'The twelve areas of life, one by one', strength: 'Where your chart has more or less support' };
 
 /* ---------- the document ---------- */
 function css(th, paper){

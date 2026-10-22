@@ -19,7 +19,7 @@ with sync_playwright() as p:
     pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.route('**/*', lambda r: r.continue_() if r.request.url.startswith(('http://127.0.0.1', 'data:', 'blob:', 'about:')) else r.abort())
     pg.goto(PAGE); pg.wait_for_selector('#birthForm')
-    ok('PDFR loaded with 11 sections and 2 themes', pg.evaluate("typeof PDFR==='object'&&PDFR!==null&&PDFR.sections.length===11&&PDFR.themes.length===2"))
+    ok('PDFR loaded with 12 sections and 2 themes', pg.evaluate("typeof PDFR==='object'&&PDFR!==null&&PDFR.sections.length===12&&PDFR.themes.length===2"))
     html0 = ''
     for i, c in enumerate(CHARTS):
         pg.evaluate(CAST, dict(name='Asha <b>Rao</b>', dob=c[0], tob=c[1], place='Test & Place', lat=c[2], lon=c[3], tz=c[4])); pg.wait_for_selector('#results.show', timeout=15000)
@@ -46,11 +46,11 @@ with sync_playwright() as p:
     ok('Deep reading overview has the "Create a beautiful PDF" button', pg.evaluate("!!document.querySelector('.dr-sec[data-sec=intro] .dr-pdf')"))
     pg.evaluate("document.querySelector('.dr-pdf').click()"); pg.wait_for_selector('.pdfs.on'); pg.wait_for_timeout(700)
     st = pg.evaluate("""()=>{const f=document.getElementById('pdfs-frame'),d=f.contentDocument;return {n:d&&d.querySelectorAll('section.sec').length,cover:!!(d&&d.querySelector('.cover')),secs:document.querySelectorAll('.pdfs-sec input').length,count:document.getElementById('pdfs-count').textContent}}""")
-    ok('Studio opens with a live preview of the full report and 11 section toggles', st['cover'] and st['n'] >= 8 and st['secs'] == 11, st)
+    ok('Studio opens with a live preview of the full report and 12 section toggles', st['cover'] and st['n'] >= 8 and st['secs'] == 12, st)
     pg.evaluate("document.querySelector('.pdfs-sec input[value=houses]').click()"); pg.wait_for_timeout(700)
     pg.fill('#pdfs-title', 'My Custom Title'); pg.evaluate("document.querySelector('.pdfs-theme.t-midnight input').click()"); pg.wait_for_timeout(700)
     st2 = pg.evaluate("""()=>{const d=document.getElementById('pdfs-frame').contentDocument;return {noHouses:!d.querySelector('#s-houses'),title:/My Custom Title/.test(d.querySelector('.cover h1').textContent),theme:/#10142b/i.test(d.querySelector('style').textContent),count:document.getElementById('pdfs-count').textContent}}""")
-    ok('Studio preview updates when a section, the title and the style change', st2['noHouses'] and st2['title'] and st2['theme'] and st2['count'].startswith('10 of 11'), st2)
+    ok('Studio preview updates when a section, the title and the style change', st2['noHouses'] and st2['title'] and st2['theme'] and st2['count'].startswith('11 of 12'), st2)
     pg.screenshot(path='/tmp/pdfs_studio_phone.png')
     n0 = pg.evaluate("document.querySelectorAll('body>iframe').length"); pg.evaluate("document.getElementById('pdfs-print').click()"); pg.wait_for_timeout(500)
     ok('Save as PDF prints the report inside a hidden iframe (the page itself is not printed)', pg.evaluate("document.querySelectorAll('body>iframe').length") == n0 + 1)

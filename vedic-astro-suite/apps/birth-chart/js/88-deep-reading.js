@@ -14,6 +14,7 @@ if (typeof VDB === 'undefined') return;
 const D = VDB.data, SIGN = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
 const PL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
 const HELPFUL = ['Jupiter','Venus','Mercury'], PRESS = ['Sun','Mars','Saturn','Rahu','Ketu'];
+const TRS_fmt = jd => (typeof TRS !== 'undefined' && jd != null && typeof jdToDate === 'function') ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][jdToDate(jd).getUTCMonth()] + ' ' + jdToDate(jd).getUTCFullYear() : 'an open date';
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
 const glyph = n => (typeof PLANET_GLYPHS !== 'undefined' && PLANET_GLYPHS[n]) || '';
@@ -116,7 +117,7 @@ function dashaBlock(c, md, ad){
 
 /* ---------- the "📖 Deep reading" tab ---------- */
 function pane(c){
-  const r = R(c), asc = r.lagna.sign, ascIdx = SIGN.indexOf(asc), P = r.planets, out = [], S = { intro: [], you: [], planets: [], yogas: [], doshas: [], areas: [], vargas: [], time: [], houses: [] };
+  const r = R(c), asc = r.lagna.sign, ascIdx = SIGN.indexOf(asc), P = r.planets, out = [], S = { intro: [], you: [], planets: [], yogas: [], doshas: [], areas: [], vargas: [], time: [], transits: [], houses: [] };
   const ll = r.houseLords[0], mo = P.Moon;
   S.intro.push(note('g', `📖 <b>Deep reading</b>: classical meanings for every placement in this chart, house by house. Texts come from the built-in knowledge base; read them together, since each planet's result depends on its sign, house, aspects and the running period.`));
   const sg = SG(c); if (sg) S.intro.push(sigNote(sg));
@@ -167,11 +168,28 @@ function pane(c){
   const vg = (typeof VGR !== 'undefined' && VGR) ? VGR.all(c) : [];
   if (vg.length){ S.vargas.push(note('g', `🔭 <b>Six zoom-in charts</b><br><small>Each divisional chart looks at one area of life in detail. Open one to see its rising sign, the houses that matter, every planet and how comfortable it is there.</small>`));
     vg.forEach(x => S.vargas.push(`<details class="dr-vg"><summary><b>${esc(x.name)}</b> <small>${esc(x.short)}</small>${chip(x.bandTone, x.band)}<span class="dr-as">${x.score}</span></summary><div class="dr-vg-b">${x.paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('')}</div></details>`)); }
+  const trs = (typeof TRS !== 'undefined' && TRS) ? TRS.assess(c, (typeof currentProfileForExport !== 'undefined') ? currentProfileForExport : null) : null;
+  if (trs){
+    S.transits.push(note('g', `🪐 <b>The slow planets, now and over the next three years</b><br><small>${esc(trs.note)}</small>`));
+    if (!trs.available) S.transits.push(note('', esc(trs.notes.join(' '))));
+    else {
+      trs.notes.forEach(n => S.transits.push(note('b', esc(n))));
+      S.transits.push(note('', `<b>In short:</b> ${trs.summary.map(esc).join(' ')}`));
+      if (trs.sade.active.length) trs.sade.active.forEach(x => S.transits.push(`<div class="dr-area"><div class="dr-ah"><span class="dr-ai">⏳</span><b>${esc(x.kind)}: ${esc(x.name)}</b>${chip(x.level === 'lighter' ? 'g' : x.level === 'heavier' ? 'b' : '', x.level)}</div><p class="dr-p">${esc(x.text)}</p></div>`));
+      else S.transits.push(note('', `<b>Sade Sati and Dhaiya:</b> not running now. ${esc(trs.sade.next ? trs.sade.next.text : '')}`));
+      S.transits.push(`<details class="dr-vg"><summary><b>All Sade Sati and Dhaiya periods of your life</b></summary><div class="dr-vg-b">${trs.sade.cycles.map(cy => `<h5>${esc(cy.kind)} <small>${cy.status === 'now' ? 'running now' : cy.status === 'past' ? 'past' : 'ahead'}</small></h5><p>${cy.phases.map(p => `${esc(p.name)} (${esc(p.sign)}): ${TRS_fmt(p.start)} to ${TRS_fmt(p.end)}`).join('; ')}.</p>`).join('')}</div></details>`);
+      S.transits.push(`<div class="dr-w-h">Where the slow planets are now</div>` + trs.gochar.map(g => note(g.tone === 'helpful' ? 'g' : '', `<b>${esc(g.planet)}</b> ${chip(g.tone === 'helpful' ? 'g' : 'b', g.tone)}<br>${esc(g.text)}`)).join(''));
+      S.transits.push(`<details class="dr-vg"><summary><b>Sign changes in the next three years</b> <small>${trs.calendar.length} dates</small></summary><div class="dr-vg-b">${trs.calendar.map(x => `<p>${esc(x.text)}</p>`).join('')}</div></details>`);
+      const LA = LAE.assess(c).areas;
+      S.transits.push(`<div class="dr-w-h">Year by year, area by area</div><div class="dr-ol"><div class="dr-or dr-oh"><span></span>${[0, 1, 2].map(i => `<span>Year ${i + 1}</span>`).join('')}</div>${LA.map(a => `<div class="dr-or"><span>${a.icon} ${esc(a.name)}</span>${trs.outlook[a.id].map(o => `<span class="dr-oc ${o.bandTone || 'm'}" title="${esc(o.text)}">${o.score}</span>`).join('')}</div>`).join('')}</div><div class="rd-w"><small>Year 1 runs from now for twelve months. Each number blends your natal score for the area, the dasha running in the middle of that year and how long Jupiter and Saturn together influence the area's houses (the double transit).</small></div>`);
+      S.transits.push(`<details class="dr-vg"><summary><b>Double-transit windows by area</b> <small>Jupiter and Saturn together</small></summary><div class="dr-vg-b">${LA.map(a => `<h5>${esc(a.icon)} ${esc(a.name)}</h5>${trs.double[a.id].length ? trs.double[a.id].map(w => `<p>${esc(w.text)}</p>`).join('') : '<p>No double transit on this area in the next three years.</p>'}`).join('')}</div></details>`);
+    }
+  }
   S.time.push(timelineHtml(c));
   S.houses = cards;
   const SEC = [['intro', '✨', 'Overview', 'Start here: what this reading is and your signature at a glance'], ['you', '🧭', 'Who you are', 'Rising sign, Moon and birth star'],
     ['planets', '🪐', 'Planet roles', 'What each planet does for you, and how they work together'], ['yogas', '🔮', 'Yogas', 'Supportive and notable planet combinations'],
-    ['doshas', '⚠️', 'Points to watch', 'Areas that need extra care, with what eases them'], ['areas', '📊', 'Life areas', 'Career, money, marriage and six more, scored and explained'], ['vargas', '🔭', 'Divisional charts', 'Marriage, career, children, property, learning and spirit in detail'], ['time', '⏳', 'Life timeline', 'Every Mahadasha, now and the next five years'], ['houses', '🏠', 'House by house', 'The twelve areas of life, one card each']]
+    ['doshas', '⚠️', 'Points to watch', 'Areas that need extra care, with what eases them'], ['areas', '📊', 'Life areas', 'Career, money, marriage and six more, scored and explained'], ['vargas', '🔭', 'Divisional charts', 'Marriage, career, children, property, learning and spirit in detail'], ['time', '⏳', 'Life timeline', 'Every Mahadasha, now and the next five years'], ['transits', '🪐', 'Transits and Sade Sati', 'What the slow planets are doing now and next'], ['houses', '🏠', 'House by house', 'The twelve areas of life, one card each']]
     .filter(x => S[x[0]].length), nav = SEC.map((x, i) => `<button type="button" class="dr-nb" data-sec="${x[0]}">${x[1]} ${esc(x[2])}</button>`).join('');
   return `<nav class="dr-nav" aria-label="Sections of the reading">${nav}</nav>` + SEC.map((x, i) => `<section class="dr-sec" data-sec="${x[0]}"><div class="dr-sh"><span class="dr-sn">${i + 1}</span><div><b>${esc(x[2])}</b><small>${esc(x[3])}</small></div></div>${S[x[0]].join('')}</section>`).join('');
 }
@@ -205,6 +223,7 @@ function reportText(c){
   PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) para(`${a} + ${x.with} in ${P[a].sign}:`, x.text); }));
   { const la2 = (typeof LAE !== 'undefined' && LAE) ? LAE.assess(c) : null; if (la2){ sub('LIFE AREAS (0-100, compared inside your own chart)'); la2.areas.forEach(x => para(`${x.name} - ${x.band} (${x.score}):`, x.headline.replace(/^[^.]*\.[^.]*\) ?/, '') + ' Right now: ' + (x.now.why.join('; ') || 'no direct link') + '. Next five years: ' + x.next5.why.join('; ') + '.')); if (typeof LAN !== 'undefined' && LAN) LAN.all(c).forEach(n => { sub(n.name.toUpperCase() + ' - THE FULL STORY'); n.paragraphs.forEach(q => para(q.h + ':', q.text)); }); } }
   { if (typeof VGR !== 'undefined' && VGR){ const vgr = VGR.all(c); if (vgr.length){ sub('DIVISIONAL CHARTS'); vgr.forEach(x => { para(`${x.name} - ${x.band} (${x.score}):`, ''); x.paragraphs.forEach(q => para(q.h + ':', q.text)); }); } } }
+  { if (typeof TRS !== 'undefined' && TRS){ const tr2 = TRS.assess(c, (typeof currentProfileForExport !== 'undefined') ? currentProfileForExport : null); sub('TRANSITS AND SADE SATI'); if (!tr2.available) para('Not shown:', tr2.notes.join(' ')); else { tr2.notes.forEach(n => para('Note:', n)); para('In short:', tr2.summary.join(' ')); tr2.sade.active.forEach(x => para(x.kind + ' - ' + x.name + ':', x.text)); if (!tr2.sade.active.length && tr2.sade.next) para('Sade Sati and Dhaiya:', 'Not running now. ' + tr2.sade.next.text); tr2.gochar.forEach(g => para(g.planet + ' now:', g.text)); tr2.calendar.forEach(x => para('Sign change:', x.text)); LAE.assess(c).areas.forEach(a => tr2.outlook[a.id].forEach(o => para(a.name + ', year ' + o.year + ':', o.text))); } } }
   { const yg2 = (typeof YGE !== 'undefined' && YGE) ? YGE.detect(c) : []; if (yg2.length){ sub('YOGAS IN YOUR CHART'); yg2.forEach(x => para(x.name + ':', x.text.replace(/^[^.]*\. /, ''))); } }
   PL.forEach(n => {
     const e = P[n]; if (!e) return;

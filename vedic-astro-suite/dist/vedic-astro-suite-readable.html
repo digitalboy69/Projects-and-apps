@@ -12228,6 +12228,10 @@ html{scroll-behavior:auto!important}
 .dr-vg>summary{cursor:pointer;padding:10px 12px;font-size:13px;color:var(--text-main);list-style:none;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.dr-vg>summary::-webkit-details-marker{display:none}
 .dr-vg>summary::before{content:'▸';color:var(--gold,#d4af37)}.dr-vg[open]>summary::before{content:'▾'}.dr-vg>summary small{color:var(--text-muted)}
 .dr-vg-b{padding:0 12px 12px}.dr-vg-b h5{margin:10px 0 2px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted)}.dr-vg-b p{margin:0 0 4px;font-size:12.5px;line-height:1.6;color:var(--text-main)}
+
+.dr-p{margin:4px 0 0;font-size:12.5px;line-height:1.6;color:var(--text-main)}.dr-w-h{margin:8px 0 0;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted)}
+.dr-ol{display:flex;flex-direction:column;gap:5px}.dr-or{display:grid;grid-template-columns:1fr repeat(3,44px);gap:6px;align-items:center;font-size:12.5px;color:var(--text-main)}.dr-oh{font-size:11px;color:var(--text-muted);text-align:center}
+.dr-oc{text-align:center;padding:4px 0;border-radius:8px;font-weight:700;background:rgba(255,255,255,.07)}.dr-oc.g{background:rgba(79,138,91,.3)}.dr-oc.b{background:rgba(181,104,58,.35)}
 </style>
 <style>
 /* ===== PDF Studio dialog (js/93-pdf-report.js) ===== */
@@ -38821,6 +38825,7 @@ if (typeof VDB === 'undefined') return;
 const D = VDB.data, SIGN = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
 const PL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
 const HELPFUL = ['Jupiter','Venus','Mercury'], PRESS = ['Sun','Mars','Saturn','Rahu','Ketu'];
+const TRS_fmt = jd => (typeof TRS !== 'undefined' && jd != null && typeof jdToDate === 'function') ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][jdToDate(jd).getUTCMonth()] + ' ' + jdToDate(jd).getUTCFullYear() : 'an open date';
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
 const glyph = n => (typeof PLANET_GLYPHS !== 'undefined' && PLANET_GLYPHS[n]) || '';
@@ -38923,7 +38928,7 @@ function dashaBlock(c, md, ad){
 
 /* ---------- the "📖 Deep reading" tab ---------- */
 function pane(c){
-  const r = R(c), asc = r.lagna.sign, ascIdx = SIGN.indexOf(asc), P = r.planets, out = [], S = { intro: [], you: [], planets: [], yogas: [], doshas: [], areas: [], vargas: [], time: [], houses: [] };
+  const r = R(c), asc = r.lagna.sign, ascIdx = SIGN.indexOf(asc), P = r.planets, out = [], S = { intro: [], you: [], planets: [], yogas: [], doshas: [], areas: [], vargas: [], time: [], transits: [], houses: [] };
   const ll = r.houseLords[0], mo = P.Moon;
   S.intro.push(note('g', `📖 <b>Deep reading</b>: classical meanings for every placement in this chart, house by house. Texts come from the built-in knowledge base; read them together, since each planet's result depends on its sign, house, aspects and the running period.`));
   const sg = SG(c); if (sg) S.intro.push(sigNote(sg));
@@ -38974,11 +38979,28 @@ function pane(c){
   const vg = (typeof VGR !== 'undefined' && VGR) ? VGR.all(c) : [];
   if (vg.length){ S.vargas.push(note('g', `🔭 <b>Six zoom-in charts</b><br><small>Each divisional chart looks at one area of life in detail. Open one to see its rising sign, the houses that matter, every planet and how comfortable it is there.</small>`));
     vg.forEach(x => S.vargas.push(`<details class="dr-vg"><summary><b>${esc(x.name)}</b> <small>${esc(x.short)}</small>${chip(x.bandTone, x.band)}<span class="dr-as">${x.score}</span></summary><div class="dr-vg-b">${x.paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('')}</div></details>`)); }
+  const trs = (typeof TRS !== 'undefined' && TRS) ? TRS.assess(c, (typeof currentProfileForExport !== 'undefined') ? currentProfileForExport : null) : null;
+  if (trs){
+    S.transits.push(note('g', `🪐 <b>The slow planets, now and over the next three years</b><br><small>${esc(trs.note)}</small>`));
+    if (!trs.available) S.transits.push(note('', esc(trs.notes.join(' '))));
+    else {
+      trs.notes.forEach(n => S.transits.push(note('b', esc(n))));
+      S.transits.push(note('', `<b>In short:</b> ${trs.summary.map(esc).join(' ')}`));
+      if (trs.sade.active.length) trs.sade.active.forEach(x => S.transits.push(`<div class="dr-area"><div class="dr-ah"><span class="dr-ai">⏳</span><b>${esc(x.kind)}: ${esc(x.name)}</b>${chip(x.level === 'lighter' ? 'g' : x.level === 'heavier' ? 'b' : '', x.level)}</div><p class="dr-p">${esc(x.text)}</p></div>`));
+      else S.transits.push(note('', `<b>Sade Sati and Dhaiya:</b> not running now. ${esc(trs.sade.next ? trs.sade.next.text : '')}`));
+      S.transits.push(`<details class="dr-vg"><summary><b>All Sade Sati and Dhaiya periods of your life</b></summary><div class="dr-vg-b">${trs.sade.cycles.map(cy => `<h5>${esc(cy.kind)} <small>${cy.status === 'now' ? 'running now' : cy.status === 'past' ? 'past' : 'ahead'}</small></h5><p>${cy.phases.map(p => `${esc(p.name)} (${esc(p.sign)}): ${TRS_fmt(p.start)} to ${TRS_fmt(p.end)}`).join('; ')}.</p>`).join('')}</div></details>`);
+      S.transits.push(`<div class="dr-w-h">Where the slow planets are now</div>` + trs.gochar.map(g => note(g.tone === 'helpful' ? 'g' : '', `<b>${esc(g.planet)}</b> ${chip(g.tone === 'helpful' ? 'g' : 'b', g.tone)}<br>${esc(g.text)}`)).join(''));
+      S.transits.push(`<details class="dr-vg"><summary><b>Sign changes in the next three years</b> <small>${trs.calendar.length} dates</small></summary><div class="dr-vg-b">${trs.calendar.map(x => `<p>${esc(x.text)}</p>`).join('')}</div></details>`);
+      const LA = LAE.assess(c).areas;
+      S.transits.push(`<div class="dr-w-h">Year by year, area by area</div><div class="dr-ol"><div class="dr-or dr-oh"><span></span>${[0, 1, 2].map(i => `<span>Year ${i + 1}</span>`).join('')}</div>${LA.map(a => `<div class="dr-or"><span>${a.icon} ${esc(a.name)}</span>${trs.outlook[a.id].map(o => `<span class="dr-oc ${o.bandTone || 'm'}" title="${esc(o.text)}">${o.score}</span>`).join('')}</div>`).join('')}</div><div class="rd-w"><small>Year 1 runs from now for twelve months. Each number blends your natal score for the area, the dasha running in the middle of that year and how long Jupiter and Saturn together influence the area's houses (the double transit).</small></div>`);
+      S.transits.push(`<details class="dr-vg"><summary><b>Double-transit windows by area</b> <small>Jupiter and Saturn together</small></summary><div class="dr-vg-b">${LA.map(a => `<h5>${esc(a.icon)} ${esc(a.name)}</h5>${trs.double[a.id].length ? trs.double[a.id].map(w => `<p>${esc(w.text)}</p>`).join('') : '<p>No double transit on this area in the next three years.</p>'}`).join('')}</div></details>`);
+    }
+  }
   S.time.push(timelineHtml(c));
   S.houses = cards;
   const SEC = [['intro', '✨', 'Overview', 'Start here: what this reading is and your signature at a glance'], ['you', '🧭', 'Who you are', 'Rising sign, Moon and birth star'],
     ['planets', '🪐', 'Planet roles', 'What each planet does for you, and how they work together'], ['yogas', '🔮', 'Yogas', 'Supportive and notable planet combinations'],
-    ['doshas', '⚠️', 'Points to watch', 'Areas that need extra care, with what eases them'], ['areas', '📊', 'Life areas', 'Career, money, marriage and six more, scored and explained'], ['vargas', '🔭', 'Divisional charts', 'Marriage, career, children, property, learning and spirit in detail'], ['time', '⏳', 'Life timeline', 'Every Mahadasha, now and the next five years'], ['houses', '🏠', 'House by house', 'The twelve areas of life, one card each']]
+    ['doshas', '⚠️', 'Points to watch', 'Areas that need extra care, with what eases them'], ['areas', '📊', 'Life areas', 'Career, money, marriage and six more, scored and explained'], ['vargas', '🔭', 'Divisional charts', 'Marriage, career, children, property, learning and spirit in detail'], ['time', '⏳', 'Life timeline', 'Every Mahadasha, now and the next five years'], ['transits', '🪐', 'Transits and Sade Sati', 'What the slow planets are doing now and next'], ['houses', '🏠', 'House by house', 'The twelve areas of life, one card each']]
     .filter(x => S[x[0]].length), nav = SEC.map((x, i) => `<button type="button" class="dr-nb" data-sec="${x[0]}">${x[1]} ${esc(x[2])}</button>`).join('');
   return `<nav class="dr-nav" aria-label="Sections of the reading">${nav}</nav>` + SEC.map((x, i) => `<section class="dr-sec" data-sec="${x[0]}"><div class="dr-sh"><span class="dr-sn">${i + 1}</span><div><b>${esc(x[2])}</b><small>${esc(x[3])}</small></div></div>${S[x[0]].join('')}</section>`).join('');
 }
@@ -39012,6 +39034,7 @@ function reportText(c){
   PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) para(`${a} + ${x.with} in ${P[a].sign}:`, x.text); }));
   { const la2 = (typeof LAE !== 'undefined' && LAE) ? LAE.assess(c) : null; if (la2){ sub('LIFE AREAS (0-100, compared inside your own chart)'); la2.areas.forEach(x => para(`${x.name} - ${x.band} (${x.score}):`, x.headline.replace(/^[^.]*\.[^.]*\) ?/, '') + ' Right now: ' + (x.now.why.join('; ') || 'no direct link') + '. Next five years: ' + x.next5.why.join('; ') + '.')); if (typeof LAN !== 'undefined' && LAN) LAN.all(c).forEach(n => { sub(n.name.toUpperCase() + ' - THE FULL STORY'); n.paragraphs.forEach(q => para(q.h + ':', q.text)); }); } }
   { if (typeof VGR !== 'undefined' && VGR){ const vgr = VGR.all(c); if (vgr.length){ sub('DIVISIONAL CHARTS'); vgr.forEach(x => { para(`${x.name} - ${x.band} (${x.score}):`, ''); x.paragraphs.forEach(q => para(q.h + ':', q.text)); }); } } }
+  { if (typeof TRS !== 'undefined' && TRS){ const tr2 = TRS.assess(c, (typeof currentProfileForExport !== 'undefined') ? currentProfileForExport : null); sub('TRANSITS AND SADE SATI'); if (!tr2.available) para('Not shown:', tr2.notes.join(' ')); else { tr2.notes.forEach(n => para('Note:', n)); para('In short:', tr2.summary.join(' ')); tr2.sade.active.forEach(x => para(x.kind + ' - ' + x.name + ':', x.text)); if (!tr2.sade.active.length && tr2.sade.next) para('Sade Sati and Dhaiya:', 'Not running now. ' + tr2.sade.next.text); tr2.gochar.forEach(g => para(g.planet + ' now:', g.text)); tr2.calendar.forEach(x => para('Sign change:', x.text)); LAE.assess(c).areas.forEach(a => tr2.outlook[a.id].forEach(o => para(a.name + ', year ' + o.year + ':', o.text))); } } }
   { const yg2 = (typeof YGE !== 'undefined' && YGE) ? YGE.detect(c) : []; if (yg2.length){ sub('YOGAS IN YOUR CHART'); yg2.forEach(x => para(x.name + ':', x.text.replace(/^[^.]*\. /, ''))); } }
   PL.forEach(n => {
     const e = P[n]; if (!e) return;
@@ -42442,7 +42465,7 @@ const dig = s => !s ? '' : String(s).replace('OwnSign', 'Own sign').replace(/([a
 const SECTIONS = [
   ['overview', 'Your signature at a glance'], ['chart', 'Birth chart and planet positions'], ['foundation', 'Who you are: rising sign, Moon and birth star'],
   ['roles', 'What each planet does for you'], ['yogas', 'Yogas: notable combinations'], ['cautions', 'Points that need care'],
-  ['areas', 'Nine areas of life, compared'], ['vargas', 'Divisional charts: marriage, career, children and more'], ['timeline', 'Life timeline (Mahadashas)'], ['houses', 'House by house'], ['strength', 'Strength of the twelve houses']];
+  ['areas', 'Nine areas of life, compared'], ['vargas', 'Divisional charts: marriage, career, children and more'], ['timeline', 'Life timeline (Mahadashas)'], ['transits', 'Transits and Sade Sati'], ['houses', 'House by house'], ['strength', 'Strength of the twelve houses']];
 const THEMES = {
   ivory:    { name: 'Ivory & gold', cover1: '#fbf6e9', cover2: '#efe2bd', coverInk: '#2b2418', ink: '#262626', soft: '#6b6355', accent: '#a8801f', accent2: '#e9d9a6', rule: '#e4dcc6', card: '#fdfaf1', page: '#ffffff' },
   midnight: { name: 'Midnight & gold', cover1: '#10142b', cover2: '#2a2350', coverInk: '#f6ecd0', ink: '#20222e', soft: '#626675', accent: '#8a6a17', accent2: '#e3cf8d', rule: '#dedbe8', card: '#f8f7fc', page: '#ffffff' } };
@@ -42547,6 +42570,18 @@ function bTimeline(c, o){
   return `<p class="lead">${esc(VDA.data.intro)}</p><table class="tb"><thead><tr><th>Mahadasha</th><th>Dates</th><th>Age</th><th>Theme</th><th>Tone</th></tr></thead><tbody>${rows}</tbody></table>` +
     (up.length ? `<h3 class="grp">The next five years, sub-period by sub-period</h3><table class="tb"><thead><tr><th>Dates</th><th>Period</th><th>Tone</th><th>What the blend tends to feel like</th></tr></thead><tbody>${upRows}</tbody></table>` : '') + `<h3 class="grp">Every Mahadasha in words</h3>` + cards;
 }
+function bTransits(c, o){
+  if (typeof TRS === 'undefined' || !TRS) return ''; const T = TRS.assess(c, (typeof currentProfileForExport !== 'undefined') ? currentProfileForExport : null);
+  if (!T.available) return `<p class="lead">${esc(T.notes.join(' '))}</p>`;
+  const fj = jd => jd == null ? 'open' : MON[jdToDate(jd).getUTCMonth()] + ' ' + jdToDate(jd).getUTCFullYear(), LA = LAE.assess(c).areas;
+  const sade = T.sade.active.length ? T.sade.active.map(x => card(`${esc(x.kind)}: ${esc(x.name)} ${chip(x.level, x.level === 'lighter' ? 'g' : x.level === 'heavier' ? 'b' : '')}`, `<p>${esc(x.text)}</p>`, 'now')).join('') : card('Sade Sati and Dhaiya', `<p>Not running now. ${esc(T.sade.next ? T.sade.next.text : '')}</p>`);
+  const cyc = `<table class="tb"><thead><tr><th>Period</th><th>Stage</th><th>Dates</th><th></th></tr></thead><tbody>${T.sade.cycles.map(cy => cy.phases.map(p => `<tr class="${cy.status === 'now' ? 'now' : cy.status === 'past' ? 'past' : ''}"><td>${esc(cy.kind)}</td><td>${esc(p.name)} (${esc(p.sign)})</td><td>${fj(p.start)} – ${fj(p.end)}</td><td>${cy.status === 'now' ? 'running' : cy.status}</td></tr>`).join('')).join('')}</tbody></table>`;
+  const gt = `<table class="tb"><thead><tr><th>Planet</th><th>Sign</th><th>Until</th><th>From the Moon</th><th>Tone</th></tr></thead><tbody>${T.gochar.map(g => `<tr><td><b>${esc(g.planet)}</b></td><td>${esc(g.sign)}</td><td>${fj(g.to)}</td><td>${ordn(g.houseFromMoon)} house</td><td>${chip(g.tone, g.tone === 'helpful' ? 'g' : 'b')}</td></tr>`).join('')}</tbody></table>` + T.gochar.map(g => `<p>${esc(g.text)}</p>`).join('');
+  const cal = `<table class="tb"><thead><tr><th>Date</th><th>Planet</th><th>Enters</th><th>From the Moon</th><th>Tone</th></tr></thead><tbody>${T.calendar.map(x => `<tr><td>${fj(x.jd)}</td><td><b>${esc(x.planet)}</b></td><td>${esc(x.sign)}</td><td>${ordn(x.houseFromMoon)} house</td><td>${chip(x.tone, x.tone === 'helpful' ? 'g' : 'b')}</td></tr>`).join('')}</tbody></table>`;
+  const ol = `<table class="tb"><thead><tr><th>Area</th><th>Year 1</th><th>Year 2</th><th>Year 3</th></tr></thead><tbody>${LA.map(a => `<tr><td><b>${esc(a.icon)} ${esc(a.name)}</b></td>${T.outlook[a.id].map(o => `<td>${chip(o.band + ' ' + o.score, o.bandTone)}</td>`).join('')}</tr>`).join('')}</tbody></table><p class="sm">${esc(T.outlook[LA[0].id].map(o => 'Year ' + o.year + ': ' + o.label).join(' · '))}. Each number blends the natal score of the area, the dasha running in the middle of that year, and how long Jupiter and Saturn together influence its houses (the double transit).</p>`;
+  const dbl = LA.filter(a => T.double[a.id].length).map(a => `<p><b>${esc(a.icon)} ${esc(a.name)}:</b> ${T.double[a.id].map(w => esc(w.text.replace('Jupiter and Saturn both influence your ', '')).replace(/ from /, ', ')).join(' ')}</p>`).join('');
+  return `<p class="lead">${esc(T.note)}</p><p><b>In short.</b> ${esc(T.summary.join(' '))}</p>${sade}<h3 class="grp">Every Sade Sati and Dhaiya in your life</h3>${cyc}<h3 class="grp">Where the slow planets are now</h3>${gt}<h3 class="grp">Sign changes in the next three years</h3>${cal}<h3 class="grp">Year by year, area by area</h3>${ol}${dbl ? `<h3 class="grp">Double-transit windows (Jupiter and Saturn together)</h3>${dbl}` : ''}`;
+}
 function bHouses(c, o){
   const r = VDB.reading(c), D = VDB.data, asc = SIGN.indexOf(r.lagna.sign), out = [];
   for (let n = 1; n <= 12; n++){
@@ -42565,8 +42600,8 @@ function bStrength(c){
   return `<p class="lead">Sarva Ashtakavarga points for each house, counted from the rising sign. A house above the average of ${avg.toFixed(1)} tends to get more support; below it tends to need more of your own effort.</p>${savSvg(c, o_theme)}` +
     `<p><b>Best supported:</b> ${hi.map(x => `${nmh(x[1])}, ${x[0]} points`).join('; ')}.</p><p><b>Needs more effort:</b> ${lo.map(x => `${nmh(x[1])}, ${x[0]} points`).join('; ')}.</p>`;
 }
-const BUILD = { overview: bOverview, chart: bChart, foundation: bFoundation, roles: bRoles, yogas: bYogas, cautions: bCautions, areas: bAreas, vargas: bVargas, timeline: bTimeline, houses: bHouses, strength: bStrength };
-const SUB = { overview: 'The main threads of your chart in plain language', chart: 'Where every planet stands at your birth', foundation: 'The base layer of the whole reading', roles: 'How each planet works for your rising sign', yogas: 'Supportive and notable planet combinations', cautions: 'Areas that deserve extra care', areas: 'Career, money, marriage and six more, scored and explained', vargas: 'Six zoom-in charts for the main areas of life', timeline: 'The stages of your life, with dates', houses: 'The twelve areas of life, one by one', strength: 'Where your chart has more or less support' };
+const BUILD = { overview: bOverview, chart: bChart, foundation: bFoundation, roles: bRoles, yogas: bYogas, cautions: bCautions, areas: bAreas, vargas: bVargas, timeline: bTimeline, transits: bTransits, houses: bHouses, strength: bStrength };
+const SUB = { overview: 'The main threads of your chart in plain language', chart: 'Where every planet stands at your birth', foundation: 'The base layer of the whole reading', roles: 'How each planet works for your rising sign', yogas: 'Supportive and notable planet combinations', cautions: 'Areas that deserve extra care', areas: 'Career, money, marriage and six more, scored and explained', vargas: 'Six zoom-in charts for the main areas of life', timeline: 'The stages of your life, with dates', transits: 'What the slow planets are doing now and over the next three years', houses: 'The twelve areas of life, one by one', strength: 'Where your chart has more or less support' };
 
 /* ---------- the document ---------- */
 function css(th, paper){
@@ -43634,6 +43669,231 @@ window.VGR = (function(D){
   function all(c){ return D.order.map(k => chart(c, k)).filter(Boolean); }
   return { data: D, chart, all, keys: D.order };
 })(VGR_DATA);
+<\/script>
+<script>
+/* ============================================================================
+   GENERATED by tools/reading_gen (edit the tables in tools/reading_gen/build_ts.py, then run tools/reading_gen/regen.sh). Do not hand-edit this file.
+   TRANSITS AND SADE SATI (TRS): what the slow planets are doing now and over the next three years, layer schema v1.1.
+   TRS.assess(chart, profile, {now}) -> { available, now, sade{active[], next, cycles[]}, gochar[], calendar[], double{area:[windows]}, outlook{area:[{year...}]}, summary[], text }
+   Dates come from the app's own engine (computeTransits in js/46: Saturn/Jupiter/Rahu/Ketu sign stays and the Sade Sati / Dhaiya cycles); houses are whole-sign from the Moon
+   and from the Lagna. Double transit = Jupiter and Saturn both occupy or aspect the same house. Outlook per area and year blends the natal score, the dasha at mid-year and the double-transit cover.
+   Reliable range: 1801-2049 (planet formulas); outside it the result says so. Needs js/46 (computeTransits), js/87 (VDB), js/90 (VMF), js/94 (LAE).
+   ============================================================================ */
+const TRS_DATA = {
+ "schema": "layer-v1.1",
+ "phases": {
+  "Sade Sati": {
+   "1": {
+    "name": "rising phase",
+    "sub": "Saturn in the 12th sign from your Moon",
+    "theme": "expenses, sleep, rest, endings and a need to simplify",
+    "feels": "a quiet pressure that asks you to let go of what you carry without need",
+    "helps": [
+     "Cut one recurring expense or commitment that no longer serves you.",
+     "Keep a fixed sleep time and a short evening wind-down.",
+     "Finish unfinished things instead of starting new ones."
+    ],
+    "watch": "worry that builds up in the background, or spending to soothe it",
+    "ask": "Looking back at the last time Saturn stood here, did you let go of something that was holding you back?"
+   },
+   "2": {
+    "name": "peak phase",
+    "sub": "Saturn over your Moon sign",
+    "theme": "your mind, mood, health habits, home life and sense of identity",
+    "feels": "a weighty period where responsibilities feel heavier and your inner life asks for more care",
+    "helps": [
+     "Protect sleep, food and a daily walk before anything else.",
+     "Talk to one steady person about what you carry instead of holding it alone.",
+     "Choose a few responsibilities and do them well."
+    ],
+    "watch": "low mood, self-doubt or taking on more than you can carry",
+    "ask": "When Saturn last crossed your Moon sign, which habits or relationships were tested, and what did you learn from it?"
+   },
+   "3": {
+    "name": "settling phase",
+    "sub": "Saturn in the 2nd sign from your Moon",
+    "theme": "money, family, speech and rebuilding on firmer ground",
+    "feels": "a slow rebuilding stage where steady effort starts to show",
+    "helps": [
+     "Make a simple budget and keep to it for three months.",
+     "Choose your words carefully with family and repair one strained bond.",
+     "Build one habit that pays off slowly."
+    ],
+    "watch": "tension around money or family talk, and impatience for results",
+    "ask": "In the years after Saturn last passed your Moon sign, did money or family matters settle into a firmer pattern?"
+   }
+  },
+  "Dhaiya (4th)": {
+   "4": {
+    "name": "Saturn in the 4th from your Moon",
+    "sub": "often called Kantaka Shani",
+    "theme": "home, family peace, property, vehicles and your sense of security",
+    "feels": "a stretch where home matters and inner peace ask for more attention and patience",
+    "helps": [
+     "Keep home routines simple and predictable.",
+     "Check documents and costs before property or vehicle decisions.",
+     "Make time for a calm place that is yours."
+    ],
+    "watch": "restlessness at home, or big property decisions made in a hurry",
+    "ask": "When Saturn was last in this position, were home or family matters slower or heavier than usual?"
+   }
+  },
+  "Dhaiya (8th)": {
+   "8": {
+    "name": "Saturn in the 8th from your Moon",
+    "sub": "often called Ashtama Shani",
+    "theme": "sudden change, health routines, shared money and what lies under the surface",
+    "feels": "a period of deep change where you are asked to be careful, thorough and patient",
+    "helps": [
+     "Keep health check-ups on time.",
+     "Avoid risky loans or joint money commitments you do not fully understand.",
+     "Use the time for research, repair and quiet inner work."
+    ],
+    "watch": "taking risks to speed things up, or ignoring small health signals",
+    "ask": "When Saturn was last in this position, did something change suddenly and teach you to be more careful?"
+   }
+  }
+ },
+ "gochar": {
+  "Saturn": {
+   "good": "rewards patience, structure and honest work",
+   "test": "asks for patience, responsibility and slower progress",
+   "fav": [
+    3,
+    6,
+    11
+   ]
+  },
+  "Jupiter": {
+   "good": "tends to bring growth, help and a more hopeful outlook",
+   "test": "can bring overconfidence, spreading yourself thin, or support that arrives late",
+   "fav": [
+    2,
+    5,
+    7,
+    9,
+    11
+   ]
+  },
+  "Rahu": {
+   "good": "can bring unusual openings and ambition that pays off",
+   "test": "can bring restlessness, confusion or chasing too much",
+   "fav": [
+    3,
+    6,
+    10,
+    11
+   ]
+  },
+  "Ketu": {
+   "good": "can bring clarity and the ability to let go",
+   "test": "can bring detachment, loss of interest or a feeling of being unsettled",
+   "fav": [
+    3,
+    6,
+    11
+   ]
+  }
+ },
+ "note": "Transits show the weather of a period, not fixed events. The natal chart and the running dasha decide how much of it you feel; use the questions to test each statement against your own past."
+};
+
+window.TRS = (function(D){
+  'use strict';
+  if (typeof computeTransits !== 'function' || typeof LAE === 'undefined' || !LAE || typeof VMF === 'undefined' || !VMF) return null;
+  const SIGN = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], DAY = 365.25, EPS = 1e9;
+  const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
+  const nm = arr => arr.length < 2 ? arr.join('') : arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1];
+  const lc = s => s.charAt(0).toLowerCase() + s.slice(1), cap = s => s.charAt(0).toUpperCase() + s.slice(1), clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const jdOf = d => toJulianDay(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds());
+  const fmt = jd => { if (jd == null) return 'a date beyond the range'; const d = jdToDate(jd); return MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); };
+  const dateOf = jd => jdToDate(jd), inRange = (s, e, t) => (s == null || s <= t) && (e == null || t < e);
+  const BANDS = LAE.data.bands;
+  const cache = new WeakMap();
+  const trBase = (chart, profile) => { let r = cache.get(chart); if (!r){ r = computeTransits(chart, profile); cache.set(chart, r); } return r; };
+
+  // houses that a planet in sign s occupies or aspects (whole-sign, counted from the Lagna): Jupiter 5/7/9, Saturn 3/7/10
+  const ASP = { Jupiter: [5, 7, 9], Saturn: [3, 7, 10] };
+  const touches = (planet, sign, asc) => { const h0 = ((sign - asc + 12) % 12) + 1, s = new Set([h0]); (ASP[planet] || []).forEach(o => s.add(((h0 + o - 2) % 12) + 1)); return s; };
+  function intervals(stays, planet, asc, house, t0, t1){            // merged [start,end] windows where the planet touches the house, clipped to [t0,t1]
+    const out = []; stays.forEach(s => { if (!touches(planet, s.sign, asc).has(house)) return; const a = Math.max(t0, s.start == null ? -EPS : s.start), b = Math.min(t1, s.end == null ? EPS : s.end); if (b > a){ const l = out[out.length - 1]; if (l && Math.abs(l[1] - a) < 1) l[1] = b; else out.push([a, b]); } });
+    return out;
+  }
+  const meet = (A, B) => { const o = []; A.forEach(a => B.forEach(b => { const s = Math.max(a[0], b[0]), e = Math.min(a[1], b[1]); if (e - s >= 20) o.push([s, e]); })); return o; };
+  const union = list => { const L = list.slice().sort((x, y) => x[0] - y[0]), o = []; L.forEach(w => { const l = o[o.length - 1]; if (l && w[0] <= l[1]) l[1] = Math.max(l[1], w[1]); else o.push([w[0], w[1]]); }); return o; };
+  const cover = (wins, a, b) => wins.reduce((s, w) => s + Math.max(0, Math.min(w[1], b) - Math.max(w[0], a)), 0);
+
+  function ease(chart, opts){                                        // how heavy a Saturn cycle tends to feel for this chart, with the reasons
+    const reasons = []; let e = 0, P = chart.planets;
+    const F = VDB.functionalNature(chart.ascendant.sign).Saturn.kind;
+    if (F === 'Yogakaraka' || F === 'Functional benefic'){ e += 1; reasons.push('Saturn is a ' + F.toLowerCase() + ' for your rising sign, which tends to soften its lessons'); }
+    else if (F === 'Functional malefic'){ e -= 1; reasons.push('Saturn is a functional malefic for your rising sign, so its lessons tend to be firmer'); }
+    const sd = P.Saturn.dignity && P.Saturn.dignity.status; if (sd === 'Exalted' || sd === 'OwnSign' || sd === 'Moolatrikona'){ e += 1; reasons.push('Saturn is strong in your birth chart, so it handles its own cycle well'); } else if (sd === 'Debilitated'){ e -= 1; reasons.push('Saturn is in a weaker sign in your birth chart, so its cycle may feel heavier'); }
+    const mp = chart.shadbala && chart.shadbala.planets && chart.shadbala.planets.Moon && chart.shadbala.planets.Moon.percentOfRequired; if (mp != null){ if (mp >= 105){ e += 1; reasons.push('your Moon is well supplied with strength, which helps you stay steady'); } else if (mp < 80){ e -= 1; reasons.push('your Moon has less strength than it needs, so rest and routine matter more'); } }
+    return { ease: e, level: e >= 2 ? 'lighter' : e <= -2 ? 'heavier' : 'moderate', reasons };
+  }
+
+  function assess(chart, profile, opts){
+    const now = (opts && opts.now) || new Date(), nowJD = jdOf(now), moon = chart.planets.Moon.sign, asc = chart.ascendant.sign;
+    const out = { available: true, now, nowJD, notes: [], sade: { active: [], next: null, cycles: [] }, gochar: [], calendar: [], double: {}, outlook: {}, summary: [], note: D.note };
+    const y = now.getUTCFullYear(); if (y < 1801 || y + 3 > 2049) out.notes.push('Part of this period is outside 1801-2049, where the planet formulas are not reliable.');
+    if (nowJD < chart.julianDay - 3 * DAY || nowJD + 3 * DAY > chart.julianDay + 100 * DAY){ out.available = false; out.notes.push('This chart is too far from the date for the transit tables (they cover 100 years from birth), so transits are not shown.'); out.text = 'Transits are not shown for this date.'; return out; }
+    const T = trBase(chart, profile), hM = s => ((s - moon + 12) % 12) + 1, hL = s => ((s - asc + 12) % 12) + 1, I = Math.round;
+    const ez = ease(chart);
+    // ---------- Sade Sati and Dhaiya
+    const kinds = [['Sade Sati', T.sadeSati], ['Dhaiya (4th)', T.kantaka], ['Dhaiya (8th)', T.ashtama]], relMap = { 'Sade Sati': { 11: 1, 0: 2, 1: 3 }, 'Dhaiya (4th)': { 3: 4 }, 'Dhaiya (8th)': { 7: 8 } };
+    kinds.forEach(([kind, list]) => list.forEach(c => {
+      const ph = c.phases.map(p => { const k = relMap[kind][p.rel], F = D.phases[kind][k]; return { kind, phase: k, name: F.name, sub: F.sub, sign: SIGN[p.sign], start: p.start, end: p.end, theme: F.theme, feels: F.feels, helps: F.helps, watch: F.watch, ask: F.ask }; });
+      const cyc = { kind, start: c.start, end: c.end, phases: ph, status: inRange(c.start, c.end, nowJD) ? 'now' : (c.end != null && c.end <= nowJD) ? 'past' : 'ahead' };
+      out.sade.cycles.push(cyc);
+      ph.forEach(p => { if (inRange(p.start, p.end, nowJD)){
+        const jup = T.stays.Jupiter.find(s => inRange(s.start, s.end, nowJD)), jh = jup ? hM(jup.sign) : 0, jgood = D.gochar.Jupiter.fav.includes(jh);
+        const rs = ez.reasons.slice(); let e = ez.ease; if (jup){ if (jgood){ e += 1; rs.push(`Jupiter is in your ${ordn(jh)} house from the Moon right now, which tends to give support`); } else rs.push(`Jupiter is in your ${ordn(jh)} house from the Moon right now, which gives less direct support`); }
+        const level = e >= 2 ? 'lighter' : e <= -2 ? 'heavier' : 'moderate';
+        out.sade.active.push(Object.assign({}, p, { cycleStart: c.start, cycleEnd: c.end, level, reasons: rs, text: `You are in the ${p.name} of ${kind} (${p.sub}), from ${fmt(p.start)} to ${fmt(p.end)}. This stage tends to be about ${p.theme}. It often feels like ${p.feels}. For your chart it tends to feel ${level} than average${rs.length ? ' because ' + nm(rs.map(lc)) : ''}. What helps: ${p.helps.join(' ')} Watch for ${p.watch}. ${p.ask}` }));
+      } });
+    }));
+    out.sade.cycles.sort((a, b) => (a.start == null ? -EPS : a.start) - (b.start == null ? -EPS : b.start));
+    const ahead = out.sade.cycles.filter(c => c.status === 'ahead' && c.start != null).sort((a, b) => a.start - b.start)[0];
+    if (ahead) out.sade.next = { kind: ahead.kind, start: ahead.start, text: `The next ${ahead.kind} period starts in ${fmt(ahead.start)}${ahead.phases[0] ? ' (' + ahead.phases[0].sub + ')' : ''}.` };
+    // ---------- slow planets now
+    ['Saturn', 'Jupiter', 'Rahu', 'Ketu'].forEach(p => {
+      const s = T.stays[p].find(x => inRange(x.start, x.end, nowJD)); if (!s) return; const G = D.gochar[p], h1 = hM(s.sign), h2 = hL(s.sign), good = G.fav.includes(h1), A = VMF.data.arena[h1 - 1];
+      out.gochar.push({ planet: p, sign: SIGN[s.sign], signIndex: s.sign, from: s.start, to: s.end, houseFromMoon: h1, houseFromLagna: h2, tone: good ? 'helpful' : 'testing',
+        text: `${p} is in ${SIGN[s.sign]} until ${fmt(s.end)}, your ${ordn(h1)} house from the Moon (${A.theme}) and your ${ordn(h2)} house from the Lagna. For this stretch it ${good ? G.good : G.test} around ${A.theme}.` });
+    });
+    // ---------- sign-change calendar, next three years
+    const t1 = nowJD + 3 * DAY;
+    ['Saturn', 'Jupiter', 'Rahu', 'Ketu'].forEach(p => T.stays[p].forEach(s => { if (s.start != null && s.start > nowJD && s.start <= t1){ const G = D.gochar[p], h1 = hM(s.sign), A = VMF.data.arena[h1 - 1], good = G.fav.includes(h1);
+      out.calendar.push({ planet: p, sign: SIGN[s.sign], jd: s.start, date: dateOf(s.start), houseFromMoon: h1, houseFromLagna: hL(s.sign), tone: good ? 'helpful' : 'testing', text: `${fmt(s.start)}: ${p} enters ${SIGN[s.sign]}, your ${ordn(h1)} house from the Moon (${A.theme}); it ${good ? G.good : G.test} there.` }); } }));
+    out.calendar.sort((a, b) => a.jd - b.jd);
+    // ---------- double transit windows per life area (Jupiter and Saturn both occupy/aspect the same house)
+    const la = LAE.assess(chart, { now }), areas = la.areas;
+    const win = {};
+    areas.forEach(a => { const all = []; a.primary.forEach(h => { const J = intervals(T.stays.Jupiter, 'Jupiter', asc, h, nowJD, t1), S = intervals(T.stays.Saturn, 'Saturn', asc, h, nowJD, t1); meet(J, S).forEach(w => all.push([w[0], w[1], h])); });
+      win[a.id] = all.sort((x, y) => x[0] - y[0]); out.double[a.id] = all.map(w => ({ start: w[0], end: w[1], house: w[2], text: `Jupiter and Saturn both influence your ${ordn(w[2])} house from ${fmt(w[0])} to ${fmt(w[1])}.` })); });
+    // ---------- year-by-year outlook per area (three years from now)
+    for (let i = 0; i < 3; i++){
+      const a = nowJD + i * DAY, b = a + DAY, mid = new Date(now.getTime() + (i + 0.5) * DAY * 864e5), lm = LAE.assess(chart, { now: mid }), label = `${MON[dateOf(a).getUTCMonth()]} ${dateOf(a).getUTCFullYear()} to ${MON[dateOf(b).getUTCMonth()]} ${dateOf(b).getUTCFullYear()}`;
+      areas.forEach((ar, k) => {
+        const U = union(win[ar.id].map(w => [w[0], w[1]])), frac = cover(U, a, b) / DAY, tScore = 40 + 60 * Math.min(1, frac / 0.5), dScore = lm.areas[k].now.score;
+        const sc = I(clamp(0.4 * ar.score + 0.35 * dScore + 0.25 * tScore, 3, 97)), band = BANDS.find(x => sc >= x[0]), months = Math.round(frac * 12);
+        const hs = [...new Set(win[ar.id].filter(w => w[1] > a && w[0] < b).map(w => w[2]))];
+        (out.outlook[ar.id] = out.outlook[ar.id] || []).push({ year: i + 1, label, score: sc, band: band[1], bandTone: band[2], parts: { natal: ar.score, dasha: dScore, transit: I(tScore) }, doubleMonths: months,
+          text: `${label}: ${band[1].toLowerCase()} (${sc}/100). ${lm.areas[k].now.why[0] ? cap(lm.areas[k].now.why[0]) + '. ' : ''}${months > 0 ? `Jupiter and Saturn both influence your ${nm(hs.map(ordn))} house for about ${months} month${months > 1 ? 's' : ''}, which tends to support progress in this area.` : 'No double transit touches this area in this stretch, so progress rests more on your own effort and the dasha.'}` });
+      });
+    }
+    // ---------- summary and text
+    if (out.sade.active.length) out.sade.active.forEach(x => out.summary.push(`${x.kind}: ${x.name} (${x.level} for your chart) until ${fmt(x.end)}.`)); else out.summary.push(out.sade.next ? 'No Sade Sati or Dhaiya is running now. ' + out.sade.next.text : 'No Sade Sati or Dhaiya is running now.');
+    out.gochar.forEach(g => out.summary.push(`${g.planet} in ${g.sign} (${ordn(g.houseFromMoon)} from the Moon, ${g.tone}).`));
+    const yr1 = areas.map(ar => [ar.name, out.outlook[ar.id][0].score]).sort((x, y) => y[1] - x[1]);
+    out.summary.push(`Strongest areas in the next twelve months: ${yr1.slice(0, 2).map(x => x[0].toLowerCase()).join(' and ')}. Needing most care: ${yr1.slice(-2).reverse().map(x => x[0].toLowerCase()).join(' and ')}.`);
+    out.text = out.summary.join(' ');
+    return out;
+  }
+  return { data: D, assess };
+})(TRS_DATA);
 <\/script>
 <script>
 /* ============================================================================

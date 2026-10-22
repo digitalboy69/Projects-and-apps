@@ -150,6 +150,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
 - `apps/birth-chart/js/95-life-narratives.js` — Life-area narratives (global LAN), GENERATED: a 450-700 word personal reading for each of the 9 life areas, composed from the engine facts (stance by band, house-lord arena, strengths, care points, yoga modifiers, timing, practices, self-check questions)
 - `apps/birth-chart/js/96-varga-reading.js` — Divisional chart readings (global VGR), GENERATED: D9, D10, D7, D4, D24, D20 each with rising sign, the houses that matter, planet-by-planet text, strength summary, vargottama and a score; positions come from the app's own varga engine
+- `apps/birth-chart/js/97-transit-reading.js` — Transits and Sade Sati (global TRS), GENERATED: Sade Sati/Dhaiya phase texts and ease for your chart, where Saturn/Jupiter/Rahu/Ketu are now (from the Moon and Lagna), a three-year sign-change calendar, double-transit windows and a year-by-year outlook per life area; dates come from the app's own computeTransits
 - `apps/birth-chart/js/90-year-timeline-engine.js` — Year Timeline scanner (global YT): date range -> sign/nakshatra changes, stations, transit contacts with natal points, lunations/eclipses, dasha changes (3 levels), Sade Sati edges, Jupiter+Saturn house segments; facts only
 - `apps/birth-chart/js/91-year-timeline-writer.js` — Year Timeline writer (global YTW): turns scan result into one structured Markdown file for an AI (planet role map, house map, dasha table, event list)
 - `apps/birth-chart/js/92-year-timeline-ui.js` — "Year Timeline File" panel (panel-yeartimeline): two dates, options, Copy / Download .md
@@ -318,6 +319,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tools/reading_gen/build_la.py` — life-area table (houses, significators, varga, yogas per area), weights, calibration constants and the scoring code; writes js/94-life-areas.js
 - `tools/reading_gen/build_ln.py` — narrative tables (noun/win/slip/stance/practices/questions per area, part sentences, timing, closing) + composer; writes js/95-life-narratives.js
 - `tools/reading_gen/build_vg.py` — varga table (domain, houses, key planets, intro, questions) + composer; writes js/96-varga-reading.js
+- `tools/reading_gen/build_ts.py` — transit wording tables (phases, favourable houses) + composer; writes js/97-transit-reading.js
 - `tools/reading_gen/regen.sh` — regenerates all four reading databases (js/87, 89, 90, 91); afterwards `git status` must show no change unless a table was edited
 - `tools/reading_gen/regen.sh — regenerates all four reading databases; afterwards `git status` must show no change unless a table was edited`
 - `tools/ai/session.sh` — AI session helper: start / check / test / ship (commit, rebase on moved main, check, push branch, fast-forward main; token only via GH_TOKEN env)
@@ -341,6 +343,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/life_narratives_test.py` — Life-area narratives: 12 charts x 9 areas (length, structure, wording, consistency with scores), variation, sensitivity, Deep reading + report + PDF wiring
 - `tests/varga_reading_test.py` — Divisional chart readings: 12 charts x 6 vargas cross-checked with the app's own varga data and VDB's D9 vargottama, variation, one-fact sensitivity, Deep reading + report + PDF wiring
+- `tests/transit_reading_test.py` — Transit reading: planet signs, sign-change dates, Sade Sati/Dhaiya phase and double-transit windows checked against the ephemeris on 12 charts; outlook bounds; date sensitivity; Deep reading + report + PDF wiring
 - `tests/prod_forms_check.py` — Deep reading inside the real production forms (single-file build + customer edition): 6 tabs, 12 house cards, 9 planet blocks, all layers loaded, report section
 - `tests/customer_smoke.py` — customer edition smoke test
 - `tests/datefinder_test.py` — Date Finder test
