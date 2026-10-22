@@ -158,11 +158,12 @@ function pane(c){
     cards.push(`<details class="vx-pl"${n === 1 ? ' open' : ''}><summary><span class="vx-gl">${n}</span><div><b>${ordn(n)} house: ${esc(H.name)}</b><small>${esc(S.name)} · lord ${esc(hl.lord)} in the ${ordn(hl.placedIn)}</small></div>${chip(occ.length ? 'g' : '', tag)}</summary><div class="rd-b">${body.join('')}</div></details>`);
   }
   const la = (typeof LAE !== 'undefined' && LAE) ? LAE.assess(c) : null;
+  const ln = (la && typeof LAN !== 'undefined' && LAN) ? LAN.all(c) : [], lnOf = id => ln.find(y => y.id === id);
   if (la){ S.areas.push(note('g', `📊 <b>Nine areas of life, compared</b><br><small>Each score (0 to 100) blends house strength, the strength of the house lords and natural significators, the matching divisional chart, related yogas and the running dasha. It compares the areas inside your own chart. It is not a prediction.</small>`));
     la.areas.forEach(x => S.areas.push(`<div class="dr-area"><div class="dr-ah"><span class="dr-ai">${x.icon}</span><b>${esc(x.name)}</b>${chip(x.bandTone, x.band)}<span class="dr-as">${x.score}</span></div><div class="dr-bar"><i class="${x.bandTone || 'm'}" style="width:${x.score}%"></i></div>` +
       `<div class="dr-parts">${[['house', 'Houses'], ['lords', 'Lords'], ['karaka', 'Significators'], ['varga', 'Divisional'], ['yogas', 'Yogas'], ['dasha', 'Timing']].map(k => `<span>${k[1]} <b>${x.parts[k[0]]}</b></span>`).join('')}</div>` +
       (x.pos.length ? `<ul class="dr-ul">${x.pos.map(t => `<li>✔ ${esc(t)}.</li>`).join('')}${x.neg.map(t => `<li>▲ ${esc(t)}.</li>`).join('')}</ul>` : '') +
-      `<div class="rd-w"><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}. <small>(${x.now.score}/100)</small></div><div class="rd-w"><b>Next five years:</b> ${esc(x.next5.why.join('; '))}. <small>(${x.next5.score}/100)</small></div></div>`)); }
+      `<div class="rd-w"><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}. <small>(${x.now.score}/100)</small></div><div class="rd-w"><b>Next five years:</b> ${esc(x.next5.why.join('; '))}. <small>(${x.next5.score}/100)</small></div>${lnOf(x.id) ? `<details class="dr-story"><summary>📖 Read the full story (about ${Math.round(lnOf(x.id).words / 10) * 10} words)</summary>${lnOf(x.id).paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('')}</details>` : ''}</div>`)); }
   S.time.push(timelineHtml(c));
   S.houses = cards;
   const SEC = [['intro', '✨', 'Overview', 'Start here: what this reading is and your signature at a glance'], ['you', '🧭', 'Who you are', 'Rising sign, Moon and birth star'],
@@ -199,7 +200,7 @@ function reportText(c){
   para(`Functional nature for ${asc} rising:`, Object.entries(r.functional).map(([p, v]) => `${p} ${v.kind.replace('Functional ', '').toLowerCase()}`).join('; ') + '.');
   if (typeof VMF !== 'undefined' && VMF) ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'].forEach(n => { const x = VMF.role(n, c.ascendant.sign); if (x) para(`${n} as ${x.kind.toLowerCase()}:`, x.text); });
   PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) para(`${a} + ${x.with} in ${P[a].sign}:`, x.text); }));
-  { const la2 = (typeof LAE !== 'undefined' && LAE) ? LAE.assess(c) : null; if (la2){ sub('LIFE AREAS (0-100, compared inside your own chart)'); la2.areas.forEach(x => para(`${x.name} - ${x.band} (${x.score}):`, x.headline.replace(/^[^.]*\.[^.]*\) ?/, '') + ' Right now: ' + (x.now.why.join('; ') || 'no direct link') + '. Next five years: ' + x.next5.why.join('; ') + '.')); } }
+  { const la2 = (typeof LAE !== 'undefined' && LAE) ? LAE.assess(c) : null; if (la2){ sub('LIFE AREAS (0-100, compared inside your own chart)'); la2.areas.forEach(x => para(`${x.name} - ${x.band} (${x.score}):`, x.headline.replace(/^[^.]*\.[^.]*\) ?/, '') + ' Right now: ' + (x.now.why.join('; ') || 'no direct link') + '. Next five years: ' + x.next5.why.join('; ') + '.')); if (typeof LAN !== 'undefined' && LAN) LAN.all(c).forEach(n => { sub(n.name.toUpperCase() + ' - THE FULL STORY'); n.paragraphs.forEach(q => para(q.h + ':', q.text)); }); } }
   { const yg2 = (typeof YGE !== 'undefined' && YGE) ? YGE.detect(c) : []; if (yg2.length){ sub('YOGAS IN YOUR CHART'); yg2.forEach(x => para(x.name + ':', x.text.replace(/^[^.]*\. /, ''))); } }
   PL.forEach(n => {
     const e = P[n]; if (!e) return;

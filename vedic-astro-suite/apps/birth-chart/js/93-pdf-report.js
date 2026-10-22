@@ -104,14 +104,13 @@ const isD = x => /^Doshas|^Cautions/.test(x.cat);
 function bYogas(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; const l = YGE.detect(c).filter(x => !isD(x)); return l.length ? `<p class="lead">${l.length} combinations were found by exact rules. Each is a tendency to test against your life, not a promise.</p>` + groups(l, o) : '<p>No notable yoga from the rules in this report was found in this chart.</p>'; }
 function bCautions(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; const l = YGE.detect(c).filter(isD); return l.length ? `<p class="lead">These are areas to look after, not verdicts. Where a condition eases the point, it is listed with it.</p>` + groups(l, o) : '<p>None of the points checked in this report stand out in this chart.</p>'; }
 function bAreas(c, o){
-  if (typeof LAE === 'undefined' || !LAE) return ''; const la = LAE.assess(c), th = o_theme;
+  if (typeof LAE === 'undefined' || !LAE) return ''; const la = LAE.assess(c), th = o_theme, ln = (typeof LAN !== 'undefined' && LAN) ? LAN.all(c) : [], lnOf = id => ln.find(y => y.id === id);
   const bar = x => `<div class="abar"><i class="${x.bandTone || 'm'}" style="width:${x.score}%"></i></div>`;
   const sum = `<table class="tb"><thead><tr><th>Area</th><th>Score</th><th></th><th>Band</th><th>Right now</th></tr></thead><tbody>${la.areas.map(x => `<tr><td><b>${esc(x.icon)} ${esc(x.name)}</b></td><td><b>${x.score}</b></td><td style="width:34%">${bar(x)}</td><td>${chip(x.band, x.bandTone)}</td><td>${x.now.score}</td></tr>`).join('')}</tbody></table>`;
   return `<p class="lead">${esc(la.note)} Each score blends house strength, house lords, natural significators, the matching divisional chart, related yogas and the running dasha.</p>${sum}` +
     la.areas.map(x => card(`${esc(x.icon)} ${esc(x.name)} ${chip(x.band + ' · ' + x.score, x.bandTone)} <small>${esc(x.theme)}</small>`, bar(x) +
       `<p class="sm">Houses ${x.parts.house} · Lords ${x.parts.lords} · Significators ${x.parts.karaka} · Divisional chart ${x.parts.varga} · Yogas ${x.parts.yogas} · Timing ${x.parts.dasha}</p>` +
-      (x.pos.length || x.neg.length ? `<ul class="ul">${x.pos.map(t => `<li>${esc(t)}.</li>`).join('')}${x.neg.map(t => `<li class="neg">${esc(t)}.</li>`).join('')}</ul>` : '') +
-      `<p><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}.</p><p><b>Next five years:</b> ${esc(x.next5.why.join('; '))}.</p>`, tone(x.bandTone === 'g' ? 'strong' : x.bandTone === 'b' ? 'mild' : ''))).join('');
+            (lnOf(x.id) ? lnOf(x.id).paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('') : `<p><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}.</p><p><b>Next five years:</b> ${esc(x.next5.why.join('; '))}.</p>`), tone(x.bandTone === 'g' ? 'strong' : x.bandTone === 'b' ? 'mild' : '') + ' long')).join('');
 }
 function bTimeline(c, o){
   if (typeof VDA === 'undefined' || !VDA || !c.dashaData) return '';
@@ -190,6 +189,7 @@ function css(th, paper){
   .chart-svg{width:100%;height:auto;background:#fffdf6;border-radius:2mm}.chart-svg .cp{font:700 15px Arial,sans-serif;fill:${th.ink};text-anchor:middle}.chart-svg .ca{font:700 13px Arial,sans-serif;fill:${th.accent};text-anchor:middle}.chart-svg .cs{font:11px Arial,sans-serif;fill:${th.soft};text-anchor:middle}
   .abar{height:2.4mm;border-radius:99px;background:#ece7d8;overflow:hidden;margin:1mm 0 2.5mm}.abar i{display:block;height:100%;background:${th.accent}}.abar i.g{background:#4f8a5b}.abar i.b{background:#c0733f}
   .ul{margin:0 0 5pt 5mm;padding:0;font-size:9.5pt}.ul li{margin:0 0 1.5mm}.ul li.neg{color:#9a4f24}
+  .card h5{font:700 8.5pt Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:${th.soft};margin:4mm 0 1mm}.card.long{break-inside:auto}
   .cap{font:8.5pt Arial,sans-serif;color:${th.soft};margin-top:2mm}
   .bar-svg{width:100%;height:auto;margin:2mm 0 5mm}.bar-svg .cv{font:700 11px Arial,sans-serif;fill:${th.ink}}.bar-svg .cl{font:10px Arial,sans-serif;fill:${th.soft}}
   .end{text-align:center;padding-top:30mm;color:${th.soft}}.end h2{color:${th.accent};font-size:20pt;margin-bottom:5mm}.end p{max-width:130mm;margin:0 auto 4mm}

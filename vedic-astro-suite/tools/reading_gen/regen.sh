@@ -9,3 +9,4 @@ python3 build_vmf.py                                   # js/90-reading-manifest.
 python3 build_vda.py                                   # js/91-dasha-reading.js       (tables inside build_vda.py)
 python3 build_yg.py                                    # js/92-yoga-engine.js         (table inside build_yg.py)
 python3 build_la.py                                    # js/94-life-areas.js          (table inside build_la.py)
+python3 build_ln.py                                    # js/95-life-narratives.js     (tables inside build_ln.py)
