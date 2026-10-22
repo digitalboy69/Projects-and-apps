@@ -1495,7 +1495,7 @@ const VDB_DATA = {
  "conjunction": {
   "Sun+Moon": "Born around the new Moon: strong will joined with emotion, a powerful mind that can feel overwhelmed. The Moon is weak in light, so peace of mind needs deliberate care.",
   "Sun+Mars": "Fiery, courageous and competitive; a natural fighter and leader. Strong energy, but heat and temper need cooling; good for defence, sports and surgery.",
-  "Sun+Mercury": "Budhaditya pattern: sharp intellect, skill in speech and administration. Mercury is nearly always close to the Sun, so the yoga is strongest when Mercury is not combust.",
+  "Sun+Mercury": "Budhaditya pattern: sharp intellect, skill in speech and administration. Mercury stays close to the Sun, so the yoga is strongest when Mercury is not combust.",
   "Sun+Jupiter": "Wisdom with authority: ethical leadership, respect for teachers and a strong sense of purpose. Pride in beliefs can make the person preachy.",
   "Sun+Venus": "Creative charm with a need for recognition. Love of art and status; the Sun's heat can scorch Venus, so relationships may feel pressured by ego.",
   "Sun+Saturn": "Father and authority themes are tense: duty versus ego. Delayed recognition that grows through persistence; discipline is learned early.",
@@ -1602,7 +1602,7 @@ const VDB_DATA = {
     53.3333,
     66.6667
    ],
-   "trait": "Curious, gentle and always searching; restless, with a love of travel, learning and variety.",
+   "trait": "Curious, gentle and keen to keep searching; restless, with a love of travel, learning and variety.",
    "careers": "research, writing, travel, design",
    "watch": "restlessness and indecision"
   },

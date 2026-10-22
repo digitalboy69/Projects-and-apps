@@ -2,7 +2,7 @@
 CONJ = {
  'Sun+Moon':"Born around the new Moon: strong will joined with emotion, a powerful mind that can feel overwhelmed. The Moon is weak in light, so peace of mind needs deliberate care.",
  'Sun+Mars':"Fiery, courageous and competitive; a natural fighter and leader. Strong energy, but heat and temper need cooling; good for defence, sports and surgery.",
- 'Sun+Mercury':"Budhaditya pattern: sharp intellect, skill in speech and administration. Mercury is nearly always close to the Sun, so the yoga is strongest when Mercury is not combust.",
+ 'Sun+Mercury':"Budhaditya pattern: sharp intellect, skill in speech and administration. Mercury stays close to the Sun, so the yoga is strongest when Mercury is not combust.",
  'Sun+Jupiter':"Wisdom with authority: ethical leadership, respect for teachers and a strong sense of purpose. Pride in beliefs can make the person preachy.",
  'Sun+Venus':"Creative charm with a need for recognition. Love of art and status; the Sun's heat can scorch Venus, so relationships may feel pressured by ego.",
  'Sun+Saturn':"Father and authority themes are tense: duty versus ego. Delayed recognition that grows through persistence; discipline is learned early.",
@@ -44,7 +44,7 @@ NAK = [
  ('Bharani','Venus','Yama',"yoni (the womb)",'Manushya',"Intense, determined and able to carry heavy responsibilities; strong feelings and a sense of justice.","law, care of others, transformation work, the arts","extremes and burdens"),
  ('Krittika','Sun','Agni',"razor / flame",'Rakshasa',"Sharp, purifying and direct; strong will and a gift for cutting through falsehood.","teaching, cooking, military, editing, leadership","sharp tongue and criticism"),
  ('Rohini','Moon','Brahma',"chariot / ox-cart",'Manushya',"Charming, creative and sensual; loves growth, beauty and material comfort. A Moon-favoured star.","arts, agriculture, fashion, hospitality, business","possessiveness and indulgence"),
- ('Mrigashira','Mars','Soma',"deer's head",'Deva',"Curious, gentle and always searching; restless, with a love of travel, learning and variety.","research, writing, travel, design","restlessness and indecision"),
+ ('Mrigashira','Mars','Soma',"deer's head",'Deva',"Curious, gentle and keen to keep searching; restless, with a love of travel, learning and variety.","research, writing, travel, design","restlessness and indecision"),
  ('Ardra','Rahu','Rudra',"teardrop",'Manushya',"Stormy, intense and transformative; sharp intellect that grows through struggle and renewal.","technology, research, crisis work, healing","emotional storms and harshness"),
  ('Punarvasu','Jupiter','Aditi',"quiver of arrows",'Deva',"Optimistic, forgiving and renewing; bounces back and likes simple, kind living.","teaching, counselling, writing, travel","over-trust and drifting"),
  ('Pushya','Saturn','Brihaspati',"cow's udder / lotus",'Deva',"Nourishing, wise and dependable; widely considered the most auspicious star for growth and care.","teaching, healing, advising, public service","rigidity and over-responsibility"),

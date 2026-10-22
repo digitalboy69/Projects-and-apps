@@ -158,6 +158,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
 _Generated 2026-10-22 - 1400 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-23 - 1368 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -450,3 +451,4 @@ shared/meta.css                                     98 lines    5 KB
 - Session 6 (cont.): S7 narratives `js/95-life-narratives.js` (`LAN.all/area`), composed from LAE facts; shown in Deep reading (fold-out), report and PDF. Edit tables in build_ln.py only. Next: S8.
 - Session 7: S8 `js/96-varga-reading.js` (`VGR.chart/all`) wired into Deep reading (bucket S.vargas), report and PDF (section 'vargas'); tests/varga_reading_test.py. Next: S9.
 - Session 8: S9 `js/97-transit-reading.js` (`TRS.assess`) wired into Deep reading ('transits'), report and PDF; tests/transit_reading_test.py. Edit tables in build_ts.py only. Next: S11 QA.
+- Session 9: S11 QA `tests/reading_qa_test.py` (12 charts, invariants, `--sheet` makes docs/ASTROLOGER_REVIEW_SHEET.md). M4 passed. Next: S12 polish.

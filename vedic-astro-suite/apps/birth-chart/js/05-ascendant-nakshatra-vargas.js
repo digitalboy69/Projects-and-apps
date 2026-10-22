@@ -71,7 +71,7 @@ const VARGAS = {
   D9:{n:9,name:"Navamsa",full:"Marriage & Dharma",desc:"Marriage, spouse, inner dharma, fortune"},
   RTN:{n:9,name:"Rasi Tulya Navamsa",full:"Navamsa on the Rasi lagna",desc:"Each planet\u2019s Navamsa sign transposed onto the Rasi chart (D1 lagna kept fixed)",noTimer:true},
   D10:{n:10,name:"Dasamsa",full:"Career Chart",desc:"Career, profession, status, achievements"},
-  D11:{n:11,name:"Rudramsa",full:"Death & Destruction",desc:"Death-like events, endings, destruction"},
+  D11:{n:11,name:"Rudramsa",full:"Endings & Upheaval",desc:"Endings, upheaval and major transitions"},
   D12:{n:12,name:"Dwadasamsa",full:"Parents Chart",desc:"Parents, ancestry, lineage"},
   D16:{n:16,name:"Shodasamsa",full:"Vehicles & Comfort",desc:"Vehicles, comforts, mental peace"},
   D20:{n:20,name:"Vimsamsa",full:"Spiritual Chart",desc:"Spiritual pursuits, worship, sadhana"},
