@@ -40,7 +40,7 @@ You are working on the **Vedic Astro Suite**: a folder project made of a shell +
 | Shadbala, Bhava Bala | `birth-chart/14-shadbala-engine.js`, `birth-chart/72-bhava-bala.js` | `computeShadbala`, `computeBhavaBala` |
 | Fate Meter, Sahams (Tajika), Life Activation, Tithi Pravesh, Chart Reading | `birth-chart/75-fate-meter.js`, `birth-chart/74-sahams.js` | `computeFate`, `buildFatePanel`, `buildSahamPanel`, panels `panel-fate`, `panel-sahams`, `panel-tithi`, `panel-active`, `panel-reading` |
 | Find birth DATE from memory clues (tithi, weekday, festival, eclipse, Saturn…) | `birth-chart/27-date-finder-core.js`, `birth-chart/29-date-finder-ui.js` | `dfGen` (engine, generator), `DF_FEST` (festival rules, Amanta months), `dfBuild` (UI), `dfOpenModal` (popup from the birth form), `dfUse` |
-| Rectification / birth time tools / life events | `birth-chart/26-rectification-studio.js`, `birth-chart/30-life-event-checker.js`, `birth-chart/25-home-and-tabs.js`, `birth-chart/65-error-boundaries.js` | `initRectStudio` ("RECTIFICATION STUDIO" banner, tabs dial/scan/sandhi/vt/tt/life), `rsRunLife`, `rsEvalLagna`; old panel ids route via `RS_ROUTE` in `switchAppTab` hook |
+| Rectification / birth time tools / life events | `birth-chart/26-rectification-studio.js`, `birth-chart/30-life-event-checker.js`, `birth-chart/25-home-and-tabs.js`, `birth-chart/65-error-boundaries.js` | `initRectStudio` ("RECTIFICATION STUDIO" banner, tabs dial/scan/sandhi/vt/tt/life), `rsRunLife`, `rsEvalLagna`; old panel ids route via `RS_ROUTE` in `switchAppTab` hook. Life-Event Pro (later files win): events catalog `js/97` (`LEC`, 278 events), engine + UI `js/98` (`leAnalyse`, `rsBuildLife`, `rsRunLife`) |
 | Panchang, transits, Sade Sati | `birth-chart/45-panchanga-engine.js`, `birth-chart/59-live-transit-form.js` | `panchangaAt`, `computeLiveSky`, "PHASE 1 ENGINES" banner |
 | Special lagnas / Arudha | `birth-chart/17-special-lagnas.js` | `buildVargaFromLagna`, `computeAllSpecialLagnaSigns` |
 | Home dashboard, tab bar, new panel/tool | `birth-chart/25-home-and-tabs.js`, `birth-chart/65-error-boundaries.js`, `birth-chart/58-render-results.js` | `HOME_ITEMS` (add a row), `switchAppTab`, panels are `html += \`<div class="app-panel" id="panel-X">\`` in `renderResults` |
@@ -149,6 +149,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Dasha layer (S3): `js/91-dasha-reading.js` (`VDA`) = timeline of every Mahadasha (theme/feelsLike per planet + arena + ruled houses + VMF lines + tone from functional nature/dignity/house + self-check), Antardashas via the app's `calculateAntardashas`, `upcoming(chart,5)`, `current(chart)`, `pair(md,ad)`. Deep reading tab: Life timeline cards + next-5-years rows; Now tab: running MD+AD (old generic VDB dasha text superseded); report: LIFE TIMELINE. Charts older than the 120-year cycle have no running period (handled). Test `tests/dasha_reading_test.py`.
 - AI session system: start every session with `docs/AI_START_HERE.md` (session loop, `tools/ai/session.sh start|check|test|ship`, token hygiene, lessons). The four reading databases (js/87, 89, 90, 91) are GENERATED from `tools/reading_gen/*.py`: edit the tables there and run `regen.sh`, never the JS. `.gitattributes` auto-merges STRUCTURE.md/AI_GUIDE.md (union) and dist/symbols.idx (ours, then build.py).
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
+- Life-Event Checker Pro: `js/97-life-event-catalog.js` (278 events by house/planet/sign, plain words, sharpness) + `js/98-life-event-engine.js` (dasha recomputed per candidate minute, aspects, Jup/Sat/Mars/Rahu/Ketu transits, Monte-Carlo luck test, bootstrap + drop-one, confidence floor) + `css/42`. Overrides the functions of js/30. Test: `node tests/life_event_pro_test.js`. Floor is a consistency check of the rules, not proof of astrology.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
 
 ---
@@ -162,6 +163,13 @@ _Generated 2026-10-22 - 1368 symbols in `symbols.idx` (paths are real files now:
 **birth-chart** - 144 files, 22651 lines, 1563 KB
 ```
 index.html                                         566 lines   32 KB
+_Generated 2026-10-22 - 1395 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+
+### File map (lines / KB) - file names say what is inside
+
+**birth-chart** - 146 files, 23151 lines, 1606 KB
+```
+index.html                                         568 lines   32 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -263,6 +271,8 @@ js/94-life-areas.js                                416 lines   16 KB
 js/95-life-narratives.js                           331 lines   21 KB
 js/96-varga-reading.js                             189 lines   11 KB
 js/97-transit-reading.js                           224 lines   17 KB
+js/97-life-event-catalog.js                        354 lines   33 KB
+js/98-life-event-engine.js                         349 lines   29 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
@@ -305,6 +315,7 @@ css/39-deep-reading.css                             47 lines    5 KB
 css/40-pdf-studio.css                               32 lines    4 KB
 css/40-year-timeline.css                             8 lines    0 KB
 css/41-dasha-time-finder.css                        63 lines    5 KB
+css/42-life-event-pro.css                           54 lines    6 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB

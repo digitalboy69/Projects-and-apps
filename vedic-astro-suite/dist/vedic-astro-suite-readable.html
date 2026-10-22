@@ -12339,6 +12339,61 @@ body.pdfs-lock{overflow:hidden}
   .dtf-chips{grid-template-columns:repeat(3,1fr)}
 }
 </style>
+<style>
+/* Life-Event Checker Pro (js/97, js/98): picker, evidence meter, confidence hero. Uses the studio's variables. */
+.le-pick{margin-bottom:14px;padding:12px;border-radius:18px;background:rgba(255,255,255,.025);border:1px solid var(--border-subtle)}
+.le-pick-top{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.le-pick-top input{flex:1;min-width:0;background:rgba(0,0,0,.3);border:1px solid var(--border-light);color:var(--text-main);border-radius:12px;padding:10px 12px;font-size:14px;font-family:inherit}
+.le-pick-top input:focus{outline:none;border-color:var(--gold)}
+.le-pick-top span{font-size:11px;color:var(--text-muted);white-space:nowrap}
+.le-views{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px;scrollbar-width:none}
+.le-views::-webkit-scrollbar{display:none}
+.le-views button{flex:0 0 auto;padding:7px 13px;border-radius:999px;border:1px solid var(--border-light);background:rgba(0,0,0,.25);color:var(--text-muted);font-size:12.5px;cursor:pointer;font-family:inherit}
+.le-views button.on{border-color:var(--gold);color:var(--gold-bright);background:rgba(212,175,55,.12)}
+.le-cats{max-height:340px;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+.le-grp{margin-bottom:6px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid var(--border-subtle)}
+.le-grp>summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;padding:10px 12px;font-size:13.5px}
+.le-grp>summary::-webkit-details-marker{display:none}
+.le-grp>summary em{font-style:normal;font-size:11px;color:var(--gold-bright);font-family:var(--font-mono)}
+.le-grp>summary small{flex-basis:100%;font-size:11.5px;color:var(--text-muted)}
+.le-chips{display:flex;flex-wrap:wrap;gap:7px;padding:0 10px 12px}
+.le-chip{display:inline-flex;align-items:center;gap:5px;padding:7px 11px;border-radius:999px;border:1px solid var(--border-light);background:rgba(255,255,255,.03);color:var(--text-main);font-size:12.5px;cursor:pointer;font-family:inherit;text-align:left;transition:all .15s}
+.le-chip i{font-style:normal;font-size:10px}
+.le-chip.neg{border-style:dashed}
+.le-chip:hover{border-color:var(--gold-bright);background:rgba(212,175,55,.1)}
+.le-chip.on{border-color:var(--gold);background:rgba(212,175,55,.2);box-shadow:0 0 0 1px var(--gold) inset}
+.le-sel{margin-top:10px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,rgba(212,175,55,.1),rgba(94,196,183,.05));border:1px solid var(--border-light)}
+.le-sel-empty{font-size:13px;color:var(--text-muted)}
+.le-sel-t{font-size:15px;font-weight:600}.le-sel-t u{text-decoration:none;font-size:10px;margin-left:6px;padding:2px 7px;border-radius:999px;background:rgba(192,57,43,.25);font-weight:400}
+.le-sel-p{margin:4px 0 8px;font-size:13px;color:var(--text-muted)}
+.le-tags{display:flex;flex-wrap:wrap;gap:6px}.le-tags span{font-size:11.5px;padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.28);border:1px solid var(--border-subtle)}
+.le-meter{margin:6px 0 12px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.025);border:1px solid var(--border-subtle)}
+.le-meter-top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;margin-bottom:8px}.le-meter-top span{color:var(--text-muted);font-size:12px}
+.le-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.le-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--teal-bright),var(--gold-bright));transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.le-houses{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0 6px}
+.le-houses span{width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;font-size:11px;font-family:var(--font-mono);background:rgba(255,255,255,.05);color:var(--text-muted)}
+.le-houses span.on{background:rgba(212,175,55,.3);color:var(--gold-bright)}
+.le-meter-tip{font-size:12px;color:var(--text-muted);line-height:1.5}
+.le-prog{display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:16px;background:rgba(255,255,255,.025);border:1px solid var(--border-subtle);font-size:13px;color:var(--text-muted)}
+.le-hero{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:16px;margin-bottom:14px;border-radius:20px;border:1px solid var(--gold);background:linear-gradient(135deg,rgba(212,175,55,.14),rgba(94,196,183,.06))}
+.le-gauge{width:104px;height:104px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 auto;background:radial-gradient(circle,rgba(0,0,0,.45) 56%,transparent 58%),conic-gradient(var(--gold-bright),var(--teal-bright),rgba(255,255,255,.08) 0)}
+.le-gauge b{font-size:26px;font-family:var(--font-mono);color:var(--gold-bright)}.le-gauge span{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);text-align:center;max-width:70px}
+.le-hero-txt{flex:1;min-width:200px;display:flex;flex-direction:column;gap:5px}
+.le-grade{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright)}
+.le-best{font-size:17px}.le-sub{font-size:12.5px;color:var(--text-muted);line-height:1.5}
+.le-hero .rs-seg{align-self:flex-start;margin-top:4px}
+.le-g1{border-color:#c0392b}.le-g1 .le-grade{color:#e57368}.le-g2{border-color:#d6a032}
+.le-tests{margin-bottom:16px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.025);border:1px solid var(--border-subtle)}
+.le-tests-h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+.le-test{display:grid;grid-template-columns:1fr 64px;gap:2px 10px;margin-bottom:10px;font-size:13px}
+.le-test .le-bar{grid-column:1;grid-row:2}.le-test em{grid-column:2;grid-row:2;font-style:normal;font-family:var(--font-mono);color:var(--gold-bright);text-align:right;font-size:12.5px;align-self:center}
+.le-test small{grid-column:1/3;color:var(--text-muted);font-size:11.5px}
+.le-fitnote{margin:6px 0 0 38px;font-size:11.5px;color:var(--text-muted)}
+.le-v{font-style:normal;font-size:11px;color:var(--text-muted)}
+.le-out{margin:12px 0;padding:11px 14px;border-radius:14px;background:rgba(214,160,50,.12);border:1px solid rgba(214,160,50,.4);font-size:12.5px;line-height:1.55}
+@media (max-width:480px){.le-gauge{width:88px;height:88px}.le-gauge b{font-size:22px}.le-cats{max-height:300px}.le-fitnote,.rs-why{margin-left:0}}
+</style>
 
 
 
@@ -44572,6 +44627,711 @@ document.addEventListener('click', (e) => {
     dtfRender();
   }
 });
+<\/script>
+<script>
+/* ============================================================================
+   LIFE-EVENT CATALOG (global LEC) — 240+ everyday events for the Life-Event Checker
+   Each event: id, emoji, label, plain (one simple sentence), p = primary houses, s = secondary houses,
+   k = natural significator planets, sh = how exactly a person can date it (3 = to the day, 2 = to a few weeks,
+   1 = a phase / gradual), n = 1 for hard/negative events (shown with a soft tag only; same scoring).
+   Browse views: by life area (house), by planet (first significator), by sign (natural zodiac: sign N = house N).
+   The 10 original ids (marriage, child, career, edu, foreign, property, gain, father, mother, health) keep
+   their original houses so saved events still work.
+   Row format: 'emoji|id|label|plain|primary houses|secondary houses|planets|sharpness[|n]'
+   Loaded after 26-rectification-studio.js (RS_CATS) and 30-life-event-checker.js; used by 98-life-event-engine.js.
+   ============================================================================ */
+const LEC_HOUSES = [
+  { h:1,  name:'Self & body',            plain:'You, your body, looks, health basics, new beginnings',  sign:0,  signWords:'self, courage, fresh starts' },
+  { h:2,  name:'Money & family',         plain:'Income, savings, food, speech, close family',            sign:1,  signWords:'money, values, comfort' },
+  { h:3,  name:'Skills & siblings',      plain:'Effort, courage, younger siblings, short trips, media',  sign:2,  signWords:'skills, talk, short trips' },
+  { h:4,  name:'Home & mother',          plain:'House, land, vehicles, mother, school, inner peace',     sign:3,  signWords:'home, mother, feelings' },
+  { h:5,  name:'Children & romance',     plain:'Kids, love affairs, exams, creativity, risk-taking',     sign:4,  signWords:'children, romance, talent' },
+  { h:6,  name:'Work, health & debts',   plain:'Daily job, illness, loans, rivals, legal fights',        sign:5,  signWords:'service, health, problems' },
+  { h:7,  name:'Partners & deals',       plain:'Marriage, partners, clients, contracts, public dealings',sign:6,  signWords:'partners, deals, balance' },
+  { h:8,  name:'Sudden change',          plain:'Surgery, accidents, inheritance, shocks, deep change',   sign:7,  signWords:'crisis, rebirth, secrets' },
+  { h:9,  name:'Luck, father & travel',  plain:'Fortune, father, teachers, long journeys, higher study', sign:8,  signWords:'luck, wisdom, long journeys' },
+  { h:10, name:'Career & status',        plain:'Profession, promotions, reputation, authority',          sign:9,  signWords:'career, status, duty' },
+  { h:11, name:'Gains & friends',        plain:'Profits, friends, networks, elder siblings, wishes',     sign:10, signWords:'gains, friends, goals' },
+  { h:12, name:'Foreign & endings',      plain:'Living abroad, expenses, hospital, solitude, spirit',    sign:11, signWords:'loss, foreign lands, spirit' }
+];
+const LEC_PLANETS = {
+  Sun:    { icon:'☀️', name:'Sun',     plain:'Authority, father, government, self-respect' },
+  Moon:   { icon:'🌙', name:'Moon',    plain:'Mind, mother, home feelings, the public' },
+  Mars:   { icon:'🔥', name:'Mars',    plain:'Energy, property, surgery, siblings, accidents' },
+  Mercury:{ icon:'💬', name:'Mercury', plain:'Talk, study, business, writing, trade' },
+  Jupiter:{ icon:'🌟', name:'Jupiter', plain:'Growth, children, teachers, money, luck' },
+  Venus:  { icon:'💖', name:'Venus',   plain:'Love, comfort, luxury, arts, vehicles' },
+  Saturn: { icon:'⛓️', name:'Saturn',  plain:'Delay, hard work, service, loss, long-term' },
+  Rahu:   { icon:'🌀', name:'Rahu',    plain:'Foreign, sudden, ambition, technology' },
+  Ketu:   { icon:'🪔', name:'Ketu',    plain:'Letting go, spirit, cuts, detachment' }
+};
+const LEC_SIGN_NAMES = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+
+const LEC_RAW = [
+/* ---- 1st house: self, body, new beginnings ---- */
+'🌱|freshstart|Began a brand-new phase of life|A clear "before and after" moment in your own life|1|10,3|Sun|2',
+'💪|fitness|Started serious fitness or sport|Joined a gym, a team or began regular training|1|3,6|Mars|2',
+'🏆|personalwin|Won a personal title or first prize|You personally came first in something|1,10|11|Sun|3',
+'🤕|bodyinjury|Injury to head or body|An accident that hurt your body|1,8|6,12|Mars,Saturn|3|1',
+'🩹|fullrecovery|Recovered fully from a long illness|Health returned after a long bad patch|1|6,11|Sun,Jupiter|2',
+'🧠|confidence|Big jump in confidence|Suddenly felt bold and sure of yourself|1|3,5|Sun,Mars|1',
+'💇|newlook|Big change in looks, weight or style|People noticed you look very different|1|2,7|Venus|2',
+'📛|namechange|Changed name or title|Legally or socially took a new name|1,2|3,8|Mercury,Rahu|3',
+'🦸|leader|Became a leader or captain|Put in charge of a group, team or class|1,10|11,3|Sun,Mars|2',
+'😔|lowphase|A phase of low energy or self-doubt|Months of feeling flat or lost|1,12|8|Moon,Saturn|1|1',
+'🚀|ownlaunch|Launched your own project or brand|Put your own name on a new thing|1,10|3,7|Sun,Mercury|3',
+'🧬|healthturn|Began a lifestyle or health turnaround|Changed diet, sleep or habits for good|1,6|11|Mars,Sun|2',
+'🎭|stagedebut|First time in the public spotlight|First stage, screen or big audience moment|1,5|10,3|Sun,Venus|3',
+'🧗|challenge|Took on a big personal challenge|Trek, marathon, exam of the body or nerve|1,3|6|Mars|2',
+'🛡️|selfreliance|Became fully independent|Started standing on your own feet|1|3,10|Sun,Saturn|1',
+'🔄|lifepivot|Total life direction change|Dropped the old path and chose a new one|1,10|8,9|Rahu,Saturn|2',
+'🪪|identitydoc|Got a major ID or citizenship paper|Passport, citizenship or major identity document|1,3|12,9|Rahu,Mercury|3',
+'🌞|famouslocal|Became known in your circle|Noticed and respected in your area or community|1,11|10|Sun|1',
+'🧴|skinhair|Skin, hair or appearance treatment|Medical or cosmetic work on your looks|1|6,2|Venus,Mars|2',
+'🎯|goalset|Set and started a life goal|Wrote it down and began moving toward it|1,11|10,5|Sun,Jupiter|1',
+/* ---- 2nd house: money, family, speech ---- */
+'💵|salary|First salary or big pay rise|Money coming in grew noticeably|2,11|10|Jupiter,Mercury|3',
+'🏦|savings|Built big savings or began investing|Started saving seriously or opened an investment|2|11|Jupiter,Venus|2',
+'💍|jewellery|Received gold, jewellery or family wealth|Gold or valuables came to you|2|8,11|Jupiter,Venus|3',
+'🗣️|speaking|Success with voice, speech or singing|Your voice or talk won you praise or work|2,3|5|Mercury,Venus|2',
+'🍽️|foodbiz|Started a food or catering business|Restaurant, cloud kitchen, tiffin, catering|2|7,10|Venus,Moon|3',
+'👪|familyjoin|New member joined the family|In-law, adoption or relative came to live with you|2|7,5|Jupiter|2',
+'💸|moneyloss|Major money loss, theft or fraud|Lost a large amount of money|2,12|6,8|Saturn,Rahu|3|1',
+'🧓|familyfight|Family dispute or property-split talk|Serious quarrel inside the family|2|4,8|Mars,Saturn|2|1',
+'🦷|faceeye|Dental, eye or face treatment|Teeth, eyes or face needed medical care|2|12,6|Venus,Sun|2|1',
+'📈|shares|Gains from shares or trading|Money made from market investments|2,11|5,8|Mercury,Rahu|3',
+'🏭|familybiz|Joined the family business|Took a role in the business your family runs|2,10|4|Sun,Jupiter|2',
+'🧮|stable|Became financially stable|Money worries finally eased|2,11|9|Jupiter,Venus|1',
+'🌐|language|Learned a new language or voice skill|Fluent or certified in something spoken|2,3||Mercury|1',
+'🏧|bankacct|Opened a major account or fixed deposit|Large formal money step like FD, trust or business account|2||Jupiter,Mercury|3',
+'🎁|giftmoney|Received a big gift of money|Relatives or well-wishers gave you funds|2,11|5|Jupiter|3',
+'🥘|diet|Big change in food habits|Became vegetarian, vegan or changed diet fully|2|6,1|Venus,Moon|2',
+'🧾|budgetcrisis|Money tight for a long time|A season of constant cash shortage|2,6|12,8|Saturn|1|1',
+'📣|ownvoice|Started a talking-based income|Teaching, anchoring, podcast, coaching income|2,3|10,11|Mercury,Jupiter|2',
+'🪙|familywealth|Family fortune improved|Parents or family became wealthier|2,9|11|Jupiter|1',
+'👶|babyname|Naming ceremony / family function at home|A big family function was held|2,4|5|Moon,Jupiter|3',
+/* ---- 3rd house: skills, siblings, courage, media ---- */
+'👦|sibbirth|Younger brother or sister born|A younger sibling arrived|3|5,11|Mars|3',
+'💒|sibmarry|Sibling got married|A brother or sister’s wedding|3,11|7|Mars,Venus|3',
+'⚡|sibfight|Conflict with sibling|Serious fight or break with a brother/sister|3|8,6|Mars|2|1',
+'🕊️|sibloss|Loss or serious illness of a sibling|A brother or sister fell very ill or passed away|3,8|12|Mars,Saturn|3|1',
+'✍️|writing|Started writing or blogging|First articles, blog or channel posts|3|5,11|Mercury|2',
+'📚|bookpub|Published an article or book|Your writing was printed or released|3,5|9,11|Mercury,Jupiter|3',
+'📱|viral|Social media growth or went viral|Followers or views jumped|3,11|5,1|Mercury,Rahu|2',
+'💻|gadget|Bought laptop, phone or key gadget|A major device purchase|3|4,11|Mercury,Rahu|3',
+'🚌|shorttrip|Short trips became frequent|Many short journeys for work or family|3|9,12|Mercury,Moon|1',
+'🥇|sportwin|Won in sport or competition|Medal, match win or tournament success|3,1|5,6|Mars|3',
+'🎓|skillcourse|Completed a skill course or certificate|Finished a short course or training|3,5|4,9|Mercury|3',
+'🛒|salessucc|Sales or marketing success|Closed a big sale or ran a winning campaign|3,11|7,10|Mercury,Mars|2',
+'✋|handinjury|Hand, arm or shoulder injury|Hurt your hand, arm, shoulder or ear|3|6,8|Mars|3|1',
+'🏘️|neighbour|Dispute or change with neighbours|Trouble or help from people next door|3|4,6|Mars,Mercury|2',
+'🎬|mediadebut|Media, film or acting debut|First time in a film, ad, show or publication|3,5|10,1|Mercury,Venus|3',
+'🥋|martial|Started martial arts or defence training|Karate, boxing, military-style training|3,1|6|Mars|2',
+'📷|photovideo|Started photography, video or design work|Began making visual content|3,5|2,11|Mercury,Venus|2',
+'📨|negotiation|Won an important negotiation|Talked your way to a good deal|3,7|2,11|Mercury|2',
+'💪|bravemove|Did something very brave|Took a bold risk that needed courage|3|1,10|Mars|2',
+'🛵|commute|Started a daily travelling routine|Long daily commute or frequent travelling job|3|6,10|Mercury,Moon|1',
+/* ---- 4th house: home, mother, vehicle, peace ---- */
+'🏠|property|Bought a house, flat or vehicle|A major property or vehicle purchase|4|2,11|Mars,Venus|3',
+'🔑|newhome|Moved into a new home|Shifted your main residence|4|12,3|Moon,Mars|3',
+'🧱|renovation|Built or renovated your home|Construction, interiors or major repairs|4|2,11|Mars,Venus|2',
+'🌾|land|Bought land or agricultural property|Plot, farm or land purchase|4|2,11|Mars|3',
+'🚗|car|Bought a car|Four-wheeler purchase|4|2,11|Venus|3',
+'🏍️|twowheeler|Bought a bike or scooter|Two-wheeler purchase|4|3,11|Mars,Venus|3',
+'👩|mother|Mother: major event|Mother had a big life event or illness|4|8,10|Moon|3',
+'🩺|motherill|Mother’s illness or surgery|Mother needed treatment or an operation|4,6|8|Moon,Saturn|3|1',
+'🕯️|motherloss|Loss of mother|Mother passed away|4,8|12|Moon,Saturn|3|1',
+'🎓|edu|Higher education started or finished|College, degree or major study milestone|4,9|5|Jupiter,Mercury|3',
+'🏫|schoolfinish|Finished school (10th / 12th)|Board exams or school completion|4,5|9|Mercury,Moon|3',
+'🏛️|collegeadmit|Admission to college|Got a seat in college or university|4,5|9|Mercury,Jupiter|3',
+'😌|peacelost|Lost peace of mind at home|Long tension or unrest at home|4|8,12|Moon,Saturn|1|1',
+'💔|breakdown|Emotional breakdown or heavy stress|A very hard emotional period|4|5,12|Moon,Saturn|2|1',
+'📦|sellhome|Sold a house or property|Sale of a home or land|4|2,12|Mars,Saturn|3',
+'🏘️|rented|Rented a new place|Started living in a rented home|4|12,3|Moon|3',
+'💳|homeloan|Took a home loan|Started a large housing EMI|4,6|2|Mars,Saturn|3',
+'🧑‍🏫|teachjob|Started teaching at school level|Began work as a school teacher|4,5|10,3|Moon,Mercury|3',
+'🫀|heartissue|Heart or chest health problem|Chest, heart or lung trouble|4|6,8|Moon,Sun|2|1',
+'🏡|homecoming|Came back to the home town|Returned home after living away|4|12|Moon|3',
+/* ---- 5th house: children, romance, exams, creativity ---- */
+'👶|child|Child born|A baby was born to you|5|2,9,11|Jupiter|3',
+'🤰|pregnancy|Pregnancy confirmed|You learned a baby was on the way|5|2,11|Jupiter,Moon|3',
+'💔|miscarry|Pregnancy loss|A pregnancy ended early|5,8|12,6|Moon,Saturn|3|1',
+'👧|secondchild|Second child born|Another baby arrived|5|2,11|Jupiter|3',
+'🎒|childschool|Child achievement or admission|Your child did well or started a new school|5|4,9|Jupiter,Mercury|2',
+'👰|childmarry|Child’s marriage|Your son or daughter got married|5,7|9|Jupiter,Venus|3',
+'🧒|childhealth|Child’s health problem|Your child had a serious health scare|5,6|8|Jupiter,Mars|2|1',
+'❤️|fallinlove|Fell in love|A strong romantic attachment began|5|7,11|Venus|2',
+'🌹|firstlove|First romantic relationship|Your very first serious relationship|5,7|11|Venus|2',
+'💘|lovemarriage|Love turned into marriage decision|You both decided to marry out of love|5,7|11|Venus,Rahu|3',
+'💔|breakup|Break-up of a relationship|A romantic relationship ended|5,7|12,8|Venus,Saturn|3|1',
+'📝|examclear|Cleared an important exam|Passed a key or competitive exam|5|9,6|Mercury,Jupiter|3',
+'🏅|rank|Top rank or scholarship in studies|Excellent result or scholarship award|5,9|11|Jupiter,Mercury|3',
+'🧪|research|Research or project success|A thesis, invention or project worked|5|8,9|Mercury,Jupiter|2',
+'🎨|creative|Creative breakthrough|Art, music, film or design got noticed|5|3,11|Venus,Moon|2',
+'🏆|contest|Won a contest or talent show|Public competition win|5|1,3|Venus,Sun|3',
+'🎰|speculative|Gain from lottery or speculation|Luck-based money gain|5,11|2,8|Jupiter,Rahu|3',
+'📉|spectrade|Loss in speculation or trading|Money lost in luck-based risk|5,12|8,2|Rahu,Saturn|3|1',
+'🕉️|mantra|Received a mantra or initiation|Spiritual teaching given to you|5,9|12|Jupiter|3',
+'🍼|adoption|Adopted a child|Legally welcomed an adopted child|5|2,11|Jupiter,Moon|3',
+/* ---- 6th house: job, illness, debts, rivals ---- */
+'💼|career|Job start or promotion|A new job or a step up at work|10|6,11|Sun,Saturn|3',
+'📬|joboffer|Received a job offer|Got an offer letter|6,10|11|Saturn,Mercury|3',
+'📤|joblost|Lost a job|Laid off, fired or contract ended|6,8,12|10|Saturn,Rahu|3|1',
+'🤝|bossclash|Conflict with boss or colleague|Serious friction at work|6|10,8|Mars,Saturn|2|1',
+'😮‍💨|burnout|Work stress or burnout|Long heavy work pressure|6,10|8,12|Saturn,Mars|1|1',
+'💳|loantaken|Took a big loan|A large borrowing began|6|2,12|Saturn|3|1',
+'✅|loancleared|Cleared a loan|Finished repaying a big debt|6,11|2|Jupiter,Saturn|3',
+'⚖️|lawstart|Legal case started against or by you|A court or legal fight began|6|7,8|Mars,Saturn|3|1',
+'🏛️|lawwon|Won a legal case|The verdict went your way|6,9|11,10|Mars,Jupiter|3',
+'🥊|rivalbeat|Defeated a rival or competitor|Overcame an opponent|6|3,11|Mars|2',
+'🤒|health|Fell seriously ill or needed surgery|A real illness or an operation|6,8|1,12|Mars,Saturn|3|1',
+'🏥|hospital|Hospital admission|Stayed in hospital|6,8,12|1|Mars,Saturn|3|1',
+'🩸|chronic|Chronic condition diagnosed|Long-term health condition identified|6,8|1|Saturn|3|1',
+'💊|treatment|Started a long treatment or therapy|Medical or alternative treatment began|6|1,8|Mars,Mercury|2',
+'🐕|pet|Got or lost a pet|A pet joined or left your life|6|5,4|Mercury,Moon|3',
+'🛠️|servicejob|Joined service / support / NGO work|Began a helping or service-based role|6|10,12|Saturn,Moon|2',
+'🪖|uniform|Joined army, police or uniformed service|Started in a uniformed or force job|6,10|3,1|Mars,Sun|3',
+'🧾|taxissue|Tax, audit or official notice trouble|Authorities questioned your accounts|6,8|2,10|Saturn,Rahu|2|1',
+'🔪|betrayed|Betrayed by colleague or friend|Trust broken by someone close at work|6,8|7,11|Rahu,Saturn|2|1',
+'🌙|nightshift|Started night shifts or odd hours|Work schedule turned upside down|6,12|10|Saturn,Moon|2',
+/* ---- 7th house: marriage, partners, contracts ---- */
+'💍|marriage|Marriage or partnership|Wedding or formal long-term commitment|7|2,11|Venus|3',
+'💐|engaged|Engagement or betrothal|Formally promised to marry|7|5,11|Venus,Jupiter|3',
+'👀|metspouse|Met your future partner|First meeting with the person you later married|7|5,11|Venus|3',
+'🏘️|livein|Started living together|Moved in with a partner without or before marriage|7|4,5|Venus,Moon|3',
+'📜|divorce|Divorce or legal separation|A marriage ended in law|7,8|6,12|Saturn,Mars|3|1',
+'🚪|separation|Separation or partner moved away|You and your partner lived apart|7,12|8|Saturn,Rahu|2|1',
+'🛏️|spouseill|Spouse’s illness|Partner had serious health trouble|7,6|8|Venus,Saturn|2|1',
+'📈|spouserise|Spouse’s career rise|Partner got a big promotion or success|7,10|11|Venus,Jupiter|2',
+'🔁|remarry|Second marriage or remarriage|Married again|7|2,11|Venus,Rahu|3',
+'🤝|bizpartner|Started a business partnership|Joined or formed a partner-based venture|7|10,11|Mercury,Venus|3',
+'🔚|partnerend|Business partnership ended|Parted ways with a business partner|7,8|12,6|Saturn,Rahu|3|1',
+'🧑‍💼|bigclient|Signed a very big client or contract|A large customer or deal came in|7,10|11|Mercury,Venus|3',
+'🖋️|contract|Signed an important legal agreement|Contract, MOU or formal deal|7|10,9|Mercury|3',
+'🌍|publicsucc|Won public attention and approval|People at large noticed and liked your work|7,10|11|Venus,Sun|2',
+'💞|arranged|Marriage proposals started coming|Family began serious match-making|7|2,5|Venus,Jupiter|2',
+'🔥|exreturn|Old partner came back|Reunion with a former partner|7,5|12|Venus,Rahu|2',
+'🛫|spouseabroad|Spouse from or moved abroad|Partner linked to a foreign place|7,12|9|Rahu,Venus|3',
+'🧑‍⚖️|spouselaw|Legal fight with partner|Court or lawyer matters with a spouse or partner|7,6|8|Mars,Saturn|3|1',
+'🛍️|customers|Customer base grew|Business or practice got many more clients|7,11|10|Mercury,Venus|1',
+'🌉|longdistance|Long-distance relationship began|Love or marriage across places|7,12|3|Venus,Rahu|1',
+/* ---- 8th house: sudden change, inheritance, surgery, shocks ---- */
+'🔪|surgery|Surgery or operation|A planned or emergency operation|8|6,1|Mars,Saturn|3|1',
+'🚑|accident|Serious accident|A major accident with real harm|8|1,6|Mars,Rahu|3|1',
+'😮|nearmiss|Near-death or narrow escape|Came very close to danger and survived|8,1|12|Mars,Ketu|3|1',
+'⚡|shock|Sudden shock or reversal|Life flipped suddenly overnight|8|12,1|Rahu,Saturn|3|1',
+'🎉|windfall|Sudden windfall|Unexpected money arrived|8,11|2,5|Rahu,Jupiter|3',
+'📜|inherit|Received inheritance|Property or money came from a family elder|8,2|4,11|Saturn,Jupiter|3',
+'🛡️|insurance|Insurance claim or payout|Received insurance money|8|2,6|Saturn,Mercury|3',
+'🕊️|grandloss|Death of grandparent or elder|An elder in the family passed away|8,4|9|Saturn,Moon|3|1',
+'🕯️|relloss|Death of a close relative|A relative close to you passed away|8|12,4|Saturn,Ketu|3|1',
+'😢|friendloss|Death of a close friend|A friend passed away|8,11|12|Saturn,Ketu|3|1',
+'🔮|occultstudy|Began astrology, occult or deep research|Started studying hidden or mystical subjects|8|9,12|Ketu,Rahu|2',
+'🌪️|crisis|Crisis that changed you|Hard time that rebuilt your outlook|8|1,12|Saturn,Ketu|2|1',
+'🗞️|scandal|Scandal or false accusation|Name dragged into trouble|8|10,6|Rahu,Mars|2|1',
+'🤫|secret|Secret revealed|Hidden matter came to light|8|12,3|Rahu,Mercury|3|1',
+'🚛|suddentransfer|Sudden transfer or relocation|Forced to shift quickly|8,3|10,12|Rahu,Saturn|3',
+'🧠|depression|Depression or deep low mood|A long period of heavy sadness|8,12|4,1|Moon,Saturn|1|1',
+'🛋️|therapy|Began therapy or inner healing|Sought counselling or deep emotional work|8|12,5|Moon,Ketu|2',
+'🏚️|bankrupt|Bankruptcy or business collapse|Business or finances fell apart|8,12|2,6|Saturn,Rahu|3|1',
+'💰|spousewealth|Gain through spouse or in-laws|Money or support from partner’s side|8,7|2|Venus,Saturn|2',
+'🧪|deepresearch|Breakthrough in research|Discovery in science, tech or investigation|8,5|9,3|Rahu,Mercury|2',
+/* ---- 9th house: luck, father, guru, long travel ---- */
+'👨|father|Father: major event|Father had a big life event or illness|9|3,8|Sun|3',
+'🩺|fatherill|Father’s illness|Father was seriously unwell|9,6|8|Sun,Saturn|3|1',
+'🕯️|fatherloss|Loss of father|Father passed away|9,8|12|Sun,Saturn|3|1',
+'🧑‍🏫|mentor|Met a mentor or guru|A teacher who changed your path|9|5,11|Jupiter|2',
+'🛕|pilgrimage|Pilgrimage or holy journey|Visited a sacred place|9|12,3|Jupiter,Ketu|3',
+'🌏|longtrip|Long journey abroad (not to live)|Holiday or work trip to a distant country|9,12|3|Jupiter,Rahu|3',
+'🎓|phd|Master’s, PhD or advanced study|Postgraduate or doctoral milestone|9,5|4,8|Jupiter,Mercury|3',
+'📖|scholarship|Won a scholarship or fellowship|Funding for higher study|9,5|11|Jupiter|3',
+'🧘|ritual|Major religious ceremony|Thread ceremony, initiation, big puja or yagna|9|5,12|Jupiter|3',
+'🪔|charity|Started charity or temple service|Gave time or money for good causes|9|12,11|Jupiter,Ketu|2',
+'🍀|luckybreak|A big lucky break|Opportunity arrived at just the right time|9,11|5,10|Jupiter|2',
+'⚖️|verdict|Favourable court or authority decision|Official decision came in your favour|9,6|10|Jupiter,Sun|3',
+'🏫|teaching|Started teaching at college level or coaching|Began lecturing, training or coaching others|9,5|10|Jupiter,Mercury|3',
+'🏔️|retreat|Spiritual retreat or long course|Went on a retreat, vipassana or similar|9,12|5|Jupiter,Ketu|3',
+'🛂|visa|Visa approved|Got permission to travel or stay abroad|9,12|3,10|Rahu,Jupiter|3',
+'🧭|philosophy|Big shift in beliefs|Changed how you see life or faith|9|1,12|Jupiter,Ketu|1',
+'📕|authorbook|Wrote a full book|Finished a full-length book|9,5|3|Jupiter,Mercury|3',
+'🌠|fortuneturn|Fortune turned for the better|A clear rise in luck and support|9|11,2|Jupiter|1',
+'👴|fatherretire|Father’s retirement or relocation|Father stepped back or moved|9|4,12|Sun|3',
+'🌐|successabroad|Success linked to a foreign place|A result that came through overseas people|9,12|11,10|Rahu,Jupiter|2',
+/* ---- 10th house: career, status, authority ---- */
+'🪜|promotion|Promotion or new designation|Moved up in rank or title|10|6,11|Sun,Saturn|3',
+'🔀|careerchange|Changed career or field|Moved to a very different line of work|10|8,9|Saturn,Rahu|3',
+'🏢|startbiz|Started your own business|Opened a business or practice|10,7|11,3|Sun,Mercury|3',
+'🏛️|govjob|Got a government job|Entered public service|10|6,1|Sun,Saturn|3',
+'🗳️|politics|Entered politics or public office|Joined politics or won a post|10|11,1|Sun,Mars|3',
+'📺|fame|Fame or media recognition|Noticed widely in media or your industry|10,1|11,5|Sun,Venus|2',
+'🏅|careeraward|Award or honour at work|Formal recognition for your work|10|11,1|Sun,Jupiter|3',
+'📉|demotion|Demotion or loss of status|Lost position, power or rank|10,12|8,6|Saturn,Rahu|3|1',
+'🚪|resign|Resigned from a job|You chose to leave your job|10,12|9,8|Saturn,Rahu|3',
+'🛏️|retire|Retired or stepped back|Finished your main career|10,12|9|Saturn,Sun|3',
+'👔|manager|Became a manager or head|Given a team or department to lead|10|1,6|Sun,Saturn|3',
+'👑|ceo|Became director, owner or CEO|Reached the top role of an organisation|10,1|11,9|Sun,Jupiter|3',
+'📜|licence|Got a professional licence|Bar, medical, CA, pilot or similar licence|10,5|9,6|Saturn,Jupiter|3',
+'🏗️|bigproject|Led a big successful project|A project you led was a clear success|10|3,11|Sun,Mars|2',
+'📰|reputation|Reputation damage|Public name or image harmed|10,8|6,12|Saturn,Rahu|2|1',
+'🚚|jobtransfer|Job transfer to another city|Company moved you to a new place|10,3|4,12|Saturn,Mercury|3',
+'💼|careerbreak|Career break or long gap|Time away from work|10,12|6|Saturn,Ketu|2',
+'🥇|topclient|Won a very important account|Landed a major prestigious client or tender|10,7|11|Sun,Mercury|3',
+'🎖️|authority|Gained real authority or power|Given real decision-making power|10|1,11|Sun|2',
+'📈|careerrise|Long steady rise in career|Years of clear upward movement|10,11|6|Saturn,Jupiter|1',
+/* ---- 11th house: gains, friends, networks ---- */
+'💰|gain|Big gain or wealth jump|A large increase in money or assets|2,11|5,9|Jupiter|3',
+'🌟|wishdone|A long-held wish was fulfilled|Something you wanted for years came true|11|5,9|Jupiter|3',
+'💵|incomejump|Income jumped sharply|Earnings rose by a big step|11,2|10|Jupiter,Mercury|2',
+'🎁|bonus|Received a big bonus or reward|Bonus, prize money or award cash|11|2,10|Jupiter,Mercury|3',
+'👥|network|Joined a powerful network or group|Club, association or elite community|11|3,7|Rahu,Mercury|2',
+'🤗|newfriend|Met a lifelong friend|A friend who stayed with you for years|11|3,7|Mercury,Venus|3',
+'💔|friendlost|Lost or broke a close friendship|A friendship ended|11,12|8,6|Rahu,Saturn|2|1',
+'👨‍🦱|eldersib|Elder sibling: major event|Elder brother or sister had a big event|11|3,9|Jupiter,Mars|3',
+'💞|eldersibmarry|Elder sibling’s wedding|Elder brother or sister got married|11,7|3|Jupiter,Venus|3',
+'🔗|connection|A contact opened a big door|Someone you know got you a big chance|11|3,10|Mercury,Rahu|2',
+'🏭|sideincome|Started a side income|Second source of earnings began|11,2|3,6|Mercury,Rahu|3',
+'📦|ecommerce|Started online selling or e-commerce|Launched an online shop or marketplace business|11,3|7,10|Mercury,Rahu|3',
+'💹|investgain|Long-term investments paid off|Property or investments grew a lot|11|2,5|Jupiter,Saturn|2',
+'🧑‍🤝‍🧑|community|Became a leader in a community|Elected or trusted in a group|11,10|1,3|Saturn,Jupiter|2',
+'📱|appwebsite|Launched an app, website or platform|Put a digital product live|11,3|5,10|Rahu,Mercury|3',
+'🎓|alumni|Gained from an alumni or old friend network|Old classmates or friends helped|11|3,5|Mercury|2',
+'🏆|goalreached|Reached a long-term goal|A multi-year target was reached|11|10,1|Jupiter,Saturn|3',
+'💸|fundraise|Raised money for a venture|Investors, crowdfunding or loans for your plan|11,2|7,5|Jupiter,Rahu|3',
+'🤲|debtfree|Became completely debt-free|No big loans remain|11,6|2|Jupiter,Saturn|3',
+'👍|socialfame|Friends circle grew very large|Many new contacts and social events|11|3,5|Venus,Mercury|1',
+/* ---- 12th house: foreign, loss, solitude, spirit ---- */
+'✈️|foreign|Moved or settled abroad|Went to live in another country|12|3,9|Rahu|3',
+'💼|workabroad|Started working abroad|Took a job in another country|12,10|9,3|Rahu,Saturn|3',
+'🎓|studyabroad|Went abroad to study|Joined a foreign university or programme|12,9|5,4|Rahu,Jupiter|3',
+'🛬|returnhome|Returned from abroad for good|Came back to your home country|12,4|9|Rahu,Moon|3',
+'🏥|longhospital|Long hospital stay or bed rest|Weeks in hospital or recovery|12,6|8,1|Saturn,Moon|3|1',
+'💸|bigexpense|Very large expense|A big one-time spending|12|2,6|Venus,Saturn|3',
+'🎒|lostitem|Lost valuables or belongings|Lost something important or costly|12,2|8|Rahu,Saturn|2|1',
+'🧘|solitude|A period of solitude or retreat|Withdrew from the world for a while|12|9,8|Ketu,Saturn|1',
+'😴|sleep|Sleep trouble or insomnia|A long stretch of poor sleep|12,6|4,1|Moon,Saturn|1|1',
+'🛕|ashram|Stayed in an ashram or monastery|Lived for a time in a spiritual place|12,9|8,5|Ketu,Jupiter|3',
+'🔒|confinement|Legal confinement or restriction|Detained, restricted or bound by rules|12,6|8|Saturn,Rahu|3|1',
+'🕶️|secretaffair|Hidden relationship or secret matter|A relationship kept private|12,7|5,8|Rahu,Venus|2',
+'🌎|foreignspouse|Partner from another country|Married or partnered with someone foreign|12,7|9|Rahu,Venus|3',
+'🧳|emigrate|Emigrated permanently|Left your country for good|12|9,3|Rahu|3',
+'🛬|immigrate|Got permanent residency or citizenship abroad|PR, green card or foreign citizenship|12,9|1,10|Rahu,Jupiter|3',
+'🤲|givingaway|Gave away a lot (donation)|Large donation or sacrifice|12,9|11|Ketu,Jupiter|2',
+'🧘‍♀️|meditate|Began a daily meditation practice|Settled into regular spiritual practice|12,5|9|Ketu,Jupiter|2',
+'📉|businessloss|Business or investment loss|Large loss in work or money|12,8|2,6|Saturn,Rahu|3|1',
+'👁️|eyesurg|Eye operation or foot problem|Eye or foot treatment|12,2|6|Venus,Saturn|3|1',
+'🪽|letgo|Ended a major chapter and let go|Closed a long chapter of life|12,8|1,4|Ketu,Saturn|2',
+/* ---- Cross-area milestones (appear in the house of their main theme) ---- */
+'🎂|firstjob|First job in life (any kind)|Your very first paid work|10,6|3,11|Saturn,Mercury|3',
+'🧑‍🎓|graduate|Graduation|Completed a college degree|5,9|4,10|Mercury,Jupiter|3',
+'🏠|ownroof|Moved out of parents’ home|Started living on your own|4,12|1,3|Moon,Mars|3',
+'🏙️|citymove|Moved to a bigger city|Shifted cities for work or study|3,12|4,10|Mercury,Rahu|3',
+'👩‍👧|momtobe|Became a parent for the first time|The first time you became mother or father|5|4,2|Jupiter,Moon|3',
+'🧓|inlaws|Major event with in-laws|Big change or illness among in-laws|7,8|4,12|Venus,Saturn|2',
+'🎤|publicperf|Big public performance or speech|A well-attended performance or talk|3,5|10,1|Mercury,Venus|3',
+'🏦|bankjob|Bank, finance or accounts job|Work with money or accounts started|2,6|10,11|Mercury,Jupiter|3',
+'⚙️|techjob|Technology or engineering job|Started in tech, engineering or IT|10,3|6,11|Rahu,Mercury|3',
+'🩺|medicalcareer|Entered medicine or healing|Medical, nursing or healing profession began|6,10|8,1|Sun,Mars|3',
+'⚖️|lawcareer|Entered law or judiciary|Started as lawyer, judge or legal officer|9,10|6,7|Jupiter,Saturn|3',
+'🎭|artcareer|Arts or entertainment career began|Professional work in arts, music or entertainment|5,10|3,7|Venus,Moon|3',
+'🌾|agricareer|Farming or land-based work started|Agriculture, farm or land business began|4,10|3,6|Mars,Moon|3',
+'🏗️|builderbiz|Real estate or construction business|Deals in property or building work began|4,10|11,3|Mars,Saturn|3',
+'🧑‍🍳|hospitality|Hospitality or beauty business|Hotel, salon, fashion or beauty work started|7,2|10,11|Venus|3',
+'🎓|ownclass|Opened a coaching or training centre|Started your own teaching centre|5,9|10,11|Jupiter,Mercury|3',
+'🛳️|shipping|Export, import or shipping work|International trade or logistics work|12,7|10,3|Rahu,Mercury|3',
+'🔬|science|Joined a scientific or research post|Lab, institute or research appointment|8,5|10,9|Mercury,Rahu|3',
+'📡|mediajob|Joined media, news or communications|Journalism, PR or media job|3,10|5,11|Mercury,Rahu|3',
+'🪖|retiredforce|Left a uniformed service|Left army, police or similar force|10,12|6,3|Mars,Sun|3',
+'🏥|healthcheck|Major medical check-up or scan found something|A test or scan revealed a health matter|6,8|1,12|Mars,Saturn|3|1',
+'🧪|surgerymother|Parent’s surgery|Father or mother had an operation|4,9|8,6|Moon,Sun|3|1',
+'💒|ownwedding|Wedding ceremony of your own (rituals done)|The actual wedding rituals and ceremony|7|5,11|Venus,Jupiter|3',
+'🏘️|buyshop|Bought a shop or office|Commercial property purchase|4,10|11,2|Mars,Mercury|3',
+'🛶|holiday|Took a major holiday|A special long vacation|5,12|9,3|Venus,Moon|3',
+'🪞|spirituawake|Spiritual awakening|A deep inner turning toward spirit|9,12|8,5|Ketu,Jupiter|1',
+'🧑‍🍼|childabroad|Child went abroad or moved far|Your child left for another place|5,12|9|Jupiter,Rahu|3',
+'🏆|sibsuccess|Sibling’s big success|A brother or sister did very well|3,11|10|Mars,Jupiter|2',
+'📱|techgadgetbiz|Started a tech or online business|Online or tech-based enterprise began|3,11|10,7|Rahu,Mercury|3',
+'🛑|legalnotice|Received a legal notice|Official notice from court or lawyer|6,8|7,10|Mars,Saturn|3|1',
+'🧑‍🔧|skilledtrade|Started a hands-on trade|Mechanic, electrical, carpentry or craft work|3,6|10|Mars,Mercury|3',
+'🪴|garden|Took up farming, gardening or nature life|Began a life close to nature|4|5,12|Moon,Venus|1',
+'🧑‍⚕️|healerrole|Began healing others|Started therapy, yoga or healing work|6,12|5,10|Ketu,Moon|2',
+'📚|libraryphase|A long phase of deep study|Years of focused learning|5,4|9|Mercury,Jupiter|1',
+'🚪|exitgroup|Left a group, party or organisation|Walked away from a long membership|11,12|3|Saturn,Ketu|2',
+'🏅|sportcareer|Professional sports career began|Joined a team or league professionally|3,1|5,10|Mars|3',
+'🎻|musiclearn|Started learning music or dance|Began formal lessons in music or dance|5,2|3|Venus,Moon|2',
+'🧑‍🚀|risktaker|Left safety for a risky dream|Quit security to follow a bold plan|3,10|1,8|Mars,Rahu|2'
+];
+
+const LEC = (function(){
+  const list = [], byId = {};
+  LEC_RAW.forEach(row=>{
+    const f = row.split('|');
+    const nums = s=> s ? s.split(',').map(Number) : [];
+    const ks = f[6] ? f[6].split(',') : [];
+    const e = { id:f[1], emoji:f[0], label:f[2], plain:f[3], p:nums(f[4]), s:nums(f[5]), k:ks, sh:+f[7]||2, n:f[8]==='1' };
+    e.label = e.emoji + ' ' + e.label;
+    e.house = e.p[0];
+    e.planet = e.k[0] || 'Jupiter';
+    if (byId[e.id]) return;              // first row wins (ids are unique anyway)
+    byId[e.id] = e; list.push(e);
+  });
+  return { list, byId, houses:LEC_HOUSES, planets:LEC_PLANETS, signs:LEC_SIGN_NAMES, count:list.length };
+})();
+
+/* Plug the catalog into the existing studio table (keeps the 10 original ids and their houses). */
+(function(){
+  if (typeof RS_CATS === 'undefined') return;
+  LEC.list.forEach(e=>{ RS_CATS[e.id] = e; });
+})();
+<\/script>
+<script>
+/* ============================================================================
+   LIFE-EVENT CHECKER PRO (global LEE) — replaces rsBuildLife / rsRenderEvents / rsRunLife of 30-life-event-checker.js
+   Needs: 97-life-event-catalog.js (LEC), 16 (rectifyPoint, shiftLocalDateTime), 10 (DASHA_*), 03 (getSiderealLongitudeAt).
+   What is new vs the old checker
+   - The dasha is RE-COMPUTED for every candidate birth minute (Moon moves, so the whole dasha timeline shifts).
+   - Links = occupy + rule + graha drishti. Transits = Jupiter, Saturn (+ Mars, Rahu, Ketu, lighter).
+   - Every event has sharpness (catalog) x date precision (day / month / year) as a weight.
+   - Score per event = 0.50 dasha cover + 0.25 transit cover + 0.10 karaka + 0.15 double transit (all 0..1).
+   - Confidence floor = min(luck test, reshuffle test, drop-one test) x evidence factor. Honest meaning in the UI.
+   ============================================================================ */
+const LE_PL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+const LE_ASP = { Mars:[4,7,8], Jupiter:[5,7,9], Saturn:[3,7,10] };       // houses counted from the planet (1 = itself)
+const LE_TR_W = { Jupiter:1, Saturn:1, Mars:.5, Rahu:.5, Ketu:.5 };       // transit weights (sum 3.5)
+const LE_SH = { 1:.6, 2:.8, 3:1 };                                         // catalog sharpness -> weight
+const LE_PREC = {
+  d:{ label:'Exact day',        icon:'🎯', w:1,   offs:[0] },
+  m:{ label:'Within a month',   icon:'📅', w:.75, offs:[-15,0,15] },
+  y:{ label:'Only the year',    icon:'🌫️', w:.45, offs:[-182,-91,0,91,182] }
+};
+const LE_YR = 365.25*86400000;
+const LE_F = 61;                                                           // floats per (sample, event): 12 d + 12 t + 12 j + 12 s + 9 k + 4 spare
+const LE_CW = {}, LE_CAT_IDS = [];
+(function(){ LEC.list.forEach(c=>{ const w = new Float32Array(12); let sum = 0;
+  c.p.forEach(h=>{ w[h-1] = 2; }); c.s.forEach(h=>{ if(!w[h-1]) w[h-1] = 1; });
+  for (let i=0;i<12;i++) sum += w[i];
+  LE_CW[c.id] = { w, sum, kidx:c.k.map(k=>LE_PL.indexOf(k)).filter(i=>i>-1) }; LE_CAT_IDS.push(c.id); }); })();
+
+/* ---- Vimshottari lord at a date for a given Moon longitude (same 365.25-day convention as the main engine) ---- */
+function leVim(moonLon, birthMs, evMs){
+  const span = 360/27, ml = normDeg(moonLon), ni = Math.floor(ml/span), frac = (span - ml%span)/span;
+  const sl = NAKSHATRAS[ni].lord, sIdx = DASHA_SEQUENCE.indexOf(sl);
+  let t = (evMs - birthMs)/LE_YR + DASHA_YEARS[sl]*(1 - frac), i = sIdx, guard = 0;
+  while (t >= DASHA_YEARS[DASHA_SEQUENCE[i%9]] && guard++ < 60){ t -= DASHA_YEARS[DASHA_SEQUENCE[i%9]]; i++; }
+  const md = DASHA_SEQUENCE[i%9]; let len = DASHA_YEARS[md]; const out = [md];
+  for (let lev=0; lev<2; lev++){
+    const j0 = DASHA_SEQUENCE.indexOf(out[lev]); let found = out[lev], nl = len;
+    for (let k=0;k<9;k++){ const lord = DASHA_SEQUENCE[(j0+k)%9], l = len*DASHA_YEARS[lord]/DASHA_TOTAL_YEARS;
+      if (t < l || k===8){ found = lord; nl = l; break; } t -= l; }
+    out.push(found); len = nl;
+  }
+  return out;                                                              // [Mahadasha, Antardasha, Pratyantardasha]
+}
+/* ---- houses (1..12 -> index 0..11) a natal planet is linked to from lagna L: sits, rules, aspects ---- */
+function leLinks(P, L, sg, msign){
+  const out = new Float32Array(12), hh = s=> ((s - L + 12)%12);
+  const put = (i,v)=>{ if (v > out[i]) out[i] = v; };
+  const sgn = P==='Moon' ? msign : sg[P]; if (sgn==null) return out;
+  const node = P==='Rahu' || P==='Ketu', owner = node ? SIGNS[sgn].lord : P, base = hh(sgn);
+  put(base, 1);
+  for (let s=0;s<12;s++) if (SIGNS[s].lord===owner) put(hh(s), node ? .7 : 1);
+  if (node){ const os = owner==='Moon' ? msign : sg[owner]; if (os!=null) put(hh(os), .7); }
+  else (LE_ASP[P] || [7]).forEach(o=>{ if (o>1) put((base+o-1)%12, .5); });
+  return out;
+}
+/* ---- houses a transiting planet (in sign ts) influences from lagna L ---- */
+function leTransitInfl(P, ts, L){
+  const out = new Float32Array(12), b = ((ts - L + 12)%12); out[b] = 1;
+  if (P==='Jupiter' || P==='Saturn' || P==='Mars') (LE_ASP[P]).forEach(o=>{ if (o>1){ const i = (b+o-1)%12; if (out[i] < .75) out[i] = P==='Mars' ? .6 : .75; } });
+  return out;
+}
+function leRng(seed){ let a = seed>>>0; return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a>>>15, 1|a); t = t + Math.imul(t ^ t>>>7, 61|t) ^ t; return ((t ^ t>>>14)>>>0)/4294967296; }; }
+function leScoreAt(F, b, cw, sum, kidx){
+  let d=0, t=0, pj=0, ps=0; const w = cw;
+  for (let h=0; h<12; h++){ const x = w[h]; if (x){ d += x*F[b+h]; t += x*F[b+12+h];
+    if (x===2){ if (F[b+24+h] > pj) pj = F[b+24+h]; if (F[b+36+h] > ps) ps = F[b+36+h]; } } }
+  let kar = 0; for (let i=0;i<kidx.length;i++) kar += F[b+48+kidx[i]]; if (kar>1) kar = 1;
+  return .5*d/(sum*2.5) + .25*t/(sum*3.5) + .1*kar + .15*pj*ps;
+}
+const leTick = ()=> new Promise(r=> setTimeout(r, 0));
+
+/* ---- main analysis (pure: no DOM). o = { chart, prof, events, date, time, halfHours, K, B, onProgress } ---- */
+async function leAnalyse(o){
+  const chart = o.chart, prof = o.prof, tz = prof.tz || 0, prog = o.onProgress || (()=>{});
+  const sg = {}; LE_PL.forEach(P=>{ if (P!=='Moon' && chart.planets[P]) sg[P] = chart.planets[P].sign; });
+  // events -> date points with transit signs
+  const evs = o.events.filter(e=> LEC.byId[e.c]).map(e=>{
+    const c = LEC.byId[e.c], pr = LE_PREC[e.pr] ? e.pr : 'd', [y,m,d] = e.d.split('-').map(Number);
+    const pts = LE_PREC[pr].offs.map(od=>{
+      const ms = Date.UTC(y, m-1, d+od, 12) - tz*3600000, jd = ms/86400000 + 2440587.5, ra = getSiderealLongitudeAt('Rahu', jd);
+      return { ms, tr:{ Jupiter:Math.floor(getSiderealLongitudeAt('Jupiter',jd)/30), Saturn:Math.floor(getSiderealLongitudeAt('Saturn',jd)/30),
+        Mars:Math.floor(getSiderealLongitudeAt('Mars',jd)/30), Rahu:Math.floor(ra/30), Ketu:Math.floor(normDeg(ra+180)/30) }, tcache:{} };
+    });
+    return { e, c, pr, pts, w:LE_SH[c.sh]*LE_PREC[pr].w, cwo:LE_CW[c.id] };
+  });
+  const n = evs.length; if (!n) return null;
+  // candidate birth moments
+  const half = (o.halfHours || 3)*3600, S = o.S || 360, step = (2*half)/S, samples = [];
+  for (let i=0;i<S;i++){
+    const off = Math.round(-half + (i+.5)*step), sh = shiftLocalDateTime(o.date, o.time, off);
+    const r = rectifyPoint(sh.dateStr, sh.timeStr, prof.lat, prof.lon, tz), L = r.asc.sign, ms = (r.jd - 2440587.5)*86400000;
+    const links = {}; LE_PL.forEach(P=>{ links[P] = leLinks(P, L, sg, r.moon.sign); });
+    samples.push({ off, L, moon:r.moon.longitude, birthMs:ms, links });
+  }
+  // state per (sample, event)
+  const F = new Float32Array(S*n*LE_F), LW = [1,1,.5], KW = [1,.6,.3];
+  for (let s=0;s<S;s++){ const sp = samples[s];
+    for (let k=0;k<n;k++){ const ev = evs[k], b = (s*n+k)*LE_F, np = ev.pts.length;
+      ev.pts.forEach(pt=>{
+        const lords = leVim(sp.moon, sp.birthMs, pt.ms);
+        lords.forEach((P,lv)=>{ const lk = sp.links[P]; for (let h=0;h<12;h++) F[b+h] += LW[lv]*lk[h]/np; F[b+48+LE_PL.indexOf(P)] += KW[lv]/np; });
+        const tc = pt.tcache[sp.L] || (pt.tcache[sp.L] = (function(){ const t = new Float32Array(12);
+          Object.keys(LE_TR_W).forEach(P=>{ const x = leTransitInfl(P, pt.tr[P], sp.L); for (let h=0;h<12;h++) t[h] += LE_TR_W[P]*x[h]; });
+          return { t, j:leTransitInfl('Jupiter', pt.tr.Jupiter, sp.L), s:leTransitInfl('Saturn', pt.tr.Saturn, sp.L) }; })());
+        for (let h=0;h<12;h++){ F[b+12+h] += tc.t[h]/np; F[b+24+h] += tc.j[h]/np; F[b+36+h] += tc.s[h]/np; }
+      });
+    }
+  }
+  const W = evs.map(e=>e.w), sumWt = W.reduce((a,b)=>a+b, 0);
+  const E = new Float32Array(S*n);
+  for (let s=0;s<S;s++) for (let k=0;k<n;k++){ const c = evs[k].cwo; E[s*n+k] = leScoreAt(F, (s*n+k)*LE_F, c.w, c.sum, c.kidx); }
+  const Tof = (sel, wts, sumw)=>{ const T = new Float64Array(S); for (let s=0;s<S;s++){ let a = 0; for (let j=0;j<sel.length;j++) a += wts[j]*E[s*n+sel[j]]; T[s] = a/sumw; } return T; };
+  const peak = (T, only)=>{
+    let mx = -1, mn = 1e9, bi = -1;
+    for (let s=0;s<S;s++){ if (T[s] < mn) mn = T[s]; if (only!=null && samples[s].L!==only) continue; if (T[s] > mx){ mx = T[s]; bi = s; } }
+    if (bi<0) return null;
+    const L = samples[bi].L, tau = mx - .03*(mx - mn), offs = [];
+    for (let s=0;s<S;s++) if (samples[s].L===L && T[s] >= tau) offs.push(samples[s].off);
+    offs.sort((a,b)=>a-b);
+    return { L, T:mx, off:offs[Math.floor(offs.length/2)], s:bi, tau };
+  };
+  const all = evs.map((_,i)=>i), Tobs = Tof(all, W, sumWt), top = peak(Tobs);
+  // seed: same input -> same confidence
+  let seed = 7; evs.forEach(ev=>{ for (const ch of ev.e.c + ev.e.d + ev.pr) seed = (seed*31 + ch.charCodeAt(0))>>>0; });
+  const rnd = leRng(seed);
+  prog(.05, 'Checking each rising sign…');
+  // bootstrap (reshuffle) + drop-one
+  const B = o.B || 400; let sameSign = 0; const topOffs = [];
+  for (let b=0;b<B;b++){ const sel = [], wts = []; let sw = 0;
+    for (let j=0;j<n;j++){ const k = Math.floor(rnd()*n); sel.push(k); wts.push(W[k]); sw += W[k]; }
+    const pk = peak(Tof(sel, wts, sw)); if (pk.L===top.L){ sameSign++; topOffs.push(pk.off); } }
+  let loo = 0; if (n>1) for (let i=0;i<n;i++){ const sel = all.filter(x=>x!==i); const pk = peak(Tof(sel, sel.map(x=>W[x]), sel.reduce((a,x)=>a+W[x],0))); if (pk.L===top.L) loo++; }
+  const P2 = sameSign/B, P3 = n>1 ? loo/n : 0;
+  topOffs.sort((a,b)=>a-b);
+  const q = f=> topOffs.length ? topOffs[Math.min(topOffs.length-1, Math.floor(f*topOffs.length))] : top.off;
+  prog(.15, 'Testing against random life events…');
+  // luck test: random event types, same dates, best fit anywhere in the window
+  const K = Math.max(60, Math.min(o.K || 300, Math.floor(2.2e8/(S*n*70)))); let ge = 0;
+  const pick = new Array(n);
+  for (let r=0;r<K;r++){
+    for (let j=0;j<n;j++) pick[j] = LE_CW[LE_CAT_IDS[Math.floor(rnd()*LE_CAT_IDS.length)]];
+    let best = -1;
+    for (let s=0;s<S;s++){ let a = 0; for (let j=0;j<n;j++){ const c = pick[j]; a += W[j]*leScoreAt(F, (s*n+j)*LE_F, c.w, c.sum, c.kidx); } if (a > best) best = a; }
+    if (best/sumWt >= top.T - 1e-12) ge++;
+    if (r%20===19){ prog(.15 + .8*r/K, 'Testing against random life events…'); await leTick(); }
+  }
+  const pLuck = (ge+1)/(K+1), P1 = Math.max(0, 1 - 4*pLuck);   // strict: p=5% -> 80%, p=25% or worse -> 0%
+  // evidence amount: distinct themes count fully, repeats only partly
+  const themes = {}; evs.forEach(ev=>{ const h = ev.c.house; (themes[h] = themes[h] || []).push(ev.w); });
+  let nEff = 0; Object.keys(themes).forEach(h=>{ const a = themes[h]; nEff += (a.reduce((x,y)=>x+y,0)/a.length)*(1 + .35*(a.length-1)); });
+  const Fv = 1 - Math.exp(-nEff/2.2), floor = Math.min(.99, Math.min(P1, P2, P3)*Fv);
+  // per-sign ranking with per-event percentile (how much better than other event themes at that moment)
+  const catScoresAt = (s, k)=>{ let lower = 0; const obs = E[s*n+k], b = (s*n+k)*LE_F;
+    for (const id of LE_CAT_IDS){ const c = LE_CW[id]; if (leScoreAt(F, b, c.w, c.sum, c.kidx) < obs - 1e-9) lower++; }
+    return lower/(LE_CAT_IDS.length-1); };
+  const signs = {}; samples.forEach(sp=>{ signs[sp.L] = 1; });
+  const ranked = Object.keys(signs).map(Ls=>{ const L = +Ls, pk = peak(Tobs, L);
+    const runs = []; let cur = null;
+    for (let s=0;s<S;s++){ const ok = samples[s].L===L && Tobs[s] >= pk.tau;
+      if (ok){ if (cur && cur.e===s-1){ cur.e = s; cur.max = Math.max(cur.max, Tobs[s]); } else { cur = { a:s, e:s, max:Tobs[s] }; runs.push(cur); } } }
+    runs.sort((x,y)=>y.max-x.max);
+    const wins = runs.slice(0,2).map(r=>({ a:samples[r.a].off - step/2, b:samples[r.e].off + step/2, mid:Math.round((samples[r.a].off + samples[r.e].off)/2) }));
+    const per = evs.map((ev,k)=>({ ev, sc:E[pk.s*n+k], pct:catScoresAt(pk.s, k) }));
+    const fit = per.reduce((a,x,i)=> a + x.pct*W[i], 0)/sumWt;
+    return { L, T:pk.T, off:pk.off, s:pk.s, fit, wins, per };
+  }).sort((a,b)=>b.T - a.T);
+  // plain-words reasons for the top sign
+  const sp = samples[ranked[0].s];
+  ranked[0].per.forEach((x,k)=>{ const ev = evs[k], c = ev.c, mid = ev.pts[Math.floor(ev.pts.length/2)], lords = leVim(sp.moon, sp.birthMs, mid.ms), lines = [];
+    ['Mahadasha','Antardasha','Pratyantardasha'].forEach((nm,i)=>{ const lk = sp.links[lords[i]], hs = [];
+      c.p.forEach(h=>{ if (lk[h-1]>0) hs.push('H'+h+' ★'); }); c.s.forEach(h=>{ if (lk[h-1]>0) hs.push('H'+h); });
+      lines.push(nm+' '+lords[i]+(hs.length ? ' → '+hs.join(', ') : ': no link')); });
+    ['Jupiter','Saturn'].forEach(P=>{ const inf = leTransitInfl(P, mid.tr[P], sp.L), hs = []; c.p.forEach(h=>{ if (inf[h-1]>0) hs.push('H'+h+' ★'); }); c.s.forEach(h=>{ if (inf[h-1]>=.75) hs.push('H'+h); });
+      if (hs.length) lines.push(P+' transit reaches '+hs.join(', ')); });
+    x.lines = lines; });
+  prog(1, 'Done');
+  return { n, S, step, half, ranked, top:ranked[0], close: ranked.length>1 && ranked[1].T >= ranked[0].T*.93,
+    conf:{ P1, P2, P3, F:Fv, floor, pLuck, nEff, K, B },
+    timeWin:{ lo:q(.1), hi:q(.9), mid:ranked[0].off },
+    outliers: ranked[0].per.filter(x=>x.pct < .35) };
+}
+
+/* ============================ UI ============================ */
+const leUI = { view:'house', q:'', sel:null, running:false };
+function leFmt(off, date, time){ const sh = shiftLocalDateTime(date, time, Math.round(off)), day = sh.dateStr===date ? '' : (sh.dateStr>date?' +1d':' −1d'); return sh.timeStr.slice(0,5)+day; }
+function leSharpLabel(sh){ return sh===3 ? 'Date: exact day' : sh===2 ? 'Date: to a few weeks' : 'Date: a phase (fuzzy)'; }
+function leChip(e){ return `<button type="button" class="le-chip${leUI.sel===e.id?' on':''}${e.n?' neg':''}" data-le-pick="${e.id}" title="${rsEsc(e.plain)}"><span>${e.label}</span>${e.sh===3?'<i>🎯</i>':''}</button>`; }
+function leGroups(){
+  const q = leUI.q.trim().toLowerCase(), H = LEC.houses;
+  let list = LEC.list.filter(e=> !q || (e.label+' '+e.plain+' '+e.id+' house '+e.house+' '+H[e.house-1].name+' '+e.k.join(' ')+' '+LEC.signs[e.house-1]).toLowerCase().indexOf(q) > -1);
+  const g = [];
+  if (leUI.view==='house') H.forEach(h=>{ const a = list.filter(e=>e.house===h.h); if (a.length) g.push({ t:`House ${h.h} · ${h.name}`, d:h.plain, a }); });
+  else if (leUI.view==='planet') LE_PL.forEach(P=>{ const a = list.filter(e=>e.planet===P); if (a.length) g.push({ t:`${LEC.planets[P].icon} ${P}`, d:LEC.planets[P].plain, a }); });
+  else if (leUI.view==='sign') H.forEach(h=>{ const a = list.filter(e=>e.house===h.h); if (a.length) g.push({ t:`${SIGNS[h.sign].symbol} ${LEC.signs[h.sign]}`, d:`Natural sign of house ${h.h}: ${h.signWords}`, a }); });
+  else { const a = list.filter(e=>e.sh===3); H.forEach(h=>{ const b = a.filter(e=>e.house===h.h); if (b.length) g.push({ t:`🎯 ${h.name}`, d:'Events you can date to the exact day', a:b }); }); }
+  return { g, count:list.length };
+}
+function leRenderCats(){
+  const el = document.getElementById('leCats'); if (!el) return;
+  const r = leGroups(), open = !!leUI.q.trim();
+  el.innerHTML = r.g.length ? r.g.map((x,i)=>`<details class="le-grp"${(open||i===0||x.a.some(e=>e.id===leUI.sel))?' open':''}><summary><b>${x.t}</b><em>${x.a.length}</em><small>${rsEsc(x.d)}</small></summary><div class="le-chips">${x.a.map(leChip).join('')}</div></details>`).join('')
+    : `<div class="rs-empty">No event matches “${rsEsc(leUI.q)}”. Try a simpler word like job, home, child, loan.</div>`;
+  const c = document.getElementById('leCount'); if (c) c.textContent = r.count + ' of ' + LEC.count + ' events';
+}
+function leRenderSel(){
+  const el = document.getElementById('leSel'); if (!el) return;
+  const e = LEC.byId[leUI.sel];
+  if (!e){ el.innerHTML = `<div class="le-sel-empty">👆 Tap an event above. It will be linked to houses, a planet and a sign automatically.</div>`; return; }
+  const H = LEC.houses, sec = e.s.length ? e.s.map(h=>'H'+h).join(', ') : '—';
+  el.innerHTML = `<div class="le-sel-t">${e.label}${e.n?' <u>hard event</u>':''}</div><div class="le-sel-p">${rsEsc(e.plain)}</div>
+    <div class="le-tags"><span>Main: ${e.p.map(h=>`H${h} ${H[h-1].name}`).join(' + ')}</span><span>Also: ${sec}</span>
+    <span>Planet: ${e.k.join(', ')}</span><span>${SIGNS[H[e.house-1].sign].symbol} ${LEC.signs[H[e.house-1].sign]}</span><span>${leSharpLabel(e.sh)}</span></div>`;
+}
+function leMeterData(){
+  const evs = rsState.events.filter(e=>LEC.byId[e.c]), themes = {}; let nEff = 0; const hs = {};
+  evs.forEach(e=>{ const c = LEC.byId[e.c], w = LE_SH[c.sh]*LE_PREC[e.pr||'d'].w; (themes[c.house] = themes[c.house] || []).push(w); c.p.forEach(h=>{ hs[h] = 1; }); });
+  Object.keys(themes).forEach(h=>{ const a = themes[h]; nEff += (a.reduce((x,y)=>x+y,0)/a.length)*(1 + .35*(a.length-1)); });
+  return { n:evs.length, nEff, cap:evs.length ? 1 - Math.exp(-nEff/2.2) : 0, hs };
+}
+function leRenderMeter(){
+  const el = document.getElementById('leMeter'); if (!el) return;
+  const m = leMeterData(), pct = Math.round(m.cap*100);
+  el.innerHTML = `<div class="le-meter-top"><b>Evidence strength: ${pct}% max</b><span>${m.n} event${m.n===1?'':'s'} · ${m.nEff.toFixed(1)} independent</span></div>
+    <div class="le-bar"><i style="width:${pct}%"></i></div>
+    <div class="le-houses">${[1,2,3,4,5,6,7,8,9,10,11,12].map(h=>`<span class="${m.hs[h]?'on':''}" title="${LEC.houses[h-1].name}">${h}</span>`).join('')}</div>
+    <div class="le-meter-tip">${!m.n?'Add events to see how strong your proof can get. ':''}${m.n&&pct<85?`Your final confidence can never exceed ${pct}% with this evidence. Add events from <b>different life areas</b> (lit numbers above show houses already covered) and prefer 🎯 exact-day events.`:m.n?'Good spread of evidence. The final confidence now depends on how well the events agree on one time.':''}</div>`;
+}
+function rsRenderEvents(){
+  const el = document.getElementById('rsEvList'); if (!el) return;
+  leRenderMeter();
+  if (!rsState.events.length){ el.innerHTML = `<div class="rs-empty">No events yet. Pick one above and add its date. Marriage, a job, a child, a loan, a move all work well.</div>`; return; }
+  el.innerHTML = rsState.events.map((e,i)=>{ const c = LEC.byId[e.c], pr = LE_PREC[e.pr||'d'];
+    return `<span class="rs-evchip"><b>${c?c.label:rsEsc(e.c)}</b> · ${rsEsc(e.d)} ${pr.icon}${e.n?` · ${rsEsc(e.n)}`:''}<button type="button" data-rs-del="${i}" aria-label="Remove">✕</button></span>`; }).join('') +
+    (rsState.events.length<5 ? `<div class="rs-empty" style="margin-top:8px">Tip: ${5-rsState.events.length} more event${5-rsState.events.length>1?'s':''} from different life areas would make the result much stronger.</div>` : '');
+}
+function rsBuildLife(p){
+  p.innerHTML = `
+  <div class="rs-pane-head"><h3>🌟 Life-Event Checker</h3><p>Real events are the best proof. We test every possible rising sign (and every minute) against your dashas and slow transits.</p></div>
+  <details class="rs-how"><summary>💡 How it works (and how far to trust it)</summary>
+    <p>For every minute in your search window we build the chart, work out the dasha for that exact minute, and ask: <em>at the date of each event, were the running dasha lords and the slow planets (Jupiter, Saturn, Mars, Rahu, Ketu) tied to the houses that rule that kind of event?</em>
+    The events are then compared with the same chart scored against <b>random event types</b> to see if the fit is more than luck, and re-shuffled many times to see if the answer stays put.</p>
+    <p><b>Confidence floor</b> = the weakest of three tests (not luck · stays same when events are reshuffled · stays same when one event is dropped) × how much independent evidence you gave. It tells you how consistent the answer is with the rules used here. It does <b>not</b> prove the astrological rules themselves, and it is not a guaranteed accuracy. Use it as a strong clue and confirm with Sandhi / Varga tools.</p></details>
+  <div class="le-pick">
+    <div class="le-pick-top"><input type="search" id="leSearch" placeholder="🔎 Search events: marriage, surgery, visa, loan…" autocomplete="off"><span id="leCount"></span></div>
+    <div class="le-views" role="tablist">
+      <button type="button" data-le-view="house" class="on">🏠 Life area</button><button type="button" data-le-view="planet">🪐 Planet</button>
+      <button type="button" data-le-view="sign">♈ Sign</button><button type="button" data-le-view="best">🎯 Best for accuracy</button></div>
+    <div id="leCats" class="le-cats"></div>
+    <div id="leSel" class="le-sel"></div>
+  </div>
+  <input type="hidden" id="rsEvCat" value="">
+  <div class="rs-ev-form">
+    <label>Date<input type="date" id="rsEvDate"></label>
+    <label>How sure is the date?<select id="leEvPrec"><option value="d">🎯 Exact day</option><option value="m">📅 Within a month</option><option value="y">🌫️ Only the year</option></select></label>
+    <label class="grow">Note (optional)<input type="text" id="rsEvNote" maxlength="40" placeholder="e.g. first job"></label>
+    <button type="button" class="btn btn-ghost" id="rsEvAdd">＋ Add event</button>
+  </div>
+  <div id="leMeter" class="le-meter"></div>
+  <div id="rsEvList" class="rs-ev-list"></div>
+  <div class="rs-ev-opts">
+    <label>Search around your working time<select id="rsEvWin">
+      <option value="12">Whole day · all 12 signs</option><option value="6">± 6 hours</option><option value="3" selected>± 3 hours</option><option value="1.5">± 90 minutes</option></select></label>
+    <button type="button" class="btn btn-primary" id="rsEvRun">✨ Find the best-fitting rising sign</button>
+    <button type="button" class="btn btn-ghost" id="leClear">🗑️ Clear events</button>
+  </div>
+  <div id="rsEvOut"></div>`;
+  leRenderCats(); leRenderSel(); leRenderMeter();
+  p.querySelector('#leSearch').addEventListener('input', e=>{ leUI.q = e.target.value; leRenderCats(); });
+  p.querySelector('.le-views').addEventListener('click', e=>{ const b = e.target.closest('[data-le-view]'); if (!b) return;
+    leUI.view = b.dataset.leView; p.querySelectorAll('[data-le-view]').forEach(x=>x.classList.toggle('on', x===b)); leRenderCats(); });
+  p.querySelector('#leCats').addEventListener('click', e=>{ const b = e.target.closest('[data-le-pick]'); if (!b) return;
+    leUI.sel = b.dataset.lePick; document.getElementById('rsEvCat').value = leUI.sel;
+    p.querySelectorAll('.le-chip').forEach(x=>x.classList.toggle('on', x.dataset.lePick===leUI.sel)); leRenderSel();
+    const d = document.getElementById('rsEvDate'); if (d) d.focus({ preventScroll:true }); });
+  p.querySelector('#rsEvAdd').addEventListener('click', ()=>{
+    const d = document.getElementById('rsEvDate').value, c = leUI.sel, n = document.getElementById('rsEvNote').value.trim(), pr = document.getElementById('leEvPrec').value;
+    if (!c){ rsToast('Pick an event type first 👆'); return; }
+    if (!d){ rsToast('Pick the event date first 📅'); return; }
+    const p0 = currentProfileForExport;
+    if (p0 && d < p0.dob){ rsToast('That date is before the birth date'); return; }
+    rsState.events.push({ c, d, n, pr }); rsState.events.sort((a,b)=> a.d<b.d?-1:1);
+    rsSaveEvents(); rsRenderEvents(); document.getElementById('rsEvDate').value = ''; document.getElementById('rsEvNote').value = '';
+    rsToast('Event added ✓');
+  });
+  p.querySelector('#rsEvList').addEventListener('click', e=>{
+    const b = e.target.closest('[data-rs-del]'); if (!b) return;
+    rsState.events.splice(+b.dataset.rsDel, 1); rsSaveEvents(); rsRenderEvents();
+  });
+  p.querySelector('#leClear').addEventListener('click', ()=>{ if (!rsState.events.length) return; if (!confirm('Remove all events for this chart?')) return;
+    rsState.events = []; rsSaveEvents(); rsRenderEvents(); document.getElementById('rsEvOut').innerHTML = ''; });
+  p.querySelector('#rsEvRun').addEventListener('click', rsRunLife);
+  p.addEventListener('click', e=>{
+    const b = e.target.closest('[data-rs-use]'); if (!b) return;
+    const off = +b.dataset.rsUse, dEl = document.getElementById('rectDate');
+    const base = shiftLocalDateTime(dEl.value, document.getElementById('rectCenterTime').value, off);
+    dEl.value = base.dateStr;
+    const pr = base.timeStr.split(':').map(Number); rectHms = { h:pr[0], m:pr[1], s:pr[2]||0 }; updateHmsDisplay();
+    rsToast('Dial set to ' + base.timeStr.slice(0,5) + ' ✓'); rsShow('dial', true);
+  });
+}
+function leGrade(f){ return f>=.8 ? ['Strong','le-g4','Very likely the right window. Confirm with Sandhi / Varga tools.'] : f>=.6 ? ['Good','le-g3','A solid lead. Worth setting the dial and checking the chart.'] : f>=.4 ? ['Fair','le-g2','A useful clue, not yet proof. More events would sharpen it.'] : ['Weak','le-g1','Too little or too mixed evidence. Add more events from different life areas.']; }
+function lePctWord(p){ return p>=.85 ? ['✅','Strong fit'] : p>=.6 ? ['🟢','Supports'] : p>=.35 ? ['➖','Neutral'] : ['❌','Poor fit']; }
+
+async function rsRunLife(){
+  const out = document.getElementById('rsEvOut'); if (!out || leUI.running) return;
+  const chart = currentChartForModal, prof = currentProfileForExport;
+  if (!chart || !prof){ out.innerHTML = `<div class="rs-empty">Generate a chart first.</div>`; return; }
+  if (!rsState.events.length){ rsToast('Add at least one event first'); out.innerHTML = `<div class="rs-empty">Add some dated events above, then press the button again.</div>`; return; }
+  const date = document.getElementById('rectDate').value, time = document.getElementById('rectCenterTime').value;
+  const half = parseFloat(document.getElementById('rsEvWin').value);
+  leUI.running = true;
+  out.innerHTML = `<div class="le-prog"><div class="le-bar"><i id="leProgBar" style="width:3%"></i></div><span id="leProgTxt">Starting…</span></div>`;
+  let r = null;
+  try {
+    r = await leAnalyse({ chart, prof, events:rsState.events, date, time, halfHours:half,
+      onProgress:(f,t)=>{ const b = document.getElementById('leProgBar'), x = document.getElementById('leProgTxt'); if (b) b.style.width = Math.round(f*100)+'%'; if (x) x.textContent = t; } });
+  } catch(err){ console.error('Life events', err); out.innerHTML = `<div class="rs-empty">Something went wrong while testing. Try fewer events or a smaller window.</div>`; leUI.running = false; return; }
+  leUI.running = false;
+  if (!r){ out.innerHTML = `<div class="rs-empty">None of the saved events could be read.</div>`; return; }
+  const c = r.conf, gr = leGrade(c.floor), fm = off=> leFmt(off, date, time), top = r.top, sg = SIGNS[top.L];
+  const bar = (lab, v, tip)=>`<div class="le-test"><span>${lab}</span><div class="le-bar"><i data-w="${Math.round(v*100)}"></i></div><em>${Math.round(v*100)}%</em><small>${tip}</small></div>`;
+  const spreadMin = Math.round((r.timeWin.hi - r.timeWin.lo)/60);
+  out.innerHTML = `
+    <div class="le-hero ${gr[1]}">
+      <div class="le-gauge"><b>${Math.round(c.floor*100)}%</b><span>minimum confidence</span></div>
+      <div class="le-hero-txt"><div class="le-grade">${gr[0]} evidence</div>
+        <div class="le-best">${sg.symbol} <b>${sg.name} rising</b> around <b>${fm(top.off)}</b></div>
+        <div class="le-sub">Likely window ${fm(r.timeWin.lo)} – ${fm(r.timeWin.hi)}${spreadMin>0?` (about ${spreadMin} min wide)`:''}</div>
+        <div class="le-sub">${gr[2]}</div>
+        <button type="button" class="rs-seg" data-rs-use="${top.off}">🕰️ Set the Time Dial to ${fm(top.off)} <u>use ➜</u></button></div></div>
+    <div class="le-tests"><div class="le-tests-h">How the minimum was worked out (lowest of the first three, times evidence)</div>
+      ${bar('🍀 Not just luck', c.P1, `Random event types fit this well in only ${(c.pLuck*100).toFixed(1)}% of ${c.K} tries (needs under 5% to score 80%)`)}
+      ${bar('🔀 Survives reshuffling', c.P2, `Same rising sign won in ${Math.round(c.P2*100)}% of ${c.B} re-sampled sets of your events`)}
+      ${bar('✂️ Survives dropping one event', c.P3, 'Same sign when each single event is left out')}
+      ${bar('📚 Amount of evidence', c.F, `${c.nEff.toFixed(1)} independent events (different life areas count most)`)}
+    </div>
+    <div class="rs-res-head">Ranking of possible rising signs <span>${r.n} event${r.n>1?'s':''} · ${r.S} minutes tested</span></div>
+    ${r.ranked.map((x,i)=>{ const s2 = SIGNS[x.L], pct = Math.round(x.fit*100);
+      return `<div class="rs-rank ${i===0?'top':''}"><div class="rs-rank-row"><span class="rs-rank-n">${i===0?'👑':i+1}</span><b>${s2.symbol} ${s2.name}</b>
+        <div class="rs-bar"><i data-w="${pct}"></i></div><em>${pct}%</em></div>
+        <div class="le-fitnote">Events fit this sign better than ${pct}% of other event types, on average.</div>
+        <div class="rs-rank-segs">${x.wins.map(w=>`<button type="button" class="rs-seg" data-rs-use="${w.mid}" title="Set the dial to the middle of this window">🕰️ ${fm(w.a)} – ${fm(w.b)} <u>use ➜</u></button>`).join('')}</div>
+        <details class="rs-why"><summary>Event by event</summary>${x.per.map(y=>{ const v = lePctWord(y.pct); return `<div class="rs-why-ev"><b>${v[0]} ${y.ev.c.label} · ${rsEsc(y.ev.e.d)}</b> <em class="le-v">${v[1]} · ${Math.round(y.pct*100)}%</em>${y.lines?`<ul>${y.lines.map(l=>`<li>${rsEsc(l)}</li>`).join('')}</ul>`:''}</div>`; }).join('')}</details></div>`; }).join('')}
+    ${r.outliers.length ? `<div class="le-out">⚠️ <b>Events that disagree with the top answer:</b> ${r.outliers.map(x=>`${x.ev.c.label} (${rsEsc(x.ev.e.d)})`).join(', ')}. Double-check those dates or remove them. One wrong date can pull the whole result.</div>` : ''}
+    <div class="rs-note">${r.close?'⚖️ <b>Close call.</b> The top signs are within 7%. Add more events or use the Sandhi / Varga tools. ':''}Times use your birth timezone. Score weights: dasha 50%, slow transits 25%, natural significator 10%, Jupiter+Saturn together 15%. The percentage is a consistency check of this method, not a guarantee. It supports your judgement, it does not replace it.</div>`;
+  requestAnimationFrame(()=> requestAnimationFrame(()=> out.querySelectorAll('.rs-bar i,.le-bar i[data-w]').forEach(b=> b.style.width = b.dataset.w+'%')));
+  rsToast('Done ✨ Top fit: ' + sg.name + ' · min confidence ' + Math.round(c.floor*100) + '%');
+}
+window.LEE = { analyse:leAnalyse, vim:leVim, links:leLinks, catalog:LEC };
 <\/script>
 <script>
 /* Copy buttons on/off (Settings in the main menu). OFF by default. Hides every "Copy ..." button in the app while off.
