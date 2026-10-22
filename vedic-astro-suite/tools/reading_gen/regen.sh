@@ -8,3 +8,4 @@ python3 build_nk.py                                    # js/89-vedic-nakshatra-d
 python3 build_vmf.py                                   # js/90-reading-manifest.js    (tables inside build_vmf.py)
 python3 build_vda.py                                   # js/91-dasha-reading.js       (tables inside build_vda.py)
 python3 build_yg.py                                    # js/92-yoga-engine.js         (table inside build_yg.py)
+python3 build_la.py                                    # js/94-life-areas.js          (table inside build_la.py)

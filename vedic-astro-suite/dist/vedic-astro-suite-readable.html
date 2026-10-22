@@ -12215,6 +12215,11 @@ html{scroll-behavior:auto!important}
 .dr-grp>summary::before{content:'▸';color:var(--gold,#d4af37);transition:transform .15s}.dr-grp[open]>summary::before{transform:rotate(90deg)}
 .dr-n{margin-left:auto;font-size:11px;padding:1px 8px;border-radius:999px;background:rgba(255,255,255,.07);color:var(--text-muted);font-weight:500}
 .dr-grp-b{display:flex;flex-direction:column;gap:8px;padding:0 10px 10px}
+.dr-area{padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.035);border:1px solid var(--border-lighter,rgba(255,255,255,.08));display:flex;flex-direction:column;gap:7px}
+.dr-ah{display:flex;align-items:center;gap:8px}.dr-ah b{font-size:13.5px;color:var(--text-main)}.dr-ai{font-size:17px}.dr-as{margin-left:auto;font-size:19px;font-weight:700;color:var(--gold,#d4af37)}
+.dr-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.dr-bar i{display:block;height:100%;border-radius:99px;background:#d4af37}.dr-bar i.g{background:linear-gradient(90deg,#4f8a5b,#79c08a)}.dr-bar i.b{background:linear-gradient(90deg,#b5683a,#e0955f)}
+.dr-parts{display:flex;flex-wrap:wrap;gap:6px}.dr-parts span{font-size:11px;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.06);color:var(--text-muted)}.dr-parts b{color:var(--text-main);margin-left:2px}
+.dr-area .dr-ul{margin:2px 0 2px 16px}.dr-area .dr-ul li{font-size:12.5px;line-height:1.5;margin:3px 0}
 </style>
 <style>
 /* ===== PDF Studio dialog (js/93-pdf-report.js) ===== */
@@ -38910,7 +38915,7 @@ function dashaBlock(c, md, ad){
 
 /* ---------- the "📖 Deep reading" tab ---------- */
 function pane(c){
-  const r = R(c), asc = r.lagna.sign, ascIdx = SIGN.indexOf(asc), P = r.planets, out = [], S = { intro: [], you: [], planets: [], yogas: [], doshas: [], time: [], houses: [] };
+  const r = R(c), asc = r.lagna.sign, ascIdx = SIGN.indexOf(asc), P = r.planets, out = [], S = { intro: [], you: [], planets: [], yogas: [], doshas: [], areas: [], time: [], houses: [] };
   const ll = r.houseLords[0], mo = P.Moon;
   S.intro.push(note('g', `📖 <b>Deep reading</b>: classical meanings for every placement in this chart, house by house. Texts come from the built-in knowledge base; read them together, since each planet's result depends on its sign, house, aspects and the running period.`));
   const sg = SG(c); if (sg) S.intro.push(sigNote(sg));
@@ -38951,11 +38956,17 @@ function pane(c){
     const tag = occ.length ? occ.map(glyph).join(' ') : 'empty';
     cards.push(`<details class="vx-pl"${n === 1 ? ' open' : ''}><summary><span class="vx-gl">${n}</span><div><b>${ordn(n)} house: ${esc(H.name)}</b><small>${esc(S.name)} · lord ${esc(hl.lord)} in the ${ordn(hl.placedIn)}</small></div>${chip(occ.length ? 'g' : '', tag)}</summary><div class="rd-b">${body.join('')}</div></details>`);
   }
+  const la = (typeof LAE !== 'undefined' && LAE) ? LAE.assess(c) : null;
+  if (la){ S.areas.push(note('g', `📊 <b>Nine areas of life, compared</b><br><small>Each score (0 to 100) blends house strength, the strength of the house lords and natural significators, the matching divisional chart, related yogas and the running dasha. It compares the areas inside your own chart. It is not a prediction.</small>`));
+    la.areas.forEach(x => S.areas.push(`<div class="dr-area"><div class="dr-ah"><span class="dr-ai">${x.icon}</span><b>${esc(x.name)}</b>${chip(x.bandTone, x.band)}<span class="dr-as">${x.score}</span></div><div class="dr-bar"><i class="${x.bandTone || 'm'}" style="width:${x.score}%"></i></div>` +
+      `<div class="dr-parts">${[['house', 'Houses'], ['lords', 'Lords'], ['karaka', 'Significators'], ['varga', 'Divisional'], ['yogas', 'Yogas'], ['dasha', 'Timing']].map(k => `<span>${k[1]} <b>${x.parts[k[0]]}</b></span>`).join('')}</div>` +
+      (x.pos.length ? `<ul class="dr-ul">${x.pos.map(t => `<li>✔ ${esc(t)}.</li>`).join('')}${x.neg.map(t => `<li>▲ ${esc(t)}.</li>`).join('')}</ul>` : '') +
+      `<div class="rd-w"><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}. <small>(${x.now.score}/100)</small></div><div class="rd-w"><b>Next five years:</b> ${esc(x.next5.why.join('; '))}. <small>(${x.next5.score}/100)</small></div></div>`)); }
   S.time.push(timelineHtml(c));
   S.houses = cards;
   const SEC = [['intro', '✨', 'Overview', 'Start here: what this reading is and your signature at a glance'], ['you', '🧭', 'Who you are', 'Rising sign, Moon and birth star'],
     ['planets', '🪐', 'Planet roles', 'What each planet does for you, and how they work together'], ['yogas', '🔮', 'Yogas', 'Supportive and notable planet combinations'],
-    ['doshas', '⚠️', 'Points to watch', 'Areas that need extra care, with what eases them'], ['time', '⏳', 'Life timeline', 'Every Mahadasha, now and the next five years'], ['houses', '🏠', 'House by house', 'The twelve areas of life, one card each']]
+    ['doshas', '⚠️', 'Points to watch', 'Areas that need extra care, with what eases them'], ['areas', '📊', 'Life areas', 'Career, money, marriage and six more, scored and explained'], ['time', '⏳', 'Life timeline', 'Every Mahadasha, now and the next five years'], ['houses', '🏠', 'House by house', 'The twelve areas of life, one card each']]
     .filter(x => S[x[0]].length), nav = SEC.map((x, i) => `<button type="button" class="dr-nb" data-sec="${x[0]}">${x[1]} ${esc(x[2])}</button>`).join('');
   return `<nav class="dr-nav" aria-label="Sections of the reading">${nav}</nav>` + SEC.map((x, i) => `<section class="dr-sec" data-sec="${x[0]}"><div class="dr-sh"><span class="dr-sn">${i + 1}</span><div><b>${esc(x[2])}</b><small>${esc(x[3])}</small></div></div>${S[x[0]].join('')}</section>`).join('');
 }
@@ -38987,6 +38998,7 @@ function reportText(c){
   para(`Functional nature for ${asc} rising:`, Object.entries(r.functional).map(([p, v]) => `${p} ${v.kind.replace('Functional ', '').toLowerCase()}`).join('; ') + '.');
   if (typeof VMF !== 'undefined' && VMF) ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'].forEach(n => { const x = VMF.role(n, c.ascendant.sign); if (x) para(`${n} as ${x.kind.toLowerCase()}:`, x.text); });
   PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) para(`${a} + ${x.with} in ${P[a].sign}:`, x.text); }));
+  { const la2 = (typeof LAE !== 'undefined' && LAE) ? LAE.assess(c) : null; if (la2){ sub('LIFE AREAS (0-100, compared inside your own chart)'); la2.areas.forEach(x => para(`${x.name} - ${x.band} (${x.score}):`, x.headline.replace(/^[^.]*\.[^.]*\) ?/, '') + ' Right now: ' + (x.now.why.join('; ') || 'no direct link') + '. Next five years: ' + x.next5.why.join('; ') + '.')); } }
   { const yg2 = (typeof YGE !== 'undefined' && YGE) ? YGE.detect(c) : []; if (yg2.length){ sub('YOGAS IN YOUR CHART'); yg2.forEach(x => para(x.name + ':', x.text.replace(/^[^.]*\. /, ''))); } }
   PL.forEach(n => {
     const e = P[n]; if (!e) return;
@@ -42417,7 +42429,7 @@ const dig = s => !s ? '' : String(s).replace('OwnSign', 'Own sign').replace(/([a
 const SECTIONS = [
   ['overview', 'Your signature at a glance'], ['chart', 'Birth chart and planet positions'], ['foundation', 'Who you are: rising sign, Moon and birth star'],
   ['roles', 'What each planet does for you'], ['yogas', 'Yogas: notable combinations'], ['cautions', 'Points that need care'],
-  ['timeline', 'Life timeline (Mahadashas)'], ['houses', 'House by house'], ['strength', 'Strength of the twelve houses']];
+  ['areas', 'Nine areas of life, compared'], ['timeline', 'Life timeline (Mahadashas)'], ['houses', 'House by house'], ['strength', 'Strength of the twelve houses']];
 const THEMES = {
   ivory:    { name: 'Ivory & gold', cover1: '#fbf6e9', cover2: '#efe2bd', coverInk: '#2b2418', ink: '#262626', soft: '#6b6355', accent: '#a8801f', accent2: '#e9d9a6', rule: '#e4dcc6', card: '#fdfaf1', page: '#ffffff' },
   midnight: { name: 'Midnight & gold', cover1: '#10142b', cover2: '#2a2350', coverInk: '#f6ecd0', ink: '#20222e', soft: '#626675', accent: '#8a6a17', accent2: '#e3cf8d', rule: '#dedbe8', card: '#f8f7fc', page: '#ffffff' } };
@@ -42499,6 +42511,16 @@ function groups(list, o){ const cats = []; list.forEach(x => { if (cats.indexOf(
 const isD = x => /^Doshas|^Cautions/.test(x.cat);
 function bYogas(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; const l = YGE.detect(c).filter(x => !isD(x)); return l.length ? `<p class="lead">${l.length} combinations were found by exact rules. Each is a tendency to test against your life, not a promise.</p>` + groups(l, o) : '<p>No notable yoga from the rules in this report was found in this chart.</p>'; }
 function bCautions(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; const l = YGE.detect(c).filter(isD); return l.length ? `<p class="lead">These are areas to look after, not verdicts. Where a condition eases the point, it is listed with it.</p>` + groups(l, o) : '<p>None of the points checked in this report stand out in this chart.</p>'; }
+function bAreas(c, o){
+  if (typeof LAE === 'undefined' || !LAE) return ''; const la = LAE.assess(c), th = o_theme;
+  const bar = x => `<div class="abar"><i class="${x.bandTone || 'm'}" style="width:${x.score}%"></i></div>`;
+  const sum = `<table class="tb"><thead><tr><th>Area</th><th>Score</th><th></th><th>Band</th><th>Right now</th></tr></thead><tbody>${la.areas.map(x => `<tr><td><b>${esc(x.icon)} ${esc(x.name)}</b></td><td><b>${x.score}</b></td><td style="width:34%">${bar(x)}</td><td>${chip(x.band, x.bandTone)}</td><td>${x.now.score}</td></tr>`).join('')}</tbody></table>`;
+  return `<p class="lead">${esc(la.note)} Each score blends house strength, house lords, natural significators, the matching divisional chart, related yogas and the running dasha.</p>${sum}` +
+    la.areas.map(x => card(`${esc(x.icon)} ${esc(x.name)} ${chip(x.band + ' · ' + x.score, x.bandTone)} <small>${esc(x.theme)}</small>`, bar(x) +
+      `<p class="sm">Houses ${x.parts.house} · Lords ${x.parts.lords} · Significators ${x.parts.karaka} · Divisional chart ${x.parts.varga} · Yogas ${x.parts.yogas} · Timing ${x.parts.dasha}</p>` +
+      (x.pos.length || x.neg.length ? `<ul class="ul">${x.pos.map(t => `<li>${esc(t)}.</li>`).join('')}${x.neg.map(t => `<li class="neg">${esc(t)}.</li>`).join('')}</ul>` : '') +
+      `<p><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}.</p><p><b>Next five years:</b> ${esc(x.next5.why.join('; '))}.</p>`, tone(x.bandTone === 'g' ? 'strong' : x.bandTone === 'b' ? 'mild' : ''))).join('');
+}
 function bTimeline(c, o){
   if (typeof VDA === 'undefined' || !VDA || !c.dashaData) return '';
   const T = VDA.timeline(c), rows = T.periods.map(p => `<tr class="${p.status}"><td><b>${esc(p.lord)}</b></td><td>${fmtD(p.start)} – ${fmtD(p.end)}</td><td>${p.ageStart}–${p.ageEnd}</td><td>${esc(p.theme)}</td><td>${chip(p.tone, tone(p.tone))}</td></tr>`).join('');
@@ -42525,8 +42547,8 @@ function bStrength(c){
   return `<p class="lead">Sarva Ashtakavarga points for each house, counted from the rising sign. A house above the average of ${avg.toFixed(1)} tends to get more support; below it tends to need more of your own effort.</p>${savSvg(c, o_theme)}` +
     `<p><b>Best supported:</b> ${hi.map(x => `${nmh(x[1])}, ${x[0]} points`).join('; ')}.</p><p><b>Needs more effort:</b> ${lo.map(x => `${nmh(x[1])}, ${x[0]} points`).join('; ')}.</p>`;
 }
-const BUILD = { overview: bOverview, chart: bChart, foundation: bFoundation, roles: bRoles, yogas: bYogas, cautions: bCautions, timeline: bTimeline, houses: bHouses, strength: bStrength };
-const SUB = { overview: 'The main threads of your chart in plain language', chart: 'Where every planet stands at your birth', foundation: 'The base layer of the whole reading', roles: 'How each planet works for your rising sign', yogas: 'Supportive and notable planet combinations', cautions: 'Areas that deserve extra care', timeline: 'The stages of your life, with dates', houses: 'The twelve areas of life, one by one', strength: 'Where your chart has more or less support' };
+const BUILD = { overview: bOverview, chart: bChart, foundation: bFoundation, roles: bRoles, yogas: bYogas, cautions: bCautions, areas: bAreas, timeline: bTimeline, houses: bHouses, strength: bStrength };
+const SUB = { overview: 'The main threads of your chart in plain language', chart: 'Where every planet stands at your birth', foundation: 'The base layer of the whole reading', roles: 'How each planet works for your rising sign', yogas: 'Supportive and notable planet combinations', cautions: 'Areas that deserve extra care', areas: 'Career, money, marriage and six more, scored and explained', timeline: 'The stages of your life, with dates', houses: 'The twelve areas of life, one by one', strength: 'Where your chart has more or less support' };
 
 /* ---------- the document ---------- */
 function css(th, paper){
@@ -42574,6 +42596,8 @@ function css(th, paper){
   .tb tr:nth-child(even) td{background:${th.card}}.tb tr.now td{background:#fff3c9}.tb tr.past td{color:${th.soft}}.tb tr{break-inside:avoid}
   .chart-wrap{display:grid;grid-template-columns:76mm 1fr;gap:6mm;align-items:start}.chart-box{break-inside:avoid}
   .chart-svg{width:100%;height:auto;background:#fffdf6;border-radius:2mm}.chart-svg .cp{font:700 15px Arial,sans-serif;fill:${th.ink};text-anchor:middle}.chart-svg .ca{font:700 13px Arial,sans-serif;fill:${th.accent};text-anchor:middle}.chart-svg .cs{font:11px Arial,sans-serif;fill:${th.soft};text-anchor:middle}
+  .abar{height:2.4mm;border-radius:99px;background:#ece7d8;overflow:hidden;margin:1mm 0 2.5mm}.abar i{display:block;height:100%;background:${th.accent}}.abar i.g{background:#4f8a5b}.abar i.b{background:#c0733f}
+  .ul{margin:0 0 5pt 5mm;padding:0;font-size:9.5pt}.ul li{margin:0 0 1.5mm}.ul li.neg{color:#9a4f24}
   .cap{font:8.5pt Arial,sans-serif;color:${th.soft};margin-top:2mm}
   .bar-svg{width:100%;height:auto;margin:2mm 0 5mm}.bar-svg .cv{font:700 11px Arial,sans-serif;fill:${th.ink}}.bar-svg .cl{font:10px Arial,sans-serif;fill:${th.soft}}
   .end{text-align:center;padding-top:30mm;color:${th.soft}}.end h2{color:${th.accent};font-size:20pt;margin-bottom:5mm}.end p{max-width:130mm;margin:0 auto 4mm}
@@ -42652,6 +42676,423 @@ function open(){
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-pdf-studio]'); if (b){ e.preventDefault(); if (typeof closeExportModal === 'function') closeExportModal(); open(); } });
 window.PDFR = { build, open, close, sections: SECTIONS.map(s => s[0]), themes: Object.keys(THEMES) };
 })();
+<\/script>
+<script>
+/* ============================================================================
+   GENERATED by tools/reading_gen (edit the table in tools/reading_gen/build_la.py, then run tools/reading_gen/regen.sh). Do not hand-edit this file.
+   LIFE-AREA ENGINE (LAE): 9 areas scored 0-100 from facts the app already computes, layer schema v1.1.
+   LAE.assess(chart, {now}) -> { areas: [ {id, name, icon, theme, score, raw, band, parts{house,lords,karaka,varga,yogas,dasha}, now{score,why}, next5{score,why},
+                                           pos[], neg[], yogas[], headline} ], strongest, weakest, order }
+   parts (each 0-100, 50 = neutral):  house   = Ashtakavarga points of the area's houses + planets sitting there
+                                      lords   = shadbala of the house lords (+ where they stand)
+                                      karaka  = shadbala + dignity of the natural significators
+                                      varga   = dignity of lords and significators in the matching divisional chart
+                                      yogas   = detected yogas (YGE) that touch the area, by tone and strength
+                                      dasha   = support of the running period and of the next five years
+   score = calibrated weighted sum (CAL fitted on sample charts so scores spread out). Needs js/87 (VDB), js/91 (VDA), js/92 (YGE).
+   ============================================================================ */
+const LAE_DATA = {
+ "schema": "layer-v1.1",
+ "areas": [
+  {
+   "id": "career",
+   "name": "Career and public standing",
+   "icon": "💼",
+   "primary": [
+    10
+   ],
+   "support": [
+    6,
+    11,
+    2
+   ],
+   "karakas": [
+    "Sun",
+    "Saturn",
+    "Mercury"
+   ],
+   "varga": "D10",
+   "vname": "career chart (D10)",
+   "theme": "work, status and how the world sees your effort",
+   "yogas": [
+    "raja_kt",
+    "dharma_karmadhipati",
+    "amala",
+    "ruchaka",
+    "bhadra",
+    "hamsa",
+    "malavya",
+    "sasa",
+    "yogakaraka",
+    "karma_yoga",
+    "chatussagara",
+    "budhaditya"
+   ]
+  },
+  {
+   "id": "money",
+   "name": "Money and savings",
+   "icon": "💰",
+   "primary": [
+    2,
+    11
+   ],
+   "support": [
+    5,
+    9
+   ],
+   "karakas": [
+    "Jupiter",
+    "Venus"
+   ],
+   "varga": "D2",
+   "vname": "wealth chart (D2)",
+   "theme": "earning, saving and what you hold on to",
+   "yogas": [
+    "dhana",
+    "lakshmi",
+    "labha_dhana",
+    "vasumati",
+    "bhagya",
+    "kalanidhi",
+    "daridra",
+    "adhi",
+    "gajakesari"
+   ]
+  },
+  {
+   "id": "marriage",
+   "name": "Marriage and partnership",
+   "icon": "💞",
+   "primary": [
+    7
+   ],
+   "support": [
+    2,
+    11
+   ],
+   "karakas": [
+    "Venus",
+    "Jupiter"
+   ],
+   "varga": "D9",
+   "vname": "marriage chart (D9)",
+   "theme": "close one-to-one bonds and commitment",
+   "yogas": [
+    "malavya",
+    "manglik",
+    "subha_kartari_l",
+    "papa_kartari_l",
+    "lakshmi_narayana"
+   ]
+  },
+  {
+   "id": "children",
+   "name": "Children and creativity",
+   "icon": "🌱",
+   "primary": [
+    5
+   ],
+   "support": [
+    9,
+    2
+   ],
+   "karakas": [
+    "Jupiter"
+   ],
+   "varga": "D7",
+   "vname": "children chart (D7)",
+   "theme": "children, students and what you create",
+   "yogas": [
+    "hamsa",
+    "trikona_link",
+    "saraswati",
+    "gajakesari",
+    "guru_chandala"
+   ]
+  },
+  {
+   "id": "health",
+   "name": "Health and vitality",
+   "icon": "🌿",
+   "primary": [
+    1,
+    6
+   ],
+   "support": [
+    8
+   ],
+   "karakas": [
+    "Sun",
+    "Moon"
+   ],
+   "varga": "D6",
+   "vname": "health chart (D6)",
+   "theme": "energy, stamina, recovery and daily habits",
+   "yogas": [
+    "harsha",
+    "ruchaka",
+    "vimala",
+    "sarala",
+    "kemadruma",
+    "papa_kartari_l",
+    "subha_kartari_l",
+    "chandra_grahan",
+    "surya_grahan"
+   ]
+  },
+  {
+   "id": "education",
+   "name": "Learning and education",
+   "icon": "📚",
+   "primary": [
+    4,
+    5
+   ],
+   "support": [
+    2,
+    9
+   ],
+   "karakas": [
+    "Mercury",
+    "Jupiter"
+   ],
+   "varga": "D24",
+   "vname": "learning chart (D24)",
+   "theme": "study, skill, memory and the habit of learning",
+   "yogas": [
+    "saraswati",
+    "bhadra",
+    "budhaditya",
+    "kalanidhi",
+    "hamsa",
+    "trikona_link"
+   ]
+  },
+  {
+   "id": "foreign",
+   "name": "Foreign lands and moving away",
+   "icon": "✈️",
+   "primary": [
+    12,
+    9
+   ],
+   "support": [
+    3,
+    7
+   ],
+   "karakas": [
+    "Rahu",
+    "Saturn"
+   ],
+   "varga": "D9",
+   "vname": "navamsa (D9)",
+   "theme": "travel, living abroad and distance from where you began",
+   "yogas": [
+    "dainya_parivartana",
+    "vimala",
+    "bhagya"
+   ]
+  },
+  {
+   "id": "home",
+   "name": "Home and property",
+   "icon": "🏠",
+   "primary": [
+    4
+   ],
+   "support": [
+    2,
+    11
+   ],
+   "karakas": [
+    "Moon",
+    "Mars"
+   ],
+   "varga": "D4",
+   "vname": "property chart (D4)",
+   "theme": "home, family roots, vehicles and property",
+   "yogas": [
+    "gajakesari",
+    "ruchaka",
+    "hamsa",
+    "parvata",
+    "kahala",
+    "maha_parivartana"
+   ]
+  },
+  {
+   "id": "spirit",
+   "name": "Inner life and spirituality",
+   "icon": "🕉️",
+   "primary": [
+    9,
+    12
+   ],
+   "support": [
+    5,
+    8
+   ],
+   "karakas": [
+    "Jupiter",
+    "Ketu"
+   ],
+   "varga": "D20",
+   "vname": "spiritual chart (D20)",
+   "theme": "beliefs, practice, solitude and a sense of meaning",
+   "yogas": [
+    "hamsa",
+    "saraswati",
+    "guru_chandala",
+    "sarala",
+    "vimala",
+    "trikona_link"
+   ]
+  }
+ ],
+ "cal": {
+  "mu": 57.9,
+  "gain": 2.4
+ },
+ "bands": [
+  [
+   62,
+   "Strong",
+   "g"
+  ],
+  [
+   50,
+   "Steady",
+   "g"
+  ],
+  [
+   38,
+   "Mixed",
+   ""
+  ],
+  [
+   0,
+   "Needs care",
+   "b"
+  ]
+ ],
+ "weights": {
+  "house": 0.24,
+  "lords": 0.2,
+  "karaka": 0.16,
+  "varga": 0.1,
+  "yogas": 0.15,
+  "dasha": 0.15
+ },
+ "note": "Scores compare the areas within one chart and show where support is stronger or lighter. They are not predictions: effort, timing and choices decide what happens."
+};
+
+window.LAE = (function(D){
+  'use strict';
+  if (typeof VDB === 'undefined' || typeof YGE === 'undefined' || !YGE) return null;
+  const P7 = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'], BEN = ['Jupiter','Venus','Mercury','Moon'], MAL = ['Sun','Mars','Saturn','Rahu','Ketu'];
+  const KEN = [1,4,7,10], TRI = [1,5,9], DUS = [6,8,12];
+  const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x)), avg = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0, uniq = a => [...new Set(a)];
+  const lc = s => s.charAt(0).toLowerCase() + s.slice(1), cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const nm = arr => arr.length < 2 ? arr.join('') : arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1];
+  const DIG = { Exalted: 1, OwnSign: 1, Moolatrikona: 1, Friend: .35, Neutral: 0, Enemy: -.35, Debilitated: -1 };
+  const AREA = {}; D.areas.forEach(a => AREA[a.id] = a);
+
+  function assess(chart, opts){
+    const now = (opts && opts.now) || new Date(), P = chart.planets, H1 = chart.vargas.D1.houses, SAV = chart.ashtakavarga.sav, SB = chart.shadbala.planets;
+    const lordOf = h => H1[h - 1].signLord, signOf = h => H1[h - 1].sign, savOf = h => SAV[signOf(h)];
+    const pct = n => (SB[n] && SB[n].percentOfRequired) || 100;
+    const lordScore = n => clamp(50 + (pct(n) - 100) * 0.5, 0, 100);
+    const houseOf = n => P[n] && P[n].house;
+    const aspHouses = n => (P[n] && P[n].aspectsHouses) || [];
+    const yogas = YGE.detect(chart, { now });
+    let cur = null, ups = [];
+    try { if (typeof VDA !== 'undefined' && VDA){ cur = VDA.current(chart, now); ups = VDA.upcoming(chart, 5, now); } } catch (e) { cur = null; ups = []; }
+    const out = D.areas.map(A => {
+      const pos = [], neg = [], add = (dev, text) => { if (dev > 3) pos.push({ dev, text }); else if (dev < -3) neg.push({ dev, text }); };
+      const prim = A.primary, supH = A.support, hs = prim.concat(supH), hw = h => prim.includes(h) ? 1 : 0.5;
+      const lordsP = uniq(prim.map(lordOf)), lordsAll = uniq(hs.map(lordOf)), kar = A.karakas;
+      const rel = new Set(lordsP.concat(kar));
+      // ---- house: Ashtakavarga points + occupants
+      let hn = 0, hd = 0;
+      hs.forEach(h => {
+        const s = clamp(50 + (savOf(h) - 28) * 3.2, 0, 100), occ = Object.keys(P).filter(n => P[n].house === h);
+        const eff = occ.reduce((a, n) => a + (BEN.includes(n) ? 4 : MAL.includes(n) ? -3 : 0), 0), o = clamp(50 + eff, 20, 80), v = 0.7 * s + 0.3 * o;
+        hn += v * hw(h); hd += hw(h);
+        if (prim.includes(h)){
+          add((savOf(h) - 28) * 1.6, `Your ${ordn(h)} house has ${savOf(h)} Ashtakavarga points, ${savOf(h) >= 28 ? 'above' : 'below'} the usual average of 28`);
+          const ben = occ.filter(n => BEN.includes(n)), mal = occ.filter(n => MAL.includes(n));
+          if (ben.length) add(5 * ben.length, `${nm(ben)} ${ben.length > 1 ? 'sit' : 'sits'} in your ${ordn(h)} house, which tends to support it`);
+          if (mal.length && !ben.length) add(-4 * mal.length, `${nm(mal)} ${mal.length > 1 ? 'sit' : 'sits'} in your ${ordn(h)} house, which tends to add pressure there`);
+        }
+      });
+      const house = hd ? hn / hd : 50;
+      // ---- lords: shadbala + placement
+      let ln = 0, ld = 0;
+      hs.forEach(h => {
+        const l = lordOf(h), lh = houseOf(l); if (!lh) return;
+        const place = KEN.includes(lh) || TRI.includes(lh) ? 8 : [2, 11].includes(lh) ? 4 : DUS.includes(lh) ? -10 : 0, v = clamp(lordScore(l) + place, 0, 100);
+        ln += v * hw(h); ld += hw(h);
+        if (prim.includes(h)){
+          add((pct(l) - 100) * 0.35, `The lord of your ${ordn(h)} house, ${l}, has ${Math.round(pct(l))}% of the strength it needs, ${pct(l) >= 100 ? 'which is a good sign' : 'so it needs support'}`);
+          if (place) add(place, `${l} stands in your ${ordn(lh)} house, ${place > 0 ? 'a supportive place' : 'a difficult place'} for the ${ordn(h)} lord`);
+        }
+      });
+      const lords = ld ? ln / ld : 50;
+      // ---- karakas: shadbala + dignity + house
+      const ks = kar.map(n => {
+        const p = P[n]; if (!p) return 50; const base = SB[n] ? lordScore(n) : 50, st = p.dignity && p.dignity.status, dg = (DIG[st] || 0) * 9, pl = DUS.includes(p.house) ? -6 : KEN.includes(p.house) || TRI.includes(p.house) ? 4 : 0;
+        const v = clamp(base + dg + pl, 0, 100);
+        if (SB[n]) add((pct(n) - 100) * 0.3 + dg, `${n}, a natural significator for this area, ${st === 'Exalted' || st === 'OwnSign' || st === 'Moolatrikona' ? 'is in a strong sign' : st === 'Debilitated' ? 'sits in a weaker sign' : pct(n) >= 100 ? 'is well supplied with strength' : 'has less strength than it needs'}`);
+        return v; });
+      const karaka = avg(ks);
+      // ---- varga: dignity in the matching divisional chart
+      const V = chart.vargas[A.varga], vs = [];
+      if (V && V.planetVargaSign){ uniq(lordsP.concat(kar)).forEach(n => { if (V.planetVargaSign[n] == null) return; const d = getDignity(n, V.planetVargaSign[n], 15), s = d && d.status; vs.push({ n, s, v: DIG[s] || 0 }); }); }
+      const varga = vs.length ? clamp(50 + 30 * avg(vs.map(x => x.v)), 0, 100) : 50;
+      const vgood = vs.filter(x => x.v >= 1), vbad = vs.filter(x => x.v <= -1);
+      if (vgood.length) add(8 * vgood.length, `In the ${A.vname}, ${nm(vgood.map(x => x.n))} ${vgood.length > 1 ? 'are' : 'is'} in a strong sign`);
+      if (vbad.length) add(-8 * vbad.length, `In the ${A.vname}, ${nm(vbad.map(x => x.n))} ${vbad.length > 1 ? 'are' : 'is'} in a weaker sign`);
+      // ---- yogas that touch the area
+      const mine = yogas.filter(y => A.yogas.includes(y.id) || y.planets.some(n => rel.has(n)) && y.houses.some(h => hs.includes(h)));
+      const lv = y => y.level === 'strong' ? 1 : y.level === 'mild' ? 0.4 : 0.7;
+      let ys = 0; const ylist = [];
+      mine.forEach(y => { const t = y.tone === 'support' ? 1 : y.tone === 'challenge' ? -1 : 0, ease = y.cancelled && t < 0 ? 0.4 : 1, w = t * lv(y) * ease * (A.yogas.includes(y.id) ? 9 : 5); ys += w; ylist.push({ id: y.id, name: y.name, tone: y.tone, level: y.level || '', why: y.why, w });
+        add(w * 1.2, `${y.name} ${t > 0 ? 'supports' : t < 0 ? 'puts pressure on' : 'touches'} this area (${y.why})`); });
+      const yg = clamp(50 + clamp(ys, -28, 28) * 1.5, 0, 100);
+      // ---- dasha support: the running Mahadasha/Antardasha lords and the next five years
+      const sup = n => { let s = 0; if (lordsP.includes(n)) s += 1; else if (kar.includes(n)) s += 0.8; else if (lordsAll.includes(n)) s += 0.45;
+        const h = houseOf(n); if (h && prim.includes(h)) s += 0.5; if (h && aspHouses(n).some(x => prim.includes(x))) s += 0.15;
+        const rules = []; for (let k = 1; k <= 12; k++) if (lordOf(k) === n) rules.push(k); if (rules.some(k => DUS.includes(k)) && !lordsP.includes(n) && !kar.includes(n)) s -= 0.4; return clamp(s, -0.5, 1.4); };
+      const why = n => { const r = []; for (let k = 1; k <= 12; k++) if (lordOf(k) === n && hs.includes(k)) r.push(k); const h = houseOf(n), t = [];
+        if (r.length) t.push(`rules your ${nm(r.map(ordn))} house`); if (kar.includes(n)) t.push('is a natural significator here'); if (h && prim.includes(h)) t.push(`sits in your ${ordn(h)} house`);
+        for (let k = 1; k <= 12; k++) if (lordOf(k) === n && DUS.includes(k) && !r.length) { t.push(`rules your ${ordn(k)} house, which tends to bring effort`); break; } return t; };
+      const toScore = s => clamp(50 + (s - 0.35) * 45, 0, 100);
+      let nowS = 50, nowWhy = [], nextS = 50, nextWhy = [];
+      if (cur && cur.md){ const m = cur.md.lord, a = cur.ad && cur.ad.lord, sm = sup(m), sa = a ? sup(a) : sm; nowS = toScore(0.6 * sm + 0.4 * sa);
+        const wm = why(m), wa = a ? why(a) : []; nowWhy = [`${m} Mahadasha ${wm.length ? wm.join(' and ') : 'has no direct link to this area'}`].concat(a ? [`${a} Antardasha ${wa.length ? wa.join(' and ') : 'has no direct link to this area'}`] : []); }
+      if (!(cur && cur.md)) nowWhy = ['No Mahadasha is running for this chart date, so timing is left neutral'];
+      if (!ups.length) nextWhy = ['No dasha periods fall in the next five years for this chart'];
+      if (ups.length){ let w = 0, t = 0, best = null; ups.forEach(r => { const d = Math.max(1, (Math.min(r.end, new Date(now.getTime() + 5 * 365.25 * 864e5)) - Math.max(r.start, now)) / 864e5), s = toScore(0.6 * sup(r.mdLord) + 0.4 * sup(r.lord)); w += d; t += s * d; if (!best || s > best.s) best = { s, r }; });
+        nextS = t / w; if (best && best.s > 56) nextWhy = [`The strongest window is ${VDA.fmt(best.r.start)} to ${VDA.fmt(best.r.end)} (${best.r.mdLord}-${best.r.lord})`]; else nextWhy = ['No sub-period in the next five years stands out strongly for this area']; }
+      const dasha = 0.5 * nowS + 0.5 * nextS;
+      if (cur && cur.md) add((nowS - 50) * 0.6, `The running ${cur.md.lord} Mahadasha ${nowS >= 56 ? 'is linked to this area, so the next stretch tends to favour it' : nowS <= 44 ? 'is not linked to this area, so progress here may need more of your own effort now' : 'has a mixed link to this area'}`);
+      // ---- total
+      const W = D.weights, raw = W.house * house + W.lords * lords + W.karaka * karaka + W.varga * varga + W.yogas * yg + W.dasha * dasha;
+      const score = Math.round(clamp(50 + (raw - D.cal.mu) * D.cal.gain, 3, 97)), band = D.bands.find(b => score >= b[0]);
+      pos.sort((a, b) => b.dev - a.dev); neg.sort((a, b) => a.dev - b.dev);
+      const P2 = pos.slice(0, 3).map(x => x.text), N2 = neg.slice(0, 2).map(x => x.text);
+      const headline = [`${A.name}: ${band[1].toLowerCase()} support (${score}/100).`, P2[0] ? P2[0] + '.' : '', N2[0] ? 'On the other side, ' + lc(N2[0]) + '.' : ''].filter(Boolean).join(' ');
+      return { id: A.id, name: A.name, icon: A.icon, theme: A.theme, score, raw: +raw.toFixed(2), band: band[1], bandTone: band[2], primary: prim, support: supH, karakas: kar,
+        parts: { house: Math.round(house), lords: Math.round(lords), karaka: Math.round(karaka), varga: Math.round(varga), yogas: Math.round(yg), dasha: Math.round(dasha) },
+        now: { score: Math.round(nowS), why: nowWhy }, next5: { score: Math.round(nextS), why: nextWhy }, pos: P2, neg: N2, yogas: ylist, headline };
+    });
+    const order = out.slice().sort((a, b) => b.score - a.score).map(x => x.id);
+    return { areas: out, order, strongest: order[0], weakest: order[order.length - 1], note: D.note };
+  }
+  return { data: D, assess, ids: D.areas.map(a => a.id) };
+})(LAE_DATA);
 <\/script>
 <script>
 /* ============================================================================

@@ -21,7 +21,7 @@ const dig = s => !s ? '' : String(s).replace('OwnSign', 'Own sign').replace(/([a
 const SECTIONS = [
   ['overview', 'Your signature at a glance'], ['chart', 'Birth chart and planet positions'], ['foundation', 'Who you are: rising sign, Moon and birth star'],
   ['roles', 'What each planet does for you'], ['yogas', 'Yogas: notable combinations'], ['cautions', 'Points that need care'],
-  ['timeline', 'Life timeline (Mahadashas)'], ['houses', 'House by house'], ['strength', 'Strength of the twelve houses']];
+  ['areas', 'Nine areas of life, compared'], ['timeline', 'Life timeline (Mahadashas)'], ['houses', 'House by house'], ['strength', 'Strength of the twelve houses']];
 const THEMES = {
   ivory:    { name: 'Ivory & gold', cover1: '#fbf6e9', cover2: '#efe2bd', coverInk: '#2b2418', ink: '#262626', soft: '#6b6355', accent: '#a8801f', accent2: '#e9d9a6', rule: '#e4dcc6', card: '#fdfaf1', page: '#ffffff' },
   midnight: { name: 'Midnight & gold', cover1: '#10142b', cover2: '#2a2350', coverInk: '#f6ecd0', ink: '#20222e', soft: '#626675', accent: '#8a6a17', accent2: '#e3cf8d', rule: '#dedbe8', card: '#f8f7fc', page: '#ffffff' } };
@@ -103,6 +103,16 @@ function groups(list, o){ const cats = []; list.forEach(x => { if (cats.indexOf(
 const isD = x => /^Doshas|^Cautions/.test(x.cat);
 function bYogas(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; const l = YGE.detect(c).filter(x => !isD(x)); return l.length ? `<p class="lead">${l.length} combinations were found by exact rules. Each is a tendency to test against your life, not a promise.</p>` + groups(l, o) : '<p>No notable yoga from the rules in this report was found in this chart.</p>'; }
 function bCautions(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; const l = YGE.detect(c).filter(isD); return l.length ? `<p class="lead">These are areas to look after, not verdicts. Where a condition eases the point, it is listed with it.</p>` + groups(l, o) : '<p>None of the points checked in this report stand out in this chart.</p>'; }
+function bAreas(c, o){
+  if (typeof LAE === 'undefined' || !LAE) return ''; const la = LAE.assess(c), th = o_theme;
+  const bar = x => `<div class="abar"><i class="${x.bandTone || 'm'}" style="width:${x.score}%"></i></div>`;
+  const sum = `<table class="tb"><thead><tr><th>Area</th><th>Score</th><th></th><th>Band</th><th>Right now</th></tr></thead><tbody>${la.areas.map(x => `<tr><td><b>${esc(x.icon)} ${esc(x.name)}</b></td><td><b>${x.score}</b></td><td style="width:34%">${bar(x)}</td><td>${chip(x.band, x.bandTone)}</td><td>${x.now.score}</td></tr>`).join('')}</tbody></table>`;
+  return `<p class="lead">${esc(la.note)} Each score blends house strength, house lords, natural significators, the matching divisional chart, related yogas and the running dasha.</p>${sum}` +
+    la.areas.map(x => card(`${esc(x.icon)} ${esc(x.name)} ${chip(x.band + ' · ' + x.score, x.bandTone)} <small>${esc(x.theme)}</small>`, bar(x) +
+      `<p class="sm">Houses ${x.parts.house} · Lords ${x.parts.lords} · Significators ${x.parts.karaka} · Divisional chart ${x.parts.varga} · Yogas ${x.parts.yogas} · Timing ${x.parts.dasha}</p>` +
+      (x.pos.length || x.neg.length ? `<ul class="ul">${x.pos.map(t => `<li>${esc(t)}.</li>`).join('')}${x.neg.map(t => `<li class="neg">${esc(t)}.</li>`).join('')}</ul>` : '') +
+      `<p><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}.</p><p><b>Next five years:</b> ${esc(x.next5.why.join('; '))}.</p>`, tone(x.bandTone === 'g' ? 'strong' : x.bandTone === 'b' ? 'mild' : ''))).join('');
+}
 function bTimeline(c, o){
   if (typeof VDA === 'undefined' || !VDA || !c.dashaData) return '';
   const T = VDA.timeline(c), rows = T.periods.map(p => `<tr class="${p.status}"><td><b>${esc(p.lord)}</b></td><td>${fmtD(p.start)} – ${fmtD(p.end)}</td><td>${p.ageStart}–${p.ageEnd}</td><td>${esc(p.theme)}</td><td>${chip(p.tone, tone(p.tone))}</td></tr>`).join('');
@@ -129,8 +139,8 @@ function bStrength(c){
   return `<p class="lead">Sarva Ashtakavarga points for each house, counted from the rising sign. A house above the average of ${avg.toFixed(1)} tends to get more support; below it tends to need more of your own effort.</p>${savSvg(c, o_theme)}` +
     `<p><b>Best supported:</b> ${hi.map(x => `${nmh(x[1])}, ${x[0]} points`).join('; ')}.</p><p><b>Needs more effort:</b> ${lo.map(x => `${nmh(x[1])}, ${x[0]} points`).join('; ')}.</p>`;
 }
-const BUILD = { overview: bOverview, chart: bChart, foundation: bFoundation, roles: bRoles, yogas: bYogas, cautions: bCautions, timeline: bTimeline, houses: bHouses, strength: bStrength };
-const SUB = { overview: 'The main threads of your chart in plain language', chart: 'Where every planet stands at your birth', foundation: 'The base layer of the whole reading', roles: 'How each planet works for your rising sign', yogas: 'Supportive and notable planet combinations', cautions: 'Areas that deserve extra care', timeline: 'The stages of your life, with dates', houses: 'The twelve areas of life, one by one', strength: 'Where your chart has more or less support' };
+const BUILD = { overview: bOverview, chart: bChart, foundation: bFoundation, roles: bRoles, yogas: bYogas, cautions: bCautions, areas: bAreas, timeline: bTimeline, houses: bHouses, strength: bStrength };
+const SUB = { overview: 'The main threads of your chart in plain language', chart: 'Where every planet stands at your birth', foundation: 'The base layer of the whole reading', roles: 'How each planet works for your rising sign', yogas: 'Supportive and notable planet combinations', cautions: 'Areas that deserve extra care', areas: 'Career, money, marriage and six more, scored and explained', timeline: 'The stages of your life, with dates', houses: 'The twelve areas of life, one by one', strength: 'Where your chart has more or less support' };
 
 /* ---------- the document ---------- */
 function css(th, paper){
@@ -178,6 +188,8 @@ function css(th, paper){
   .tb tr:nth-child(even) td{background:${th.card}}.tb tr.now td{background:#fff3c9}.tb tr.past td{color:${th.soft}}.tb tr{break-inside:avoid}
   .chart-wrap{display:grid;grid-template-columns:76mm 1fr;gap:6mm;align-items:start}.chart-box{break-inside:avoid}
   .chart-svg{width:100%;height:auto;background:#fffdf6;border-radius:2mm}.chart-svg .cp{font:700 15px Arial,sans-serif;fill:${th.ink};text-anchor:middle}.chart-svg .ca{font:700 13px Arial,sans-serif;fill:${th.accent};text-anchor:middle}.chart-svg .cs{font:11px Arial,sans-serif;fill:${th.soft};text-anchor:middle}
+  .abar{height:2.4mm;border-radius:99px;background:#ece7d8;overflow:hidden;margin:1mm 0 2.5mm}.abar i{display:block;height:100%;background:${th.accent}}.abar i.g{background:#4f8a5b}.abar i.b{background:#c0733f}
+  .ul{margin:0 0 5pt 5mm;padding:0;font-size:9.5pt}.ul li{margin:0 0 1.5mm}.ul li.neg{color:#9a4f24}
   .cap{font:8.5pt Arial,sans-serif;color:${th.soft};margin-top:2mm}
   .bar-svg{width:100%;height:auto;margin:2mm 0 5mm}.bar-svg .cv{font:700 11px Arial,sans-serif;fill:${th.ink}}.bar-svg .cl{font:10px Arial,sans-serif;fill:${th.soft}}
   .end{text-align:center;padding-top:30mm;color:${th.soft}}.end h2{color:${th.accent};font-size:20pt;margin-bottom:5mm}.end p{max-width:130mm;margin:0 auto 4mm}

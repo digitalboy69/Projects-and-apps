@@ -147,6 +147,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/91-dasha-reading.js` — Dasha layer (global VDA), schema v1.1: life timeline (every Mahadasha: theme, arena, ruled houses, real-life lines, tone with reasons, self-check), 9 Antardashas each, next-5-years rows, 81 main x sub blends; dates/lords from the app's dasha engine; used by Deep reading and the report
 - `apps/birth-chart/js/92-yoga-engine.js` — Yoga engine (global YGE), schema v1.1, GENERATED: 41 yogas with exact detectors (Moon, Sun, combinations, wealth, exchanges, reversals, status, Pancha Mahapurusha, surrounding, cautions); each shows the rule it matched plus real-life text
 - `apps/birth-chart/js/93-pdf-report.js` — PDF report (global PDFR): builds a self-contained printable HTML report (cover, contents, 9 sections, inline SVG chart + bars, themes, A4/Letter) and the "PDF Studio" dialog (live preview, Save as PDF via print, Download HTML). No libraries.
+- `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
 - `apps/birth-chart/js/90-year-timeline-engine.js` — Year Timeline scanner (global YT): date range -> sign/nakshatra changes, stations, transit contacts with natal points, lunations/eclipses, dasha changes (3 levels), Sade Sati edges, Jupiter+Saturn house segments; facts only
 - `apps/birth-chart/js/91-year-timeline-writer.js` — Year Timeline writer (global YTW): turns scan result into one structured Markdown file for an AI (planet role map, house map, dasha table, event list)
 - `apps/birth-chart/js/92-year-timeline-ui.js` — "Year Timeline File" panel (panel-yeartimeline): two dates, options, Copy / Download .md
@@ -312,6 +313,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tools/reading_gen/build_vmf.py` — manifestation tables (behave, arena, manner, rising) + writes js/90-reading-manifest.js
 - `tools/reading_gen/build_vda.py` — dasha planet table + house relations + writes js/91-dasha-reading.js
 - `tools/reading_gen/build_yg.py` — yoga facet table (41 yogas) + detector code, writes js/92-yoga-engine.js
+- `tools/reading_gen/build_la.py` — life-area table (houses, significators, varga, yogas per area), weights, calibration constants and the scoring code; writes js/94-life-areas.js
 - `tools/reading_gen/regen.sh` — regenerates all four reading databases (js/87, 89, 90, 91); afterwards `git status` must show no change unless a table was edited
 - `tools/reading_gen/regen.sh — regenerates all four reading databases; afterwards `git status` must show no change unless a table was edited`
 - `tools/ai/session.sh` — AI session helper: start / check / test / ship (commit, rebase on moved main, check, push branch, fast-forward main; token only via GH_TOKEN env)
@@ -332,6 +334,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/dasha_reading_test.py` — Dasha layer: all Mahadashas + Antardashas equal the app's engine on 8 charts, current period, gap-free 5-year window, clean texts, screens + report
 - `tests/yoga_engine_test.py` — Yoga engine: 41 hand-built charts that have each yoga and 41 that do not, cross-check with the app's own detectors on 8 real charts, texts, screen and report
 - `tests/pdf_report_test.py` — PDF report: 4 theme/paper variants x 4 charts clean and self-contained, sections/options, Studio dialog, real PDF render
+- `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/prod_forms_check.py` — Deep reading inside the real production forms (single-file build + customer edition): 6 tabs, 12 house cards, 9 planet blocks, all layers loaded, report section
 - `tests/customer_smoke.py` — customer edition smoke test
 - `tests/datefinder_test.py` — Date Finder test
