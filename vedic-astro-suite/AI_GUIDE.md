@@ -156,20 +156,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-22 - 1368 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-22 - 1400 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 144 files, 22651 lines, 1563 KB
+**birth-chart** - 147 files, 23411 lines, 1631 KB
 ```
-index.html                                         566 lines   32 KB
-_Generated 2026-10-22 - 1395 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
-
-### File map (lines / KB) - file names say what is inside
-
-**birth-chart** - 146 files, 23151 lines, 1606 KB
-```
-index.html                                         568 lines   32 KB
+index.html                                         569 lines   32 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -270,8 +263,8 @@ js/93-pdf-report.js                                289 lines   37 KB
 js/94-life-areas.js                                416 lines   16 KB
 js/95-life-narratives.js                           331 lines   21 KB
 js/96-varga-reading.js                             189 lines   11 KB
-js/97-transit-reading.js                           224 lines   17 KB
 js/97-life-event-catalog.js                        354 lines   33 KB
+js/97-transit-reading.js                           224 lines   17 KB
 js/98-life-event-engine.js                         349 lines   29 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
