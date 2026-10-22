@@ -1,0 +1,15 @@
+{
+  "owner_name": "Madhu Yadav",
+  "brand": "Madhu Yadav",
+  "site_url": "https://frosty-sun-6314.madhuma83636.workers.dev",
+  "email": "[YOUR EMAIL]",
+  "phone": "[YOUR PHONE]",
+  "address": "[YOUR ADDRESS, CITY, STATE, PIN, INDIA]",
+  "support_hours": "Monday to Saturday, 10 am to 6 pm IST",
+  "what_you_sell": "[WHAT YOU SELL, in one line]",
+  "delivery": "Everything is digital. You get access or your result online or by email, usually within 24 hours of payment. Nothing is shipped by post.",
+  "refund_days": 7,
+  "offerings": [
+    { "name": "[ITEM NAME]", "what": "[SHORT DESCRIPTION]", "price": "[PRICE IN INR]" }
+  ]
+}

@@ -65,7 +65,8 @@ function render(){
      (p.collect_note?'<label for="nt">Note (optional)</label><textarea id="nt" rows="3" maxlength="300"></textarea>':'')+
      '<input class="hp" id="web" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">'+
      '<button class="btn" id="go" type="submit">'+esc(p.button_text)+(p.pay_what_you_want?'':' · '+inr(p.amount_paise))+'</button><p class="err" id="err" role="alert"></p></form>'+
-     '<div class="safe">Secure payment by Razorpay · UPI, cards, netbanking</div>';
+     '<div class="safe">Secure payment by Razorpay · UPI, cards, netbanking</div>'+
+     '<div class="safe"><a href="/terms.html" style="color:inherit">Terms</a> · <a href="/privacy.html" style="color:inherit">Privacy</a> · <a href="/refund.html" style="color:inherit">Refunds</a> · <a href="/contact.html" style="color:inherit">Contact</a></div>';
   say(h);$('f').addEventListener('submit',submit)
 }
 function fail(m){$('err').textContent=m;$('go').disabled=false}
