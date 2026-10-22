@@ -35,6 +35,11 @@ input,textarea,select{width:100%;font:15px inherit;font-family:inherit;color:var
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
 .stats{display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
 .stats b{color:var(--gold2)}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+.tile{background:linear-gradient(170deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:16px;padding:14px}
+.tile small{display:block;color:var(--muted);font-size:13px}.tile b{display:block;font:600 24px Georgia,serif;color:var(--gold2);margin-top:2px}.tile span{color:var(--muted);font-size:13px}
+@media(min-width:640px){.tiles{grid-template-columns:repeat(3,1fr)}}
+.prow{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14.5px}.prow:last-child{border-bottom:0}.prow b{color:var(--gold2);white-space:nowrap}
 .msg{min-height:1.4em;margin:10px 0 0;font-size:14px}.msg.bad{color:var(--bad)}.msg.good{color:var(--good)}
 table{width:100%;border-collapse:collapse;font-size:14px}
 th,td{text-align:left;padding:9px 8px;border-top:1px solid var(--line);vertical-align:top}
@@ -63,9 +68,15 @@ pre{white-space:pre-wrap;word-break:break-all;background:#14110d;border:1px soli
 </section>
 
 <div id="vApp" hidden>
-  <div class="tabs"><button class="tab" id="tPages" aria-pressed="true">Pages</button><button class="tab" id="tPay" aria-pressed="false">Payments</button><button class="tab" id="tHelp" aria-pressed="false">Help</button></div>
+  <div class="tabs"><button class="tab" id="tDash" aria-pressed="true">Dashboard</button><button class="tab" id="tPages" aria-pressed="false">Pages</button><button class="tab" id="tPay" aria-pressed="false">Payments</button><button class="tab" id="tHelp" aria-pressed="false">Help</button></div>
 
-  <section id="pPages">
+  <section id="pDash">
+    <div class="tiles" id="dTiles"><div class="tile"><small>Loading…</small></div></div>
+    <div class="card"><b>Last 30 days</b><div id="dChart" style="margin-top:8px"></div></div>
+    <div class="card"><b>Earnings by page</b><div id="dPages" style="margin-top:8px"></div></div>
+  </section>
+
+  <section id="pPages" hidden>
     <div class="acts" style="margin:0 0 12px"><button class="btn" id="newPage">New payment page</button></div>
     <div id="form" class="card" hidden></div>
     <div id="list"></div>
@@ -132,8 +143,31 @@ function boot(){
 }
 /* ---- data ---- */
 function loadAll(){
+  loadStats();
   sb.from('ph_pages').select('*').order('created_at',{ascending:false}).then(function(r){pages=r.data||[];renderList()});
   sb.from('ph_orders').select('*, ph_pages(title,slug)').order('created_at',{ascending:false}).limit(500).then(function(r){orders=r.data||[];renderList();renderPay()})
+}
+function loadStats(){
+  sb.rpc('ph_stats').then(function(r){
+    if(r.error||!r.data){$('dTiles').innerHTML='<div class="tile"><small>Could not load your numbers. Refresh the page.</small></div>';return}
+    renderDash(r.data)
+  })
+}
+function renderDash(s){
+  function tile(l,o,extra){return '<div class="tile"><small>'+l+'</small><b>'+inr(o.paise)+'</b><span>'+o.count+(o.count===1?' payment':' payments')+(extra||'')+'</span></div>'}
+  $('dTiles').innerHTML=tile('Today',s.today)+tile('Last 7 days',s.week)+tile('Last 30 days',s.month)+tile('All time',s.all)+tile('Refunded',s.refunded)+
+    '<div class="tile"><small>Started, not paid yet (24 h)</small><b>'+s.waiting+'</b><span>people who opened the payment window</span></div>';
+  var d=s.days||[],max=d.reduce(function(m,x){return Math.max(m,x.paise)},0);
+  if(!max){$('dChart').innerHTML='<p class="muted" style="margin:0">No paid orders in the last 30 days yet.</p>'}
+  else{
+    var W=300,bw=W/d.length,bars=d.map(function(x,i){var h=Math.max(x.paise?2:0,Math.round(x.paise/max*76)),lab=new Date(x.d+'T00:00:00').toLocaleDateString([], {day:'numeric',month:'short'});
+      return '<rect x="'+(i*bw+1).toFixed(1)+'" y="'+(86-h)+'" width="'+(bw-2).toFixed(1)+'" height="'+h+'" rx="2" fill="#d4a24a" opacity="'+(x.paise?1:.2)+'"><title>'+lab+': '+inr(x.paise)+' ('+x.n+')</title></rect>'}).join('');
+    $('dChart').innerHTML='<svg viewBox="0 0 300 104" width="100%" role="img" aria-label="Earnings per day, last 30 days">'+bars+
+      '<line x1="0" y1="86.5" x2="300" y2="86.5" stroke="#3a332a"/><text x="0" y="99" fill="#aaa190" font-size="8">'+esc(new Date(d[0].d+'T00:00:00').toLocaleDateString([], {day:'numeric',month:'short'}))+'</text>'+
+      '<text x="300" y="99" fill="#aaa190" font-size="8" text-anchor="end">Today</text><text x="0" y="8" fill="#aaa190" font-size="8">Best day: '+inr(max)+'</text></svg>'
+  }
+  var pg=s.pages||[];
+  $('dPages').innerHTML=pg.length?pg.map(function(x){return '<div class="prow"><span>'+esc(x.title)+' <span class="muted">· '+x.count+'</span></span><b>'+inr(x.paise)+'</b></div>'}).join(''):'<p class="muted" style="margin:0">Nothing earned yet.</p>'
 }
 function statsFor(id){var n=0,sum=0;orders.forEach(function(o){if(o.page_id===id&&o.status==='paid'){n++;sum+=o.amount_paise}});return {n:n,sum:sum}}
 function renderList(){
@@ -195,13 +229,13 @@ function renderPay(){
     return '<tr><td>'+esc(new Date(o.created_at).toLocaleString([], {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))+'</td><td>'+esc(o.ph_pages?o.ph_pages.title:'')+'</td><td>'+esc(o.name)+(o.note?'<div class="muted">'+esc(o.note)+'</div>':'')+'</td><td>'+esc(o.email)+(o.phone?'<div class="muted">'+esc(o.phone)+'</div>':'')+'</td><td>'+inr(o.amount_paise)+'</td><td><span class="st '+esc(o.status)+'">'+esc(o.status)+'</span></td></tr>'}).join(''):'<tr><td colspan="6" class="muted">Nothing here yet.</td></tr>'
 }
 function csvCell(v){v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
-function tab(t){['Pages','Pay','Help'].forEach(function(n){$('p'+n).hidden=n!==t;$('t'+n).setAttribute('aria-pressed',n===t)})}
+function tab(t){['Dash','Pages','Pay','Help'].forEach(function(n){$('p'+n).hidden=n!==t;$('t'+n).setAttribute('aria-pressed',n===t)})}
 /* ---- wiring ---- */
 $('signin').onclick=function(){auth('in')};$('signup').onclick=function(){auth('up')};
 $('pw').addEventListener('keydown',function(e){if(e.key==='Enter')auth('in')});
 $('out').onclick=function(){sb.auth.signOut().then(boot)};
 $('claim').onclick=function(){sb.rpc('ph_claim_admin').then(function(r){if(r.data===true)boot();else say('claimMsg','Someone else is already the owner of this Pay Hub.','bad')})};
-$('tPages').onclick=function(){tab('Pages')};$('tPay').onclick=function(){tab('Pay')};$('tHelp').onclick=function(){tab('Help')};
+$('tDash').onclick=function(){tab('Dash');loadStats()};$('tPages').onclick=function(){tab('Pages')};$('tPay').onclick=function(){tab('Pay')};$('tHelp').onclick=function(){tab('Help')};
 $('newPage').onclick=function(){openForm(null)};
 $('fStatus').onchange=renderPay;
 $('csv').onclick=function(){var f=$('fStatus').value,rows=[['date','page','name','email','phone','note','amount_rupees','status','payment_id']].concat(orders.filter(function(o){return !f||o.status===f}).map(function(o){return [o.created_at,o.ph_pages?o.ph_pages.title:'',o.name,o.email,o.phone,o.note,o.amount_paise/100,o.status,o.payment_id]}));copy(rows.map(function(r){return r.map(csvCell).join(',')}).join('\n'),'payMsg')};
