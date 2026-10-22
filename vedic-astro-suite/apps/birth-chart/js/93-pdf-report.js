@@ -21,7 +21,7 @@ const dig = s => !s ? '' : String(s).replace('OwnSign', 'Own sign').replace(/([a
 const SECTIONS = [
   ['overview', 'Your signature at a glance'], ['chart', 'Birth chart and planet positions'], ['foundation', 'Who you are: rising sign, Moon and birth star'],
   ['roles', 'What each planet does for you'], ['yogas', 'Yogas: notable combinations'], ['cautions', 'Points that need care'],
-  ['areas', 'Nine areas of life, compared'], ['timeline', 'Life timeline (Mahadashas)'], ['houses', 'House by house'], ['strength', 'Strength of the twelve houses']];
+  ['areas', 'Nine areas of life, compared'], ['vargas', 'Divisional charts: marriage, career, children and more'], ['timeline', 'Life timeline (Mahadashas)'], ['houses', 'House by house'], ['strength', 'Strength of the twelve houses']];
 const THEMES = {
   ivory:    { name: 'Ivory & gold', cover1: '#fbf6e9', cover2: '#efe2bd', coverInk: '#2b2418', ink: '#262626', soft: '#6b6355', accent: '#a8801f', accent2: '#e9d9a6', rule: '#e4dcc6', card: '#fdfaf1', page: '#ffffff' },
   midnight: { name: 'Midnight & gold', cover1: '#10142b', cover2: '#2a2350', coverInk: '#f6ecd0', ink: '#20222e', soft: '#626675', accent: '#8a6a17', accent2: '#e3cf8d', rule: '#dedbe8', card: '#f8f7fc', page: '#ffffff' } };
@@ -112,6 +112,12 @@ function bAreas(c, o){
       `<p class="sm">Houses ${x.parts.house} · Lords ${x.parts.lords} · Significators ${x.parts.karaka} · Divisional chart ${x.parts.varga} · Yogas ${x.parts.yogas} · Timing ${x.parts.dasha}</p>` +
             (lnOf(x.id) ? lnOf(x.id).paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('') : `<p><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}.</p><p><b>Next five years:</b> ${esc(x.next5.why.join('; '))}.</p>`), tone(x.bandTone === 'g' ? 'strong' : x.bandTone === 'b' ? 'mild' : '') + ' long')).join('');
 }
+function bVargas(c, o){
+  if (typeof VGR === 'undefined' || !VGR) return ''; const vg = VGR.all(c); if (!vg.length) return '';
+  const bar = x => `<div class="abar"><i class="${x.bandTone || 'm'}" style="width:${x.score}%"></i></div>`;
+  return `<p class="lead">${esc(VGR.data.note)}</p><table class="tb"><thead><tr><th>Chart</th><th>Looks at</th><th>Rising</th><th>Score</th><th></th><th>Band</th></tr></thead><tbody>${vg.map(x => `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.short)}</td><td>${esc(x.lagna.sign)}</td><td><b>${x.score}</b></td><td style="width:26%">${bar(x)}</td><td>${chip(x.band, x.bandTone)}</td></tr>`).join('')}</tbody></table>` +
+    vg.map(x => card(`${esc(x.name)} ${chip(x.band + ' · ' + x.score, x.bandTone)} <small>${esc(x.noun)}</small>`, bar(x) + x.paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join(''), tone(x.bandTone === 'g' ? 'strong' : x.bandTone === 'b' ? 'mild' : '') + ' long')).join('');
+}
 function bTimeline(c, o){
   if (typeof VDA === 'undefined' || !VDA || !c.dashaData) return '';
   const T = VDA.timeline(c), rows = T.periods.map(p => `<tr class="${p.status}"><td><b>${esc(p.lord)}</b></td><td>${fmtD(p.start)} – ${fmtD(p.end)}</td><td>${p.ageStart}–${p.ageEnd}</td><td>${esc(p.theme)}</td><td>${chip(p.tone, tone(p.tone))}</td></tr>`).join('');
@@ -138,8 +144,8 @@ function bStrength(c){
   return `<p class="lead">Sarva Ashtakavarga points for each house, counted from the rising sign. A house above the average of ${avg.toFixed(1)} tends to get more support; below it tends to need more of your own effort.</p>${savSvg(c, o_theme)}` +
     `<p><b>Best supported:</b> ${hi.map(x => `${nmh(x[1])}, ${x[0]} points`).join('; ')}.</p><p><b>Needs more effort:</b> ${lo.map(x => `${nmh(x[1])}, ${x[0]} points`).join('; ')}.</p>`;
 }
-const BUILD = { overview: bOverview, chart: bChart, foundation: bFoundation, roles: bRoles, yogas: bYogas, cautions: bCautions, areas: bAreas, timeline: bTimeline, houses: bHouses, strength: bStrength };
-const SUB = { overview: 'The main threads of your chart in plain language', chart: 'Where every planet stands at your birth', foundation: 'The base layer of the whole reading', roles: 'How each planet works for your rising sign', yogas: 'Supportive and notable planet combinations', cautions: 'Areas that deserve extra care', areas: 'Career, money, marriage and six more, scored and explained', timeline: 'The stages of your life, with dates', houses: 'The twelve areas of life, one by one', strength: 'Where your chart has more or less support' };
+const BUILD = { overview: bOverview, chart: bChart, foundation: bFoundation, roles: bRoles, yogas: bYogas, cautions: bCautions, areas: bAreas, vargas: bVargas, timeline: bTimeline, houses: bHouses, strength: bStrength };
+const SUB = { overview: 'The main threads of your chart in plain language', chart: 'Where every planet stands at your birth', foundation: 'The base layer of the whole reading', roles: 'How each planet works for your rising sign', yogas: 'Supportive and notable planet combinations', cautions: 'Areas that deserve extra care', areas: 'Career, money, marriage and six more, scored and explained', vargas: 'Six zoom-in charts for the main areas of life', timeline: 'The stages of your life, with dates', houses: 'The twelve areas of life, one by one', strength: 'Where your chart has more or less support' };
 
 /* ---------- the document ---------- */
 function css(th, paper){

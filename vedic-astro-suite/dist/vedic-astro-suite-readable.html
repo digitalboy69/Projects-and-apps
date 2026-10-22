@@ -12223,6 +12223,11 @@ html{scroll-behavior:auto!important}
 
 .dr-story{border-top:1px dashed var(--border-lighter,rgba(255,255,255,.12));padding-top:6px}.dr-story>summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--gold,#d4af37);list-style:none}
 .dr-story>summary::-webkit-details-marker{display:none}.dr-story h5{margin:10px 0 2px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted)}.dr-story p{margin:0 0 4px;font-size:12.5px;line-height:1.6;color:var(--text-main)}
+
+.dr-vg{border:1px solid var(--border-lighter,rgba(255,255,255,.1));border-radius:12px;background:rgba(255,255,255,.02)}
+.dr-vg>summary{cursor:pointer;padding:10px 12px;font-size:13px;color:var(--text-main);list-style:none;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.dr-vg>summary::-webkit-details-marker{display:none}
+.dr-vg>summary::before{content:'▸';color:var(--gold,#d4af37)}.dr-vg[open]>summary::before{content:'▾'}.dr-vg>summary small{color:var(--text-muted)}
+.dr-vg-b{padding:0 12px 12px}.dr-vg-b h5{margin:10px 0 2px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted)}.dr-vg-b p{margin:0 0 4px;font-size:12.5px;line-height:1.6;color:var(--text-main)}
 </style>
 <style>
 /* ===== PDF Studio dialog (js/93-pdf-report.js) ===== */
@@ -38918,7 +38923,7 @@ function dashaBlock(c, md, ad){
 
 /* ---------- the "📖 Deep reading" tab ---------- */
 function pane(c){
-  const r = R(c), asc = r.lagna.sign, ascIdx = SIGN.indexOf(asc), P = r.planets, out = [], S = { intro: [], you: [], planets: [], yogas: [], doshas: [], areas: [], time: [], houses: [] };
+  const r = R(c), asc = r.lagna.sign, ascIdx = SIGN.indexOf(asc), P = r.planets, out = [], S = { intro: [], you: [], planets: [], yogas: [], doshas: [], areas: [], vargas: [], time: [], houses: [] };
   const ll = r.houseLords[0], mo = P.Moon;
   S.intro.push(note('g', `📖 <b>Deep reading</b>: classical meanings for every placement in this chart, house by house. Texts come from the built-in knowledge base; read them together, since each planet's result depends on its sign, house, aspects and the running period.`));
   const sg = SG(c); if (sg) S.intro.push(sigNote(sg));
@@ -38966,11 +38971,14 @@ function pane(c){
       `<div class="dr-parts">${[['house', 'Houses'], ['lords', 'Lords'], ['karaka', 'Significators'], ['varga', 'Divisional'], ['yogas', 'Yogas'], ['dasha', 'Timing']].map(k => `<span>${k[1]} <b>${x.parts[k[0]]}</b></span>`).join('')}</div>` +
       (x.pos.length ? `<ul class="dr-ul">${x.pos.map(t => `<li>✔ ${esc(t)}.</li>`).join('')}${x.neg.map(t => `<li>▲ ${esc(t)}.</li>`).join('')}</ul>` : '') +
       `<div class="rd-w"><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}. <small>(${x.now.score}/100)</small></div><div class="rd-w"><b>Next five years:</b> ${esc(x.next5.why.join('; '))}. <small>(${x.next5.score}/100)</small></div>${lnOf(x.id) ? `<details class="dr-story"><summary>📖 Read the full story (about ${Math.round(lnOf(x.id).words / 10) * 10} words)</summary>${lnOf(x.id).paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('')}</details>` : ''}</div>`)); }
+  const vg = (typeof VGR !== 'undefined' && VGR) ? VGR.all(c) : [];
+  if (vg.length){ S.vargas.push(note('g', `🔭 <b>Six zoom-in charts</b><br><small>Each divisional chart looks at one area of life in detail. Open one to see its rising sign, the houses that matter, every planet and how comfortable it is there.</small>`));
+    vg.forEach(x => S.vargas.push(`<details class="dr-vg"><summary><b>${esc(x.name)}</b> <small>${esc(x.short)}</small>${chip(x.bandTone, x.band)}<span class="dr-as">${x.score}</span></summary><div class="dr-vg-b">${x.paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('')}</div></details>`)); }
   S.time.push(timelineHtml(c));
   S.houses = cards;
   const SEC = [['intro', '✨', 'Overview', 'Start here: what this reading is and your signature at a glance'], ['you', '🧭', 'Who you are', 'Rising sign, Moon and birth star'],
     ['planets', '🪐', 'Planet roles', 'What each planet does for you, and how they work together'], ['yogas', '🔮', 'Yogas', 'Supportive and notable planet combinations'],
-    ['doshas', '⚠️', 'Points to watch', 'Areas that need extra care, with what eases them'], ['areas', '📊', 'Life areas', 'Career, money, marriage and six more, scored and explained'], ['time', '⏳', 'Life timeline', 'Every Mahadasha, now and the next five years'], ['houses', '🏠', 'House by house', 'The twelve areas of life, one card each']]
+    ['doshas', '⚠️', 'Points to watch', 'Areas that need extra care, with what eases them'], ['areas', '📊', 'Life areas', 'Career, money, marriage and six more, scored and explained'], ['vargas', '🔭', 'Divisional charts', 'Marriage, career, children, property, learning and spirit in detail'], ['time', '⏳', 'Life timeline', 'Every Mahadasha, now and the next five years'], ['houses', '🏠', 'House by house', 'The twelve areas of life, one card each']]
     .filter(x => S[x[0]].length), nav = SEC.map((x, i) => `<button type="button" class="dr-nb" data-sec="${x[0]}">${x[1]} ${esc(x[2])}</button>`).join('');
   return `<nav class="dr-nav" aria-label="Sections of the reading">${nav}</nav>` + SEC.map((x, i) => `<section class="dr-sec" data-sec="${x[0]}"><div class="dr-sh"><span class="dr-sn">${i + 1}</span><div><b>${esc(x[2])}</b><small>${esc(x[3])}</small></div></div>${S[x[0]].join('')}</section>`).join('');
 }
@@ -39003,6 +39011,7 @@ function reportText(c){
   if (typeof VMF !== 'undefined' && VMF) ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'].forEach(n => { const x = VMF.role(n, c.ascendant.sign); if (x) para(`${n} as ${x.kind.toLowerCase()}:`, x.text); });
   PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) para(`${a} + ${x.with} in ${P[a].sign}:`, x.text); }));
   { const la2 = (typeof LAE !== 'undefined' && LAE) ? LAE.assess(c) : null; if (la2){ sub('LIFE AREAS (0-100, compared inside your own chart)'); la2.areas.forEach(x => para(`${x.name} - ${x.band} (${x.score}):`, x.headline.replace(/^[^.]*\.[^.]*\) ?/, '') + ' Right now: ' + (x.now.why.join('; ') || 'no direct link') + '. Next five years: ' + x.next5.why.join('; ') + '.')); if (typeof LAN !== 'undefined' && LAN) LAN.all(c).forEach(n => { sub(n.name.toUpperCase() + ' - THE FULL STORY'); n.paragraphs.forEach(q => para(q.h + ':', q.text)); }); } }
+  { if (typeof VGR !== 'undefined' && VGR){ const vgr = VGR.all(c); if (vgr.length){ sub('DIVISIONAL CHARTS'); vgr.forEach(x => { para(`${x.name} - ${x.band} (${x.score}):`, ''); x.paragraphs.forEach(q => para(q.h + ':', q.text)); }); } } }
   { const yg2 = (typeof YGE !== 'undefined' && YGE) ? YGE.detect(c) : []; if (yg2.length){ sub('YOGAS IN YOUR CHART'); yg2.forEach(x => para(x.name + ':', x.text.replace(/^[^.]*\. /, ''))); } }
   PL.forEach(n => {
     const e = P[n]; if (!e) return;
@@ -42433,7 +42442,7 @@ const dig = s => !s ? '' : String(s).replace('OwnSign', 'Own sign').replace(/([a
 const SECTIONS = [
   ['overview', 'Your signature at a glance'], ['chart', 'Birth chart and planet positions'], ['foundation', 'Who you are: rising sign, Moon and birth star'],
   ['roles', 'What each planet does for you'], ['yogas', 'Yogas: notable combinations'], ['cautions', 'Points that need care'],
-  ['areas', 'Nine areas of life, compared'], ['timeline', 'Life timeline (Mahadashas)'], ['houses', 'House by house'], ['strength', 'Strength of the twelve houses']];
+  ['areas', 'Nine areas of life, compared'], ['vargas', 'Divisional charts: marriage, career, children and more'], ['timeline', 'Life timeline (Mahadashas)'], ['houses', 'House by house'], ['strength', 'Strength of the twelve houses']];
 const THEMES = {
   ivory:    { name: 'Ivory & gold', cover1: '#fbf6e9', cover2: '#efe2bd', coverInk: '#2b2418', ink: '#262626', soft: '#6b6355', accent: '#a8801f', accent2: '#e9d9a6', rule: '#e4dcc6', card: '#fdfaf1', page: '#ffffff' },
   midnight: { name: 'Midnight & gold', cover1: '#10142b', cover2: '#2a2350', coverInk: '#f6ecd0', ink: '#20222e', soft: '#626675', accent: '#8a6a17', accent2: '#e3cf8d', rule: '#dedbe8', card: '#f8f7fc', page: '#ffffff' } };
@@ -42524,6 +42533,12 @@ function bAreas(c, o){
       `<p class="sm">Houses ${x.parts.house} · Lords ${x.parts.lords} · Significators ${x.parts.karaka} · Divisional chart ${x.parts.varga} · Yogas ${x.parts.yogas} · Timing ${x.parts.dasha}</p>` +
             (lnOf(x.id) ? lnOf(x.id).paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('') : `<p><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}.</p><p><b>Next five years:</b> ${esc(x.next5.why.join('; '))}.</p>`), tone(x.bandTone === 'g' ? 'strong' : x.bandTone === 'b' ? 'mild' : '') + ' long')).join('');
 }
+function bVargas(c, o){
+  if (typeof VGR === 'undefined' || !VGR) return ''; const vg = VGR.all(c); if (!vg.length) return '';
+  const bar = x => `<div class="abar"><i class="${x.bandTone || 'm'}" style="width:${x.score}%"></i></div>`;
+  return `<p class="lead">${esc(VGR.data.note)}</p><table class="tb"><thead><tr><th>Chart</th><th>Looks at</th><th>Rising</th><th>Score</th><th></th><th>Band</th></tr></thead><tbody>${vg.map(x => `<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.short)}</td><td>${esc(x.lagna.sign)}</td><td><b>${x.score}</b></td><td style="width:26%">${bar(x)}</td><td>${chip(x.band, x.bandTone)}</td></tr>`).join('')}</tbody></table>` +
+    vg.map(x => card(`${esc(x.name)} ${chip(x.band + ' · ' + x.score, x.bandTone)} <small>${esc(x.noun)}</small>`, bar(x) + x.paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join(''), tone(x.bandTone === 'g' ? 'strong' : x.bandTone === 'b' ? 'mild' : '') + ' long')).join('');
+}
 function bTimeline(c, o){
   if (typeof VDA === 'undefined' || !VDA || !c.dashaData) return '';
   const T = VDA.timeline(c), rows = T.periods.map(p => `<tr class="${p.status}"><td><b>${esc(p.lord)}</b></td><td>${fmtD(p.start)} – ${fmtD(p.end)}</td><td>${p.ageStart}–${p.ageEnd}</td><td>${esc(p.theme)}</td><td>${chip(p.tone, tone(p.tone))}</td></tr>`).join('');
@@ -42550,8 +42565,8 @@ function bStrength(c){
   return `<p class="lead">Sarva Ashtakavarga points for each house, counted from the rising sign. A house above the average of ${avg.toFixed(1)} tends to get more support; below it tends to need more of your own effort.</p>${savSvg(c, o_theme)}` +
     `<p><b>Best supported:</b> ${hi.map(x => `${nmh(x[1])}, ${x[0]} points`).join('; ')}.</p><p><b>Needs more effort:</b> ${lo.map(x => `${nmh(x[1])}, ${x[0]} points`).join('; ')}.</p>`;
 }
-const BUILD = { overview: bOverview, chart: bChart, foundation: bFoundation, roles: bRoles, yogas: bYogas, cautions: bCautions, areas: bAreas, timeline: bTimeline, houses: bHouses, strength: bStrength };
-const SUB = { overview: 'The main threads of your chart in plain language', chart: 'Where every planet stands at your birth', foundation: 'The base layer of the whole reading', roles: 'How each planet works for your rising sign', yogas: 'Supportive and notable planet combinations', cautions: 'Areas that deserve extra care', areas: 'Career, money, marriage and six more, scored and explained', timeline: 'The stages of your life, with dates', houses: 'The twelve areas of life, one by one', strength: 'Where your chart has more or less support' };
+const BUILD = { overview: bOverview, chart: bChart, foundation: bFoundation, roles: bRoles, yogas: bYogas, cautions: bCautions, areas: bAreas, vargas: bVargas, timeline: bTimeline, houses: bHouses, strength: bStrength };
+const SUB = { overview: 'The main threads of your chart in plain language', chart: 'Where every planet stands at your birth', foundation: 'The base layer of the whole reading', roles: 'How each planet works for your rising sign', yogas: 'Supportive and notable planet combinations', cautions: 'Areas that deserve extra care', areas: 'Career, money, marriage and six more, scored and explained', vargas: 'Six zoom-in charts for the main areas of life', timeline: 'The stages of your life, with dates', houses: 'The twelve areas of life, one by one', strength: 'Where your chart has more or less support' };
 
 /* ---------- the document ---------- */
 function css(th, paper){
@@ -43429,6 +43444,196 @@ window.LAN = (function(D){
   function area(chart, id, opts){ const la = LAE.assess(chart, opts), x = la.areas.find(y => y.id === id); return x ? build(chart, x, opts) : null; }
   return { data: D, all, area, build };
 })(LAN_DATA);
+<\/script>
+<script>
+/* ============================================================================
+   GENERATED by tools/reading_gen (edit the table in tools/reading_gen/build_vg.py, then run tools/reading_gen/regen.sh). Do not hand-edit this file.
+   DIVISIONAL CHART READINGS (VGR): D9, D10, D7, D4, D24, D20 read in plain language, layer schema v1.1.
+   VGR.chart(chart, key) -> { key, name, short, noun, score, band, bandTone, lagna{sign,text}, houses[{house,sign,lord,lordHouse,lordDignity,occupants,text}],
+                              planets[{planet, sign, house, dignity, strong, weak, vargottama, key, text}], summary{strong[],weak[],vargottama[],text}, questions[], paragraphs[{h,text}], text }
+   VGR.all(chart) -> the six charts in order.
+   All positions come from chart.vargas[key] (the app's own varga engine); dignity from getDignity(); texts from VMF (planet x house x sign) and VDB (signs).
+   Needs js/87 (VDB), js/90 (VMF). Tests: tests/varga_reading_test.py.
+   ============================================================================ */
+const VGR_DATA = {
+ "schema": "layer-v1.1",
+ "order": [
+  "D9",
+  "D10",
+  "D7",
+  "D4",
+  "D24",
+  "D20"
+ ],
+ "vargas": {
+  "D9": {
+   "name": "Navamsa (D9)",
+   "short": "marriage and values",
+   "noun": "marriage, partnership and the values you grow into",
+   "houses": [
+    7,
+    9
+   ],
+   "key": [
+    "Venus",
+    "Jupiter"
+   ],
+   "intro": "The navamsa is the chart of partnership and of the values you grow into. It is read as the inner strength behind your birth chart: a planet that is comfortable here tends to keep its promise in the long run.",
+   "lagna": "This is where your closest partnerships and your deeper values begin to take shape.",
+   "asks": [
+    "Have your values or what you want from a partner changed a lot between your twenties and now?",
+    "Do your closest bonds feel stronger over time than they did at first?"
+   ]
+  },
+  "D10": {
+   "name": "Dashamsa (D10)",
+   "short": "career",
+   "noun": "career and public standing",
+   "houses": [
+    10
+   ],
+   "key": [
+    "Sun",
+    "Saturn",
+    "Mercury"
+   ],
+   "intro": "The dashamsa zooms in on your working life: how you build a reputation, deal with authority and carry responsibility.",
+   "lagna": "This is how your working life tends to begin and how you present your effort.",
+   "asks": [
+    "Has your reputation grown more from steady work than from sudden breaks?",
+    "Do you do your best work when you carry real responsibility?"
+   ]
+  },
+  "D7": {
+   "name": "Saptamsa (D7)",
+   "short": "children and creation",
+   "noun": "children, students and what you create",
+   "houses": [
+    5
+   ],
+   "key": [
+    "Jupiter"
+   ],
+   "intro": "The saptamsa zooms in on children, students and the things you bring into the world and look after.",
+   "lagna": "This is how you tend to approach nurturing, teaching and creating.",
+   "asks": [
+    "Do you feel most at ease when you are guiding someone younger or building something of your own?",
+    "Has timing around family or creative work followed its own pace rather than your plans?"
+   ]
+  },
+  "D4": {
+   "name": "Chaturthamsa (D4)",
+   "short": "home and property",
+   "noun": "home, property and settled comfort",
+   "houses": [
+    4
+   ],
+   "key": [
+    "Moon",
+    "Mars"
+   ],
+   "intro": "The chaturthamsa zooms in on home, property, vehicles and the kind of comfort that lasts.",
+   "lagna": "This is how you tend to approach settling down and making a place your own.",
+   "asks": [
+    "Do you feel most at peace in a home you have shaped yourself?",
+    "Have property or moving decisions taken more time than you expected?"
+   ]
+  },
+  "D24": {
+   "name": "Siddhamsa (D24)",
+   "short": "learning",
+   "noun": "learning, education and skill",
+   "houses": [
+    4,
+    5
+   ],
+   "key": [
+    "Mercury",
+    "Jupiter"
+   ],
+   "intro": "The siddhamsa zooms in on study, skill and the way your mind builds knowledge.",
+   "lagna": "This is how you tend to approach study and the building of skill.",
+   "asks": [
+    "Do you learn best by practising and teaching rather than by reading alone?",
+    "Has a particular subject or skill kept coming back to you over the years?"
+   ]
+  },
+  "D20": {
+   "name": "Vimshamsa (D20)",
+   "short": "spiritual life",
+   "noun": "spiritual practice and inner growth",
+   "houses": [
+    9,
+    12
+   ],
+   "key": [
+    "Jupiter",
+    "Ketu"
+   ],
+   "intro": "The vimshamsa zooms in on faith, practice and the quiet side of life.",
+   "lagna": "This is how you tend to approach practice, belief and time alone.",
+   "asks": [
+    "Do quiet time and reflection steady you more than activity does?",
+    "Has your sense of meaning changed over the years, and did that help you?"
+   ]
+  }
+ },
+ "note": "A divisional chart zooms in on one area. Read it together with the birth chart: where both agree, the theme tends to be steady; where they differ, the difference is worth noticing."
+};
+
+window.VGR = (function(D){
+  'use strict';
+  if (typeof VDB === 'undefined' || typeof VMF === 'undefined' || !VMF) return null;
+  const SIGN = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const PL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'], BEN = ['Jupiter','Venus','Mercury','Moon'];
+  const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
+  const nm = arr => arr.length < 2 ? arr.join('') : arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1];
+  const lc = s => s.charAt(0).toLowerCase() + s.slice(1), cap = s => s.charAt(0).toUpperCase() + s.slice(1), clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const DIG = { Exalted: 1, OwnSign: 1, Moolatrikona: 1, Friend: .35, Neutral: 0, Enemy: -.35, Debilitated: -1 };
+  const BANDS = [[62, 'Strong', 'g'], [50, 'Steady', 'g'], [38, 'Mixed', ''], [0, 'Needs care', 'b']];
+  const words = t => (t.match(/\S+/g) || []).length;
+
+  function chart(c, key){
+    const A = D.vargas[key], V = c.vargas && c.vargas[key]; if (!A || !V) return null;
+    const lagSign = V.houses[0].sign, S = VDB.data.signs, hs = V.houses, pvs = V.planetVargaSign;
+    const houseOfSign = s => ((s - lagSign + 12) % 12) + 1;
+    const dg = n => { const s = pvs[n]; const d = (typeof getDignity === 'function') ? getDignity(n, s, 15) : null; return d && d.status || 'Neutral'; };
+    // ---- planets
+    const planets = PL.filter(n => pvs[n] != null && c.planets[n]).map(n => {
+      const sIdx = pvs[n], h = houseOfSign(sIdx), st = dg(n), strong = st === 'Exalted' || st === 'OwnSign' || st === 'Moolatrikona', weak = st === 'Debilitated', vg = c.planets[n].sign === sIdx, key2 = A.key.includes(n);
+      const ruled = []; for (let k = 1; k <= 12; k++) if (S[(lagSign + k - 1) % 12].lord === n) ruled.push(k);
+      const m = VMF.placement(n, h, sIdx, st), B = VMF.data.behave[n];
+      const tag = strong ? ', in a strong sign' : weak ? ', in a weaker sign' : '', vtag = vg ? ' It is in the same sign as in your birth chart (vargottama), which tends to make its message steadier.' : '';
+      const role = key2 ? ` As a natural significator for ${A.short}, it carries extra weight here.` : '';
+      const rule = ruled.some(k => A.houses.includes(k)) ? ` It rules the ${nm(ruled.filter(k => A.houses.includes(k)).map(ordn))} house of this chart, which is a house that matters for ${A.short}.` : '';
+      const full = key2 || strong || weak || vg;
+      const text = `${n} is in ${SIGN[sIdx]}, in the ${ordn(h)} house of this chart${tag}.${vtag}${role}${rule} ${m.practice[0].line}` + (full ? ` At its best, you ${B.atBest}; under strain, you may ${B.underStress}.` : '');
+      return { planet: n, sign: SIGN[sIdx], signIndex: sIdx, house: h, dignity: st, strong, weak, vargottama: vg, key: key2, rules: ruled, text };
+    });
+    // ---- domain houses
+    const houses = A.houses.map(h => {
+      const s = (lagSign + h - 1) % 12, lord = S[s].lord, ls = pvs[lord], lh = ls != null ? houseOfSign(ls) : null, occ = hs[h - 1].planets.map(p => p.name), ar = VMF.data.arena[h - 1];
+      const ld = ls != null ? dg(lord) : 'Neutral', ldTxt = ld === 'Exalted' || ld === 'OwnSign' || ld === 'Moolatrikona' ? ', in a strong sign' : ld === 'Debilitated' ? ', in a weaker sign' : '';
+      const ben = occ.filter(n => BEN.includes(n)), mal = occ.filter(n => !BEN.includes(n));
+      const oc = !occ.length ? 'No planet sits there, so its lord carries the house.' : `${nm(occ)} ${occ.length > 1 ? 'sit' : 'sits'} there${ben.length && !mal.length ? ', which tends to support it' : mal.length && !ben.length ? ', which tends to add pressure there' : ', a mix of supportive and demanding influences'}.`;
+      return { house: h, sign: SIGN[s], lord, lordHouse: lh, lordDignity: ld, occupants: occ, text: `The ${ordn(h)} house of this chart (${ar.theme}) is ${SIGN[s]}, ruled by ${lord}, which stands in ${SIGN[ls]} in the ${ordn(lh)} house${ldTxt}. ${oc}` };
+    });
+    // ---- strength summary and score
+    const strong = planets.filter(p => p.strong).map(p => p.planet), weak = planets.filter(p => p.weak).map(p => p.planet), vgs = planets.filter(p => p.vargottama).map(p => p.planet);
+    let num = 0, den = 0; planets.forEach(p => { const w = p.key ? 2 : 1; num += w * (DIG[p.dignity] || 0) + (p.vargottama && p.key ? 0.3 : 0) * w; den += w; });
+    const lordsAvg = houses.length ? houses.reduce((a, x) => a + (DIG[x.lordDignity] || 0), 0) / houses.length : 0, occAvg = houses.reduce((a, x) => a + x.occupants.reduce((b, n) => b + (BEN.includes(n) ? 0.3 : -0.2), 0), 0) / Math.max(1, houses.length);
+    const score = Math.round(clamp(50 + 22 * (den ? num / den : 0) + 14 * lordsAvg + 10 * occAvg, 3, 97)), band = BANDS.find(b => score >= b[0]);
+    const summary = { strong, weak, vargottama: vgs, text: `${strong.length ? 'Comfortable here: ' + nm(strong) + '. ' : ''}${weak.length ? 'Under some strain here: ' + nm(weak) + '. ' : ''}${vgs.length ? 'Same sign as in your birth chart (vargottama): ' + nm(vgs) + '. ' : ''}${!strong.length && !weak.length ? 'No planet is in a notably strong or weak sign, so this chart works mostly through placement. ' : ''}Overall this chart reads as ${band[1].toLowerCase()} for ${A.short} (${score}/100).`.trim() };
+    // ---- text
+    const lagText = `The ${A.name} rises in ${SIGN[lagSign]}: ${S[lagSign].style}. ${A.lagna} ${S[lagSign].name} is ruled by ${S[lagSign].lord}${pvs[S[lagSign].lord] != null ? ', which stands in ' + SIGN[pvs[S[lagSign].lord]] + ' here' : ''}.`;
+    const paragraphs = [{ h: 'What this chart shows', text: A.intro }, { h: 'How it begins', text: lagText }, { h: `The houses that matter for ${A.short}`, text: houses.map(x => x.text).join(' ') },
+      { h: 'Planet by planet', text: planets.map(p => p.text).join(' ') }, { h: 'Strength at a glance', text: summary.text }, { h: 'Check this against your life', text: A.asks.join(' ') }];
+    return { key, name: A.name, short: A.short, noun: A.noun, score, band: band[1], bandTone: band[2], lagna: { sign: SIGN[lagSign], text: lagText }, houses, planets, summary, questions: A.asks.slice(), paragraphs, words: words(paragraphs.map(p => p.text).join(' ')),
+      text: `${A.name}\n` + paragraphs.map(p => `${p.h}. ${p.text}`).join('\n\n') };
+  }
+  function all(c){ return D.order.map(k => chart(c, k)).filter(Boolean); }
+  return { data: D, chart, all, keys: D.order };
+})(VGR_DATA);
 <\/script>
 <script>
 /* ============================================================================

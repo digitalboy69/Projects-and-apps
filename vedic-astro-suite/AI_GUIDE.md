@@ -155,13 +155,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-22 - 1359 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-22 - 1363 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 142 files, 22186 lines, 1525 KB
+**birth-chart** - 143 files, 22391 lines, 1538 KB
 ```
-index.html                                         564 lines   32 KB
+index.html                                         565 lines   32 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -249,7 +249,7 @@ js/84-bridge-3d.js                                  38 lines    2 KB
 js/85-popular-charts-data.js                       116 lines   26 KB
 js/86-popular-charts.js                            120 lines    7 KB
 js/87-vedic-knowledge-db.js                       2269 lines  202 KB
-js/88-deep-reading.js                              238 lines   25 KB
+js/88-deep-reading.js                              242 lines   26 KB
 js/89-vedic-nakshatra-db.js                       1187 lines   38 KB
 js/90-reading-manifest.js                          527 lines   26 KB
 js/90-year-timeline-engine.js                      265 lines   15 KB
@@ -258,9 +258,10 @@ js/91-year-timeline-writer.js                      190 lines   18 KB
 js/92-year-timeline-ui.js                           57 lines    4 KB
 js/92-yoga-engine.js                              1379 lines   63 KB
 js/93-dasha-time-finder.js                         162 lines   10 KB
-js/93-pdf-report.js                                271 lines   33 KB
+js/93-pdf-report.js                                277 lines   34 KB
 js/94-life-areas.js                                416 lines   16 KB
 js/95-life-narratives.js                           331 lines   21 KB
+js/96-varga-reading.js                             189 lines   11 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
@@ -299,7 +300,7 @@ css/35-dasha-systems.css                            96 lines    8 KB
 css/36-ui-overhaul.css                             126 lines   11 KB
 css/37-d-chart-overview.css                         76 lines    6 KB
 css/38-popular-charts.css                           35 lines    4 KB
-css/39-deep-reading.css                             38 lines    4 KB
+css/39-deep-reading.css                             43 lines    4 KB
 css/40-pdf-studio.css                               32 lines    4 KB
 css/40-year-timeline.css                             8 lines    0 KB
 css/41-dasha-time-finder.css                        63 lines    5 KB
@@ -441,3 +442,4 @@ shared/meta.css                                     98 lines    5 KB
 - Session 5 (cont.): PDF Studio `js/93-pdf-report.js` (`PDFR.build/open`) + css/40; add a new reading layer to the PDF by adding a builder to BUILD, an entry to SECTIONS and SUB. Test: tests/pdf_report_test.py.
 - Session 6: S6 life-area engine `js/94-life-areas.js` (`LAE.assess`), wired into Deep reading/report/PDF; tests/life_areas_test.py. If you change weights or inputs, re-run the 12-chart calibration (see tests) and update CAL in build_la.py. Next: S7.
 - Session 6 (cont.): S7 narratives `js/95-life-narratives.js` (`LAN.all/area`), composed from LAE facts; shown in Deep reading (fold-out), report and PDF. Edit tables in build_ln.py only. Next: S8.
+- Session 7: S8 `js/96-varga-reading.js` (`VGR.chart/all`) wired into Deep reading (bucket S.vargas), report and PDF (section 'vargas'); tests/varga_reading_test.py. Next: S9.
