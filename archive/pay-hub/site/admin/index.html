@@ -148,7 +148,7 @@ function renderList(){
 }
 function slugify(t){return t.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,50)}
 function openForm(p){
-  editing=p?p.id:null;var v=p||{title:'',slug:'',description:'',amount_paise:50000,pay_what_you_want:false,min_paise:100,button_text:'Pay now',collect_phone:false,collect_note:false,success_message:'Thank you! Your payment was received.',redirect_url:'',active:true};
+  editing=p?p.id:null;var v=p||{title:'',slug:'',description:'',amount_paise:50000,pay_what_you_want:false,min_paise:100,button_text:'Pay now',collect_phone:false,collect_note:false,success_message:'Thank you! Your payment was received.',redirect_url:'',delivery_message:'',delivery_url:'',active:true};
   $('form').hidden=false;
   $('form').innerHTML='<h2>'+(p?'Edit page':'New payment page')+'</h2>'+
   '<label for="fTitle">Title</label><input id="fTitle" maxlength="120" value="'+esc(v.title)+'">'+
@@ -161,6 +161,8 @@ function openForm(p){
   '<div class="chk"><input type="checkbox" id="fNote"'+(v.collect_note?' checked':'')+'><label for="fNote">Ask for a note</label></div>'+
   '<label for="fOk">Message after payment</label><input id="fOk" maxlength="500" value="'+esc(v.success_message)+'">'+
   '<label for="fRed">Send them to this link after payment (optional, must start with https://)</label><input id="fRed" value="'+esc(v.redirect_url||'')+'">'+
+  '<label for="fDel">What the customer receives after paying (shown only after a verified payment)</label><textarea id="fDel" rows="4" maxlength="4000">'+esc(v.delivery_message||'')+'</textarea>'+
+  '<label for="fDelUrl">Private download or access link (optional, must start with https://)</label><input id="fDelUrl" value="'+esc(v.delivery_url||'')+'">'+
   '<div class="chk"><input type="checkbox" id="fAct"'+(v.active?' checked':'')+'><label for="fAct">Page is live</label></div>'+
   '<div class="acts"><button class="btn" id="fSave">Save page</button><button class="btn g" id="fCancel">Cancel</button></div><p class="msg" id="fMsg" role="alert"></p>';
   $('fTitle').oninput=function(){if(!editing&&!$('fSlug').dataset.touched)$('fSlug').value=slugify(this.value)};
@@ -171,10 +173,11 @@ function openForm(p){
 }
 function save(){
   var amt=Math.round(parseFloat($('fAmt').value)*100),min=Math.round(parseFloat($('fMin')?$('fMin').value:'1')*100);
-  var row={title:$('fTitle').value.trim(),slug:$('fSlug').value.trim().toLowerCase(),description:$('fDesc').value.trim(),amount_paise:amt,button_text:$('fBtn').value.trim()||'Pay now',pay_what_you_want:$('fPwyw').checked,min_paise:isFinite(min)?min:100,collect_phone:$('fPhone').checked,collect_note:$('fNote').checked,success_message:$('fOk').value.trim()||'Thank you! Your payment was received.',redirect_url:$('fRed').value.trim()||null,active:$('fAct').checked};
+  var row={title:$('fTitle').value.trim(),slug:$('fSlug').value.trim().toLowerCase(),description:$('fDesc').value.trim(),amount_paise:amt,button_text:$('fBtn').value.trim()||'Pay now',pay_what_you_want:$('fPwyw').checked,min_paise:isFinite(min)?min:100,collect_phone:$('fPhone').checked,collect_note:$('fNote').checked,success_message:$('fOk').value.trim()||'Thank you! Your payment was received.',redirect_url:$('fRed').value.trim()||null,delivery_message:$('fDel').value.trim(),delivery_url:$('fDelUrl').value.trim(),active:$('fAct').checked};
   if(!row.title)return say('fMsg','Please add a title.','bad');
   if(!/^[a-z0-9][a-z0-9-]{1,60}$/.test(row.slug))return say('fMsg','Link name: 2 to 61 characters, only letters, numbers and dashes.','bad');
   if(!isFinite(amt)||amt<100)return say('fMsg','Price must be at least ₹1.','bad');
+  if(row.delivery_url&&!/^https:\/\//.test(row.delivery_url))return say('fMsg','The private link must start with https://','bad');
   if(row.redirect_url&&!/^https:\/\//.test(row.redirect_url))return say('fMsg','The after-payment link must start with https://','bad');
   say('fMsg','Saving…');
   var q=editing?sb.from('ph_pages').update(row).eq('id',editing):sb.from('ph_pages').insert(row);

@@ -100,8 +100,11 @@ function verify(res){
   fetch(C.supabaseUrl+'/functions/v1/ph-verify',{method:'POST',headers:{'Content-Type':'application/json',apikey:C.anonKey},body:JSON.stringify(res)})
   .then(function(r){return r.json()}).then(function(j){
     if(j&&j.ok){
-      say('<div class="ok"><svg width="64" height="64" viewBox="0 0 54 54"><circle cx="27" cy="27" r="25" fill="none" stroke="#d4a24a" stroke-width="2.5"/><path d="M16 28l8 8 14-17" fill="none" stroke="#d4a24a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><h1>Payment received</h1><p class="desc">'+esc(j.success_message)+'</p><p class="msg">Payment ID: '+esc(res.razorpay_payment_id)+'</p></div>');
-      if(j.redirect_url&&/^https:\/\//.test(j.redirect_url))setTimeout(function(){location.href=j.redirect_url},3000)
+      var hasDel=!!(j.delivery_message||j.delivery_url);
+      var del=(j.delivery_message?'<p class="desc" style="margin:14px 0 0;color:var(--fg)">'+esc(j.delivery_message)+'</p>':'')+(j.delivery_url&&/^https:\/\//.test(j.delivery_url)?'<a class="btn" style="display:block;text-decoration:none;text-align:center;line-height:52px" href="'+esc(j.delivery_url)+'" target="_blank" rel="noopener noreferrer">Open your purchase</a>':'');
+      var rl=location.origin+'/receipt.html?o='+encodeURIComponent(res.razorpay_order_id)+'&p='+encodeURIComponent(res.razorpay_payment_id);
+      say('<div class="ok"><svg width="64" height="64" viewBox="0 0 54 54"><circle cx="27" cy="27" r="25" fill="none" stroke="#d4a24a" stroke-width="2.5"/><path d="M16 28l8 8 14-17" fill="none" stroke="#d4a24a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><h1>Payment received</h1><p class="desc">'+esc(j.success_message)+'</p>'+del+'<p class="msg">Payment ID: '+esc(res.razorpay_payment_id)+'</p>'+(hasDel?'<p class="msg">Save this link to come back to your purchase later:<br><a href="'+esc(rl)+'" style="color:var(--gold2);word-break:break-all">'+esc(rl)+'</a></p>':'')+'</div>');
+      if(!hasDel&&j.redirect_url&&/^https:\/\//.test(j.redirect_url))setTimeout(function(){location.href=j.redirect_url},3000)
     }else say('<p class="msg">We could not confirm your payment yet. If money was taken, it will be confirmed automatically within a few minutes. Payment ID: '+esc(res.razorpay_payment_id)+'</p>')
   }).catch(function(){say('<p class="msg">We could not confirm your payment yet. If money was taken, it will be confirmed automatically. Payment ID: '+esc(res.razorpay_payment_id)+'</p>')})
 }
