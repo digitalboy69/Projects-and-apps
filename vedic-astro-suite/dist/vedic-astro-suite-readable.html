@@ -12312,59 +12312,198 @@ html{scroll-behavior:auto!important}
 }
 </style>
 <style>
-/* Life-Event Checker Pro (js/97, js/98): picker, evidence meter, confidence hero. Uses the studio's variables. */
-.le-pick{margin-bottom:14px;padding:12px;border-radius:18px;background:rgba(255,255,255,.025);border:1px solid var(--border-subtle)}
-.le-pick-top{display:flex;gap:10px;align-items:center;margin-bottom:10px}
-.le-pick-top input{flex:1;min-width:0;background:rgba(0,0,0,.3);border:1px solid var(--border-light);color:var(--text-main);border-radius:12px;padding:10px 12px;font-size:14px;font-family:inherit}
-.le-pick-top input:focus{outline:none;border-color:var(--gold)}
-.le-pick-top span{font-size:11px;color:var(--text-muted);white-space:nowrap}
-.le-views{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px;scrollbar-width:none}
+/* Life-Event Checker Pro (js/97, js/98). Redesigned UI. ONLY class selectors starting with .le- are used
+   (never bare span/i/b/em) so the shared emoji->icon layer (.vxi spans) is never styled by accident. */
+.le-root{--le-gold:var(--gold,#d4af37);--le-gold2:var(--gold-bright,#f6d775);--le-teal:var(--teal-bright,#4fd1c5);--le-txt:var(--text-main,#f2efe6);--le-mut:var(--text-muted,#a6a39a);
+  --le-line:rgba(255,255,255,.09);--le-card:rgba(255,255,255,.035);display:flex;flex-direction:column;gap:14px;color:var(--le-txt)}
+.le-root .vxi{vertical-align:-.2em}
+/* ---------- hero ---------- */
+.le-hero-head{position:relative;overflow:hidden;display:flex;gap:18px;align-items:center;padding:20px 18px;border-radius:24px;border:1px solid rgba(246,215,117,.35);
+  background:radial-gradient(120% 140% at 0% 0%,rgba(246,215,117,.18),transparent 55%),radial-gradient(90% 120% at 100% 100%,rgba(79,209,197,.16),transparent 60%),linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.01))}
+.le-orb{position:relative;flex:0 0 74px;width:74px;height:74px}
+.le-orb i{position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(246,215,117,.55);animation:leSpin 14s linear infinite}
+.le-orb i:nth-child(2){inset:10px;border-color:rgba(79,209,197,.6);animation-duration:9s;animation-direction:reverse;border-style:dashed}
+.le-orb i:nth-child(3){inset:25px;border:0;background:radial-gradient(circle,#f6d775,#d4af37 60%,transparent 72%);box-shadow:0 0 26px rgba(246,215,117,.6);animation:lePulse 3s ease-in-out infinite}
+@keyframes leSpin{to{transform:rotate(360deg)}}@keyframes lePulse{50%{transform:scale(1.18);opacity:.8}}
+.le-hh-txt{min-width:0}
+.le-eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--le-gold2);margin-bottom:4px}
+.le-hh-txt h3{margin:0 0 6px;font-size:21px;line-height:1.2;font-weight:700;background:linear-gradient(90deg,#fff,#f6d775 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.le-hh-txt p{margin:0 0 10px;font-size:13px;line-height:1.55;color:var(--le-mut)}
+.le-hh-stats{display:flex;flex-wrap:wrap;gap:7px}
+.le-hstat{font-size:11.5px;padding:5px 11px;border-radius:99px;background:rgba(0,0,0,.3);border:1px solid var(--le-line);color:var(--le-mut)}
+.le-hstat b{color:var(--le-gold2);font-family:var(--font-mono,monospace);margin-right:3px}
+.le-how{margin:0}
+/* ---------- cards + steps ---------- */
+.le-card{padding:16px;border-radius:22px;background:var(--le-card);border:1px solid var(--le-line);box-shadow:0 14px 40px rgba(0,0,0,.22)}
+.le-step-h{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.le-step-h>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.le-step-h b{font-size:15.5px}.le-step-h small{font-size:12px;color:var(--le-mut);line-height:1.4}
+.le-num{flex:0 0 32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;color:#1b1608;background:linear-gradient(135deg,#f6d775,#d4af37);box-shadow:0 4px 14px rgba(212,175,55,.35)}
+.le-count{font-size:11.5px;color:var(--le-mut);white-space:nowrap;padding:4px 10px;border-radius:99px;background:rgba(0,0,0,.25)}
+.le-count b{color:var(--le-gold2);font-family:var(--font-mono,monospace)}
+/* ---------- search + view tabs + filters ---------- */
+.le-search{position:relative;margin-bottom:10px}
+.le-sico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--le-mut);pointer-events:none;display:inline-flex}
+.le-search input{width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border-radius:14px;border:1px solid var(--le-line);background:rgba(0,0,0,.32);color:var(--le-txt);font-size:14px;font-family:inherit;transition:border-color .2s,box-shadow .2s}
+.le-search input:focus{outline:none;border-color:var(--le-gold);box-shadow:0 0 0 3px rgba(212,175,55,.15)}
+.le-views{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 8px;margin:0 -2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .le-views::-webkit-scrollbar{display:none}
-.le-views button{flex:0 0 auto;padding:7px 13px;border-radius:999px;border:1px solid var(--border-light);background:rgba(0,0,0,.25);color:var(--text-muted);font-size:12.5px;cursor:pointer;font-family:inherit}
-.le-views button.on{border-color:var(--gold);color:var(--gold-bright);background:rgba(212,175,55,.12)}
-.le-cats{max-height:340px;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
-.le-grp{margin-bottom:6px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid var(--border-subtle)}
-.le-grp>summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;padding:10px 12px;font-size:13.5px}
+.le-vbtn{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:99px;border:1px solid var(--le-line);background:rgba(0,0,0,.25);color:var(--le-mut);font-size:12.5px;cursor:pointer;font-family:inherit;transition:all .2s}
+.le-vbtn:hover{color:var(--le-txt);border-color:rgba(246,215,117,.4)}
+.le-vbtn.on{color:#1b1608;font-weight:600;border-color:transparent;background:linear-gradient(135deg,#f6d775,#d4af37);box-shadow:0 6px 18px rgba(212,175,55,.3)}
+.le-vi{display:inline-flex}
+.le-filters{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:4px 0 12px}
+.le-flab{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--le-mut);margin-right:2px}
+.le-fp{padding:6px 12px;border-radius:99px;border:1px solid var(--le-line);background:transparent;color:var(--le-mut);font-size:12px;cursor:pointer;font-family:inherit;transition:all .18s}
+.le-fp:hover{color:var(--le-txt)}
+.le-fp.on{color:var(--le-txt);border-color:var(--pc,var(--le-gold));background:color-mix(in srgb,var(--pc,#d4af37) 18%,transparent);box-shadow:0 0 0 1px var(--pc,var(--le-gold)) inset}
+/* ---------- groups + chips ---------- */
+.le-cats{max-height:440px;overflow-y:auto;overscroll-behavior:contain;padding:2px 3px 2px 0;scrollbar-width:thin;scrollbar-color:rgba(246,215,117,.35) transparent}
+.le-grp{margin-bottom:8px;border-radius:18px;border:1px solid var(--le-line);background:linear-gradient(135deg,color-mix(in srgb,var(--gc,#d4af37) 9%,transparent),rgba(0,0,0,.14));overflow:hidden}
+.le-grp[open]{border-color:color-mix(in srgb,var(--gc,#d4af37) 45%,transparent)}
+.le-grp>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:11px 13px}
 .le-grp>summary::-webkit-details-marker{display:none}
-.le-grp>summary em{font-style:normal;font-size:11px;color:var(--gold-bright);font-family:var(--font-mono)}
-.le-grp>summary small{flex-basis:100%;font-size:11.5px;color:var(--text-muted)}
-.le-chips{display:flex;flex-wrap:wrap;gap:7px;padding:0 10px 12px}
-.le-chip{display:inline-flex;align-items:center;gap:5px;padding:7px 11px;border-radius:999px;border:1px solid var(--border-light);background:rgba(255,255,255,.03);color:var(--text-main);font-size:12.5px;cursor:pointer;font-family:inherit;text-align:left;transition:all .15s}
-.le-chip i{font-style:normal;font-size:10px}
-.le-chip.neg{border-style:dashed}
-.le-chip:hover{border-color:var(--gold-bright);background:rgba(212,175,55,.1)}
-.le-chip.on{border-color:var(--gold);background:rgba(212,175,55,.2);box-shadow:0 0 0 1px var(--gold) inset}
-.le-sel{margin-top:10px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,rgba(212,175,55,.1),rgba(94,196,183,.05));border:1px solid var(--border-light)}
-.le-sel-empty{font-size:13px;color:var(--text-muted)}
-.le-sel-t{font-size:15px;font-weight:600}.le-sel-t u{text-decoration:none;font-size:10px;margin-left:6px;padding:2px 7px;border-radius:999px;background:rgba(192,57,43,.25);font-weight:400}
-.le-sel-p{margin:4px 0 8px;font-size:13px;color:var(--text-muted)}
-.le-tags{display:flex;flex-wrap:wrap;gap:6px}.le-tags span{font-size:11.5px;padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.28);border:1px solid var(--border-subtle)}
-.le-meter{margin:6px 0 12px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.025);border:1px solid var(--border-subtle)}
-.le-meter-top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;margin-bottom:8px}.le-meter-top span{color:var(--text-muted);font-size:12px}
+.le-gico{flex:0 0 38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:18px;color:var(--gc,#d4af37);background:color-mix(in srgb,var(--gc,#d4af37) 16%,transparent);border:1px solid color-mix(in srgb,var(--gc,#d4af37) 40%,transparent)}
+.le-gico.num{font-family:var(--font-mono,monospace);font-weight:700;font-size:16px}.le-gico.glyph{font-size:22px}
+.le-gtxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.le-gtitle{font-size:14px;font-weight:600}.le-gdesc{font-size:11.5px;color:var(--le-mut);line-height:1.35}
+.le-gcnt{flex:0 0 auto;min-width:26px;text-align:center;font-size:11.5px;font-family:var(--font-mono,monospace);padding:3px 8px;border-radius:99px;color:var(--gc,#d4af37);background:color-mix(in srgb,var(--gc,#d4af37) 14%,transparent)}
+.le-grp>summary::after{content:'';flex:0 0 8px;height:8px;border-right:2px solid var(--le-mut);border-bottom:2px solid var(--le-mut);transform:rotate(45deg);transition:transform .25s;margin:-3px 2px 0 0}
+.le-grp[open]>summary::after{transform:rotate(-135deg);margin-top:3px}
+.le-chips{display:flex;flex-wrap:wrap;gap:8px;padding:2px 12px 14px}
+.le-chip{position:relative;display:inline-flex;align-items:center;gap:8px;padding:8px 13px 8px 9px;border-radius:99px;border:1px solid var(--le-line);background:rgba(0,0,0,.28);color:var(--le-txt);font-size:12.8px;cursor:pointer;font-family:inherit;text-align:left;line-height:1.25;transition:transform .15s,border-color .15s,background .15s,box-shadow .15s}
+.le-chip:hover{transform:translateY(-1px);border-color:var(--gc,var(--le-gold));background:color-mix(in srgb,var(--gc,#d4af37) 14%,rgba(0,0,0,.28))}
+.le-chip:active{transform:scale(.97)}
+.le-chip.hard{border-style:dashed}
+.le-chip.on{border-color:var(--gc,var(--le-gold));background:color-mix(in srgb,var(--gc,#d4af37) 26%,rgba(0,0,0,.3));box-shadow:0 0 0 1px var(--gc,var(--le-gold)) inset,0 6px 20px color-mix(in srgb,var(--gc,#d4af37) 30%,transparent)}
+.le-cemo{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;flex:0 0 26px;font-size:14px;background:color-mix(in srgb,var(--gc,#d4af37) 20%,transparent);color:var(--gc,#d4af37)}
+.le-ctxt{min-width:0}
+.le-cdot{position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:#5fcf8d;box-shadow:0 0 8px #5fcf8d}
+.le-none{padding:26px 14px;text-align:center;color:var(--le-mut);font-size:13px}.le-none-ico{font-size:28px;margin-bottom:6px}
+/* ---------- passport ---------- */
+.le-sel{margin-top:12px}
+.le-sel-empty{display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;border:1px dashed var(--le-line);color:var(--le-mut);font-size:13px}
+.le-sel-hand{font-size:22px}
+.le-pass{padding:14px;border-radius:18px;border:1px solid color-mix(in srgb,var(--gc,#d4af37) 55%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--gc,#d4af37) 16%,transparent),rgba(0,0,0,.2));animation:leIn .35s both}
+.le-pass-top{display:flex;gap:12px;align-items:center;margin-bottom:11px}
+.le-pass-emo{flex:0 0 46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:24px;color:var(--gc,#d4af37);background:color-mix(in srgb,var(--gc,#d4af37) 20%,transparent)}
+.le-pass-t{font-size:16px;font-weight:700}.le-pass-p{font-size:12.5px;color:var(--le-mut);margin-top:2px;line-height:1.45}
+.le-pills{display:flex;flex-wrap:wrap;gap:6px}
+.le-pill{display:inline-flex;align-items:stretch;border-radius:10px;overflow:hidden;border:1px solid color-mix(in srgb,var(--pc,#94a3b8) 45%,transparent);font-size:11.5px}
+.le-pl{padding:4px 7px;background:color-mix(in srgb,var(--pc,#94a3b8) 22%,transparent);color:var(--pc,#cbd5e1);font-size:10px;text-transform:uppercase;letter-spacing:.06em;display:inline-flex;align-items:center}
+.le-pv{padding:4px 9px;background:rgba(0,0,0,.3);display:inline-flex;align-items:center}
+@keyframes leIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* ---------- form ---------- */
+.le-addfor{display:flex;align-items:center;gap:9px;padding:9px 13px;margin-bottom:12px;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid var(--le-line);font-size:13px;min-height:22px}
+.le-addfor-emo{display:inline-flex;color:var(--le-gold2)}.le-addfor-t{font-weight:600}.le-addfor-s{margin-left:auto;font-size:11px;color:var(--le-mut)}.le-addfor-none{color:var(--le-mut)}
+.le-form{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.le-fld{display:flex;flex-direction:column;gap:6px;min-width:150px}.le-fld.grow{flex:1 1 180px}
+.le-flbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--le-mut)}
+.le-fld input,.le-fld select{box-sizing:border-box;width:100%;padding:11px 13px;border-radius:13px;border:1px solid var(--le-line);background:rgba(0,0,0,.32);color:var(--le-txt);font-size:14px;font-family:inherit}
+.le-fld input:focus,.le-fld select:focus{outline:none;border-color:var(--le-gold);box-shadow:0 0 0 3px rgba(212,175,55,.15)}
+.le-seg3{display:flex;gap:4px;padding:4px;border-radius:14px;background:rgba(0,0,0,.32);border:1px solid var(--le-line)}
+.le-sg{flex:1;display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:7px 8px;border-radius:10px;border:0;background:transparent;color:var(--le-mut);font-size:11.5px;cursor:pointer;font-family:inherit;transition:all .18s;white-space:nowrap}
+.le-sg.on{background:linear-gradient(135deg,rgba(246,215,117,.25),rgba(212,175,55,.12));color:var(--le-gold2);box-shadow:0 0 0 1px rgba(246,215,117,.5) inset}
+.le-sgi{display:inline-flex;font-size:15px}
+/* ---------- buttons ---------- */
+.le-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:14px;border:1px solid var(--le-line);background:rgba(255,255,255,.05);color:var(--le-txt);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .15s,box-shadow .2s,filter .2s}
+.le-btn:hover{transform:translateY(-1px)}.le-btn:active{transform:scale(.97)}
+.le-btn-gold{border-color:transparent;color:#1b1608;background:linear-gradient(135deg,#f6d775,#d4af37);box-shadow:0 8px 22px rgba(212,175,55,.3)}
+.le-btn-go{flex:1 1 240px;padding:15px 20px;font-size:15px;border-color:transparent;color:#1b1608;background:linear-gradient(120deg,#f6d775,#d4af37 45%,#4fd1c5);background-size:200% 100%;box-shadow:0 12px 30px rgba(79,209,197,.25);animation:leSheen 5s ease-in-out infinite}
+@keyframes leSheen{50%{background-position:100% 0}}
+.le-btn-go.busy{opacity:.6;pointer-events:none;animation:none}
+.le-btn-ghost{background:transparent;color:var(--le-mut);font-weight:500}
+.le-plus{font-size:17px;line-height:1}
+.le-actions{display:flex;flex-wrap:wrap;gap:10px}
+.le-runrow{display:flex;gap:12px;margin-bottom:12px}
+/* ---------- meter ---------- */
+.le-meter{margin-bottom:14px;padding:12px;border-radius:18px;background:rgba(0,0,0,.2);border:1px solid var(--le-line)}
+.le-meter-in{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.le-wheel{flex:0 0 138px;width:138px;height:138px;margin:0 auto}
+.le-wseg{fill:rgba(255,255,255,.06);stroke:rgba(255,255,255,.08);stroke-width:.6;transition:fill .5s}
+.le-wseg.on{fill:var(--wc);fill-opacity:.85;stroke:var(--wc);filter:drop-shadow(0 0 4px var(--wc))}
+.le-wnum{font-size:9px;font-family:var(--font-mono,monospace);fill:#8b8878}.le-wnum.on{fill:#10100c;font-weight:700}
+.le-wpct{font-size:21px;font-weight:700;fill:#f6d775;font-family:var(--font-mono,monospace)}.le-wlab{font-size:6.2px;letter-spacing:.14em;fill:#9a9788}
+.le-meter-txt{flex:1 1 200px;min-width:0}
+.le-meter-h{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--le-mut);margin-bottom:8px}
+.le-meter-stats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+.le-stat{font-size:11.5px;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.05);color:var(--le-mut)}.le-stat b{color:var(--le-gold2);font-family:var(--font-mono,monospace)}
+.le-meter-tip{font-size:12.5px;line-height:1.55;color:var(--le-mut)}.le-meter-tip b{color:var(--le-gold2)}
+/* ---------- event timeline ---------- */
+.le-tl{display:flex;flex-direction:column;gap:9px}
+.le-ev{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;border:1px solid var(--le-line);background:linear-gradient(90deg,color-mix(in srgb,var(--cc,#d4af37) 12%,transparent),rgba(0,0,0,.14));border-left:3px solid var(--cc,#d4af37);animation:leIn .35s both}
+.le-evd{flex:0 0 52px;display:flex;flex-direction:column;align-items:center;line-height:1.1;padding:5px 0;border-radius:12px;background:rgba(0,0,0,.3)}
+.le-evd-day{font-size:19px;font-weight:700;font-family:var(--font-mono,monospace)}.le-evd-mon{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--cc,#d4af37)}.le-evd-yr{font-size:10px;color:var(--le-mut)}
+.le-evm{flex:1;min-width:0}
+.le-evt{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;line-height:1.3}
+.le-evemo{display:inline-flex;color:var(--cc,#d4af37)}
+.le-evs{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.le-evprec,.le-evage,.le-evnote{font-size:11px;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.06);color:var(--le-mut)}.le-evnote{font-style:italic}
+.le-evx{flex:0 0 30px;height:30px;border-radius:50%;border:0;background:rgba(255,255,255,.07);color:var(--le-mut);cursor:pointer;font-size:13px;transition:all .18s}
+.le-evx:hover{background:#c0392b;color:#fff;transform:rotate(90deg)}
+.le-empty{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:24px 16px;border-radius:18px;border:1px dashed var(--le-line);color:var(--le-mut);font-size:12.5px}
+.le-empty b{color:var(--le-txt);font-size:14px}.le-empty-ico{font-size:30px}
+.le-tip{margin-top:10px;padding:10px 13px;border-radius:13px;background:rgba(246,215,117,.08);border:1px solid rgba(246,215,117,.25);font-size:12.5px;color:var(--le-mut)}
+/* ---------- progress ---------- */
+.le-prog{display:flex;gap:16px;align-items:center;padding:20px;border-radius:22px;border:1px solid var(--le-line);background:var(--le-card)}
+.le-prog-orb{position:relative;flex:0 0 52px;height:52px}.le-prog-orb i{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:#f6d775;animation:leSpin 1s linear infinite}
+.le-prog-orb i:nth-child(2){inset:9px;border-top-color:#4fd1c5;animation-duration:1.6s;animation-direction:reverse}
+.le-prog-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}.le-prog-txt b{font-size:14px}.le-prog-txt small{font-size:11.5px;color:var(--le-mut)}
 .le-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
-.le-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--teal-bright),var(--gold-bright));transition:width .9s cubic-bezier(.2,.8,.2,1)}
-.le-houses{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0 6px}
-.le-houses span{width:24px;height:24px;border-radius:50%;display:inline-grid;place-items:center;font-size:11px;font-family:var(--font-mono);background:rgba(255,255,255,.05);color:var(--text-muted)}
-.le-houses span.on{background:rgba(212,175,55,.3);color:var(--gold-bright)}
-.le-meter-tip{font-size:12px;color:var(--text-muted);line-height:1.5}
-.le-prog{display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:16px;background:rgba(255,255,255,.025);border:1px solid var(--border-subtle);font-size:13px;color:var(--text-muted)}
-.le-hero{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:16px;margin-bottom:14px;border-radius:20px;border:1px solid var(--gold);background:linear-gradient(135deg,rgba(212,175,55,.14),rgba(94,196,183,.06))}
-.le-gauge{width:104px;height:104px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 auto;background:radial-gradient(circle,rgba(0,0,0,.45) 56%,transparent 58%),conic-gradient(var(--gold-bright),var(--teal-bright),rgba(255,255,255,.08) 0)}
-.le-gauge b{font-size:26px;font-family:var(--font-mono);color:var(--gold-bright)}.le-gauge span{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);text-align:center;max-width:70px}
-.le-hero-txt{flex:1;min-width:200px;display:flex;flex-direction:column;gap:5px}
-.le-grade{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright)}
-.le-best{font-size:17px}.le-sub{font-size:12.5px;color:var(--text-muted);line-height:1.5}
-.le-hero .rs-seg{align-self:flex-start;margin-top:4px}
-.le-g1{border-color:#c0392b}.le-g1 .le-grade{color:#e57368}.le-g2{border-color:#d6a032}
-.le-tests{margin-bottom:16px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.025);border:1px solid var(--border-subtle)}
-.le-tests-h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
-.le-test{display:grid;grid-template-columns:1fr 64px;gap:2px 10px;margin-bottom:10px;font-size:13px}
-.le-test .le-bar{grid-column:1;grid-row:2}.le-test em{grid-column:2;grid-row:2;font-style:normal;font-family:var(--font-mono);color:var(--gold-bright);text-align:right;font-size:12.5px;align-self:center}
-.le-test small{grid-column:1/3;color:var(--text-muted);font-size:11.5px}
-.le-fitnote{margin:6px 0 0 38px;font-size:11.5px;color:var(--text-muted)}
-.le-v{font-style:normal;font-size:11px;color:var(--text-muted)}
-.le-out{margin:12px 0;padding:11px 14px;border-radius:14px;background:rgba(214,160,50,.12);border:1px solid rgba(214,160,50,.4);font-size:12.5px;line-height:1.55}
-@media (max-width:480px){.le-gauge{width:88px;height:88px}.le-gauge b{font-size:22px}.le-cats{max-height:300px}.le-fitnote,.rs-why{margin-left:0}}
+.le-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#4fd1c5,#f6d775);transition:width .9s cubic-bezier(.2,.8,.2,1)}
+/* ---------- result ---------- */
+.le-result{padding:18px;border-radius:26px;border:1px solid rgba(246,215,117,.5);background:radial-gradient(110% 120% at 0% 0%,rgba(246,215,117,.16),transparent 55%),radial-gradient(90% 100% at 100% 100%,rgba(79,209,197,.13),transparent 60%),rgba(255,255,255,.025);box-shadow:0 18px 50px rgba(0,0,0,.3);animation:leIn .5s both}
+.le-result.le-g1{border-color:rgba(255,122,107,.6)}.le-result.le-g2{border-color:rgba(233,185,73,.6)}
+.le-rhero{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.le-gauge{position:relative;flex:0 0 132px;width:132px;height:132px;margin:0 auto}
+.le-gauge-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.le-gauge-in b{font-size:32px;font-family:var(--font-mono,monospace);color:#f6d775;line-height:1}.le-gauge-in span{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--le-mut);margin-top:4px;line-height:1.3}
+.le-ring{display:block}.le-ring-bg{fill:none;stroke:rgba(255,255,255,.09)}
+.le-ring-fg{fill:none;stroke-linecap:round;transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)}
+.le-rtxt{flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.le-badge{align-self:flex-start;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border-radius:99px;color:#1b1608;font-weight:700;background:linear-gradient(135deg,#f6d775,#d4af37)}
+.le-g1 .le-badge{background:linear-gradient(135deg,#ff9d8f,#ff7a6b)}.le-g2 .le-badge{background:linear-gradient(135deg,#f6c453,#e0a033)}.le-g4 .le-badge{background:linear-gradient(135deg,#8cf0c0,#4fd1c5)}
+.le-rbest{display:flex;align-items:center;gap:12px;font-size:19px}
+.le-rglyph{font-size:40px;line-height:1;filter:drop-shadow(0 0 10px currentColor)}
+.le-rbest small{display:block;font-size:13px;color:var(--le-mut);margin-top:2px}.le-rbest small b{color:var(--le-gold2)}
+.le-rsub{font-size:13px;line-height:1.5}.le-rsub.dim{color:var(--le-mut);font-size:12.5px}
+.le-usebtn{align-self:flex-start;margin-top:4px;padding:11px 16px;font-size:13px}
+.le-arrow{opacity:.75}
+.le-tests-h{margin:18px 0 10px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--le-mut)}.le-tests-h small{display:block;text-transform:none;letter-spacing:0;font-size:11.5px;margin-top:2px;opacity:.8}
+.le-tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.le-tcard{position:relative;display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;background:rgba(0,0,0,.25);border:1px solid var(--le-line)}
+.le-tcard .le-ring{flex:0 0 56px}
+.le-tc-v{position:absolute;left:12px;top:12px;width:56px;height:56px;display:grid;place-items:center;font-size:12.5px;font-weight:700;font-family:var(--font-mono,monospace);color:#f6d775}
+.le-tc-t{min-width:0;display:flex;flex-direction:column;gap:3px}.le-tc-t b{font-size:13px}.le-tc-t small{font-size:11.5px;color:var(--le-mut);line-height:1.4}
+.le-out{display:flex;gap:12px;padding:13px 15px;border-radius:18px;background:rgba(233,185,73,.1);border:1px solid rgba(233,185,73,.4);font-size:12.5px;line-height:1.6}
+.le-out-ico{font-size:20px}.le-out small{color:var(--le-mut)}
+.le-rank-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:4px;font-size:14px;font-weight:600}.le-rank-h span{font-size:11.5px;font-weight:400;color:var(--le-mut)}
+.le-rank{padding:13px 14px;border-radius:20px;border:1px solid var(--le-line);background:var(--le-card);animation:leIn .45s both}
+.le-rank.top{border-color:rgba(246,215,117,.6);background:linear-gradient(135deg,rgba(246,215,117,.12),rgba(79,209,197,.05));box-shadow:0 10px 32px rgba(212,175,55,.12)}
+.le-rk-head{display:flex;align-items:center;gap:11px;margin-bottom:9px}
+.le-rk-n{flex:0 0 26px;text-align:center;font-size:15px;color:var(--le-mut);font-family:var(--font-mono,monospace)}
+.le-rk-glyph{flex:0 0 40px;height:40px;border-radius:13px;display:grid;place-items:center;font-size:23px;color:var(--ec);background:color-mix(in srgb,var(--ec) 16%,transparent);border:1px solid color-mix(in srgb,var(--ec) 40%,transparent)}
+.le-rk-name{flex:1;min-width:0;display:flex;flex-direction:column}.le-rk-name b{font-size:15px}.le-rk-name small{font-size:11px;color:var(--le-mut)}
+.le-rk-pct{font-size:17px;font-weight:700;font-family:var(--font-mono,monospace);color:#f6d775}
+.le-wins{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.le-win{padding:8px 13px;border-radius:99px;border:1px solid var(--le-line);background:rgba(0,0,0,.3);color:var(--le-txt);font-size:12px;cursor:pointer;font-family:var(--font-mono,monospace);transition:all .18s}
+.le-win:hover{border-color:#f6d775;background:rgba(246,215,117,.12);transform:translateY(-1px)}.le-win .le-arrow{font-family:inherit;color:var(--le-teal)}
+.le-why{margin-top:11px}.le-why>summary{cursor:pointer;font-size:12.5px;color:var(--le-gold2);list-style:none}.le-why>summary::-webkit-details-marker{display:none}.le-why>summary::before{content:'▸ ';}.le-why[open]>summary::before{content:'▾ '}
+.le-vlist{display:flex;flex-direction:column;gap:8px;margin-top:9px}
+.le-vrow{padding:9px 11px;border-radius:13px;background:rgba(0,0,0,.24);border-left:3px solid var(--vc)}
+.le-vhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.le-vemo{display:inline-flex;color:var(--vc)}
+.le-vname{flex:1;min-width:120px;font-size:13px;font-weight:600}.le-vname small{font-weight:400;color:var(--le-mut);margin-left:4px}
+.le-vtag{font-size:11px;padding:3px 9px;border-radius:99px;color:var(--vc);background:color-mix(in srgb,var(--vc) 15%,transparent)}
+.le-vrow ul{margin:7px 0 0;padding-left:18px;font-size:12px;color:var(--le-mut);line-height:1.6}
+.le-note{padding:13px 15px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid var(--le-line);font-size:12px;line-height:1.6;color:var(--le-mut)}
+/* ---------- small screens ---------- */
+@media (max-width:520px){
+  .le-hero-head{padding:16px 14px;gap:12px}.le-orb{flex-basis:54px;width:54px;height:54px}.le-orb i:nth-child(3){inset:18px}.le-hh-txt h3{font-size:18px}
+  .le-card{padding:13px;border-radius:20px}.le-cats{max-height:380px}.le-chips{padding:2px 9px 12px}
+  .le-cof{display:none}.le-count{padding:4px 9px}.le-step-h small{font-size:11.5px}
+  .le-fld{min-width:100%}.le-btn-go{flex-basis:100%}.le-result{padding:14px}.le-rbest{font-size:17px}.le-meter-in{justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){.le-root *{animation:none!important;transition:none!important}}
 </style>
 <style>
 /* Right now tab (js/101-house-now-ui.js): running periods, area bars, house chips, today's sky, house cards */
@@ -45870,6 +46009,103 @@ const LEC = (function(){
   if (typeof RS_CATS === 'undefined') return;
   LEC.list.forEach(e=>{ RS_CATS[e.id] = e; });
 })();
+
+/* ============================================================================
+   EXTRA CATEGORIES — every event is also tagged with: theme, who it is about, mood, life stage, date accuracy
+   (house / planet / sign come from the rows above). Used by the browse views and filters of 98-life-event-engine.js.
+   ============================================================================ */
+const LEC_THEMES = [
+  { id:'self',   icon:'🌱', name:'Self & Identity',      plain:'You as a person: image, confidence, new starts', c:'#e9b949' },
+  { id:'love',   icon:'💞', name:'Love & Family',        plain:'Partner, children, parents, siblings, relatives', c:'#ef6f9a' },
+  { id:'money',  icon:'💰', name:'Money & Wealth',       plain:'Income, savings, loans, gains, windfalls',        c:'#5fcf8d' },
+  { id:'work',   icon:'💼', name:'Work & Business',      plain:'Jobs, promotions, business, clients, contracts',  c:'#5aa9ff' },
+  { id:'home',   icon:'🏡', name:'Home & Property',      plain:'Houses, land, vehicles, moves at home',           c:'#e29a5b' },
+  { id:'learn',  icon:'🎓', name:'Study & Skills',       plain:'School, exams, courses, writing, new skills',     c:'#a78bfa' },
+  { id:'body',   icon:'🩺', name:'Health & Body',        plain:'Illness, surgery, fitness, recovery',             c:'#ff7a6b' },
+  { id:'travel', icon:'✈️', name:'Travel & Foreign',     plain:'Trips, moving abroad, visas, relocation',         c:'#4fd1c5' },
+  { id:'spirit', icon:'🕉️', name:'Spirit & Inner Life',  plain:'Faith, retreats, meditation, letting go',         c:'#c4b5fd' },
+  { id:'legal',  icon:'⚖️', name:'Legal & Conflict',     plain:'Courts, notices, rivals, secrets, disputes',      c:'#94a3b8' },
+  { id:'social', icon:'🌟', name:'Fame, Friends & Luck', plain:'Recognition, friends, networks, lucky breaks',    c:'#f6c453' },
+  { id:'loss',   icon:'🥀', name:'Loss & Crisis',        plain:'Deaths, accidents, shocks, hard turning points',  c:'#d96a8a' }
+];
+const LEC_THEME_IDS = {
+  self:'freshstart personalwin confidence newlook namechange leader lowphase ownlaunch stagedebut challenge selfreliance lifepivot identitydoc goalset bravemove risktaker',
+  love:'familyjoin familyfight babyname sibbirth sibmarry sibfight child pregnancy secondchild childschool childmarry fallinlove firstlove lovemarriage breakup adoption momtobe childabroad marriage engaged metspouse livein divorce separation spouserise remarry arranged exreturn spouseabroad inlaws ownwedding longdistance foreignspouse secretaffair mother father fatherretire eldersib eldersibmarry familywealth sibsuccess',
+  money:'salary savings jewellery shares stable bankacct giftmoney budgetcrisis moneyloss gain windfall inherit insurance spousewealth speculative spectrade incomejump bonus sideincome investgain fundraise debtfree loantaken loancleared bigexpense lostitem taxissue businessloss bankrupt',
+  work:'career promotion careerchange startbiz govjob politics careeraward demotion resign retire manager ceo licence bigproject reputation jobtransfer careerbreak topclient authority careerrise firstjob techjob retiredforce joboffer joblost bossclash burnout nightshift servicejob uniform betrayed bizpartner partnerend bigclient contract customers hospitality ecommerce appwebsite techgadgetbiz salessucc negotiation foodbiz familybiz ownvoice commute mediajob artcareer agricareer builderbiz lawcareer shipping skilledtrade science medicalcareer ownclass teachjob teaching bankjob sportcareer',
+  home:'property newhome renovation land car twowheeler sellhome rented homeloan homecoming ownroof garden buyshop gadget',
+  learn:'edu schoolfinish collegeadmit examclear rank research graduate libraryphase musiclearn skillcourse language writing bookpub photovideo phd scholarship authorbook mentor deepresearch speaking',
+  body:'fitness bodyinjury fullrecovery healthturn skinhair faceeye diet handinjury heartissue health hospital chronic treatment healthcheck healerrole longhospital sleep eyesurg martial sportwin motherill fatherill spouseill childhealth surgery surgerymother depression therapy',
+  travel:'foreign workabroad studyabroad returnhome emigrate immigrate longtrip visa successabroad shorttrip citymove holiday suddentransfer',
+  spirit:'mantra pilgrimage ritual charity retreat philosophy spirituawake solitude ashram meditate letgo occultstudy givingaway',
+  legal:'lawstart lawwon verdict legalnotice spouselaw confinement rivalbeat scandal secret',
+  social:'fame viral newfriend friendlost network connection community alumni socialfame exitgroup wishdone goalreached luckybreak fortuneturn neighbour publicsucc mediadebut publicperf contest creative famouslocal',
+  loss:'accident nearmiss shock crisis sibloss motherloss fatherloss grandloss relloss friendloss miscarry breakdown peacelost'
+};
+const LEC_WHO = [
+  { id:'me',       icon:'🙋', name:'Me',                         plain:'Something that happened to you directly', c:'#e9b949' },
+  { id:'partner',  icon:'💑', name:'Partner & love',             plain:'Spouse, partner, romance',                 c:'#ef6f9a' },
+  { id:'children', icon:'👶', name:'Children',                   plain:'Your kids or pregnancy',                   c:'#5fcf8d' },
+  { id:'parents',  icon:'👪', name:'Parents',                    plain:'Mother or father',                         c:'#e29a5b' },
+  { id:'siblings', icon:'👫', name:'Brothers & sisters',         plain:'Younger or elder siblings',                c:'#5aa9ff' },
+  { id:'family',   icon:'🏘️', name:'Wider family',               plain:'Grandparents, in-laws, relatives',         c:'#a78bfa' },
+  { id:'others',   icon:'🤝', name:'Friends, work people & clients', plain:'Colleagues, bosses, clients, rivals, mentors', c:'#4fd1c5' }
+];
+const LEC_STAGES = [
+  { id:'study',   icon:'🎒', name:'Study years',  plain:'Roughly up to age 25', c:'#a78bfa' },
+  { id:'start',   icon:'🚀', name:'Starting out', plain:'Roughly age 22 to 35', c:'#5aa9ff' },
+  { id:'settled', icon:'🏛️', name:'Settled life', plain:'Roughly age 35 to 55', c:'#e9b949' },
+  { id:'later',   icon:'🌇', name:'Later life',   plain:'Roughly age 55 and on', c:'#e29a5b' },
+  { id:'any',     icon:'🔁', name:'Any age',      plain:'Can happen at any time of life', c:'#94a3b8' }
+];
+const LEC_STAGE_IDS = {
+  study:'schoolfinish collegeadmit edu examclear rank graduate firstlove fallinlove skillcourse libraryphase musiclearn scholarship',
+  start:'firstjob joboffer salary marriage engaged arranged metspouse lovemarriage ownwedding livein child pregnancy property car twowheeler homeloan startbiz citymove studyabroad workabroad ownroof newhome rented foreign phd bizpartner ownlaunch',
+  settled:'promotion manager ceo secondchild childschool careerchange authority politics careeraward bigproject careerrise investgain buyshop land familybiz',
+  later:'retire retiredforce childmarry childabroad pilgrimage ashram meditate fatherretire fatherloss motherloss grandloss careerbreak charity mentor'
+};
+const LEC_MOODS = [
+  { id:'good', icon:'✨', name:'Good news',      plain:'Positive events and wins',            c:'#5fcf8d' },
+  { id:'turn', icon:'🔄', name:'Turning points', plain:'Big changes that open a new chapter', c:'#e9b949' },
+  { id:'hard', icon:'⚠️', name:'Hard times',     plain:'Difficult or painful events',          c:'#ff7a6b' }
+];
+const LEC_TURN_IDS = 'freshstart lifepivot careerchange citymove foreign emigrate immigrate ownroof marriage startbiz ownlaunch jobtransfer newhome studyabroad workabroad returnhome remarry retire resign letgo spirituawake ownwedding livein divorce';
+const LEC_ACC = [
+  { id:3, icon:'🎯', name:'Exact day',        plain:'You can name the date',                c:'#5fcf8d' },
+  { id:2, icon:'📅', name:'A few weeks',      plain:'You know the month or so',             c:'#e9b949' },
+  { id:1, icon:'🌫️', name:'A phase',          plain:'Gradual: only a period of time',       c:'#94a3b8' }
+];
+/* colour sets for the browse views */
+const LEC_HC = ['#e9b949','#5fcf8d','#4fd1c5','#e29a5b','#ef6f9a','#ff7a6b','#f472b6','#d96a8a','#a78bfa','#5aa9ff','#f6c453','#7dd3fc'];
+const LEC_PC = { Sun:'#f6c453', Moon:'#cbd5e1', Mars:'#ff7a6b', Mercury:'#5fcf8d', Jupiter:'#e9b949', Venus:'#ef6f9a', Saturn:'#94a3b8', Rahu:'#a78bfa', Ketu:'#c08457' };
+const LEC_EC = { Fire:'#ff7a6b', Earth:'#5fcf8d', Air:'#7dd3fc', Water:'#7c8cf8' };
+
+(function(){
+  const idx = (obj)=>{ const m = {}; Object.keys(obj).forEach(k=> obj[k].split(' ').forEach(id=>{ if (id) m[id] = k; })); return m; };
+  const th = idx(LEC_THEME_IDS), st = idx(LEC_STAGE_IDS), turn = {}; LEC_TURN_IDS.split(' ').forEach(i=>{ turn[i] = 1; });
+  const houseTheme = { 1:'self', 2:'money', 3:'learn', 4:'home', 5:'love', 6:'work', 7:'love', 8:'loss', 9:'spirit', 10:'work', 11:'social', 12:'travel' };
+  const whoRx = [
+    ['children', /child|baby|pregnan|miscarry|adopt|momtobe|secondchild/],
+    ['parents',  /mother|father|parent/],
+    ['siblings', /sib|eldersib|brother|sister/],
+    ['partner',  /spouse|partner|marri|engage|wedding|divorce|separation|remarry|livein|metspouse|arranged|exreturn|lover|love|romantic|breakup|longdistance|secretaffair/],
+    ['family',   /inlaws|in-law|grand|relloss|relative|familyjoin|familyfight|familywealth|babyname/],
+    ['others',   /friend|colleague|boss|neighbour|network|client|rival|enemy|mentor|guru|alumni|community|betray|bizpartner|partnerend|customers|connection|exitgroup/]
+  ];
+  const whoFix = { ownroof:'me', grandloss:'family' };
+  LEC.list.forEach(e=>{
+    e.name = e.label.slice(e.emoji.length + 1);
+    e.theme = th[e.id] || houseTheme[e.house];
+    e.stage = st[e.id] || 'any';
+    e.mood = e.n ? 'hard' : (turn[e.id] ? 'turn' : 'good');
+    const txt = (e.id + ' ' + e.name).toLowerCase(); e.who = 'me';
+    for (const r of whoRx) if (r[1].test(txt)){ e.who = r[0]; break; }
+    if (whoFix[e.id]) e.who = whoFix[e.id];
+    e.acc = e.sh;
+  });
+  LEC.themes = LEC_THEMES; LEC.whoList = LEC_WHO; LEC.stages = LEC_STAGES; LEC.moods = LEC_MOODS; LEC.accs = LEC_ACC;
+  LEC.hc = LEC_HC; LEC.pc = LEC_PC; LEC.ec = LEC_EC;
+})();
 <\/script>
 <script>
 /* ============================================================================
@@ -46053,115 +46289,174 @@ async function leAnalyse(o){
     outliers: ranked[0].per.filter(x=>x.pct < .35) };
 }
 
-/* ============================ UI ============================ */
-const leUI = { view:'house', q:'', sel:null, running:false };
+/* ============================ UI (redesigned) ============================ */
+const leUI = { view:'house', q:'', sel:null, running:false, mood:'all', exact:false, prec:'d' };
+const LE_VIEWS = [['house','🏠','Life area'],['theme','🎨','Theme'],['planet','🪐','Planet'],['sign','♈','Sign'],['who','👥','Who'],['stage','🧭','Life stage'],['acc','📅','Date accuracy']];
+const LE_MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function leFmt(off, date, time){ const sh = shiftLocalDateTime(date, time, Math.round(off)), day = sh.dateStr===date ? '' : (sh.dateStr>date?' +1d':' −1d'); return sh.timeStr.slice(0,5)+day; }
-function leSharpLabel(sh){ return sh===3 ? 'Date: exact day' : sh===2 ? 'Date: to a few weeks' : 'Date: a phase (fuzzy)'; }
-function leChip(e){ return `<button type="button" class="le-chip${leUI.sel===e.id?' on':''}${e.n?' neg':''}" data-le-pick="${e.id}" title="${rsEsc(e.plain)}"><span>${e.label}</span>${e.sh===3?'<i>🎯</i>':''}</button>`; }
-function leGroups(){
-  const q = leUI.q.trim().toLowerCase(), H = LEC.houses;
-  let list = LEC.list.filter(e=> !q || (e.label+' '+e.plain+' '+e.id+' house '+e.house+' '+H[e.house-1].name+' '+e.k.join(' ')+' '+LEC.signs[e.house-1]).toLowerCase().indexOf(q) > -1);
-  const g = [];
-  if (leUI.view==='house') H.forEach(h=>{ const a = list.filter(e=>e.house===h.h); if (a.length) g.push({ t:`House ${h.h} · ${h.name}`, d:h.plain, a }); });
-  else if (leUI.view==='planet') LE_PL.forEach(P=>{ const a = list.filter(e=>e.planet===P); if (a.length) g.push({ t:`${LEC.planets[P].icon} ${P}`, d:LEC.planets[P].plain, a }); });
-  else if (leUI.view==='sign') H.forEach(h=>{ const a = list.filter(e=>e.house===h.h); if (a.length) g.push({ t:`${SIGNS[h.sign].symbol} ${LEC.signs[h.sign]}`, d:`Natural sign of house ${h.h}: ${h.signWords}`, a }); });
-  else { const a = list.filter(e=>e.sh===3); H.forEach(h=>{ const b = a.filter(e=>e.house===h.h); if (b.length) g.push({ t:`🎯 ${h.name}`, d:'Events you can date to the exact day', a:b }); }); }
-  return { g, count:list.length };
+function leFind(list, id){ for (let i=0;i<list.length;i++) if (list[i].id===id) return list[i]; return null; }
+/* every browse view = a list of groups; an event can sit in several groups (e.g. two main houses, several planets) */
+function leDefs(view){
+  const H = LEC.houses, mk = (k,icon,title,desc,color,f,kind)=>({ k, icon, title, desc, color, f, kind:kind||'' });
+  if (view==='house')  return H.map(h=> mk('h'+h.h, String(h.h), h.name, h.plain, LEC.hc[h.h-1], e=> e.p.indexOf(h.h)>-1, 'num'));
+  if (view==='theme')  return LEC.themes.map(t=> mk(t.id, t.icon, t.name, t.plain, t.c, e=> e.theme===t.id));
+  if (view==='planet') return LE_PL.map(P=> mk(P, LEC.planets[P].icon, P, LEC.planets[P].plain, LEC.pc[P], e=> e.k.indexOf(P)>-1));
+  if (view==='sign')   return H.map(h=> mk('s'+h.sign, SIGNS[h.sign].symbol, LEC.signs[h.sign], 'Natural sign of house '+h.h+': '+h.signWords, LEC.ec[SIGNS[h.sign].element], e=> e.p.indexOf(h.h)>-1, 'glyph'));
+  if (view==='who')    return LEC.whoList.map(w=> mk(w.id, w.icon, w.name, w.plain, w.c, e=> e.who===w.id));
+  if (view==='stage')  return LEC.stages.map(t=> mk(t.id, t.icon, t.name, t.plain, t.c, e=> e.stage===t.id));
+  return LEC.accs.map(a=> mk('a'+a.id, a.icon, a.name, a.plain, a.c, e=> e.acc===a.id));
+}
+function leHay(e){
+  if (e._hay) return e._hay;
+  const hs = e.p.concat(e.s).map(h=> 'house '+h+' '+LEC.houses[h-1].name+' '+LEC.signs[h-1]);
+  return e._hay = (e.name+' '+e.plain+' '+e.id+' '+e.k.join(' ')+' '+hs.join(' ')+' '+leFind(LEC.themes,e.theme).name+' '+leFind(LEC.whoList,e.who).name+' '+leFind(LEC.stages,e.stage).name+' '+leFind(LEC.moods,e.mood).name).toLowerCase();
+}
+function leVisible(e){
+  if (leUI.mood!=='all' && e.mood!==leUI.mood) return false;
+  if (leUI.exact && e.acc!==3) return false;
+  const q = leUI.q.trim().toLowerCase(); if (q && q.split(/\s+/).some(w=> leHay(e).indexOf(w) < 0)) return false;
+  return true;
+}
+function leChipHTML(e){
+  return `<button type="button" class="le-chip${leUI.sel===e.id?' on':''}${e.mood==='hard'?' hard':''}" data-le-pick="${e.id}" title="${rsEsc(e.plain)}"><span class="le-cemo">${e.emoji}</span><span class="le-ctxt">${rsEsc(e.name)}</span>${e.acc===3?'<span class="le-cdot" title="Exact day"></span>':''}</button>`;
 }
 function leRenderCats(){
   const el = document.getElementById('leCats'); if (!el) return;
-  const r = leGroups(), open = !!leUI.q.trim();
-  el.innerHTML = r.g.length ? r.g.map((x,i)=>`<details class="le-grp"${(open||i===0||x.a.some(e=>e.id===leUI.sel))?' open':''}><summary><b>${x.t}</b><em>${x.a.length}</em><small>${rsEsc(x.d)}</small></summary><div class="le-chips">${x.a.map(leChip).join('')}</div></details>`).join('')
-    : `<div class="rs-empty">No event matches “${rsEsc(leUI.q)}”. Try a simpler word like job, home, child, loan.</div>`;
-  const c = document.getElementById('leCount'); if (c) c.textContent = r.count + ' of ' + LEC.count + ' events';
+  const vis = LEC.list.filter(leVisible), filtered = !!leUI.q.trim() || leUI.mood!=='all' || leUI.exact;
+  const groups = leDefs(leUI.view).map(d=>({ d, a:vis.filter(d.f) })).filter(g=> g.a.length);
+  el.innerHTML = groups.length ? groups.map((g,i)=>{ const d = g.d, open = filtered || i===0 || g.a.some(e=>e.id===leUI.sel);
+    return `<details class="le-grp" style="--gc:${d.color}"${open?' open':''}><summary><span class="le-gico ${d.kind}">${d.icon}</span><span class="le-gtxt"><span class="le-gtitle">${rsEsc(d.title)}</span><span class="le-gdesc">${rsEsc(d.desc)}</span></span><span class="le-gcnt">${g.a.length}</span></summary><div class="le-chips">${g.a.map(leChipHTML).join('')}</div></details>`; }).join('')
+    : `<div class="le-none"><div class="le-none-ico">🔍</div>No event matches. Try a simpler word like job, home, child, loan, or clear the filters.</div>`;
+  const c = document.getElementById('leCount'); if (c) c.innerHTML = `<b>${vis.length}</b><span class="le-cof"> of ${LEC.count} events</span>`;
 }
+function lePill(lab, val, color){ return `<span class="le-pill" style="--pc:${color}"><span class="le-pl">${lab}</span><span class="le-pv">${val}</span></span>`; }
 function leRenderSel(){
-  const el = document.getElementById('leSel'); if (!el) return;
-  const e = LEC.byId[leUI.sel];
-  if (!e){ el.innerHTML = `<div class="le-sel-empty">👆 Tap an event above. It will be linked to houses, a planet and a sign automatically.</div>`; return; }
-  const H = LEC.houses, sec = e.s.length ? e.s.map(h=>'H'+h).join(', ') : '—';
-  el.innerHTML = `<div class="le-sel-t">${e.label}${e.n?' <u>hard event</u>':''}</div><div class="le-sel-p">${rsEsc(e.plain)}</div>
-    <div class="le-tags"><span>Main: ${e.p.map(h=>`H${h} ${H[h-1].name}`).join(' + ')}</span><span>Also: ${sec}</span>
-    <span>Planet: ${e.k.join(', ')}</span><span>${SIGNS[H[e.house-1].sign].symbol} ${LEC.signs[H[e.house-1].sign]}</span><span>${leSharpLabel(e.sh)}</span></div>`;
+  const el = document.getElementById('leSel'), af = document.getElementById('leAddFor'); if (!el) return;
+  const e = leFind(LEC.list, leUI.sel);
+  if (!e){ el.innerHTML = `<div class="le-sel-empty"><span class="le-sel-hand">👆</span><span>Tap any event above. You will see how it links to houses, planets, signs and more.</span></div>`;
+    if (af) af.innerHTML = `<span class="le-addfor-none">No event picked yet</span>`; return; }
+  const H = LEC.houses, th = leFind(LEC.themes,e.theme), wh = leFind(LEC.whoList,e.who), sg = leFind(LEC.stages,e.stage), md = leFind(LEC.moods,e.mood), ac = leFind(LEC.accs,e.acc);
+  el.innerHTML = `<div class="le-pass" style="--gc:${th.c}"><div class="le-pass-top"><span class="le-pass-emo">${e.emoji}</span><div><div class="le-pass-t">${rsEsc(e.name)}</div><div class="le-pass-p">${rsEsc(e.plain)}</div></div></div>
+    <div class="le-pills">
+      ${e.p.map(h=> lePill('Main area', `H${h} · ${H[h-1].name}`, LEC.hc[h-1])).join('')}
+      ${e.s.length ? lePill('Also touches', e.s.map(h=>'H'+h).join(' · '), '#94a3b8') : ''}
+      ${e.k.map(k=> lePill('Planet', k, LEC.pc[k])).join('')}
+      ${e.p.map(h=> lePill('Sign', SIGNS[H[h-1].sign].symbol+' '+LEC.signs[H[h-1].sign], LEC.ec[SIGNS[H[h-1].sign].element])).join('')}
+      ${lePill('Theme', th.name, th.c)}${lePill('About', wh.name, wh.c)}${lePill('Life stage', sg.name, sg.c)}${lePill('Mood', md.name, md.c)}${lePill('Date', ac.name, ac.c)}
+    </div></div>`;
+  if (af) af.innerHTML = `<span class="le-addfor-emo">${e.emoji}</span><span class="le-addfor-t">${rsEsc(e.name)}</span><span class="le-addfor-s">${ac.name.toLowerCase()} works best</span>`;
 }
+/* evidence meter: 12-house wheel (lit = covered by your events) */
 function leMeterData(){
   const evs = rsState.events.filter(e=>LEC.byId[e.c]), themes = {}; let nEff = 0; const hs = {};
   evs.forEach(e=>{ const c = LEC.byId[e.c], w = LE_SH[c.sh]*LE_PREC[e.pr||'d'].w; (themes[c.house] = themes[c.house] || []).push(w); c.p.forEach(h=>{ hs[h] = 1; }); });
   Object.keys(themes).forEach(h=>{ const a = themes[h]; nEff += (a.reduce((x,y)=>x+y,0)/a.length)*(1 + .35*(a.length-1)); });
   return { n:evs.length, nEff, cap:evs.length ? 1 - Math.exp(-nEff/2.2) : 0, hs };
 }
+function leWheel(hs, pct){
+  const cx = 70, cy = 70, R = 62, r = 38, seg = [];
+  const pt = (rad, a)=> [cx + rad*Math.cos(a), cy + rad*Math.sin(a)];
+  for (let i=0;i<12;i++){
+    const a0 = (-90 + i*30 + 1.6)*Math.PI/180, a1 = (-90 + (i+1)*30 - 1.6)*Math.PI/180, p0 = pt(R,a0), p1 = pt(R,a1), p2 = pt(r,a1), p3 = pt(r,a0), am = (a0+a1)/2, tp = pt((R+r)/2, am);
+    seg.push(`<path d="M${p0[0].toFixed(1)} ${p0[1].toFixed(1)} A${R} ${R} 0 0 1 ${p1[0].toFixed(1)} ${p1[1].toFixed(1)} L${p2[0].toFixed(1)} ${p2[1].toFixed(1)} A${r} ${r} 0 0 0 ${p3[0].toFixed(1)} ${p3[1].toFixed(1)}Z" class="le-wseg${hs[i+1]?' on':''}" style="--wc:${LEC.hc[i]}"><title>House ${i+1}: ${LEC.houses[i].name}</title></path><text x="${tp[0].toFixed(1)}" y="${(tp[1]+3.4).toFixed(1)}" class="le-wnum${hs[i+1]?' on':''}" text-anchor="middle">${i+1}</text>`);
+  }
+  return `<svg class="le-wheel" viewBox="0 0 140 140" role="img" aria-label="Houses covered by your events">${seg.join('')}<text x="70" y="68" class="le-wpct" text-anchor="middle">${pct}%</text><text x="70" y="83" class="le-wlab" text-anchor="middle">MAX PROOF</text></svg>`;
+}
 function leRenderMeter(){
   const el = document.getElementById('leMeter'); if (!el) return;
-  const m = leMeterData(), pct = Math.round(m.cap*100);
-  el.innerHTML = `<div class="le-meter-top"><b>Evidence strength: ${pct}% max</b><span>${m.n} event${m.n===1?'':'s'} · ${m.nEff.toFixed(1)} independent</span></div>
-    <div class="le-bar"><i style="width:${pct}%"></i></div>
-    <div class="le-houses">${[1,2,3,4,5,6,7,8,9,10,11,12].map(h=>`<span class="${m.hs[h]?'on':''}" title="${LEC.houses[h-1].name}">${h}</span>`).join('')}</div>
-    <div class="le-meter-tip">${!m.n?'Add events to see how strong your proof can get. ':''}${m.n&&pct<85?`Your final confidence can never exceed ${pct}% with this evidence. Add events from <b>different life areas</b> (lit numbers above show houses already covered) and prefer 🎯 exact-day events.`:m.n?'Good spread of evidence. The final confidence now depends on how well the events agree on one time.':''}</div>`;
+  const m = leMeterData(), pct = Math.round(m.cap*100), cov = Object.keys(m.hs).length;
+  el.innerHTML = `<div class="le-meter-in">${leWheel(m.hs, pct)}<div class="le-meter-txt">
+    <div class="le-meter-h">Evidence strength</div>
+    <div class="le-meter-stats"><span class="le-stat"><b>${m.n}</b> event${m.n===1?'':'s'}</span><span class="le-stat"><b>${m.nEff.toFixed(1)}</b> independent</span><span class="le-stat"><b>${cov}</b>/12 houses</span></div>
+    <div class="le-meter-tip">${!m.n ? 'Add your first event to start building proof. Each lit slice is a house your events already cover.'
+      : pct<85 ? `Your final confidence cannot exceed <b>${pct}%</b> yet. Add events from <b>different life areas</b> (dark slices) and prefer exact-day events.`
+      : 'Great spread. The final confidence now depends on how well the events agree on one birth time.'}</div></div></div>`;
 }
+function leAge(dob, d){ if (!dob) return ''; const y = (new Date(d+'T12:00:00Z') - new Date(dob+'T12:00:00Z'))/(365.25*86400000); return y>=0 ? 'age '+Math.floor(y) : ''; }
 function rsRenderEvents(){
   const el = document.getElementById('rsEvList'); if (!el) return;
   leRenderMeter();
-  if (!rsState.events.length){ el.innerHTML = `<div class="rs-empty">No events yet. Pick one above and add its date. Marriage, a job, a child, a loan, a move all work well.</div>`; return; }
-  el.innerHTML = rsState.events.map((e,i)=>{ const c = LEC.byId[e.c], pr = LE_PREC[e.pr||'d'];
-    return `<span class="rs-evchip"><b>${c?c.label:rsEsc(e.c)}</b> · ${rsEsc(e.d)} ${pr.icon}${e.n?` · ${rsEsc(e.n)}`:''}<button type="button" data-rs-del="${i}" aria-label="Remove">✕</button></span>`; }).join('') +
-    (rsState.events.length<5 ? `<div class="rs-empty" style="margin-top:8px">Tip: ${5-rsState.events.length} more event${5-rsState.events.length>1?'s':''} from different life areas would make the result much stronger.</div>` : '');
+  const cnt = document.getElementById('leEvCount'); if (cnt) cnt.textContent = rsState.events.length ? rsState.events.length+' added' : '';
+  if (!rsState.events.length){ el.innerHTML = `<div class="le-empty"><div class="le-empty-ico">🌠</div><b>No events yet</b><span>Pick an event, add its date, and it appears here. Marriage, a job, a child, a loan, a move all work well.</span></div>`; return; }
+  const dob = (currentProfileForExport || {}).dob;
+  el.innerHTML = `<div class="le-tl">` + rsState.events.map((e,i)=>{ const c = LEC.byId[e.c], pr = LE_PREC[e.pr||'d'], th = c ? leFind(LEC.themes,c.theme) : null, p = (e.d||'').split('-');
+    return `<div class="le-ev" style="--cc:${th?th.c:'#e9b949'}"><div class="le-evd"><span class="le-evd-day">${+p[2]||''}</span><span class="le-evd-mon">${LE_MON[(+p[1]||1)-1]}</span><span class="le-evd-yr">${p[0]||''}</span></div>
+      <div class="le-evm"><div class="le-evt">${c?`<span class="le-evemo">${c.emoji}</span>${rsEsc(c.name)}`:rsEsc(e.c)}</div><div class="le-evs"><span class="le-evprec">${pr.icon} ${pr.label}</span>${leAge(dob,e.d)?`<span class="le-evage">${leAge(dob,e.d)}</span>`:''}${e.n?`<span class="le-evnote">“${rsEsc(e.n)}”</span>`:''}</div></div>
+      <button type="button" class="le-evx" data-rs-del="${i}" aria-label="Remove">✕</button></div>`; }).join('') + `</div>` +
+    (rsState.events.length<5 ? `<div class="le-tip">💡 ${5-rsState.events.length} more event${5-rsState.events.length>1?'s':''} from different life areas will make the answer much stronger.</div>` : '');
 }
 function rsBuildLife(p){
-  p.innerHTML = `
-  <div class="rs-pane-head"><h3>🌟 Life-Event Checker</h3><p>Real events are the best proof. We test every possible rising sign (and every minute) against your dashas and slow transits.</p></div>
-  <details class="rs-how"><summary>💡 How it works (and how far to trust it)</summary>
-    <p>For every minute in your search window we build the chart, work out the dasha for that exact minute, and ask: <em>at the date of each event, were the running dasha lords and the slow planets (Jupiter, Saturn, Mars, Rahu, Ketu) tied to the houses that rule that kind of event?</em>
+  p.innerHTML = `<div class="le-root">
+  <div class="le-hero-head"><div class="le-orb" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="le-hh-txt"><div class="le-eyebrow">✦ Life-Event Checker</div><h3>Prove the birth time with your real life</h3>
+    <p>Tell us what happened and when. We test every possible rising sign, minute by minute, against your dashas and slow transits.</p>
+    <div class="le-hh-stats"><span class="le-hstat"><b>${LEC.count}</b> events</span><span class="le-hstat"><b>7</b> ways to browse</span><span class="le-hstat"><b>3</b> confidence tests</span></div></div></div>
+  <details class="rs-how le-how"><summary>💡 How it works (and how far to trust it)</summary>
+    <p>For every minute in your search window we build the chart, work out the dasha for that exact minute, and ask: <em>on the date of each event, were the running dasha lords and the slow planets (Jupiter, Saturn, Mars, Rahu, Ketu) tied to the houses that rule that kind of event?</em>
     The events are then compared with the same chart scored against <b>random event types</b> to see if the fit is more than luck, and re-shuffled many times to see if the answer stays put.</p>
-    <p><b>Confidence floor</b> = the weakest of three tests (not luck · stays same when events are reshuffled · stays same when one event is dropped) × how much independent evidence you gave. It tells you how consistent the answer is with the rules used here. It does <b>not</b> prove the astrological rules themselves, and it is not a guaranteed accuracy. Use it as a strong clue and confirm with Sandhi / Varga tools.</p></details>
-  <div class="le-pick">
-    <div class="le-pick-top"><input type="search" id="leSearch" placeholder="🔎 Search events: marriage, surgery, visa, loan…" autocomplete="off"><span id="leCount"></span></div>
-    <div class="le-views" role="tablist">
-      <button type="button" data-le-view="house" class="on">🏠 Life area</button><button type="button" data-le-view="planet">🪐 Planet</button>
-      <button type="button" data-le-view="sign">♈ Sign</button><button type="button" data-le-view="best">🎯 Best for accuracy</button></div>
+    <p><b>Minimum confidence</b> = the weakest of three tests (not luck · stays the same when events are reshuffled · stays the same when one event is dropped) × how much independent evidence you gave. It tells you how consistent the answer is with the rules used here. It does <b>not</b> prove the astrological rules themselves and it is not a guaranteed accuracy. Use it as a strong clue and confirm with the Sandhi / Varga tools.</p></details>
+
+  <section class="le-card"><div class="le-step-h"><span class="le-num">1</span><div><b>Pick what happened</b><small>Browse by area, theme, planet, sign, person, age or how exact the date is</small></div><span id="leCount" class="le-count"></span></div>
+    <div class="le-search"><span class="le-sico">🔎</span><input type="search" id="leSearch" placeholder="Search: marriage, surgery, visa, loan, mother…" autocomplete="off"></div>
+    <div class="le-views" role="tablist">${LE_VIEWS.map((v,i)=>`<button type="button" data-le-view="${v[0]}" class="le-vbtn${i===0?' on':''}"><span class="le-vi">${v[1]}</span>${v[2]}</button>`).join('')}</div>
+    <div class="le-filters"><span class="le-flab">Show</span>
+      <button type="button" class="le-fp on" data-le-mood="all">All</button>${LEC.moods.map(m=>`<button type="button" class="le-fp" data-le-mood="${m.id}" style="--pc:${m.c}">${m.icon} ${m.name}</button>`).join('')}
+      <button type="button" class="le-fp le-fx" data-le-exact="1">🎯 Exact-day only</button></div>
     <div id="leCats" class="le-cats"></div>
-    <div id="leSel" class="le-sel"></div>
-  </div>
+    <div id="leSel" class="le-sel"></div></section>
+
   <input type="hidden" id="rsEvCat" value="">
-  <div class="rs-ev-form">
-    <label>Date<input type="date" id="rsEvDate"></label>
-    <label>How sure is the date?<select id="leEvPrec"><option value="d">🎯 Exact day</option><option value="m">📅 Within a month</option><option value="y">🌫️ Only the year</option></select></label>
-    <label class="grow">Note (optional)<input type="text" id="rsEvNote" maxlength="40" placeholder="e.g. first job"></label>
-    <button type="button" class="btn btn-ghost" id="rsEvAdd">＋ Add event</button>
-  </div>
-  <div id="leMeter" class="le-meter"></div>
-  <div id="rsEvList" class="rs-ev-list"></div>
-  <div class="rs-ev-opts">
-    <label>Search around your working time<select id="rsEvWin">
-      <option value="12">Whole day · all 12 signs</option><option value="6">± 6 hours</option><option value="3" selected>± 3 hours</option><option value="1.5">± 90 minutes</option></select></label>
-    <button type="button" class="btn btn-primary" id="rsEvRun">✨ Find the best-fitting rising sign</button>
-    <button type="button" class="btn btn-ghost" id="leClear">🗑️ Clear events</button>
-  </div>
-  <div id="rsEvOut"></div>`;
-  leRenderCats(); leRenderSel(); leRenderMeter();
-  p.querySelector('#leSearch').addEventListener('input', e=>{ leUI.q = e.target.value; leRenderCats(); });
-  p.querySelector('.le-views').addEventListener('click', e=>{ const b = e.target.closest('[data-le-view]'); if (!b) return;
+  <section class="le-card" id="leAddCard"><div class="le-step-h"><span class="le-num">2</span><div><b>Add the date</b><small>An exact day is best. A month or a year still helps a little.</small></div></div>
+    <div class="le-addfor" id="leAddFor"></div>
+    <div class="le-form">
+      <label class="le-fld"><span class="le-flbl">Date</span><input type="date" id="rsEvDate"></label>
+      <div class="le-fld"><span class="le-flbl">How sure is the date?</span><div class="le-seg3" id="lePrecSeg">${Object.keys(LE_PREC).map((k,i)=>`<button type="button" class="le-sg${i===0?' on':''}" data-le-prec="${k}"><span class="le-sgi">${LE_PREC[k].icon}</span>${LE_PREC[k].label}</button>`).join('')}</div></div>
+      <label class="le-fld grow"><span class="le-flbl">Note (optional)</span><input type="text" id="rsEvNote" maxlength="40" placeholder="e.g. first job in Pune"></label>
+      <button type="button" class="le-btn le-btn-gold" id="rsEvAdd"><span class="le-plus">＋</span> Add event</button>
+    </div></section>
+
+  <section class="le-card"><div class="le-step-h"><span class="le-num">3</span><div><b>Your events</b><small>The more different life areas you cover, the stronger the proof</small></div><span id="leEvCount" class="le-count"></span></div>
+    <div id="leMeter" class="le-meter"></div><div id="rsEvList" class="le-evlist"></div></section>
+
+  <section class="le-card le-run"><div class="le-step-h"><span class="le-num">4</span><div><b>Find the birth time</b><small>Choose how wide to search, then run the test</small></div></div>
+    <div class="le-runrow"><label class="le-fld grow"><span class="le-flbl">Search around your working time</span><select id="rsEvWin">
+      <option value="12">Whole day · all 12 signs</option><option value="6">± 6 hours</option><option value="3" selected>± 3 hours</option><option value="1.5">± 90 minutes</option></select></label></div>
+    <div class="le-actions"><button type="button" class="le-btn le-btn-go" id="rsEvRun"><span class="le-spark">✨</span> Find the best-fitting rising sign</button>
+      <button type="button" class="le-btn le-btn-ghost" id="leClear">🗑️ Clear events</button></div></section>
+  <div id="rsEvOut"></div></div>`;
+  leRenderCats(); leRenderSel(); rsRenderEvents();
+  const q = s=> p.querySelector(s), add = ()=> q('#rsEvAdd').click();
+  q('#leSearch').addEventListener('input', e=>{ leUI.q = e.target.value; leRenderCats(); });
+  q('.le-views').addEventListener('click', e=>{ const b = e.target.closest('[data-le-view]'); if (!b) return;
     leUI.view = b.dataset.leView; p.querySelectorAll('[data-le-view]').forEach(x=>x.classList.toggle('on', x===b)); leRenderCats(); });
-  p.querySelector('#leCats').addEventListener('click', e=>{ const b = e.target.closest('[data-le-pick]'); if (!b) return;
-    leUI.sel = b.dataset.lePick; document.getElementById('rsEvCat').value = leUI.sel;
+  q('.le-filters').addEventListener('click', e=>{ const m = e.target.closest('[data-le-mood]'), x = e.target.closest('[data-le-exact]');
+    if (m){ leUI.mood = m.dataset.leMood; p.querySelectorAll('[data-le-mood]').forEach(b=>b.classList.toggle('on', b===m)); }
+    else if (x){ leUI.exact = !leUI.exact; x.classList.toggle('on', leUI.exact); } else return; leRenderCats(); });
+  q('#leCats').addEventListener('click', e=>{ const b = e.target.closest('[data-le-pick]'); if (!b) return;
+    leUI.sel = b.dataset.lePick; q('#rsEvCat').value = leUI.sel;
     p.querySelectorAll('.le-chip').forEach(x=>x.classList.toggle('on', x.dataset.lePick===leUI.sel)); leRenderSel();
-    const d = document.getElementById('rsEvDate'); if (d) d.focus({ preventScroll:true }); });
-  p.querySelector('#rsEvAdd').addEventListener('click', ()=>{
-    const d = document.getElementById('rsEvDate').value, c = leUI.sel, n = document.getElementById('rsEvNote').value.trim(), pr = document.getElementById('leEvPrec').value;
+    const ev = LEC.byId[leUI.sel]; if (ev){ leUI.prec = ev.acc===3 ? 'd' : ev.acc===2 ? 'm' : 'y'; p.querySelectorAll('[data-le-prec]').forEach(x=>x.classList.toggle('on', x.dataset.lePrec===leUI.prec)); }
+    const sl = q('#leSel'); if (sl && sl.scrollIntoView) sl.scrollIntoView({ block:'nearest', behavior:'smooth' }); });
+  q('#lePrecSeg').addEventListener('click', e=>{ const b = e.target.closest('[data-le-prec]'); if (!b) return; leUI.prec = b.dataset.lePrec;
+    p.querySelectorAll('[data-le-prec]').forEach(x=>x.classList.toggle('on', x===b)); });
+  q('#rsEvDate').addEventListener('keydown', e=>{ if (e.key==='Enter'){ e.preventDefault(); add(); } });
+  q('#rsEvAdd').addEventListener('click', ()=>{
+    const d = q('#rsEvDate').value, c = leUI.sel, n = q('#rsEvNote').value.trim(), pr = leUI.prec;
     if (!c){ rsToast('Pick an event type first 👆'); return; }
     if (!d){ rsToast('Pick the event date first 📅'); return; }
     const p0 = currentProfileForExport;
     if (p0 && d < p0.dob){ rsToast('That date is before the birth date'); return; }
     rsState.events.push({ c, d, n, pr }); rsState.events.sort((a,b)=> a.d<b.d?-1:1);
-    rsSaveEvents(); rsRenderEvents(); document.getElementById('rsEvDate').value = ''; document.getElementById('rsEvNote').value = '';
+    rsSaveEvents(); rsRenderEvents(); q('#rsEvDate').value = ''; q('#rsEvNote').value = '';
     rsToast('Event added ✓');
   });
-  p.querySelector('#rsEvList').addEventListener('click', e=>{
+  q('#rsEvList').addEventListener('click', e=>{
     const b = e.target.closest('[data-rs-del]'); if (!b) return;
     rsState.events.splice(+b.dataset.rsDel, 1); rsSaveEvents(); rsRenderEvents();
   });
-  p.querySelector('#leClear').addEventListener('click', ()=>{ if (!rsState.events.length) return; if (!confirm('Remove all events for this chart?')) return;
-    rsState.events = []; rsSaveEvents(); rsRenderEvents(); document.getElementById('rsEvOut').innerHTML = ''; });
-  p.querySelector('#rsEvRun').addEventListener('click', rsRunLife);
+  q('#leClear').addEventListener('click', ()=>{ if (!rsState.events.length) return; if (!confirm('Remove all events for this chart?')) return;
+    rsState.events = []; rsSaveEvents(); rsRenderEvents(); q('#rsEvOut').innerHTML = ''; });
+  q('#rsEvRun').addEventListener('click', rsRunLife);
   p.addEventListener('click', e=>{
     const b = e.target.closest('[data-rs-use]'); if (!b) return;
     const off = +b.dataset.rsUse, dEl = document.getElementById('rectDate');
@@ -46171,52 +46466,60 @@ function rsBuildLife(p){
     rsToast('Dial set to ' + base.timeStr.slice(0,5) + ' ✓'); rsShow('dial', true);
   });
 }
-function leGrade(f){ return f>=.8 ? ['Strong','le-g4','Very likely the right window. Confirm with Sandhi / Varga tools.'] : f>=.6 ? ['Good','le-g3','A solid lead. Worth setting the dial and checking the chart.'] : f>=.4 ? ['Fair','le-g2','A useful clue, not yet proof. More events would sharpen it.'] : ['Weak','le-g1','Too little or too mixed evidence. Add more events from different life areas.']; }
-function lePctWord(p){ return p>=.85 ? ['✅','Strong fit'] : p>=.6 ? ['🟢','Supports'] : p>=.35 ? ['➖','Neutral'] : ['❌','Poor fit']; }
-
+function leGrade(f){ return f>=.8 ? ['Strong','le-g4','Very likely the right window. Confirm with the Sandhi / Varga tools.'] : f>=.6 ? ['Good','le-g3','A solid lead. Worth setting the dial and checking the chart.'] : f>=.4 ? ['Fair','le-g2','A useful clue, not yet proof. More events would sharpen it.'] : ['Weak','le-g1','Too little or too mixed evidence. Add more events from different life areas.']; }
+function lePctWord(p){ return p>=.85 ? ['✅','Strong fit','#5fcf8d'] : p>=.6 ? ['🟢','Supports','#9be28f'] : p>=.35 ? ['➖','Neutral','#94a3b8'] : ['❌','Poor fit','#ff7a6b']; }
+function leRing(v, size, sw, cls){
+  const r = (size - sw)/2, C = 2*Math.PI*r, c = size/2;
+  return `<svg class="le-ring ${cls||''}" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true"><defs><linearGradient id="leGrad${size}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6d775"/><stop offset="1" stop-color="#4fd1c5"/></linearGradient></defs>
+    <circle class="le-ring-bg" cx="${c}" cy="${c}" r="${r}" stroke-width="${sw}"/><circle class="le-ring-fg" cx="${c}" cy="${c}" r="${r}" stroke-width="${sw}" stroke="url(#leGrad${size})" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}" data-off="${(C*(1-v)).toFixed(1)}" transform="rotate(-90 ${c} ${c})"/></svg>`;
+}
 async function rsRunLife(){
   const out = document.getElementById('rsEvOut'); if (!out || leUI.running) return;
   const chart = currentChartForModal, prof = currentProfileForExport;
-  if (!chart || !prof){ out.innerHTML = `<div class="rs-empty">Generate a chart first.</div>`; return; }
-  if (!rsState.events.length){ rsToast('Add at least one event first'); out.innerHTML = `<div class="rs-empty">Add some dated events above, then press the button again.</div>`; return; }
+  if (!chart || !prof){ out.innerHTML = `<div class="le-empty"><b>Generate a chart first</b></div>`; return; }
+  if (!rsState.events.length){ rsToast('Add at least one event first'); out.innerHTML = `<div class="le-empty"><div class="le-empty-ico">🌠</div><b>Add some dated events first</b><span>Then press the button again.</span></div>`; return; }
   const date = document.getElementById('rectDate').value, time = document.getElementById('rectCenterTime').value;
   const half = parseFloat(document.getElementById('rsEvWin').value);
-  leUI.running = true;
-  out.innerHTML = `<div class="le-prog"><div class="le-bar"><i id="leProgBar" style="width:3%"></i></div><span id="leProgTxt">Starting…</span></div>`;
+  leUI.running = true; const btn = document.getElementById('rsEvRun'); if (btn) btn.classList.add('busy');
+  out.innerHTML = `<div class="le-prog"><div class="le-prog-orb"><i></i><i></i></div><div class="le-prog-txt"><b id="leProgTxt">Starting…</b><div class="le-bar"><i id="leProgBar" style="width:3%"></i></div><small>Testing minutes, signs and random look-alikes. This takes a few seconds.</small></div></div>`;
+  out.scrollIntoView && out.scrollIntoView({ block:'nearest', behavior:'smooth' });
   let r = null;
   try {
     r = await leAnalyse({ chart, prof, events:rsState.events, date, time, halfHours:half,
       onProgress:(f,t)=>{ const b = document.getElementById('leProgBar'), x = document.getElementById('leProgTxt'); if (b) b.style.width = Math.round(f*100)+'%'; if (x) x.textContent = t; } });
-  } catch(err){ console.error('Life events', err); out.innerHTML = `<div class="rs-empty">Something went wrong while testing. Try fewer events or a smaller window.</div>`; leUI.running = false; return; }
-  leUI.running = false;
-  if (!r){ out.innerHTML = `<div class="rs-empty">None of the saved events could be read.</div>`; return; }
+  } catch(err){ console.error('Life events', err); out.innerHTML = `<div class="le-empty"><b>Something went wrong</b><span>Try fewer events or a smaller window.</span></div>`; leUI.running = false; if (btn) btn.classList.remove('busy'); return; }
+  leUI.running = false; if (btn) btn.classList.remove('busy');
+  if (!r){ out.innerHTML = `<div class="le-empty"><b>None of the saved events could be read.</b></div>`; return; }
   const c = r.conf, gr = leGrade(c.floor), fm = off=> leFmt(off, date, time), top = r.top, sg = SIGNS[top.L];
-  const bar = (lab, v, tip)=>`<div class="le-test"><span>${lab}</span><div class="le-bar"><i data-w="${Math.round(v*100)}"></i></div><em>${Math.round(v*100)}%</em><small>${tip}</small></div>`;
   const spreadMin = Math.round((r.timeWin.hi - r.timeWin.lo)/60);
+  const tcard = (ico, lab, v, tip)=>`<div class="le-tcard">${leRing(v, 56, 6, 'mini')}<div class="le-tc-v">${Math.round(v*100)}%</div><div class="le-tc-t"><b>${lab}</b><small>${tip}</small></div></div>`;
   out.innerHTML = `
-    <div class="le-hero ${gr[1]}">
-      <div class="le-gauge"><b>${Math.round(c.floor*100)}%</b><span>minimum confidence</span></div>
-      <div class="le-hero-txt"><div class="le-grade">${gr[0]} evidence</div>
-        <div class="le-best">${sg.symbol} <b>${sg.name} rising</b> around <b>${fm(top.off)}</b></div>
-        <div class="le-sub">Likely window ${fm(r.timeWin.lo)} – ${fm(r.timeWin.hi)}${spreadMin>0?` (about ${spreadMin} min wide)`:''}</div>
-        <div class="le-sub">${gr[2]}</div>
-        <button type="button" class="rs-seg" data-rs-use="${top.off}">🕰️ Set the Time Dial to ${fm(top.off)} <u>use ➜</u></button></div></div>
-    <div class="le-tests"><div class="le-tests-h">How the minimum was worked out (lowest of the first three, times evidence)</div>
-      ${bar('🍀 Not just luck', c.P1, `Random event types fit this well in only ${(c.pLuck*100).toFixed(1)}% of ${c.K} tries (needs under 5% to score 80%)`)}
-      ${bar('🔀 Survives reshuffling', c.P2, `Same rising sign won in ${Math.round(c.P2*100)}% of ${c.B} re-sampled sets of your events`)}
-      ${bar('✂️ Survives dropping one event', c.P3, 'Same sign when each single event is left out')}
-      ${bar('📚 Amount of evidence', c.F, `${c.nEff.toFixed(1)} independent events (different life areas count most)`)}
-    </div>
-    <div class="rs-res-head">Ranking of possible rising signs <span>${r.n} event${r.n>1?'s':''} · ${r.S} minutes tested</span></div>
+    <div class="le-result ${gr[1]}">
+      <div class="le-rhero"><div class="le-gauge">${leRing(c.floor, 132, 11, 'big')}<div class="le-gauge-in"><b>${Math.round(c.floor*100)}%</b><span>minimum<br>confidence</span></div></div>
+        <div class="le-rtxt"><span class="le-badge">${gr[0]} evidence</span>
+          <div class="le-rbest"><span class="le-rglyph" style="color:${LEC.ec[sg.element]}">${sg.symbol}</span><span><b>${sg.name}</b> rising<small>around <b>${fm(top.off)}</b></small></span></div>
+          <div class="le-rsub">Likely window <b>${fm(r.timeWin.lo)} – ${fm(r.timeWin.hi)}</b>${spreadMin>0?` · about ${spreadMin} min wide`:''}</div>
+          <div class="le-rsub dim">${gr[2]}</div>
+          <button type="button" class="le-btn le-btn-gold le-usebtn" data-rs-use="${top.off}">🕰️ Set the Time Dial to ${fm(top.off)} <span class="le-arrow">➜</span></button></div></div>
+      <div class="le-tests-h">How the minimum was worked out <small>lowest of the first three, then times the evidence</small></div>
+      <div class="le-tgrid">
+        ${tcard('🍀','Not just luck', c.P1, `Random event types matched this well in ${(c.pLuck*100).toFixed(1)}% of ${c.K} tries. Under 5% scores 80%.`)}
+        ${tcard('🔀','Survives reshuffling', c.P2, `Same sign won in ${Math.round(c.P2*100)}% of ${c.B} re-sampled sets of your events.`)}
+        ${tcard('✂️','Survives dropping one', c.P3, 'Same sign when each single event is left out.')}
+        ${tcard('📚','Amount of evidence', c.F, `${c.nEff.toFixed(1)} independent events. Different life areas count most.`)}
+      </div></div>
+    ${r.outliers.length ? `<div class="le-out"><span class="le-out-ico">⚠️</span><div><b>These events disagree with the top answer</b><br>${r.outliers.map(x=>`${x.ev.c.emoji} ${rsEsc(x.ev.c.name)} (${rsEsc(x.ev.e.d)})`).join(' · ')}<br><small>Double-check those dates or remove them. One wrong date can pull the whole result.</small></div></div>` : ''}
+    <div class="le-rank-h">Ranking of possible rising signs <span>${r.n} event${r.n>1?'s':''} · ${r.S} minutes tested</span></div>
     ${r.ranked.map((x,i)=>{ const s2 = SIGNS[x.L], pct = Math.round(x.fit*100);
-      return `<div class="rs-rank ${i===0?'top':''}"><div class="rs-rank-row"><span class="rs-rank-n">${i===0?'👑':i+1}</span><b>${s2.symbol} ${s2.name}</b>
-        <div class="rs-bar"><i data-w="${pct}"></i></div><em>${pct}%</em></div>
-        <div class="le-fitnote">Events fit this sign better than ${pct}% of other event types, on average.</div>
-        <div class="rs-rank-segs">${x.wins.map(w=>`<button type="button" class="rs-seg" data-rs-use="${w.mid}" title="Set the dial to the middle of this window">🕰️ ${fm(w.a)} – ${fm(w.b)} <u>use ➜</u></button>`).join('')}</div>
-        <details class="rs-why"><summary>Event by event</summary>${x.per.map(y=>{ const v = lePctWord(y.pct); return `<div class="rs-why-ev"><b>${v[0]} ${y.ev.c.label} · ${rsEsc(y.ev.e.d)}</b> <em class="le-v">${v[1]} · ${Math.round(y.pct*100)}%</em>${y.lines?`<ul>${y.lines.map(l=>`<li>${rsEsc(l)}</li>`).join('')}</ul>`:''}</div>`; }).join('')}</details></div>`; }).join('')}
-    ${r.outliers.length ? `<div class="le-out">⚠️ <b>Events that disagree with the top answer:</b> ${r.outliers.map(x=>`${x.ev.c.label} (${rsEsc(x.ev.e.d)})`).join(', ')}. Double-check those dates or remove them. One wrong date can pull the whole result.</div>` : ''}
-    <div class="rs-note">${r.close?'⚖️ <b>Close call.</b> The top signs are within 7%. Add more events or use the Sandhi / Varga tools. ':''}Times use your birth timezone. Score weights: dasha 50%, slow transits 25%, natural significator 10%, Jupiter+Saturn together 15%. The percentage is a consistency check of this method, not a guarantee. It supports your judgement, it does not replace it.</div>`;
-  requestAnimationFrame(()=> requestAnimationFrame(()=> out.querySelectorAll('.rs-bar i,.le-bar i[data-w]').forEach(b=> b.style.width = b.dataset.w+'%')));
+      return `<article class="le-rank${i===0?' top':''}" style="--ec:${LEC.ec[s2.element]}"><div class="le-rk-head"><span class="le-rk-n">${i===0?'👑':i+1}</span><span class="le-rk-glyph">${s2.symbol}</span><span class="le-rk-name"><b>${s2.name}</b><small>Events fit better than ${pct}% of other event types</small></span><span class="le-rk-pct">${pct}%</span></div>
+        <div class="le-bar"><i data-w="${pct}"></i></div>
+        <div class="le-wins">${x.wins.map(w=>`<button type="button" class="le-win" data-rs-use="${w.mid}" title="Set the dial to the middle of this window">🕰️ ${fm(w.a)} – ${fm(w.b)} <span class="le-arrow">use ➜</span></button>`).join('')}</div>
+        <details class="le-why"><summary>Event by event</summary><div class="le-vlist">${x.per.map(y=>{ const v = lePctWord(y.pct);
+          return `<div class="le-vrow" style="--vc:${v[2]}"><div class="le-vhead"><span class="le-vemo">${y.ev.c.emoji}</span><span class="le-vname">${rsEsc(y.ev.c.name)} <small>${rsEsc(y.ev.e.d)}</small></span><span class="le-vtag">${v[0]} ${v[1]} · ${Math.round(y.pct*100)}%</span></div>${y.lines?`<ul>${y.lines.map(l=>`<li>${rsEsc(l)}</li>`).join('')}</ul>`:''}</div>`; }).join('')}</div></details></article>`; }).join('')}
+    <div class="le-note">${r.close?'⚖️ <b>Close call.</b> The top signs are within 7%. Add more events or use the Sandhi / Varga tools. ':''}Times use your birth timezone. Score weights: dasha 50%, slow transits 25%, natural significator 10%, Jupiter + Saturn together 15%. The percentage is a consistency check of this method, not a guarantee. It supports your judgement, it does not replace it.</div>`;
+  requestAnimationFrame(()=> requestAnimationFrame(()=>{
+    out.querySelectorAll('.le-ring-fg').forEach(b=> b.style.strokeDashoffset = b.dataset.off);
+    out.querySelectorAll('.le-bar i[data-w]').forEach(b=> b.style.width = b.dataset.w+'%'); }));
   rsToast('Done ✨ Top fit: ' + sg.name + ' · min confidence ' + Math.round(c.floor*100) + '%');
 }
 window.LEE = { analyse:leAnalyse, vim:leVim, links:leLinks, catalog:LEC };

@@ -351,3 +351,100 @@ const LEC = (function(){
   if (typeof RS_CATS === 'undefined') return;
   LEC.list.forEach(e=>{ RS_CATS[e.id] = e; });
 })();
+
+/* ============================================================================
+   EXTRA CATEGORIES — every event is also tagged with: theme, who it is about, mood, life stage, date accuracy
+   (house / planet / sign come from the rows above). Used by the browse views and filters of 98-life-event-engine.js.
+   ============================================================================ */
+const LEC_THEMES = [
+  { id:'self',   icon:'🌱', name:'Self & Identity',      plain:'You as a person: image, confidence, new starts', c:'#e9b949' },
+  { id:'love',   icon:'💞', name:'Love & Family',        plain:'Partner, children, parents, siblings, relatives', c:'#ef6f9a' },
+  { id:'money',  icon:'💰', name:'Money & Wealth',       plain:'Income, savings, loans, gains, windfalls',        c:'#5fcf8d' },
+  { id:'work',   icon:'💼', name:'Work & Business',      plain:'Jobs, promotions, business, clients, contracts',  c:'#5aa9ff' },
+  { id:'home',   icon:'🏡', name:'Home & Property',      plain:'Houses, land, vehicles, moves at home',           c:'#e29a5b' },
+  { id:'learn',  icon:'🎓', name:'Study & Skills',       plain:'School, exams, courses, writing, new skills',     c:'#a78bfa' },
+  { id:'body',   icon:'🩺', name:'Health & Body',        plain:'Illness, surgery, fitness, recovery',             c:'#ff7a6b' },
+  { id:'travel', icon:'✈️', name:'Travel & Foreign',     plain:'Trips, moving abroad, visas, relocation',         c:'#4fd1c5' },
+  { id:'spirit', icon:'🕉️', name:'Spirit & Inner Life',  plain:'Faith, retreats, meditation, letting go',         c:'#c4b5fd' },
+  { id:'legal',  icon:'⚖️', name:'Legal & Conflict',     plain:'Courts, notices, rivals, secrets, disputes',      c:'#94a3b8' },
+  { id:'social', icon:'🌟', name:'Fame, Friends & Luck', plain:'Recognition, friends, networks, lucky breaks',    c:'#f6c453' },
+  { id:'loss',   icon:'🥀', name:'Loss & Crisis',        plain:'Deaths, accidents, shocks, hard turning points',  c:'#d96a8a' }
+];
+const LEC_THEME_IDS = {
+  self:'freshstart personalwin confidence newlook namechange leader lowphase ownlaunch stagedebut challenge selfreliance lifepivot identitydoc goalset bravemove risktaker',
+  love:'familyjoin familyfight babyname sibbirth sibmarry sibfight child pregnancy secondchild childschool childmarry fallinlove firstlove lovemarriage breakup adoption momtobe childabroad marriage engaged metspouse livein divorce separation spouserise remarry arranged exreturn spouseabroad inlaws ownwedding longdistance foreignspouse secretaffair mother father fatherretire eldersib eldersibmarry familywealth sibsuccess',
+  money:'salary savings jewellery shares stable bankacct giftmoney budgetcrisis moneyloss gain windfall inherit insurance spousewealth speculative spectrade incomejump bonus sideincome investgain fundraise debtfree loantaken loancleared bigexpense lostitem taxissue businessloss bankrupt',
+  work:'career promotion careerchange startbiz govjob politics careeraward demotion resign retire manager ceo licence bigproject reputation jobtransfer careerbreak topclient authority careerrise firstjob techjob retiredforce joboffer joblost bossclash burnout nightshift servicejob uniform betrayed bizpartner partnerend bigclient contract customers hospitality ecommerce appwebsite techgadgetbiz salessucc negotiation foodbiz familybiz ownvoice commute mediajob artcareer agricareer builderbiz lawcareer shipping skilledtrade science medicalcareer ownclass teachjob teaching bankjob sportcareer',
+  home:'property newhome renovation land car twowheeler sellhome rented homeloan homecoming ownroof garden buyshop gadget',
+  learn:'edu schoolfinish collegeadmit examclear rank research graduate libraryphase musiclearn skillcourse language writing bookpub photovideo phd scholarship authorbook mentor deepresearch speaking',
+  body:'fitness bodyinjury fullrecovery healthturn skinhair faceeye diet handinjury heartissue health hospital chronic treatment healthcheck healerrole longhospital sleep eyesurg martial sportwin motherill fatherill spouseill childhealth surgery surgerymother depression therapy',
+  travel:'foreign workabroad studyabroad returnhome emigrate immigrate longtrip visa successabroad shorttrip citymove holiday suddentransfer',
+  spirit:'mantra pilgrimage ritual charity retreat philosophy spirituawake solitude ashram meditate letgo occultstudy givingaway',
+  legal:'lawstart lawwon verdict legalnotice spouselaw confinement rivalbeat scandal secret',
+  social:'fame viral newfriend friendlost network connection community alumni socialfame exitgroup wishdone goalreached luckybreak fortuneturn neighbour publicsucc mediadebut publicperf contest creative famouslocal',
+  loss:'accident nearmiss shock crisis sibloss motherloss fatherloss grandloss relloss friendloss miscarry breakdown peacelost'
+};
+const LEC_WHO = [
+  { id:'me',       icon:'🙋', name:'Me',                         plain:'Something that happened to you directly', c:'#e9b949' },
+  { id:'partner',  icon:'💑', name:'Partner & love',             plain:'Spouse, partner, romance',                 c:'#ef6f9a' },
+  { id:'children', icon:'👶', name:'Children',                   plain:'Your kids or pregnancy',                   c:'#5fcf8d' },
+  { id:'parents',  icon:'👪', name:'Parents',                    plain:'Mother or father',                         c:'#e29a5b' },
+  { id:'siblings', icon:'👫', name:'Brothers & sisters',         plain:'Younger or elder siblings',                c:'#5aa9ff' },
+  { id:'family',   icon:'🏘️', name:'Wider family',               plain:'Grandparents, in-laws, relatives',         c:'#a78bfa' },
+  { id:'others',   icon:'🤝', name:'Friends, work people & clients', plain:'Colleagues, bosses, clients, rivals, mentors', c:'#4fd1c5' }
+];
+const LEC_STAGES = [
+  { id:'study',   icon:'🎒', name:'Study years',  plain:'Roughly up to age 25', c:'#a78bfa' },
+  { id:'start',   icon:'🚀', name:'Starting out', plain:'Roughly age 22 to 35', c:'#5aa9ff' },
+  { id:'settled', icon:'🏛️', name:'Settled life', plain:'Roughly age 35 to 55', c:'#e9b949' },
+  { id:'later',   icon:'🌇', name:'Later life',   plain:'Roughly age 55 and on', c:'#e29a5b' },
+  { id:'any',     icon:'🔁', name:'Any age',      plain:'Can happen at any time of life', c:'#94a3b8' }
+];
+const LEC_STAGE_IDS = {
+  study:'schoolfinish collegeadmit edu examclear rank graduate firstlove fallinlove skillcourse libraryphase musiclearn scholarship',
+  start:'firstjob joboffer salary marriage engaged arranged metspouse lovemarriage ownwedding livein child pregnancy property car twowheeler homeloan startbiz citymove studyabroad workabroad ownroof newhome rented foreign phd bizpartner ownlaunch',
+  settled:'promotion manager ceo secondchild childschool careerchange authority politics careeraward bigproject careerrise investgain buyshop land familybiz',
+  later:'retire retiredforce childmarry childabroad pilgrimage ashram meditate fatherretire fatherloss motherloss grandloss careerbreak charity mentor'
+};
+const LEC_MOODS = [
+  { id:'good', icon:'✨', name:'Good news',      plain:'Positive events and wins',            c:'#5fcf8d' },
+  { id:'turn', icon:'🔄', name:'Turning points', plain:'Big changes that open a new chapter', c:'#e9b949' },
+  { id:'hard', icon:'⚠️', name:'Hard times',     plain:'Difficult or painful events',          c:'#ff7a6b' }
+];
+const LEC_TURN_IDS = 'freshstart lifepivot careerchange citymove foreign emigrate immigrate ownroof marriage startbiz ownlaunch jobtransfer newhome studyabroad workabroad returnhome remarry retire resign letgo spirituawake ownwedding livein divorce';
+const LEC_ACC = [
+  { id:3, icon:'🎯', name:'Exact day',        plain:'You can name the date',                c:'#5fcf8d' },
+  { id:2, icon:'📅', name:'A few weeks',      plain:'You know the month or so',             c:'#e9b949' },
+  { id:1, icon:'🌫️', name:'A phase',          plain:'Gradual: only a period of time',       c:'#94a3b8' }
+];
+/* colour sets for the browse views */
+const LEC_HC = ['#e9b949','#5fcf8d','#4fd1c5','#e29a5b','#ef6f9a','#ff7a6b','#f472b6','#d96a8a','#a78bfa','#5aa9ff','#f6c453','#7dd3fc'];
+const LEC_PC = { Sun:'#f6c453', Moon:'#cbd5e1', Mars:'#ff7a6b', Mercury:'#5fcf8d', Jupiter:'#e9b949', Venus:'#ef6f9a', Saturn:'#94a3b8', Rahu:'#a78bfa', Ketu:'#c08457' };
+const LEC_EC = { Fire:'#ff7a6b', Earth:'#5fcf8d', Air:'#7dd3fc', Water:'#7c8cf8' };
+
+(function(){
+  const idx = (obj)=>{ const m = {}; Object.keys(obj).forEach(k=> obj[k].split(' ').forEach(id=>{ if (id) m[id] = k; })); return m; };
+  const th = idx(LEC_THEME_IDS), st = idx(LEC_STAGE_IDS), turn = {}; LEC_TURN_IDS.split(' ').forEach(i=>{ turn[i] = 1; });
+  const houseTheme = { 1:'self', 2:'money', 3:'learn', 4:'home', 5:'love', 6:'work', 7:'love', 8:'loss', 9:'spirit', 10:'work', 11:'social', 12:'travel' };
+  const whoRx = [
+    ['children', /child|baby|pregnan|miscarry|adopt|momtobe|secondchild/],
+    ['parents',  /mother|father|parent/],
+    ['siblings', /sib|eldersib|brother|sister/],
+    ['partner',  /spouse|partner|marri|engage|wedding|divorce|separation|remarry|livein|metspouse|arranged|exreturn|lover|love|romantic|breakup|longdistance|secretaffair/],
+    ['family',   /inlaws|in-law|grand|relloss|relative|familyjoin|familyfight|familywealth|babyname/],
+    ['others',   /friend|colleague|boss|neighbour|network|client|rival|enemy|mentor|guru|alumni|community|betray|bizpartner|partnerend|customers|connection|exitgroup/]
+  ];
+  const whoFix = { ownroof:'me', grandloss:'family' };
+  LEC.list.forEach(e=>{
+    e.name = e.label.slice(e.emoji.length + 1);
+    e.theme = th[e.id] || houseTheme[e.house];
+    e.stage = st[e.id] || 'any';
+    e.mood = e.n ? 'hard' : (turn[e.id] ? 'turn' : 'good');
+    const txt = (e.id + ' ' + e.name).toLowerCase(); e.who = 'me';
+    for (const r of whoRx) if (r[1].test(txt)){ e.who = r[0]; break; }
+    if (whoFix[e.id]) e.who = whoFix[e.id];
+    e.acc = e.sh;
+  });
+  LEC.themes = LEC_THEMES; LEC.whoList = LEC_WHO; LEC.stages = LEC_STAGES; LEC.moods = LEC_MOODS; LEC.accs = LEC_ACC;
+  LEC.hc = LEC_HC; LEC.pc = LEC_PC; LEC.ec = LEC_EC;
+})();
