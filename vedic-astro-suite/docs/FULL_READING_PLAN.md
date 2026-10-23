@@ -99,3 +99,4 @@ Every session: build -> its own test -> commit -> push to `feature/full-reading`
 - Session 7: S8 done. Next: S9 Transits and Sade Sati, then S11 QA (10 sample charts, invariants, astrologer review sheet) and S12 polish.
 - Session 8: S9 done. Next: S11 QA (M4), then S12 polish.
 - Session 9: S11 done, M4 passed. Next: S12 polish and release.
+- Session 9 (cont.): PDF rebuilt as a one-click book (no Studio/settings): dark cover with zodiac wheel, contents, 9 part dividers, 21 sections (js/93 core + js/98 extra pages): panchang, planet pages, special lagnas + Bhava Chalit, Shadbala, Ashtakavarga heat map, all 24 divisional charts drawn, every Mahadasha/Antardasha, life-area plates, house plates, glossary, notes. About 125 pages. tests/pdf_report_test.py rewritten.

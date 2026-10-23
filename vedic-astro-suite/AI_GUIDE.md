@@ -157,13 +157,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-23 - 1400 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-23 - 1420 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 147 files, 23411 lines, 1631 KB
+**birth-chart** - 148 files, 23654 lines, 1676 KB
 ```
-index.html                                         569 lines   32 KB
+index.html                                         570 lines   32 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          164 lines    7 KB
@@ -251,7 +251,7 @@ js/84-bridge-3d.js                                  38 lines    2 KB
 js/85-popular-charts-data.js                       116 lines   26 KB
 js/86-popular-charts.js                            120 lines    7 KB
 js/87-vedic-knowledge-db.js                       2269 lines  202 KB
-js/88-deep-reading.js                              261 lines   30 KB
+js/88-deep-reading.js                              261 lines   31 KB
 js/89-vedic-nakshatra-db.js                       1187 lines   38 KB
 js/90-reading-manifest.js                          527 lines   26 KB
 js/90-year-timeline-engine.js                      265 lines   15 KB
@@ -260,13 +260,14 @@ js/91-year-timeline-writer.js                      190 lines   18 KB
 js/92-year-timeline-ui.js                           57 lines    4 KB
 js/92-yoga-engine.js                              1379 lines   63 KB
 js/93-dasha-time-finder.js                         162 lines   10 KB
-js/93-pdf-report.js                                289 lines   37 KB
+js/93-pdf-report.js                                384 lines   53 KB
 js/94-life-areas.js                                416 lines   16 KB
 js/95-life-narratives.js                           331 lines   21 KB
 js/96-varga-reading.js                             189 lines   11 KB
 js/97-life-event-catalog.js                        354 lines   33 KB
 js/97-transit-reading.js                           224 lines   17 KB
 js/98-life-event-engine.js                         349 lines   29 KB
+js/98-pdf-pages.js                                 175 lines   32 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
@@ -306,7 +307,7 @@ css/36-ui-overhaul.css                             126 lines   11 KB
 css/37-d-chart-overview.css                         76 lines    6 KB
 css/38-popular-charts.css                           35 lines    4 KB
 css/39-deep-reading.css                             47 lines    5 KB
-css/40-pdf-studio.css                               32 lines    4 KB
+css/40-pdf-studio.css                                4 lines    0 KB
 css/40-year-timeline.css                             8 lines    0 KB
 css/41-dasha-time-finder.css                        63 lines    5 KB
 css/42-life-event-pro.css                           54 lines    6 KB
@@ -451,3 +452,4 @@ shared/meta.css                                     98 lines    5 KB
 - Session 7: S8 `js/96-varga-reading.js` (`VGR.chart/all`) wired into Deep reading (bucket S.vargas), report and PDF (section 'vargas'); tests/varga_reading_test.py. Next: S9.
 - Session 8: S9 `js/97-transit-reading.js` (`TRS.assess`) wired into Deep reading ('transits'), report and PDF; tests/transit_reading_test.py. Edit tables in build_ts.py only. Next: S11 QA.
 - Session 9: S11 QA `tests/reading_qa_test.py` (12 charts, invariants, `--sheet` makes docs/ASTROLOGER_REVIEW_SHEET.md). M4 passed. Next: S12 polish.
+- Session 9 (cont.): PDF is now a one-click book (`PDFR.generate`, no settings). Core + design in js/93, extra sections in js/98 via `PDFR.reg`. A new section = a builder + `PDFR.reg` + an entry in PARTS (js/93). Beware: never give a CSS class the same name as a status value used on rows (e.g. 'ahead'); keep tables narrower than the page or Chrome shrinks the whole book.

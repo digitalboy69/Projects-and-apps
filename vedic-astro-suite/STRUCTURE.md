@@ -148,7 +148,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/90-reading-manifest.js` — Manifestation layer (global VMF), schema v1.1: planet (what you do) x house (arena scenes) x sign (manner) for 1296 combinations in second person with self-check questions; 12 rising-sign profiles; Lagna-lord arc; `signature(chart)` = personal summary; used by Deep reading
 - `apps/birth-chart/js/91-dasha-reading.js` — Dasha layer (global VDA), schema v1.1: life timeline (every Mahadasha: theme, arena, ruled houses, real-life lines, tone with reasons, self-check), 9 Antardashas each, next-5-years rows, 81 main x sub blends; dates/lords from the app's dasha engine; used by Deep reading and the report
 - `apps/birth-chart/js/92-yoga-engine.js` — Yoga engine (global YGE), schema v1.1, GENERATED: 41 yogas with exact detectors (Moon, Sun, combinations, wealth, exchanges, reversals, status, Pancha Mahapurusha, surrounding, cautions); each shows the rule it matched plus real-life text
-- `apps/birth-chart/js/93-pdf-report.js` — PDF report (global PDFR): builds a self-contained printable HTML report (cover, contents, 9 sections, inline SVG chart + bars, themes, A4/Letter) and the "PDF Studio" dialog (live preview, Save as PDF via print, Download HTML). No libraries.
+- `apps/birth-chart/js/93-pdf-report.js` — PDF book (global PDFR): one click builds a self-contained printable HTML book (cover with zodiac wheel, contents, nine parts with full-page dividers, sections, plates, inline SVG charts) and opens the print window; `PDFR.reg` registers section builders. Hand-written, no libraries.
+- `apps/birth-chart/js/98-pdf-pages.js` — extra PDF sections registered into PDFR: panchang, planet pages, special lagnas + Bhava Chalit, Shadbala, Ashtakavarga, gallery of all divisional charts, every Mahadasha/Antardasha, glossary, notes
 - `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
 - `apps/birth-chart/js/95-life-narratives.js` — Life-area narratives (global LAN), GENERATED: a 450-700 word personal reading for each of the 9 life areas, composed from the engine facts (stance by band, house-lord arena, strengths, care points, yoga modifiers, timing, practices, self-check questions)
 - `apps/birth-chart/js/96-varga-reading.js` — Divisional chart readings (global VGR), GENERATED: D9, D10, D7, D4, D24, D20 each with rising sign, the houses that matter, planet-by-planet text, strength summary, vargottama and a score; positions come from the app's own varga engine
@@ -196,7 +197,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/37-d-chart-overview.css` — Divisional charts "At a glance" dashboard (hero, planet table, 12-house grid, balance bars, highlights)
 - `apps/birth-chart/css/38-popular-charts.css` — Popular charts section + detail sheet styles
 - `apps/birth-chart/css/39-deep-reading.css` — Deep reading lines (dr-l) and small text in notes/cards
-- `apps/birth-chart/css/40-pdf-studio.css` — PDF Studio dialog styles
+- `apps/birth-chart/css/40-pdf-studio.css` — notice shown while the PDF is prepared
 - `apps/birth-chart/css/40-year-timeline.css` — Year Timeline File panel styles
 - `apps/birth-chart/css/41-dasha-time-finder.css` — Dasha Time Finder styles
 - `apps/birth-chart/css/42-life-event-pro.css` — styles for the Life-Event picker, evidence meter and confidence hero
