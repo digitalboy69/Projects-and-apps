@@ -96,6 +96,7 @@ bOverview	fn	apps/birth-chart/js/93-pdf-report.js:127	birth-chart
 bPanchang	fn	apps/birth-chart/js/98-pdf-pages.js:27	birth-chart
 bPlanets	fn	apps/birth-chart/js/98-pdf-pages.js:43	birth-chart
 brahmaPlanet	fn	apps/birth-chart/js/81-dasha-systems-ayur-special.js:27	birth-chart
+brand	fn	apps/birth-chart/js/93-pdf-report.js:253	birth-chart
 bRoles	fn	apps/birth-chart/js/93-pdf-report.js:151	birth-chart
 bShadbala	fn	apps/birth-chart/js/98-pdf-pages.js:80	birth-chart
 bStrength	fn	apps/birth-chart/js/93-pdf-report.js:228	birth-chart
@@ -108,7 +109,7 @@ build	fn	apps/birth-chart/js/73-tithi-pravesh.js:18	birth-chart
 build	fn	apps/birth-chart/js/75-fate-meter.js:46	birth-chart
 build	fn	apps/birth-chart/js/76-share-link-qr.js:106	birth-chart
 build	fn	apps/birth-chart/js/84-bridge-3d.js:5	birth-chart
-build	fn	apps/birth-chart/js/93-pdf-report.js:340	birth-chart
+build	fn	apps/birth-chart/js/93-pdf-report.js:348	birth-chart
 build	fn	apps/birth-chart/js/95-life-narratives.js:289	birth-chart
 build	fn	apps/sky3d/js/45-vimshottari-dasha.js:29	sky3d
 build	fn	apps/sky3d/js/49-time-machine.js:58	sky3d
@@ -266,11 +267,11 @@ copyTextToClipboard	fn	apps/birth-chart/js/62-clipboard-download-helpers.js:3	bi
 coSync	fn	shell/js/locpicker.js:160	shell
 countFromAriesOrPisces	fn	apps/birth-chart/js/17-special-lagnas.js:95	birth-chart
 COVER	const	apps/birth-chart/js/79-dasha-systems-nakshatra.js:6	birth-chart
-css	fn	apps/birth-chart/js/93-pdf-report.js:252	birth-chart
+css	fn	apps/birth-chart/js/93-pdf-report.js:259	birth-chart
 CSS	const	shell/js/locpicker.js:74	shell
 ctrlHtml	fn	apps/birth-chart/js/82-dasha-systems-ui.js:84	birth-chart
 ctx	fn	apps/birth-chart/js/73-tithi-pravesh.js:8	birth-chart
-ctx	fn	apps/birth-chart/js/93-pdf-report.js:365	birth-chart
+ctx	fn	apps/birth-chart/js/93-pdf-report.js:373	birth-chart
 ctx	fn	apps/sky3d/js/50-sky-dashboard.js:33	sky3d
 ctxLine	fn	shared/export-addon.js:121	shared
 current	fn	apps/birth-chart/js/91-dasha-reading.js:266	birth-chart
@@ -482,7 +483,7 @@ fullReport	fn	shared/export-addon.js:540	shared
 fullSync	fn	apps/birth-chart/js/77-cloud-account.js:28	birth-chart
 functionalNature	fn	apps/birth-chart/js/87-vedic-knowledge-db.js:2221	birth-chart
 gauge	fn	apps/birth-chart/js/75-fate-meter.js:45	birth-chart
-generate	fn	apps/birth-chart/js/93-pdf-report.js:370	birth-chart
+generate	fn	apps/birth-chart/js/93-pdf-report.js:378	birth-chart
 generateExportData	fn	apps/sky3d/js/38-data-export-wiring.js:4	sky3d
 generateExportData	fn	shared/export-addon.js:597	shared
 generatePlanetTexture	fn	apps/sky3d/js/10-procedural-textures.js:2	sky3d
@@ -803,7 +804,7 @@ normDeg	fn	apps/birth-chart/js/03-ephemeris-engine.js:5	birth-chart
 normDeg	fn	apps/sky3d/js/01-astro-engine.js:7	sky3d
 normSess	fn	apps/birth-chart/js/77-cloud-account.js:9	birth-chart
 north	fn	apps/birth-chart/js/93-pdf-report.js:82	birth-chart
-note	fn	apps/birth-chart/js/93-pdf-report.js:366	birth-chart
+note	fn	apps/birth-chart/js/93-pdf-report.js:374	birth-chart
 nowCardHtml	fn	apps/sky3d/js/47-dasha-transit-ui.js:21	sky3d
 nowJulianDay	fn	apps/birth-chart/js/04-transit-timing-engine.js:38	birth-chart
 nvDate	fn	apps/birth-chart/js/48-panchanga-panel.js:4	birth-chart

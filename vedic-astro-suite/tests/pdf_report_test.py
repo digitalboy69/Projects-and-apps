@@ -61,6 +61,23 @@ with sync_playwright() as p:
     pg2 = b.new_page(); pg2.set_content(html0, wait_until='load'); pdf = pg2.pdf(prefer_css_page_size=True, print_background=True)
     pages = len(re.findall(rb'/Type\s*/Page[^s]', pdf)); open('/tmp/pdfs_sample.pdf', 'wb').write(pdf)
     ok('a real A4 PDF renders: 100 to 220 pages, under 6 MB', pdf[:4] == b'%PDF' and 100 <= pages <= 220 and len(pdf) < 6_000_000, (pages, len(pdf) // 1024))
+    # ---- budgets: speed and size ----
+    sp = pg.evaluate("()=>{const t=performance.now(),h=PDFR.build(currentChartForModal,currentProfileForExport);return {ms:Math.round(performance.now()-t),kb:Math.round(h.length/1024)}}")
+    ok('speed and size budget: the book builds in under 4 s and the HTML stays under 900 KB', sp['ms'] < 4000 and sp['kb'] < 900, sp)
+    # ---- customer edition: brand from the wrapper page ----
+    pb = b.new_page(viewport={'width': 430, 'height': 900}); pb.route('**/*', lambda r: r.continue_() if r.request.url.startswith(('http://127.0.0.1', 'data:', 'blob:', 'about:')) else r.abort())
+    pb.add_init_script("window.__VAX_BRAND={brand_name:'Acharya <b>Test</b>',tagline:'Vedic guidance',phone:'99999 12345',logo:'data:image/png;base64,iVBORw0KGgo='};")
+    pb.goto(PAGE); pb.wait_for_selector('#birthForm'); pb.evaluate(CAST, dict(name='Asha', dob='1995-03-14', tob='11:00', place='Hyderabad', lat=17.385, lon=78.4867, tz=5.5)); pb.wait_for_selector('#results.show', timeout=15000)
+    br = pb.evaluate("""()=>{const h=PDFR.build(currentChartForModal,currentProfileForExport),d=new DOMParser().parseFromString(h,'text/html'),bad=[];
+      if(!/Prepared by Acharya/.test(d.querySelector('.cover .foot').textContent)||!/Vedic guidance/.test(d.querySelector('.cover .foot').textContent))bad.push('cover brand');
+      if(!d.querySelector('.cover img.logo')||!d.querySelector('.end .bk img.logo'))bad.push('logo');if(!/Acharya/.test(d.querySelector('.end .bk').textContent)||!/99999 12345/.test(d.querySelector('.end .bk').textContent))bad.push('closing brand');
+      const st=d.querySelector('style').textContent;if(!/@top-left\{content:"Acharya +Test"/.test(st))bad.push('page header brand: '+(st.match(/@top-left\{[^}]{0,60}/)||[''])[0]);
+      if(h.includes('<b>Test</b>'))bad.push('brand not escaped');
+      window.__VAX_BRAND={brand_name:'X',logo:'javascript:alert(1)'};const h2=PDFR.build(currentChartForModal,currentProfileForExport);if(/javascript:/.test(h2)||/<img class="logo"/.test(h2))bad.push('unsafe logo accepted');
+      window.__VAX_BRAND=undefined;const h3=PDFR.build(currentChartForModal,currentProfileForExport);if(!/Prepared with care/.test(h3)||/@top-left\{content:"[A-Za-z]/.test(h3))bad.push('no-brand fallback');
+      return bad}""")
+    ok('customer edition: brand name, tagline, phone and logo on the cover, page headers and closing page; unsafe logo rejected; plain fallback without a brand', not br, br)
+    ok('the book carries the "not advice" and birth-time notes', pg.evaluate("(()=>{const t=PDFR.build(currentChartForModal,currentProfileForExport);return /not medical, legal, financial or psychological advice/.test(t)&&/difference of a few minutes/.test(t)})()"))
     ok('no JavaScript errors', not errs, errs[:3]); b.close()
 bad = [r for r in res if not r[1]]
 for n, c, d in res: print(('PASS ' if c else 'FAIL ') + n + ('' if c or d == '' else '  -> ' + str(d)[:300]))

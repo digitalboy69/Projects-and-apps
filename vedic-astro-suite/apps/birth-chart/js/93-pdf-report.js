@@ -249,12 +249,19 @@ reg('houses', 'House by house', 'The twelve areas of life, one by one', bHouses)
 reg('strength', 'Strength of the twelve houses', 'Where your chart has more or less support', bStrength);
 
 /* ---------- the document ---------- */
-function css(th, name){
-  const nm = String(name || '').replace(/[^\p{L}\p{N} .,'\u2019-]/gu, ' ').trim();   // letters and basic punctuation only: this string goes inside a <style> block
+/* Customer edition: the wrapper page injects window.__VAX_BRAND = { brand_name, tagline, phone, logo }. Shown on the cover, page headers and closing page. */
+function brand(){
+  let B = {}; try { B = window.__VAX_BRAND || (window.parent && window.parent !== window && window.parent.__VAX_BRAND) || {}; } catch (e) { B = {}; }
+  const clean = (v, n) => String(v || '').replace(/<[^>]*>/g, ' ').replace(/[\u0000-\u001f<>]/g, ' ').replace(/ +/g, ' ').trim().slice(0, n);
+  return { name: clean(B.brand_name, 60), tagline: clean(B.tagline, 110), phone: clean(B.phone, 30), logo: /^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+\/=]+$/.test(B.logo || '') && String(B.logo).length < 400000 ? B.logo : '' };
+}
+const safeCss = v => String(v || '').replace(/[^\p{L}\p{N} .,'\u2019-]/gu, ' ').trim();   // goes inside a <style> block: letters and basic punctuation only
+function css(th, name, brandName){
+  const nm = safeCss(name), bn = safeCss(brandName);
   return `
-  @page{size:A4;margin:18mm 15mm 20mm;@bottom-center{content:counter(page);font:9pt Georgia,serif;color:#8a8576}@top-right{content:"${nm ? nm + '  ·  ' : ''}Vedic Birth Chart Reading";font:7.5pt Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#b3a98e}}
-  @page:first{margin:0;@bottom-center{content:none}@top-right{content:none}}
-  @page dv{margin:0;@bottom-center{content:none}@top-right{content:none}}
+  @page{size:A4;margin:18mm 15mm 20mm;@bottom-center{content:counter(page);font:9pt Georgia,serif;color:#8a8576}${bn ? `@top-left{content:"${bn}";font:600 7.5pt Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:${th.accent}}` : ''}@top-right{content:"${nm ? nm + '  ·  ' : ''}Vedic Birth Chart Reading";font:7.5pt Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#b3a98e}}
+  @page:first{margin:0;@bottom-center{content:none}@top-right{content:none}@top-left{content:none}}
+  @page dv{margin:0;@bottom-center{content:none}@top-right{content:none}@top-left{content:none}}
   *{box-sizing:border-box}
   html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   body{margin:0;font:10.5pt/1.58 Georgia,'Times New Roman',serif;color:${th.ink};background:${th.page}}
@@ -274,6 +281,7 @@ function css(th, name){
   .cover dl{display:grid;grid-template-columns:auto 1fr;gap:2mm 7mm;margin:6mm 0 0;font-size:11.5pt}
   .cover dt{opacity:.7;font:600 8.5pt Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;padding-top:1pt}.cover dd{margin:0}
   .cover .foot{font-size:9pt;opacity:.78;display:flex;justify-content:space-between;align-items:flex-end}
+  .logo{display:block;max-height:16mm;max-width:50mm;object-fit:contain}.end .logo{margin:0 auto 4mm}.end .bk{margin-top:14mm;padding-top:6mm;border-top:.3mm solid rgba(233,217,166,.5)}.end .bk b{display:block;font:700 15pt Georgia,serif;color:${th.accent2}}.end .bk span{display:block;font-size:10.5pt;opacity:.9;margin-top:1mm}
   .end{justify-content:center;align-items:center;text-align:center;break-before:page;break-after:auto}.end .mandala{position:absolute;left:50%;top:50%;width:230mm;height:230mm;margin:-115mm 0 0 -115mm}
   .end>div{position:relative;max-width:125mm}.end h2{color:${th.accent2};font-size:30pt;margin-bottom:8mm}.end p{font-size:12pt;opacity:.92;margin-bottom:5mm}.end .sm{color:${th.accent2};opacity:.8;font-size:9pt;margin-top:12mm}
   /* contents */
@@ -338,7 +346,7 @@ function css(th, name){
   @media print{.card,.sig,.tb tr,.vplate{break-inside:avoid}.card.long{break-inside:auto}}`;
 }
 function build(chart, profile, opts){
-  opts = opts || {}; const th = TH, only = Array.isArray(opts.sections) ? opts.sections : null;
+  opts = opts || {}; const th = TH, br = opts.brand || brand(), only = Array.isArray(opts.sections) ? opts.sections : null;
   const pr = Object.assign({}, ID, profile || {}), asc = SIGN[chart.ascendant.sign], mo = chart.planets.Moon, su = chart.planets.Sun;
   const title = opts.title || 'Vedic Birth Chart Reading', subtitle = opts.subtitle || 'A personal reading of your chart: character, strengths, timing and the points that deserve care';
   const body = {}; SECTIONS.forEach(s => { if (only && only.indexOf(s[0]) < 0){ body[s[0]] = ''; return; } let h = ''; try { h = s[3](chart, { asks: true, why: true }); } catch (e) { h = ''; if (window.console) console.warn('PDFR: section ' + s[0] + ' failed: ' + (e && e.message)); } body[s[0]] = h; });
@@ -353,12 +361,12 @@ function build(chart, profile, opts){
     tocBits += '</ol>';
   });
   const today = new Date(), made = today.getDate() + ' ' + MON[today.getMonth()] + ' ' + today.getFullYear(), birth = [pr.dob, pr.tob].filter(Boolean).join(', ');
-  const cover = `<div class="cover">${zodiacWheel(chart.ascendant.sign, th.accent2, th.night1)}${mandala(th.accent2, .35)}<div><div class="om">ॐ</div></div><div class="main"><div class="kick">Vedic astrology · sidereal Lahiri</div><h1>${esc(title)}</h1><div class="sub">${esc(subtitle)}</div><div class="rule"></div><div class="who">${esc(pr.name || 'Your chart')}</div>` +
+  const cover = `<div class="cover">${zodiacWheel(chart.ascendant.sign, th.accent2, th.night1)}${mandala(th.accent2, .35)}<div>${br.logo ? `<img class="logo" src="${br.logo}" alt="">` : '<div class="om">ॐ</div>'}</div><div class="main"><div class="kick">Vedic astrology · sidereal Lahiri</div><h1>${esc(title)}</h1><div class="sub">${esc(subtitle)}</div><div class="rule"></div><div class="who">${esc(pr.name || 'Your chart')}</div>` +
     `<dl>${birth ? `<dt>Born</dt><dd>${esc(birth)}</dd>` : ''}${pr.place ? `<dt>Place</dt><dd>${esc(pr.place)}</dd>` : ''}<dt>Rising</dt><dd>${esc(asc)}</dd><dt>Moon</dt><dd>${esc(SIGN[mo.sign])}${mo.nakshatra ? ', ' + esc(mo.nakshatra.name) : ''}</dd><dt>Sun</dt><dd>${esc(SIGN[su.sign])}</dd></dl></div>` +
-    `<div class="foot"><span>${opts.preparedBy ? 'Prepared by ' + esc(opts.preparedBy) : 'Prepared with care'}</span><span>${esc(made)}</span></div></div>`;
-  const toc = `<div class="toc"><h2>Contents</h2><div class="tl"></div>${tocBits}<div class="how"><b>How to read this report.</b> Everything here describes tendencies drawn from the position of the planets at your birth. It is not a prediction of fixed events. Read each section with the questions in mind, keep what fits your life and let the rest go.</div></div>`;
-  const end = `<section class="end">${mandala(th.accent2, .3)}<div><h2>A last word</h2><p>Astrology offers a language for reflection. It cannot replace medical, legal, financial or psychological advice, and nothing here is a promise about what will happen.</p><p>Your choices, effort and circumstances shape your life far more than any chart. Use this reading to understand yourself better, then act on what you learn.</p><p class="sm">${esc(title)} · ${esc(pr.name || '')} · ${esc(made)}</p></div></section>`;
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}${pr.name ? ' - ' + esc(pr.name) : ''}</title><style>${css(th, pr.name)}${typeof PDFR !== 'undefined' && PDFR.extraCss ? PDFR.extraCss(th) : ''}</style></head><body>${cover}${toc}${main}${end}</body></html>`;
+    `<div class="foot"><span>${(opts.preparedBy || br.name) ? 'Prepared by ' + esc(opts.preparedBy || br.name) + (br.tagline ? ' · ' + esc(br.tagline) : '') : 'Prepared with care'}</span><span>${esc(made)}</span></div></div>`;
+  const toc = `<div class="toc"><h2>Contents</h2><div class="tl"></div>${tocBits}<div class="how"><b>How to read this report.</b> Everything here describes tendencies drawn from the position of the planets at your birth. It is not a prediction of fixed events. Read each section with the questions in mind, keep what fits your life and let the rest go.</div><div class="how"><b>Please note.</b> This report is for reflection and self-understanding. It is not medical, legal, financial or psychological advice, and it does not replace a consultation with a qualified professional. Its accuracy depends on the birth date, time and place you gave: a difference of a few minutes can change the rising sign and the divisional charts, so use a time from a birth record where you can.</div></div>`;
+  const end = `<section class="end">${mandala(th.accent2, .3)}<div><h2>A last word</h2><p>Astrology offers a language for reflection. It cannot replace medical, legal, financial or psychological advice, and nothing here is a promise about what will happen.</p><p>Your choices, effort and circumstances shape your life far more than any chart. Use this reading to understand yourself better, then act on what you learn.</p>${br.name || br.phone ? `<div class="bk">${br.logo ? `<img class="logo" src="${br.logo}" alt="">` : ''}<b>${esc(br.name)}</b>${br.tagline ? `<span>${esc(br.tagline)}</span>` : ''}${br.phone ? `<span>${esc(br.phone)}</span>` : ''}</div>` : ''}<p class="sm">${esc(title)} · ${esc(pr.name || '')} · ${esc(made)}</p></div></section>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}${pr.name ? ' - ' + esc(pr.name) : ''}</title><style>${css(th, pr.name, br.name)}${typeof PDFR !== 'undefined' && PDFR.extraCss ? PDFR.extraCss(th) : ''}</style></head><body>${cover}${toc}${main}${end}</body></html>`;
 }
 
 /* ---------- one click: build the book and open the print window ---------- */
