@@ -160,17 +160,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-24 - 1436 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-23 - 1463 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 152 files, 24299 lines, 1745 KB
-_Generated 2026-10-22 - 1419 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
-_Generated 2026-10-23 - 1427 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
-
-### File map (lines / KB) - file names say what is inside
-
-**birth-chart** - 147 files, 23895 lines, 1684 KB
+**birth-chart** - 152 files, 24783 lines, 1798 KB
 ```
 index.html                                         574 lines   32 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -277,11 +271,9 @@ js/95-life-narratives.js                           331 lines   21 KB
 js/96-varga-reading.js                             189 lines   11 KB
 js/97-life-event-catalog.js                        451 lines   43 KB
 js/97-transit-reading.js                           224 lines   17 KB
-js/98-life-event-engine.js                         349 lines   29 KB
+js/98-life-event-engine.js                         419 lines   39 KB
 js/98-pdf-pages.js                                 175 lines   32 KB
 js/99-area-deep.js                                 268 lines   37 KB
-js/98-life-event-engine.js                         416 lines   38 KB
-js/98-life-event-engine.js                         419 lines   39 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
@@ -324,9 +316,8 @@ css/39-deep-reading.css                             47 lines    5 KB
 css/40-pdf-studio.css                                4 lines    0 KB
 css/40-year-timeline.css                             8 lines    0 KB
 css/41-dasha-time-finder.css                        63 lines    5 KB
-css/42-life-event-pro.css                           54 lines    6 KB
-css/43-house-now.css                                 8 lines    1 KB
 css/42-life-event-pro.css                          193 lines   22 KB
+css/43-house-now.css                                 8 lines    1 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
