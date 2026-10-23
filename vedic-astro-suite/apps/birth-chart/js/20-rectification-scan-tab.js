@@ -17,7 +17,9 @@ function fmtDegShort(deg){
   return `${String(dd).padStart(2,'0')}°${String(m).padStart(2,'0')}'${String(s).padStart(2,'0')}"`;
 }
 
-function runRectificationScan(){
+let rectScanToken = 0;
+const RECT_ROW_H = 40, RECT_BUF = 8;
+async function runRectificationScan(){
   if (!currentProfileForExport){ return; }
   const lat = currentProfileForExport.lat, lon = currentProfileForExport.lon, tz = currentProfileForExport.tz;
   const dateStr = document.getElementById('rectDate').value;
@@ -36,70 +38,92 @@ function runRectificationScan(){
     wrap.innerHTML = `<div class="rect-empty">That window/step combination is ${steps.toLocaleString()} candidate seconds — too many to scan smoothly. Widen the step or narrow the window.</div>`;
     return;
   }
-
-  rectRows = [];
+  // compute in small chunks so the screen never freezes; a newer run cancels an older one
+  const token = ++rectScanToken, btn = document.getElementById('rectScanBtn');
+  if (btn) btn.disabled = true;
+  wrap.innerHTML = `<div class="rect-prog"><div class="rect-prog-t"><b id="rectProgTxt">Scanning ${steps.toLocaleString()} moments…</b><span id="rectProgPct">0%</span></div><div class="rect-prog-bar"><i id="rectProgBar"></i></div></div>`;
+  const rows = []; let done = 0;
   for (let off = -totalRange; off <= totalRange; off += step){
     const shifted = shiftLocalDateTime(dateStr, centerTime, off);
     const pt = rectifyPoint(shifted.dateStr, shifted.timeStr, lat, lon, tz);
     pt.offsetSec = off;
-    rectRows.push(pt);
+    rows.push(pt);
+    if (++done % 150 === 0){
+      const f = Math.min(1, done/steps), b = document.getElementById('rectProgBar'), t = document.getElementById('rectProgPct');
+      if (b) b.style.width = Math.round(f*100) + '%'; if (t) t.textContent = Math.round(f*100) + '%';
+      await new Promise(r => setTimeout(r, 0));
+      if (token !== rectScanToken) return;
+    }
   }
+  if (btn) btn.disabled = false;
+  rectRows = rows;
   rectSelectedIdx = null;
   document.getElementById('rectDetail').classList.remove('show');
-  renderRectificationTable();
+  renderRectificationTable(true);
 }
 
-function renderRectificationTable(){
-  const wrap = document.getElementById('rectResultsWrap');
-  if (!wrap) return;
-  if (rectRows.length === 0){ wrap.innerHTML = ""; return; }
-
-  let rowsHtml = "";
-  for (let i=0; i<rectRows.length; i++){
-    const r = rectRows[i];
-    const prev = i>0 ? rectRows[i-1] : null;
-    const d60Boundary = prev && (prev.asc.sign !== r.asc.sign || prev.asc.d60Amsa !== r.asc.d60Amsa);
-    const nakBoundary = prev && (prev.asc.nak.index !== r.asc.nak.index || prev.asc.nak.pada !== r.asc.nak.pada);
-    const isCenter = r.offsetSec === 0;
-    const cls = [
-      d60Boundary ? 'rect-d60-boundary' : '',
-      nakBoundary ? 'rect-nak-boundary' : '',
-      i===rectSelectedIdx ? 'rect-selected' : ''
-    ].filter(Boolean).join(' ');
-    const ascSign = SIGNS[r.asc.sign];
-    const moonD60Sign = SIGNS[r.moon.d60Sign];
-    rowsHtml += `<tr class="${cls}" data-idx="${i}">
-      <td>${r.timeStr}${isCenter ? ' <span style="color:var(--gold-bright);font-family:var(--font-sans);font-size:10px;">● recorded</span>' : ''}</td>
+function rectRowHtml(i){
+  const r = rectRows[i], prev = i>0 ? rectRows[i-1] : null;
+  const d60Boundary = prev && (prev.asc.sign !== r.asc.sign || prev.asc.d60Amsa !== r.asc.d60Amsa);
+  const nakBoundary = prev && (prev.asc.nak.index !== r.asc.nak.index || prev.asc.nak.pada !== r.asc.nak.pada);
+  const isCenter = r.offsetSec === 0;
+  const cls = [ d60Boundary ? 'rect-d60-boundary' : '', nakBoundary ? 'rect-nak-boundary' : '', i===rectSelectedIdx ? 'rect-selected' : '' ].filter(Boolean).join(' ');
+  const ascSign = SIGNS[r.asc.sign], moonD60Sign = SIGNS[r.moon.d60Sign];
+  return `<tr class="${cls}" data-idx="${i}">
+      <td>${r.timeStr}${isCenter ? ' <span class="rect-rec">● recorded</span>' : ''}</td>
       <td>${ascSign.symbol} ${ascSign.name} ${fmtDegShort(r.asc.degInSign)}</td>
       <td>${escapeHtml(r.asc.nak.name)}-${r.asc.nak.pada}</td>
       <td>#${r.asc.d60Amsa} → ${SIGNS[r.asc.d60Sign].name}</td>
       <td>#${r.moon.d60Amsa} → ${moonD60Sign.name}</td>
     </tr>`;
-  }
-
+}
+/* Virtual table: only the rows near the viewport exist in the DOM (about 40), however many seconds were scanned. */
+function renderRectificationTable(resetScroll){
+  const wrap = document.getElementById('rectResultsWrap');
+  if (!wrap) return;
+  if (rectRows.length === 0){ wrap.innerHTML = ""; return; }
+  const n = rectRows.length;
   wrap.innerHTML = `
     <div class="rect-summary">
-      <span>${rectRows.length.toLocaleString()} candidate seconds scanned · click any row to inspect &amp; apply</span>
+      <span>${n.toLocaleString()} candidate seconds scanned · tap any row to inspect &amp; apply</span>
       <span class="rect-legend">
         <span><i style="background:var(--gold-dim);"></i> new D60 (Shashtiamsha) division begins</span>
         <span><i style="background:var(--teal-bright);"></i> new Nakshatra pada begins</span>
       </span>
     </div>
-    <div class="rect-table-wrap" style="max-height:480px; overflow-y:auto;">
+    <div class="rect-vwrap vx-noicon" id="rectVWrap">
       <table class="rect-table">
         <thead><tr><th>Local Time</th><th>Ascendant</th><th>Asc Nakshatra-Pada</th><th>Asc D60 Amsa</th><th>Moon D60 Amsa</th></tr></thead>
-        <tbody>${rowsHtml}</tbody>
+        <tbody id="rectTbody"></tbody>
       </table>
-    </div>`;
-
-  wrap.querySelectorAll('tbody tr').forEach(tr => {
-    tr.addEventListener('click', () => {
-      rectSelectedIdx = parseInt(tr.dataset.idx, 10);
-      renderRectificationTable();
-      renderRectificationDetail();
-      document.getElementById('rectDetail').scrollIntoView({behavior:'smooth', block:'nearest'});
-    });
+    </div>
+    <button type="button" class="rect-jump" id="rectJump">⌖ Jump to the recorded time</button>`;
+  const vw = document.getElementById('rectVWrap'), tb = document.getElementById('rectTbody');
+  const V = { a:-1, b:-1, raf:0 };
+  const paint = force => {
+    const head = vw.querySelector('thead'), hh = head ? head.offsetHeight : 40;
+    const top = Math.max(0, vw.scrollTop - hh), h = vw.clientHeight || 460;
+    const a = Math.max(0, Math.floor(top/RECT_ROW_H) - RECT_BUF), b = Math.min(n, Math.ceil((top + h)/RECT_ROW_H) + RECT_BUF);
+    if (!force && a === V.a && b === V.b) return;
+    V.a = a; V.b = b;
+    let html = a > 0 ? `<tr class="rect-sp" style="height:${a*RECT_ROW_H}px"><td colspan="5"></td></tr>` : '';
+    for (let i=a; i<b; i++) html += rectRowHtml(i);
+    if (b < n) html += `<tr class="rect-sp" style="height:${(n-b)*RECT_ROW_H}px"><td colspan="5"></td></tr>`;
+    tb.innerHTML = html;
+  };
+  vw.addEventListener('scroll', () => { if (!V.raf) V.raf = requestAnimationFrame(() => { V.raf = 0; paint(false); }); }, { passive:true });
+  tb.addEventListener('click', e => {
+    const tr = e.target.closest('tr[data-idx]'); if (!tr) return;
+    rectSelectedIdx = parseInt(tr.dataset.idx, 10);
+    const old = tb.querySelector('.rect-selected'); if (old) old.classList.remove('rect-selected');
+    tr.classList.add('rect-selected');
+    renderRectificationDetail();
+    const d = document.getElementById('rectDetail'); if (d) d.scrollIntoView({ behavior:'smooth', block:'nearest' });
   });
+  const center = () => { const ci = rectRows.findIndex(r => r.offsetSec === 0); if (ci >= 0) vw.scrollTop = Math.max(0, ci*RECT_ROW_H - (vw.clientHeight||460)/2 + RECT_ROW_H*2); paint(true); };
+  document.getElementById('rectJump').addEventListener('click', center);
+  paint(true);
+  if (resetScroll) center();
 }
 
 function renderRectificationDetail(){
@@ -246,8 +270,14 @@ function runFullChartCalculation(){
   // time identically to a normal chart generation. Nothing is saved to the
   // stored profile unless you use "Apply" — this is a live, temporary preview.
   const tempProfile = { ...currentProfileForExport, dob: dateStr, tob: timeStr };
-  renderResults(tempProfile);
-  switchAppTab('panel-overview');
+  const btn = document.getElementById('rectFullCalcBtn');
+  if (btn){ btn.disabled = true; btn.dataset.label = btn.innerHTML; btn.innerHTML = '<span class="rs-spin"></span> Calculating…'; }
+  resultsEl.innerHTML = `<div class="rs-calc"><span class="rs-spin"></span><div><b>Recalculating every tab for this exact time</b><small>This takes a moment. You can keep reading while it works.</small></div></div>`;
+  // let the screen show the working state first, then do the heavy render
+  requestAnimationFrame(() => setTimeout(() => {
+    try { renderResults(tempProfile); switchAppTab('panel-overview'); }
+    finally { const b2 = document.getElementById('rectFullCalcBtn'); if (b2){ b2.disabled = false; if (b2.dataset.label) b2.innerHTML = b2.dataset.label; } }
+  }, 30));
 }
 
 function wireRectificationPanel(){

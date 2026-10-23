@@ -103,6 +103,7 @@ function switchAppTab(panelId){
   const h1 = document.querySelector('.brand-text h1');
   if (h1){ if(!h1.dataset.orig) h1.dataset.orig=h1.textContent; if(document.body.classList.contains('app-mode')) h1.textContent = it0 ? it0[2] : 'Home'; }
   document.body.classList.toggle('on-sub', panelId!=='panel-home');
+  document.body.classList.toggle('rs-open', panelId==='panel-rectification');
   const back = document.getElementById('panelBack');
   if (back){
     back.style.display = panelId==='panel-home' ? 'none' : 'flex';
@@ -110,6 +111,8 @@ function switchAppTab(panelId){
     if (it) back.querySelector('span').textContent = it[2];
   }
   window.scrollTo({ top:0, behavior:'instant' in window ? 'instant' : 'auto' });
+  if (panelId==='panel-vbday' && typeof vbLazyRender==='function') vbLazyRender();   // heavy panel: built on first open
+  if (panelId==='panel-tithi' && typeof window.tpRenderPending==='function') window.tpRenderPending();
 }
 document.querySelectorAll('.app-tab').forEach(tab=>{
   tab.addEventListener('click', ()=> switchAppTab(tab.dataset.panel));

@@ -26,7 +26,7 @@ function dfBuild(pane){
   const opt = (arr, first) => (first ? `<option value="">${first}</option>` : '') + arr.map((t, i) => `<option value="${i}">${dfEsc(t)}</option>`).join('');
   const signs = SIGNS.map(s => `${s.symbol} ${s.name}`);
   p.innerHTML = `
-  <div class="rs-pane-head"><h3>🔎 Date Finder</h3><p>Not sure of the birth date? Add whatever the family remembers: full moon, a festival, the weekday… We check every day and list the ones that fit.</p></div>
+  <div class="rs-pane-head"><span class="rs-ph-ico">🔎</span><div class="rs-ph-txt"><h3>Date Finder</h3><p>Not sure of the birth date? Add whatever the family remembers: full moon, a festival, the weekday… We check every day and list the ones that fit.</p></div></div>
   <details class="rs-how"><summary>💡 How it works (and how far to trust it)</summary>
     <p>You give a range of years and any clues. For every day in that range we work out the tithi, weekday, nakshatra, Moon sign, lunar month, festivals, eclipses and where Saturn, Jupiter and Rahu were (Lahiri, same engine as the rest of the app). A day is listed when it fits <b>all</b> your clues. With 3 or more clues we also show days that miss <b>just one</b> (memory is often slightly wrong), clearly marked.
     More clues = fewer dates. <b>Amavasya + Sunday + Diwali</b> within a few years usually gives one or two days.</p>

@@ -25,7 +25,7 @@ function pnBoundary(fn, jd, unit, dir, stepDays){
   const step = stepDays || 0.02; let lo = jd, hi = jd;
   for (let i = 1; i <= 600; i++){ hi = jd + dir * step * i; if (delta(hi) >= need) break; lo = hi; }
   let a = lo, b = hi;
-  for (let i = 0; i < 50; i++){ const m = (a + b) / 2; if (delta(m) >= need) b = m; else a = m; }
+  for (let i = 0; i < 38; i++){ const m = (a + b) / 2; if (delta(m) >= need) b = m; else a = m; }   // 38 halvings of a <=12-day bracket is far below double precision at JD 2.4e6
   return (a + b) / 2;
 }
 

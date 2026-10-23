@@ -24,6 +24,7 @@ function runSandhiCalculation(){
 
   sandhiCountdownInterval = setInterval(() => {
     if (!document.getElementById('sandhiTableBody')){ clearInterval(sandhiCountdownInterval); sandhiCountdownInterval = null; return; }
+    if (document.hidden || !document.getElementById('sandhiTableBody').offsetParent) return;   // hidden tab: skip
     const nowJD = nowJulianDay();
     sandhiRows.forEach(t => {
       const cell = document.getElementById(`sandhi-rem-${t.vargaKey}`);

@@ -215,8 +215,9 @@ function leRenderCats(){
   const vis = LEC.list.filter(leVisible), filtered = !!leUI.q.trim() || leUI.mood!=='all' || leUI.exact;
   const groups = leDefs(leUI.view).map(d=>({ d, a:vis.filter(d.f) })).filter(g=> g.a.length);
   el.innerHTML = groups.length ? groups.map((g,i)=>{ const d = g.d, open = filtered || i===0 || g.a.some(e=>e.id===leUI.sel);
-    return `<details class="le-grp" style="--gc:${d.color}"${open?' open':''}><summary><span class="le-gico ${d.kind}">${d.icon}</span><span class="le-gtxt"><span class="le-gtitle">${rsEsc(d.title)}</span><span class="le-gdesc">${rsEsc(d.desc)}</span></span><span class="le-gcnt">${g.a.length}</span></summary><div class="le-chips">${g.a.map(leChipHTML).join('')}</div></details>`; }).join('')
+    return `<details class="le-grp" data-gi="${i}" style="--gc:${d.color}"${open?' open':''}><summary><span class="le-gico ${d.kind}">${d.icon}</span><span class="le-gtxt"><span class="le-gtitle">${rsEsc(d.title)}</span><span class="le-gdesc">${rsEsc(d.desc)}</span></span><span class="le-gcnt">${g.a.length}</span></summary><div class="le-chips">${open ? g.a.map(leChipHTML).join('') : ''}</div></details>`; }).join('')
     : `<div class="le-none"><div class="le-none-ico">🔍</div>No event matches. Try a simpler word like job, home, child, loan, or clear the filters.</div>`;
+  leUI.groups = groups;   // closed groups fill their chips the moment they are opened (keeps the screen light)
   const c = document.getElementById('leCount'); if (c) c.innerHTML = `<b>${vis.length}</b><span class="le-cof"> of ${LEC.count} events</span>`;
 }
 function lePill(lab, val, color){ return `<span class="le-pill" style="--pc:${color}"><span class="le-pl">${lab}</span><span class="le-pv">${val}</span></span>`; }
@@ -322,6 +323,8 @@ function rsBuildLife(p){
   q('.le-filters').addEventListener('click', e=>{ const m = e.target.closest('[data-le-mood]'), x = e.target.closest('[data-le-exact]');
     if (m){ leUI.mood = m.dataset.leMood; p.querySelectorAll('[data-le-mood]').forEach(b=>b.classList.toggle('on', b===m)); }
     else if (x){ leUI.exact = !leUI.exact; x.classList.toggle('on', leUI.exact); } else return; leRenderCats(); });
+  q('#leCats').addEventListener('toggle', e=>{ const d = e.target; if (!d.open || d.dataset.gi==null) return;
+    const c = d.querySelector('.le-chips'), g = (leUI.groups||[])[+d.dataset.gi]; if (c && g && !c.firstChild) c.innerHTML = g.a.map(leChipHTML).join(''); }, true);
   q('#leCats').addEventListener('click', e=>{ const b = e.target.closest('[data-le-pick]'); if (!b) return;
     leUI.sel = b.dataset.lePick; q('#rsEvCat').value = leUI.sel;
     p.querySelectorAll('.le-chip').forEach(x=>x.classList.toggle('on', x.dataset.lePick===leUI.sel)); leRenderSel();

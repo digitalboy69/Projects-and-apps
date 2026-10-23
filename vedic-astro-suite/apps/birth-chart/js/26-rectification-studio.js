@@ -101,10 +101,11 @@ function rsRefresh(){
 function rsShow(id, scroll){
   const root = document.getElementById('rsRoot'); if (!root) return;
   rsState.tab = id; rsState.visited[id] = 1;
+  let activeTab = null;
   root.querySelectorAll('.rs-tab').forEach(b=>{
     const on = b.dataset.rsTab===id; b.classList.toggle('active', on);
     b.classList.toggle('seen', !!rsState.visited[b.dataset.rsTab] && !on);
-    if (on){ const bar = b.parentElement; bar.scrollTo({ left: b.offsetLeft - (bar.clientWidth-b.offsetWidth)/2, behavior:'smooth' }); }
+    if (on) activeTab = b;
   });
   root.querySelectorAll('.rs-pane').forEach(p=> p.classList.toggle('active', p.dataset.rsPane===id));
   const grp = RS_TABS.find(t=>t[0]===id)[3];
@@ -112,11 +113,18 @@ function rsShow(id, scroll){
     const n = +s.dataset.step; s.classList.toggle('active', n===grp); s.classList.toggle('done', n<grp);
   });
   const line = root.querySelector('.rs-rail-fill'); if (line) line.style.width = ((grp-1)/2*100)+'%';
-  if (scroll){ const top = root.querySelector('.rs-tabs').getBoundingClientRect().top + window.pageYOffset - 70; window.scrollTo({ top:Math.max(0,top), behavior:'smooth' }); }
+  // all layout reads happen together in the next frame (no read/write ping-pong while the tab swaps)
+  requestAnimationFrame(()=>{
+    if (activeTab){ const bar = activeTab.parentElement; bar.scrollTo({ left: activeTab.offsetLeft - (bar.clientWidth-activeTab.offsetWidth)/2, behavior:'smooth' }); }
+    if (scroll){ const top = root.querySelector('.rs-tabs').getBoundingClientRect().top + window.pageYOffset - 70; window.scrollTo({ top:Math.max(0,top), behavior:'smooth' }); }
+  });
   if (id==='life') rsRenderEvents();
   if (id==='dates'){ try { dfPlaceNote(); } catch(e){} }
 }
 
+function rsPaneHead(icon, title, sub){
+  return `<div class="rs-pane-head"><span class="rs-ph-ico">${icon}</span><div class="rs-ph-txt"><h3>${title}</h3><p>${sub}</p></div></div>`;
+}
 function rsHow(el, title){
   if (!el || el.closest('details')) return;
   const d = document.createElement('details'); d.className = 'rs-how';
@@ -143,24 +151,26 @@ function initRectStudio(){
   panel.innerHTML = `
   <div class="rs" id="rsRoot">
     <div class="rs-hero">
-      <div class="rs-aura"></div>
+      <div class="rs-aura" aria-hidden="true"></div>
       <div class="rs-clockwrap">${rsClockSVG()}</div>
       <div class="rs-hero-txt">
         <div class="rs-eyebrow">✦ Rectification Studio</div>
         <h2>Find the <em>true</em> moment of birth</h2>
-        <p>Every tool in one calm place. Tell us how sure you are and we'll point you to the right one.</p>
+        <p>Every birth-time tool in one calm place. Tell us how sure you are and we will point you to the right one.</p>
         <div class="rs-pill" id="rsPill"></div>
+      </div>
+      <div class="rs-ask-wrap">
         <div class="rs-ask">How sure are you of the birth time?</div>
-        <div class="rs-chips">${chips.map(c=>`<button type="button" class="rs-chip" data-rs-chip="${c[0]}"><span>${c[1]}</span><b>${c[2]}</b><i>${c[3]}</i></button>`).join('')}</div>
+        <div class="rs-chips">${chips.map(c=>`<button type="button" class="rs-chip" data-rs-chip="${c[0]}"><span class="rs-ci">${c[1]}</span><span class="rs-ct"><span class="rs-cb">${c[2]}</span><span class="rs-cs">${c[3]}</span></span></button>`).join('')}</div>
         <div class="rs-hint" id="rsHint"></div>
       </div>
     </div>
     <div class="rs-rail">
       <div class="rs-rail-line"><div class="rs-rail-fill"></div></div>
-      ${RS_STEPS.map(s=>`<button type="button" class="rs-step" data-step="${s[0]}"><span class="rs-dot">${s[0]}</span><em>${s[1]}</em></button>`).join('')}
+      ${RS_STEPS.map(s=>`<button type="button" class="rs-step" data-step="${s[0]}"><span class="rs-dot">${s[0]}</span><em class="rs-step-l">${s[1]}</em></button>`).join('')}
     </div>
     <div class="rs-tabs" role="tablist">
-      ${RS_TABS.map(t=>`<button type="button" class="rs-tab" role="tab" data-rs-tab="${t[0]}" data-g="${t[3]}"><span>${t[1]}</span>${t[2]}</button>`).join('')}
+      ${RS_TABS.map(t=>`<button type="button" class="rs-tab" role="tab" data-rs-tab="${t[0]}" data-g="${t[3]}"><span class="rs-ti">${t[1]}</span><span class="rs-tl">${t[2]}</span></button>`).join('')}
     </div>
     <div class="rs-panes">
       ${RS_TABS.map(t=>`<section class="rs-pane" data-rs-pane="${t[0]}"></section>`).join('')}
@@ -170,18 +180,22 @@ function initRectStudio(){
 
   // Dial
   const pd = pane('dial');
-  pd.innerHTML = `<div class="rs-pane-head"><h3>🕰️ Time Dial</h3><p>Dial an exact moment and see the whole chart for it.</p></div>`;
+  pd.innerHTML = rsPaneHead('🕰️','Time Dial','Dial an exact moment and see the whole chart for it.');
   if (intro){ rsHow(intro, 'How the dial works'); pd.appendChild(intro.closest('details') || intro); }
   pd.appendChild(dialCard); pd.appendChild(actRow); pd.appendChild(fullRes);
   // Scan
   const ps = pane('scan');
-  ps.innerHTML = `<div class="rs-pane-head"><h3>🎯 Second-by-Second Scan</h3><p>Slide through a window of time and watch the Ascendant, D60 and nakshatra shift.</p></div>`;
+  ps.innerHTML = rsPaneHead('🎯','Second-by-Second Scan','Slide through a window of time and watch the Ascendant, D60 and nakshatra shift.');
   ps.appendChild(ctrls); ps.appendChild(resWrap); ps.appendChild(detail);
   // Sub panels (nodes keep their ids so Export still finds them)
   Object.keys(RS_SUBS).forEach(k=>{
     const el = document.getElementById(RS_SUBS[k]); const p = pane(k); if (!el) return;
     el.classList.remove('app-panel'); el.classList.add('rs-sub');
     const intro2 = el.querySelector('.tt-intro'); if (intro2) rsHow(intro2, 'What this does');
+    p.insertBefore(document.createRange().createContextualFragment(({
+      sandhi:rsPaneHead('⏱️','Sandhi Table','The exact moments the rising sign changes in every divisional chart.'),
+      vt:rsPaneHead('🗺️','Varga Timeline','Map how a divisional chart changes across the birth-time window.'),
+      tt:rsPaneHead('⏳','Transit Timer','When any planet or the Ascendant changes sign in any D-chart.') })[k]), p.firstChild);
     p.appendChild(el);
   });
   // Life

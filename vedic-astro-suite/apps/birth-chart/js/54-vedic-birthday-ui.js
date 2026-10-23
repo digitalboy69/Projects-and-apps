@@ -15,7 +15,8 @@ function buildVedicBirthdayPanel(chart, profile){
   VB = { N, cache: {}, profile, y: now.getFullYear(), today: { y: now.getFullYear(), m: now.getMonth() + 1, d: now.getDate() } };
   VB.y = Math.min(VB_MAX, Math.max(VB_MIN, VB.y));
   const P = N.P;
-  setTimeout(() => vbRender(), 0);
+  VB.pending = true;   // a year of lunar searches is heavy: compute only when the panel is opened (see vbLazyRender)
+  setTimeout(() => { const pn = document.getElementById('panel-vbday'); if (pn && pn.classList.contains('active')) vbLazyRender(); }, 0);
   return `<div class="vb">
     <div class="vb-hero">
       <div class="vb-cake" aria-hidden="true">🎂</div>
@@ -37,6 +38,9 @@ function buildVedicBirthdayPanel(chart, profile){
     <div id="vbBody"></div>
   </div>`;
 }
+function vbLazyRender(){ if (VB && VB.pending){ VB.pending = false; vbRender(); } }
+/* Export / PDF read every panel's text: build the deferred ones first so reports stay complete. */
+window.vxEnsurePanels = function(){ try { vbLazyRender(); } catch (e) {} try { if (window.tpRenderPending) window.tpRenderPending(); } catch (e) {} };
 function vbGet(y){ if (!VB.cache[y]) VB.cache[y] = vbYear(VB.N, y); return VB.cache[y]; }
 function vbRender(){
   const body = document.getElementById('vbBody'); if (!body || !VB) return;

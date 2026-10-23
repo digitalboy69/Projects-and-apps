@@ -121,6 +121,10 @@
   Object.keys(MAP).forEach(function(k){ keys.push(k); });
   keys.sort(function(a, b){ return b.length - a.length; });
   var RX = new RegExp('(' + keys.join('|') + ')\\uFE0F?', 'g'), RXT = new RegExp(keys.join('|'));
+  /* cheap pre-check: a text node can only contain an icon if it has the FIRST character of some mapped emoji.
+     One character-class test is far cheaper than the big alternation above, so most text nodes stop here. */
+  var firsts = {}; keys.forEach(function(k){ firsts[k.codePointAt(0)] = 1; });
+  var RXQ = new RegExp('[' + Object.keys(firsts).map(function(c){ return '\\u{' + (+c).toString(16) + '}'; }).join('') + ']', 'u');
   var SKIP = 'script,style,textarea,input,select,option,title,svg,noscript,[contenteditable="true"],[contenteditable=""],.vxi,.vx-noicon';
   var cache = {};
   function svg(n){
@@ -128,7 +132,7 @@
   }
   function fix(t){
     var p = t.parentNode; if (!p || p.nodeType !== 1) return;
-    var v = t.nodeValue; if (!v || !RXT.test(v)) return;
+    var v = t.nodeValue; if (!v || !RXQ.test(v) || !RXT.test(v)) return;
     if (p.closest && p.closest(SKIP)) return;
     RX.lastIndex = 0;
     var f = document.createDocumentFragment(), last = 0, m;
@@ -145,9 +149,9 @@
   }
   function scan(n){
     if (n.nodeType === 3){ fix(n); return; }
-    if (n.nodeType !== 1 || !n.textContent || !RXT.test(n.textContent)) return;
-    var w = document.createTreeWalker(n, 4, null), list = [], x;
-    while ((x = w.nextNode())) if (RXT.test(x.nodeValue)) list.push(x);
+    if (n.nodeType !== 1) return;
+    var w = document.createTreeWalker(n, 4, null), list = [], x;   /* no whole-subtree textContent: walk text nodes with the cheap test */
+    while ((x = w.nextNode())) if (RXQ.test(x.nodeValue) && RXT.test(x.nodeValue)) list.push(x);
     for (var i = 0; i < list.length; i++) fix(list[i]);
   }
   var obs = new MutationObserver(function(recs){

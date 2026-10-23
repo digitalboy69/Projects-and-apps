@@ -31,6 +31,7 @@ function runTransitTimerCheck(){
   ttCountdownInterval = setInterval(() => {
     const el = document.getElementById('ttResults');
     if (!el || !document.getElementById('ttCountdownValue')){ clearInterval(ttCountdownInterval); ttCountdownInterval = null; return; }
+    if (document.hidden || !el.offsetParent) return;   // nobody is looking: skip the DOM writes
     const nowJD = nowJulianDay();
     const remaining = t.jdNext - nowJD;
     const sinceNow = nowJD - t.jdEntered;

@@ -229,7 +229,7 @@
     'Treat every number as computed, authoritative data - do not recalculate positions. Please: (1) summarise the chart (lagna, Moon sign, nakshatra, strongest and weakest planets); ' +
     '(2) analyse houses, yogas, Shadbala, Ashtakavarga and the divisional charts; (3) explain the running Mahadasha/Antardasha and the upcoming transits; ' +
     '(4) give practical, balanced guidance and flag any uncertainty. Ask me if you need more detail.';
-  function buildXP(chart, profile, S){
+  function buildXP(chart, profile, S){ try { if (window.vxEnsurePanels) window.vxEnsurePanels(); } catch (e) {}
     var out = [];
     if (S.xp_houses === true){ out.push('=' .repeat(78) + '\n' + 'HOUSE-BY-HOUSE SUMMARY (D1, whole-sign)\n' + '='.repeat(78) + '\n\n' + housesText(chart)); }
     XP.forEach(function(x){

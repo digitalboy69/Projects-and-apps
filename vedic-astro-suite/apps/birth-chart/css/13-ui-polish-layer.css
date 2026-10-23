@@ -6,9 +6,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 @keyframes vxIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .app-panel.active>*{animation:vxIn .55s cubic-bezier(.2,.8,.2,1) both}
 .app-panel.active>*:nth-child(2){animation-delay:.05s}.app-panel.active>*:nth-child(3){animation-delay:.1s}.app-panel.active>*:nth-child(4){animation-delay:.15s}.app-panel.active>*:nth-child(5){animation-delay:.2s}.app-panel.active>*:nth-child(n+6){animation-delay:.25s}
-[class$="-card"],[class*="-card "],.pl-card,.ov-kcard,.home-card,.prof-card{transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s,border-color .25s}
-@media (hover:hover){[class$="-card"]:hover,[class*="-card "]:hover,.ov-kcard:hover,.home-card:hover,.prof-card:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(0,0,0,.4),0 0 0 1px rgba(212,175,55,.22)}}
-[class$="-card"]:active,.home-card:active,.prof-card:active{transform:scale(.985)}
+[class$="-card"]:not(#panel-rectification *),[class*="-card "]:not(#panel-rectification *),.pl-card,.ov-kcard,.home-card,.prof-card{transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s,border-color .25s}
+@media (hover:hover){[class$="-card"]:not(#panel-rectification *):hover,[class*="-card "]:not(#panel-rectification *):hover,.ov-kcard:hover,.home-card:hover,.prof-card:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(0,0,0,.4),0 0 0 1px rgba(212,175,55,.22)}}
+[class$="-card"]:not(#panel-rectification *):active,.home-card:active,.prof-card:active{transform:scale(.985)}
 .btn,button.chart-dl-btn-single,.in-sh-btn,.in-ex,.app-tab{-webkit-tap-highlight-color:transparent;transition:transform .2s cubic-bezier(.2,.8,.2,1),box-shadow .25s,filter .2s,background .25s}
 .btn:active,.in-sh-btn:active,.in-ex:active{transform:scale(.96)}
 @media (hover:hover){.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}}

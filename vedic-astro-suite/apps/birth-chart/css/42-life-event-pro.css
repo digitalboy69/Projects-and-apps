@@ -95,9 +95,9 @@
 .le-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:14px;border:1px solid var(--le-line);background:rgba(255,255,255,.05);color:var(--le-txt);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .15s,box-shadow .2s,filter .2s}
 .le-btn:hover{transform:translateY(-1px)}.le-btn:active{transform:scale(.97)}
 .le-btn-gold{border-color:transparent;color:#1b1608;background:linear-gradient(135deg,#f6d775,#d4af37);box-shadow:0 8px 22px rgba(212,175,55,.3)}
-.le-btn-go{flex:1 1 240px;padding:15px 20px;font-size:15px;border-color:transparent;color:#1b1608;background:linear-gradient(120deg,#f6d775,#d4af37 45%,#4fd1c5);background-size:200% 100%;box-shadow:0 12px 30px rgba(79,209,197,.25);animation:leSheen 5s ease-in-out infinite}
-@keyframes leSheen{50%{background-position:100% 0}}
-.le-btn-go.busy{opacity:.6;pointer-events:none;animation:none}
+.le-btn-go{flex:1 1 240px;padding:15px 20px;font-size:15px;border-color:transparent;color:#1b1608;background:linear-gradient(120deg,#f6d775,#d4af37 45%,#4fd1c5);background-size:200% 100%;background-position:0 0;box-shadow:0 12px 30px rgba(79,209,197,.25);transition:background-position .6s,transform .15s}
+.le-btn-go:hover{background-position:100% 0}
+.le-btn-go.busy{opacity:.6;pointer-events:none}
 .le-btn-ghost{background:transparent;color:var(--le-mut);font-weight:500}
 .le-plus{font-size:17px;line-height:1}
 .le-actions{display:flex;flex-wrap:wrap;gap:10px}
