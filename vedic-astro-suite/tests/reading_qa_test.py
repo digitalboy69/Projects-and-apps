@@ -46,7 +46,7 @@ with sync_playwright() as p:
         if m: bad.append('banned: ' + tt[max(0, m.start() - 40):m.end() + 20].replace('\n', ' '))
         if r['t'] != r['t2']: bad.append('not deterministic')
         wc = len(t.split())
-        if not 14000 <= wc <= 60000: bad.append('word count %d' % wc)
+        if not 14000 <= wc <= 90000: bad.append('word count %d' % wc)
         paras = [re.sub(r'\s+', ' ', x).strip() for x in re.split(r'\n\s*\n', t)]
         cnt = collections.Counter(x for x in paras if len(x.split()) >= 25 and not x.startswith('H1:'))
         dup = [x[:70] + " ##" + str(x.count("H1:")) for x, n in cnt.items() if n > 1]

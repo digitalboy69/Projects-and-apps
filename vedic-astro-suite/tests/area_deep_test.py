@@ -55,7 +55,7 @@ with sync_playwright() as p:
     # ---- screens ----
     pg.evaluate(CAST, dict(name='Asha', dob='1995-03-14', tob='11:00', place='Hyderabad', lat=17.385, lon=78.4867, tz=5.5)); pg.wait_for_selector('#results.show', timeout=15000)
     pg.evaluate("document.querySelectorAll('.app-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-reading').classList.add('active')")
-    pg.evaluate("document.querySelectorAll('#panel-reading .rd .vx-tabs button')[5].click()"); pg.wait_for_timeout(400)
+    pg.evaluate("document.querySelectorAll('#panel-reading .rd .vx-tabs button:not(.hn-tab)')[5].click()"); pg.wait_for_timeout(400)
     s = pg.evaluate("""()=>{const ch=currentChartForModal,D=ADD.all(ch),bad=[],sec=document.querySelector('.dr-sec[data-sec=areas]'),norm=s=>s.replace(/\\s+/g,' ');
       const ds=sec.querySelectorAll('details.dr-deep');if(ds.length!==9)bad.push('deep folds '+ds.length);ds.forEach((d,i)=>{if(d.querySelectorAll('h5').length!==D[i].sections.length)bad.push('headings '+i);if(!norm(d.textContent).includes(norm(D[i].sections[1].text).slice(0,80)))bad.push('text '+i)});
       const rep=norm(buildFullReportText(ch,currentProfileForExport,{}));if((rep.match(/DEEP DIVE \\(ALL CHARTS\\)/g)||[]).length!==9)bad.push('report titles');D.forEach(a=>{if(!rep.includes(norm(a.sections[2].text).slice(0,70)))bad.push('report '+a.id)});

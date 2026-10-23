@@ -64,7 +64,7 @@ with sync_playwright() as p:
         later:b.calendar[0].jd>a.calendar[0].jd}}""" % NOW)
     ok('moving the date moves the planets, the calendar and the outlook; a Sade Sati or Dhaiya phase is active on some date between 2026 and 2046', all(sn.values()), sn)
     # ---- screens ----
-    s = pg.evaluate("""()=>{const ch=currentChartForModal,T=TRS.assess(ch,currentProfileForExport),rd=document.querySelector('#panel-reading .rd'),pane=[...rd.querySelectorAll(':scope>.vx-pane')][5],bad=[],norm=s=>s.replace(/\\s+/g,' ');
+    s = pg.evaluate("""()=>{const ch=currentChartForModal,T=TRS.assess(ch,currentProfileForExport),rd=document.querySelector('#panel-reading .rd'),pane=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane)')][5],bad=[],norm=s=>s.replace(/\\s+/g,' ');
       const sec=pane.querySelector('.dr-sec[data-sec=transits]');if(!sec)return {bad:['no section']};if(![...pane.querySelectorAll('.dr-nb')].some(b=>b.dataset.sec==='transits'))bad.push('nav');
       const tx=norm(sec.textContent);T.gochar.forEach(g=>{if(!tx.includes(norm(g.text)))bad.push('gochar '+g.planet)});if(sec.querySelectorAll('.dr-ol .dr-or:not(.dr-oh)').length!==9)bad.push('outlook rows');
       if(sec.querySelectorAll('.dr-oc').length!==27)bad.push('outlook cells');if(!tx.includes('Sade Sati'))bad.push('sade');if(!tx.includes('Double-transit windows'))bad.push('double');

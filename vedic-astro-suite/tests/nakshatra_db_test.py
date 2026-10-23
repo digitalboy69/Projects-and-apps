@@ -62,7 +62,7 @@ with sync_playwright() as p:
         if o: bad.append((d, o[:4]))
     ok('8 real charts: for all 9 planets + Lagna the pada->navamsa sign equals the app\'s own D9; Moon star lord equals the app\'s dasha start lord and balance', not bad, bad[:2])
     # ---- on-screen: Deep reading shows the layer for the last chart cast ----
-    s = pg.evaluate("""()=>{const c=currentChartForModal,R=VNK.forChart(c),rd=document.querySelector('#panel-reading .rd'),panes=[...rd.querySelectorAll(':scope>.vx-pane')],norm=s=>s.replace(/\\s+/g,' ');
+    s = pg.evaluate("""()=>{const c=currentChartForModal,R=VNK.forChart(c),rd=document.querySelector('#panel-reading .rd'),panes=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane)')],norm=s=>s.replace(/\\s+/g,' ');
       const deep=norm(panes[5].textContent),cards=[...panes[2].querySelectorAll('details.vx-pl')].map(d=>norm(d.textContent)),bad=[];
       if(!deep.includes('Birth star: '+R.moon.nakshatra+', pada '+R.moon.pada.pada))bad.push('birth star note');if(!deep.includes('Rising nakshatra: '+R.lagna.nakshatra))bad.push('rising note');
       if(!deep.includes(norm(R.moon.wellbeing)))bad.push('wellbeing');

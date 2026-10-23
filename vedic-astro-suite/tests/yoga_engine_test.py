@@ -155,12 +155,12 @@ with sync_playwright() as p:
       const past=YGE.detect(currentChartForModal,{now:new Date('2200-01-01')});return {n:Y.length,bad:bad.slice(0,6),noTimingAfterLife:past.every(x=>!x.timing||!/running now/.test(x.timing))}}""")
     ok('every yoga carries a strength level with its reason; timing hints name a Mahadasha and never say "running now" after the last one', not lt['bad'] and lt['noTimingAfterLife'], lt)
     # ---- on screen + report ----
-    s = pg.evaluate("""()=>{const c=currentChartForModal,Y=YGE.detect(c),rd=document.querySelector('#panel-reading .rd'),norm=s=>s.replace(/\\s+/g,' '),panes=[...rd.querySelectorAll(':scope>.vx-pane')],deep=norm(panes[5].textContent),bad=[];
+    s = pg.evaluate("""()=>{const c=currentChartForModal,Y=YGE.detect(c),rd=document.querySelector('#panel-reading .rd'),norm=s=>s.replace(/\\s+/g,' '),panes=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane)')],deep=norm(panes[5].textContent),bad=[];
       if(!Y.length)return {bad:['no yogas']};if(!deep.includes('Yogas in your chart'))bad.push('title');Y.forEach(x=>{if(!deep.includes(norm(x.name)))bad.push('name '+x.id);if(!deep.includes(norm(x.why)))bad.push('why '+x.id)});
       const rep=buildFullReportText(c,currentProfileForExport,{}).replace(/\\s+/g,' ');if(!rep.includes('YOGAS IN YOUR CHART'))bad.push('report title');Y.forEach(x=>{if(!rep.includes(norm(x.name)))bad.push('report '+x.id)});
       return {n:Y.length,bad:bad.slice(0,6),overflow:document.documentElement.scrollWidth>window.innerWidth+1}}""")
     ok('Deep reading shows "Yogas in your chart" with every detected yoga and its rule; the report lists them too', not s['bad'], s)
-    sc = pg.evaluate("""()=>{const rd=document.querySelector('#panel-reading .rd'),pane=[...rd.querySelectorAll(':scope>.vx-pane')][5],secs=[...pane.querySelectorAll(':scope>.dr-sec')],nav=[...pane.querySelectorAll('.dr-nb')];
+    sc = pg.evaluate("""()=>{const rd=document.querySelector('#panel-reading .rd'),pane=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane)')][5],secs=[...pane.querySelectorAll(':scope>.dr-sec')],nav=[...pane.querySelectorAll('.dr-nb')];
       const keys=secs.map(x=>x.dataset.sec),bad=[];if(secs.length<5)bad.push('few sections '+secs.length);if(JSON.stringify(keys)!==JSON.stringify(nav.map(b=>b.dataset.sec)))bad.push('nav mismatch');
       const order=['intro','you','planets','yogas','doshas','areas','vargas','time','transits','houses'];if(JSON.stringify(keys)!==JSON.stringify(order.filter(k=>keys.includes(k))))bad.push('order '+keys);
       if(!keys.includes('intro')||!keys.includes('you')||!keys.includes('houses'))bad.push('core sections');

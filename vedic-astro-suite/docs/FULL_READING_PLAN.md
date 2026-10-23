@@ -62,6 +62,7 @@ Every session: build -> its own test -> commit -> push to `feature/full-reading`
 - [x] **S11 QA** (tests/reading_qa_test.py, 12 charts; docs/ASTROLOGER_REVIEW_SHEET.md; fixes: D11 label softened, 'always' wording in Budhaditya/Mrigashira text; open: older Foundation text still has 'death' in places, needs human review): 10 sample charts (incl. edge cases); invariants (no undefined, no duplicate paragraphs, section coverage, word counts, no contradictions within one area); "astrologer review sheet" for a human reviewer; fix list. **-> M4 (merge)**
 - [x] **S12 Polish & release** (done: brand on cover/headers/closing page from `__VAX_BRAND`, disclaimers + birth-time note in the book, speed/size budgets in tests/pdf_report_test.py, docs/RELEASE_CHECKLIST.md; AI writer decided: not now): disclaimers, speed, size budget, customer edition, docs; decide on the optional AI-writer step.
 - [x] **S13 Area deep dive** (done: js/99-area-deep.js via tools/reading_gen/build_dd.py; about 1,900 words per area across D1-D144, Ashtakavarga, Shadbala, drishti, yogas and timing, plus love, partner, workstyle, keeping and path extras; shown in Deep reading, the report and the PDF; tests/area_deep_test.py): long connected pattern readings for each life area.
+- [x] **S14 Right now (12 houses)** (done: js/100-house-now.js via tools/reading_gen/build_hn.py + js/101-house-now-ui.js; first tab of Chart Reading, report text and first PDF page of the Time part; each house read from sign, lord, natal planets, today's transits, aspects, nakshatras and Mahadasha/Antardasha/Pratyantar; tests/house_now_test.py): how life is going now, house by house and area by area.
 
 ## 6. Working rules (every session)
 1. Start: read this file + `AI_GUIDE.md`; take the next unchecked session. Do not skip ahead.
@@ -100,7 +101,9 @@ Every session: build -> its own test -> commit -> push to `feature/full-reading`
 - Session 7: S8 done. Next: S9 Transits and Sade Sati, then S11 QA (10 sample charts, invariants, astrologer review sheet) and S12 polish.
 - Session 8: S9 done. Next: S11 QA (M4), then S12 polish.
 - Session 9: S10-S12 done; S13 Area deep dive done (long pattern paragraphs per life area). Next: relatability pass (top signals, scene library, time anchors) once the user picks a direction.
+- Session 10: S14 Right now done. Next: relatability pass (top signals, scene library) when the user picks a direction.
 - Session 9: S11 done, M4 passed. Next: S12 polish and release.
+- Session 10: S14 Right now done. Next: relatability pass (top signals, scene library) when the user picks a direction.
 - Session 9 (cont.): PDF rebuilt as a one-click book (no Studio/settings): dark cover with zodiac wheel, contents, 9 part dividers, 21 sections (js/93 core + js/98 extra pages): panchang, planet pages, special lagnas + Bhava Chalit, Shadbala, Ashtakavarga heat map, all 24 divisional charts drawn, every Mahadasha/Antardasha, life-area plates, house plates, glossary, notes. About 125 pages. tests/pdf_report_test.py rewritten.
 - Session 9 (fix): PDF no longer opens a blank print window first; prints once when the book is loaded.
 - Session 10: S12 done. All plan steps ticked (S1-S12). Remaining work is outside the plan: astrologer review of the sheet, checkout/delivery, Hindi/Telugu.

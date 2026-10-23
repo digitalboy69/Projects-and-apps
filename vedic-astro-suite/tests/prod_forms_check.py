@@ -16,7 +16,7 @@ with sync_playwright() as p:
         fr = [x for x in pg.frames if x.query_selector('#birthForm')][0]
         fr.evaluate("loadProfileIntoForm({name:'Test',dob:'1995-03-14',tob:'11:00',place:'Hyderabad',lat:17.385,lon:78.4867,tz:5.5});document.getElementById('birthForm').requestSubmit()")
         fr.wait_for_selector('#results.show', timeout=20000)
-        o = fr.evaluate("""()=>{const rd=document.querySelector('#panel-reading .rd'),t=[...rd.querySelectorAll('.vx-tabs button')].map(b=>b.textContent),pn=[...rd.querySelectorAll(':scope>.vx-pane')],c=currentChartForModal;
+        o = fr.evaluate("""()=>{const rd=document.querySelector('#panel-reading .rd'),t=[...rd.querySelectorAll('.vx-tabs button:not(.hn-tab)')].map(b=>b.textContent),pn=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane)')],c=currentChartForModal;
           return {tabs:t.length,last:t[t.length-1],cards:pn[5].querySelectorAll('details.vx-pl').length-c.dashaData.mahadashas.length,planets:[...pn[2].querySelectorAll('details.vx-pl')].filter(d=>/In real life/.test(d.textContent)).length,
             layers:[typeof VDB,typeof VNK,typeof VMF,typeof VDA,typeof VDR].every(x=>x==='object'),report:/LIFE TIMELINE/.test(buildFullReportText(c,currentProfileForExport,{}))}}""")
         good = o['tabs'] == 6 and o['cards'] == 12 and o['planets'] == 9 and o['layers'] and o['report'] and not errs

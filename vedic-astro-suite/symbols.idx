@@ -65,6 +65,7 @@ aspectedSigns	fn	apps/birth-chart/js/80-dasha-systems-rasi.js:67	birth-chart
 aspectOnHouse	fn	apps/birth-chart/js/87-vedic-knowledge-db.js:2200	birth-chart
 aspectRowsToPlainText	fn	apps/birth-chart/js/60-interactive-varga-svg.js:129	birth-chart
 aspects	fn	apps/birth-chart/js/69-divisional-areas.js:88	birth-chart
+assess	fn	apps/birth-chart/js/100-house-now.js:283	birth-chart
 assess	fn	apps/birth-chart/js/94-life-areas.js:322	birth-chart
 assess	fn	apps/birth-chart/js/97-transit-reading.js:164	birth-chart
 at	fn	apps/birth-chart/js/73-tithi-pravesh.js:13	birth-chart
@@ -568,6 +569,7 @@ hideLoader	fn	shell/js/shell.js:29	shell
 histModal	fn	apps/notepad/js/01-notepad.js:201	notepad
 hitEvents	fn	apps/birth-chart/js/90-year-timeline-engine.js:93	birth-chart
 hl	fn	apps/notepad/js/01-notepad.js:34	notepad
+HNW_DATA	const	apps/birth-chart/js/100-house-now.js:8	birth-chart
 HOME_ITEMS	const	apps/birth-chart/js/25-home-and-tabs.js:6	birth-chart
 HOME_SEC_COL	const	apps/birth-chart/js/25-home-and-tabs.js:39	birth-chart
 homeAskHtml	fn	apps/birth-chart/js/25-home-and-tabs.js:40	birth-chart
@@ -714,6 +716,7 @@ lordOf	fn	apps/birth-chart/js/78-dasha-systems-core.js:45	birth-chart
 lt	fn	apps/birth-chart/js/98-pdf-pages.js:26	birth-chart
 lunationEvents	fn	apps/birth-chart/js/90-year-timeline-engine.js:122	birth-chart
 mainList	fn	apps/sky3d/js/48-profile-bridge.js:10	sky3d
+make	fn	apps/birth-chart/js/100-house-now.js:180	birth-chart
 makeSphere	fn	apps/sky3d/js/10-procedural-textures.js:109	sky3d
 MALE_PLANETS	const	apps/birth-chart/js/14-shadbala-engine.js:39	birth-chart
 mandala	fn	apps/birth-chart/js/93-pdf-report.js:46	birth-chart
@@ -736,6 +739,7 @@ mkGroup	fn	shared/export-addon.js:429	shared
 modal	fn	apps/notepad/js/01-notepad.js:170	notepad
 modalMini	fn	apps/notepad/js/01-notepad.js:325	notepad
 model	fn	apps/birth-chart/js/69-divisional-areas.js:12	birth-chart
+MON	const	apps/birth-chart/js/101-house-now-ui.js:11	birth-chart
 MON	const	apps/birth-chart/js/82-dasha-systems-ui.js:27	birth-chart
 MON	const	apps/birth-chart/js/86-popular-charts.js:12	birth-chart
 MON	const	apps/birth-chart/js/93-pdf-report.js:18	birth-chart
@@ -889,6 +893,7 @@ pair	fn	apps/birth-chart/js/91-dasha-reading.js:206	birth-chart
 pair	fn	shell/js/locpicker.js:26	shell
 palette	fn	apps/notepad/js/01-notepad.js:172	notepad
 panchangaAt	fn	apps/birth-chart/js/45-panchanga-engine.js:58	birth-chart
+pane	fn	apps/birth-chart/js/101-house-now-ui.js:16	birth-chart
 pane	fn	apps/birth-chart/js/88-deep-reading.js:119	birth-chart
 panel-active	id	apps/birth-chart/js/58-render-results.js:236	birth-chart
 panel-ashtakavarga	id	apps/birth-chart/js/58-render-results.js:238	birth-chart
@@ -1082,6 +1087,7 @@ renderTransitFilters	fn	apps/sky3d/js/20-transit-conjunction-scanner.js:135	sky3
 renderTransitTimerResult	fn	apps/birth-chart/js/21-transit-timer-tab.js:50	birth-chart
 repeatFixed	fn	apps/birth-chart/js/78-dasha-systems-core.js:121	birth-chart
 report	fn	apps/birth-chart/js/02-app-meta-layer.js:39	birth-chart
+reportText	fn	apps/birth-chart/js/101-house-now-ui.js:31	birth-chart
 reportText	fn	apps/birth-chart/js/88-deep-reading.js:207	birth-chart
 REQUIRED_RUPAS	const	apps/birth-chart/js/14-shadbala-engine.js:171	birth-chart
 rerenderResults	fn	apps/sky3d/js/47-dasha-transit-ui.js:123	sky3d
@@ -1201,6 +1207,7 @@ signSteps	fn	apps/birth-chart/js/78-dasha-systems-core.js:98	birth-chart
 signType	fn	apps/birth-chart/js/72-bhava-bala.js:9	birth-chart
 signUp	fn	apps/birth-chart/js/77-cloud-account.js:55	birth-chart
 simple	fn	apps/birth-chart/js/79-dasha-systems-nakshatra.js:19	birth-chart
+sky	fn	apps/birth-chart/js/100-house-now.js:171	birth-chart
 snap	fn	apps/notepad/js/01-notepad.js:60	notepad
 snapshot	fn	apps/sky3d/js/46-dasha-transit-engine.js:250	sky3d
 snapshotPositions	fn	apps/sky3d/js/07-position-snapshot.js:2	sky3d
@@ -1321,6 +1328,7 @@ toJulianDay	fn	apps/birth-chart/js/03-ephemeris-engine.js:7	birth-chart
 toJulianDay	fn	apps/sky3d/js/01-astro-engine.js:10	sky3d
 token	fn	apps/birth-chart/js/77-cloud-account.js:11	birth-chart
 toMD	fn	apps/notepad/js/01-notepad.js:205	notepad
+TONE	const	apps/birth-chart/js/101-house-now-ui.js:13	birth-chart
 TONE_CLS	const	apps/birth-chart/js/88-deep-reading.js:31	birth-chart
 TPL	const	apps/notepad/js/01-notepad.js:43	notepad
 tplModal	fn	apps/notepad/js/01-notepad.js:197	notepad

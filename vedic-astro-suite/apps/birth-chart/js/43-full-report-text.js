@@ -230,6 +230,11 @@ function buildFullReportText(chart, profile, sections, liveSkyData){
     add(`${pad('Ascendant',10)} ${normDeg(chart.ascendant.longitude).toFixed(6)}°`);
   }
 
+  if (want('deepReading') && window.HNW && HNW.reportText){
+    try { section('LIFE RIGHT NOW: THE TWELVE HOUSES'); add(HNW.reportText(chart)); }
+    catch(e){ add('(The right-now reading could not be built for this chart.)'); }
+  }
+
   if (want('deepReading') && window.VDR){
     try { section('DEEP READING: CLASSICAL INTERPRETATIONS'); add(VDR.reportText(chart)); }
     catch(e){ add('(Deep reading could not be built for this chart.)'); }

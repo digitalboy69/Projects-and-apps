@@ -12366,6 +12366,15 @@ html{scroll-behavior:auto!important}
 .le-out{margin:12px 0;padding:11px 14px;border-radius:14px;background:rgba(214,160,50,.12);border:1px solid rgba(214,160,50,.4);font-size:12.5px;line-height:1.55}
 @media (max-width:480px){.le-gauge{width:88px;height:88px}.le-gauge b{font-size:22px}.le-cats{max-height:300px}.le-fitnote,.rs-why{margin-left:0}}
 </style>
+<style>
+/* Right now tab (js/101-house-now-ui.js): running periods, area bars, house chips, today's sky, house cards */
+.hn .rd-h small{font-weight:400;color:var(--text-muted)}
+.hn-ars{display:flex;flex-direction:column;gap:7px;margin:6px 0 10px}.hn-ar{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1.6fr) 30px minmax(0,.9fr);gap:8px;align-items:center;font-size:12.5px;color:var(--text-main)}.hn-ar small{color:var(--text-muted);font-size:11px}.hn-ar b{text-align:right}
+.hn-chips{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin:6px 0 12px}.hn-chip{display:flex;flex-direction:column;align-items:center;padding:7px 2px;border-radius:12px;border:1px solid var(--border-lighter,rgba(255,255,255,.1));background:rgba(255,255,255,.04);text-decoration:none;color:var(--text-main);font-size:12px}.hn-chip i{font-style:normal;font-size:11px;color:var(--text-muted)}.hn-chip.g{background:rgba(79,138,91,.22)}.hn-chip.b{background:rgba(181,104,58,.25)}
+.hn-sky{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:7px;margin:6px 0 12px}.hn-sk{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center;padding:7px 9px;border-radius:12px;background:rgba(255,255,255,.04);font-size:12.5px}.hn-sk small{display:block;color:var(--text-muted);font-size:11px}.hn-g{font-size:20px;color:var(--gold,#d4af37);text-align:center}.hn-nk{text-align:right}
+.hn-card{margin:7px 0}.hn-card>summary b{font-size:13px}.hn-card>summary .hn-e{font-size:18px}.hn-card>summary small{flex:1 1 100%}.hn-card .dr-vg-b h5{text-transform:none;letter-spacing:0;font-size:13px;color:var(--text-main)}.hn-card .dr-p{margin:5px 0;line-height:1.6}
+@media(max-width:420px){.hn-chips{grid-template-columns:repeat(4,minmax(0,1fr))}.hn-ar{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 28px}.hn-ar small{display:none}}
+</style>
 
 
 
@@ -18576,6 +18585,11 @@ function buildFullReportText(chart, profile, sections, liveSkyData){
     add(`${pad('Ascendant',10)} ${normDeg(chart.ascendant.longitude).toFixed(6)}°`);
   }
 
+  if (want('deepReading') && window.HNW && HNW.reportText){
+    try { section('LIFE RIGHT NOW: THE TWELVE HOUSES'); add(HNW.reportText(chart)); }
+    catch(e){ add('(The right-now reading could not be built for this chart.)'); }
+  }
+
   if (want('deepReading') && window.VDR){
     try { section('DEEP READING: CLASSICAL INTERPRETATIONS'); add(VDR.reportText(chart)); }
     catch(e){ add('(Deep reading could not be built for this chart.)'); }
@@ -21703,8 +21717,8 @@ function build(c){const x=X(c),pr=periods(x),act=findActiveDasha(c.dashaData.mah
    <div class="rd-h">Sub-periods of this Mahadasha</div>${ads.map(a=>`<div class="vx-row${a.startDate<=nowP&&nowP<a.endDate?' vg':''}"><span class="vx-gl">${PLANET_GLYPHS[a.lord]}</span><span><b>${a.lord}</b> · ${foc(a.lord)}<br><small style="color:var(--text-muted)">${formatDashaDate(a.startDate)} → ${formatDashaDate(a.endDate)}</small></span><b>${a.startDate<=nowP&&nowP<a.endDate?'NOW':''}</b></div>`).join('')}
    <div class="rd-h">Transits today</div><div class="vx-grid">${['Saturn','Jupiter','Rahu','Ketu'].map(n=>`<div class="vx-t"><label>${n}</label><b>${sgn(tr[n].s)}</b><small>House ${tr[n].hl} from Lagna · ${tr[n].hm} from Moon</small></div>`).join('')}</div>${note(sd===12||sd===1||sd===2||sd===4||sd===8?'b':'g','🪐 '+sade)}`;
   const yogas=yg.length?yg.map(y=>`<div class="vx-row vg"><span class="vx-gl">🧿</span><span><b>${y.t}</b><br><small style="color:var(--text-muted)">${YX[y.k][0]} — ${y.d}</small></span><b></b></div>`).join(''):note('','No major yogas detected in the standard checks.');
-  const T=['✨ Summary','🎯 Life areas','🪐 Planets','⏳ Now','🧿 Yogas'],Pn=[sum,areas,pls,now,yogas];if(window.VDR){T.push('📖 Deep reading');Pn.push(VDR.pane(c));}
-  return `<div class="section-heading"><h3>Chart Reading — in plain words</h3><div class="rule"></div></div><div class="vx rd"><div class="vx-note">Auto-generated from classical rules (house lords, dignity, aspects, Ashtakavarga, Dasha). Use it as a fast starting point for a reading, not a final verdict.</div><div class="vx-tabs">${T.map((t,i)=>`<button type="button" data-i="${i}" class="${i?'':'on'}">${t}</button>`).join('')}</div>${Pn.map((p,i)=>`<div class="vx-pane${i?'':' on'}">${p}</div>`).join('')}</div>`;}
+  const T=['✨ Summary','🎯 Life areas','🪐 Planets','⏳ Now','🧿 Yogas'],Pn=[sum,areas,pls,now,yogas];if(window.VDR){T.push('📖 Deep reading');Pn.push(VDR.pane(c));}if(window.HNW&&HNW.pane){T.unshift('🌅 Right now');Pn.unshift(HNW.pane(c));}
+  return `<div class="section-heading"><h3>Chart Reading — in plain words</h3><div class="rule"></div></div><div class="vx rd"><div class="vx-note">Auto-generated from classical rules (house lords, dignity, aspects, Ashtakavarga, Dasha). Use it as a fast starting point for a reading, not a final verdict.</div><div class="vx-tabs">${T.map((t,i)=>`<button type="button" data-i="${i}" class="${i?'':'on'}${i===0&&/Right now/.test(t)?' hn-tab':''}">${t}</button>`).join('')}</div>${Pn.map((p,i)=>`<div class="vx-pane${i?'':' on'}${i===0&&/^<div class="hn">/.test(p)?' hn-pane':''}">${p}</div>`).join('')}</div>`;}
 window.buildReadingPanel=function(c){try{return build(c);}catch(e){console.warn('reading',e);return '<div class="vx-note b">Could not build the reading for this chart.</div>';}};
 document.addEventListener('click',e=>{const b=e.target.closest('.rd .vx-tabs button');if(!b)return;const r=b.closest('.rd'),i=+b.dataset.i;r.querySelectorAll('.vx-tabs button').forEach((x,j)=>x.classList.toggle('on',j===i));r.querySelectorAll(':scope>.vx-pane').forEach((x,j)=>x.classList.toggle('on',j===i));});
 })();
@@ -44477,6 +44491,352 @@ window.ADD = (function(D){
   function area(chart, id, opts){ const now = (opts && opts.now) || new Date(), LA = LAE.assess(chart, { now }); return build(chart, id, now, LA); }
   return { data: D, all, area, ids: LAE.ids };
 })(ADD_DATA);
+<\/script>
+<script>
+/* ============================================================================
+   GENERATED by tools/reading_gen (edit the tables in tools/reading_gen/build_hn.py, then run tools/reading_gen/regen.sh). Do not hand-edit this file.
+   HOUSE RIGHT NOW (HNW): how each of the 12 houses is running at this moment, layer schema v1.1. Pattern reading for the present stretch, not prediction.
+   HNW.assess(chart, {now}) -> { now, dasha:{md,ad,pd}, sky:[9 transiting planets], houses:[12 x {h, score, band, sections:[{id,e,h,lines[],text}], drivers}], areas:[9], best, care, words }
+   Reads: the sign, lord and natal planets of each house, where all nine planets stand today (sign, house, nakshatra and pada, retrograde), the aspects they throw,
+   and the running Mahadasha, Antardasha and Pratyantar lords with their links to the house. Needs js/99 (ADD tables), js/94 (LAE), js/87 (VDB), js/89 (VNK).
+   ============================================================================ */
+const HNW_DATA = {
+ "schema": "layer-v1.1",
+ "elem": [
+  "Fire",
+  "Earth",
+  "Air",
+  "Water"
+ ],
+ "mode": [
+  "movable",
+  "fixed",
+  "dual"
+ ],
+ "modeText": {
+  "movable": "a movable sign that likes to start things and keep moving",
+  "fixed": "a fixed sign that holds on and finishes what it begins",
+  "dual": "a dual sign that adapts and sees both sides"
+ },
+ "elemText": {
+  "Fire": "fire, which acts and shows",
+  "Earth": "earth, which builds and steadies",
+  "Air": "air, which thinks and connects",
+  "Water": "water, which feels and absorbs"
+ },
+ "asp": {
+  "Sun": [
+   7
+  ],
+  "Moon": [
+   7
+  ],
+  "Mercury": [
+   7
+  ],
+  "Venus": [
+   7
+  ],
+  "Mars": [
+   4,
+   7,
+   8
+  ],
+  "Jupiter": [
+   5,
+   7,
+   9
+  ],
+  "Saturn": [
+   3,
+   7,
+   10
+  ],
+  "Rahu": [
+   5,
+   7,
+   9
+  ],
+  "Ketu": [
+   5,
+   7,
+   9
+  ]
+ },
+ "karaka": {
+  "1": [
+   "Sun"
+  ],
+  "2": [
+   "Jupiter"
+  ],
+  "3": [
+   "Mars"
+  ],
+  "4": [
+   "Moon"
+  ],
+  "5": [
+   "Jupiter"
+  ],
+  "6": [
+   "Mars",
+   "Saturn"
+  ],
+  "7": [
+   "Venus"
+  ],
+  "8": [
+   "Saturn"
+  ],
+  "9": [
+   "Jupiter"
+  ],
+  "10": [
+   "Sun",
+   "Mercury",
+   "Jupiter",
+   "Saturn"
+  ],
+  "11": [
+   "Jupiter"
+  ],
+  "12": [
+   "Saturn",
+   "Ketu"
+  ]
+ },
+ "hemoji": [
+  "🧍",
+  "💰",
+  "💪",
+  "🏡",
+  "🎨",
+  "🩺",
+  "💞",
+  "🔮",
+  "🙏",
+  "💼",
+  "🌐",
+  "🌙"
+ ],
+ "pemoji": {
+  "Sun": "☀️",
+  "Moon": "🌙",
+  "Mars": "🔥",
+  "Mercury": "🗣️",
+  "Jupiter": "🍀",
+  "Venus": "🌸",
+  "Saturn": "⏳",
+  "Rahu": "🌀",
+  "Ketu": "🧭"
+ },
+ "feel": {
+  "Strong": "a supported stretch",
+  "Steady": "a steady stretch",
+  "Mixed": "a mixed stretch, with help and friction side by side",
+  "Needs care": "a stretch that asks for care and patience"
+ },
+ "help_": {
+  "Strong": "Use the lift: start, ask, decide and build here while the conditions are working with you.",
+  "Steady": "Keep the routine going and add one small step at a time; steady conditions reward consistency.",
+  "Mixed": "Pick one thing to push and one to protect; with mixed conditions, clear priorities matter more than speed.",
+  "Needs care": "Go slower, double-check details, keep reserves and avoid big, hurried commitments in this area until the pressure eases."
+ }
+};
+
+window.HNW = (function(D){
+  'use strict';
+  if (typeof LAE === 'undefined' || !LAE || typeof ADD === 'undefined' || !ADD || typeof VDB === 'undefined' || typeof VNK === 'undefined' || !VNK || typeof findActiveDasha !== 'function') return null;
+  const T = ADD.data, SIGN = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const P9 = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'], BEN = ['Jupiter','Venus','Mercury','Moon'], SLOW = ['Saturn','Jupiter','Rahu','Ketu'];
+  const STRONG = ['Exalted','OwnSign','Moolatrikona'], WEAK = ['Enemy','Debilitated'];
+  const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
+  const nm = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1), lc = s => s.charAt(0).toLowerCase() + s.slice(1), clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], fd = d => MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+  const hash = s => { let h = 7; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; }, pick = (arr, seed) => arr[hash(seed) % arr.length];
+  const E = n => D.pemoji[n] || '🪐';
+  const DS = { Exalted: 'exalted', OwnSign: 'in its own sign', Moolatrikona: 'in its moolatrikona sign', Friend: "in a friend's sign", Neutral: 'in a neutral sign', Enemy: "in an enemy's sign", Debilitated: 'debilitated' };
+  const lower = n => n.toLowerCase();
+  const signOf = (asc, h) => (asc + h - 1) % 12, houseOfSign = (asc, s) => ((s - asc + 12) % 12) + 1;
+  const aspH = (n, hp) => (D.asp[n] || [7]).map(o => ((hp + o - 2) % 12) + 1);
+  const dig = (n, s, deg) => { try { return (getDignity(n, s, deg == null ? 15 : deg) || {}).status || 'Neutral'; } catch (e) { return 'Neutral'; } };
+
+  function sky(chart, now){
+    const jd = toJulianDay(now.getUTCFullYear(), now.getUTCMonth() + 1, now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()), asc = chart.ascendant.sign, out = {};
+    P9.forEach(n => { const lon = getSiderealLongitudeAt(n, jd), s = getSignIndex(lon), deg = lon % 30, nk = getNakshatra(lon), nr = VNK.nakshatra(nk.index);
+      const rx = n === 'Rahu' || n === 'Ketu' ? true : (n === 'Sun' || n === 'Moon') ? false : !!isRetrograde(lower(n), jd);
+      out[n] = { n, lon, sign: s, deg, house: houseOfSign(asc, s), nak: nk.name, nakIndex: nk.index, pada: nk.pada, nakLord: nk.lord, nature: nr ? nr.nature : '', kw: nr ? (nr.keywords || []).slice(0, 3) : [], rx, dig: dig(n, s, deg),
+        asp: aspH(n, houseOfSign(asc, s)) }; });
+    return { jd, p: out };
+  }
+
+  function make(chart, now){
+    const P = chart.planets, H1 = chart.vargas.D1.houses, asc = chart.ascendant.sign, SAV = chart.ashtakavarga.sav, SB = chart.shadbala.planets, avg = SAV.reduce((a, b) => a + b, 0) / 12;
+    const FN = VDB.functionalNature(asc), S = sky(chart, now), X = S.p;
+    const fk = n => { const k = FN[n] && FN[n].kind || ''; return /Yogakaraka|benefic/i.test(k) && !/malefic/i.test(k) ? 1 : /malefic/i.test(k) ? -1 : (n === 'Rahu' || n === 'Ketu') ? -0.5 : 0; };
+    const nat = n => BEN.indexOf(n) >= 0 ? 1 : -1;
+    const kindWord = n => { const k = FN[n] && FN[n].kind; return !k ? ((n === 'Rahu' || n === 'Ketu') ? 'a shadow planet' : 'neutral for your rising sign') : /neutral/i.test(k) ? 'neutral for your rising sign' : 'a ' + lc(k); };
+    const g = (n, st) => clamp(0.5 * nat(n) + 0.5 * fk(n) + (STRONG.indexOf(st) >= 0 ? 0.3 : WEAK.indexOf(st) >= 0 ? -0.3 : 0), -1, 1);
+    const pct = n => (SB[n] && SB[n].percentOfRequired != null) ? Math.round(SB[n].percentOfRequired) : null;
+    const rules = n => [1,2,3,4,5,6,7,8,9,10,11,12].filter(h => H1[h - 1].signLord === n);
+    const nkOf = n => P[n] && P[n].nakshatra;
+    const act = findActiveDasha(chart.dashaData.mahadashas, now) || {}, DL = [['Mahadasha', act.mahadasha, 8], ['Antardasha', act.antardasha, 5], ['Pratyantar', act.pratyantardasha, 2]].filter(x => x[1]);
+    const tone = (v) => v >= 1.5 ? 'supports' : v <= -1.5 ? 'presses on' : 'touches';
+    const nkLine = (who, n, nk, nature, kw, lord) => { const rel = VNK.relation(n, lord), ease = rel === 'own' ? 'its own star, so it works at home' : rel === 'friend' ? "a friend's star, which eases its work" : rel === 'enemy' ? "an enemy's star, which adds friction to its work" : "a neutral star, so it works on its own merits";
+      return `${who} ${n} is in ${nk.name}, pada ${nk.pada}, ruled by ${lord}: ${nature ? nature.toLowerCase() + ' in nature' : 'a star of its own kind'}${kw && kw.length ? ' (' + kw.join(', ') + ')' : ''}, ${ease}.`; };
+
+    const houses = [];
+    for (let h = 1; h <= 12; h++){
+      const hs = H1[h - 1], sg = hs.sign, lord = hs.signLord, lp = P[lord], theme = T.theme[h - 1], drivers = [], L = [], sec = [];
+      const addSec = (id, e, hd, lines) => sec.push({ id, e, h: hd, lines, text: lines.join(' ') });
+      const natalOcc = P9.filter(n => P[n] && P[n].house === h), tOcc = P9.filter(n => X[n].house === h), tAsp = P9.filter(n => X[n].house !== h && X[n].asp.indexOf(h) >= 0);
+      const lordT = X[lord], lpct = pct(lord), ldig = lp && lp.dignity ? lp.dignity.status : 'Neutral';
+      // ---- natal base
+      let base = clamp((SAV[sg] - avg) * 2.5, -9, 9) + (lpct != null ? clamp((lpct - 100) / 12, -6, 6) : 0);
+      // ---- 1. house, sign, lord
+      const el = D.elem[sg % 4], md = D.mode[sg % 3];
+      L.length = 0;
+      L.push(`🏠 The ${ordn(h)} house is the house of ${theme}. In your chart it falls in ${SIGN[sg]}, ${D.modeText[md]}, with an element of ${D.elemText[el]}.`);
+      L.push(`${E(lord)} Its lord is ${lord}, ${kindWord(lord)}: natally in your ${ordn(lp.house)} house in ${SIGN[lp.sign]}, ${DS[ldig] || 'in a neutral sign'}${lpct != null ? ', with ' + lpct + '% of the strength it needs' : ''}. This ties ${theme.split(',')[0]} to ${T.theme[lp.house - 1].split(',')[0]}.`);
+      L.push(`📊 The house holds ${SAV[sg]} Ashtakavarga points against an average of ${avg.toFixed(1)}, so its natural support is ${SAV[sg] >= avg + 1.5 ? 'above' : SAV[sg] <= avg - 1.5 ? 'below' : 'close to'} the chart's norm.`);
+      L.push(`🛰️ Today the lord ${lord} is transiting ${SIGN[lordT.sign]}${lordT.rx ? ' (retrograde)' : ''}, your ${ordn(lordT.house)} house, so for this stretch ${theme.split(',')[0]} is being fed through ${T.theme[lordT.house - 1].split(',')[0]}.`);
+      const lg = g(lord, lordT.dig); drivers.push({ w: 2.5 * lg, t: `the lord ${lord} transiting your ${ordn(lordT.house)} house${lordT.rx ? ' while retrograde' : ''}` });
+      addSec('house', '🏠', 'The house, its sign and its lord', L.slice());
+      // ---- 2. natal planets
+      L.length = 0;
+      if (natalOcc.length) natalOcc.forEach(n => { const p = P[n], d = p.dignity ? p.dignity.status : 'Neutral', k = p.nakshatra, nr = VNK.nakshatra(k.index);
+        L.push(`${E(n)} ${n} sits here from birth, ${DS[d] || 'in a neutral sign'} (${nat(n) > 0 ? 'a natural benefic' : 'a natural malefic'}, ${kindWord(n)}), in ${k.name} pada ${k.pada}, a ${nr ? nr.nature.toLowerCase() : ''} star ruled by ${k.lord}. It brings ${T.role[n]} into ${theme.split(',')[0]}.`); });
+      else L.push(`⚪ No planet is placed here at birth, so the house is carried by its lord ${lord} and by whatever passes through or looks at it, which is a common and workable pattern.`);
+      natalOcc.forEach(n => { const d = P[n].dignity ? P[n].dignity.status : 'Neutral'; base += (nat(n) + fk(n)) * (STRONG.indexOf(d) >= 0 ? 2.5 : WEAK.indexOf(d) >= 0 ? 0.8 : 1.6); });
+      addSec('natal', '🌟', 'Planets placed here at birth', L.slice());
+      // ---- 3. transiting planets in the house
+      L.length = 0;
+      if (tOcc.length) tOcc.forEach(n => { const x = X[n], gg = g(n, x.dig), wt = SLOW.indexOf(n) >= 0 ? 7 : n === 'Mars' ? 4 : 2.5;
+        drivers.push({ w: wt * gg, t: `${n} transiting this house` });
+        L.push(`${E(n)} Transit ${n} is in this house now, at ${x.deg.toFixed(0)}° ${SIGN[x.sign]}${x.rx ? ', retrograde' : ''}, ${DS[x.dig] || 'in a neutral sign'}. It is ${nat(n) > 0 ? 'a natural benefic' : 'a natural malefic'} and ${kindWord(n)} for you, so over ${SLOW.indexOf(n) >= 0 ? 'this long stretch' : n === 'Mars' ? 'these weeks' : 'these days'} it ${gg >= 0.5 ? 'tends to support' : gg <= -0.5 ? 'tends to press on' : 'both helps and tests'} ${theme.split(',')[0]}. ${nkLine('Its star:', n, { name: x.nak, pada: x.pada }, x.nature, x.kw, x.nakLord)}`); });
+      else { const near = P9.filter(n => SLOW.indexOf(n) >= 0 || n === 'Mars').map(n => ({ n, d: ((x => (x - h + 12) % 12)(X[n].house)) })).sort((a, b) => a.d - b.d)[0];
+        L.push(`⚪ No planet is passing through this house today, so it is quiet from visitors; the tone comes from the aspects, the lord and the running dasha below.`); }
+      addSec('transit', '🪐', 'Planets passing through it today', L.slice());
+      // ---- 4. aspects
+      L.length = 0;
+      tAsp.forEach(n => { const x = X[n], gg = g(n, x.dig), wt = (SLOW.indexOf(n) >= 0 ? 7 : n === 'Mars' ? 4 : 2.5) * 0.6; drivers.push({ w: wt * gg, t: `${n} looking at this house from the ${ordn(x.house)}` });
+        L.push(`${E(n)} Transit ${n}, now in ${SIGN[x.sign]} (your ${ordn(x.house)} house), looks at this house, which is ${SIGN[sg]}. It is ${nat(n) > 0 ? 'a benefic' : 'a malefic'} here and ${kindWord(n)}, so its sight ${gg >= 0.5 ? 'adds support' : gg <= -0.5 ? 'adds pressure' : 'adds both help and a test'}.`); });
+      tOcc.forEach(n => { const x = X[n], hs2 = x.asp.map(a => `${SIGN[signOf(asc, a)]} (${ordn(a)} house)`); L.push(`👁️ ${n}, standing here, looks at ${nm(hs2)}, so what happens in this house is carried into those parts of life too.`); });
+      natalOcc.forEach(n => { const w = tAsp.filter(t => X[t].asp.indexOf(P[n].house) >= 0); if (w.length) L.push(`🔗 Transit ${nm(w)} also looks at natal ${n} in this house, which switches that planet's themes on.`); });
+      if (!L.length) L.push(`⚪ No transiting planet is looking at this house today, so there is no extra push or pressure from sight.`);
+      addSec('aspect', '👁️', 'Aspects on the house', L.slice());
+      // ---- 5. dasha
+      L.length = 0; const dsum = [];
+      DL.forEach(([lab, d, wt]) => { const n = d.lord, p = P[n], r = rules(n), sits = p.house === h, aspects = (p.aspectsHouses || []).indexOf(h) >= 0, kar = (D.karaka[h] || []).indexOf(n) >= 0, owns = r.indexOf(h) >= 0;
+        const link = owns ? 1 : sits ? 0.8 : aspects ? 0.5 : kar ? 0.5 : 0, how = owns ? 'rules this house' : sits ? 'sits in this house' : aspects ? 'looks at this house' : kar ? 'is a natural significator of this house' : 'has no direct link to this house', ing = owns ? 'ruling this house' : sits ? 'sitting in this house' : aspects ? 'looking at this house' : 'being a natural significator of this house';
+        const d0 = p.dignity ? p.dignity.status : 'Neutral', gg = g(n, d0); if (link) drivers.push({ w: wt * link * (gg >= 0 ? 0.6 + gg : 0.4 + gg), t: `the ${lab} lord ${n} ${ing}` });
+        dsum.push(link ? `${lab} ${n}` : '');
+        L.push(`${E(n)} ${lab} ${n} (${fd(d.startDate)} to ${fd(d.endDate)}) ${how}. Natally ${n} is ${DS[d0] || 'in a neutral sign'} in your ${ordn(p.house)} house, rules the ${r.length ? nm(r.map(ordn)) : 'no'} house${r.length > 1 ? 's' : ''}, and is ${kindWord(n)}${link ? ', so this period speaks directly to ' + theme.split(',')[0] + '.' : '; its themes reach this house only indirectly, through the planets and houses it does touch.'}`);
+        const tx = X[n]; if (tx.house === h) L.push(`🎯 ${n} is also transiting this very house now, which makes ${theme.split(',')[0]} the place where its ${lab.toLowerCase()} is most visible; a dasha lord passing through its own target house tends to bring that period's themes into the open.`); });
+      if (!DL.length) L.push('⏳ The dasha tables for this chart do not reach this date, so only the natal pattern, the transits and their aspects are used for this house.');
+      addSec('dasha', '⏳', 'Mahadasha, Antardasha and Pratyantar', L.slice());
+      // ---- 6. nakshatras involved
+      L.length = 0; const inv = []; tOcc.forEach(n => inv.push(['Transit', n])); tAsp.forEach(n => inv.push(['Aspecting transit', n])); inv.push(['Transit lord', lord]); DL.forEach(([lab, d]) => inv.push([lab + ' lord (natal)', d.lord]));
+      const seen = {}; inv.forEach(([lab, n]) => { const k = lab + n; if (seen[k]) return; seen[k] = 1; const nat_ = /natal/.test(lab); const x = nat_ ? { nak: nkOf(n).name, pada: nkOf(n).pada, nakLord: nkOf(n).lord, nature: (VNK.nakshatra(nkOf(n).index) || {}).nature, kw: ((VNK.nakshatra(nkOf(n).index) || {}).keywords || []).slice(0, 3) } : X[n]; if (L.length < 7) L.push('⭐ ' + nkLine(lab + ':', n, { name: x.nak, pada: x.pada }, x.nature, x.kw, x.nakLord)); });
+      const lordNk = X[lord]; drivers.push({ w: VNK.relation(lord, lordNk.nakLord) === 'enemy' ? -1 : VNK.relation(lord, lordNk.nakLord) === 'friend' || VNK.relation(lord, lordNk.nakLord) === 'own' ? 1 : 0, t: `the transiting lord stands in ${lordNk.nak}, ruled by ${lordNk.nakLord}` });
+      addSec('nak', '⭐', 'The stars (nakshatras) involved', L.slice());
+      // ---- 7. links
+      L.length = 0;
+      const lordHouseNow = lordT.house; L.push(`🔗 The lord ${lord} links ${theme.split(',')[0]} (the ${ordn(h)}) with ${T.theme[lordHouseNow - 1].split(',')[0]} (the ${ordn(lordHouseNow)}) right now${lordHouseNow === lp.house ? ', the same house it holds at birth, so the natal and present stories point the same way' : `, a change from its natal ${ordn(lp.house)} house, so the present stretch adds a new angle`}.`);
+      P9.forEach(n => { if (n === lord || n === 'Moon') return; const x = X[n]; if (x.sign === lp.sign && x.house !== h) L.push(`🔗 Transit ${n} is in ${SIGN[x.sign]}, the sign where the lord ${lord} sits at birth, so it presses on the lord's natal position.`); });
+      natalOcc.forEach(n => { const same = P9.filter(t => X[t].sign === P[n].sign); if (same.length) L.push(`🔗 ${nm(same.map(t => 'Transit ' + t))} ${same.length > 1 ? 'are' : 'is'} in ${SIGN[P[n].sign]} with natal ${n}, joining the present to the birth pattern of this house.`); });
+      DL.forEach(([lab, d]) => { const r = rules(d.lord); if (r.indexOf(h) < 0 && r.length) { const shared = r.map(ordn); } });
+      const dl = DL.map(x => x[1].lord).filter(n => rules(n).indexOf(h) >= 0); if (dl.length) L.push(`⏳ The running dasha chain includes ${nm(dl)}, ruler of this house, so the timing layer and the house layer are the same story.`);
+      if (L.length < 2) L.push(`🧩 The links here are few, which means this house runs mostly on its own natal pattern right now.`);
+      addSec('link', '🔗', 'Links between planets and houses', L.slice());
+      // ---- 8. score and verdict
+      const sum = drivers.reduce((a, d) => a + d.w, 0), score = Math.round(clamp(50 + base + sum, 5, 95)), band = LAE.data.bands.find(b => score >= b[0]);
+      const sup = drivers.filter(d => d.w >= 0.8).sort((a, b) => b.w - a.w).slice(0, 4), prs = drivers.filter(d => d.w <= -0.8).sort((a, b) => a.w - b.w).slice(0, 4);
+      L.length = 0;
+      L.push(`${band[2] === 'g' ? '🟢' : band[2] === 'b' ? '🔴' : '🟡'} Overall the ${ordn(h)} house reads ${band[1].toLowerCase()} right now (${score} out of 100), ${D.feel[band[1]]}.`);
+      L.push(sup.length ? `✅ Supporting it: ${nm(sup.map(d => d.t))}.` : `✅ Nothing stands out as a strong support at this moment.`);
+      L.push(prs.length ? `⚠️ Pressing on it: ${nm(prs.map(d => d.t))}.` : `⚠️ Nothing stands out as a strong pressure at this moment.`);
+      L.push(`📊 The natal base (Ashtakavarga ${SAV[sg]}, lord at ${lpct == null ? 'n/a' : lpct + '%'}) ${base >= 2 ? 'adds to' : base <= -2 ? 'takes from' : 'barely moves'} the score before today's sky is counted.`);
+      addSec('verdict', '⚖️', 'Good or demanding for this house', L.slice());
+      // ---- 9. combined
+      L.length = 0; const top = drivers.slice().sort((a, b) => Math.abs(b.w) - Math.abs(a.w)).filter(d => Math.abs(d.w) >= 0.5).slice(0, 3);
+      L.push(`🧭 Putting it together: ${theme.split(',')[0]} is in ${D.feel[band[1]]} (${score}/100). ${top.length ? 'The loudest influences are ' + nm(top.map(d => d.t)) + '. ' : 'No single influence dominates, so the house runs on its natal pattern. '}${DL.length ? 'Underneath, the ' + nm(DL.map(x => lc(x[0]) + ' of ' + x[1].lord)) + ' set the background rhythm' + (dl.length ? ', and because ' + nm(dl) + (dl.length > 1 ? ' rule' : ' rules') + ' this house, that rhythm runs straight through it' : '') + '. ' : ''}${D.help_[band[1]]}`);
+      L.push(`🌱 This is a reading of present conditions and tendencies, not a forecast of events.`);
+      addSec('combined', '🧭', 'All of it combined', L.slice());
+      houses.push({ h, theme, emoji: D.hemoji[h - 1], sign: SIGN[sg], lord, score, band: band[1], tone: band[2], sup: sup.map(d => d.t), prs: prs.map(d => d.t), drivers, sections: sec,
+        facts: { sav: SAV[sg], lordPct: lpct, lordHouseNatal: lp.house, lordHouseNow: lordT.house, tOcc, tAsp, natalOcc } });
+    }
+    const words = houses.reduce((a, x) => a + x.sections.reduce((b, s) => b + s.text.split(/\s+/).length, 0), 0);
+    const areas = LAE.data.areas.map(a => { const hs = a.primary.map(h => houses[h - 1].score), sc = Math.round(hs.reduce((x, y) => x + y, 0) / hs.length), b = LAE.data.bands.find(x => sc >= x[0]); return { id: a.id, name: a.name, icon: a.icon, score: sc, band: b[1], tone: b[2], houses: a.primary }; });
+    const ranked = houses.slice().sort((a, b) => b.score - a.score || a.h - b.h);
+    const sk = P9.map(n => X[n]);
+    return { now, dasha: { md: act.mahadasha, ad: act.antardasha, pd: act.pratyantardasha }, sky: sk, houses, areas, best: ranked.slice(0, 3).map(x => x.h), care: ranked.slice(-3).reverse().map(x => x.h), words, asc: SIGN[asc] };
+  }
+  const cache = new WeakMap();
+  function assess(chart, opts){ const now = (opts && opts.now) || new Date(), key = now.getTime(); let c = cache.get(chart); if (!c) { c = {}; cache.set(chart, c); } if (!c[key]) c[key] = make(chart, now); return c[key]; }
+  return { data: D, assess };
+})(HNW_DATA);
+<\/script>
+<script>
+/* ============================================================================
+   HOUSE RIGHT NOW, screens (js/101): the first tab of Chart Reading ("🌅 Right now"), the report text and the PDF section, all from HNW (js/100).
+   HNW.pane(chart) -> HTML      HNW.reportText(chart) -> plain text      PDFR section 'now' (first page of the Time part)
+   Hand-written; no new calculations here. Styles: css/43-house-now.css. Tested by tests/house_now_test.py.
+   ============================================================================ */
+(function(){
+'use strict';
+if (typeof HNW === 'undefined' || !HNW) return;
+const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], fd = d => d ? MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear() : '';
+const GL = { Sun: '☉', Moon: '☽', Mars: '♂', Mercury: '☿', Jupiter: '♃', Venus: '♀', Saturn: '♄', Rahu: '☊', Ketu: '☋' };
+const TONE = { g: '🟢', b: '🔴', '': '🟡' };
+const A = c => HNW.assess(c, { now: new Date() });
+
+function pane(c){
+  const a = A(c), D = a.dasha, nowS = new Date().toUTCString().slice(5, 16);
+  const tile = (lab, d) => d ? `<div class="vx-t"><label>${lab}</label><b>${esc(d.lord)}</b><small>${fd(d.startDate)} to ${fd(d.endDate)}</small></div>` : '';
+  const chips = a.houses.map(x => `<a class="hn-chip ${x.tone}" href="#hn-h${x.h}" data-hn="${x.h}"><span>${x.emoji}</span><b>${x.h}</b><i>${x.score}</i></a>`).join('');
+  const sky = a.sky.map(x => `<div class="hn-sk"><span class="hn-g">${GL[x.n]}</span><div><b>${x.n}${x.rx && x.n !== 'Rahu' && x.n !== 'Ketu' ? ' ℞' : ''}</b><small>${esc(['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'][x.sign])} · ${ordn(x.house)} house</small></div><small class="hn-nk">${esc(x.nak)} ${x.pada}</small></div>`).join('');
+  const areas = a.areas.map(x => `<div class="hn-ar"><span>${x.icon || ''} ${esc(x.name)}</span><div class="dr-bar"><i class="${x.tone}" style="width:${x.score}%"></i></div><b>${x.score}</b><small>${esc(x.band)}</small></div>`).join('');
+  const card = x => `<details class="dr-vg hn-card" id="hn-h${x.h}"><summary><span class="hn-e">${x.emoji}</span><b>${ordn(x.h)} house · ${esc(x.theme.split(',')[0])}</b><small>${esc(x.sign)} · lord ${esc(x.lord)}</small><span class="vx-chip ${x.tone}">${TONE[x.tone]} ${x.score} · ${esc(x.band)}</span></summary><div class="dr-vg-b">${x.sections.map(s => `<h5>${s.e} ${esc(s.h)}</h5>${s.lines.map(l => `<p class="dr-p">${esc(l)}</p>`).join('')}`).join('')}</div></details>`;
+  return `<div class="hn"><div class="vx-note g"><div>🌅 <b>Your life right now</b>, read for ${esc(nowS)} (UTC). Every house is read from its sign, lord and natal planets, today's transiting planets, their aspects and nakshatras, and your running Mahadasha, Antardasha and Pratyantar. These are present conditions and tendencies, not predictions of events.</div></div>
+  <div class="rd-h">⏳ Running periods</div><div class="vx-grid">${tile('Mahadasha', D.md)}${tile('Antardasha', D.ad)}${tile('Pratyantar', D.pd)}</div>
+  <div class="rd-h">📈 How the nine life areas are going</div><div class="hn-ars">${areas}</div>
+  <div class="vx-note"><div>🌟 <b>Brightest houses now:</b> ${a.best.map(h => `${a.houses[h - 1].emoji} ${ordn(h)} (${a.houses[h - 1].score})`).join(', ')}. &nbsp; 🛠️ <b>Needing most care:</b> ${a.care.map(h => `${a.houses[h - 1].emoji} ${ordn(h)} (${a.houses[h - 1].score})`).join(', ')}.</div></div>
+  <div class="rd-h">🏠 The twelve houses at a glance <small>(tap one to read it)</small></div><div class="hn-chips">${chips}</div>
+  <div class="rd-h">🪐 Today's sky</div><div class="hn-sky">${sky}</div>
+  <div class="rd-h">📖 Each house in depth</div>${a.houses.map(card).join('')}</div>`;
+}
+function reportText(c){
+  const a = A(c), D = a.dasha, out = ['LIFE RIGHT NOW: THE TWELVE HOUSES', 'Running: ' + ['Mahadasha', 'Antardasha', 'Pratyantar'].map((l, i) => { const d = [D.md, D.ad, D.pd][i]; return d ? l + ' ' + d.lord + ' (' + fd(d.startDate) + ' to ' + fd(d.endDate) + ')' : ''; }).filter(Boolean).join(', '), ''];
+  out.push('Life areas: ' + a.areas.map(x => x.name + ' ' + x.score + ' (' + x.band + ')').join('; '), '');
+  a.houses.forEach(x => { out.push(`--- ${ordn(x.h)} house: ${x.theme} (${x.sign}, lord ${x.lord}) ${x.score}/100 ${x.band} ---`); x.sections.forEach(s => { out.push(s.h.toUpperCase()); s.lines.forEach(l => out.push('  ' + l)); }); out.push(''); });
+  return out.join('\n');
+}
+window.HNW.pane = pane; window.HNW.reportText = reportText;
+
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.hn-chip'); if (!b) return; e.preventDefault(); const t = document.getElementById('hn-h' + b.dataset.hn); if (t){ t.open = true; t.scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
+
+/* ---------- PDF ---------- */
+const P = window.PDFR;
+if (P && P.h && P.reg){
+  const H = P.h, ES = H.esc;
+  P.reg('now', 'Your life right now: the twelve houses', 'Each house read from today\'s sky and your running dasha', function(c){
+    const a = A(c), D = a.dasha, tile = (l, d) => d ? `<div class="hn-t"><small>${l}</small><b>${ES(d.lord)}</b><span>${fd(d.startDate)} to ${fd(d.endDate)}</span></div>` : '';
+    let out = `<p class="lead">Read for ${ES(new Date().toUTCString().slice(5, 16))}. Each house is read from its sign, lord and natal planets, today's transiting planets with their aspects and nakshatras, and your running dasha periods. These are present conditions and tendencies, not predictions.</p>`;
+    out += `<div class="hn-tiles">${tile('Mahadasha', D.md)}${tile('Antardasha', D.ad)}${tile('Pratyantar', D.pd)}</div>`;
+    out += `<h4 class="hn-h">How the nine life areas are going</h4>` + a.areas.map(x => H.hbar(x.name, x.score, 100, x.band, x.tone)).join('');
+    out += `<h4 class="hn-h">Today's sky</h4><table class="tb"><tr><th>Planet</th><th>Sign</th><th>House</th><th>Nakshatra</th></tr>${a.sky.map(x => `<tr><td>${ES(x.n)}${x.rx && x.n !== 'Rahu' && x.n !== 'Ketu' ? ' ℞' : ''}</td><td>${ES(H.SIGN[x.sign])}</td><td>${ordn(x.house)}</td><td>${ES(x.nak)} ${x.pada}</td></tr>`).join('')}</table>`;
+    out += a.houses.map(x => `<div class="plate hn-plate"><div class="pl-head"><div class="pl-glyph">${x.h}</div><div><small>${ES(x.sign)} · lord ${ES(x.lord)}</small><h3>${ES(x.theme.split(',')[0])} · ${x.score}/100 · ${ES(x.band)}</h3></div></div>${x.sections.map(s => `<h5>${ES(s.h)}</h5>${s.lines.map(l => `<p>${ES(l)}</p>`).join('')}`).join('')}</div>`).join('');
+    return out;
+  });
+  const i = P.parts.findIndex(p => p.secs.indexOf('timeline') >= 0); if (i >= 0 && P.parts[i].secs.indexOf('now') < 0) P.parts[i].secs.unshift('now');
+  const old = P.extraCss; P.extraCss = th => (old ? old(th) : '') + `.hn-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4mm;margin:4mm 0}.hn-t{padding:4mm;border:.3mm solid ${th.rule};border-radius:2mm;background:${th.card}}.hn-t small{display:block;font:600 7.5pt Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:${th.soft}}.hn-t b{display:block;font:700 17pt Georgia,serif;color:${th.accent}}.hn-t span{font:8pt Arial,sans-serif;color:${th.soft}}.hn-h{margin:6mm 0 2mm;font:700 12pt Georgia,serif;color:${th.accent}}.hn-plate p{font-size:10pt;line-height:1.5;margin:0 0 2mm;text-align:left}.hn-plate h5{margin:3mm 0 1mm}`;
+}
+})();
 <\/script>
 <script>
 /* ============================================================================
