@@ -165,7 +165,7 @@ const isD = x => /^Doshas|^Cautions/.test(x.cat);
 function bYogas(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; const l = YGE.detect(c).filter(x => !isD(x)); return l.length ? `<p class="lead">${l.length} combinations were found by exact rules. Each is a tendency to test against your life, not a promise.</p>` + groups(l, o) : '<p>No notable yoga from the rules in this report was found in this chart.</p>'; }
 function bCautions(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; const l = YGE.detect(c).filter(isD); return l.length ? `<p class="lead">These are areas to look after, not verdicts. Where a condition eases the point, it is listed with it.</p>` + groups(l, o) : '<p>None of the points checked in this report stand out in this chart.</p>'; }
 function bAreas(c, o){
-  if (typeof LAE === 'undefined' || !LAE) return ''; const la = LAE.assess(c), th = TH, ln = (typeof LAN !== 'undefined' && LAN) ? LAN.all(c) : [], lnOf = id => ln.find(y => y.id === id);
+  if (typeof LAE === 'undefined' || !LAE) return ''; const la = LAE.assess(c), th = TH, ln = (typeof LAN !== 'undefined' && LAN) ? LAN.all(c) : [], lnOf = id => ln.find(y => y.id === id), dd = (typeof ADD !== 'undefined' && ADD) ? ADD.all(c) : [], ddOf = id => dd.find(y => y.id === id);
   const sum = `<table class="tb"><thead><tr><th>Area</th><th>Score</th><th></th><th>Band</th><th>Right now</th></tr></thead><tbody>${la.areas.map(x => `<tr><td><b>${esc(x.icon)} ${esc(x.name)}</b></td><td><b>${x.score}</b></td><td style="width:34%">${bar(x)}</td><td>${chip(x.band, x.bandTone)}</td><td>${x.now.score}</td></tr>`).join('')}</tbody></table>`;
   const rad = radar(la.areas.map(x => ({ label: x.name.split(' and ')[0], v: x.score })), th);
   const idOf = v => v && v.id ? v.id : v, st = la.areas.find(x => x.id === idOf(la.strongest)) || la.areas[0], wk = la.areas.find(x => x.id === idOf(la.weakest)) || la.areas[0];
@@ -176,7 +176,8 @@ function bAreas(c, o){
     return `<div class="plate area ${tone(x.bandTone === 'g' ? 'strong' : x.bandTone === 'b' ? 'mild' : '')}"><div class="ahd">${ring(x.score, x.bandTone, th)}<div><small>${esc(x.theme)}</small><h3>${esc(x.icon)} ${esc(x.name)}</h3>${chip(x.band + ' · ' + x.score, x.bandTone)} <span class="sm">Right now ${x.now.score} · next five years ${x.next5.score}</span></div></div>` +
       `<div class="parts">${PN.map(k => hbar(k[1], x.parts[k[0]], 100, x.parts[k[0]], x.parts[k[0]] >= 62 ? 'g' : x.parts[k[0]] < 40 ? 'b' : '')).join('')}</div>` +
       `<div class="two"><div><h5>What helps</h5><ul class="ul">${(x.pos || []).map(t => `<li>${esc(t)}</li>`).join('') || '<li>No single standout support.</li>'}</ul></div><div><h5>What needs care</h5><ul class="ul">${(x.neg || []).map(t => `<li class="neg">${esc(t)}</li>`).join('') || '<li>Nothing stands out as a strain.</li>'}</ul></div></div>` +
-      (nar ? nar.paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('') : `<p><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}.</p><p><b>Next five years:</b> ${esc(x.next5.why.join('; '))}.</p>`) + `</div>`;
+      (nar ? nar.paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('') : `<p><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}.</p><p><b>Next five years:</b> ${esc(x.next5.why.join('; '))}.</p>`) + `</div>` +
+      (ddOf(x.id) ? `<div class="plate area deep"><div class="ahd"><div class="dglyph">${esc(x.icon)}</div><div><small>Deep dive · all charts, Ashtakavarga, Shadbala and aspects</small><h3>${esc(x.name)}</h3><span class="sm">Strengths, weak points and direction, read as one connected pattern</span></div></div>${ddOf(x.id).sections.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('')}</div>` : '');
   }).join('');
   return intro + plates;
 }
@@ -331,6 +332,7 @@ function css(th, name, brandName){
   .plate{break-before:page;padding:6mm 6mm 2mm;border:.4mm solid ${th.rule};border-top:2mm solid ${th.accent2};border-radius:3mm;background:linear-gradient(180deg,${th.card},#fff 38mm)}
   .plate.g{border-top-color:#4f8a5b}.plate.b{border-top-color:#c0733f}
   .ahd{display:flex;gap:6mm;align-items:center;margin-bottom:5mm}.ahd small{display:block;font:600 8pt Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:${th.soft}}.ahd h3{font-size:20pt;margin:1mm 0 2mm}.ring{width:30mm;height:30mm;flex:0 0 30mm}
+  .dglyph{flex:0 0 22mm;height:22mm;border-radius:50%;display:grid;place-items:center;font-size:24pt;background:${th.card};border:.5mm solid ${th.accent2}}.plate.deep p{font-size:10.2pt;text-align:justify;hyphens:auto}
   .parts{margin:0 0 5mm;padding:4mm 5mm;border-radius:2.5mm;background:#fff;border:.3mm solid ${th.rule}}.two{display:grid;grid-template-columns:1fr 1fr;gap:7mm}
   .hhead{display:grid;grid-template-columns:36mm 1fr 52mm;gap:6mm;align-items:center;margin-bottom:5mm}.hn{font:700 96pt/1 'Palatino Linotype',Palatino,Georgia,serif;color:${th.goldL};-webkit-text-stroke:.4mm ${th.accent};text-align:center}.hbox small{font:600 8pt Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:${th.accent}}.hbox h3{font-size:21pt;margin:1mm 0 2mm}.hbox .pts{margin-top:3mm}
   .plate .chart-svg{background:#fff}

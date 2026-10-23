@@ -38998,11 +38998,12 @@ function pane(c){
   }
   const la = (typeof LAE !== 'undefined' && LAE) ? LAE.assess(c) : null;
   const ln = (la && typeof LAN !== 'undefined' && LAN) ? LAN.all(c) : [], lnOf = id => ln.find(y => y.id === id);
+  const dd = (la && typeof ADD !== 'undefined' && ADD) ? ADD.all(c) : [], ddOf = id => dd.find(y => y.id === id);
   if (la){ S.areas.push(note('g', `📊 <b>Nine areas of life, compared</b><br><small>Each score (0 to 100) blends house strength, the strength of the house lords and natural significators, the matching divisional chart, related yogas and the running dasha. It compares the areas inside your own chart. It is not a prediction.</small>`));
     la.areas.forEach(x => S.areas.push(`<div class="dr-area"><div class="dr-ah"><span class="dr-ai">${x.icon}</span><b>${esc(x.name)}</b>${chip(x.bandTone, x.band)}<span class="dr-as">${x.score}</span></div><div class="dr-bar"><i class="${x.bandTone || 'm'}" style="width:${x.score}%"></i></div>` +
       `<div class="dr-parts">${[['house', 'Houses'], ['lords', 'Lords'], ['karaka', 'Significators'], ['varga', 'Divisional'], ['yogas', 'Yogas'], ['dasha', 'Timing']].map(k => `<span>${k[1]} <b>${x.parts[k[0]]}</b></span>`).join('')}</div>` +
       (x.pos.length ? `<ul class="dr-ul">${x.pos.map(t => `<li>✔ ${esc(t)}.</li>`).join('')}${x.neg.map(t => `<li>▲ ${esc(t)}.</li>`).join('')}</ul>` : '') +
-      `<div class="rd-w"><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}. <small>(${x.now.score}/100)</small></div><div class="rd-w"><b>Next five years:</b> ${esc(x.next5.why.join('; '))}. <small>(${x.next5.score}/100)</small></div>${lnOf(x.id) ? `<details class="dr-story"><summary>📖 Read the full story (about ${Math.round(lnOf(x.id).words / 10) * 10} words)</summary>${lnOf(x.id).paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('')}</details>` : ''}</div>`)); }
+      `<div class="rd-w"><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}. <small>(${x.now.score}/100)</small></div><div class="rd-w"><b>Next five years:</b> ${esc(x.next5.why.join('; '))}. <small>(${x.next5.score}/100)</small></div>${lnOf(x.id) ? `<details class="dr-story"><summary>📖 Read the full story (about ${Math.round(lnOf(x.id).words / 10) * 10} words)</summary>${lnOf(x.id).paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('')}</details>` : ''}${ddOf(x.id) ? `<details class="dr-story dr-deep"><summary>🔬 Deep dive: strengths, weak points and direction across all charts (about ${Math.round(ddOf(x.id).words / 50) * 50} words)</summary>${ddOf(x.id).sections.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('')}</details>` : ''}</div>`)); }
   const vg = (typeof VGR !== 'undefined' && VGR) ? VGR.all(c) : [];
   if (vg.length){ S.vargas.push(note('g', `🔭 <b>Six zoom-in charts</b><br><small>Each divisional chart looks at one area of life in detail. Open one to see its rising sign, the houses that matter, every planet and how comfortable it is there.</small>`));
     vg.forEach(x => S.vargas.push(`<details class="dr-vg"><summary><b>${esc(x.name)}</b> <small>${esc(x.short)}</small>${chip(x.bandTone, x.band)}<span class="dr-as">${x.score}</span></summary><div class="dr-vg-b">${x.paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('')}</div></details>`)); }
@@ -39059,7 +39060,7 @@ function reportText(c){
   para(`Functional nature for ${asc} rising:`, Object.entries(r.functional).map(([p, v]) => `${p} ${v.kind.replace('Functional ', '').toLowerCase()}`).join('; ') + '.');
   if (typeof VMF !== 'undefined' && VMF) ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'].forEach(n => { const x = VMF.role(n, c.ascendant.sign); if (x) para(`${n} as ${x.kind.toLowerCase()}:`, x.text); });
   PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) para(`${a} + ${x.with} in ${P[a].sign}:`, x.text); }));
-  { const la2 = (typeof LAE !== 'undefined' && LAE) ? LAE.assess(c) : null; if (la2){ sub('LIFE AREAS (0-100, compared inside your own chart)'); la2.areas.forEach(x => para(`${x.name} - ${x.band} (${x.score}):`, x.headline.replace(/^[^.]*\.[^.]*\) ?/, '') + ' Right now: ' + (x.now.why.join('; ') || 'no direct link') + '. Next five years: ' + x.next5.why.join('; ') + '.')); if (typeof LAN !== 'undefined' && LAN) LAN.all(c).forEach(n => { sub(n.name.toUpperCase() + ' - THE FULL STORY'); n.paragraphs.forEach(q => para(q.h + ':', q.text)); }); } }
+  { const la2 = (typeof LAE !== 'undefined' && LAE) ? LAE.assess(c) : null; if (la2){ sub('LIFE AREAS (0-100, compared inside your own chart)'); la2.areas.forEach(x => para(`${x.name} - ${x.band} (${x.score}):`, x.headline.replace(/^[^.]*\.[^.]*\) ?/, '') + ' Right now: ' + (x.now.why.join('; ') || 'no direct link') + '. Next five years: ' + x.next5.why.join('; ') + '.')); if (typeof LAN !== 'undefined' && LAN) LAN.all(c).forEach(n => { sub(n.name.toUpperCase() + ' - THE FULL STORY'); n.paragraphs.forEach(q => para(q.h + ':', q.text)); }); if (typeof ADD !== 'undefined' && ADD) ADD.all(c).forEach(n => { sub(n.name.toUpperCase() + ' - DEEP DIVE (ALL CHARTS)'); n.sections.forEach(q => para(q.h + ':', q.text)); }); } }
   { if (typeof VGR !== 'undefined' && VGR){ const vgr = VGR.all(c); if (vgr.length){ sub('DIVISIONAL CHARTS'); vgr.forEach(x => { para(`${x.name} - ${x.band} (${x.score}):`, ''); x.paragraphs.forEach(q => para(q.h + ':', q.text)); }); } } }
   { if (typeof TRS !== 'undefined' && TRS){ const tr2 = TRS.assess(c, (typeof currentProfileForExport !== 'undefined') ? currentProfileForExport : null); sub('TRANSITS AND SADE SATI'); if (!tr2.available) para('Not shown:', tr2.notes.join(' ')); else { tr2.notes.forEach(n => para('Note:', n)); para('In short:', tr2.summary.join(' ')); tr2.sade.active.forEach(x => para(x.kind + ' - ' + x.name + ':', x.text)); if (!tr2.sade.active.length && tr2.sade.next) para('Sade Sati and Dhaiya:', 'Not running now. ' + tr2.sade.next.text); tr2.gochar.forEach(g => para(g.planet + ' now:', g.text)); tr2.calendar.forEach(x => para('Sign change:', x.text)); LAE.assess(c).areas.forEach(a => tr2.outlook[a.id].forEach(o => para(a.name + ', year ' + o.year + ':', o.text))); } } }
   { const yg2 = (typeof YGE !== 'undefined' && YGE) ? YGE.detect(c) : []; if (yg2.length){ sub('YOGAS IN YOUR CHART'); yg2.forEach(x => para(x.name + ':', x.text.replace(/^[^.]*\. /, ''))); } }
@@ -42636,7 +42637,7 @@ const isD = x => /^Doshas|^Cautions/.test(x.cat);
 function bYogas(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; const l = YGE.detect(c).filter(x => !isD(x)); return l.length ? `<p class="lead">${l.length} combinations were found by exact rules. Each is a tendency to test against your life, not a promise.</p>` + groups(l, o) : '<p>No notable yoga from the rules in this report was found in this chart.</p>'; }
 function bCautions(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; const l = YGE.detect(c).filter(isD); return l.length ? `<p class="lead">These are areas to look after, not verdicts. Where a condition eases the point, it is listed with it.</p>` + groups(l, o) : '<p>None of the points checked in this report stand out in this chart.</p>'; }
 function bAreas(c, o){
-  if (typeof LAE === 'undefined' || !LAE) return ''; const la = LAE.assess(c), th = TH, ln = (typeof LAN !== 'undefined' && LAN) ? LAN.all(c) : [], lnOf = id => ln.find(y => y.id === id);
+  if (typeof LAE === 'undefined' || !LAE) return ''; const la = LAE.assess(c), th = TH, ln = (typeof LAN !== 'undefined' && LAN) ? LAN.all(c) : [], lnOf = id => ln.find(y => y.id === id), dd = (typeof ADD !== 'undefined' && ADD) ? ADD.all(c) : [], ddOf = id => dd.find(y => y.id === id);
   const sum = `<table class="tb"><thead><tr><th>Area</th><th>Score</th><th></th><th>Band</th><th>Right now</th></tr></thead><tbody>${la.areas.map(x => `<tr><td><b>${esc(x.icon)} ${esc(x.name)}</b></td><td><b>${x.score}</b></td><td style="width:34%">${bar(x)}</td><td>${chip(x.band, x.bandTone)}</td><td>${x.now.score}</td></tr>`).join('')}</tbody></table>`;
   const rad = radar(la.areas.map(x => ({ label: x.name.split(' and ')[0], v: x.score })), th);
   const idOf = v => v && v.id ? v.id : v, st = la.areas.find(x => x.id === idOf(la.strongest)) || la.areas[0], wk = la.areas.find(x => x.id === idOf(la.weakest)) || la.areas[0];
@@ -42647,7 +42648,8 @@ function bAreas(c, o){
     return `<div class="plate area ${tone(x.bandTone === 'g' ? 'strong' : x.bandTone === 'b' ? 'mild' : '')}"><div class="ahd">${ring(x.score, x.bandTone, th)}<div><small>${esc(x.theme)}</small><h3>${esc(x.icon)} ${esc(x.name)}</h3>${chip(x.band + ' · ' + x.score, x.bandTone)} <span class="sm">Right now ${x.now.score} · next five years ${x.next5.score}</span></div></div>` +
       `<div class="parts">${PN.map(k => hbar(k[1], x.parts[k[0]], 100, x.parts[k[0]], x.parts[k[0]] >= 62 ? 'g' : x.parts[k[0]] < 40 ? 'b' : '')).join('')}</div>` +
       `<div class="two"><div><h5>What helps</h5><ul class="ul">${(x.pos || []).map(t => `<li>${esc(t)}</li>`).join('') || '<li>No single standout support.</li>'}</ul></div><div><h5>What needs care</h5><ul class="ul">${(x.neg || []).map(t => `<li class="neg">${esc(t)}</li>`).join('') || '<li>Nothing stands out as a strain.</li>'}</ul></div></div>` +
-      (nar ? nar.paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('') : `<p><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}.</p><p><b>Next five years:</b> ${esc(x.next5.why.join('; '))}.</p>`) + `</div>`;
+      (nar ? nar.paragraphs.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('') : `<p><b>Right now:</b> ${esc(x.now.why.join('; ') || 'no direct link to this area')}.</p><p><b>Next five years:</b> ${esc(x.next5.why.join('; '))}.</p>`) + `</div>` +
+      (ddOf(x.id) ? `<div class="plate area deep"><div class="ahd"><div class="dglyph">${esc(x.icon)}</div><div><small>Deep dive · all charts, Ashtakavarga, Shadbala and aspects</small><h3>${esc(x.name)}</h3><span class="sm">Strengths, weak points and direction, read as one connected pattern</span></div></div>${ddOf(x.id).sections.map(q => `<h5>${esc(q.h)}</h5><p>${esc(q.text)}</p>`).join('')}</div>` : '');
   }).join('');
   return intro + plates;
 }
@@ -42802,6 +42804,7 @@ function css(th, name, brandName){
   .plate{break-before:page;padding:6mm 6mm 2mm;border:.4mm solid ${th.rule};border-top:2mm solid ${th.accent2};border-radius:3mm;background:linear-gradient(180deg,${th.card},#fff 38mm)}
   .plate.g{border-top-color:#4f8a5b}.plate.b{border-top-color:#c0733f}
   .ahd{display:flex;gap:6mm;align-items:center;margin-bottom:5mm}.ahd small{display:block;font:600 8pt Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:${th.soft}}.ahd h3{font-size:20pt;margin:1mm 0 2mm}.ring{width:30mm;height:30mm;flex:0 0 30mm}
+  .dglyph{flex:0 0 22mm;height:22mm;border-radius:50%;display:grid;place-items:center;font-size:24pt;background:${th.card};border:.5mm solid ${th.accent2}}.plate.deep p{font-size:10.2pt;text-align:justify;hyphens:auto}
   .parts{margin:0 0 5mm;padding:4mm 5mm;border-radius:2.5mm;background:#fff;border:.3mm solid ${th.rule}}.two{display:grid;grid-template-columns:1fr 1fr;gap:7mm}
   .hhead{display:grid;grid-template-columns:36mm 1fr 52mm;gap:6mm;align-items:center;margin-bottom:5mm}.hn{font:700 96pt/1 'Palatino Linotype',Palatino,Georgia,serif;color:${th.goldL};-webkit-text-stroke:.4mm ${th.accent};text-align:center}.hbox small{font:600 8pt Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:${th.accent}}.hbox h3{font-size:21pt;margin:1mm 0 2mm}.hbox .pts{margin-top:3mm}
   .plate .chart-svg{background:#fff}
@@ -44205,6 +44208,275 @@ P.reg('glossary', 'Glossary', 'The terms in this report, in plain words', bGloss
 P.reg('notes', 'Numbers, method and notes', 'The data behind the reading, and space for your own notes', bNotes);
 P.extraCss = th => `.dblock{break-before:page}.dhead{margin-bottom:4mm}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:5mm 8mm;margin-bottom:5mm}.grid2 figure{margin:0;break-inside:avoid}.grid2 h5{margin:0 0 1mm}.vplate .tb td,.vplate .tb th{padding:1.3mm 2mm}.heatrow td{text-align:center}.heatrow td:first-child{text-align:left}`;
 })();
+<\/script>
+<script>
+/* ============================================================================
+   GENERATED by tools/reading_gen (edit the tables in tools/reading_gen/build_dd.py, then run tools/reading_gen/regen.sh). Do not hand-edit this file.
+   AREA DEEP DIVE (ADD): a long, connected reading for each of the 9 life areas, layer schema v1.1. Pattern reading, not prediction.
+   ADD.area(chart, id, {now}) -> { id, name, icon, sections:[{id,h,text}], words, facts }      ADD.all(chart, {now}) -> [ ... 9 areas ... ]
+   Reads: D1 and every divisional chart (dignity of the lords and significators in all of them), Ashtakavarga (SAV by house, BAV of the lord and significators),
+   Shadbala (percent of requirement), drishti (which planets look at the houses, lords and significators and how strong they are), yogas (YGE), dasha (VDA) and
+   transits (TRS), then links each area to the others through the planets they share. Needs js/94 (LAE), js/92 (YGE).
+   ============================================================================ */
+const ADD_DATA = {
+ "schema": "layer-v1.1",
+ "theme": [
+  "yourself, your body and how you start things",
+  "money, speech and family",
+  "effort, courage, skills and siblings",
+  "home, the mind and your roots",
+  "creativity, children and learning",
+  "daily work, service, health routines and obstacles",
+  "partnerships and one-to-one bonds",
+  "change, shared resources and hidden matters",
+  "belief, teachers and long-term luck",
+  "career and public standing",
+  "gains, friends and networks",
+  "rest, losses, distance and the inner life"
+ ],
+ "role": {
+  "Sun": "confidence and authority",
+  "Moon": "feeling and daily rhythm",
+  "Mars": "drive and courage",
+  "Mercury": "thinking and communication",
+  "Jupiter": "wisdom, growth and guidance",
+  "Venus": "affection, pleasure and harmony",
+  "Saturn": "discipline and patience",
+  "Rahu": "ambition and the unconventional",
+  "Ketu": "detachment and inner searching"
+ },
+ "dig": {
+  "Exalted": "exalted, the strongest position a planet can hold in a sign",
+  "OwnSign": "in its own sign, at home and steady",
+  "Moolatrikona": "in its moolatrikona sign, nearly as strong as in its own",
+  "Friend": "in a friend's sign, comfortable though not at full power",
+  "Neutral": "in a neutral sign, neither helped nor hindered by the sign itself",
+  "Enemy": "in an enemy's sign, uncomfortable and working through friction",
+  "Debilitated": "debilitated, in its weakest sign, so its results need conscious support"
+ },
+ "pillars": {
+  "house": "the house itself (Ashtakavarga support)",
+  "lords": "the house lords (Shadbala and placement)",
+  "karaka": "the natural significators",
+  "varga": "the divisional chart",
+  "yogas": "the yogas that touch it",
+  "dasha": "timing"
+ },
+ "areas": {
+  "career": {
+   "what": "your career and public standing",
+   "verb": "build a visible role",
+   "vnoun": "the career chart (D10)",
+   "ask": "Has your standing grown more from steady, repeated effort than from sudden openings?"
+  },
+  "money": {
+   "what": "your money and savings",
+   "verb": "earn, keep and grow resources",
+   "vnoun": "the wealth chart (D2)",
+   "ask": "Do you tend to earn in more than one way, and do you keep a share of what comes in?"
+  },
+  "marriage": {
+   "what": "your marriage and closest partnerships",
+   "verb": "commit and stay close",
+   "vnoun": "the marriage chart (D9)",
+   "ask": "Do you take time to commit, and has that patience served your bonds?"
+  },
+  "children": {
+   "what": "children, students and creative work",
+   "verb": "nurture and create",
+   "vnoun": "the children chart (D7)",
+   "ask": "Do you come most alive when you are teaching, guiding or making something?"
+  },
+  "health": {
+   "what": "your health and vitality",
+   "verb": "keep energy steady and recover",
+   "vnoun": "the health chart (D6)",
+   "ask": "Does your energy recover well after hard stretches, and which habit protects it most?"
+  },
+  "education": {
+   "what": "learning and education",
+   "verb": "learn and apply what you learn",
+   "vnoun": "the learning chart (D24)",
+   "ask": "Do you learn best in short regular sessions, and do you remember most what you have used?"
+  },
+  "foreign": {
+   "what": "travel and life away from your starting place",
+   "verb": "move, adapt and settle elsewhere",
+   "vnoun": "the navamsa (D9)",
+   "ask": "Have distance and change helped you grow more than they have unsettled you?"
+  },
+  "home": {
+   "what": "home, family roots and property",
+   "verb": "make a settled home",
+   "vnoun": "the property chart (D4)",
+   "ask": "Do you feel most at peace when your home and roots are in order?"
+  },
+  "spirit": {
+   "what": "your inner life and sense of meaning",
+   "verb": "keep a practice that gives meaning",
+   "vnoun": "the spiritual chart (D20)",
+   "ask": "Which quiet habit makes you feel most steady and connected?"
+  }
+ }
+};
+
+window.ADD = (function(D){
+  'use strict';
+  if (typeof LAE === 'undefined' || !LAE || typeof YGE === 'undefined' || !YGE || typeof getDignity !== 'function') return null;
+  const SIGN = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const P9 = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'], BEN = ['Jupiter','Venus','Mercury','Moon'], MAL = ['Sun','Mars','Saturn','Rahu','Ketu'];
+  const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
+  const nm = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1), lc = s => s.charAt(0).toLowerCase() + s.slice(1), uniq = a => [...new Set(a)], avg = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0;
+  const hash = s => { let h = 7; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; }, pick = (arr, seed) => arr[hash(seed) % arr.length];
+  const STRONG = ['Exalted','OwnSign','Moolatrikona'], WEAK = ['Enemy','Debilitated'];
+  const AREA = {}; LAE.data.areas.forEach(a => AREA[a.id] = a);
+
+  function ctx(chart, now){
+    const P = chart.planets, H1 = chart.vargas.D1.houses, SAV = chart.ashtakavarga.sav, BAV = chart.ashtakavarga.bavTables || {}, SB = chart.shadbala.planets;
+    const vkeys = Object.keys(chart.vargas).filter(k => chart.vargas[k] && chart.vargas[k].planetVargaSign && /^D\d+$/.test(k));
+    const c = { P, H1, SAV, BAV, SB, vkeys, now, avgSav: SAV.reduce((a, b) => a + b, 0) / 12 };
+    c.pct = n => (SB[n] && SB[n].percentOfRequired != null) ? Math.round(SB[n].percentOfRequired) : null;
+    c.dig = n => (P[n] && P[n].dignity && P[n].dignity.status) || 'Neutral';
+    c.houseOf = n => P[n] && P[n].house;
+    c.lordOf = h => H1[h - 1].signLord;
+    c.signIdx = h => H1[h - 1].sign;
+    c.sav = h => SAV[H1[h - 1].sign];
+    c.bav = (n, sign) => (BAV[n] && BAV[n][sign] != null) ? BAV[n][sign] : null;
+    c.aspectors = h => P9.filter(n => P[n] && (P[n].aspectsHouses || []).indexOf(h) >= 0 && P[n].house !== h);
+    c.net = list => list.reduce((a, n) => a + (BEN.indexOf(n) >= 0 ? 1 : -1) * ((c.pct(n) == null ? 100 : c.pct(n)) / 100), 0);
+    c.vp = n => { // the planet's dignity in every divisional chart
+      const o = { strong: 0, friend: 0, neutral: 0, weak: 0, total: 0, vargottama: false }; if (!P[n]) return o;
+      c.vkeys.forEach(k => { const sg = chart.vargas[k].planetVargaSign[n]; if (sg == null) return; const st = (getDignity(n, sg, 15) || {}).status; o.total++;
+        if (STRONG.indexOf(st) >= 0) o.strong++; else if (st === 'Friend') o.friend++; else if (WEAK.indexOf(st) >= 0) o.weak++; else o.neutral++; });
+      const d9 = chart.vargas.D9 && chart.vargas.D9.planetVargaSign && chart.vargas.D9.planetVargaSign[n]; o.vargottama = d9 != null && d9 === P[n].sign;
+      o.score = o.total ? (o.strong + 0.5 * o.friend - o.weak) / o.total : 0; return o; };
+    c.vsign = (k, n) => chart.vargas[k] && chart.vargas[k].planetVargaSign ? chart.vargas[k].planetVargaSign[n] : null;
+    c.vdig = (k, n) => { const s = c.vsign(k, n); return s == null ? null : (getDignity(n, s, 15) || {}).status; };
+    return c;
+  }
+  const DS = { Exalted: 'exalted', OwnSign: 'in its own sign', Moolatrikona: 'in its moolatrikona sign', Friend: "in a friend's sign", Neutral: 'in a neutral sign', Enemy: "in an enemy's sign", Debilitated: 'debilitated' }, ds = st => DS[st] || 'in a neutral sign';
+  const pw = p => p == null ? '' : p >= 130 ? 'very well supplied with strength' : p >= 100 ? 'well supplied with strength' : p >= 80 ? 'a little under the strength it needs' : 'clearly short of the strength it needs';
+  const nat = n => BEN.indexOf(n) >= 0 ? 'a natural benefic' : 'a natural malefic';
+  const place = h => [1, 4, 7, 10].indexOf(h) >= 0 ? 'k' : [5, 9].indexOf(h) >= 0 ? 't' : [3, 11].indexOf(h) >= 0 ? 'u' : h === 2 ? 'r' : 's';
+  const savWord = (v, a) => v >= a + 4 ? 'well above' : v >= a + 1.5 ? 'above' : v > a - 1.5 ? 'close to' : v > a - 4 ? 'below' : 'well below';
+  const bavWord = v => v == null ? '' : v >= 6 ? 'a very strong share' : v >= 5 ? 'a strong share' : v === 4 ? 'a middling share' : v === 3 ? 'a modest share' : 'a thin share';
+
+  function houseBlock(c, h, A, role){
+    const sg = SIGN[c.signIdx(h)], lord = c.lordOf(h), lh = c.houseOf(lord), occ = Object.keys(c.P).filter(n => c.P[n].house === h), asp = c.aspectors(h), s = c.sav(h);
+    const rank = [1,2,3,4,5,6,7,8,9,10,11,12].sort((a, b) => c.sav(b) - c.sav(a) || a - b).indexOf(h) + 1;
+    let t = `Your ${ordn(h)} house, the house of ${D.theme[h - 1]}, falls in ${sg} and is ruled by ${lord}. `;
+    t += `Its Ashtakavarga total is ${s} points against a chart average of ${c.avgSav.toFixed(1)}, which is ${savWord(s, c.avgSav)} average and makes it the ${rank === 1 ? 'best supported' : rank === 12 ? 'least supported' : ordn(rank) + ' best supported'} of your twelve houses. `;
+    if (occ.length){ t += occ.map(n => { const d = c.dig(n), p = c.pct(n); return `${n} sits here, ${D.dig[d] || 'in a neutral sign'}${p != null ? `, ${pw(p)} (${p}% of what it needs)` : ''}, bringing ${D.role[n]} straight into ${role.what}`; }).join('; ') + '. ';
+      const ben = occ.filter(n => BEN.indexOf(n) >= 0), mal = occ.filter(n => MAL.indexOf(n) >= 0);
+      t += ben.length && mal.length ? 'With both supportive and demanding planets in the house, it works as a mixed room: it gives and it tests in turn. ' : ben.length ? 'These occupants lean supportive, which tends to lift the house. ' : 'These occupants lean demanding: they tend to bring effort and growth through pressure rather than ease. ';
+    } else t += `No planet sits in it, so it is shaped mainly by its lord and by the planets that look at it, which is the usual and perfectly workable pattern for an empty house. `;
+    return t;
+  }
+
+  function lordBlock(c, h, role){
+    const lord = c.lordOf(h), lh = c.houseOf(lord), st = c.dig(lord), p = c.pct(lord), p0 = c.P[lord], bv = c.bav(lord, p0 && p0.sign), cl = place(lh);
+    let t = `The ${ordn(h)} lord, ${lord}, stands in your ${ordn(lh)} house in ${SIGN[p0.sign]}, ${D.dig[st] || 'in a neutral sign'}`;
+    t += p != null ? `, and is ${pw(p)} (${p}% of its requirement). ` : '. ';
+    if (lh === h) t += `Because it sits in its own house, this area is self-contained: it leans on its own resources and does not depend on other parts of life to function. `;
+    else t += `That ties ${role.what} to ${D.theme[lh - 1]}. ` + (cl === 'k' ? 'A lord in a corner house is anchored in visible life, so the area tends to show in daily results. ' : cl === 't' ? 'A lord in a trine house carries merit and natural support, so the area tends to be helped by past effort and goodwill. ' : cl === 'u' ? 'A lord in a house of growth tends to improve with time and persistence. ' : cl === 'r' ? 'A lord in the house of resources links the area to what you earn, say and hold on to. ' : 'A lord in a house of strain tends to give its results through effort, release or detours, which is demanding but not a verdict. ');
+    if (bv != null) t += `In its own Ashtakavarga ${lord} gives ${bv} of 8 points to ${SIGN[p0.sign]}, ${bavWord(bv)} in the sign where it stands. `;
+    if (p0.retrograde && lord !== 'Rahu' && lord !== 'Ketu') t += `It is retrograde, so its work turns inward and its results tend to arrive late or after a second look. `;
+    if (p0.combustion && p0.combustion.combust) t += `It is also close to the Sun (combust), which dims its own voice. `;
+    return t;
+  }
+
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], fm = jd => { const d = jdToDate(jd); return MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); };
+  const fw = w => { const a = fm(w.start), b = fm(w.end); return a === b ? 'around ' + a : 'from ' + a + ' to ' + b; };
+  function build(chart, id, now, LA){
+    const A = AREA[id], R = D.areas[id], c = ctx(chart, now), la = LA.areas.find(x => x.id === id), secs = [], facts = { primary: [], karakas: [], vp: {}, support: [] };
+    const prim = A.primary, sup = A.support, kar = A.karakas, lordsP = uniq(prim.map(c.lordOf)), P = c.P;
+    const add = (sid, h, text) => secs.push({ id: sid, h, text: text.replace(/\s+/g, ' ').trim() });
+    // 1. shape
+    const parts = Object.keys(la.parts).map(k => [k, la.parts[k]]).sort((a, b) => b[1] - a[1]), best = parts[0], worst = parts[parts.length - 1];
+    add('shape', 'The shape of the pattern', `${A.name} is read here through ${nm(prim.map(h => `the ${ordn(h)} house (${SIGN[c.signIdx(h)]}, ruled by ${c.lordOf(h)})`))}, with ${nm(sup.map(ordn))} house${sup.length > 1 ? 's' : ''} feeding it, the natural significators ${nm(kar)}, and ${R.vnoun}. Those are then checked against all ${c.vkeys.length} divisional charts the app calculates, against the Ashtakavarga points under each house, against Shadbala, and against the planets that look at each point. Taken together the area scores ${la.score} out of 100, which reads as ${la.band.toLowerCase()} support when compared with your other areas. The firmest pillar is ${D.pillars[best[0]]} (${best[1]} out of 100) and the thinnest is ${D.pillars[worst[0]]} (${worst[1]} out of 100). That gap is the story of this area: it tells you where the area has natural help and where it asks for conscious effort. What follows is a pattern reading, not a forecast; it describes tendencies, strengths and direction, and your choices decide how they are used.`);
+    // 2. houses
+    prim.forEach(h => facts.primary.push({ h, sign: SIGN[c.signIdx(h)], lord: c.lordOf(h), lordHouse: c.houseOf(c.lordOf(h)), lordPct: c.pct(c.lordOf(h)), sav: c.sav(h), occ: Object.keys(P).filter(n => P[n].house === h), asp: c.aspectors(h) }));
+    add('house', prim.length > 1 ? 'The houses themselves' : 'The house itself', prim.map(h => houseBlock(c, h, A, R)).join(' '));
+    // 3. lords
+    add('lords', prim.length > 1 ? 'The house lords' : 'The house lord', prim.map(h => lordBlock(c, h, R)).join(' ') + ' ' + sup.map(h => { const l = c.lordOf(h), lh = c.houseOf(l), p = c.pct(l); facts.support.push({ h, lord: l, lordHouse: lh, pct: p }); return `Among the supporting houses, the ${ordn(h)} lord ${l} stands in the ${ordn(lh)} house${p != null ? ` with ${p}% of its requirement` : ''}, ${p != null && p >= 100 ? 'a dependable helper' : 'a helper that needs support'}.`; }).join(' '));
+    // 4. drishti
+    const keyPts = prim.map(h => ({ what: `the ${ordn(h)} house`, list: c.aspectors(h) })).concat(lordsP.map(l => ({ what: l + ' (the lord)', list: c.aspectors(c.houseOf(l)) }))).concat(kar.filter(n => P[n]).map(n => ({ what: n + ' (a significator)', list: c.aspectors(P[n].house) })));
+    const dr = keyPts.map(k => { if (!k.list.length) return `Nothing looks directly at ${k.what}, so it works on its own terms.`; const net = c.net(k.list);
+      return `${nm(k.list.map(n => `${n} (${nat(n)}, ${c.pct(n) != null ? c.pct(n) + '% of its strength' : 'a shadow planet'})`))} look${k.list.length > 1 ? '' : 's'} at ${k.what}, ${net > 0.6 ? 'which on balance protects and widens it' : net < -0.6 ? 'which on balance adds pressure and asks for patience' : 'which balances support against pressure'}.`; });
+    add('drishti', 'Who looks at this area (drishti)', `Drishti, the line of sight between planets, shows who influences a point from a distance. ${dr.join(' ')} The stronger the aspecting planet, the louder its voice, so read these as a map of who protects the area and who tests it.`);
+    // 5. karakas
+    const ks = kar.filter(n => P[n]).map(n => { const p0 = P[n], st = c.dig(n), p = c.pct(n), bv = c.bav(n, p0.sign), conj = Object.keys(P).filter(q => q !== n && P[q].house === p0.house);
+      facts.karakas.push({ n, house: p0.house, dig: st, pct: p, bav: bv });
+      return `${n}, the planet of ${D.role[n]}, stands in the ${ordn(p0.house)} house in ${SIGN[p0.sign]}, ${D.dig[st] || 'in a neutral sign'}${p != null ? `, ${pw(p)} (${p}%)` : ''}${bv != null ? `, with ${bv} of 8 of its own Ashtakavarga points there` : ''}. ${p0.house === prim[0] ? 'It sits in the area it signifies, which gives it direct access.' : `That links its gifts to ${D.theme[p0.house - 1]}.`}${p0.retrograde && n !== 'Rahu' && n !== 'Ketu' ? ' It is retrograde, so it works inward and late.' : ''}${p0.combustion && p0.combustion.combust ? ' It is combust, close to the Sun, so it may need conscious attention.' : ''}${conj.length ? ` It shares the house with ${nm(conj)}.` : ''}`; });
+    const kst = kar.filter(n => P[n]).map(n => [n, (c.pct(n) == null ? 100 : c.pct(n)) + (STRONG.indexOf(c.dig(n)) >= 0 ? 25 : WEAK.indexOf(c.dig(n)) >= 0 ? -25 : 0)]).sort((a, b) => b[1] - a[1]);
+    add('karaka', 'The natural significators', `A natural significator is the planet that represents a theme in every chart, whatever the houses say. ${ks.join(' ')}${kst.length > 1 ? ` Of these, ${kst[0][0]} carries the most weight and ${kst[kst.length - 1][0]} the least, so the area leans on ${kst[0][0]}'s qualities first and asks you to develop ${kst[kst.length - 1][0]}'s deliberately.` : ''}`);
+    // 6. ashtakavarga
+    const hs = prim.concat(sup), sv = hs.map(h => [h, c.sav(h)]).sort((a, b) => b[1] - a[1]);
+    const bavs = lordsP.concat(kar.filter(n => lordsP.indexOf(n) < 0)).map(n => prim.map(h => { const v = c.bav(n, c.signIdx(h)); return v == null ? null : `${n} gives ${v} of 8 points to the ${ordn(h)} house (${bavWord(v)})`; }).filter(Boolean)).reduce((a, b) => a.concat(b), []);
+    add('ashtaka', 'Ashtakavarga: the support underneath', `Ashtakavarga counts how many of the eight reference points favour each sign, so it shows how much support sits under a house regardless of who occupies it. For this area the houses read ${nm(hs.map(h => `${ordn(h)} house ${c.sav(h)}`))} points, against an average of ${c.avgSav.toFixed(1)}. The lifeline is the ${ordn(sv[0][0])} house with ${sv[0][1]} points, and the thinnest is the ${ordn(sv[sv.length - 1][0])} house with ${sv[sv.length - 1][1]}${sv[0][1] - sv[sv.length - 1][1] >= 6 ? ', a wide gap that means the area gets help in one place and has to be built by hand in another' : ', a narrow gap that means support is fairly even across the area'}. ${bavs.length ? 'Looking at the individual planets, ' + nm(bavs.slice(0, 5)) + '. Five or more points means that planet backs the house; two or fewer means it adds little there and the area leans on other planets.' : ''}`);
+    // 7a. patterns across all vargas
+    const keyP = uniq(lordsP.concat(kar)).filter(n => P[n]).slice(0, 4), vpl = keyP.map(n => { const o = c.vp(n); facts.vp[n] = o; return `${n} is in a strong sign (own, exalted or moolatrikona) in ${o.strong} of ${o.total} charts, in a friend's sign in ${o.friend}, in a neutral sign in ${o.neutral}, and in an enemy's or debilitated sign in ${o.weak}${o.vargottama ? ', and it is vargottama (the same sign in the birth chart and the navamsa), which adds steadiness' : ''}`; });
+    const mean = avg(keyP.map(n => facts.vp[n].score)), vtxt = mean >= 0.22 ? 'The lords and significators of this area are well placed across the divisional charts, so the promise of the birth chart is echoed at finer levels' : mean >= 0.1 ? 'Across the divisional charts these planets are fairly placed: they are supported in some charts and neutral in most, so the area is steady without being exceptional' : 'Across the divisional charts these planets are more often neutral or strained than strong, so the area asks for more of your own effort than the birth chart alone suggests';
+    add('vpattern', 'Across all the divisional charts', `Every divisional chart is a finer lens on the same sky, so a planet that stays strong across many of them is dependable and one that is strong only in the birth chart may fade under closer look. For the planets behind this area: ${vpl.join('; ')}. ${vtxt}.`);
+    // 7b. the area's own varga
+    const V = chart.vargas[A.varga], vasc = V ? V.ascendantSign : null;
+    if (V){ const h0 = prim[0], vh = V.houses[h0 - 1], vsg = (vasc + h0 - 1) % 12, vl = vh.signLord, vls = c.vsign(A.varga, vl), vst = vls != null ? (getDignity(vl, vls, 15) || {}).status : null, occ = (vh.planets || []).map(p => p.name);
+      const core = lordsP.concat(kar).filter(n => c.vsign(A.varga, n) != null).slice(0, 4), cs = core.map(n => `${n} in ${SIGN[c.vsign(A.varga, n)]} (${lc((c.vdig(A.varga, n) || 'Neutral').replace('OwnSign', 'own sign'))})`);
+      const d9 = lordsP.map(n => c.vdig('D9', n)).filter(Boolean), good = [c.dig(lordsP[0]), c.vdig(A.varga, lordsP[0]), c.vdig('D9', lordsP[0])].filter(x => x && STRONG.concat(['Friend']).indexOf(x) >= 0).length;
+      add('varga', `${cap(R.vnoun)} up close`, `In ${R.vnoun} the rising sign is ${SIGN[vasc]}, so the ${ordn(h0)} house of that chart falls in ${SIGN[vsg]}, ruled by ${vl}, which stands in ${vls != null ? SIGN[vls] : 'its sign'}${vst ? ' and is ' + (D.dig[vst] || 'in a neutral sign') : ''}. ${occ.length ? `${nm(occ)} ${occ.length > 1 ? 'sit' : 'sits'} in that house, adding ${nm(occ.map(n => D.role[n]))} to the picture.` : 'No planet sits in that house, so its lord carries it.'} The key planets there read: ${cs.join(', ')}. When the birth chart, this chart and the navamsa are compared for the main lord ${lordsP[0]}, ${good === 3 ? 'all three agree that it is in a comfortable or strong position, which is the clearest sign of a dependable area' : good === 2 ? 'two of the three agree it is comfortable, so the area is mostly reliable with one weaker view' : good === 1 ? 'only one of the three shows it comfortable, so the charts give split signals and the area rewards patience and checking' : 'none of the three shows it strongly placed, so the area asks for deliberate effort and the best results come from steady building'}.`);
+      facts.vstrong = good; }
+    // 8. yogas
+    const yl = (la.yogas || []).filter(y => y.tone !== 'neutral').slice(0, 4), yn = (la.yogas || []).length;
+    add('yogas', 'Yogas and combinations', yn ? `For ${A.name.toLowerCase()}, the yoga rules find ${yn} combination${yn > 1 ? 's' : ''} touching the area. ${(yl.length ? yl : la.yogas.slice(0, 3)).map(y => `${y.name} (${y.tone === 'support' ? 'supportive' : y.tone === 'challenge' ? 'demanding' : 'neutral'}${y.level ? ', ' + y.level : ''}) appears because ${y.why}`).join('. ')}. Supportive combinations add a margin the numbers alone do not show; demanding ones mark where the area gets its tests, and a test is a place to grow strength, not a closed door. Weigh them against the plain numbers for ${nm(prim.map(h => `the ${ordn(h)} house`))} and the significators ${nm(kar)} described earlier: a yoga adds colour to a pattern that the houses, lords and divisional charts have already drawn, and it matters most where those numbers agree with it.` : `No named yoga touches this area strongly, so its character comes from the houses, lords and significators described above rather than from a special combination. That is common, and it means the area is shaped by ordinary, readable factors you can work with directly. In practice, look at ${nm(prim.map(h => `the ${ordn(h)} house lord ${c.lordOf(h)}`))} and the significators ${nm(kar)}: their strength, their dignity in the divisional charts and the planets that look at them carry the whole reading for ${A.name.toLowerCase()}, so the earlier sections matter more here than any single combination would.`);
+    // 9. direction and timing
+    let tr = null; try { if (typeof TRS !== 'undefined' && TRS) tr = TRS.assess(chart, (typeof currentProfileForExport !== 'undefined') ? currentProfileForExport : null, { now }); } catch (e) { tr = null; }
+    let tt = `For ${A.name.toLowerCase()}, the running dasha reads as follows. ${la.now.why.map(x => cap(x) + '.').join(' ')} Together they put the present stretch at ${la.now.score} out of 100 for this area. Looking five years ahead, ${lc(la.next5.why.join('. ').replace(/^The strongest/, 'the strongest'))} (${la.next5.score} out of 100 on average). `;
+    if (tr && tr.available && tr.outlook && tr.outlook[id]){ const o = tr.outlook[id]; tt += `Over the next three years the year-by-year blend of the natal score, the dasha and the slow planets reads ${nm(o.map(y => `${y.label} ${y.band.toLowerCase()} (${y.score})`))}. `;
+      const w = (tr.double && tr.double[id]) || []; if (w.length) tt += `Jupiter and Saturn together influence the houses of this area in ${w.length} window${w.length > 1 ? 's' : ''}, the first ${fw(w[0])}, which is a classic marker of active timing. `; }
+    tt += `Treat timing as direction: it shows when the area is more likely to be lit up or quiet, not what will occur.`;
+    add('timing', 'Direction and timing', tt);
+    // extras
+    (EXTRA[id] || []).forEach(fn => { try { const r = fn(chart, c, A, R, la); if (r) add(r[0], r[1], r[2]); } catch (e) {} });
+    // 10. links
+    const share = {}; const keyOf = a => uniq(a.primary.map(c.lordOf).concat(a.karakas)).filter(n => P[n]);
+    const mine = keyOf(A); LA.areas.forEach(o => { if (o.id === id) return; const oth = keyOf(AREA[o.id]), both = mine.filter(n => oth.indexOf(n) >= 0), hh = prim.filter(h => AREA[o.id].primary.concat(AREA[o.id].support).indexOf(h) >= 0); if (both.length || hh.length) share[o.id] = { both, hh, o }; });
+    const links = Object.keys(share).sort((a, b) => (share[b].both.length * 2 + share[b].hh.length) - (share[a].both.length * 2 + share[a].hh.length)).slice(0, 4);
+    facts.links = links;
+    add('links', 'How this area links to the rest of your chart', links.length ? `No area stands alone, because the same planets and houses serve several parts of life. ${links.map(k => { const s = share[k], o = s.o; const lead = ['', 'It also ', 'A further link: it ', 'And it '][links.indexOf(k)]; return `${links.indexOf(k) ? lead : A.name + ' '}shares ${s.both.length ? nm(s.both) : `the ${nm(s.hh.map(ordn))} house`} with ${lc(AREA[k].name)} (${o.band.toLowerCase()}, ${o.score}), so ${s.both.length ? pick([`a boost or a strain on ${nm(s.both)} is felt in both`, `what lifts ${nm(s.both)} lifts both, and what strains ${s.both.length > 1 ? 'them' : 'it'} is felt in both`, `both lean on the condition of ${nm(s.both)}`], id + k) : 'the same house shapes both'}`; }).join('. ')}. Where the neighbouring area is stronger it can lend momentum, and where it is weaker it can draw on the same planets and compete for your energy, so working on one often moves the other.` : `This area draws on planets and houses that no other area leans on heavily, so it develops largely on its own terms and does not compete with the rest of your chart for energy.`);
+    // 11. synthesis
+    const pos = la.pos.slice(0, 2), neg = la.neg.slice(0, 2);
+    add('synthesis', 'Bringing it together', `Putting the pillars side by side. The strongest supports are these: ${pos.length ? pos.map(x => lc(x) + '.').join(' ') : 'they are spread evenly with no single standout.'} The places that ask for care are these: ${neg.length ? neg.map(x => lc(x) + '.').join(' ') : 'few and mild.'} The direction of the pattern is to lead with what is firm, which is ${D.pillars[best[0]]}, and to shore up ${D.pillars[worst[0]]} on purpose rather than hoping it will carry weight it was not built for. In plain terms, ${la.band === 'Strong' ? 'this is an area where effort tends to be rewarded and the chart backs you; the risk is taking it for granted' : la.band === 'Steady' ? 'this is an area with a sound base and a few soft spots; steady attention turns a good base into a strong one' : la.band === 'Mixed' ? 'this is an area of real contrast, with parts that flow and parts that stall; knowing which is which saves a lot of wasted effort' : 'this is an area that asks for more of your own work than most; the chart does not close it off, but it rewards patience, structure and good support'}. A question to carry with you: ${R.ask}`);
+    const words = secs.reduce((a, s) => a + s.text.split(/\s+/).length, 0);
+    return { id, name: A.name, icon: A.icon, score: la.score, band: la.band, sections: secs, words, facts };
+  }
+
+  /* ---------- area-specific extra sections ---------- */
+  const EXTRA = {
+    marriage: [(chart, c, A, R) => {
+      const P = c.P, h5 = 5, l5 = c.lordOf(5), l7 = c.lordOf(7), v = P.Venus, mo = P.Moon, occ5 = Object.keys(P).filter(n => P[n].house === 5), a5 = c.aspectors(5);
+      const linked = P[l5].house === P[l7].house || P[l5].house === 7 || P[l7].house === 5 || (P[l5].aspectsHouses || []).indexOf(P[l7].house) >= 0 && (P[l7].aspectsHouses || []).indexOf(P[l5].house) >= 0;
+      return ['love', 'Love and romance: how affection works for you', `Love is read separately from marriage, mainly through the 5th house, Venus and the Moon. Your 5th house falls in ${SIGN[c.signIdx(5)]}, ruled by ${l5}, which stands in the ${ordn(P[l5].house)} house, ${D.dig[c.dig(l5)] || 'in a neutral sign'}${c.pct(l5) != null ? `, with ${c.pct(l5)}% of its requirement` : ''}; the house holds ${c.sav(5)} Ashtakavarga points (${savWord(c.sav(5), c.avgSav)} average) and ${occ5.length ? 'is occupied by ' + nm(occ5) : 'is empty'}${a5.length ? ', with ' + nm(a5) + ' looking at it' : ''}. Venus, the planet of affection, is in ${SIGN[v.sign]} in the ${ordn(v.house)} house, ${D.dig[c.dig('Venus')]}, with ${c.pct('Venus')}% of its strength, and in the navamsa it is ${ds(c.vdig('D9', 'Venus') || 'Neutral')}. The Moon, which sets how you feel and need to be held, is in ${SIGN[mo.sign]} in the ${ordn(mo.house)} house. ${linked ? 'The lords of the 5th (romance) and the 7th (commitment) are linked by house or sight, so for you falling in love and settling down tend to be connected: the person you are drawn to and the person you commit to are more likely to be the same.' : 'The lords of the 5th (romance) and the 7th (commitment) are not directly linked, so attraction and long-term commitment can follow different tracks for you: the pull you feel and the partner you would build a life with may not point the same way every time, and it helps to ask both questions separately.'} Read this as a style of loving, not a promise of events.`]; },
+    (chart, c, A, R) => {
+      const P = c.P, dk = chart.charaKarakas && chart.charaKarakas.Darakaraka, dp = dk && dk.planet, ul = (typeof computeAllSpecialLagnaSigns === 'function') ? computeAllSpecialLagnaSigns(chart).UL : null, asc = chart.ascendant.sign;
+      if (!dp || !P[dp]) return null; const d9 = c.vsign('D9', dp), v9 = chart.vargas.D9, l7n = v9.houses[6].signLord, l7s = c.vsign('D9', l7n);
+      return ['partner', 'The partner pattern', `In the Jaimini method the Darakaraka, the planet with the lowest degree in your chart, describes the partner you tend to attract. Yours is ${dp}, in ${SIGN[P[dp].sign]} in the ${ordn(P[dp].house)} house, ${D.dig[c.dig(dp)]}${c.pct(dp) != null ? `, with ${c.pct(dp)}% of its requirement` : ''}; in the navamsa it sits in ${d9 != null ? SIGN[d9] : 'its sign'}. So the partner pattern carries the qualities of ${D.role[dp]}, and where this planet is strong, partnership tends to feel supported; where it is strained, partnership asks for patience around exactly those qualities. In the navamsa the 7th house is ruled by ${l7n}, standing in ${l7s != null ? SIGN[l7s] : 'its sign'} (${lc(((getDignity(l7n, l7s, 15) || {}).status || 'Neutral').replace('OwnSign', 'own sign'))}), which shows the deeper, long-run quality of the bond once the first attraction settles. ${ul != null && ul >= 0 ? `The Upapada Lagna, the traditional marker of the marriage bond itself, falls in ${SIGN[ul]}, the ${ordn(((ul - asc + 12) % 12) + 1)} house from your rising sign, which links the marriage bond to ${D.theme[((ul - asc + 12) % 12)]}.` : ''} Together these describe a pattern of attraction and commitment, which you can test against your own history of close bonds.`]; }],
+    career: [(chart, c, A, R) => {
+      const P = c.P, ak = chart.charaKarakas && chart.charaKarakas.Amatyakaraka, ap = ak && ak.planet, l10 = c.lordOf(10), asc = chart.ascendant.sign, al = (typeof computeAllSpecialLagnaSigns === 'function') ? computeAllSpecialLagnaSigns(chart).AL : null;
+      if (!ap || !P[ap]) return null; const l6 = c.lordOf(6), l11 = c.lordOf(11);
+      return ['workstyle', 'Work style and the road to standing', `The Amatyakaraka, the planet of the adviser and of vocation in the Jaimini method, is ${ap}, in ${SIGN[P[ap].sign]} in the ${ordn(P[ap].house)} house, ${D.dig[c.dig(ap)]}${c.pct(ap) != null ? `, with ${c.pct(ap)}% of its requirement` : ''}. It colours how you work: through ${D.role[ap]}. Three houses describe the road: the 6th, ${SIGN[c.signIdx(6)]}, ruled by ${l6} in the ${ordn(P[l6].house)} house, shows service, daily routine and competition; the 10th, ruled by ${l10} in the ${ordn(P[l10].house)} house, shows the role itself; and the 11th, ruled by ${l11} in the ${ordn(P[l11].house)} house, shows gains, networks and the rewards that follow. ${[6, 10, 11].filter(h => [1, 4, 5, 7, 9, 10].indexOf(P[c.lordOf(h)].house) >= 0).length >= 2 ? 'Most of these lords stand in supportive houses, so the road from effort to role to reward is fairly open.' : 'Several of these lords stand in demanding houses, so the road from effort to role to reward tends to be indirect and to reward patience.'} ${al != null && al >= 0 ? `Your Arudha Lagna, the image the world forms of you, falls in ${SIGN[al]}, the ${ordn(((al - asc + 12) % 12) + 1)} house from your rising sign, which means the public sees you through the themes of ${D.theme[((al - asc + 12) % 12)]}.` : ''}`]; }],
+    money: [(chart, c, A, R) => {
+      const P = c.P, l2 = c.lordOf(2), l11 = c.lordOf(11), s2 = c.sav(2), s11 = c.sav(11), l5 = c.lordOf(5), l9 = c.lordOf(9);
+      return ['keeping', 'Earning versus keeping', `Money has two halves in the chart: the 11th house is what comes in and the 2nd house is what stays. Your 11th house has ${s11} Ashtakavarga points and your 2nd has ${s2}, against an average of ${c.avgSav.toFixed(1)}, so ${s11 > s2 + 2 ? 'earning is better supported than keeping, and conscious saving habits matter more for you than for most' : s2 > s11 + 2 ? 'keeping is better supported than earning, so what you earn tends to stay while growing income takes deliberate effort' : 'earning and keeping are about equally supported, so neither half has to compensate for the other'}. The 11th lord ${l11} stands in the ${ordn(P[l11].house)} house with ${c.pct(l11) != null ? c.pct(l11) + '%' : 'its'} strength and the 2nd lord ${l2} stands in the ${ordn(P[l2].house)} house with ${c.pct(l2) != null ? c.pct(l2) + '%' : 'its'} strength. The 5th lord ${l5} (ideas and speculation) is in the ${ordn(P[l5].house)} house and the 9th lord ${l9} (fortune) is in the ${ordn(P[l9].house)} house; the more these two connect to the 2nd and 11th, the more good fortune and ideas turn into money. ${[P[l5].house, P[l9].house].some(h => [2, 11].indexOf(h) >= 0) ? 'At least one of them stands in a money house, a classic link between fortune and income.' : 'Neither stands in a money house, so income here is built more through work and steady habits than through luck.'}`]; }],
+    spirit: [(chart, c, A, R) => {
+      const P = c.P, ak = chart.charaKarakas && chart.charaKarakas.Atmakaraka, ap = ak && ak.planet; if (!ap || !P[ap]) return null; const d9 = c.vsign('D9', ap), asc = chart.ascendant.sign, ket = P.Ketu, l9 = c.lordOf(9), l12 = c.lordOf(12);
+      return ['path', 'Practice and path', `In the Jaimini method the Atmakaraka, the planet with the highest degree, is the significator of the soul and shows the lesson that keeps returning. Yours is ${ap}, in ${SIGN[P[ap].sign]} in the ${ordn(P[ap].house)} house, ${D.dig[c.dig(ap)]}${c.pct(ap) != null ? `, with ${c.pct(ap)}% of its requirement` : ''}. Its navamsa sign, ${d9 != null ? SIGN[d9] : 'unknown'}, is called the Karakamsha and is read as the deeper wish of the soul: it falls ${d9 != null ? 'in the ' + ordn(((d9 - asc + 12) % 12) + 1) + ' house from your rising sign, which links the inner search to ' + D.theme[((d9 - asc + 12) % 12)] : 'in a sign the chart cannot place'}. Ketu, the planet of letting go, stands in the ${ordn(ket.house)} house in ${SIGN[ket.sign]}, so detachment and quiet turning-away tend to show around ${D.theme[ket.house - 1]}. The 9th lord ${l9} (belief and teachers) stands in the ${ordn(P[l9].house)} house and the 12th lord ${l12} (solitude and release) stands in the ${ordn(P[l12].house)} house. ${[9, 12].map(h => c.sav(h)).reduce((a, b) => a + b, 0) / 2 >= c.avgSav ? 'The 9th and 12th houses together are fairly well supported, so practice tends to find room in your life.' : 'The 9th and 12th houses are lightly supported, so practice tends to need a fixed time and place rather than arriving by itself.'} This describes the shape of your inner search; the practice itself is yours to choose.`]; }]
+  };
+
+  function all(chart, opts){ const now = (opts && opts.now) || new Date(), LA = LAE.assess(chart, { now }); return LA.areas.map(a => build(chart, a.id, now, LA)); }
+  function area(chart, id, opts){ const now = (opts && opts.now) || new Date(), LA = LAE.assess(chart, { now }); return build(chart, id, now, LA); }
+  return { data: D, all, area, ids: LAE.ids };
+})(ADD_DATA);
 <\/script>
 <script>
 /* ============================================================================

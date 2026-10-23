@@ -68,7 +68,7 @@ with sync_playwright() as p:
       if(![...pane.querySelectorAll('.dr-nb')].some(b=>b.dataset.sec==='areas'))bad.push('nav');
       A.areas.forEach((x,i)=>{const e=sec.querySelectorAll('.dr-area')[i];if(!e)return;if(!e.textContent.includes(x.name))bad.push('name '+x.id);if(e.querySelector('.dr-as').textContent!==String(x.score))bad.push('score '+x.id);if(e.querySelector('.dr-bar i').style.width!==x.score+'%')bad.push('bar '+x.id)});
       const rep=buildFullReportText(c,currentProfileForExport,{}).replace(/\\s+/g,' ');if(!rep.includes('LIFE AREAS'))bad.push('report title');A.areas.forEach(x=>{if(!rep.includes(x.name+' - '+x.band+' ('+x.score+')'))bad.push('report '+x.id)});
-      const d=new DOMParser().parseFromString(PDFR.build(c,currentProfileForExport,{sections:['areas']}),'text/html');if(d.querySelectorAll('#s-areas .plate').length!==9||d.querySelectorAll('#s-areas table.tb:first-of-type tbody tr').length!==9)bad.push('pdf cards');
+      const d=new DOMParser().parseFromString(PDFR.build(c,currentProfileForExport,{sections:['areas']}),'text/html');if(d.querySelectorAll('#s-areas .plate:not(.deep)').length!==9||d.querySelectorAll('#s-areas table.tb:first-of-type tbody tr').length!==9)bad.push('pdf cards');
       if(!d.querySelector('#s-areas .abar i'))bad.push('pdf bars');
       return {bad:bad.slice(0,6),overflow:document.documentElement.scrollWidth>window.innerWidth+1}}""")
     ok('Deep reading has a "Life areas" section (9 cards, scores, bars, nav button); the report and the PDF list the same scores', not s['bad'], s)

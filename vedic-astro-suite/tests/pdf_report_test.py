@@ -31,7 +31,7 @@ with sync_playwright() as p:
           const secs=[...d.querySelectorAll('section.sec')].map(s=>s.id.slice(2));const miss=%s.filter(x=>secs.indexOf(x)<0);if(miss.length)bad.push('missing '+miss.join());
           if(d.querySelectorAll('.divider').length!==9)bad.push('dividers '+d.querySelectorAll('.divider').length);if(!d.querySelector('.cover svg.wheel')||!d.querySelector('.end'))bad.push('cover/end');
           if(d.querySelectorAll('.toc li').length!==secs.length||d.querySelectorAll('.toc .tp').length!==9)bad.push('toc');
-          if(d.querySelectorAll('#s-houses .plate').length!==12)bad.push('house plates');if(d.querySelectorAll('#s-areas .plate').length!==9)bad.push('area plates '+d.querySelectorAll('#s-areas .plate').length);
+          if(d.querySelectorAll('#s-houses .plate').length!==12)bad.push('house plates');if(d.querySelectorAll('#s-areas .plate:not(.deep)').length!==9)bad.push('area plates '+d.querySelectorAll('#s-areas .plate').length);
           if(d.querySelectorAll('#s-planets .plate').length!==9)bad.push('planet plates');
           const nv=Object.keys(ch.vargas).filter(k=>typeof VARGAS!=='undefined'&&VARGAS[k]).length;if(d.querySelectorAll('#s-gallery .vplate').length!==nv||nv<20)bad.push('varga charts '+d.querySelectorAll('#s-gallery .vplate').length+' vs '+nv);
           if(d.querySelectorAll('#s-gallery svg.chart-svg polygon').length!==nv*12)bad.push('gallery houses');

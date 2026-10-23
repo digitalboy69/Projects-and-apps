@@ -150,6 +150,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/92-yoga-engine.js` — Yoga engine (global YGE), schema v1.1, GENERATED: 41 yogas with exact detectors (Moon, Sun, combinations, wealth, exchanges, reversals, status, Pancha Mahapurusha, surrounding, cautions); each shows the rule it matched plus real-life text
 - `apps/birth-chart/js/93-pdf-report.js` — PDF book (global PDFR): one click builds a self-contained printable HTML book (cover with zodiac wheel, contents, nine parts with full-page dividers, sections, plates, inline SVG charts) and opens the print window; `PDFR.reg` registers section builders. Hand-written, no libraries.
 - `apps/birth-chart/js/98-pdf-pages.js` — extra PDF sections registered into PDFR: panchang, planet pages, special lagnas + Bhava Chalit, Shadbala, Ashtakavarga, gallery of all divisional charts, every Mahadasha/Antardasha, glossary, notes
+- `apps/birth-chart/js/99-area-deep.js` — GENERATED area deep dive (ADD): long connected readings for 9 life areas across all divisional charts, Ashtakavarga, Shadbala, drishti, yogas, timing, plus love/partner/workstyle/keeping/path extras
 - `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
 - `apps/birth-chart/js/95-life-narratives.js` — Life-area narratives (global LAN), GENERATED: a 450-700 word personal reading for each of the 9 life areas, composed from the engine facts (stance by band, house-lord arena, strengths, care points, yoga modifiers, timing, practices, self-check questions)
 - `apps/birth-chart/js/96-varga-reading.js` — Divisional chart readings (global VGR), GENERATED: D9, D10, D7, D4, D24, D20 each with rising sign, the houses that matter, planet-by-planet text, strength summary, vargottama and a score; positions come from the app's own varga engine
@@ -324,6 +325,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tools/reading_gen/build_ln.py` — narrative tables (noun/win/slip/stance/practices/questions per area, part sentences, timing, closing) + composer; writes js/95-life-narratives.js
 - `tools/reading_gen/build_vg.py` — varga table (domain, houses, key planets, intro, questions) + composer; writes js/96-varga-reading.js
 - `tools/reading_gen/build_ts.py` — transit wording tables (phases, favourable houses) + composer; writes js/97-transit-reading.js
+- `tools/reading_gen/build_dd.py` — area deep dive tables and composer; writes js/99-area-deep.js
 - `tools/reading_gen/regen.sh` — regenerates all four reading databases (js/87, 89, 90, 91); afterwards `git status` must show no change unless a table was edited
 - `tools/reading_gen/regen.sh — regenerates all four reading databases; afterwards `git status` must show no change unless a table was edited`
 - `tools/ai/session.sh` — AI session helper: start / check / test / ship (commit, rebase on moved main, check, push branch, fast-forward main; token only via GH_TOKEN env)
@@ -345,6 +347,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/yoga_engine_test.py` — Yoga engine: 41 hand-built charts that have each yoga and 41 that do not, cross-check with the app's own detectors on 8 real charts, texts, screen and report
 - `tests/life_event_pro_test.js` — Life-Event Pro engine in a Node vm: catalog integrity, dasha equals the app engine, recovers a known rising sign and time, flags wrong dates, random events stay below a 40% floor
 - `tests/pdf_report_test.py` — PDF report: 4 theme/paper variants x 4 charts clean and self-contained, sections/options, Studio dialog, real PDF render
+- `tests/area_deep_test.py` — area deep dive: every quoted number vs the chart over 12 charts, wording rules, determinism, Deep reading/report/PDF wiring
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/life_narratives_test.py` — Life-area narratives: 12 charts x 9 areas (length, structure, wording, consistency with scores), variation, sensitivity, Deep reading + report + PDF wiring
 - `tests/varga_reading_test.py` — Divisional chart readings: 12 charts x 6 vargas cross-checked with the app's own varga data and VDB's D9 vargottama, variation, one-fact sensitivity, Deep reading + report + PDF wiring

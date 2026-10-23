@@ -66,7 +66,7 @@ with sync_playwright() as p:
       const cards=[...pane.querySelectorAll('.dr-sec[data-sec=areas] .dr-area')];if(cards.length!==9)bad.push('cards');
       cards.forEach((e,i)=>{const d=e.querySelector('details.dr-story');if(!d){bad.push('no story '+i);return}if(d.querySelectorAll('h5').length!==L[i].paragraphs.length)bad.push('headings '+i);if(!norm(d.textContent).includes(norm(L[i].paragraphs[0].text)))bad.push('text '+i)});
       const rep=buildFullReportText(c,currentProfileForExport,{}).replace(/\\s+/g,' ');L.forEach(n=>{if(!rep.includes(n.name.toUpperCase()+' - THE FULL STORY'))bad.push('report '+n.id);if(!rep.includes(norm(n.paragraphs[1].text.slice(0,80))))bad.push('report text '+n.id)});
-      const d=new DOMParser().parseFromString(PDFR.build(c,currentProfileForExport,{sections:['areas']}),'text/html'),cs=[...d.querySelectorAll('#s-areas .plate')];if(cs.length!==9)bad.push('pdf cards');
+      const d=new DOMParser().parseFromString(PDFR.build(c,currentProfileForExport,{sections:['areas']}),'text/html'),cs=[...d.querySelectorAll('#s-areas .plate:not(.deep)')];if(cs.length!==9)bad.push('pdf cards');
       cs.forEach((e,i)=>{if(e.querySelectorAll('h5').length!==L[i].paragraphs.length+2)bad.push('pdf headings '+i)});
       return {bad:bad.slice(0,6),overflow:document.documentElement.scrollWidth>window.innerWidth+1}}""")
     ok('Deep reading (fold-out story under each area), the report text and the PDF carry the same 9 narratives', not s['bad'], s)
