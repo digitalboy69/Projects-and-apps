@@ -52,8 +52,8 @@ function bPlanets(c){
       (role ? `<p><b>What it does for ${esc(SIGN[asc])} rising.</b> It ${esc(role.gives)}. It can feel ${esc(role.feels)}. Watch for ${esc(role.watch)}.</p>` : '') +
       (rd && rd.inHouse ? `<h5>In the ${esc(ordn(p.house))} house</h5><p>${esc(P.h.strip(rd.inHouse.text))}</p>` : '') + (rd && rd.inSign ? `<h5>In ${esc(SIGN[p.sign])}</h5><p>${esc(P.h.strip(rd.inSign.text))}</p>` : '') +
       (vn ? `<h5>In ${esc(p.nakshatra.name)}, pada ${p.nakshatra.pada}</h5><p>${esc(vn.text || vn.how || '')}</p>` : '') +
-      (p.retrograde && n !== 'Rahu' && n !== 'Ketu' ? `<p class="sm"><b>Retrograde.</b> A retrograde planet turns its energy inward. Its results often come later, in a revised form, or through rethinking.</p>` : '') +
-      (p.combustion && p.combustion.combust ? `<p class="sm"><b>Combust.</b> Very close to the Sun, this planet's own voice is overshadowed. Its themes may need conscious attention to come through.</p>` : '') +
+      (window.PSTUI ? PSTUI.pdf(c, n) : (p.retrograde && n !== 'Rahu' && n !== 'Ketu' ? `<p class="sm"><b>Retrograde.</b> A retrograde planet turns its energy inward. Its results often come later, in a revised form, or through rethinking.</p>` : '') +
+      (p.combustion && p.combustion.combust ? `<p class="sm"><b>Combust.</b> Very close to the Sun, this planet's own voice is overshadowed. Its themes may need conscious attention to come through.</p>` : '')) +
       (conj.length ? `<p class="sm"><b>Conjunction.</b> ${esc(n)} shares the ${esc(ordn(p.house))} house with ${esc(conj.join(' and '))}; their themes blend and are read together.</p>` : '') + `</div>`;
   });
   return out;

@@ -14,3 +14,4 @@ python3 build_vg.py                                    # js/96-varga-reading.js 
 python3 build_ts.py                                    # js/97-transit-reading.js     (table inside build_ts.py)
 python3 build_dd.py                                    # js/99-area-deep.js           (tables inside build_dd.py)
 python3 build_hn.py                                    # js/100-house-now.js         (tables inside build_hn.py)
+python3 build_ps.py                                    # js/102-planet-states.js     (tables inside build_ps.py and ps_data.py)

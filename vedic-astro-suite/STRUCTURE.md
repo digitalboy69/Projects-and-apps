@@ -153,6 +153,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/99-area-deep.js` — GENERATED area deep dive (ADD): long connected readings for 9 life areas across all divisional charts, Ashtakavarga, Shadbala, drishti, yogas, timing, plus love/partner/workstyle/keeping/path extras
 - `apps/birth-chart/js/100-house-now.js` — GENERATED "Right now" reading (HNW): 12 houses x 9 emoji sections from sign, lord, natal planets, today's transits, aspects, nakshatras and Mahadasha/Antardasha/Pratyantar
 - `apps/birth-chart/js/101-house-now-ui.js` — Right now screens: first tab of Chart Reading, report text and the PDF section
+- `apps/birth-chart/js/102-planet-states.js` — GENERATED planet states (PST): every state of a planet (exalted, own, friend, neutral, enemy, debilitated with cancellation check, retrograde, combust, vargottama, navamsa, house) with everyday examples
+- `apps/birth-chart/js/103-planet-states-ui.js` — adds the PST blocks to the Planets tab cards, the report text and the PDF planet pages
 - `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
 - `apps/birth-chart/js/95-life-narratives.js` — Life-area narratives (global LAN), GENERATED: a 450-700 word personal reading for each of the 9 life areas, composed from the engine facts (stance by band, house-lord arena, strengths, care points, yoga modifiers, timing, practices, self-check questions)
 - `apps/birth-chart/js/96-varga-reading.js` — Divisional chart readings (global VGR), GENERATED: D9, D10, D7, D4, D24, D20 each with rising sign, the houses that matter, planet-by-planet text, strength summary, vargottama and a score; positions come from the app's own varga engine
@@ -330,6 +332,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tools/reading_gen/build_ts.py` — transit wording tables (phases, favourable houses) + composer; writes js/97-transit-reading.js
 - `tools/reading_gen/build_dd.py` — area deep dive tables and composer; writes js/99-area-deep.js
 - `tools/reading_gen/build_hn.py` — Right now tables and composer; writes js/100-house-now.js
+- `tools/reading_gen/build_ps.py` — planet states frames, combinations and composer; writes js/102-planet-states.js
+- `tools/reading_gen/ps_data.py` — planet-by-planet state wording (exalted, debilitated, retrograde, combust, scenes, friction, help) used by build_ps.py
 - `tools/reading_gen/regen.sh` — regenerates all four reading databases (js/87, 89, 90, 91); afterwards `git status` must show no change unless a table was edited
 - `tools/reading_gen/regen.sh — regenerates all four reading databases; afterwards `git status` must show no change unless a table was edited`
 - `tools/ai/session.sh` — AI session helper: start / check / test / ship (commit, rebase on moved main, check, push branch, fast-forward main; token only via GH_TOKEN env)
@@ -353,6 +357,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/pdf_report_test.py` — PDF report: 4 theme/paper variants x 4 charts clean and self-contained, sections/options, Studio dialog, real PDF render
 - `tests/area_deep_test.py` — area deep dive: every quoted number vs the chart over 12 charts, wording rules, determinism, Deep reading/report/PDF wiring
 - `tests/house_now_test.py` — Right now: sky, dasha chain, signs, lords, Ashtakavarga and scores vs the engines at two dates over 12 charts, wording, first tab, report and PDF
+- `tests/planet_states_test.py` — planet states: tags vs the chart over 12 charts, every planet x state paragraph, wording, Planets tab, report and PDF wiring
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/life_narratives_test.py` — Life-area narratives: 12 charts x 9 areas (length, structure, wording, consistency with scores), variation, sensitivity, Deep reading + report + PDF wiring
 - `tests/varga_reading_test.py` — Divisional chart readings: 12 charts x 6 vargas cross-checked with the app's own varga data and VDB's D9 vargottama, variation, one-fact sensitivity, Deep reading + report + PDF wiring

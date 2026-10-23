@@ -28,10 +28,11 @@ function pane(c){
   <div class="rd-h">🪐 Today's sky</div><div class="hn-sky">${sky}</div>
   <div class="rd-h">📖 Each house in depth</div>${a.houses.map(card).join('')}</div>`;
 }
+const wrap = (t, w, ind) => { const words = String(t).split(/\s+/), out = []; let ln = ''; words.forEach(x => { if ((ln + ' ' + x).trim().length > w && ln){ out.push(ln); ln = ind + x; } else ln = (ln ? ln + ' ' : '') + x; }); if (ln) out.push(ln); return out.join('\n'); };
 function reportText(c){
   const a = A(c), D = a.dasha, out = ['LIFE RIGHT NOW: THE TWELVE HOUSES', 'Running: ' + ['Mahadasha', 'Antardasha', 'Pratyantar'].map((l, i) => { const d = [D.md, D.ad, D.pd][i]; return d ? l + ' ' + d.lord + ' (' + fd(d.startDate) + ' to ' + fd(d.endDate) + ')' : ''; }).filter(Boolean).join(', '), ''];
   out.push('Life areas: ' + a.areas.map(x => x.name + ' ' + x.score + ' (' + x.band + ')').join('; '), '');
-  a.houses.forEach(x => { out.push(`--- ${ordn(x.h)} house: ${x.theme} (${x.sign}, lord ${x.lord}) ${x.score}/100 ${x.band} ---`); x.sections.forEach(s => { out.push(s.h.toUpperCase()); s.lines.forEach(l => out.push('  ' + l)); }); out.push(''); });
+  a.houses.forEach(x => { out.push(`--- ${ordn(x.h)} house: ${x.theme} (${x.sign}, lord ${x.lord}) ${x.score}/100 ${x.band} ---`); x.sections.forEach(s => { out.push(s.h.toUpperCase()); s.lines.forEach(l => out.push(wrap('  ' + l, 74, '      '))); }); out.push(''); });
   return out.join('\n');
 }
 window.HNW.pane = pane; window.HNW.reportText = reportText;
