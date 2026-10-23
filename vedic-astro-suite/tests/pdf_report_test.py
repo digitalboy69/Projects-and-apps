@@ -19,6 +19,7 @@ with sync_playwright() as p:
     b = p.chromium.launch(executable_path=CHROME); pg = b.new_page(viewport={'width': 430, 'height': 900}); errs = []; warns = []
     pg.on('pageerror', lambda e: errs.append(str(e))); pg.on('console', lambda m: warns.append(m.text) if 'PDFR' in m.text else None)
     pg.route('**/*', lambda r: r.continue_() if r.request.url.startswith(('http://127.0.0.1', 'data:', 'blob:', 'about:')) else r.abort())
+    pg.add_init_script("window.print=function(){try{(window.top.__prints=window.top.__prints||[]).push(document.querySelector('.cover')?'book':'blank')}catch(e){}}")
     pg.goto(PAGE); pg.wait_for_selector('#birthForm')
     ok('PDFR loaded: 21 sections registered, 9 parts, no settings dialog code', pg.evaluate("typeof PDFR==='object'&&PDFR.sections().length===21&&PDFR.parts.length===9&&typeof PDFR.generate==='function'&&!document.querySelector('.pdfs')&&PDFR.themes===undefined"))
     html0 = ''
@@ -49,8 +50,9 @@ with sync_playwright() as p:
     pg.evaluate("document.querySelectorAll('.app-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-reading').classList.add('active')")
     pg.evaluate("document.querySelectorAll('#panel-reading .rd .vx-tabs button')[5].click()"); pg.wait_for_timeout(300)
     ok('Deep reading overview has the "Generate the full PDF book" button', pg.evaluate("!!document.querySelector('.dr-sec[data-sec=intro] .dr-pdf')&&/full PDF/i.test(document.querySelector('.dr-pdf').textContent)"))
-    n0 = pg.evaluate("document.querySelectorAll('body>iframe').length"); pg.evaluate("document.querySelector('.dr-pdf').click()"); pg.wait_for_timeout(1500)
+    n0 = pg.evaluate("document.querySelectorAll('body>iframe').length"); pg.evaluate("document.querySelector('.dr-pdf').click()"); pg.wait_for_timeout(3500)
     ok('one click builds the book and prints it inside a hidden iframe: no dialog, no settings', pg.evaluate("document.querySelectorAll('body>iframe').length") == n0 + 1 and not pg.evaluate("!!document.querySelector('.pdfs')") and pg.evaluate("!!document.getElementById('pdfr-note')"))
+    ok('the print window opens exactly once, and for the finished book (never for a blank frame, no second print)', pg.evaluate("window.__prints||[]") == ['book'], pg.evaluate("window.__prints||[]"))
     ok('export dialog has a single "Generate full PDF" button', pg.evaluate("(document.getElementById('exportPdfBtn')||{}).textContent||''").find('Generate full PDF') >= 0)
     ok('phone: no horizontal scroll', not pg.evaluate("document.documentElement.scrollWidth>window.innerWidth+1"))
     # ---- print layout: nothing wider than the page (Chrome would shrink the whole book), then a real PDF ----

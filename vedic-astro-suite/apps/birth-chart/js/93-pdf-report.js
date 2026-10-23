@@ -373,8 +373,13 @@ function generate(){
   setTimeout(() => {
     let html; try { html = build(chart, profile); } catch (e) { note('Could not build the report: ' + (e && e.message || e), 8000); return; }
     const f = document.createElement('iframe'); f.setAttribute('aria-hidden', 'true'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
-    f.onload = () => { try { f.contentWindow.focus(); f.contentWindow.print(); window.focus(); note('Choose "Save as PDF" in the print window.', 6000); } catch (e) { window.focus(); note('Could not open the print window.', 6000); } setTimeout(() => f.remove(), 120000); };
-    document.body.appendChild(f); f.srcdoc = html;
+    let done = false;
+    f.onload = () => {   // the empty about:blank frame fires 'load' first: print only once the book itself is in the frame
+      if (done) return; let d = null; try { d = f.contentDocument; } catch (e) { d = null; }
+      if (!d || !d.querySelector('.cover')) return; done = true;
+      setTimeout(() => { try { f.contentWindow.focus(); f.contentWindow.print(); window.focus(); note('Choose "Save as PDF" in the print window.', 6000); } catch (e) { window.focus(); note('Could not open the print window.', 6000); } setTimeout(() => f.remove(), 120000); }, 250);
+    };
+    f.srcdoc = html; document.body.appendChild(f);
   }, 60);
 }
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-pdf-studio],[data-pdf-generate]'); if (b){ e.preventDefault(); if (typeof closeExportModal === 'function') closeExportModal(); generate(); } });

@@ -161,7 +161,7 @@ _Generated 2026-10-23 - 1420 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 148 files, 23654 lines, 1676 KB
+**birth-chart** - 148 files, 23659 lines, 1676 KB
 ```
 index.html                                         570 lines   32 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -260,7 +260,7 @@ js/91-year-timeline-writer.js                      190 lines   18 KB
 js/92-year-timeline-ui.js                           57 lines    4 KB
 js/92-yoga-engine.js                              1379 lines   63 KB
 js/93-dasha-time-finder.js                         162 lines   10 KB
-js/93-pdf-report.js                                384 lines   53 KB
+js/93-pdf-report.js                                389 lines   53 KB
 js/94-life-areas.js                                416 lines   16 KB
 js/95-life-narratives.js                           331 lines   21 KB
 js/96-varga-reading.js                             189 lines   11 KB
@@ -453,3 +453,4 @@ shared/meta.css                                     98 lines    5 KB
 - Session 8: S9 `js/97-transit-reading.js` (`TRS.assess`) wired into Deep reading ('transits'), report and PDF; tests/transit_reading_test.py. Edit tables in build_ts.py only. Next: S11 QA.
 - Session 9: S11 QA `tests/reading_qa_test.py` (12 charts, invariants, `--sheet` makes docs/ASTROLOGER_REVIEW_SHEET.md). M4 passed. Next: S12 polish.
 - Session 9 (cont.): PDF is now a one-click book (`PDFR.generate`, no settings). Core + design in js/93, extra sections in js/98 via `PDFR.reg`. A new section = a builder + `PDFR.reg` + an entry in PARTS (js/93). Beware: never give a CSS class the same name as a status value used on rows (e.g. 'ahead'); keep tables narrower than the page or Chrome shrinks the whole book.
+- Session 9 (fix): PDF printed twice (a blank print window first). An iframe fires 'load' for its empty about:blank before srcdoc; `generate()` now sets srcdoc first and prints only when `.cover` is in the frame, once. Test: print count must equal ['book'].
