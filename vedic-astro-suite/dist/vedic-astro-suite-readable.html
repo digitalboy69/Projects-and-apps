@@ -39319,7 +39319,7 @@ function pane(c){
     S.planets.push(note('', `🎭 <b>What each planet's role means for you</b><br><small>${rl.map(x => `<b>${esc(x.planet)}</b> (${esc(x.kind.replace('Functional ', ''))}, ${x.rules.length > 1 ? 'houses' : 'house'} ${x.rules.join(' and ')}): It ${esc(x.gives)}. It can feel ${esc(x.feels)}. Watch for ${esc(x.watch)}.`).join('<br>')}</small>`)); }
   PL.forEach(a => (P[a] ? P[a].conjunct : []).forEach(x => { if (PL.indexOf(x.with) > PL.indexOf(a)) S.planets.push(note('', `🔗 <b>${esc(a)} + ${esc(x.with)} together in ${esc(P[a].sign)}.</b> ${esc(x.text)}`)); }));
   const yg = (typeof YGE !== 'undefined' && YGE) ? YGE.detect(c) : [];
-  const isD = x => /^Doshas|^Cautions/.test(x.cat), yOne = x => note(x.tone === 'challenge' ? 'b' : x.tone === 'mixed' ? '' : 'g', `<b>${esc(x.name)}</b>${x.level ? ' ' + chip(x.level === 'strong' ? 'g' : x.level === 'mild' ? 'b' : '', x.level) : ''} <small>(${esc(x.cat)})</small><br><small><b>Why it shows:</b> ${esc(x.why)}.</small><br>${esc(x.text.replace(/^[^.]*\.( Why it shows in your chart: [^.]*\.)? /, '').replace(/ Check this against your life: .*$/, ''))}<br><small>${esc(x.ask)}</small>`);
+  const isD = x => /^Doshas|^Cautions/.test(x.cat), yOne = x => note(x.tone === 'challenge' ? 'b' : x.tone === 'mixed' ? '' : 'g', `<b>${esc(x.name)}</b>${x.level ? ' ' + chip(x.level === 'strong' ? 'g' : x.level === 'mild' ? 'b' : '', x.level) : ''} <small>(${esc(x.cat)})</small><br><small><b>Why it shows:</b> ${esc(x.why)}.</small><br>${esc(x.text.replace(/^[^.]*\.( Why it shows in your chart: [^.]*\.)? /, '').replace(/ Check this against your life: .*$/, ''))}<br><small>${esc(x.ask)}</small>${window.PSTUI ? PSTUI.yogaHtml(c, x) : ''}`);
   const grp = (list, into) => { const cats = []; list.forEach(x => { if (cats.indexOf(x.cat) < 0) cats.push(x.cat); }); cats.forEach(k => { const m = list.filter(x => x.cat === k); into.push(`<details class="dr-grp" open><summary>${esc(k)} <span class="dr-n">${m.length}</span></summary><div class="dr-grp-b">${m.map(yOne).join('')}</div></details>`); }); };
   const ygGood = yg.filter(x => !isD(x)), ygDos = yg.filter(isD);
   if (ygGood.length){ S.yogas.push(note('g', `🔮 <b>Yogas in your chart (${ygGood.length})</b><br><small>Planet combinations found by exact rules, grouped by kind. Each one is a tendency to test against your life, not a promise.</small>`)); grp(ygGood, S.yogas); }
@@ -42971,15 +42971,16 @@ function bRoles(c){
   return `<p class="lead">For ${esc(SIGN[c.ascendant.sign])} rising, each planet looks after particular houses. That decides whether it tends to help directly, test you, or give mixed results.</p><div class="chips">${chips}</div>` +
     rows.map(x => card(`${esc(x.planet)} <small>${esc(x.kind)} · house${x.rules.length > 1 ? 's' : ''} ${x.rules.join(' and ')}</small>`, `<p>It ${esc(x.gives)}. It can feel ${esc(x.feels)}. Watch for ${esc(x.watch)}.</p>`)).join('');
 }
+let YCUR = null;
 function yogaCard(x, o){
   return card(`${esc(x.name)} ${x.level ? chip(x.level, x.level === 'strong' ? 'g' : x.level === 'mild' ? 'b' : '') : ''} <small>${esc(x.cat)}</small>`,
     (o.why ? `<p class="sm"><b>Why it shows:</b> ${esc(x.why)}.</p>` : '') + `<p>${esc(x.meaning.charAt(0).toUpperCase() + x.meaning.slice(1))}. In real life, ${esc(x.scenes[0])}; ${esc(x.scenes[1])}. At its best, you ${esc(x.best)}. Watch for ${esc(x.watch)}.${x.note ? ' ' + esc(x.note) : ''}</p>` +
-    (x.levelWhy ? `<p class="sm">Strength: ${esc(x.level)} (${esc(x.levelWhy)}).${x.timing ? ' ' + esc(x.timing) : ''}</p>` : (x.timing ? `<p class="sm">${esc(x.timing)}</p>` : '')) + (o.asks ? `<p class="ask">${esc(x.ask)}</p>` : ''), tone(x.tone));
+    (x.levelWhy ? `<p class="sm">Strength: ${esc(x.level)} (${esc(x.levelWhy)}).${x.timing ? ' ' + esc(x.timing) : ''}</p>` : (x.timing ? `<p class="sm">${esc(x.timing)}</p>` : '')) + (o.asks ? `<p class="ask">${esc(x.ask)}</p>` : '') + (window.PSTUI && YCUR ? PSTUI.yogaPdf(YCUR, x) : ''), tone(x.tone));
 }
 function groups(list, o){ const cats = []; list.forEach(x => { if (cats.indexOf(x.cat) < 0) cats.push(x.cat); }); return cats.map(k => `<h3 class="grp">${esc(k)}</h3>` + list.filter(x => x.cat === k).map(x => yogaCard(x, o)).join('')).join(''); }
 const isD = x => /^Doshas|^Cautions/.test(x.cat);
-function bYogas(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; const l = YGE.detect(c).filter(x => !isD(x)); return l.length ? `<p class="lead">${l.length} combinations were found by exact rules. Each is a tendency to test against your life, not a promise.</p>` + groups(l, o) : '<p>No notable yoga from the rules in this report was found in this chart.</p>'; }
-function bCautions(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; const l = YGE.detect(c).filter(isD); return l.length ? `<p class="lead">These are areas to look after, not verdicts. Where a condition eases the point, it is listed with it.</p>` + groups(l, o) : '<p>None of the points checked in this report stand out in this chart.</p>'; }
+function bYogas(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; YCUR = c; const l = YGE.detect(c).filter(x => !isD(x)); return l.length ? `<p class="lead">${l.length} combinations were found by exact rules. Each is a tendency to test against your life, not a promise.</p>` + groups(l, o) : '<p>No notable yoga from the rules in this report was found in this chart.</p>'; }
+function bCautions(c, o){ if (typeof YGE === 'undefined' || !YGE) return ''; YCUR = c; const l = YGE.detect(c).filter(isD); return l.length ? `<p class="lead">These are areas to look after, not verdicts. Where a condition eases the point, it is listed with it.</p>` + groups(l, o) : '<p>None of the points checked in this report stand out in this chart.</p>'; }
 function bAreas(c, o){
   if (typeof LAE === 'undefined' || !LAE) return ''; const la = LAE.assess(c), th = TH, ln = (typeof LAN !== 'undefined' && LAN) ? LAN.all(c) : [], lnOf = id => ln.find(y => y.id === id), dd = (typeof ADD !== 'undefined' && ADD) ? ADD.all(c) : [], ddOf = id => dd.find(y => y.id === id);
   const sum = `<table class="tb"><thead><tr><th>Area</th><th>Score</th><th></th><th>Band</th><th>Right now</th></tr></thead><tbody>${la.areas.map(x => `<tr><td><b>${esc(x.icon)} ${esc(x.name)}</b></td><td><b>${x.score}</b></td><td style="width:34%">${bar(x)}</td><td>${chip(x.band, x.bandTone)}</td><td>${x.now.score}</td></tr>`).join('')}</tbody></table>`;
@@ -44521,6 +44522,7 @@ function bDashas(c){
   if (typeof VDA === 'undefined' || !VDA || !c.dashaData) return ''; const T = VDA.timeline(c); let cur = null; try { cur = VDA.current(c); } catch (e) { cur = null; }
   let out = `<p class="lead">The Vimshottari dasha system divides life into nine long periods (Mahadashas), each ruled by a planet and each split into nine sub-periods (Antardashas). The order and lengths come from the Moon's nakshatra at birth. Here is every period of your life, with each sub-period.</p>${dashaLine(T)}`;
   if (cur && cur.md) out += card(`Running now: ${esc(cur.md.lord)} Mahadasha${cur.ad ? ' · ' + esc(cur.ad.lord) + ' Antardasha' : ''}`, `<p>${esc(cur.md.text || '')}</p>${cur.ad ? `<p>${esc(cur.ad.blend || '')}</p>` : ''}`, 'now');
+  if (window.PSTUI) out += PSTUI.periodsPdf(c);
   T.periods.forEach((p, i) => {
     const ads = VDA.antardashas(c, i);
     out += `<div class="dblock"><div class="pl-head"><div class="pl-glyph" style="background:${DCOL[p.lord] || TH.accent}">${glyph(p.lord)}</div><div><small>${fmtD(new Date(p.start))} – ${fmtD(new Date(p.end))} · age ${p.ageStart}–${p.ageEnd} · ${Math.round(p.years * 10) / 10} years</small><h3>${esc(p.lord)} Mahadasha</h3>${p.status === 'now' ? chip('running now', 'g') : p.status === 'past' ? chip('past') : chip('ahead')}${chip(p.tone, tone(p.tone))}</div></div>` +
@@ -45175,7 +45177,7 @@ if (P && P.h && P.reg){
    PLANET STATES (PST): what each planet's state means for you, with everyday examples, layer schema v1.1. Tendencies, not predictions.
    PST.block(chart, planet) -> { planet, tags:[...], lines:[{e,h,text}], words }     PST.all(chart) -> [ 9 blocks ]     PST.text(planet, status) -> the bare paragraph
    States covered: exalted, own sign, moolatrikona, friend's sign, neutral, enemy's sign, debilitated (with cancellation check), retrograde, combust, vargottama,
-   navamsa strength, house placement, and combinations of states. Rahu and Ketu are read through the planet that rules their sign. Needs js/99 (ADD tables).
+   navamsa strength, house placement, and combinations of states. PST.period(chart, planet, level, dates) and PST.periods(chart, now) read the running dasha lords by state. Rahu and Ketu are read through the planet that rules their sign. Needs js/99 (ADD tables).
    ============================================================================ */
 const PST_DATA = {
  "schema": "layer-v1.1",
@@ -45410,6 +45412,81 @@ const PST_DATA = {
   "Enemy": "Placed in your {h} house ({theme}), expect some friction in that field and extra effort that tends to pay off.",
   "Debilitated": "Placed in your {h} house ({theme}), that field asks for patience and practice; it often turns into a quiet strength later."
  },
+ "period": {
+  "strong": "With {P} {state}, this {level} tends to bring {core} forward with less effort than usual. You may notice {s1}, {s2} and {s3} becoming more active or more rewarding. The thing to watch is {shadow}, which can appear when things go well for a long time.",
+  "friend": "With {P} in a friend's sign, this {level} tends to bring {core} forward with support. You may notice {s1}, {s2} and {s3} getting attention, and help tends to arrive through people and circumstances. Steady effort turns that support into results; the thing to watch is {shadow}.",
+  "neutral": "With {P} in a neutral sign, this {level} brings {core} forward without extra help or hindrance from the sign, so the houses it rules and sits in decide the flavour. You may notice {s1}, {s2} and {s3} in the foreground. Watch for {shadow} and use {gift}.",
+  "weak": "With {P} {state}, this {level} may start with friction around {core}. In daily life this can look like {f1}, {f2} or {f3}. The friction is workable: it tends to ask for patience, preparation and support, and it often builds real skill. Watch for {shadow}.",
+  "retro": "Because {P} is retrograde, this {level} tends to revisit old matters before moving on: unfinished projects, former contacts or earlier decisions may return for a second look. Progress is slower at the start and more thorough later.",
+  "combust": "Because {P} is close to the Sun, this {level} may feel overshadowed by authority, ego or a stronger personality; your work in {core} may be noticed later than it deserves, so keep records and let results speak.",
+  "level": {
+   "Mahadasha": "the long background chapter of your life, lasting years, which sets the main theme",
+   "Antardasha": "the chapter inside that background, lasting months to a couple of years, which decides which part of the theme is in front",
+   "Pratyantar": "the finest layer, lasting weeks to months, useful for timing smaller steps and moods"
+  }
+ },
+ "houseState": {
+  "strong": "{P} stands strong here, so its gifts ({gift}) tend to reach {theme} with ease. Example: in matters of {theme}, you may find that {s1} feels natural and goes well.",
+  "mid": "{P} stands in a middling state here, so {theme} gets {core} in a mixed way. Example: some days {s1} goes smoothly and on others it asks more effort, depending on the other planets that touch this house.",
+  "weak": "{P} stands under pressure here, so {theme} meets {core} with some friction. Example: {f1} or {f2} may show up around {theme}. This usually responds to patience, preparation and practical support.",
+  "retro": "As it is retrograde, the matters of {theme} are often reviewed before they settle: a second look, a delayed start or a return to something earlier.",
+  "combust": "As it is close to the Sun, the matters of {theme} can feel overshadowed by ego or by a stronger person, and benefit from deliberate attention.",
+  "karaka": "{P} is also a natural significator of this house, which strengthens its themes but can make you over-focus on them; keep the other areas of life in view."
+ },
+ "starState": {
+  "strong_friend": "{P} is strong in its sign and stands in {N}, a star ruled by {NL}, a friend, so the sign and the star agree: the placement tends to be steady and well supported.",
+  "strong_enemy": "{P} is strong in its sign but stands in {N}, a star ruled by {NL}, an enemy, so the sign and the star pull in different directions: the strength is there, though its expression can come with friction or surprise.",
+  "strong_other": "{P} is strong in its sign and stands in {N}, a star ruled by {NL}; the star adds its own colour without changing the underlying strength.",
+  "weak_friend": "{P} is under pressure in its sign but stands in {N}, a star ruled by {NL}, a friend, which softens the difficulty: the star gives help where the sign does not.",
+  "weak_enemy": "{P} is under pressure in its sign and also stands in {N}, a star ruled by {NL}, an enemy, so the friction is felt twice; patience and support matter more than usual here.",
+  "weak_other": "{P} is under pressure in its sign and stands in {N}, a star ruled by {NL}; the star adds colour and the final effect depends on the aspects and the running periods.",
+  "mid_friend": "{P} stands in {N}, a star ruled by {NL}, a friend, which supports its work.",
+  "mid_enemy": "{P} stands in {N}, a star ruled by {NL}, an enemy, which adds some friction to its work.",
+  "mid_other": "{P} stands in {N}, a star ruled by {NL}; the star adds its own colour to the result."
+ },
+ "karaka": {
+  "1": [
+   "Sun"
+  ],
+  "2": [
+   "Jupiter"
+  ],
+  "3": [
+   "Mars"
+  ],
+  "4": [
+   "Moon"
+  ],
+  "5": [
+   "Jupiter"
+  ],
+  "6": [
+   "Mars",
+   "Saturn"
+  ],
+  "7": [
+   "Venus"
+  ],
+  "8": [
+   "Saturn"
+  ],
+  "9": [
+   "Jupiter"
+  ],
+  "10": [
+   "Sun",
+   "Mercury",
+   "Jupiter",
+   "Saturn"
+  ],
+  "11": [
+   "Jupiter"
+  ],
+  "12": [
+   "Saturn",
+   "Ketu"
+  ]
+ },
  "labels": {
   "Exalted": "Exalted",
   "OwnSign": "Own sign",
@@ -45481,6 +45558,12 @@ window.PST = (function(D){
       const strong = x => /Exalted|OwnSign|Moolatrikona/.test(x), weak = x => /Enemy|Debilitated/.test(x);
       add('🌗', 'In the navamsa (D9)', `In the navamsa the planet is in ${SIGN[d9s]}, ${D.labels[d9].toLowerCase()}. ${weak(st) && strong(d9) ? 'This lifts a weak birth-chart state: the inner promise is better than the outward start suggests, and results tend to improve with maturity.' : strong(st) && weak(d9) ? 'The birth chart looks strong while the navamsa is weaker, so keep the strength maintained with effort rather than assuming it.' : strong(st) && strong(d9) ? 'Both charts agree on strength, which makes this planet a reliable support.' : weak(st) && weak(d9) ? 'Both charts show friction, so steady effort and support matter more than usual.' : 'The two charts give a balanced picture, so the house and aspects decide the details.'}`);
     }
+    const polar = /Exalted|OwnSign|Moolatrikona/.test(st) ? 'strong' : /Enemy|Debilitated/.test(st) ? 'weak' : 'mid', theme = T ? T[p.house - 1].split(',')[0] : 'that house', scn = pickN(P.scenes, 1, n + 'h' + p.house)[0], frc = pickN(P.fric, 2, n + 'h' + p.house);
+    { const hm = { P: n, gift: P.gift, core: P.core, theme, s1: scn, f1: frc[0], f2: frc[1] }; let t = fill(D.houseState[polar], hm);
+      if (p.retrograde && P.retro) t += ' ' + fill(D.houseState.retro, hm); if (p.combustion && p.combustion.combust && P.combust) t += ' ' + fill(D.houseState.combust, hm); if ((D.karaka[p.house] || []).indexOf(n) >= 0) t += ' ' + fill(D.houseState.karaka, hm);
+      add('🏠', `In your ${ordn(p.house)} house (${theme}) with this state`, t); }
+    if (p.nakshatra && typeof VNK !== 'undefined' && VNK){ const nk = p.nakshatra, rel = VNK.relation(n, nk.lord), kind = rel === 'enemy' ? 'enemy' : (rel === 'friend' || rel === 'own') ? 'friend' : 'other', nr = VNK.nakshatra(nk.index);
+      add('⭐', 'Sign and star together', fill(D.starState[polar + '_' + kind], { P: n, N: nk.name + ' (pada ' + nk.pada + ')', NL: nk.lord }) + (nr && nr.nature ? ` The star is ${nr.nature.toLowerCase()} in nature, so the planet's work tends to feel ${/fixed/i.test(nr.nature) ? 'steady and persistent' : /movable|swift/i.test(nr.nature) ? 'quick and changeable' : /fierce|sharp|dreadful/i.test(nr.nature) ? 'intense and decisive' : /soft|tender|gentle/i.test(nr.nature) ? 'gentle and cooperative' : 'varied, with a mix of steady and quick phases'}.` : '')); }
     for (let i = 0; i < states.length; i++) for (let j = i + 1; j < states.length; j++){ const k = [states[i], states[j]].sort().join('+'), alt = states[i] + '+' + states[j], t = D.combos[k] || D.combos[alt] || D.combos[states[j] + '+' + states[i]]; if (t) add('🧩', 'States together', fill(t, { core: P.core })); }
     if (st === 'Debilitated'){
       const ds = SIGN.indexOf(VDB.data.planets[n].debilitationSign), es = SIGN.indexOf(VDB.data.planets[n].exaltSign), l1 = lordOfSign(ds), l2 = lordOfSign(es), reasons = [];
@@ -45492,8 +45575,38 @@ window.PST = (function(D){
     add('🛠️', 'What helps', `${cap(P.help)}.`);
     return { planet: n, tags, lines: L, words: L.reduce((a, l) => a + l.text.split(/\s+/).length, 0) };
   }
+
+  function yogaStates(chart, y){
+    const L = [], add = (e, h, t) => L.push({ e, h, text: t.replace(/\s+/g, ' ').trim() }), ps = (y.planets || []).filter(n => chart.planets[n]), info = [];
+    ps.forEach(n => { const p = chart.planets[n], st = (p.dignity && p.dignity.status) || 'Neutral', P = D.planets[n]; let sc = /Exalted|OwnSign|Moolatrikona/.test(st) ? 2 : st === 'Friend' ? 1 : /Enemy/.test(st) ? -1 : st === 'Debilitated' ? -2 : 0;
+      const bits = [D.labels[st].toLowerCase()]; if (p.retrograde && P && P.retro){ bits.push('retrograde'); sc -= 0.5; } if (p.combustion && p.combustion.combust && P){ bits.push('combust'); sc -= 1; }
+      const d9 = chart.vargas && chart.vargas.D9 && chart.vargas.D9.planetVargaSign ? chart.vargas.D9.planetVargaSign[n] : null; if (d9 != null && d9 === p.sign){ bits.push('vargottama'); sc += 1; }
+      info.push({ n, sc, bits, house: p.house }); });
+    if (!info.length) return L;
+    add('🎚️', 'State of the planets in this combination', info.map(x => `${x.n} is ${nm(x.bits)} in your ${ordn(x.house)} house`).join('; ') + '.');
+    const tot = info.reduce((a, x) => a + x.sc, 0) / info.length, weakest = info.slice().sort((a, b) => a.sc - b.sc)[0], strongest = info.slice().sort((a, b) => b.sc - a.sc)[0], sc0 = (y.scenes && y.scenes[0]) || 'this theme';
+    add('📈', 'What the states do to this combination', tot >= 1 ? `The planets involved are in good condition, so this combination tends to show clearly and with less effort. For example, ${sc0}. Keep it healthy by using it, not assuming it.` : tot <= -0.5 ? `Some of the planets involved are under pressure (${weakest.n} most of all), so this combination tends to appear in a muted or delayed form and asks for more effort. For example, ${sc0}, though it may take preparation and patience. ${cap((D.planets[weakest.n] || D.nodes[weakest.n]).help)} tends to help it come through.` : `The planets involved are in a mixed condition (${strongest.n} strongest, ${weakest.n} weakest), so this combination shows in some seasons and fades in others. For example, ${sc0}, with a stronger effect when the running periods involve ${strongest.n}.`);
+    return L;
+  }
   function all(chart){ return ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'].map(n => block(chart, n)).filter(Boolean); }
-  return { data: D, text, block, all };
+  function period(chart, n, level, d, now){
+    const p = chart.planets[n]; if (!p || !D.planets[n]) return null;
+    const P = D.planets[n], st = (p.dignity && p.dignity.status) || 'Neutral', L = [], add = (e, h, t) => L.push({ e, h, text: t.replace(/\s+/g, ' ').trim() }), lv = D.period.level[level] || '';
+    const sc = pickN(P.scenes, 3, n + level), fr = pickN(P.fric, 3, n + level), state = (D.labels[st] || st).toLowerCase().replace("friend's sign", "in a friend's sign").replace("enemy's sign", "in an enemy's sign").replace('own sign', 'in its own sign').replace('neutral sign', 'in a neutral sign').replace('moolatrikona', 'in its moolatrikona sign');
+    const strong = /Exalted|OwnSign|Moolatrikona/.test(st), weak = /Enemy|Debilitated/.test(st), key = strong ? 'strong' : st === 'Friend' ? 'friend' : weak ? 'weak' : 'neutral';
+    const m = { P: n, level, state: st === 'Exalted' ? 'exalted' : st === 'Debilitated' ? 'debilitated' : st === 'Enemy' ? "in an enemy's sign" : state, core: P.core, s1: sc[0], s2: sc[1], s3: sc[2], f1: fr[0], f2: fr[1], f3: fr[2], shadow: P.shadow, gift: P.gift };
+    const dates = d && d.startDate ? ` (${MONS[d.startDate.getUTCMonth()]} ${d.startDate.getUTCFullYear()} to ${MONS[d.endDate.getUTCMonth()]} ${d.endDate.getUTCFullYear()})` : '';
+    add('⏳', `${level} ${n}${dates}: ${lv}`, fill(D.period[key], m));
+    if (p.retrograde && P.retro){ add('🔄', 'Retrograde lord', fill(D.period.retro, m)); }
+    if (p.combustion && p.combustion.combust && P.combust){ add('🔥', 'Combust lord', fill(D.period.combust, m)); }
+    const ruled = [1,2,3,4,5,6,7,8,9,10,11,12].filter(h => chart.vargas.D1.houses[h - 1].signLord === n);
+    if (T) add('🏠', 'Houses it lights up', `${n} rules ${ruled.length ? nm(ruled.map(h => 'the ' + ordn(h) + ' house (' + T[h - 1].split(',')[0] + ')')) : 'no house'} and sits in the ${ordn(p.house)} house (${T[p.house - 1].split(',')[0]}), so during this ${level.toLowerCase()} those are the parts of life that tend to be switched on${ruled.length ? ', and where matters connected to them are more likely to move' : ''}.`);
+    add('🛠️', 'What helps in this period', `${cap(P.help)}.`);
+    return { planet: n, level, lines: L, words: L.reduce((a, l) => a + l.text.split(/\s+/).length, 0) };
+  }
+  const MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function periods(chart, now){ const act = findActiveDasha(chart.dashaData.mahadashas, now || new Date()); if (!act) return []; return [['Mahadasha', act.mahadasha], ['Antardasha', act.antardasha], ['Pratyantar', act.pratyantardasha]].filter(x => x[1]).map(([lv, d]) => period(chart, d.lord, lv, d)).filter(Boolean); }
+  return { data: D, text, block, all, period, periods, yogaStates };
 })(PST_DATA);
 <\/script>
 <script>
@@ -45509,11 +45622,18 @@ const html = (c, n) => { const b = PST.block(c, n); if (!b) return ''; return `<
 const pdf = (c, n) => { const b = PST.block(c, n); return b ? b.lines.map(l => `<h5>${l.e} ${esc(l.h)}</h5><p>${esc(l.text)}</p>`).join('') : ''; };
 const wrap = (t, w, ind) => { const words = String(t).split(/\s+/), out = []; let ln = ''; words.forEach(x => { if ((ln + ' ' + x).trim().length > w && ln){ out.push(ln); ln = ind + x; } else ln = (ln ? ln + ' ' : '') + x; }); if (ln) out.push(ln); return out.join('\n'); };
 const reportText = c => PST.all(c).map(b => `${b.planet.toUpperCase()}: ${b.tags.join(', ')}\n` + b.lines.map(l => wrap('  ' + l.h + ': ' + l.text, 74, '      ')).join('\n')).join('\n\n');
-window.PSTUI = { html, pdf, reportText };
+const periodsHtml = c => { const L = PST.periods(c, new Date()); return L.length ? `<div class="ps"><div class="rd-h">🎛️ How the lords' condition colours the running periods</div>${L.map(b => b.lines.map(l => `<div class="dr-l"><b>${l.e} ${esc(l.h)}</b><div>${esc(l.text)}</div></div>`).join('')).join('')}</div>` : ''; };
+const periodsPdf = c => { const L = PST.periods(c, new Date()); return L.length ? `<div class="plate hn-plate"><div class="pl-head"><div class="pl-glyph">⏳</div><div><small>Running now</small><h3>How the lords' condition colours the running periods</h3></div></div>${L.map(b => b.lines.map(l => `<h5>${l.e} ${esc(l.h)}</h5><p>${esc(l.text)}</p>`).join('')).join('')}</div>` : ''; };
+const periodsText = c => PST.periods(c, new Date()).map(b => b.lines.map(l => wrap('  ' + l.h + ': ' + l.text, 74, '      ')).join('\n')).join('\n');
+const yogaHtml = (c, y) => { const L = PST.yogaStates(c, y); return L.length ? `<br>${L.map(l => `<small><b>${l.e} ${esc(l.h)}:</b> ${esc(l.text)}</small>`).join('<br>')}` : ''; };
+const yogaPdf = (c, y) => PST.yogaStates(c, y).map(l => `<p class="sm"><b>${l.e} ${esc(l.h)}:</b> ${esc(l.text)}</p>`).join('');
+const yogaText = c => (typeof YGE !== 'undefined' && YGE ? YGE.detect(c) : []).map(y => `${y.name}\n` + PST.yogaStates(c, y).map(l => wrap('  ' + l.h + ': ' + l.text, 74, '      ')).join('\n')).join('\n\n');
+window.PSTUI = { html, pdf, reportText, periodsHtml, periodsPdf, periodsText, yogaHtml, yogaPdf, yogaText };
 if (window.VDR){
-  const pb = VDR.planetBlock, rt = VDR.reportText;
+  const pb = VDR.planetBlock, rt = VDR.reportText, db = VDR.dashaBlock;
+  VDR.dashaBlock = (c, md, ad) => db(c, md, ad) + periodsHtml(c);
   VDR.planetBlock = (c, n) => pb(c, n) + html(c, n);
-  VDR.reportText = c => rt(c) + '\n\nPLANET STATES (WHAT EACH PLANET\'S CONDITION MEANS, WITH EXAMPLES)\n' + reportText(c);
+  VDR.reportText = c => rt(c) + '\n\nPLANET STATES (WHAT EACH PLANET\'S CONDITION MEANS, WITH EXAMPLES)\n' + reportText(c) + '\n\nRUNNING PERIODS BY LORD CONDITION\n' + periodsText(c) + '\n\nYOGAS BY THE CONDITION OF THEIR PLANETS\n' + yogaText(c);
 }
 })();
 <\/script>

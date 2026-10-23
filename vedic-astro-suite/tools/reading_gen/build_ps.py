@@ -40,6 +40,32 @@ DATA = dict(schema='layer-v1.1', planets=PL, nodes=NODES,
   Neutral="Placed in your {h} house ({theme}), its effect there depends on the planets that join or look at it.",
   Enemy="Placed in your {h} house ({theme}), expect some friction in that field and extra effort that tends to pay off.",
   Debilitated="Placed in your {h} house ({theme}), that field asks for patience and practice; it often turns into a quiet strength later."),
+ period=dict(
+  strong="With {P} {state}, this {level} tends to bring {core} forward with less effort than usual. You may notice {s1}, {s2} and {s3} becoming more active or more rewarding. The thing to watch is {shadow}, which can appear when things go well for a long time.",
+  friend="With {P} in a friend's sign, this {level} tends to bring {core} forward with support. You may notice {s1}, {s2} and {s3} getting attention, and help tends to arrive through people and circumstances. Steady effort turns that support into results; the thing to watch is {shadow}.",
+  neutral="With {P} in a neutral sign, this {level} brings {core} forward without extra help or hindrance from the sign, so the houses it rules and sits in decide the flavour. You may notice {s1}, {s2} and {s3} in the foreground. Watch for {shadow} and use {gift}.",
+  weak="With {P} {state}, this {level} may start with friction around {core}. In daily life this can look like {f1}, {f2} or {f3}. The friction is workable: it tends to ask for patience, preparation and support, and it often builds real skill. Watch for {shadow}.",
+  retro="Because {P} is retrograde, this {level} tends to revisit old matters before moving on: unfinished projects, former contacts or earlier decisions may return for a second look. Progress is slower at the start and more thorough later.",
+  combust="Because {P} is close to the Sun, this {level} may feel overshadowed by authority, ego or a stronger personality; your work in {core} may be noticed later than it deserves, so keep records and let results speak.",
+  level=dict(Mahadasha='the long background chapter of your life, lasting years, which sets the main theme', Antardasha='the chapter inside that background, lasting months to a couple of years, which decides which part of the theme is in front', Pratyantar='the finest layer, lasting weeks to months, useful for timing smaller steps and moods')),
+ houseState=dict(
+  strong="{P} stands strong here, so its gifts ({gift}) tend to reach {theme} with ease. Example: in matters of {theme}, you may find that {s1} feels natural and goes well.",
+  mid="{P} stands in a middling state here, so {theme} gets {core} in a mixed way. Example: some days {s1} goes smoothly and on others it asks more effort, depending on the other planets that touch this house.",
+  weak="{P} stands under pressure here, so {theme} meets {core} with some friction. Example: {f1} or {f2} may show up around {theme}. This usually responds to patience, preparation and practical support.",
+  retro="As it is retrograde, the matters of {theme} are often reviewed before they settle: a second look, a delayed start or a return to something earlier.",
+  combust="As it is close to the Sun, the matters of {theme} can feel overshadowed by ego or by a stronger person, and benefit from deliberate attention.",
+  karaka="{P} is also a natural significator of this house, which strengthens its themes but can make you over-focus on them; keep the other areas of life in view."),
+ starState=dict(
+  strong_friend="{P} is strong in its sign and stands in {N}, a star ruled by {NL}, a friend, so the sign and the star agree: the placement tends to be steady and well supported.",
+  strong_enemy="{P} is strong in its sign but stands in {N}, a star ruled by {NL}, an enemy, so the sign and the star pull in different directions: the strength is there, though its expression can come with friction or surprise.",
+  strong_other="{P} is strong in its sign and stands in {N}, a star ruled by {NL}; the star adds its own colour without changing the underlying strength.",
+  weak_friend="{P} is under pressure in its sign but stands in {N}, a star ruled by {NL}, a friend, which softens the difficulty: the star gives help where the sign does not.",
+  weak_enemy="{P} is under pressure in its sign and also stands in {N}, a star ruled by {NL}, an enemy, so the friction is felt twice; patience and support matter more than usual here.",
+  weak_other="{P} is under pressure in its sign and stands in {N}, a star ruled by {NL}; the star adds colour and the final effect depends on the aspects and the running periods.",
+  mid_friend="{P} stands in {N}, a star ruled by {NL}, a friend, which supports its work.",
+  mid_enemy="{P} stands in {N}, a star ruled by {NL}, an enemy, which adds some friction to its work.",
+  mid_other="{P} stands in {N}, a star ruled by {NL}; the star adds its own colour to the result."),
+ karaka={'1': ['Sun'], '2': ['Jupiter'], '3': ['Mars'], '4': ['Moon'], '5': ['Jupiter'], '6': ['Mars', 'Saturn'], '7': ['Venus'], '8': ['Saturn'], '9': ['Jupiter'], '10': ['Sun', 'Mercury', 'Jupiter', 'Saturn'], '11': ['Jupiter'], '12': ['Saturn', 'Ketu']},
  labels=dict(Exalted='Exalted', OwnSign='Own sign', Moolatrikona='Moolatrikona', Friend="Friend's sign", Neutral='Neutral sign', Enemy="Enemy's sign", Debilitated='Debilitated'),
  emoji=dict(Exalted='👑', OwnSign='🏠', Moolatrikona='🏛️', Friend='🤝', Neutral='⚖️', Enemy='⚔️', Debilitated='📉', retro='🔄', combust='🔥', vargottama='⭐'))
 HEAD = '''/* ============================================================================
@@ -47,7 +73,7 @@ HEAD = '''/* ===================================================================
    PLANET STATES (PST): what each planet's state means for you, with everyday examples, layer schema v1.1. Tendencies, not predictions.
    PST.block(chart, planet) -> { planet, tags:[...], lines:[{e,h,text}], words }     PST.all(chart) -> [ 9 blocks ]     PST.text(planet, status) -> the bare paragraph
    States covered: exalted, own sign, moolatrikona, friend's sign, neutral, enemy's sign, debilitated (with cancellation check), retrograde, combust, vargottama,
-   navamsa strength, house placement, and combinations of states. Rahu and Ketu are read through the planet that rules their sign. Needs js/99 (ADD tables).
+   navamsa strength, house placement, and combinations of states. PST.period(chart, planet, level, dates) and PST.periods(chart, now) read the running dasha lords by state. Rahu and Ketu are read through the planet that rules their sign. Needs js/99 (ADD tables).
    ============================================================================ */
 const PST_DATA = '''
 API = r'''
@@ -100,6 +126,12 @@ window.PST = (function(D){
       const strong = x => /Exalted|OwnSign|Moolatrikona/.test(x), weak = x => /Enemy|Debilitated/.test(x);
       add('🌗', 'In the navamsa (D9)', `In the navamsa the planet is in ${SIGN[d9s]}, ${D.labels[d9].toLowerCase()}. ${weak(st) && strong(d9) ? 'This lifts a weak birth-chart state: the inner promise is better than the outward start suggests, and results tend to improve with maturity.' : strong(st) && weak(d9) ? 'The birth chart looks strong while the navamsa is weaker, so keep the strength maintained with effort rather than assuming it.' : strong(st) && strong(d9) ? 'Both charts agree on strength, which makes this planet a reliable support.' : weak(st) && weak(d9) ? 'Both charts show friction, so steady effort and support matter more than usual.' : 'The two charts give a balanced picture, so the house and aspects decide the details.'}`);
     }
+    const polar = /Exalted|OwnSign|Moolatrikona/.test(st) ? 'strong' : /Enemy|Debilitated/.test(st) ? 'weak' : 'mid', theme = T ? T[p.house - 1].split(',')[0] : 'that house', scn = pickN(P.scenes, 1, n + 'h' + p.house)[0], frc = pickN(P.fric, 2, n + 'h' + p.house);
+    { const hm = { P: n, gift: P.gift, core: P.core, theme, s1: scn, f1: frc[0], f2: frc[1] }; let t = fill(D.houseState[polar], hm);
+      if (p.retrograde && P.retro) t += ' ' + fill(D.houseState.retro, hm); if (p.combustion && p.combustion.combust && P.combust) t += ' ' + fill(D.houseState.combust, hm); if ((D.karaka[p.house] || []).indexOf(n) >= 0) t += ' ' + fill(D.houseState.karaka, hm);
+      add('🏠', `In your ${ordn(p.house)} house (${theme}) with this state`, t); }
+    if (p.nakshatra && typeof VNK !== 'undefined' && VNK){ const nk = p.nakshatra, rel = VNK.relation(n, nk.lord), kind = rel === 'enemy' ? 'enemy' : (rel === 'friend' || rel === 'own') ? 'friend' : 'other', nr = VNK.nakshatra(nk.index);
+      add('⭐', 'Sign and star together', fill(D.starState[polar + '_' + kind], { P: n, N: nk.name + ' (pada ' + nk.pada + ')', NL: nk.lord }) + (nr && nr.nature ? ` The star is ${nr.nature.toLowerCase()} in nature, so the planet's work tends to feel ${/fixed/i.test(nr.nature) ? 'steady and persistent' : /movable|swift/i.test(nr.nature) ? 'quick and changeable' : /fierce|sharp|dreadful/i.test(nr.nature) ? 'intense and decisive' : /soft|tender|gentle/i.test(nr.nature) ? 'gentle and cooperative' : 'varied, with a mix of steady and quick phases'}.` : '')); }
     for (let i = 0; i < states.length; i++) for (let j = i + 1; j < states.length; j++){ const k = [states[i], states[j]].sort().join('+'), alt = states[i] + '+' + states[j], t = D.combos[k] || D.combos[alt] || D.combos[states[j] + '+' + states[i]]; if (t) add('🧩', 'States together', fill(t, { core: P.core })); }
     if (st === 'Debilitated'){
       const ds = SIGN.indexOf(VDB.data.planets[n].debilitationSign), es = SIGN.indexOf(VDB.data.planets[n].exaltSign), l1 = lordOfSign(ds), l2 = lordOfSign(es), reasons = [];
@@ -111,8 +143,38 @@ window.PST = (function(D){
     add('🛠️', 'What helps', `${cap(P.help)}.`);
     return { planet: n, tags, lines: L, words: L.reduce((a, l) => a + l.text.split(/\s+/).length, 0) };
   }
+
+  function yogaStates(chart, y){
+    const L = [], add = (e, h, t) => L.push({ e, h, text: t.replace(/\s+/g, ' ').trim() }), ps = (y.planets || []).filter(n => chart.planets[n]), info = [];
+    ps.forEach(n => { const p = chart.planets[n], st = (p.dignity && p.dignity.status) || 'Neutral', P = D.planets[n]; let sc = /Exalted|OwnSign|Moolatrikona/.test(st) ? 2 : st === 'Friend' ? 1 : /Enemy/.test(st) ? -1 : st === 'Debilitated' ? -2 : 0;
+      const bits = [D.labels[st].toLowerCase()]; if (p.retrograde && P && P.retro){ bits.push('retrograde'); sc -= 0.5; } if (p.combustion && p.combustion.combust && P){ bits.push('combust'); sc -= 1; }
+      const d9 = chart.vargas && chart.vargas.D9 && chart.vargas.D9.planetVargaSign ? chart.vargas.D9.planetVargaSign[n] : null; if (d9 != null && d9 === p.sign){ bits.push('vargottama'); sc += 1; }
+      info.push({ n, sc, bits, house: p.house }); });
+    if (!info.length) return L;
+    add('🎚️', 'State of the planets in this combination', info.map(x => `${x.n} is ${nm(x.bits)} in your ${ordn(x.house)} house`).join('; ') + '.');
+    const tot = info.reduce((a, x) => a + x.sc, 0) / info.length, weakest = info.slice().sort((a, b) => a.sc - b.sc)[0], strongest = info.slice().sort((a, b) => b.sc - a.sc)[0], sc0 = (y.scenes && y.scenes[0]) || 'this theme';
+    add('📈', 'What the states do to this combination', tot >= 1 ? `The planets involved are in good condition, so this combination tends to show clearly and with less effort. For example, ${sc0}. Keep it healthy by using it, not assuming it.` : tot <= -0.5 ? `Some of the planets involved are under pressure (${weakest.n} most of all), so this combination tends to appear in a muted or delayed form and asks for more effort. For example, ${sc0}, though it may take preparation and patience. ${cap((D.planets[weakest.n] || D.nodes[weakest.n]).help)} tends to help it come through.` : `The planets involved are in a mixed condition (${strongest.n} strongest, ${weakest.n} weakest), so this combination shows in some seasons and fades in others. For example, ${sc0}, with a stronger effect when the running periods involve ${strongest.n}.`);
+    return L;
+  }
   function all(chart){ return ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'].map(n => block(chart, n)).filter(Boolean); }
-  return { data: D, text, block, all };
+  function period(chart, n, level, d, now){
+    const p = chart.planets[n]; if (!p || !D.planets[n]) return null;
+    const P = D.planets[n], st = (p.dignity && p.dignity.status) || 'Neutral', L = [], add = (e, h, t) => L.push({ e, h, text: t.replace(/\s+/g, ' ').trim() }), lv = D.period.level[level] || '';
+    const sc = pickN(P.scenes, 3, n + level), fr = pickN(P.fric, 3, n + level), state = (D.labels[st] || st).toLowerCase().replace("friend's sign", "in a friend's sign").replace("enemy's sign", "in an enemy's sign").replace('own sign', 'in its own sign').replace('neutral sign', 'in a neutral sign').replace('moolatrikona', 'in its moolatrikona sign');
+    const strong = /Exalted|OwnSign|Moolatrikona/.test(st), weak = /Enemy|Debilitated/.test(st), key = strong ? 'strong' : st === 'Friend' ? 'friend' : weak ? 'weak' : 'neutral';
+    const m = { P: n, level, state: st === 'Exalted' ? 'exalted' : st === 'Debilitated' ? 'debilitated' : st === 'Enemy' ? "in an enemy's sign" : state, core: P.core, s1: sc[0], s2: sc[1], s3: sc[2], f1: fr[0], f2: fr[1], f3: fr[2], shadow: P.shadow, gift: P.gift };
+    const dates = d && d.startDate ? ` (${MONS[d.startDate.getUTCMonth()]} ${d.startDate.getUTCFullYear()} to ${MONS[d.endDate.getUTCMonth()]} ${d.endDate.getUTCFullYear()})` : '';
+    add('⏳', `${level} ${n}${dates}: ${lv}`, fill(D.period[key], m));
+    if (p.retrograde && P.retro){ add('🔄', 'Retrograde lord', fill(D.period.retro, m)); }
+    if (p.combustion && p.combustion.combust && P.combust){ add('🔥', 'Combust lord', fill(D.period.combust, m)); }
+    const ruled = [1,2,3,4,5,6,7,8,9,10,11,12].filter(h => chart.vargas.D1.houses[h - 1].signLord === n);
+    if (T) add('🏠', 'Houses it lights up', `${n} rules ${ruled.length ? nm(ruled.map(h => 'the ' + ordn(h) + ' house (' + T[h - 1].split(',')[0] + ')')) : 'no house'} and sits in the ${ordn(p.house)} house (${T[p.house - 1].split(',')[0]}), so during this ${level.toLowerCase()} those are the parts of life that tend to be switched on${ruled.length ? ', and where matters connected to them are more likely to move' : ''}.`);
+    add('🛠️', 'What helps in this period', `${cap(P.help)}.`);
+    return { planet: n, level, lines: L, words: L.reduce((a, l) => a + l.text.split(/\s+/).length, 0) };
+  }
+  const MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function periods(chart, now){ const act = findActiveDasha(chart.dashaData.mahadashas, now || new Date()); if (!act) return []; return [['Mahadasha', act.mahadasha], ['Antardasha', act.antardasha], ['Pratyantar', act.pratyantardasha]].filter(x => x[1]).map(([lv, d]) => period(chart, d.lord, lv, d)).filter(Boolean); }
+  return { data: D, text, block, all, period, periods, yogaStates };
 })(PST_DATA);
 '''
 out = HEAD + json.dumps(DATA, ensure_ascii=False, indent=1) + ';' + API

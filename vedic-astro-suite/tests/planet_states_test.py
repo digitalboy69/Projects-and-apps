@@ -36,6 +36,8 @@ CHECK = """()=>{const BAN=__BAN__,ch=currentChartForModal,A=PST.all(ch),bad=[],P
   if(wantC&&!t.includes(p.combustion.separation.toFixed(1)+' degrees'))bad.push('combust degrees '+b.planet);
   if(!t.includes('your '+(['1st','2nd','3rd'][p.house-1]||p.house+'th')+' house'))bad.push('house mention '+b.planet);
   if(!b.lines.some(l=>/navamsa/i.test(l.h)))bad.push('navamsa '+b.planet);
+  if(!b.lines.some(l=>/^In your \\d+(st|nd|rd|th) house/.test(l.h)))bad.push('house line '+b.planet);
+  const sl=b.lines.find(l=>l.h==='Sign and star together');if(!sl||!sl.text.includes(p.nakshatra.name)||!sl.text.includes(p.nakshatra.lord))bad.push('star line '+b.planet);
   const states=b.tags.length-(0);if([hasR,hasC,hasV].filter(Boolean).length+(st==='Debilitated'||st==='Exalted'?1:0)>=2&&!b.lines.some(l=>l.h==='States together')&&((hasR&&(st==='Exalted'||st==='Debilitated'||st==='Enemy'))||(hasC)))bad.push('combination line '+b.planet)});
  return bad.slice(0,8)}""".replace('__BAN__', BAN)
 with sync_playwright() as p:
@@ -48,6 +50,10 @@ with sync_playwright() as p:
     seen = set()
     for i, c in enumerate(CHARTS):
         pg.evaluate(CAST, dict(name='x', dob=c[0], tob=c[1], place='x', lat=c[2], lon=c[3], tz=c[4])); pg.wait_for_selector('#results.show', timeout=15000)
+        yb = pg.evaluate("""()=>{const BAN=__BAN__,ch=currentChartForModal,bad=[];YGE.detect(ch).forEach(y=>{const L=PST.yogaStates(ch,y),t=L.map(l=>l.text).join(' ');if(!L.length){if(y.planets&&y.planets.length)bad.push('none '+y.id);return}
+          if(BAN.test(t)||/[{}]|undefined|NaN/.test(t))bad.push('text '+y.id);y.planets.forEach(n=>{if(!t.includes(n+' is '))bad.push(y.id+' misses '+n);const p=ch.planets[n];if(p.retrograde&&!['Sun','Moon','Rahu','Ketu'].includes(n)&&!new RegExp(n+' is [^.;]*retrograde').test(t))bad.push(y.id+' retro '+n);if(p.combustion&&p.combustion.combust&&n!=='Sun'&&!new RegExp(n+' is [^.;]*combust').test(t))bad.push(y.id+' combust '+n)});
+          if(!L.some(l=>l.h==='What the states do to this combination'))bad.push('verdict '+y.id)});return bad.slice(0,6)}""".replace('__BAN__', BAN))
+        ok('chart %d: yoga combinations are read by the state of their planets (retrograde, combust and so on match the chart)' % (i + 1), not yb, yb)
         bad = pg.evaluate(CHECK); ok('chart %d: state tags, degrees, cancellation, navamsa and combinations match the chart; clean wording' % (i + 1), not bad, bad)
         seen.update(pg.evaluate("PST.all(currentChartForModal).flatMap(b=>b.tags)"))
     ok('the 12 charts together exercise retrograde, combust, vargottama and weak and strong signs', {'Retrograde', 'Combust', 'Vargottama', 'Debilitated', 'Exalted'} <= seen, sorted(seen))
@@ -60,6 +66,12 @@ with sync_playwright() as p:
       const d=new DOMParser().parseFromString(PDFR.build(ch,currentProfileForExport,{sections:['planets']}),'text/html'),pl=d.querySelectorAll('#s-planets .plate');if(pl.length!==9)bad.push('pdf plates '+pl.length);pl.forEach((e,i)=>{if(!/Its sign state|What Rahu is about|What Ketu is about/.test(e.textContent))bad.push('pdf state '+i)});
       return {bad:bad.slice(0,6),overflow:document.documentElement.scrollWidth>window.innerWidth+1}}""")
     ok('Planets tab cards, report and PDF planet pages carry the state blocks', not s['bad'], s)
+    pd = pg.evaluate("""()=>{const BAN=__BAN__,ch=currentChartForModal,now=new Date('2026-10-23T00:00:00Z'),A=PST.periods(ch,now),bad=[],act=findActiveDasha(ch.dashaData.mahadashas,now);
+      if(A.length!==3)bad.push('3 periods '+A.length);const want=[act.mahadasha,act.antardasha,act.pratyantardasha].map(d=>d.lord);A.forEach((b,i)=>{if(b.planet!==want[i])bad.push('lord '+i);const t=b.lines.map(l=>l.text).join(' ');
+        if(b.words<110||BAN.test(t)||/[{}]|undefined|NaN/.test(t))bad.push('text '+i);if(!t.includes('rules')||!t.includes(' house'))bad.push('houses '+i);
+        const p=ch.planets[b.planet];if(!!p.retrograde&&!['Sun','Moon'].includes(b.planet)&&!b.lines.some(l=>l.h==='Retrograde lord'))bad.push('retro '+i);if(!(p.retrograde&&!['Sun','Moon'].includes(b.planet))&&b.lines.some(l=>l.h==='Retrograde lord'))bad.push('retro wrongly '+i)});
+      const h=VDR.dashaBlock(ch,act.mahadasha.lord,act.antardasha.lord);if(!/colours the running periods/.test(h))bad.push('now tab');return bad}""".replace('__BAN__', BAN))
+    ok('running Mahadasha, Antardasha and Pratyantar lords are read by their state, with houses, in the Now tab', not pd, pd)
     ok('phone: no horizontal scroll', not s.get('overflow'))
     ok('no JavaScript errors', not errs, errs[:3]); b.close()
 bad = [r for r in res if not r[1]]

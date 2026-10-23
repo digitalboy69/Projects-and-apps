@@ -141,6 +141,7 @@ function bDashas(c){
   if (typeof VDA === 'undefined' || !VDA || !c.dashaData) return ''; const T = VDA.timeline(c); let cur = null; try { cur = VDA.current(c); } catch (e) { cur = null; }
   let out = `<p class="lead">The Vimshottari dasha system divides life into nine long periods (Mahadashas), each ruled by a planet and each split into nine sub-periods (Antardashas). The order and lengths come from the Moon's nakshatra at birth. Here is every period of your life, with each sub-period.</p>${dashaLine(T)}`;
   if (cur && cur.md) out += card(`Running now: ${esc(cur.md.lord)} Mahadasha${cur.ad ? ' · ' + esc(cur.ad.lord) + ' Antardasha' : ''}`, `<p>${esc(cur.md.text || '')}</p>${cur.ad ? `<p>${esc(cur.ad.blend || '')}</p>` : ''}`, 'now');
+  if (window.PSTUI) out += PSTUI.periodsPdf(c);
   T.periods.forEach((p, i) => {
     const ads = VDA.antardashas(c, i);
     out += `<div class="dblock"><div class="pl-head"><div class="pl-glyph" style="background:${DCOL[p.lord] || TH.accent}">${glyph(p.lord)}</div><div><small>${fmtD(new Date(p.start))} – ${fmtD(new Date(p.end))} · age ${p.ageStart}–${p.ageEnd} · ${Math.round(p.years * 10) / 10} years</small><h3>${esc(p.lord)} Mahadasha</h3>${p.status === 'now' ? chip('running now', 'g') : p.status === 'past' ? chip('past') : chip('ahead')}${chip(p.tone, tone(p.tone))}</div></div>` +
