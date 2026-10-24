@@ -3,7 +3,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); REPO = os.path.abspath(os.pat
 from ps_data import PL, NODES
 # Planet states (S15, layer schema v1.1). Facts in (dignity, retrograde, combustion, vargottama, navamsa, house, sign lord) -> state blocks out, with real-life examples.
 # Tables are in ps_data.py (planet wording) and below (frames, combinations); logic in the API. Tendencies, not fate.
-DATA = dict(schema='layer-v1.1', planets=PL, nodes=NODES,
+DATA = dict(schema='layer-v1.1', planets=PL, nodes=NODES, short=["you and your body", "money and family", "effort and courage", "home and roots", "creativity and children", "daily work and health", "partnerships", "change and hidden matters", "belief and luck", "career and standing", "gains and friends", "rest and the inner life"],
  frames=dict(
   OwnSign="{P} is in its own sign, {S}: at home, steady and dependable. Its work in {core} tends to come without strain. In daily life you may notice it in {s1}, {s2} and {s3}. You tend to have {gift} to draw on; the thing to watch is {shadow} when the strength is overused.",
   Moolatrikona="{P} is in its moolatrikona sign, {S}: very strong, nearly as good as exaltation. It works with confidence and clarity in {core}. In daily life this may show in {s1}, {s2} and {s3}. {Gift} are available to you; the thing to watch is {shadow} if the confidence runs ahead of the situation.",
@@ -108,14 +108,14 @@ window.PST = (function(D){
     if (n === 'Rahu' || n === 'Ketu'){
       const N = D.nodes[n], dl = lordOfSign(p.sign), dp = chart.planets[dl], dst = dp && dp.dignity ? dp.dignity.status : 'Neutral';
       add('🌀', 'What ' + n + ' is about', `${n} stands for ${N.core}. Both nodes are retrograde by nature, so their work is karmic and unconventional: the results tend to come through unfamiliar routes, in bursts, and with a feeling of pull rather than choice. In daily life you may notice it in ${nm(pickN(N.scenes, 3, n))}.`);
-      add('🔗', 'How its sign lord shapes it', `${n} behaves like the planet that rules its sign. It stands in ${SIGN[p.sign]}, ruled by ${dl}, which sits in your ${ordn(dp.house)} house ${/Exalted|Moolatrikona|OwnSign/.test(dst) ? 'in a strong state (' + dst.replace('OwnSign', 'own sign').toLowerCase() + '), so the node tends to find a supportive channel' : dst === 'Debilitated' ? 'in a weak state (debilitated), so the node can feel unsupported and benefits from patience' : dst === 'Enemy' ? "in an enemy's sign, so the node's results can come with friction" : /Friend/.test(dst) ? "in a friend's sign, so the node tends to get cooperation" : 'in a neutral sign, so the result depends on the house and company'}. ${T ? 'In your ' + ordn(p.house) + ' house (' + T[p.house - 1].split(',')[0] + ') the node pulls attention toward that field.' : ''}`);
+      add('🔗', 'How its sign lord shapes it', `${n} behaves like the planet that rules its sign. It stands in ${SIGN[p.sign]}, ruled by ${dl}, which sits in your ${ordn(dp.house)} house ${/Exalted|Moolatrikona|OwnSign/.test(dst) ? 'in a strong state (' + dst.replace('OwnSign', 'own sign').toLowerCase() + '), so the node tends to find a supportive channel' : dst === 'Debilitated' ? 'in a weak state (debilitated), so the node can feel unsupported and benefits from patience' : dst === 'Enemy' ? "in an enemy's sign, so the node's results can come with friction" : /Friend/.test(dst) ? "in a friend's sign, so the node tends to get cooperation" : 'in a neutral sign, so the result depends on the house and company'}. ${T ? 'In your ' + ordn(p.house) + ' house (' + D.short[p.house - 1] + ') the node pulls attention toward that field.' : ''}`);
       add('🛠️', 'What helps', `${N.help}.`);
       tags.push(st === 'Neutral' ? 'node' : st);
       return { planet: n, tags, lines: L, words: L.reduce((a, l) => a + l.text.split(/\s+/).length, 0) };
     }
     const P = D.planets[n], ctx = { sign: p.sign }, states = [];
     tags.push(D.labels[st] || st);
-    add(D.emoji[st] || '🎚️', 'Its sign state: ' + (D.labels[st] || st) + ((st === 'Exalted' || st === 'Debilitated') && label && label !== '—' ? ' (' + label + ')' : ''), text(n, st, ctx) + (T ? ' ' + fill(D.houseTone[st] || D.houseTone.Neutral, { h: ordn(p.house), theme: T[p.house - 1].split(',')[0] }) : ''));
+    add(D.emoji[st] || '🎚️', 'Its sign state: ' + (D.labels[st] || st) + ((st === 'Exalted' || st === 'Debilitated') && label && label !== '—' ? ' (' + label + ')' : ''), text(n, st, ctx) + (T ? ' ' + fill(D.houseTone[st] || D.houseTone.Neutral, { h: ordn(p.house), theme: D.short[p.house - 1] }) : ''));
     states.push(st);
     if (p.retrograde && P.retro){ tags.push('Retrograde'); states.push('retro'); add('🔄', 'Retrograde', P.retro); }
     if (p.combustion && p.combustion.combust && P.combust){ tags.push('Combust'); states.push('combust'); add('🔥', 'Combust', `${P.combust} Here the planet is ${p.combustion.separation.toFixed(1)} degrees from the Sun (the combustion limit used is ${p.combustion.orb} degrees), so ${p.combustion.separation <= p.combustion.orb / 2 ? 'the dimming is strong' : 'the dimming is mild'}.`); }
@@ -126,7 +126,7 @@ window.PST = (function(D){
       const strong = x => /Exalted|OwnSign|Moolatrikona/.test(x), weak = x => /Enemy|Debilitated/.test(x);
       add('🌗', 'In the navamsa (D9)', `In the navamsa the planet is in ${SIGN[d9s]}, ${D.labels[d9].toLowerCase()}. ${weak(st) && strong(d9) ? 'This lifts a weak birth-chart state: the inner promise is better than the outward start suggests, and results tend to improve with maturity.' : strong(st) && weak(d9) ? 'The birth chart looks strong while the navamsa is weaker, so keep the strength maintained with effort rather than assuming it.' : strong(st) && strong(d9) ? 'Both charts agree on strength, which makes this planet a reliable support.' : weak(st) && weak(d9) ? 'Both charts show friction, so steady effort and support matter more than usual.' : 'The two charts give a balanced picture, so the house and aspects decide the details.'}`);
     }
-    const polar = /Exalted|OwnSign|Moolatrikona/.test(st) ? 'strong' : /Enemy|Debilitated/.test(st) ? 'weak' : 'mid', theme = T ? T[p.house - 1].split(',')[0] : 'that house', scn = pickN(P.scenes, 1, n + 'h' + p.house)[0], frc = pickN(P.fric, 2, n + 'h' + p.house);
+    const polar = /Exalted|OwnSign|Moolatrikona/.test(st) ? 'strong' : /Enemy|Debilitated/.test(st) ? 'weak' : 'mid', theme = T ? D.short[p.house - 1] : 'that house', scn = pickN(P.scenes, 1, n + 'h' + p.house)[0], frc = pickN(P.fric, 2, n + 'h' + p.house);
     { const hm = { P: n, gift: P.gift, core: P.core, theme, s1: scn, f1: frc[0], f2: frc[1] }; let t = fill(D.houseState[polar], hm);
       if (p.retrograde && P.retro) t += ' ' + fill(D.houseState.retro, hm); if (p.combustion && p.combustion.combust && P.combust) t += ' ' + fill(D.houseState.combust, hm); if ((D.karaka[p.house] || []).indexOf(n) >= 0) t += ' ' + fill(D.houseState.karaka, hm);
       add('🏠', `In your ${ordn(p.house)} house (${theme}) with this state`, t); }
@@ -168,7 +168,7 @@ window.PST = (function(D){
     if (p.retrograde && P.retro){ add('🔄', 'Retrograde lord', fill(D.period.retro, m)); }
     if (p.combustion && p.combustion.combust && P.combust){ add('🔥', 'Combust lord', fill(D.period.combust, m)); }
     const ruled = [1,2,3,4,5,6,7,8,9,10,11,12].filter(h => chart.vargas.D1.houses[h - 1].signLord === n);
-    if (T) add('🏠', 'Houses it lights up', `${n} rules ${ruled.length ? nm(ruled.map(h => 'the ' + ordn(h) + ' house (' + T[h - 1].split(',')[0] + ')')) : 'no house'} and sits in the ${ordn(p.house)} house (${T[p.house - 1].split(',')[0]}), so during this ${level.toLowerCase()} those are the parts of life that tend to be switched on${ruled.length ? ', and where matters connected to them are more likely to move' : ''}.`);
+    if (T) add('🏠', 'Houses it lights up', `${n} rules ${ruled.length ? nm(ruled.map(h => 'the ' + ordn(h) + ' house (' + D.short[h - 1] + ')')) : 'no house'} and sits in the ${ordn(p.house)} house (${D.short[p.house - 1]}), so during this ${level.toLowerCase()} those are the parts of life that tend to be switched on${ruled.length ? ', and where matters connected to them are more likely to move' : ''}.`);
     add('🛠️', 'What helps in this period', `${cap(P.help)}.`);
     return { planet: n, level, lines: L, words: L.reduce((a, l) => a + l.text.split(/\s+/).length, 0) };
   }

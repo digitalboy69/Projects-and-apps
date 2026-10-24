@@ -111,6 +111,20 @@ const HNW_DATA = {
    "Ketu"
   ]
  },
+ "short": [
+  "you and your body",
+  "money and family",
+  "effort and courage",
+  "home and roots",
+  "creativity and children",
+  "daily work and health",
+  "partnerships",
+  "change and hidden matters",
+  "belief and luck",
+  "career and standing",
+  "gains and friends",
+  "rest and the inner life"
+ ],
  "hemoji": [
   "🧍",
   "💰",
@@ -204,15 +218,15 @@ window.HNW = (function(D){
       const el = D.elem[sg % 4], md = D.mode[sg % 3];
       L.length = 0;
       L.push(`🏠 The ${ordn(h)} house is the house of ${theme}. In your chart it falls in ${SIGN[sg]}, ${D.modeText[md]}, with an element of ${D.elemText[el]}.`);
-      L.push(`${E(lord)} Its lord is ${lord}, ${kindWord(lord)}: natally in your ${ordn(lp.house)} house in ${SIGN[lp.sign]}, ${DS[ldig] || 'in a neutral sign'}${lpct != null ? ', with ' + lpct + '% of the strength it needs' : ''}. This ties ${theme.split(',')[0]} to ${T.theme[lp.house - 1].split(',')[0]}.`);
+      L.push(`${E(lord)} Its lord is ${lord}, ${kindWord(lord)}: natally in your ${ordn(lp.house)} house in ${SIGN[lp.sign]}, ${DS[ldig] || 'in a neutral sign'}${lpct != null ? ', with ' + lpct + '% of the strength it needs' : ''}. This ties ${D.short[h - 1]} to ${D.short[lp.house - 1]}.`);
       L.push(`📊 The house holds ${SAV[sg]} Ashtakavarga points against an average of ${avg.toFixed(1)}, so its natural support is ${SAV[sg] >= avg + 1.5 ? 'above' : SAV[sg] <= avg - 1.5 ? 'below' : 'close to'} the chart's norm.`);
-      L.push(`🛰️ Today the lord ${lord} is transiting ${SIGN[lordT.sign]}${lordT.rx ? ' (retrograde)' : ''}, your ${ordn(lordT.house)} house, so for this stretch ${theme.split(',')[0]} is being fed through ${T.theme[lordT.house - 1].split(',')[0]}.`);
+      L.push(`🛰️ Today the lord ${lord} is transiting ${SIGN[lordT.sign]}${lordT.rx ? ' (retrograde)' : ''}, your ${ordn(lordT.house)} house, so for this stretch ${D.short[h - 1]} is being fed through ${D.short[lordT.house - 1]}.`);
       const lg = g(lord, lordT.dig); drivers.push({ w: 2.5 * lg, t: `the lord ${lord} transiting your ${ordn(lordT.house)} house${lordT.rx ? ' while retrograde' : ''}` });
       addSec('house', '🏠', 'The house, its sign and its lord', L.slice());
       // ---- 2. natal planets
       L.length = 0;
       if (natalOcc.length) natalOcc.forEach(n => { const p = P[n], d = p.dignity ? p.dignity.status : 'Neutral', k = p.nakshatra, nr = VNK.nakshatra(k.index);
-        L.push(`${E(n)} ${n} sits here from birth, ${DS[d] || 'in a neutral sign'} (${nat(n) > 0 ? 'a natural benefic' : 'a natural malefic'}, ${kindWord(n)}), in ${k.name} pada ${k.pada}, a ${nr ? nr.nature.toLowerCase() : ''} star ruled by ${k.lord}. It brings ${T.role[n]} into ${theme.split(',')[0]}.`); });
+        L.push(`${E(n)} ${n} sits here from birth, ${DS[d] || 'in a neutral sign'} (${nat(n) > 0 ? 'a natural benefic' : 'a natural malefic'}, ${kindWord(n)}), in ${k.name} pada ${k.pada}, a ${nr ? nr.nature.toLowerCase() : ''} star ruled by ${k.lord}. It brings ${T.role[n]} into ${D.short[h - 1]}.`); });
       else L.push(`⚪ No planet is placed here at birth, so the house is carried by its lord ${lord} and by whatever passes through or looks at it, which is a common and workable pattern.`);
       natalOcc.forEach(n => { const d = P[n].dignity ? P[n].dignity.status : 'Neutral'; base += (nat(n) + fk(n)) * (STRONG.indexOf(d) >= 0 ? 2.5 : WEAK.indexOf(d) >= 0 ? 0.8 : 1.6); });
       addSec('natal', '🌟', 'Planets placed here at birth', L.slice());
@@ -220,7 +234,7 @@ window.HNW = (function(D){
       L.length = 0;
       if (tOcc.length) tOcc.forEach(n => { const x = X[n], gg = g(n, x.dig), wt = SLOW.indexOf(n) >= 0 ? 7 : n === 'Mars' ? 4 : 2.5;
         drivers.push({ w: wt * gg, t: `${n} transiting this house` });
-        L.push(`${E(n)} Transit ${n} is in this house now, at ${x.deg.toFixed(0)}° ${SIGN[x.sign]}${x.rx ? ', retrograde' : ''}, ${DS[x.dig] || 'in a neutral sign'}. It is ${nat(n) > 0 ? 'a natural benefic' : 'a natural malefic'} and ${kindWord(n)} for you, so over ${SLOW.indexOf(n) >= 0 ? 'this long stretch' : n === 'Mars' ? 'these weeks' : 'these days'} it ${gg >= 0.5 ? 'tends to support' : gg <= -0.5 ? 'tends to press on' : 'both helps and tests'} ${theme.split(',')[0]}. ${nkLine('Its star:', n, { name: x.nak, pada: x.pada }, x.nature, x.kw, x.nakLord)}`); });
+        L.push(`${E(n)} Transit ${n} is in this house now, at ${x.deg.toFixed(0)}° ${SIGN[x.sign]}${x.rx ? ', retrograde' : ''}, ${DS[x.dig] || 'in a neutral sign'}. It is ${nat(n) > 0 ? 'a natural benefic' : 'a natural malefic'} and ${kindWord(n)} for you, so over ${SLOW.indexOf(n) >= 0 ? 'this long stretch' : n === 'Mars' ? 'these weeks' : 'these days'} it ${gg >= 0.5 ? 'tends to support' : gg <= -0.5 ? 'tends to press on' : 'both helps and tests'} ${D.short[h - 1]}. ${nkLine('Its star:', n, { name: x.nak, pada: x.pada }, x.nature, x.kw, x.nakLord)}`); });
       else { const near = P9.filter(n => SLOW.indexOf(n) >= 0 || n === 'Mars').map(n => ({ n, d: ((x => (x - h + 12) % 12)(X[n].house)) })).sort((a, b) => a.d - b.d)[0];
         L.push(`⚪ No planet is passing through this house today, so it is quiet from visitors; the tone comes from the aspects, the lord and the running dasha below.`); }
       addSec('transit', '🪐', 'Planets passing through it today', L.slice());
@@ -238,8 +252,8 @@ window.HNW = (function(D){
         const link = owns ? 1 : sits ? 0.8 : aspects ? 0.5 : kar ? 0.5 : 0, how = owns ? 'rules this house' : sits ? 'sits in this house' : aspects ? 'looks at this house' : kar ? 'is a natural significator of this house' : 'has no direct link to this house', ing = owns ? 'ruling this house' : sits ? 'sitting in this house' : aspects ? 'looking at this house' : 'being a natural significator of this house';
         const d0 = p.dignity ? p.dignity.status : 'Neutral', gg = g(n, d0); if (link) drivers.push({ w: wt * link * (gg >= 0 ? 0.6 + gg : 0.4 + gg), t: `the ${lab} lord ${n} ${ing}` });
         dsum.push(link ? `${lab} ${n}` : '');
-        L.push(`${E(n)} ${lab} ${n} (${fd(d.startDate)} to ${fd(d.endDate)}) ${how}. Natally ${n} is ${DS[d0] || 'in a neutral sign'} in your ${ordn(p.house)} house, rules the ${r.length ? nm(r.map(ordn)) : 'no'} house${r.length > 1 ? 's' : ''}, and is ${kindWord(n)}${link ? ', so this period speaks directly to ' + theme.split(',')[0] + '.' : '; its themes reach this house only indirectly, through the planets and houses it does touch.'}`);
-        const tx = X[n]; if (tx.house === h) L.push(`🎯 ${n} is also transiting this very house now, which makes ${theme.split(',')[0]} the place where its ${lab.toLowerCase()} is most visible; a dasha lord passing through its own target house tends to bring that period's themes into the open.`); });
+        L.push(`${E(n)} ${lab} ${n} (${fd(d.startDate)} to ${fd(d.endDate)}) ${how}. Natally ${n} is ${DS[d0] || 'in a neutral sign'} in your ${ordn(p.house)} house, rules the ${r.length ? nm(r.map(ordn)) : 'no'} house${r.length > 1 ? 's' : ''}, and is ${kindWord(n)}${link ? ', so this period speaks directly to ' + D.short[h - 1] + '.' : '; its themes reach this house only indirectly, through the planets and houses it does touch.'}`);
+        const tx = X[n]; if (tx.house === h) L.push(`🎯 ${n} is also transiting this very house now, which makes ${D.short[h - 1]} the place where its ${lab.toLowerCase()} is most visible; a dasha lord passing through its own target house tends to bring that period's themes into the open.`); });
       if (!DL.length) L.push('⏳ The dasha tables for this chart do not reach this date, so only the natal pattern, the transits and their aspects are used for this house.');
       addSec('dasha', '⏳', 'Mahadasha, Antardasha and Pratyantar', L.slice());
       // ---- 6. nakshatras involved
@@ -249,7 +263,7 @@ window.HNW = (function(D){
       addSec('nak', '⭐', 'The stars (nakshatras) involved', L.slice());
       // ---- 7. links
       L.length = 0;
-      const lordHouseNow = lordT.house; L.push(`🔗 The lord ${lord} links ${theme.split(',')[0]} (the ${ordn(h)}) with ${T.theme[lordHouseNow - 1].split(',')[0]} (the ${ordn(lordHouseNow)}) right now${lordHouseNow === lp.house ? ', the same house it holds at birth, so the natal and present stories point the same way' : `, a change from its natal ${ordn(lp.house)} house, so the present stretch adds a new angle`}.`);
+      const lordHouseNow = lordT.house; L.push(`🔗 The lord ${lord} links ${D.short[h - 1]} (the ${ordn(h)}) with ${D.short[lordHouseNow - 1]} (the ${ordn(lordHouseNow)}) right now${lordHouseNow === lp.house ? ', the same house it holds at birth, so the natal and present stories point the same way' : `, a change from its natal ${ordn(lp.house)} house, so the present stretch adds a new angle`}.`);
       P9.forEach(n => { if (n === lord || n === 'Moon') return; const x = X[n]; if (x.sign === lp.sign && x.house !== h) L.push(`🔗 Transit ${n} is in ${SIGN[x.sign]}, the sign where the lord ${lord} sits at birth, so it presses on the lord's natal position.`); });
       natalOcc.forEach(n => { const same = P9.filter(t => X[t].sign === P[n].sign); if (same.length) L.push(`🔗 ${nm(same.map(t => 'Transit ' + t))} ${same.length > 1 ? 'are' : 'is'} in ${SIGN[P[n].sign]} with natal ${n}, joining the present to the birth pattern of this house.`); });
       DL.forEach(([lab, d]) => { const r = rules(d.lord); if (r.indexOf(h) < 0 && r.length) { const shared = r.map(ordn); } });
@@ -267,10 +281,10 @@ window.HNW = (function(D){
       addSec('verdict', '⚖️', 'Good or demanding for this house', L.slice());
       // ---- 9. combined
       L.length = 0; const top = drivers.slice().sort((a, b) => Math.abs(b.w) - Math.abs(a.w)).filter(d => Math.abs(d.w) >= 0.5).slice(0, 3);
-      L.push(`🧭 Putting it together: ${theme.split(',')[0]} is in ${D.feel[band[1]]} (${score}/100). ${top.length ? 'The loudest influences are ' + nm(top.map(d => d.t)) + '. ' : 'No single influence dominates, so the house runs on its natal pattern. '}${DL.length ? 'Underneath, the ' + nm(DL.map(x => lc(x[0]) + ' of ' + x[1].lord)) + ' set the background rhythm' + (dl.length ? ', and because ' + nm(dl) + (dl.length > 1 ? ' rule' : ' rules') + ' this house, that rhythm runs straight through it' : '') + '. ' : ''}${D.help_[band[1]]}`);
+      L.push(`🧭 Putting it together: ${D.short[h - 1]} is in ${D.feel[band[1]]} (${score}/100). ${top.length ? 'The loudest influences are ' + nm(top.map(d => d.t)) + '. ' : 'No single influence dominates, so the house runs on its natal pattern. '}${DL.length ? 'Underneath, the ' + nm(DL.map(x => lc(x[0]) + ' of ' + x[1].lord)) + ' set the background rhythm' + (dl.length ? ', and because ' + nm(dl) + (dl.length > 1 ? ' rule' : ' rules') + ' this house, that rhythm runs straight through it' : '') + '. ' : ''}${D.help_[band[1]]}`);
       L.push(`🌱 This is a reading of present conditions and tendencies, not a forecast of events.`);
       addSec('combined', '🧭', 'All of it combined', L.slice());
-      houses.push({ h, theme, emoji: D.hemoji[h - 1], sign: SIGN[sg], lord, score, band: band[1], tone: band[2], sup: sup.map(d => d.t), prs: prs.map(d => d.t), drivers, sections: sec,
+      houses.push({ h, theme, short: D.short[h - 1], emoji: D.hemoji[h - 1], sign: SIGN[sg], lord, score, band: band[1], tone: band[2], sup: sup.map(d => d.t), prs: prs.map(d => d.t), drivers, sections: sec,
         facts: { sav: SAV[sg], lordPct: lpct, lordHouseNatal: lp.house, lordHouseNow: lordT.house, tOcc, tAsp, natalOcc } });
     }
     const words = houses.reduce((a, x) => a + x.sections.reduce((b, s) => b + s.text.split(/\s+/).length, 0), 0);

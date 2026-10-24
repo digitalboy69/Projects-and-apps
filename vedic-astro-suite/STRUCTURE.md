@@ -155,6 +155,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/101-house-now-ui.js` — Right now screens: first tab of Chart Reading, report text and the PDF section
 - `apps/birth-chart/js/102-planet-states.js` — GENERATED planet states (PST): every state of a planet (exalted, own, friend, neutral, enemy, debilitated with cancellation check, retrograde, combust, vargottama, navamsa, house) with everyday examples
 - `apps/birth-chart/js/103-planet-states-ui.js` — adds the PST blocks to the Planets tab cards, the report text and the PDF planet pages
+- `apps/birth-chart/js/104-reading-style.js` — Chart Reading helpers: bold hook sentence, scroll progress, explored dots with ticks, next-up buttons
 - `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
 - `apps/birth-chart/js/95-life-narratives.js` — Life-area narratives (global LAN), GENERATED: a 450-700 word personal reading for each of the 9 life areas, composed from the engine facts (stance by band, house-lord arena, strengths, care points, yoga modifiers, timing, practices, self-check questions)
 - `apps/birth-chart/js/96-varga-reading.js` — Divisional chart readings (global VGR), GENERATED: D9, D10, D7, D4, D24, D20 each with rising sign, the houses that matter, planet-by-planet text, strength summary, vargottama and a score; positions come from the app's own varga engine
@@ -207,6 +208,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/41-dasha-time-finder.css` — Dasha Time Finder styles
 - `apps/birth-chart/css/42-life-event-pro.css` — styles for the Life-Event picker, evidence meter and confidence hero
 - `apps/birth-chart/css/43-house-now.css` — styles for the Right now tab (area bars, house chips, today's sky, house cards)
+- `apps/birth-chart/css/44-reading-style.css` — Chart Reading look: big headlines, hero, hooks, house cards, progress bar, explored dots and next-up buttons
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order
@@ -358,6 +360,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/area_deep_test.py` — area deep dive: every quoted number vs the chart over 12 charts, wording rules, determinism, Deep reading/report/PDF wiring
 - `tests/house_now_test.py` — Right now: sky, dasha chain, signs, lords, Ashtakavarga and scores vs the engines at two dates over 12 charts, wording, first tab, report and PDF
 - `tests/planet_states_test.py` — planet states: tags vs the chart over 12 charts, every planet x state paragraph, wording, Planets tab, report and PDF wiring
+- `tests/reading_style_test.py` — reading style: hooks, progress, explored dots, next-up, hero, headline sizes, 3 phone/desktop widths, reduced motion
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/life_narratives_test.py` — Life-area narratives: 12 charts x 9 areas (length, structure, wording, consistency with scores), variation, sensitivity, Deep reading + report + PDF wiring
 - `tests/varga_reading_test.py` — Divisional chart readings: 12 charts x 6 vargas cross-checked with the app's own varga data and VDB's D9 vargottama, variation, one-fact sensitivity, Deep reading + report + PDF wiring
