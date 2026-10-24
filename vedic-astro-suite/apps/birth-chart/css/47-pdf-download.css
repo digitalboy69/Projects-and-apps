@@ -1,0 +1,6 @@
+/* PDF download progress card (js/109-pdf-download.js) */
+.pdfd{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translate(-50%,24px);width:min(340px,calc(100vw - 32px));padding:12px 14px;border-radius:14px;background:rgba(14,18,30,.96);color:#f3ead2;border:1px solid rgba(212,175,55,.45);box-shadow:0 10px 36px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:99999;font:13px/1.4 Inter,system-ui,sans-serif}
+.pdfd.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.pdfd-t{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px}.pdfd-t b{color:#e8c766;font-weight:600}.pdfd-n{opacity:.85;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pdfd-bar{height:6px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}.pdfd-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#b8902a,#f0d57a);transition:width .2s}
+.pdfd-x{margin-top:9px;background:none;border:0;color:#cdbb86;font:inherit;text-decoration:underline;cursor:pointer;padding:0}

@@ -161,6 +161,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/107-ashtakavarga-reading.js` — GENERATED Ashtakavarga reading (AVR): combined house map and life axes, then each planet (overview, best, thin, balance, home, today) and that planet's points in each of the 12 houses
 - `apps/birth-chart/js/106-shadbala-ui.js` — the Strength tab of Chart Reading, the report text and the PDF Shadbala pages
 - `apps/birth-chart/js/108-ashtakavarga-ui.js` — Ashtakavarga tab, PDF plates and report text (AVRUI)
+- `apps/birth-chart/js/109-pdf-download.js` — PDF DOWNLOAD (PDFD): turns the PDF book straight into a .pdf file with no print window (hidden A4 frame, page cuts at block ends, browser-drawn pages as JPEG, built-in PDF writer); PDFR falls back to print if it fails
 - `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
 - `apps/birth-chart/js/95-life-narratives.js` — Life-area narratives (global LAN), GENERATED: a 450-700 word personal reading for each of the 9 life areas, composed from the engine facts (stance by band, house-lord arena, strengths, care points, yoga modifiers, timing, practices, self-check questions)
 - `apps/birth-chart/js/96-varga-reading.js` — Divisional chart readings (global VGR), GENERATED: D9, D10, D7, D4, D24, D20 each with rising sign, the houses that matter, planet-by-planet text, strength summary, vargottama and a score; positions come from the app's own varga engine
@@ -216,6 +217,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/44-reading-style.css` — Chart Reading look: big headlines, hero, hooks, house cards, progress bar, explored dots and next-up buttons
 - `apps/birth-chart/css/45-shadbala-reading.css` — styles for the Strength tab (bars with a 100% line, the six strengths, planet cards; classes use the sbr- prefix because sb- belongs to the older Shadbala screen)
 - `apps/birth-chart/css/46-ashtakavarga-reading.css` — styles for the Ashtakavarga tab (avr- prefix; av- and avx- belong to older screens)
+- `apps/birth-chart/css/47-pdf-download.css` — progress card for the PDF download (pdfd- prefix)
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order
@@ -375,6 +377,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/shadbala_reading_test.py` — Shadbala reading: every number, rank, tier and component vs chart.shadbala over 12 charts, wording, Strength tab, report and PDF
 - `tests/ashtakavarga_reading_test.py` — Ashtakavarga reading: every point, total, rank, tier, sign, house and contributor vs chart.ashtakavarga over 12 charts, wording, tab, report and PDF
 - `tests/updater_test.py` — silent updater: stale build triggers one silent reload and re-download, current build does nothing
+- `tests/pdf_download_test.py` — PDF download: a real multi-page A4 .pdf file is saved directly, no print window, page plan cuts only at block ends
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/life_narratives_test.py` — Life-area narratives: 12 charts x 9 areas (length, structure, wording, consistency with scores), variation, sensitivity, Deep reading + report + PDF wiring
 - `tests/varga_reading_test.py` — Divisional chart readings: 12 charts x 6 vargas cross-checked with the app's own varga data and VDB's D9 vargottama, variation, one-fact sensitivity, Deep reading + report + PDF wiring

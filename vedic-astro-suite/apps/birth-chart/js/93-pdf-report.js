@@ -393,7 +393,12 @@ function generate(){
     f.srcdoc = html; document.body.appendChild(f);
   }, 60);
 }
-document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-pdf-studio],[data-pdf-generate]'); if (b){ e.preventDefault(); if (typeof closeExportModal === 'function') closeExportModal(); generate(); } });
-window.PDFR = { build, open: generate, generate, reg, sections: () => SECTIONS.map(s => s[0]), parts: PARTS,
+/* one click: a direct .pdf download when the browser can do it (js/109), otherwise the print window */
+function go(){
+  if (window.PDFD && PDFD.ok){ PDFD.download().catch(e => { if (e && e.cancelled){ note('PDF cancelled.', 3000); return; } if (window.console) console.warn('PDFD fell back to print:', e); generate(); }); }
+  else generate();
+}
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-pdf-studio],[data-pdf-generate]'); if (b){ e.preventDefault(); if (typeof closeExportModal === 'function') closeExportModal(); go(); } });
+window.PDFR = { build, open: go, generate, print: generate, download: go, reg, sections: () => SECTIONS.map(s => s[0]), parts: PARTS,
   h: { SIGN, PL, P7, AB, esc, ordn, MON, fmtD, strip, dig, chip, tone, card, bar, hbar, pad2, north, vargaSvg, chartSvg, moonSvg, abbr, ring, radar, mandala, TH, savSvg } };
 })();

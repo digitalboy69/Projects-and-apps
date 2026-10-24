@@ -50,7 +50,7 @@ with sync_playwright() as p:
     pg.evaluate("document.querySelectorAll('.app-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-reading').classList.add('active')")
     pg.evaluate("document.querySelectorAll('#panel-reading .rd .vx-tabs button:not(.hn-tab):not(.sbr-tab):not(.avr-tab)')[5].click()"); pg.wait_for_timeout(300)
     ok('Deep reading overview has the "Generate the full PDF book" button', pg.evaluate("!!document.querySelector('.dr-sec[data-sec=intro] .dr-pdf')&&/full PDF/i.test(document.querySelector('.dr-pdf').textContent)"))
-    n0 = pg.evaluate("document.querySelectorAll('body>iframe').length"); pg.evaluate("document.querySelector('.dr-pdf').click()"); pg.wait_for_timeout(3500)
+    pg.evaluate('PDFD.ok=false;0'); n0 = pg.evaluate("document.querySelectorAll('body>iframe').length"); pg.evaluate("document.querySelector('.dr-pdf').click()"); pg.wait_for_timeout(3500)
     ok('one click builds the book and prints it inside a hidden iframe: no dialog, no settings', pg.evaluate("document.querySelectorAll('body>iframe').length") == n0 + 1 and not pg.evaluate("!!document.querySelector('.pdfs')") and pg.evaluate("!!document.getElementById('pdfr-note')"))
     ok('the print window opens exactly once, and for the finished book (never for a blank frame, no second print)', pg.evaluate("window.__prints||[]") == ['book'], pg.evaluate("window.__prints||[]"))
     ok('export dialog has a single "Generate full PDF" button', pg.evaluate("(document.getElementById('exportPdfBtn')||{}).textContent||''").find('Generate full PDF') >= 0)

@@ -68,6 +68,7 @@ Every session: build -> its own test -> commit -> push to `feature/full-reading`
 - [x] **S17 Shadbala reading** (done: js/105-shadbala-reading.js via tools/reading_gen/build_sb.py + js/106-shadbala-ui.js; new last tab "💪 Strength" in Chart Reading, report text and PDF Shadbala pages; all six strengths and every component read per planet, with Ishta/Kashta; tests/shadbala_reading_test.py).
 - [x] **S18 Ashtakavarga reading** (done: js/107-ashtakavarga-reading.js via tools/reading_gen/build_av.py + js/108-ashtakavarga-ui.js; new last tab "🔢 Ashtakavarga": combined house map and life axes, then each planet and its points in all 12 houses, about 15k words; also in report and PDF; tests/ashtakavarga_reading_test.py)
 - [x] **Fix: new tabs missing until refresh** (done: silent updater, shell/js/updater.js + version.json; tests/updater_test.py)
+- [x] **PDF direct download** (done: js/109-pdf-download.js + css/47; the PDF button saves a .pdf file without the print window; tests/pdf_download_test.py)
 
 ## 6. Working rules (every session)
 1. Start: read this file + `AI_GUIDE.md`; take the next unchecked session. Do not skip ahead.
