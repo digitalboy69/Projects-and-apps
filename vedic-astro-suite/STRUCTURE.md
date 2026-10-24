@@ -50,6 +50,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 ### shell/
 - `shell/css/shell.css` — loader, switcher, dev overlay styles
 - `shell/js/shell.js` — mounts app iframes, loader timing, switcher, dev overlay
+- `shell/js/updater.js` — silent updater: reads version.json, re-downloads stale cached files when the build changed and reloads once (hosted and installed app; no-op in the single-file build)
 - `shell/js/locpicker.js` — map / location picker used by every app (LocPicker)
 
 ### apps/birth-chart/ — Birth Chart / Vedic app (the main app)
@@ -343,6 +344,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tools/reading_gen/build_ps.py` — planet states frames, combinations and composer; writes js/102-planet-states.js
 - `tools/reading_gen/build_sb.py` — Shadbala reading tables and composer; writes js/105-shadbala-reading.js
 - `tools/reading_gen/build_av.py` — Ashtakavarga reading tables and composer; writes js/107-ashtakavarga-reading.js
+- `tools/version.py` — writes version.json (build id + file list) for the silent updater; run by build.py
+- `version.json` — GENERATED build id and file list read by shell/js/updater.js (never hand-edit)
 - `tools/reading_gen/ps_data.py` — planet-by-planet state wording (exalted, debilitated, retrograde, combust, scenes, friction, help) used by build_ps.py
 - `tools/reading_gen/regen.sh` — regenerates all four reading databases (js/87, 89, 90, 91); afterwards `git status` must show no change unless a table was edited
 - `tools/reading_gen/regen.sh — regenerates all four reading databases; afterwards `git status` must show no change unless a table was edited`
@@ -371,6 +374,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/reading_style_test.py` — reading style: hooks, progress, explored dots, next-up, hero, headline sizes, 3 phone/desktop widths, reduced motion
 - `tests/shadbala_reading_test.py` — Shadbala reading: every number, rank, tier and component vs chart.shadbala over 12 charts, wording, Strength tab, report and PDF
 - `tests/ashtakavarga_reading_test.py` — Ashtakavarga reading: every point, total, rank, tier, sign, house and contributor vs chart.ashtakavarga over 12 charts, wording, tab, report and PDF
+- `tests/updater_test.py` — silent updater: stale build triggers one silent reload and re-download, current build does nothing
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/life_narratives_test.py` — Life-area narratives: 12 charts x 9 areas (length, structure, wording, consistency with scores), variation, sensitivity, Deep reading + report + PDF wiring
 - `tests/varga_reading_test.py` — Divisional chart readings: 12 charts x 6 vargas cross-checked with the app's own varga data and VDB's D9 vargottama, variation, one-fact sensitivity, Deep reading + report + PDF wiring

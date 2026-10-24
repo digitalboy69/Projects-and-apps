@@ -15,6 +15,7 @@ slots = {k: assemble.load_app(v) for k, v in assemble.APPS.items()}
 for name, enc in (('vedic-astro-suite-readable.html', 'plain'), ('vedic-astro-suite-2.html', 'b64')):
     with open(os.path.join('dist', name), 'w', encoding='utf-8') as f:
         f.write(assemble.shell_html(slots, enc))
+import version; version.gen()
 print('built')
 guide.gen_guide()
 import subprocess; subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'check_structure.py')])

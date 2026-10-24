@@ -4,3 +4,4 @@ vedic-astro-suite/AI_GUIDE.md merge=union
 # Generated files: on a conflict keep the other side; tools/ai/session.sh runs build.py afterwards. (needs: git config merge.ours.driver true)
 vedic-astro-suite/symbols.idx merge=ours
 vedic-astro-suite/dist/*.html merge=ours
+vedic-astro-suite/version.json merge=ours
