@@ -63,7 +63,7 @@ with sync_playwright() as p:
     ok('calibration: no area is always high or always low (each area mean between 40 and 60)', all(40 <= st.mean(v) <= 60 for v in areaMeans.values()), {k: round(st.mean(v)) for k, v in areaMeans.items()})
     # ---- screens ----
     pg.evaluate(CAST, dict(name='Asha', dob='1995-03-14', tob='11:00', place='Hyderabad', lat=17.385, lon=78.4867, tz=5.5)); pg.wait_for_selector('#results.show', timeout=15000)
-    s = pg.evaluate("""()=>{const c=currentChartForModal,A=LAE.assess(c),rd=document.querySelector('#panel-reading .rd'),pane=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane)')][5],bad=[],norm=s=>s.replace(/\\s+/g,' ');
+    s = pg.evaluate("""()=>{const c=currentChartForModal,A=LAE.assess(c),rd=document.querySelector('#panel-reading .rd'),pane=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane):not(.sbr-pane)')][5],bad=[],norm=s=>s.replace(/\\s+/g,' ');
       const sec=pane.querySelector('.dr-sec[data-sec=areas]');if(!sec)return {bad:['no section']};if(sec.querySelectorAll('.dr-area').length!==9)bad.push('cards');
       if(![...pane.querySelectorAll('.dr-nb')].some(b=>b.dataset.sec==='areas'))bad.push('nav');
       A.areas.forEach((x,i)=>{const e=sec.querySelectorAll('.dr-area')[i];if(!e)return;if(!e.textContent.includes(x.name))bad.push('name '+x.id);if(e.querySelector('.dr-as').textContent!==String(x.score))bad.push('score '+x.id);if(e.querySelector('.dr-bar i').style.width!==x.score+'%')bad.push('bar '+x.id)});

@@ -62,7 +62,7 @@ with sync_playwright() as p:
       return {scoreUp:up.score>=base.score,textChanged:up.text!==base.text,lordsDown:dn.text!==base.text,timingChanged:t(far)!==t(base),mentionsLord:base.text.includes('The lord of your 10th house is '+l)}}""" % NOW)
     ok('the story follows the facts: more house support changes the text and does not lower the score; weaker lord changes it; moving the date changes the timing paragraph; names the real house lord', all(sn.values()), sn)
     # ---- screens ----
-    s = pg.evaluate("""()=>{const c=currentChartForModal,L=LAN.all(c),rd=document.querySelector('#panel-reading .rd'),pane=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane)')][5],bad=[],norm=s=>s.replace(/\\s+/g,' ');
+    s = pg.evaluate("""()=>{const c=currentChartForModal,L=LAN.all(c),rd=document.querySelector('#panel-reading .rd'),pane=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane):not(.sbr-pane)')][5],bad=[],norm=s=>s.replace(/\\s+/g,' ');
       const cards=[...pane.querySelectorAll('.dr-sec[data-sec=areas] .dr-area')];if(cards.length!==9)bad.push('cards');
       cards.forEach((e,i)=>{const d=e.querySelector('details.dr-story');if(!d){bad.push('no story '+i);return}if(d.querySelectorAll('h5').length!==L[i].paragraphs.length)bad.push('headings '+i);if(!norm(d.textContent).includes(norm(L[i].paragraphs[0].text)))bad.push('text '+i)});
       const rep=buildFullReportText(c,currentProfileForExport,{}).replace(/\\s+/g,' ');L.forEach(n=>{if(!rep.includes(n.name.toUpperCase()+' - THE FULL STORY'))bad.push('report '+n.id);if(!rep.includes(norm(n.paragraphs[1].text.slice(0,80))))bad.push('report text '+n.id)});

@@ -91,7 +91,7 @@ function bShadbala(c){
     `<p><b>Strongest:</b> ${esc(ordered[0])} (${S[ordered[0]].percentOfRequired.toFixed(0)}%). <b>Needs the most support:</b> ${esc(ordered[ordered.length - 1])} (${S[ordered[ordered.length - 1]].percentOfRequired.toFixed(0)}%). ${lords.length ? esc(lords.join(' · ')) + '.' : ''}</p>` +
     `<h3 class="grp">The six strengths (in virupas)</h3>` + table(['Planet', 'Position', 'Direction', 'Time', 'Motion', 'Natural', 'Aspect', 'Total (rupas)', 'Needs', '% of need', 'Verdict'], rows) +
     `<h3 class="grp">Inside position and time</h3><p class="sm">Position strength (Sthana) is made of five parts and time strength (Kala) of five more. These are the working figures behind the table above.</p>` + table(['Planet', 'Exalt.', 'Seven charts', 'Odd/even', 'Kendra', 'Decan', 'Day/night', 'Moon phase', 'Third of day', 'Weekday etc.', 'Ayana'], sub) +
-    `<h3 class="grp">How to read it</h3><p>A strong planet is easier to use: its house and themes tend to be well supported. A planet below the requirement is not "bad"; it is the one that asks for more conscious effort, patience or support from the other planets. Read Shadbala together with the dignity of the planet and with the Ashtakavarga on the next pages.</p>`;
+    `<h3 class="grp">How to read it</h3><p>A strong planet is easier to use: its house and themes tend to be well supported. A planet below the requirement is not "bad"; it is the one that asks for more conscious effort, patience or support from the other planets. Read Shadbala together with the dignity of the planet and with the Ashtakavarga on the next pages.</p>` + (window.SBRUI ? SBRUI.pdf(c) : '');
 }
 
 /* ---------- Ashtakavarga ---------- */

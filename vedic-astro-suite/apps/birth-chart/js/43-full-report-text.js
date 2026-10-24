@@ -129,6 +129,10 @@ function buildFullReportText(chart, profile, sections, liveSkyData){
     });
   }
 
+  if (want('shadbala') && window.SBRUI){
+    try { add(); add(SBRUI.text(chart)); } catch(e){ add('(The Shadbala reading could not be built for this chart.)'); }
+  }
+
   if (want('ashtakavarga')){
     section('ASHTAKAVARGA — POINT-STRENGTH SYSTEM');
     const av = chart.ashtakavarga;

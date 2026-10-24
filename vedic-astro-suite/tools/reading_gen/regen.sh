@@ -15,3 +15,4 @@ python3 build_ts.py                                    # js/97-transit-reading.j
 python3 build_dd.py                                    # js/99-area-deep.js           (tables inside build_dd.py)
 python3 build_hn.py                                    # js/100-house-now.js         (tables inside build_hn.py)
 python3 build_ps.py                                    # js/102-planet-states.js     (tables inside build_ps.py and ps_data.py)
+python3 build_sb.py                                    # js/105-shadbala-reading.js  (tables inside build_sb.py)

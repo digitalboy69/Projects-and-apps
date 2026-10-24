@@ -67,7 +67,7 @@ with sync_playwright() as p:
         if o: bad.append((d, o))
     ok('8 real charts: signature has 4-7 items, rising/Sun/Lagna-lord lines match the chart, strong/weak planets match the real dignity, all 9 headlines use the real house and sign', not bad, bad[:2])
     # ---- on screen (last chart cast) ----
-    s2 = pg.evaluate("""()=>{const c=currentChartForModal,rd=document.querySelector('#panel-reading .rd'),panes=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane)')],norm=s=>s.replace(/\\s+/g,' '),bad=[];
+    s2 = pg.evaluate("""()=>{const c=currentChartForModal,rd=document.querySelector('#panel-reading .rd'),panes=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane):not(.sbr-pane)')],norm=s=>s.replace(/\\s+/g,' '),bad=[];
       const deep=norm(panes[5].textContent),cards=[...panes[2].querySelectorAll('details.vx-pl')].map(d=>norm(d.textContent)),S=VMF.signature(c);
       if(!deep.includes('Your signature at a glance'))bad.push('signature title');S.items.forEach(x=>{if(!deep.includes(norm(x.text)))bad.push('sig '+x.title)});
       Object.keys(c.planets).forEach((n,i)=>{const e=c.planets[n],m=VMF.placement(n,e.house,e.sign,e.dignity.status);if(!cards[i].includes('In real life: '+m.headline))bad.push(n+' headline');

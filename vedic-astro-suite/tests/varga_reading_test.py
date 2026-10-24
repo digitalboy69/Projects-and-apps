@@ -67,7 +67,7 @@ with sync_playwright() as p:
         up:ex.score>=base.score&&ex.score>de.score,down:de.score<=base.score,textChanged:ex.text!==base.text&&de.text!==base.text,otherUnchanged:JSON.stringify(VGR.chart(mk(11),'D10').planets)===JSON.stringify(VGR.chart(c,'D10').planets)}}""")
     ok('the reading follows the facts: Venus exalted in D9 reads strong and lifts the score; debilitated reads weaker and lowers it; other charts do not change', all(sn.values()), sn)
     # ---- screens ----
-    s = pg.evaluate("""()=>{const c=currentChartForModal,L=VGR.all(c),rd=document.querySelector('#panel-reading .rd'),pane=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane)')][5],bad=[],norm=s=>s.replace(/\\s+/g,' ');
+    s = pg.evaluate("""()=>{const c=currentChartForModal,L=VGR.all(c),rd=document.querySelector('#panel-reading .rd'),pane=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane):not(.sbr-pane)')][5],bad=[],norm=s=>s.replace(/\\s+/g,' ');
       const sec=pane.querySelector('.dr-sec[data-sec=vargas]');if(!sec)return {bad:['no section']};const ds=[...sec.querySelectorAll('details.dr-vg')];if(ds.length!==6)bad.push('cards');
       if(![...pane.querySelectorAll('.dr-nb')].some(b=>b.dataset.sec==='vargas'))bad.push('nav');
       ds.forEach((e,i)=>{if(e.querySelectorAll('h5').length!==L[i].paragraphs.length)bad.push('h5 '+i);if(!norm(e.textContent).includes(norm(L[i].paragraphs[3].text.slice(0,90))))bad.push('text '+i);if(e.querySelector('.dr-as').textContent!==String(L[i].score))bad.push('score '+i)});

@@ -44,7 +44,7 @@ with sync_playwright() as p:
         o = pg.evaluate(CHECK)
         if o['bad']: bad.append((d, o['bad']))
     ok('8 real charts: every Mahadasha and all 9 Antardashas match the app\'s own dasha engine (lords, exact dates), birth date matches, current period equals findActiveDasha, 5-year window is gap-free, texts clean', not bad, bad[:2])
-    s = pg.evaluate("""()=>{const c=currentChartForModal,rd=document.querySelector('#panel-reading .rd'),panes=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane)')],norm=s=>s.replace(/\\s+/g,' '),bad=[];
+    s = pg.evaluate("""()=>{const c=currentChartForModal,rd=document.querySelector('#panel-reading .rd'),panes=[...rd.querySelectorAll(':scope>.vx-pane:not(.hn-pane):not(.sbr-pane)')],norm=s=>s.replace(/\\s+/g,' '),bad=[];
       const deep=norm(panes[5].textContent),T=VDA.timeline(c),cur=VDA.current(c),up=VDA.upcoming(c,5),now=norm(panes[3].textContent);
       const tl=[...panes[5].querySelectorAll('details.vx-pl')].slice(0,T.periods.length);
       if(!deep.includes('Life timeline')||!deep.includes('Next 5 years'))bad.push('headings');if(tl.length!==T.periods.length)bad.push('cards');
