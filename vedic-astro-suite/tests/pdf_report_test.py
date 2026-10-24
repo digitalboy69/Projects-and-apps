@@ -48,7 +48,7 @@ with sync_playwright() as p:
     ok('no section failed to build on any chart', not warns, warns[:3])
     # ---- one click, no dialog ----
     pg.evaluate("document.querySelectorAll('.app-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-reading').classList.add('active')")
-    pg.evaluate("document.querySelectorAll('#panel-reading .rd .vx-tabs button:not(.hn-tab):not(.sbr-tab)')[5].click()"); pg.wait_for_timeout(300)
+    pg.evaluate("document.querySelectorAll('#panel-reading .rd .vx-tabs button:not(.hn-tab):not(.sbr-tab):not(.avr-tab)')[5].click()"); pg.wait_for_timeout(300)
     ok('Deep reading overview has the "Generate the full PDF book" button', pg.evaluate("!!document.querySelector('.dr-sec[data-sec=intro] .dr-pdf')&&/full PDF/i.test(document.querySelector('.dr-pdf').textContent)"))
     n0 = pg.evaluate("document.querySelectorAll('body>iframe').length"); pg.evaluate("document.querySelector('.dr-pdf').click()"); pg.wait_for_timeout(3500)
     ok('one click builds the book and prints it inside a hidden iframe: no dialog, no settings', pg.evaluate("document.querySelectorAll('body>iframe').length") == n0 + 1 and not pg.evaluate("!!document.querySelector('.pdfs')") and pg.evaluate("!!document.getElementById('pdfr-note')"))
@@ -60,7 +60,7 @@ with sync_playwright() as p:
     ok('print layout: no element is wider than the page content area (the book is not shrunk)', pg3.evaluate("document.documentElement.scrollWidth<=document.documentElement.clientWidth"), pg3.evaluate("[document.documentElement.scrollWidth,document.documentElement.clientWidth]"))
     pg2 = b.new_page(); pg2.set_content(html0, wait_until='load'); pdf = pg2.pdf(prefer_css_page_size=True, print_background=True)
     pages = len(re.findall(rb'/Type\s*/Page[^s]', pdf)); open('/tmp/pdfs_sample.pdf', 'wb').write(pdf)
-    ok('a real A4 PDF renders: 100 to 220 pages, under 6 MB', pdf[:4] == b'%PDF' and 100 <= pages <= 220 and len(pdf) < 6_000_000, (pages, len(pdf) // 1024))
+    ok('a real A4 PDF renders: 100 to 280 pages, under 6 MB', pdf[:4] == b'%PDF' and 100 <= pages <= 280 and len(pdf) < 6_000_000, (pages, len(pdf) // 1024))
     # ---- budgets: speed and size ----
     sp = pg.evaluate("()=>{const t=performance.now(),h=PDFR.build(currentChartForModal,currentProfileForExport);return {ms:Math.round(performance.now()-t),kb:Math.round(h.length/1024)}}")
     ok('speed and size budget: the book builds in under 4 s and the HTML stays under 900 KB', sp['ms'] < 4000 and sp['kb'] < 900, sp)

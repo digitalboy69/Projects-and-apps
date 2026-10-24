@@ -154,6 +154,10 @@ function buildFullReportText(chart, profile, sections, liveSkyData){
     });
   }
 
+  if (want('ashtakavarga') && window.AVRUI){
+    try { add(); add(AVRUI.text(chart)); } catch(e){ add('(The Ashtakavarga reading could not be built for this chart.)'); }
+  }
+
   if (want('dasha')){
     section('VIMSHOTTARI DASHA — FULL PERIOD TIMELINE');
     add(`Starting lord at birth: ${chart.dashaData.startLord} (balance ${chart.dashaData.balanceYears.toFixed(2)} years)`);

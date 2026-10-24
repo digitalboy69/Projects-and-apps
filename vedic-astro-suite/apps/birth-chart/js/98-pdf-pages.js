@@ -116,7 +116,7 @@ function bAshtakavarga(c){
     `<h3 class="grp">Points in each house, by planet</h3><p class="sm">Columns are houses counted from your ${esc(SIGN[asc])} rising sign. Darker means more points. A single planet's total is fixed by the system, so compare houses within a row.</p><table class="tb heat"><thead>${th(hdr)}</thead><tbody>${rows.join('')}</tbody></table>` +
     `<p>The Sarva total is ${tot} (the system gives 337 in total across a chart). The average is ${avg.toFixed(1)} points per house; houses at ${Math.ceil(avg + 3)} or more are well supported, and houses at ${Math.floor(avg - 3)} or fewer are thinner.</p>` +
     `<h3 class="grp">The same points, sign by sign</h3>${sign}` +
-    `<h3 class="grp">Each planet's pattern</h3><div class="grid2">${bars}</div><ul class="ul">${P7.filter(n => A.bavTables[n]).map(n => `<li>${esc(nm(n))}.</li>`).join('')}</ul>`;
+    `<h3 class="grp">Each planet's pattern</h3><div class="grid2">${bars}</div><ul class="ul">${P7.filter(n => A.bavTables[n]).map(n => `<li>${esc(nm(n))}.</li>`).join('')}</ul>` + (window.AVRUI ? AVRUI.pdf(c) : '');
 }
 
 /* ---------- gallery of every divisional chart ---------- */

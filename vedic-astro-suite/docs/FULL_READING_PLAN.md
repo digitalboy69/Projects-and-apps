@@ -66,6 +66,7 @@ Every session: build -> its own test -> commit -> push to `feature/full-reading`
 - [x] **S15 Richer dataset with states** (done: js/102 PST + js/103 screens; planet states by sign state, retrograde, combust, vargottama, navamsa, house, star; running Mahadasha/Antardasha/Pratyantar lords by state; yogas by the state of their planets; tests/planet_states_test.py). Possible next: nakshatra, house and sign master texts rewritten longer by hand, Hindi/Telugu.
 - [x] **S16 Reading style** (done: css/44-reading-style.css + js/104-reading-style.js; big headlines, Right now hero with score ring, short version per house, bold hook sentences, scroll progress, explored dots with ticks, next-up buttons, reduced-motion safe; tests/reading_style_test.py).
 - [x] **S17 Shadbala reading** (done: js/105-shadbala-reading.js via tools/reading_gen/build_sb.py + js/106-shadbala-ui.js; new last tab "💪 Strength" in Chart Reading, report text and PDF Shadbala pages; all six strengths and every component read per planet, with Ishta/Kashta; tests/shadbala_reading_test.py).
+- [x] **S18 Ashtakavarga reading** (done: js/107-ashtakavarga-reading.js via tools/reading_gen/build_av.py + js/108-ashtakavarga-ui.js; new last tab "🔢 Ashtakavarga": combined house map and life axes, then each planet and its points in all 12 houses, about 15k words; also in report and PDF; tests/ashtakavarga_reading_test.py)
 
 ## 6. Working rules (every session)
 1. Start: read this file + `AI_GUIDE.md`; take the next unchecked session. Do not skip ahead.
