@@ -11,7 +11,7 @@
 .rd .rs-explored b{color:var(--rp-soft);font-weight:600}.rd .rs-explored .vxi{display:none}
 .rd .rs-dots{gap:4px}.rd .rs-dots span{width:6px;height:6px;background:rgba(255,255,255,.14)}.rd .rs-dots span.on{background:var(--rp-gold);transform:none;box-shadow:none}
 /* ---- tabs: underline style, scrolls sideways on phones ---- */
-.rd>.vx-tabs{gap:2px;padding:0;border:0;border-bottom:1px solid var(--rp-line);border-radius:0;background:none;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent 100%)}
+.rd>.vx-tabs{gap:2px;padding:0;border:0;border-bottom:1px solid var(--rp-line);border-radius:0;background:none;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
 .rd>.vx-tabs button{position:relative;flex:0 0 auto;padding:13px 14px 12px;border-radius:0;font:600 12.5px var(--font-sans);letter-spacing:.03em;color:var(--rp-faint);scroll-snap-align:center;transition:color .25s var(--rp-ease)}
 .rd>.vx-tabs button .vxi{opacity:.65;margin-right:5px;transition:opacity .25s}
 .rd>.vx-tabs button::before{content:'';position:absolute;left:12px;right:12px;bottom:-1px;height:2px;border-radius:2px;background:var(--rp-gold);transform:scaleX(0);transition:transform .3s var(--rp-ease)}

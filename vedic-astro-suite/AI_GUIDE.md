@@ -165,6 +165,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Reading polish: `css/48-reading-polish.css` (loaded last, scoped to `.rd`) is the final look layer for Chart Reading; change the look there, not in the per-tab css. Rules: one accent per meaning, hairline borders, no loud fills, headings without emoji, motion off for reduced-motion.
 - Intake polish: `css/49-intake-polish.css` (loaded last, scoped to `.in-wrap`) is the look layer of the birth-details page; the step logic stays in `js/68-intake-progress.js` (classes `done`/`current` drive the timeline).
 - Home polish: `css/50-home-polish.css` (loaded last, scoped to `#panel-home`) is the look layer of the Home tool hub (chips, Quick start tiles, tool cards); the markup comes from `js/25-home-and-tabs.js`.
+- Performance rule for the polish layers (css/48-50): animate only transform and opacity, no backdrop-filter, no mask-image, no looping box-shadow or text-shadow animation, no scroll-timeline on lists; use `contain:layout paint` on repeated cards.
 
 ---
 
@@ -174,7 +175,7 @@ _Generated 2026-10-25 - 1531 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 170 files, 26979 lines, 2008 KB
+**birth-chart** - 170 files, 26973 lines, 2007 KB
 ```
 index.html                                         592 lines   33 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -345,7 +346,7 @@ css/46-ashtakavarga-reading.css                     10 lines    2 KB
 css/47-pdf-download.css                              7 lines    1 KB
 css/48-reading-polish.css                           84 lines    8 KB
 css/49-intake-polish.css                           102 lines   12 KB
-css/50-home-polish.css                              58 lines    8 KB
+css/50-home-polish.css                              52 lines    7 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB

@@ -4,26 +4,26 @@
 /* ---- backdrop: slow aurora + twinkling stars ---- */
 .in-wrap::after{content:"";position:absolute;left:50%;top:-30px;width:120%;height:560px;transform:translateX(-50%);pointer-events:none;z-index:0;
   background-image:radial-gradient(1.4px 1.4px at 9% 14%,rgba(255,236,180,.95),transparent 60%),radial-gradient(1px 1px at 22% 38%,rgba(255,255,255,.7),transparent 60%),radial-gradient(1.6px 1.6px at 34% 9%,rgba(255,226,150,.9),transparent 60%),radial-gradient(1px 1px at 47% 27%,rgba(255,255,255,.65),transparent 60%),radial-gradient(1.3px 1.3px at 61% 12%,rgba(255,236,180,.9),transparent 60%),radial-gradient(1px 1px at 73% 33%,rgba(255,255,255,.7),transparent 60%),radial-gradient(1.5px 1.5px at 86% 17%,rgba(255,226,150,.9),transparent 60%),radial-gradient(1px 1px at 93% 41%,rgba(255,255,255,.6),transparent 60%),radial-gradient(1.2px 1.2px at 15% 55%,rgba(255,236,180,.7),transparent 60%),radial-gradient(1px 1px at 80% 58%,rgba(255,255,255,.55),transparent 60%);
-  -webkit-mask-image:linear-gradient(#000 40%,transparent);mask-image:linear-gradient(#000 40%,transparent);animation:ipTwinkle 6s ease-in-out infinite alternate}
+  animation:ipTwinkle 6s ease-in-out infinite alternate;will-change:opacity}
 .in-hero::before{content:"";position:absolute;inset:-40px -10% auto;height:380px;pointer-events:none;z-index:0;
   background-image:radial-gradient(1.2px 1.2px at 5% 30%,rgba(255,255,255,.7),transparent 60%),radial-gradient(1.6px 1.6px at 28% 22%,rgba(255,226,150,.85),transparent 60%),radial-gradient(1px 1px at 41% 48%,rgba(255,255,255,.6),transparent 60%),radial-gradient(1.4px 1.4px at 67% 8%,rgba(255,236,180,.85),transparent 60%),radial-gradient(1px 1px at 79% 46%,rgba(255,255,255,.65),transparent 60%),radial-gradient(1.5px 1.5px at 96% 24%,rgba(255,226,150,.8),transparent 60%);
-  -webkit-mask-image:linear-gradient(#000 30%,transparent);mask-image:linear-gradient(#000 30%,transparent);animation:ipTwinkle 4.5s ease-in-out -2s infinite alternate}
+  animation:ipTwinkle 4.5s ease-in-out -2s infinite alternate;will-change:opacity}
 @keyframes ipTwinkle{from{opacity:.35}to{opacity:1}}
 .in-wrap>*{position:relative;z-index:1}
 /* ---- hero: emblem ---- */
 .in-hero{position:relative;text-align:center;padding:0 0 22px}
 .in-orb{width:104px;height:104px;margin:0 auto 18px;animation:ipRise .8s var(--ip-ease) both}
-.in-ring{border:1px solid rgba(230,199,106,.35);box-shadow:0 0 44px rgba(230,199,106,.2),inset 0 0 30px rgba(230,199,106,.08);animation:inSpin 48s linear infinite}
+.in-ring{border:1px solid rgba(230,199,106,.35);box-shadow:0 0 44px rgba(230,199,106,.2),inset 0 0 30px rgba(230,199,106,.08);animation:inSpin 48s linear infinite;will-change:transform}
 .in-ring span{display:block!important;width:16px;height:16px;margin:-8px 0 0 -8px;font-size:12px;line-height:16px;color:var(--ip-gold);opacity:.8}
 .in-orb::before{content:"";position:absolute;inset:-9px;border-radius:50%;border:1px dashed rgba(230,199,106,.22);animation:inSpin 90s linear infinite reverse}
 .in-orb::after{content:"";position:absolute;left:50%;top:-12px;width:7px;height:7px;margin-left:-3.5px;border-radius:50%;background:var(--ip-gold);box-shadow:0 0 14px 3px rgba(230,199,106,.7);transform-origin:50% 64px;animation:inSpin 14s linear infinite}
-.in-om{font-size:40px;animation:ipBreathe 4.5s ease-in-out infinite}
+.in-om{font-size:40px;text-shadow:0 0 22px rgba(230,199,106,.7)}
 @keyframes ipBreathe{0%,100%{text-shadow:0 0 16px rgba(230,199,106,.45)}50%{text-shadow:0 0 34px rgba(230,199,106,.95),0 0 60px rgba(230,199,106,.35)}}
 .in-eyebrow{display:block!important;margin-bottom:12px;font:600 11px var(--font-sans);letter-spacing:.32em;text-transform:uppercase;color:var(--ip-gold);opacity:.9;animation:ipRise .8s .1s var(--ip-ease) both}
 .in-hero h2{margin:0;font:500 clamp(28px,7.4vw,40px)/1.12 var(--font-display,Georgia,serif);letter-spacing:.005em;color:#f6efd9;animation:ipRise .8s .18s var(--ip-ease) both}
 .in-hero h2 em{font-style:italic;background:linear-gradient(100deg,#c9a23f 0%,#f6e3a1 40%,#c9a23f 80%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:ipShimmer 6s ease-in-out infinite}
 @keyframes ipShimmer{0%,100%{background-position:100% 0}50%{background-position:0 0}}
-.in-trust{display:inline-flex!important;margin-top:16px;padding:7px 16px;border-radius:999px;font:500 12px var(--font-sans);letter-spacing:.02em;color:var(--ip-soft);border:1px solid var(--ip-line);background:rgba(255,255,255,.03);backdrop-filter:blur(6px);animation:ipRise .8s .28s var(--ip-ease) both}
+.in-trust{display:inline-flex!important;margin-top:16px;padding:7px 16px;border-radius:999px;font:500 12px var(--font-sans);letter-spacing:.02em;color:var(--ip-soft);border:1px solid var(--ip-line);background:rgba(255,255,255,.03);animation:ipRise .8s .28s var(--ip-ease) both}
 @keyframes ipRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 /* ---- the card ---- */
 .in-card{position:relative;padding:22px 20px 24px;border-radius:28px;border:1px solid transparent;
@@ -49,7 +49,7 @@
 @keyframes ipGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 .in-step-h{display:block;margin:0 0 14px}
 .in-num{position:absolute;left:0;top:2px;width:36px;height:36px;display:grid;place-items:center;border-radius:50%;font:600 15px var(--font-display,Georgia,serif);color:var(--ip-gold);border:1px solid rgba(230,199,106,.45);background:#10131f;box-shadow:0 0 0 5px #0d101b;transition:all .4s var(--ip-ease)}
-.in-step.current .in-num{color:#1a1405;background:linear-gradient(135deg,#f6e3a1,var(--ip-gold));border-color:transparent;box-shadow:0 0 0 5px #0d101b,0 0 24px rgba(230,199,106,.55);animation:ipPulse 2.6s ease-in-out infinite}
+.in-step.current .in-num{color:#1a1405;background:linear-gradient(135deg,#f6e3a1,var(--ip-gold));border-color:transparent;box-shadow:0 0 0 5px #0d101b,0 0 24px rgba(230,199,106,.55)}
 @keyframes ipPulse{0%,100%{box-shadow:0 0 0 5px #0d101b,0 0 16px rgba(230,199,106,.4)}50%{box-shadow:0 0 0 5px #0d101b,0 0 30px rgba(230,199,106,.75)}}
 .in-step.done .in-num{font-size:0;color:transparent;background:linear-gradient(135deg,var(--ip-gold2),var(--ip-gold));border-color:transparent;box-shadow:0 0 0 5px #0d101b;animation:inPop .5s var(--ip-ease)}
 .in-step.done .in-num::before{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='%231a1405' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px 20px no-repeat}
@@ -82,7 +82,7 @@
 .in-card .btn-cast{min-height:60px;border-radius:18px;font:600 17px var(--font-display,Georgia,serif);letter-spacing:.14em;text-transform:none;background:linear-gradient(135deg,#f6e3a1,#e6c76a 45%,#b8902a);color:#1a1405;border:0;box-shadow:0 16px 40px rgba(230,199,106,.28),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .3s var(--ip-ease),box-shadow .3s}
 .in-card .btn-cast:hover{transform:translateY(-2px);box-shadow:0 22px 50px rgba(230,199,106,.4),inset 0 1px 0 rgba(255,255,255,.5)}
 .in-card .btn-cast:active{transform:translateY(0) scale(.985)}
-.in-card:has(.in-step[data-step="3"].done) .btn-cast{animation:ipReady 2.4s ease-in-out infinite}
+.in-card:has(.in-step[data-step="3"].done) .btn-cast{box-shadow:0 16px 46px rgba(230,199,106,.5),0 0 0 5px rgba(230,199,106,.12),inset 0 1px 0 rgba(255,255,255,.5)}
 @keyframes ipReady{0%,100%{box-shadow:0 16px 40px rgba(230,199,106,.28),inset 0 1px 0 rgba(255,255,255,.5)}50%{box-shadow:0 16px 54px rgba(230,199,106,.6),0 0 0 6px rgba(230,199,106,.12),inset 0 1px 0 rgba(255,255,255,.5)}}
 /* ---- secondary links under the card ---- */
 .in-wrap .in-alt,.in-wrap [class*="in-ex"],.in-wrap .in-clue{transition:all .25s var(--ip-ease)}
