@@ -87,6 +87,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/30-life-event-checker.js` — life-event checker against dashas/transits
 - `apps/birth-chart/js/97-life-event-catalog.js` — Life-Event catalog (global LEC): 278 everyday events tagged by house, planet, sign, plain words and date sharpness; plugs into RS_CATS (keeps the 10 original ids)
 - `apps/birth-chart/js/98-life-event-engine.js` — Life-Event Checker Pro (global LEE): per-minute dasha, aspects + 5 transit planets, Monte-Carlo luck test, bootstrap/drop-one stability, confidence floor; overrides rsBuildLife/rsRenderEvents/rsRunLife
+- `apps/birth-chart/js/99-dasha-lens.js` — Dasha Lens (studio tab): any moment (date + h/m/s with nudge + hold-to-repeat) -> full Vimshottari stack MD/AD/PD/SD/Prana/Deha with exact times, time left, natal house; 9-period sibling timeline per level; sensitivity of boundaries to birth-time error; Moon from the recorded birth time or the Time Dial
+- `apps/birth-chart/js/99-jump-3d-bridge.js` — vxJump3D(): sends an exact moment + birth place to the 3D Sky app (localStorage vax_jump_3d + the shell's open-3d message); the Time Dial and scan-candidate 'Show in the 3D wheel' buttons
 - `apps/birth-chart/js/31-smart-search.js` — Smart Search (find any feature by typing)
 - `apps/birth-chart/js/32-ask-ai.js` — Ask-AI: question boxes opening Google AI mode
 - `apps/birth-chart/js/33-quick-search.js` — quick search bar
@@ -213,6 +215,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/40-year-timeline.css` — Year Timeline File panel styles
 - `apps/birth-chart/css/41-dasha-time-finder.css` — Dasha Time Finder styles
 - `apps/birth-chart/css/42-life-event-pro.css` — styles for the Life-Event picker, evidence meter and confidence hero
+- `apps/birth-chart/css/44-dasha-lens.css` — Dasha Lens (studio tab) and the 'Show in the 3D wheel' buttons
 - `apps/birth-chart/css/43-house-now.css` — styles for the Right now tab (area bars, house chips, today's sky, house cards)
 - `apps/birth-chart/css/44-reading-style.css` — Chart Reading look: big headlines, hero, hooks, house cards, progress bar, explored dots and next-up buttons
 - `apps/birth-chart/css/45-shadbala-reading.css` — styles for the Strength tab (bars with a 100% line, the six strengths, planet cards; classes use the sbr- prefix because sb- belongs to the older Shadbala screen)
@@ -271,6 +274,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/48-profile-bridge.js` — Profile bridge: all Birth Chart profiles appear in 3D (marked ✦, live), and the chart opened in the main app is auto-selected in 3D
 - `apps/sky3d/js/49-time-machine.js` — Date picker (five snapping wheels: day with weekday, month, year, hour, minute; quick steppers with hold-to-repeat; year scrub bar; typed dates; Now / Birth / Midnight) + draggable, zoomable timeline
 - `apps/sky3d/js/50-sky-dashboard.js` — Sky Dashboard (top-right ▦ button): full-screen page with panchang, highlights, planet cards, who aspects whom, trine/house matrix, sign + nakshatra exchanges, dispositor chains, signs, nakshatras, houses, balance, outer planets; reads the 3D date or the birth chart (`DBX`)
+- `apps/sky3d/js/51-jump-from-rectification.js` — receives the Rectification jump: switches to the Zodiac Wheel, jumps to the exact moment, pauses play, shows the Rising sign for the birth place (session only), toast
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
 - `apps/sky3d/css/03-3d-viewport.css` — 3D viewport
@@ -369,6 +373,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/dasha_reading_test.py` — Dasha layer: all Mahadashas + Antardashas equal the app's engine on 8 charts, current period, gap-free 5-year window, clean texts, screens + report
 - `tests/yoga_engine_test.py` — Yoga engine: 41 hand-built charts that have each yoga and 41 that do not, cross-check with the app's own detectors on 8 real charts, texts, screen and report
 - `tests/life_event_pro_test.js` — Life-Event Pro engine in a Node vm: catalog integrity, dasha equals the app engine, recovers a known rising sign and time, flags wrong dates, random events stay below a 40% floor
+- `tests/dasha_lens_test.js` — Dasha Lens engine in a Node vm: levels 1-5 equal the app's dasha engine on 1,200 random moments over 3 charts, nesting laws, Prana length, duration text
 - `tests/pdf_report_test.py` — PDF report: 4 theme/paper variants x 4 charts clean and self-contained, sections/options, Studio dialog, real PDF render
 - `tests/area_deep_test.py` — area deep dive: every quoted number vs the chart over 12 charts, wording rules, determinism, Deep reading/report/PDF wiring
 - `tests/house_now_test.py` — Right now: sky, dasha chain, signs, lords, Ashtakavarga and scores vs the engines at two dates over 12 charts, wording, first tab, report and PDF

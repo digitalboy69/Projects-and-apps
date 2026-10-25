@@ -146,6 +146,7 @@ function renderRectificationDetail(){
     <div class="rect-detail-actions">
       <button type="button" class="btn btn-primary btn-sm" id="rectApplyBtn">✓ Apply This Second & Recalculate Full Chart</button>
       <button type="button" class="btn btn-ghost btn-sm" id="rectCopyBtn">📋 Copy Time</button>
+      <button type="button" class="btn btn-ghost btn-sm rect-3d-btn" data-jump3d="scan">🌌 Show in the 3D wheel</button>
     </div>`;
   detail.classList.add('show');
 

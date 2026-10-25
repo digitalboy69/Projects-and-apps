@@ -150,6 +150,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - AI session system: start every session with `docs/AI_START_HERE.md` (session loop, `tools/ai/session.sh start|check|test|ship`, token hygiene, lessons). The four reading databases (js/87, 89, 90, 91) are GENERATED from `tools/reading_gen/*.py`: edit the tables there and run `regen.sh`, never the JS. `.gitattributes` auto-merges STRUCTURE.md/AI_GUIDE.md (union) and dist/symbols.idx (ours, then build.py).
 - Navigation plan: see `docs/APP_NAVIGATION_PLAN.md` (audit: 32 tools / 26 panels, Home = 4 screens, 17 tools with no bottom tab; target hubs Start / Chart / Time / Strength / Tools, one `TOOLS` registry, 9 sessions N1-N9). Nothing built yet; read AI_START_HERE first.
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
+- Dasha Lens (studio tab, js/99-dasha-lens.js, css/44) + 3D jump (js/99-jump-3d-bridge.js -> apps/sky3d/js/51-jump-from-rectification.js via localStorage 'vax_jump_3d' + the shell's 'vedic-open-3d'). Test: `node tests/dasha_lens_test.js`.
 - Rectification Studio redesign + speed: css/31 + css/32 rewritten (class selectors only); scan table is virtual + chunked (js/20); panels Vedic Birthday (js/54) and Tithi Pravesh (js/73) build lazily (`vxEnsurePanels` before export); moonLongitude uses a hoisted term table (js/03); icons.js pre-check; studio excluded from the global `-card` hover rules (css/13).
 - Life-Event Checker Pro: `js/97-life-event-catalog.js` (278 events by house/planet/sign, plain words, sharpness) + `js/98-life-event-engine.js` (dasha recomputed per candidate minute, aspects, Jup/Sat/Mars/Rahu/Ketu transits, Monte-Carlo luck test, bootstrap + drop-one, confidence floor) + `css/42`. Overrides the functions of js/30. Catalog facets (js/97 end): theme, who, mood, life stage, date accuracy + house/planet/sign; browse views are built by `leDefs` in js/98; UI styles use only `.le-` classes (never bare span/i/b, the icon layer inserts `.vxi` spans). Test: `node tests/life_event_pro_test.js`. Floor is a consistency check of the rules, not proof of astrology.
 - Known limits: Standish elements degrade outside 1800–2050; 3D can't be browser-tested without a local Three r128; Pluto/Uranus/Neptune have no dasha/shadbala by design.
@@ -173,6 +174,13 @@ _Generated 2026-10-24 - 1503 symbols in `symbols.idx` (paths are real files now:
 **birth-chart** - 164 files, 26438 lines, 1949 KB
 ```
 index.html                                         586 lines   33 KB
+_Generated 2026-10-25 - 1491 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+
+### File map (lines / KB) - file names say what is inside
+
+**birth-chart** - 155 files, 25074 lines, 1828 KB
+```
+index.html                                         577 lines   33 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          210 lines    7 KB
@@ -202,13 +210,13 @@ js/16-rectification-engine.js                       38 lines    2 KB
 js/17-special-lagnas.js                            404 lines   23 KB
 js/18-ui-location-profiles.js                      124 lines    5 KB
 js/19-planets-panel.js                             223 lines   16 KB
-js/20-rectification-scan-tab.js                    301 lines   14 KB
+js/20-rectification-scan-tab.js                    302 lines   15 KB
 js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
 js/25-home-and-tabs.js                             121 lines   12 KB
-js/26-rectification-studio.js                      241 lines   14 KB
+js/26-rectification-studio.js                      246 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
 js/29-date-finder-ui.js                            191 lines   18 KB
@@ -288,6 +296,8 @@ js/97-transit-reading.js                           224 lines   17 KB
 js/98-life-event-engine.js                         419 lines   39 KB
 js/98-pdf-pages.js                                 176 lines   32 KB
 js/99-area-deep.js                                 268 lines   37 KB
+js/99-dasha-lens.js                                173 lines   17 KB
+js/99-jump-3d-bridge.js                             37 lines    2 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
 css/03-hero-intake-form.css                         78 lines    4 KB
@@ -336,6 +346,7 @@ css/44-reading-style.css                            47 lines    6 KB
 css/45-shadbala-reading.css                         11 lines    2 KB
 css/46-ashtakavarga-reading.css                     10 lines    2 KB
 css/47-pdf-download.css                              7 lines    1 KB
+css/44-dasha-lens.css                               72 lines    9 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -353,9 +364,9 @@ js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 75 files, 7083 lines, 413 KB
+**sky3d** - 76 files, 7117 lines, 415 KB
 ```
-index.html                                         457 lines   27 KB
+index.html                                         458 lines   27 KB
 js/01-astro-engine.js                              143 lines    7 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -406,6 +417,7 @@ js/47-dasha-transit-ui.js                          145 lines   10 KB
 js/48-profile-bridge.js                             48 lines    2 KB
 js/49-time-machine.js                              169 lines   13 KB
 js/50-sky-dashboard.js                             249 lines   20 KB
+js/51-jump-from-rectification.js                    33 lines    2 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
