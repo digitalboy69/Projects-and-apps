@@ -82,21 +82,25 @@ function rsBuildDasha(p){
      <div class="dl-daterow"><button type="button" class="dl-nb" data-dl-n="y:-1">−1y</button><button type="button" class="dl-nb" data-dl-n="mo:-1">−1mo</button><button type="button" class="dl-nb" data-dl-n="d:-1">−1d</button>
        <input type="date" id="dlDate" aria-label="Date">
        <button type="button" class="dl-nb" data-dl-n="d:1">+1d</button><button type="button" class="dl-nb" data-dl-n="mo:1">+1mo</button><button type="button" class="dl-nb" data-dl-n="y:1">+1y</button></div>
-     <div class="dl-pods" id="dlPods"></div>
+     <div class="dl-pods" id="dlPods"><div class="dl-pod"><div class="dl-pv" data-dl-val="H">00</div><div class="dl-pb"><button type="button" class="dl-pbtn" data-dl-pod="H:-1" aria-label="HOUR minus">◀</button><button type="button" class="dl-pbtn" data-dl-pod="H:1" aria-label="HOUR plus">▶</button></div><div class="dl-pl2">HOUR</div></div><div class="dl-colon">:</div><div class="dl-pod"><div class="dl-pv" data-dl-val="M">00</div><div class="dl-pb"><button type="button" class="dl-pbtn" data-dl-pod="M:-1" aria-label="MINUTE minus">◀</button><button type="button" class="dl-pbtn" data-dl-pod="M:1" aria-label="MINUTE plus">▶</button></div><div class="dl-pl2">MINUTE</div></div><div class="dl-colon">:</div><div class="dl-pod"><div class="dl-pv" data-dl-val="S">00</div><div class="dl-pb"><button type="button" class="dl-pbtn" data-dl-pod="S:-1" aria-label="SECOND minus">◀</button><button type="button" class="dl-pbtn" data-dl-pod="S:1" aria-label="SECOND plus">▶</button></div><div class="dl-pl2">SECOND</div></div></div>
      <div class="dl-stepsz"><span class="dl-sl">Step</span>${[1,5,10,30].map(n=>`<button type="button" class="dl-sc${n===1?' on':''}" data-dl-step="${n}">${n}</button>`).join('')}<span class="dl-hint">Hold a ◀ ▶ button to run</span></div>
      <div class="dl-src"><span class="dl-sl">Birth moment for the Moon</span><div class="dl-seg"><button type="button" class="dl-sg on" data-dl-src="rec">Recorded birth time</button><button type="button" class="dl-sg" data-dl-src="dial">Time Dial time</button></div></div></div>
    <div class="dl-card"><div class="dl-h"><span class="dl-hn">2</span><b>Running at that moment</b></div><div id="dlCrumb" class="dl-crumb"></div><div id="dlStack" class="dl-stack"></div><div id="dlSens" class="dl-sens"></div>
      <div class="dl-actions"><button type="button" class="dl-btn dl-btn-3d" id="dlTo3d">🌌 Show this moment in the 3D wheel</button><button type="button" class="dl-btn" id="dlCopy">📋 Copy</button></div></div>
    <div class="dl-card"><div class="dl-h"><span class="dl-hn">3</span><b>Timeline</b><span class="dl-tz">tap a period to jump to its start</span></div><div id="dlLvTabs" class="dl-lvtabs"></div><div id="dlBar" class="dl-bar"></div><div id="dlList" class="dl-list"></div></div>`;
-  const root = p, hold = { t:0, i:0 };
-  const stop = ()=>{ clearTimeout(hold.t); clearInterval(hold.i); };
+  const root = p, hold = { t:0, i:0, down:false };
+  const stop = ()=>{ hold.down = false; clearTimeout(hold.t); clearInterval(hold.i); hold.t = hold.i = 0; };
   const act = fn=>{ fn(); dlRender(); };
   root.addEventListener('pointerdown', e=>{
     const b = e.target.closest('[data-dl-pod]'); if (!b) return; e.preventDefault();
-    const [u, dir] = b.dataset.dlPod.split(':'), go = ()=> act(()=> dlNudge(u, (+dir)*DL.step));
-    go(); stop(); hold.t = setTimeout(()=>{ hold.i = setInterval(go, 90); }, 380);
+    stop(); hold.down = true;
+    const [u, dir] = b.dataset.dlPod.split(':'), go = ()=>{ if (!hold.down || !root.offsetParent){ stop(); return; } act(()=> dlNudge(u, (+dir)*DL.step)); };
+    go(); hold.t = setTimeout(()=>{ if (hold.down) hold.i = setInterval(go, 90); }, 380);
   });
-  ['pointerup','pointerleave','pointercancel'].forEach(ev=> root.addEventListener(ev, stop, true));
+  // the finger or mouse can be released anywhere (even off the button or off the screen): listen on the window, never on the button
+  ['pointerup','pointercancel','lostpointercapture','blur','contextmenu','dragstart','touchend','touchcancel','mouseup'].forEach(ev=> window.addEventListener(ev, stop, true));
+  document.addEventListener('visibilitychange', stop);
+  root.addEventListener('contextmenu', e=>{ if (e.target.closest('[data-dl-pod]')) e.preventDefault(); });
   root.addEventListener('click', e=>{
     const t = e.target;
     let b;
@@ -141,8 +145,7 @@ function dlRender(){
   if (!bi){ crumb.textContent = ''; stackEl.innerHTML = `<div class="rs-empty">Generate a chart first.</div>`; return; }
   const tzs = dlTz(); root.querySelector('#dlTz').textContent = 'Birth-place time · UTC' + (tzs>=0?'+':'−') + Math.abs(tzs);
   const de = root.querySelector('#dlDate'); const ds = `${DL.y}-${dlP2(DL.m)}-${dlP2(DL.d)}`; if (de.value !== ds) de.value = ds;
-  const pod = (u,label,val)=>`<div class="dl-pod"><div class="dl-pv">${dlP2(val)}</div><div class="dl-pb"><button type="button" class="dl-pbtn" data-dl-pod="${u}:-1" aria-label="${label} minus">◀</button><button type="button" class="dl-pbtn" data-dl-pod="${u}:1" aria-label="${label} plus">▶</button></div><div class="dl-pl2">${label}</div></div>`;
-  root.querySelector('#dlPods').innerHTML = pod('H','HOUR',DL.H) + '<div class="dl-colon">:</div>' + pod('M','MINUTE',DL.M) + '<div class="dl-colon">:</div>' + pod('S','SECOND',DL.S);
+  ['H','M','S'].forEach(u=>{ const el = root.querySelector('[data-dl-val="'+u+'"]'); const v = dlP2(DL[u]); if (el && el.textContent !== v) el.textContent = v; });   // only the numbers change: the buttons stay put
   const ev = dlMomentMs(), st = dlStack(bi.moonLon, bi.birthMs, ev, 6); DL.stack = st;
   const before = ev < bi.birthMs;
   crumb.innerHTML = st.levels.map((l,i)=>`<span class="dl-cr">${dlChip(l.lord)}</span>`).join('<span class="dl-ar">›</span>') + (before ? `<div class="dl-warn">This moment is before the birth moment. The periods shown are the ones that would have been running.</div>` : '');
