@@ -167,20 +167,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-24 - 1503 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-25 - 1531 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 164 files, 26438 lines, 1949 KB
+**birth-chart** - 167 files, 26726 lines, 1978 KB
 ```
 index.html                                         586 lines   33 KB
-_Generated 2026-10-25 - 1491 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
-
-### File map (lines / KB) - file names say what is inside
-
-**birth-chart** - 155 files, 25074 lines, 1828 KB
-```
-index.html                                         577 lines   33 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          210 lines    7 KB
@@ -342,11 +335,11 @@ css/40-year-timeline.css                             8 lines    0 KB
 css/41-dasha-time-finder.css                        63 lines    5 KB
 css/42-life-event-pro.css                          193 lines   22 KB
 css/43-house-now.css                                 8 lines    1 KB
+css/44-dasha-lens.css                               72 lines    9 KB
 css/44-reading-style.css                            47 lines    6 KB
 css/45-shadbala-reading.css                         11 lines    2 KB
 css/46-ashtakavarga-reading.css                     10 lines    2 KB
 css/47-pdf-download.css                              7 lines    1 KB
-css/44-dasha-lens.css                               72 lines    9 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB

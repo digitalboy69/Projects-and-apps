@@ -8011,6 +8011,40 @@ const DBX = (function(){
 })();
 <\/script>
 <script>
+/* ============================================================================
+   JUMP FROM RECTIFICATION: the Birth Chart app's Rectification Studio / Dasha Lens writes 'vax_jump_3d'
+   ({ ts, jd (UTC Julian Day), local, tz, lat, lon, place, label }). Here we switch to the Zodiac Wheel, jump the
+   sky to that exact moment, pause playback, and show the Rising sign for the BIRTH PLACE (for this session only:
+   the saved 'where are you now' place is never overwritten).
+   Triggers: the shell's bridge ping, the storage event, and a check at load.
+   ============================================================================ */
+(function(){
+  'use strict';
+  const KEY = 'vax_jump_3d'; let done = 0;
+  function toast(t){
+    let el = document.getElementById('jumpToast');
+    if (!el){ el = document.createElement('div'); el.id = 'jumpToast';
+      el.style.cssText = 'position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:99999;max-width:92vw;padding:10px 18px;border-radius:99px;background:rgba(18,20,29,.96);border:1px solid #d4af37;color:#f6d775;font:500 13px/1.4 system-ui,sans-serif;box-shadow:0 12px 40px rgba(0,0,0,.5);text-align:center;transition:opacity .4s';
+      document.body.appendChild(el); }
+    el.textContent = t; el.style.opacity = '1'; clearTimeout(el._t); el._t = setTimeout(()=>{ el.style.opacity = '0'; }, 5200);
+  }
+  function consume(){
+    let j = null; try { j = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){}
+    if (!j || !isFinite(j.jd) || !(j.ts > done) || Date.now() - j.ts > 10*60*1000) return;
+    done = j.ts;
+    const step = fn => { try { fn(); } catch(e){ console.error('jump from rectification', e); } };   // one failing step must not hide the others
+    step(()=>{ const wb = document.querySelector('#viewSwitch [data-v="wheel"]'); if (wb && !wb.classList.contains('active')) wb.click(); });
+    step(()=>{ if (isPlaying){ const pb = document.getElementById('tlPlayPause'); if (pb) pb.click(); else isPlaying = false; } });
+    step(()=>{ if (isFinite(j.lat) && isFinite(j.lon)) liveLocMem = { lat:+j.lat, lon:+j.lon, label:(j.place ? String(j.place).split(',')[0] : 'birth place') }; });   // session only, not saved
+    step(()=> jumpToJD(j.jd));
+    step(()=> toast('🌌 ' + (j.label || 'Rectification') + ' · ' + j.local + (j.place ? ' · ' + String(j.place).split(',')[0] : '')));
+  }
+  window.addEventListener('message', e=>{ if (e.data === 'vedic-bridge-ping') consume(); });
+  window.addEventListener('storage', e=>{ if (e.key === KEY) consume(); });
+  setTimeout(consume, 600);
+})();
+<\/script>
+<script>
 /* =============================================================================
    VEDIC ASTRO SUITE — EXPORT + COPY ADD-ON  (v1.0)
    One self-contained file. Works in BOTH apps, auto-detects which one it is in:
@@ -16043,6 +16077,7 @@ function renderRectificationDetail(){
     <div class="rect-detail-actions">
       <button type="button" class="btn btn-primary btn-sm" id="rectApplyBtn">✓ Apply This Second & Recalculate Full Chart</button>
       <button type="button" class="btn btn-ghost btn-sm" id="rectCopyBtn">📋 Copy Time</button>
+      <button type="button" class="btn btn-ghost btn-sm rect-3d-btn" data-jump3d="scan">🌌 Show in the 3D wheel</button>
     </div>`;
   detail.classList.add('show');
 
@@ -16659,6 +16694,7 @@ const RS_TABS = [
   ['sandhi','⏱️', 'Sandhi Table',   2],
   ['vt',    '🗺️', 'Varga Timeline', 2],
   ['tt',    '⏳', 'Transit Timer',  2],
+  ['dasha', '🔱', 'Dasha Lens',     3],
   ['life',  '🌟', 'Life Events',    3]
 ];
 const RS_STEPS = [[1,'Set date & time'],[2,'Narrow it down'],[3,'Confirm with life']];
@@ -16767,6 +16803,7 @@ function rsShow(id, scroll){
     if (scroll){ const top = root.querySelector('.rs-tabs').getBoundingClientRect().top + window.pageYOffset - 70; window.scrollTo({ top:Math.max(0,top), behavior:'smooth' }); }
   });
   if (id==='life') rsRenderEvents();
+  if (id==='dasha' && typeof dlOnShow==='function') dlOnShow();
   if (id==='dates'){ try { dfPlaceNote(); } catch(e){} }
 }
 
@@ -16848,6 +16885,9 @@ function initRectStudio(){
   });
   // Life
   rsBuildLife(pane('life'));
+  try { rsBuildDasha(pane('dasha')); } catch(e){ console.error('Dasha Lens', e); }
+  // 'Show in the 3D wheel' next to the Full Chart button on the Time Dial
+  try { const b3 = document.createElement('button'); b3.type = 'button'; b3.className = 'rect-3d-btn'; b3.dataset.jump3d = 'dial'; b3.innerHTML = '🌌 Show this time in the 3D wheel'; actRow.appendChild(b3); } catch(e){}
   try { dfBuild(pane('dates')); } catch(e){ console.error('Date Finder', e); }
   // Next / Back
   RS_TABS.forEach((t,i)=>{
