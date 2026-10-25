@@ -172,16 +172,9 @@ _Generated 2026-10-25 - 1531 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 167 files, 26729 lines, 1978 KB
+**birth-chart** - 168 files, 26814 lines, 1986 KB
 ```
-index.html                                         589 lines   33 KB
-_Generated 2026-10-25 - 1503 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
-
-### File map (lines / KB) - file names say what is inside
-
-**birth-chart** - 165 files, 26523 lines, 1957 KB
-```
-index.html                                         587 lines   33 KB
+index.html                                         590 lines   33 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          210 lines    7 KB
