@@ -59,7 +59,7 @@ with sync_playwright() as p:
     pg.evaluate(CAST, dict(name='Asha', dob='1995-03-14', tob='11:00', place='Hyderabad', lat=17.385, lon=78.4867, tz=5.5)); pg.wait_for_selector('#results.show', timeout=15000)
     pg.evaluate("document.querySelectorAll('.app-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-reading').classList.add('active')"); pg.wait_for_timeout(500)
     s = pg.evaluate("""()=>{const bad=[],ch=currentChartForModal,rd=document.querySelector('#panel-reading .rd'),tabs=[...rd.querySelectorAll(':scope>.vx-tabs button')],panes=[...rd.querySelectorAll(':scope>.vx-pane')];
-      const i=tabs.findIndex(b=>/Ashtakavarga/.test(b.textContent));if(i!==tabs.length-1)bad.push('tab position '+i);tabs[i].click();const pane=panes[i];
+      const i=tabs.findIndex(b=>/Ashtakavarga/.test(b.textContent));if(i!==tabs.length-2)bad.push('tab position '+i);tabs[i].click();const pane=panes[i];
       if(pane.querySelectorAll('.avr-bar').length!==12)bad.push('bars');if(pane.querySelectorAll('details.avr-card:not(.avr-pl)').length!==12)bad.push('house cards');if(pane.querySelectorAll('details.avr-pl').length!==7)bad.push('planet cards');
       const d=pane.querySelector('details.avr-pl');d.open=true;if(d.querySelectorAll('.avr-cell').length!==12)bad.push('strip');if(d.querySelectorAll('.avr-hs').length!==12)bad.push('house entries '+d.querySelectorAll('.avr-hs').length);if(d.querySelectorAll('.avr-l').length!==19)bad.push('blocks '+d.querySelectorAll('.avr-l').length);
       const rep=buildFullReportText(ch,currentProfileForExport,{});if(!/ASHTAKAVARGA READING: POINTS, PLANET BY PLANET/.test(rep)||!/Saturn in the 10th house/.test(rep))bad.push('report');

@@ -57,7 +57,7 @@ with sync_playwright() as p:
     pg.evaluate(CAST, dict(name='Asha', dob='1995-03-14', tob='11:00', place='Hyderabad', lat=17.385, lon=78.4867, tz=5.5)); pg.wait_for_selector('#results.show', timeout=15000)
     pg.evaluate("document.querySelectorAll('.app-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-reading').classList.add('active')"); pg.wait_for_timeout(500)
     s = pg.evaluate("""()=>{const bad=[],ch=currentChartForModal,rd=document.querySelector('#panel-reading .rd'),tabs=[...rd.querySelectorAll(':scope>.vx-tabs button')],panes=[...rd.querySelectorAll(':scope>.vx-pane')];
-      const i=tabs.findIndex(b=>/Strength/.test(b.textContent));if(i!==tabs.length-2)bad.push('tab position '+i);tabs[i].click();const pane=panes[i];
+      const i=tabs.findIndex(b=>/Strength/.test(b.textContent));if(i!==tabs.length-3)bad.push('tab position '+i);tabs[i].click();const pane=panes[i];
       if(pane.querySelectorAll('details.sbr-card').length!==7)bad.push('cards');if(pane.querySelectorAll('.sbr-bar').length!==7)bad.push('bars');if(pane.querySelectorAll('.sbr-six').length!==6)bad.push('six');
       const d=pane.querySelector('details.sbr-card');d.open=true;if(d.querySelectorAll('h5').length!==8)bad.push('headings '+d.querySelectorAll('h5').length);if(d.querySelectorAll('.sbr-sub').length!==10)bad.push('sub lines '+d.querySelectorAll('.sbr-sub').length);
       const rep=buildFullReportText(ch,currentProfileForExport,{});if(!/SHADBALA READING: WHAT EACH KIND OF STRENGTH MEANS/.test(rep)||!/Ayana Bala/.test(rep))bad.push('report');

@@ -48,7 +48,7 @@ with sync_playwright() as p:
     ok('no section failed to build on any chart', not warns, warns[:3])
     # ---- one click, no dialog ----
     pg.evaluate("document.querySelectorAll('.app-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-reading').classList.add('active')")
-    pg.evaluate("document.querySelectorAll('#panel-reading .rd .vx-tabs button:not(.hn-tab):not(.sbr-tab):not(.avr-tab)')[5].click()"); pg.wait_for_timeout(300)
+    pg.evaluate("document.querySelectorAll('#panel-reading .rd .vx-tabs button:not(.hn-tab):not(.sbr-tab):not(.avr-tab):not(.pf-tab)')[5].click()"); pg.wait_for_timeout(300)
     ok('Deep reading overview has the "Generate the full PDF book" button', pg.evaluate("!!document.querySelector('.dr-sec[data-sec=intro] .dr-pdf')&&/full PDF/i.test(document.querySelector('.dr-pdf').textContent)"))
     pg.evaluate('PDFD.ok=false;0'); n0 = pg.evaluate("document.querySelectorAll('body>iframe').length"); pg.evaluate("document.querySelector('.dr-pdf').click()"); pg.wait_for_timeout(3500)
     ok('one click builds the book and prints it inside a hidden iframe: no dialog, no settings', pg.evaluate("document.querySelectorAll('body>iframe').length") == n0 + 1 and not pg.evaluate("!!document.querySelector('.pdfs')") and pg.evaluate("!!document.getElementById('pdfr-note')"))

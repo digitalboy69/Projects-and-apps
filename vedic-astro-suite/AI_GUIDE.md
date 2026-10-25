@@ -165,19 +165,20 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Reading polish: `css/48-reading-polish.css` (loaded last, scoped to `.rd`) is the final look layer for Chart Reading; change the look there, not in the per-tab css. Rules: one accent per meaning, hairline borders, no loud fills, headings without emoji, motion off for reduced-motion.
 - Intake polish: `css/49-intake-polish.css` (loaded last, scoped to `.in-wrap`) is the look layer of the birth-details page; the step logic stays in `js/68-intake-progress.js` (classes `done`/`current` drive the timeline).
 - Home polish: `css/50-home-polish.css` (loaded last, scoped to `#panel-home`) is the look layer of the Home tool hub (chips, Quick start tiles, tool cards); the markup comes from `js/25-home-and-tabs.js`.
+- Problem finder: `js/111-problem-finder.js` (PRB, hand-written data and engine: AREAS list, NAT natures, planetFindings/houseFindings/culpritFindings/timing) + `js/112-problem-finder-ui.js` (PFUI) give the last Chart Reading tab '🧭 Problem finder' and the Home tile (panel-problem). To add a problem, add a row to its area in AREAS (id, label, nature, extra houses, extra planets). Test: `problem_finder_test`.
 - Performance rule for the polish layers (css/48-50): animate only transform and opacity, no backdrop-filter, no mask-image, no looping box-shadow or text-shadow animation, no scroll-timeline on lists; use `contain:layout paint` on repeated cards.
 
 ---
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-25 - 1531 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-25 - 1545 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 170 files, 26973 lines, 2007 KB
+**birth-chart** - 173 files, 27305 lines, 2061 KB
 ```
-index.html                                         592 lines   33 KB
+index.html                                         595 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          210 lines    7 KB
@@ -199,6 +200,8 @@ js/107-ashtakavarga-reading.js                     324 lines   26 KB
 js/108-ashtakavarga-ui.js                           50 lines    6 KB
 js/109-pdf-download.js                             145 lines    9 KB
 js/11-ashtakavarga-engine.js                        32 lines    2 KB
+js/111-problem-finder.js                           211 lines   39 KB
+js/112-problem-finder-ui.js                         70 lines    8 KB
 js/12-yoga-detection.js                            117 lines    4 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
@@ -212,7 +215,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             121 lines   12 KB
+js/25-home-and-tabs.js                             122 lines   12 KB
 js/26-rectification-studio.js                      246 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -347,6 +350,7 @@ css/47-pdf-download.css                              7 lines    1 KB
 css/48-reading-polish.css                           84 lines    8 KB
 css/49-intake-polish.css                           102 lines   12 KB
 css/50-home-polish.css                              52 lines    7 KB
+css/51-problem-finder.css                           47 lines    6 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB

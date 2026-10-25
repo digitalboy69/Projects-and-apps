@@ -59,7 +59,7 @@ with sync_playwright() as p:
     ok('the 12 charts together exercise retrograde, combust, vargottama and weak and strong signs', {'Retrograde', 'Combust', 'Vargottama', 'Debilitated', 'Exalted'} <= seen, sorted(seen))
     pg.evaluate(CAST, dict(name='Asha', dob='1995-03-14', tob='11:00', place='Hyderabad', lat=17.385, lon=78.4867, tz=5.5)); pg.wait_for_selector('#results.show', timeout=15000)
     pg.evaluate("document.querySelectorAll('.app-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-reading').classList.add('active')")
-    pg.evaluate("document.querySelectorAll('#panel-reading .rd .vx-tabs button:not(.hn-tab):not(.sbr-tab):not(.avr-tab)')[2].click()"); pg.wait_for_timeout(300)
+    pg.evaluate("document.querySelectorAll('#panel-reading .rd .vx-tabs button:not(.hn-tab):not(.sbr-tab):not(.avr-tab):not(.pf-tab)')[2].click()"); pg.wait_for_timeout(300)
     s = pg.evaluate("""()=>{const bad=[],ch=currentChartForModal,pane=document.querySelector('#panel-reading .rd .vx-pane.on');const cards=pane.querySelectorAll('details.vx-pl');if(cards.length!==9)bad.push('cards '+cards.length);
       cards.forEach((c,i)=>{if(!c.querySelector('.ps'))bad.push('no .ps '+i)});
       const rep=buildFullReportText(ch,currentProfileForExport,{});if(!/PLANET STATES/.test(rep))bad.push('report');

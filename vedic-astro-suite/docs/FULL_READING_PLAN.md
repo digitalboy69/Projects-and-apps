@@ -72,6 +72,7 @@ Every session: build -> its own test -> commit -> push to `feature/full-reading`
 - [x] **Reading polish** (done: css/48-reading-polish.css; underline tabs, one column, serif headings, quiet cards, footnote disclaimer)
 - [x] **Intake polish** (done: css/49-intake-polish.css; timeline steps, glass card, starfield, animated emblem and button)
 - [x] **Home polish** (done: css/50-home-polish.css; tinted glass tiles and cards, glowing icon tiles, arrow badges, staggered entrance)
+- [x] **S19 Problem finder** (done: js/111 + js/112 + css/51; pick trigger, how it shows up, area, problem and duration; reasons from the chart; Home tile; tests/problem_finder_test.py)
 
 ## 6. Working rules (every session)
 1. Start: read this file + `AI_GUIDE.md`; take the next unchecked session. Do not skip ahead.
