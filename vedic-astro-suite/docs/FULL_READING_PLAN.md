@@ -71,6 +71,7 @@ Every session: build -> its own test -> commit -> push to `feature/full-reading`
 - [x] **PDF direct download** (done: js/109-pdf-download.js + css/47; the PDF button saves a .pdf file without the print window; tests/pdf_download_test.py)
 - [x] **Reading polish** (done: css/48-reading-polish.css; underline tabs, one column, serif headings, quiet cards, footnote disclaimer)
 - [x] **Intake polish** (done: css/49-intake-polish.css; timeline steps, glass card, starfield, animated emblem and button)
+- [x] **Home polish** (done: css/50-home-polish.css; tinted glass tiles and cards, glowing icon tiles, arrow badges, staggered entrance)
 
 ## 6. Working rules (every session)
 1. Start: read this file + `AI_GUIDE.md`; take the next unchecked session. Do not skip ahead.

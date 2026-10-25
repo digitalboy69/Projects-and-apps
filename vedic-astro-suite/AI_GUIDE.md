@@ -164,6 +164,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - PDF download: `js/109-pdf-download.js` (PDFD) makes the PDF book into a .pdf file directly (no print window): book laid out in a hidden 794px frame, cut at block ends, each page drawn by the browser (SVG foreignObject to canvas, data: URL, else the canvas is tainted) as JPEG into a built-in PDF writer. `PDFR.download` = PDFD with print fallback (`PDFR.print`). Pages are images, so text is not selectable. Test: `pdf_download_test`.
 - Reading polish: `css/48-reading-polish.css` (loaded last, scoped to `.rd`) is the final look layer for Chart Reading; change the look there, not in the per-tab css. Rules: one accent per meaning, hairline borders, no loud fills, headings without emoji, motion off for reduced-motion.
 - Intake polish: `css/49-intake-polish.css` (loaded last, scoped to `.in-wrap`) is the look layer of the birth-details page; the step logic stays in `js/68-intake-progress.js` (classes `done`/`current` drive the timeline).
+- Home polish: `css/50-home-polish.css` (loaded last, scoped to `#panel-home`) is the look layer of the Home tool hub (chips, Quick start tiles, tool cards); the markup comes from `js/25-home-and-tabs.js`.
 
 ---
 
@@ -173,9 +174,9 @@ _Generated 2026-10-25 - 1531 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 169 files, 26920 lines, 2000 KB
+**birth-chart** - 170 files, 26979 lines, 2008 KB
 ```
-index.html                                         591 lines   33 KB
+index.html                                         592 lines   33 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          210 lines    7 KB
@@ -344,6 +345,7 @@ css/46-ashtakavarga-reading.css                     10 lines    2 KB
 css/47-pdf-download.css                              7 lines    1 KB
 css/48-reading-polish.css                           84 lines    8 KB
 css/49-intake-polish.css                           102 lines   12 KB
+css/50-home-polish.css                              58 lines    8 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB

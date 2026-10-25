@@ -1,0 +1,57 @@
+/* HOME POLISH (loaded last): the tool hub on the Home tab. Filter chips, Quick start tiles and the tool cards.
+   Glass surfaces tinted by each section's colour (--sc), icon tiles with a soft glow, hairline top light, arrow badges,
+   staggered entrance and a gentle scroll reveal where the browser supports it. Scoped to #panel-home. */
+#panel-home{--hp-ease:cubic-bezier(.22,.8,.24,1);--hp-line:rgba(255,255,255,.09)}
+/* ---- filter chips ---- */
+#panel-home .hm-seg{gap:8px;padding:8px 4px 12px;margin:0 -6px;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);background:linear-gradient(rgba(7,8,12,.88) 65%,transparent)}
+#panel-home .hm-seg button{position:relative;padding:9px 16px 9px 14px;border:1px solid var(--hp-line);background:rgba(255,255,255,.035);color:#b9b3a3;font:600 12.5px var(--font-sans);letter-spacing:.02em;transition:color .25s,border-color .3s,background .3s,box-shadow .35s,transform .25s var(--hp-ease)}
+#panel-home .hm-seg button i{box-shadow:0 0 0 3px color-mix(in srgb,var(--sc) 18%,transparent);transition:box-shadow .3s,transform .3s}
+#panel-home .hm-seg button:hover{color:#f3ecd6;border-color:color-mix(in srgb,var(--sc) 55%,transparent);transform:translateY(-1px)}
+#panel-home .hm-seg button.on{color:#fff6d8;background:linear-gradient(180deg,color-mix(in srgb,var(--sc) 24%,#12151f),color-mix(in srgb,var(--sc) 10%,#0d0f18));border-color:color-mix(in srgb,var(--sc) 70%,transparent);box-shadow:0 8px 26px color-mix(in srgb,var(--sc) 24%,transparent),inset 0 1px 0 rgba(255,255,255,.12)}
+#panel-home .hm-seg button.on i{background:var(--sc);box-shadow:0 0 0 3px color-mix(in srgb,var(--sc) 28%,transparent),0 0 12px var(--sc);transform:scale(1.1)}
+/* ---- section headings ---- */
+#panel-home .hm-h{gap:10px;margin:6px 0 14px;font:600 11.5px var(--font-sans);letter-spacing:.26em;color:#cfc8b4}
+#panel-home .hm-h i{width:3px;height:16px;background:linear-gradient(180deg,var(--sc),color-mix(in srgb,var(--sc) 25%,transparent));box-shadow:0 0 12px color-mix(in srgb,var(--sc) 70%,transparent)}
+#panel-home .hm-h::after{content:"";order:2;flex:1;height:1px;background:linear-gradient(90deg,color-mix(in srgb,var(--sc,#d4af37) 40%,transparent),transparent)}
+#panel-home .hm-h em{order:3;margin-left:0;padding:2px 10px;border:1px solid var(--hp-line);background:rgba(255,255,255,.04);color:#b9b3a3;font:600 11px var(--font-sans)}
+#panel-home .hm-qs .hm-h{color:#f0e6c4}
+/* ---- Quick start tiles ---- */
+#panel-home .hm-feat{gap:12px}
+#panel-home .hm-f{position:relative;isolation:isolate;min-height:142px;padding:16px;gap:4px;border-radius:24px;border:1px solid color-mix(in srgb,var(--sc) 36%,rgba(255,255,255,.08));
+  background:radial-gradient(130% 100% at 100% 0%,color-mix(in srgb,var(--sc) 26%,transparent),transparent 58%),radial-gradient(90% 80% at 0% 100%,color-mix(in srgb,var(--sc) 10%,transparent),transparent 60%),linear-gradient(165deg,#15182b,#0b0d17);
+  box-shadow:0 18px 44px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1);transition:transform .35s var(--hp-ease),box-shadow .35s,border-color .3s}
+#panel-home .hm-f::before{content:"";position:absolute;z-index:-1;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-18deg);transition:left .8s var(--hp-ease)}
+#panel-home .hm-f:hover::before{left:130%}
+#panel-home .hm-f::after{content:"→";position:absolute;right:14px;bottom:14px;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;font:500 15px var(--font-sans);color:color-mix(in srgb,var(--sc) 85%,#fff);background:color-mix(in srgb,var(--sc) 14%,transparent);border:1px solid color-mix(in srgb,var(--sc) 35%,transparent);transition:transform .35s var(--hp-ease),background .3s}
+#panel-home .hm-f:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--sc) 75%,transparent);box-shadow:0 26px 56px rgba(0,0,0,.5),0 0 40px color-mix(in srgb,var(--sc) 20%,transparent),inset 0 1px 0 rgba(255,255,255,.14)}
+#panel-home .hm-f:hover::after{transform:translateX(3px);background:color-mix(in srgb,var(--sc) 28%,transparent)}
+#panel-home .hm-f span{display:grid;place-items:center;width:48px;height:48px;margin-bottom:auto;border-radius:15px;font-size:22px;color:color-mix(in srgb,var(--sc) 80%,#fff);background:linear-gradient(145deg,color-mix(in srgb,var(--sc) 30%,#10131f),color-mix(in srgb,var(--sc) 8%,#0c0e18));border:1px solid color-mix(in srgb,var(--sc) 40%,transparent);box-shadow:0 8px 22px color-mix(in srgb,var(--sc) 22%,transparent),inset 0 1px 0 rgba(255,255,255,.14)}
+#panel-home .hm-f b{margin-top:14px;font:600 16px/1.2 var(--font-display,Georgia,serif);letter-spacing:.01em;color:#f6efd9}
+#panel-home .hm-f small{margin-top:2px;font:600 10px var(--font-sans);letter-spacing:.18em;color:color-mix(in srgb,var(--sc) 78%,#fff)}
+/* ---- tool cards ---- */
+#panel-home .hm-grid{gap:12px}
+#panel-home .hm-c{position:relative;isolation:isolate;overflow:hidden;min-height:136px;padding:15px 15px 16px;gap:12px;border-radius:20px;border:1px solid var(--hp-line);border-top-color:color-mix(in srgb,var(--sc) 45%,rgba(255,255,255,.1));
+  background:radial-gradient(120% 90% at 100% 0%,color-mix(in srgb,var(--sc) 12%,transparent),transparent 62%),linear-gradient(170deg,#13162a,#0b0d17);
+  box-shadow:0 10px 28px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.07);transition:transform .35s var(--hp-ease),box-shadow .35s,border-color .3s,background .3s}
+#panel-home .hm-c::after{right:-34px;top:-34px;width:104px;height:104px;opacity:.7;transition:opacity .35s,transform .5s var(--hp-ease)}
+#panel-home .hm-c:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--sc) 55%,transparent);box-shadow:0 20px 44px rgba(0,0,0,.45),0 0 32px color-mix(in srgb,var(--sc) 14%,transparent),inset 0 1px 0 rgba(255,255,255,.1)}
+#panel-home .hm-c:hover::after{opacity:1;transform:scale(1.25)}
+#panel-home .hm-ci{width:46px;height:46px;border-radius:15px;font-size:21px;color:color-mix(in srgb,var(--sc) 78%,#fff);background:linear-gradient(145deg,color-mix(in srgb,var(--sc) 26%,#10131f),color-mix(in srgb,var(--sc) 7%,#0c0e18));border:1px solid color-mix(in srgb,var(--sc) 32%,transparent);box-shadow:0 6px 18px color-mix(in srgb,var(--sc) 16%,transparent),inset 0 1px 0 rgba(255,255,255,.12);transition:transform .4s var(--hp-ease)}
+#panel-home .hm-c:hover .hm-ci{transform:scale(1.08) rotate(-4deg)}
+#panel-home .hm-ct b{font:600 14.5px/1.25 var(--font-sans);letter-spacing:.01em;color:#f3ecd6}
+#panel-home .hm-ct small{margin-top:4px;font:400 12px/1.45 var(--font-sans);color:#9c9686}
+#panel-home .hm-ar{display:grid;position:absolute;right:12px;bottom:12px;width:26px;height:26px;place-items:center;border-radius:50%;font-size:15px;line-height:1;color:color-mix(in srgb,var(--sc) 85%,#fff);background:color-mix(in srgb,var(--sc) 12%,transparent);opacity:.55;transition:opacity .3s,transform .35s var(--hp-ease)}
+#panel-home .hm-c:hover .hm-ar{opacity:1;transform:translateX(3px)}
+#panel-home .hm-c:active,#panel-home .hm-f:active{transform:scale(.97)}
+#panel-home .hm-c:focus-visible,#panel-home .hm-f:focus-visible,#panel-home .hm-seg button:focus-visible{outline:2px solid var(--sc,#e6c76a);outline-offset:3px}
+/* ---- motion: staggered entrance when a section appears, scroll reveal where supported ---- */
+@keyframes hpUp{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+#panel-home .hm-sec,#panel-home .hm-qs{animation:hpUp .5s var(--hp-ease) both}
+#panel-home .hm-f,#panel-home .hm-c{animation:hpUp .55s var(--hp-ease) both}
+#panel-home .hm-f:nth-child(1),#panel-home .hm-c:nth-child(1){animation-delay:.04s}#panel-home .hm-f:nth-child(2),#panel-home .hm-c:nth-child(2){animation-delay:.1s}
+#panel-home .hm-f:nth-child(3),#panel-home .hm-c:nth-child(3){animation-delay:.16s}#panel-home .hm-f:nth-child(4),#panel-home .hm-c:nth-child(4){animation-delay:.22s}
+#panel-home .hm-c:nth-child(n+5){animation-delay:.26s}
+@supports (animation-timeline:view()){#panel-home .hm-c,#panel-home .hm-sec{animation:hpUp linear both;animation-timeline:view();animation-range:entry 0% entry 55%}}
+@media (min-width:720px){#panel-home .hm-feat{grid-template-columns:repeat(4,minmax(0,1fr))}#panel-home .hm-grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}}
+@media (max-width:560px){#panel-home .hm-f{min-height:134px;padding:14px}#panel-home .hm-f::after{right:12px;bottom:12px}}
+@media (prefers-reduced-motion:reduce){#panel-home .hm-sec,#panel-home .hm-qs,#panel-home .hm-f,#panel-home .hm-c{animation:none!important}#panel-home .hm-f::before{display:none}#panel-home *{transition-duration:.001ms!important}}

@@ -223,6 +223,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/47-pdf-download.css` — progress card for the PDF download (pdfd- prefix)
 - `apps/birth-chart/css/48-reading-polish.css` — READING POLISH, loaded last: one calm premium look for every Chart Reading tab (underline tabs, one 880px column, serif headings with thin gold rules, quiet cards and callouts, fewer emoji, footnote disclaimer, smooth motion); scoped to .rd
 - `apps/birth-chart/css/49-intake-polish.css` — INTAKE POLISH, loaded last: the birth-details page (glowing emblem, starfield, glass card, three-step timeline that fills as you go, gold focus glow, segmented AM/PM, shimmering action button, staggered entrance); scoped to .in-wrap
+- `apps/birth-chart/css/50-home-polish.css` — HOME POLISH, loaded last: the tool hub on the Home tab (filter chips, Quick start tiles, tool cards with tinted glass, glowing icon tiles, arrow badges, staggered entrance and scroll reveal); scoped to #panel-home
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order
