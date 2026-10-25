@@ -221,6 +221,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/45-shadbala-reading.css` — styles for the Strength tab (bars with a 100% line, the six strengths, planet cards; classes use the sbr- prefix because sb- belongs to the older Shadbala screen)
 - `apps/birth-chart/css/46-ashtakavarga-reading.css` — styles for the Ashtakavarga tab (avr- prefix; av- and avx- belong to older screens)
 - `apps/birth-chart/css/47-pdf-download.css` — progress card for the PDF download (pdfd- prefix)
+- `apps/birth-chart/css/48-reading-polish.css` — READING POLISH, loaded last: one calm premium look for every Chart Reading tab (underline tabs, one 880px column, serif headings with thin gold rules, quiet cards and callouts, fewer emoji, footnote disclaimer, smooth motion); scoped to .rd
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order

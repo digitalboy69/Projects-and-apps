@@ -1,0 +1,83 @@
+/* READING POLISH (loaded last): one calm, premium look for every Chart Reading tab. Scoped to .rd, so other panels are untouched.
+   Rules: one reading column, serif headings with thin gold rules, quiet surfaces, one accent colour per meaning, no loud fills. */
+.rd{--rp-ink:#ece6d6;--rp-soft:#b9b3a3;--rp-faint:#8f8a7c;--rp-line:rgba(255,255,255,.085);--rp-gold:#d9b85a;--rp-gold-soft:rgba(217,184,90,.22);--rp-surface:rgba(255,255,255,.028);--rp-surface2:rgba(255,255,255,.045);--rp-r:14px;--rp-ease:cubic-bezier(.22,.8,.24,1);
+  width:100%;max-width:880px;margin-inline:auto;gap:18px;scroll-behavior:smooth}
+.rd,.rd *{-webkit-font-smoothing:antialiased}
+/* ---- top: progress, note, explored ---- */
+.rd .rs-progress{height:2px;margin:0 0 4px;background:rgba(255,255,255,.06)}
+.rd .rs-progress i{background:linear-gradient(90deg,var(--rp-gold-soft),var(--rp-gold));box-shadow:none}
+.rd>.vx-note{background:none;border:0;border-top:1px solid var(--rp-line);border-radius:0;padding:10px 2px 0;font-size:12px;line-height:1.6;color:var(--rp-faint);font-style:italic}
+.rd .rs-explored{margin:0;font:500 11.5px var(--font-sans);letter-spacing:.04em;color:var(--rp-faint)}
+.rd .rs-explored b{color:var(--rp-soft);font-weight:600}.rd .rs-explored .vxi{display:none}
+.rd .rs-dots{gap:4px}.rd .rs-dots span{width:6px;height:6px;background:rgba(255,255,255,.14)}.rd .rs-dots span.on{background:var(--rp-gold);transform:none;box-shadow:none}
+/* ---- tabs: underline style, scrolls sideways on phones ---- */
+.rd>.vx-tabs{gap:2px;padding:0;border:0;border-bottom:1px solid var(--rp-line);border-radius:0;background:none;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 22px),transparent 100%)}
+.rd>.vx-tabs button{position:relative;flex:0 0 auto;padding:13px 14px 12px;border-radius:0;font:600 12.5px var(--font-sans);letter-spacing:.03em;color:var(--rp-faint);scroll-snap-align:center;transition:color .25s var(--rp-ease)}
+.rd>.vx-tabs button .vxi{opacity:.65;margin-right:5px;transition:opacity .25s}
+.rd>.vx-tabs button::before{content:'';position:absolute;left:12px;right:12px;bottom:-1px;height:2px;border-radius:2px;background:var(--rp-gold);transform:scaleX(0);transition:transform .3s var(--rp-ease)}
+.rd>.vx-tabs button:hover{color:var(--rp-ink)}
+.rd>.vx-tabs button.on{background:none;color:var(--rp-gold)}.rd>.vx-tabs button.on::before{transform:scaleX(1)}.rd>.vx-tabs button.on .vxi{opacity:1}
+.rd>.vx-tabs button.seen::after,.rd .vx-tabs button.on.seen::after{content:none}
+.rd>.vx-tabs button.seen:not(.on){color:var(--rp-soft)}
+.rd>.vx-tabs button:focus-visible,.rd summary:focus-visible,.rd .rs-next:focus-visible{outline:2px solid var(--rp-gold);outline-offset:2px;border-radius:6px}
+/* ---- panes ---- */
+.rd .vx-pane{gap:18px}
+.rd .vx-pane.on{animation:rp-in .42s var(--rp-ease) both}
+@keyframes rp-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* ---- headings ---- */
+.rd .rd-h,.rd .section-heading h3{margin:30px 0 12px;font:600 clamp(19px,4.8vw,23px)/1.25 var(--font-display,Georgia,serif);letter-spacing:.01em;color:#f3ecd6;gap:10px}
+.rd .rd-h::after{height:1px;background:linear-gradient(90deg,var(--rp-gold-soft),transparent);opacity:1}
+.rd .rd-h small{font:400 12.5px/1.5 var(--font-sans);letter-spacing:0;color:var(--rp-faint)}
+.rd .rd-h .vxi{opacity:.8}
+/* ---- reading text ---- */
+.rd .dr-p,.rd .dr-l>div,.rd .rd-w{font-size:14.5px;line-height:1.78;color:var(--rp-ink);max-width:68ch}
+.rd .dr-p{padding-left:14px;border-left:1px solid var(--rp-gold-soft);margin:10px 0}
+.rd strong.hk{color:#f1e2ab;font-weight:600}
+/* ---- surfaces: one card language ---- */
+.rd .dr-l,.rd .vx-t,.rd .vx-h,.rd .vx-pl,.rd .hn-card,.rd .vplate,.rd .sbr-card,.rd .avr-card,.rd .vx-row{border-radius:var(--rp-r);border:1px solid var(--rp-line);background:var(--rp-surface);box-shadow:none}
+.rd .vx-row.vg{background:var(--rp-surface2);border-color:var(--rp-gold-soft)}
+.rd .dr-l{padding:15px 16px}.rd .dr-l>b{font:600 14.5px var(--font-sans);color:#f3ecd6;letter-spacing:.01em}
+.rd .vx-pl[open],.rd .avr-card[open],.rd .sbr-card[open],.rd .hn-card[open]{border-color:var(--rp-gold-soft);background:var(--rp-surface2)}
+.rd .vx-pl[open] summary{background:none}
+.rd summary{transition:background .25s}.rd summary:hover{background:rgba(255,255,255,.03)}
+.rd details[open]>*:not(summary){animation:rp-in .35s var(--rp-ease) both}
+.rd .vx-t label,.rd .vx-kv label{font-size:10px;letter-spacing:.16em;color:var(--rp-faint)}
+.rd .vx-t b{font:600 15px/1.3 var(--font-sans);color:#f3ecd6}
+.rd .vx-gl{background:rgba(217,184,90,.1);color:var(--rp-gold)}
+/* ---- callouts: quiet, one hairline accent ---- */
+.rd .vx-pane .vx-note,.rd .vx-pane .vx-note.g,.rd .vx-pane .vx-note.b{background:var(--rp-surface);border:1px solid var(--rp-line);border-left:2px solid #5aa89c;border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.65;color:var(--rp-ink)}
+.rd .vx-pane .vx-note.g{border-left-color:var(--rp-gold)}.rd .vx-pane .vx-note.b{border-left-color:#c8776b}
+/* ---- chips and status pills: outline only ---- */
+.rd .vx-chip{background:none;border:1px solid var(--rp-line);color:var(--rp-soft);font-weight:500;padding:2px 10px}
+.rd .vx-chip.g{background:rgba(217,184,90,.08);border-color:var(--rp-gold-soft);color:#ecd28a}
+.rd .vx-chip.b{background:rgba(200,119,107,.08);border-color:rgba(200,119,107,.35);color:#e1a79d}
+.rd .vx-chip.t{background:rgba(90,168,156,.08);border-color:rgba(90,168,156,.35);color:#97d2c8}
+/* ---- bars ---- */
+.rd .vx-bar i,.rd .dr-bar{height:6px;background:rgba(255,255,255,.07)}
+.rd .vx-bar i u{background:linear-gradient(90deg,#4f9a8e,var(--rp-gold))}
+/* ---- right-now hero ---- */
+.rd .hn-hero{border-radius:20px;border:1px solid var(--rp-gold-soft);background:radial-gradient(120% 140% at 0% 0%,rgba(217,184,90,.12),transparent 60%),linear-gradient(165deg,#161826,#0e1018);padding:22px 20px}
+.rd .hn-hero h2{font:600 clamp(26px,7.2vw,34px)/1.12 var(--font-display,Georgia,serif);background:none;-webkit-background-clip:initial;background-clip:initial;color:#f6eccb}
+/* ---- next-up button ---- */
+.rd .rs-next{border-radius:14px;border:1px solid var(--rp-line);background:var(--rp-surface);transition:border-color .25s,background .25s,transform .25s var(--rp-ease)}
+.rd .rs-next:hover{border-color:var(--rp-gold-soft);background:var(--rp-surface2);transform:translateY(-1px)}
+/* ---- desktop: slightly larger type, two-column grids stay tidy ---- */
+@media (min-width:900px){.rd{gap:22px}.rd .dr-p,.rd .dr-l>div,.rd .rd-w{font-size:15px}.rd .rd-h{font-size:24px}.rd>.vx-tabs{mask-image:none}.rd>.vx-tabs button{padding:14px 18px 13px;font-size:13px}}
+@media (max-width:480px){.rd>.vx-tabs button{padding:12px 12px 11px}.rd .dr-l{padding:13px 14px}}
+@media (prefers-reduced-motion:reduce){.rd,.rd *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+/* ---- order: tabs first, the disclaimer is a quiet footnote ---- */
+.rd{display:flex;flex-direction:column}.rd>.rs-progress{order:0}.rd>.vx-tabs{order:1}.rd>.rs-explored{order:2;margin-top:-6px}.rd>.vx-pane{order:3}.rd>.vx-note{order:9;margin-top:6px}
+/* ---- fewer emoji: headings read as text, other icons sit back ---- */
+.rd .rd-h .vxi,.rd .hn-hero h2 .vxi,.rd .section-heading h3 .vxi{display:none}
+.rd .dr-l>b .vxi,.rd .hn-tag .vxi,.rd .vx-note .vxi,.rd .rd-w .vxi,.rd .vx-chip .vxi{opacity:.6}
+/* ---- neutral status blocks (no green/red/yellow fills) ---- */
+.rd .rd-w,.rd .rd-w.g,.rd .rd-w.b,.rd .rd-w.dr-ask{background:var(--rp-surface);border:1px solid var(--rp-line);border-left:2px solid var(--rp-line);color:var(--rp-ink);font-size:13.5px;line-height:1.65;padding:9px 12px;border-radius:10px;max-width:none}
+.rd .rd-w.g{border-left-color:#5aa89c}.rd .rd-w.b{border-left-color:#c8776b}.rd .rd-w.dr-ask{border-left-color:var(--rp-gold)}
+.rd .hn-tag,.rd .hn-tag.g,.rd .hn-tag.b{background:rgba(255,255,255,.035);border:1px solid var(--rp-line);border-left:2px solid #5aa89c;color:var(--rp-ink);border-radius:10px;font-size:13px;line-height:1.55}
+.rd .hn-tag.b{border-left-color:#c8776b}
+.rd .hn-short{background:var(--rp-surface);border:1px solid var(--rp-line);border-left:2px solid var(--rp-gold);border-radius:12px;color:var(--rp-ink)}
+.rd .hn-bub,.rd .sbr-bub,.rd .avr-bub{background:rgba(217,184,90,.1)}
+.rd .hn-ring{box-shadow:none}
+/* ---- desktop: heading lines up with the column; tabs are text only so all nine fit ---- */
+#panel-reading>.section-heading{max-width:880px;margin-inline:auto}
+@media (min-width:900px){.rd>.vx-tabs button .vxi{display:none}.rd>.vx-tabs button{padding:14px 13px 13px;font-size:13px}.rd>.vx-tabs{justify-content:space-between}}
