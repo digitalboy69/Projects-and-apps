@@ -12664,6 +12664,79 @@ html{scroll-behavior:auto!important}
 @media(max-width:420px){.hn-chips{grid-template-columns:repeat(4,minmax(0,1fr))}.hn-ar{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 28px}.hn-ar small{display:none}}
 </style>
 <style>
+/* Dasha Lens + "Show in the 3D wheel" buttons. Class selectors only (the icon layer inserts .vxi spans). */
+.rs-pane .rect-3d-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 20px;border-radius:16px;border:1px solid rgba(124,140,248,.5);background:linear-gradient(135deg,rgba(124,140,248,.16),rgba(0,0,0,.2));color:#c9d1ff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .15s,border-color .15s,background .15s}
+.rs-pane .rect-3d-btn:hover{transform:translateY(-1px);border-color:#9aa6ff;background:linear-gradient(135deg,rgba(124,140,248,.26),rgba(0,0,0,.2))}
+.rs-pane .rect-action-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.dl-card{margin-bottom:14px;padding:16px;border-radius:22px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.09)}
+.dl-h{display:flex;align-items:center;gap:11px;margin-bottom:13px;font-size:15px;flex-wrap:wrap}
+.dl-hn{flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:#1b1608;background:linear-gradient(135deg,#f6d775,#d4af37)}
+.dl-tz{margin-left:auto;font-size:11px;color:var(--text-muted);font-weight:400}
+.dl-presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.dl-pre{padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.26);color:var(--text-main);font-size:12.5px;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s}
+.dl-pre:hover{border-color:#f6d775;background:rgba(246,215,117,.1)}
+.dl-daterow{display:flex;gap:6px;align-items:center;margin-bottom:12px}
+.dl-daterow input{flex:1 1 0;min-width:0;box-sizing:border-box;padding:10px 8px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.34);color:var(--text-main);font-size:14px;font-family:inherit;text-align:center}
+.dl-nb{flex:0 0 auto;padding:9px 8px;min-width:40px;border-radius:11px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.28);color:var(--text-muted);font-size:11.5px;cursor:pointer;font-family:var(--font-mono,monospace);transition:background .12s,transform .1s}
+.dl-nb:hover{color:var(--text-main);background:rgba(246,215,117,.12)}.dl-nb:active{transform:scale(.93)}
+.dl-pods{display:flex;align-items:flex-start;justify-content:center;gap:6px;margin-bottom:12px}
+.dl-pod{flex:1 1 0;max-width:122px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.dl-pv{width:100%;box-sizing:border-box;text-align:center;padding:10px 0;border-radius:18px;font-size:34px;line-height:1.1;font-family:var(--font-mono,monospace);color:#f6d775;background:rgba(0,0,0,.4);border:1px solid rgba(246,215,117,.3)}
+.dl-pb{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.dl-pbtn{height:40px;border-radius:13px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--text-main);font-size:13px;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none;transition:background .12s,transform .1s}
+.dl-pbtn:hover{background:rgba(246,215,117,.18);border-color:#d4af37}.dl-pbtn:active{transform:scale(.9)}
+.dl-pl2{font-size:10px;letter-spacing:.16em;color:var(--text-muted)}
+.dl-colon{font-size:30px;padding-top:8px;color:rgba(246,215,117,.5)}
+.dl-stepsz,.dl-src{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:6px}
+.dl-sl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)}
+.dl-sc{min-width:36px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--text-muted);font-size:12px;cursor:pointer;font-family:var(--font-mono,monospace)}
+.dl-sc.on{color:#1b1608;background:#f6d775;border-color:#f6d775;font-weight:700}
+.dl-hint{margin-left:auto;font-size:11px;color:var(--text-muted)}
+.dl-seg{display:flex;gap:4px;padding:4px;border-radius:14px;background:rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.09)}
+.dl-sg{padding:8px 12px;border-radius:10px;border:0;background:transparent;color:var(--text-muted);font-size:12px;cursor:pointer;font-family:inherit}
+.dl-sg.on{background:rgba(246,215,117,.2);color:#f6d775;box-shadow:0 0 0 1px rgba(246,215,117,.5) inset}
+.dl-crumb{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:12px}
+.dl-ar{color:var(--text-muted)}
+.dl-warn{flex-basis:100%;margin-top:6px;padding:8px 12px;border-radius:12px;background:rgba(233,185,73,.1);border:1px solid rgba(233,185,73,.4);font-size:12px;color:#e9b949}
+.dl-pl{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--pc);background:color-mix(in srgb,var(--pc) 15%,transparent);border:1px solid color-mix(in srgb,var(--pc) 45%,transparent)}
+.dl-pl.big{font-size:14px;padding:5px 13px}.dl-gl{font-size:1.1em;line-height:1}
+.dl-stack{display:flex;flex-direction:column;gap:9px}
+.dl-row{padding:11px 13px;border-radius:16px;background:linear-gradient(90deg,color-mix(in srgb,var(--pc) 10%,transparent),rgba(0,0,0,.18));border:1px solid rgba(255,255,255,.08);border-left:3px solid var(--pc)}
+.dl-row.lv4,.dl-row.lv5{background:linear-gradient(90deg,color-mix(in srgb,var(--pc) 17%,transparent),rgba(0,0,0,.2))}
+.dl-r1{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.dl-tag{font-size:10px;letter-spacing:.08em;font-weight:700;padding:3px 7px;border-radius:7px;color:#1b1608;background:var(--pc)}
+.dl-lvn{font-size:12px;color:var(--text-muted)}.dl-nat{font-size:11.5px;color:var(--text-muted);margin-left:2px}
+.dl-hops{margin-left:auto;display:flex;gap:6px}
+.dl-hop{width:34px;height:30px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.28);color:var(--text-main);font-size:11px;cursor:pointer;transition:background .12s}
+.dl-hop:hover{background:rgba(246,215,117,.18)}
+.dl-r2{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:9px 0 6px;font-size:12.5px}
+.dl-to{color:var(--text-muted)}
+.dl-tm{display:inline-block;margin-left:6px;font-family:var(--font-mono,monospace);color:#f6d775}
+.dl-r3{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11.5px;color:var(--text-muted)}.dl-left{color:var(--text-main)}.dl-pct{margin-left:auto;font-family:var(--font-mono,monospace)}
+.dl-prog{height:5px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:7px}.dl-prog-i{display:block;height:100%;border-radius:99px;background:var(--pc)}
+.dl-sens{margin-top:14px;padding:12px 14px;border-radius:16px;background:rgba(124,140,248,.08);border:1px solid rgba(124,140,248,.3);font-size:12.5px;line-height:1.6;color:var(--text-muted)}
+.dl-sens b{color:var(--text-main)}.dl-sens-t{font-weight:600;color:#c9d1ff;margin-bottom:4px}.dl-sens-s{margin-top:6px;font-size:11.5px}
+.dl-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.dl-btn{padding:12px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--text-main);font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit}
+.dl-btn-3d{flex:1 1 220px;border-color:rgba(124,140,248,.5);background:linear-gradient(135deg,rgba(124,140,248,.2),rgba(0,0,0,.2));color:#c9d1ff}
+.dl-lvtabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}.dl-lvtabs::-webkit-scrollbar{display:none}
+.dl-lt{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.24);color:var(--text-muted);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.dl-lt2{font-size:9.5px;font-weight:400;letter-spacing:.03em}
+.dl-lt.on{color:#1b1608;background:linear-gradient(135deg,#f6d775,#d4af37);border-color:transparent}
+.dl-bar{position:relative;display:flex;height:42px;margin:6px 0 14px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+.dl-seg2{flex:0 0 auto;min-width:0;border:0;padding:0;background:color-mix(in srgb,var(--pc) 28%,#0b0d14);color:var(--pc);cursor:pointer;border-right:1px solid rgba(0,0,0,.5);transition:filter .15s}
+.dl-seg2:hover{filter:brightness(1.35)}.dl-seg2.on{background:var(--pc);color:#10100c}.dl-gl2{font-size:15px}
+.dl-marker{position:absolute;top:-2px;bottom:-2px;width:3px;margin-left:-1px;background:#fff;box-shadow:0 0 10px #fff;border-radius:3px;pointer-events:none}
+.dl-ltitle{font-size:12px;color:var(--text-muted);margin-bottom:8px}
+.dl-list{display:flex;flex-direction:column;gap:7px}
+.dl-li{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;text-align:left;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.08);border-left:3px solid var(--pc);background:rgba(0,0,0,.22);color:var(--text-main);font-size:12px;cursor:pointer;font-family:inherit;transition:background .12s}
+.dl-li:hover{background:color-mix(in srgb,var(--pc) 12%,rgba(0,0,0,.22))}
+.dl-li.on{background:color-mix(in srgb,var(--pc) 18%,rgba(0,0,0,.25));border-color:var(--pc)}
+.dl-now{font-size:9.5px;font-weight:700;letter-spacing:.1em;padding:2px 7px;border-radius:99px;background:#fff;color:#10100c}
+.dl-lto{color:var(--text-muted)}.dl-llen{margin-left:auto;font-family:var(--font-mono,monospace);color:var(--text-muted)}
+@media (max-width:520px){.dl-card{padding:13px}.dl-pv{font-size:28px;padding:9px 0}.dl-nb{min-width:34px;padding:9px 5px;font-size:10.5px}.dl-hint{flex-basis:100%;margin-left:0}.dl-tz{flex-basis:100%;margin-left:0}.dl-llen{flex-basis:100%;margin-left:0}}
+</style>
+<style>
 /* Reading style (js/104-reading-style.js): big headlines, short hooks, rich cards, progress and "next up" prompts for Chart Reading.
    Scoped to .rd so other panels are untouched. Motion is off for people who ask for reduced motion. */
 .rd{--rs-g1:var(--gold-bright,#F9D976);--rs-g2:var(--gold,#D4AF37);--rs-ok:#79c08a;--rs-bad:#e0955f}
@@ -44984,6 +45057,218 @@ window.ADD = (function(D){
   function area(chart, id, opts){ const now = (opts && opts.now) || new Date(), LA = LAE.assess(chart, { now }); return build(chart, id, now, LA); }
   return { data: D, all, area, ids: LAE.ids };
 })(ADD_DATA);
+<\/script>
+<script>
+/* ============================================================================
+   JUMP TO THE 3D WHEEL: send an exact moment (and the birth place, so the Rising sign is right) from the
+   Rectification Studio to the 3D Sky app. Same storage + message path as js/84-bridge-3d.js.
+   vxJump3D({ date:'YYYY-MM-DD', time:'HH:MM:SS', tz, lat, lon, place, label })  -> local time at the birth place.
+   The 3D app (apps/sky3d/js/51-jump-from-rectification.js) reads 'vax_jump_3d', switches to the Zodiac Wheel and jumps there.
+   ============================================================================ */
+(function(){
+  'use strict';
+  const KEY = 'vax_jump_3d';
+  window.vxJump3D = function(o){
+    if (!o || !o.date || !o.time){ if (window.rsToast) rsToast('Pick a date and time first'); return; }
+    const [y,m,d] = String(o.date).split('-').map(Number), [H,M,S] = String(o.time).split(':').map(Number), tz = +o.tz || 0;
+    const ms = Date.UTC(y, m-1, d, H||0, M||0, S||0) - tz*3600000, jd = ms/86400000 + 2440587.5;
+    const pay = { ts:Date.now(), jd, local:o.date+' '+String(o.time).slice(0,8), tz, lat:+o.lat, lon:+o.lon, place:o.place || '', label:o.label || 'Rectification' };
+    try { localStorage.setItem(KEY, JSON.stringify(pay)); } catch(e){}
+    if (window.rsToast) rsToast('Opening the 3D wheel at ' + pay.local + ' ✨');
+    if (window.parent && window.parent !== window) window.parent.postMessage('vedic-open-3d', '*');
+    else window.location.href = '../sky3d/index.html';
+  };
+  /* "Show in 3D wheel" buttons inside the studio: the Time Dial and the Second Scan candidate. */
+  document.addEventListener('click', e=>{
+    const b = e.target.closest('[data-jump3d]'); if (!b) return;
+    const pr = (typeof currentProfileForExport !== 'undefined') ? currentProfileForExport : null; if (!pr) return;
+    let date, time;
+    if (b.dataset.jump3d === 'dial'){
+      date = (document.getElementById('rectDate') || {}).value;
+      const h = (typeof rectHms !== 'undefined') ? rectHms : { h:0, m:0, s:0 };
+      time = [h.h, h.m, h.s].map(n=>String(n).padStart(2,'0')).join(':');
+    } else if (b.dataset.jump3d === 'scan'){
+      const r = (typeof rectRows !== 'undefined' && typeof rectSelectedIdx !== 'undefined' && rectSelectedIdx != null) ? rectRows[rectSelectedIdx] : null; if (!r) return;
+      const sh = shiftLocalDateTime((document.getElementById('rectDate') || {}).value, (document.getElementById('rectCenterTime') || {}).value, r.offsetSec);
+      date = sh.dateStr; time = sh.timeStr;
+    }
+    window.vxJump3D({ date, time, tz:pr.tz, lat:pr.lat, lon:pr.lon, place:pr.place, label:'Rectification' });
+  });
+})();
+<\/script>
+<script>
+/* ============================================================================
+   DASHA LENS (Rectification Studio tab "Dasha Lens")
+   Pick ANY moment (date + hour + minute + second) and see the whole Vimshottari stack running at that instant:
+   Mahadasha > Antardasha > Pratyantardasha > Sookshma > Prana > Deha, each with exact start/end, length,
+   time left, and where that planet sits in the chart. Nudge the date, hour, minute or second (hold to repeat)
+   to watch the lords change. A sibling timeline shows the 9 periods of any level, and a sensitivity note says
+   how far one second of birth-time error moves every boundary (so deep levels are used honestly).
+   Same maths as js/10 (365.25-day years, periods laid on the full cycle from the virtual start of the first Mahadasha).
+   Needs: js/10 (DASHA_*), js/05 (NAKSHATRAS), js/16 (rectifyPoint), js/26 (rsPaneHead, rectHms), js/99-jump-3d-bridge.
+   ============================================================================ */
+const DL_YR = 365.25*86400000;
+const DL_LV = [['Mahadasha','MD'],['Antardasha','AD'],['Pratyantardasha','PD'],['Sookshma','SD'],['Prana','PR'],['Deha','DH']];
+const DL_PC = { Sun:'#f6c453', Moon:'#cbd5e1', Mars:'#ff7a6b', Mercury:'#5fcf8d', Jupiter:'#e9b949', Venus:'#ef6f9a', Saturn:'#94a3b8', Rahu:'#a78bfa', Ketu:'#c08457' };
+const DL_GL = { Sun:'☉', Moon:'☽', Mars:'♂', Mercury:'☿', Jupiter:'♃', Venus:'♀', Saturn:'♄', Rahu:'☊', Ketu:'☋' };
+const DL_MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DL = { y:0, m:0, d:0, H:0, M:0, S:0, src:'rec', lv:4, step:1, ready:false, timer:0 };
+
+/* ---------- engine ---------- */
+function dlChildren(par){                       // the 9 sub-periods of a period, starting from its own lord
+  const j0 = DASHA_SEQUENCE.indexOf(par.lord), len = par.end - par.start, out = []; let cur = par.start;
+  for (let k=0;k<9;k++){ const lord = DASHA_SEQUENCE[(j0+k)%9], l = len*DASHA_YEARS[lord]/DASHA_TOTAL_YEARS; out.push({ lord, start:cur, end:cur+l }); cur += l; }
+  return out;
+}
+function dlStack(moonLon, birthMs, evMs, depth){
+  const span = 360/27, ml = normDeg(moonLon), ni = Math.floor(ml/span), frac = (span - ml%span)/span;
+  const sl = NAKSHATRAS[ni].lord, sIdx = DASHA_SEQUENCE.indexOf(sl), vstart = birthMs - DASHA_YEARS[sl]*(1 - frac)*DL_YR;
+  const mahas = []; let cur = vstart;
+  for (let k=0;k<9;k++){ const lord = DASHA_SEQUENCE[(sIdx+k)%9], l = DASHA_YEARS[lord]*DL_YR; mahas.push({ lord, start:cur, end:cur+l }); cur += l; }
+  let t = evMs, i = 0, guard = 0, base = vstart;       // beyond 120 years the cycle simply repeats
+  if (t >= mahas[8].end){ const cycles = Math.floor((t - vstart)/(DASHA_TOTAL_YEARS*DL_YR)); base = vstart + cycles*DASHA_TOTAL_YEARS*DL_YR; }
+  const shifted = base===vstart ? mahas : mahas.map(m=>({ lord:m.lord, start:m.start + (base - vstart), end:m.end + (base - vstart) }));
+  while (i < 8 && t >= shifted[i].end && guard++ < 20) i++;
+  const levels = [shifted[i]];
+  for (let lv=1; lv<depth; lv++){ const ch = dlChildren(levels[lv-1]); let pick = ch[8]; for (let k=0;k<9;k++){ if (t < ch[k].end){ pick = ch[k]; break; } } levels.push(pick); }
+  return { levels, mahas:shifted, vstart:base, balanceLord:sl, sIdx };
+}
+
+/* ---------- formatting ---------- */
+function dlTz(){ const p = currentProfileForExport; return p && isFinite(+p.tz) ? +p.tz : 0; }
+function dlP2(n){ return String(n).padStart(2,'0'); }
+function dlLocal(ms){ const d = new Date(ms + dlTz()*3600000); return { y:d.getUTCFullYear(), m:d.getUTCMonth()+1, d:d.getUTCDate(), H:d.getUTCHours(), M:d.getUTCMinutes(), S:d.getUTCSeconds() }; }
+function dlStamp(ms){ const l = dlLocal(Math.round(ms/1000)*1000); return `${l.d} ${DL_MON[l.m-1]} ${l.y}<span class="dl-tm">${dlP2(l.H)}:${dlP2(l.M)}:${dlP2(l.S)}</span>`; }
+function dlDur(ms){
+  const s = Math.max(0, Math.round(ms/1000));
+  if (s >= 86400*30){ const y = Math.floor(s/(DL_YR/1000)), mo = Math.floor((s - y*DL_YR/1000)/(30.4375*86400)), d = Math.floor((s - y*DL_YR/1000 - mo*30.4375*86400)/86400); return `${y?y+'y ':''}${mo?mo+'mo ':''}${d?d+'d':''}`.trim() || '0d'; }
+  if (s >= 86400){ const d = Math.floor(s/86400), h = Math.floor((s%86400)/3600); return `${d}d${h?' '+h+'h':''}`; }
+  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), x = s%60;
+  return h ? `${h}h ${m}m${x?' '+x+'s':''}` : m ? `${m}m ${x}s` : `${x}s`;
+}
+function dlMomentMs(){ return Date.UTC(DL.y, DL.m-1, DL.d, DL.H, DL.M, DL.S) - dlTz()*3600000; }
+function dlSetMs(ms){ const l = dlLocal(ms); DL.y = l.y; DL.m = l.m; DL.d = l.d; DL.H = l.H; DL.M = l.M; DL.S = l.S; }
+function dlNorm(){ const t = Date.UTC(DL.y, DL.m-1, DL.d, DL.H, DL.M, DL.S); const d = new Date(t); DL.y = d.getUTCFullYear(); DL.m = d.getUTCMonth()+1; DL.d = d.getUTCDate(); DL.H = d.getUTCHours(); DL.M = d.getUTCMinutes(); DL.S = d.getUTCSeconds(); }
+function dlNudge(unit, n){
+  if (unit==='y' || unit==='mo'){            // keep the day-of-month, clamp to the month length (31 Jan + 1 month = 28/29 Feb)
+    const d0 = DL.d; if (unit==='y') DL.y += n; else DL.m += n;
+    DL.d = 1; dlNorm(); const dim = new Date(Date.UTC(DL.y, DL.m, 0)).getUTCDate(); DL.d = Math.min(d0, dim);
+  } else DL[unit] += n;
+  dlNorm();
+}
+
+/* ---------- birth moment used for the Moon ---------- */
+function dlBirth(){
+  const pr = currentProfileForExport, ch = currentChartForModal; if (!pr || !ch) return null;
+  let date = pr.dob, time = String(pr.tob || '12:00:00'); if (time.length === 5) time += ':00';
+  if (DL.src === 'dial'){ const de = document.getElementById('rectDate'); if (de && de.value){ date = de.value; const h = (typeof rectHms !== 'undefined') ? rectHms : { h:0, m:0, s:0 }; time = `${dlP2(h.h)}:${dlP2(h.m)}:${dlP2(h.s)}`; } }
+  const r = rectifyPoint(date, time, pr.lat, pr.lon, pr.tz), sh = shiftLocalDateTime(date, time, 60);
+  const r3 = rectifyPoint(sh.dateStr, sh.timeStr, pr.lat, pr.lon, pr.tz);
+  const birthMs = (r.jd - 2440587.5)*86400000, nl = NAKSHATRAS[Math.floor(normDeg(r.moon.longitude)/(360/27))].lord;
+  const dMoon = Math.abs(r3.moon.longitude - r.moon.longitude), perSec = (dMoon/(360/27))*DASHA_YEARS[nl]*DL_YR/60;   // ms of dasha shift per second of birth-time error
+  return { moonLon:r.moon.longitude, birthMs, date, time, shiftPerSecMs:perSec, shiftPerMinDays:perSec*60/86400000 };
+}
+
+/* ---------- UI ---------- */
+function dlPlanetInfo(P){ const ch = currentChartForModal, p = ch && ch.planets && ch.planets[P]; return p ? `H${p.house} · ${SIGNS[p.sign].name}` : ''; }
+function dlChip(P, big){ return `<span class="dl-pl${big?' big':''}" style="--pc:${DL_PC[P]}"><span class="dl-gl">${DL_GL[P]}</span>${P}</span>`; }
+function rsBuildDasha(p){
+  p.innerHTML = rsPaneHead('🔱','Dasha Lens','Pick any moment and see the whole Vimshottari stack running then, down to Prana and Deha.') +
+  `<details class="rs-how"><summary>How to use this</summary><p>Set a date and time (your event, or any moment) and the lens shows which planet rules every level at that instant. Use the pods to move the hour, minute or second and watch the deeper levels change. Prana lasts hours and Deha about an hour, so seconds matter there.</p>
+   <p><b>Be honest with deep levels:</b> every dasha boundary depends on the Moon at birth. One second of birth-time error slides the whole timeline by the amount shown in the sensitivity note. So use Prana and Deha to <em>compare candidate birth times</em> (switch the source to the Time Dial), not as proof on their own.</p></details>
+   <div class="dl-card"><div class="dl-h"><span class="dl-hn">1</span><b>When?</b><span class="dl-tz" id="dlTz"></span></div>
+     <div class="dl-presets"><button type="button" class="dl-pre" data-dl-pre="birth">🍼 Birth</button><button type="button" class="dl-pre" data-dl-pre="now">⏱ Now</button><button type="button" class="dl-pre" data-dl-pre="dial">🕰️ Dial time</button><button type="button" class="dl-pre" data-dl-pre="mid">🌓 Midnight</button></div>
+     <div class="dl-daterow"><button type="button" class="dl-nb" data-dl-n="y:-1">−1y</button><button type="button" class="dl-nb" data-dl-n="mo:-1">−1mo</button><button type="button" class="dl-nb" data-dl-n="d:-1">−1d</button>
+       <input type="date" id="dlDate" aria-label="Date">
+       <button type="button" class="dl-nb" data-dl-n="d:1">+1d</button><button type="button" class="dl-nb" data-dl-n="mo:1">+1mo</button><button type="button" class="dl-nb" data-dl-n="y:1">+1y</button></div>
+     <div class="dl-pods" id="dlPods"></div>
+     <div class="dl-stepsz"><span class="dl-sl">Step</span>${[1,5,10,30].map(n=>`<button type="button" class="dl-sc${n===1?' on':''}" data-dl-step="${n}">${n}</button>`).join('')}<span class="dl-hint">Hold a ◀ ▶ button to run</span></div>
+     <div class="dl-src"><span class="dl-sl">Birth moment for the Moon</span><div class="dl-seg"><button type="button" class="dl-sg on" data-dl-src="rec">Recorded birth time</button><button type="button" class="dl-sg" data-dl-src="dial">Time Dial time</button></div></div></div>
+   <div class="dl-card"><div class="dl-h"><span class="dl-hn">2</span><b>Running at that moment</b></div><div id="dlCrumb" class="dl-crumb"></div><div id="dlStack" class="dl-stack"></div><div id="dlSens" class="dl-sens"></div>
+     <div class="dl-actions"><button type="button" class="dl-btn dl-btn-3d" id="dlTo3d">🌌 Show this moment in the 3D wheel</button><button type="button" class="dl-btn" id="dlCopy">📋 Copy</button></div></div>
+   <div class="dl-card"><div class="dl-h"><span class="dl-hn">3</span><b>Timeline</b><span class="dl-tz">tap a period to jump to its start</span></div><div id="dlLvTabs" class="dl-lvtabs"></div><div id="dlBar" class="dl-bar"></div><div id="dlList" class="dl-list"></div></div>`;
+  const root = p, hold = { t:0, i:0 };
+  const stop = ()=>{ clearTimeout(hold.t); clearInterval(hold.i); };
+  const act = fn=>{ fn(); dlRender(); };
+  root.addEventListener('pointerdown', e=>{
+    const b = e.target.closest('[data-dl-pod]'); if (!b) return; e.preventDefault();
+    const [u, dir] = b.dataset.dlPod.split(':'), go = ()=> act(()=> dlNudge(u, (+dir)*DL.step));
+    go(); stop(); hold.t = setTimeout(()=>{ hold.i = setInterval(go, 90); }, 380);
+  });
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=> root.addEventListener(ev, stop, true));
+  root.addEventListener('click', e=>{
+    const t = e.target;
+    let b;
+    if ((b = t.closest('[data-dl-n]'))){ const [u,n] = b.dataset.dlN.split(':'); act(()=> dlNudge(u, +n)); }
+    else if ((b = t.closest('[data-dl-pre]'))){ act(()=> dlPreset(b.dataset.dlPre)); }
+    else if ((b = t.closest('[data-dl-step]'))){ DL.step = +b.dataset.dlStep; root.querySelectorAll('[data-dl-step]').forEach(x=>x.classList.toggle('on', x===b)); }
+    else if ((b = t.closest('[data-dl-src]'))){ DL.src = b.dataset.dlSrc; root.querySelectorAll('[data-dl-src]').forEach(x=>x.classList.toggle('on', x===b)); dlRender(); }
+    else if ((b = t.closest('[data-dl-lv]'))){ DL.lv = +b.dataset.dlLv; dlRender(); }
+    else if ((b = t.closest('[data-dl-goto]'))){ act(()=> dlSetMs(Math.ceil(+b.dataset.dlGoto/1000)*1000)); }
+    else if ((b = t.closest('[data-dl-hop]'))){ const [lv, dir] = b.dataset.dlHop.split(':'), s = DL.stack && DL.stack.levels[+lv]; if (s) act(()=> dlSetMs(+dir > 0 ? Math.ceil(s.end/1000)*1000 : Math.floor(s.start/1000)*1000 - 1000)); }
+    else if (t.closest('#dlTo3d')){ const l = dlLocal(dlMomentMs()); dlTo3D(l); }
+    else if (t.closest('#dlCopy')) dlCopy();
+  });
+  const de = root.querySelector('#dlDate');
+  de.addEventListener('change', ()=>{ if (!de.value) return; const [y,m,d] = de.value.split('-').map(Number); DL.y = y; DL.m = m; DL.d = d; dlRender(); });
+}
+function dlPreset(k){
+  const pr = currentProfileForExport; if (!pr) return;
+  if (k==='birth'){ const [y,m,d] = pr.dob.split('-').map(Number), t = String(pr.tob||'12:00').split(':').map(Number); DL.y = y; DL.m = m; DL.d = d; DL.H = t[0]||0; DL.M = t[1]||0; DL.S = t[2]||0; }
+  else if (k==='now') dlSetMs(Date.now());
+  else if (k==='dial'){ const de = document.getElementById('rectDate'); if (de && de.value){ const [y,m,d] = de.value.split('-').map(Number), h = (typeof rectHms !== 'undefined') ? rectHms : { h:0, m:0, s:0 }; DL.y = y; DL.m = m; DL.d = d; DL.H = h.h; DL.M = h.m; DL.S = h.s; } }
+  else if (k==='mid'){ DL.H = 0; DL.M = 0; DL.S = 0; }
+  dlNorm();
+}
+function dlTo3D(l){
+  const pr = currentProfileForExport || {};
+  if (typeof vxJump3D !== 'function'){ rsToast('3D link not ready'); return; }
+  vxJump3D({ date:`${l.y}-${dlP2(l.m)}-${dlP2(l.d)}`, time:`${dlP2(l.H)}:${dlP2(l.M)}:${dlP2(l.S)}`, tz:pr.tz, lat:pr.lat, lon:pr.lon, place:pr.place, label:'Dasha Lens' });
+}
+function dlCopy(){
+  const txt = document.getElementById('dlCrumb').dataset.txt || ''; if (!txt) return;
+  try { navigator.clipboard.writeText(txt).then(()=> rsToast('Copied ✓'), ()=> rsToast('Copy failed')); } catch(e){ rsToast('Copy not available'); }
+}
+function dlOnShow(){
+  if (!DL.ready){ dlSetMs(Date.now()); DL.ready = true; }
+  dlRender();
+}
+function dlRender(){
+  const root = document.querySelector('.rs-pane[data-rs-pane="dasha"]'); if (!root) return;
+  const crumb = root.querySelector('#dlCrumb'), stackEl = root.querySelector('#dlStack');
+  const bi = dlBirth();
+  if (!bi){ crumb.textContent = ''; stackEl.innerHTML = `<div class="rs-empty">Generate a chart first.</div>`; return; }
+  const tzs = dlTz(); root.querySelector('#dlTz').textContent = 'Birth-place time · UTC' + (tzs>=0?'+':'−') + Math.abs(tzs);
+  const de = root.querySelector('#dlDate'); const ds = `${DL.y}-${dlP2(DL.m)}-${dlP2(DL.d)}`; if (de.value !== ds) de.value = ds;
+  const pod = (u,label,val)=>`<div class="dl-pod"><div class="dl-pv">${dlP2(val)}</div><div class="dl-pb"><button type="button" class="dl-pbtn" data-dl-pod="${u}:-1" aria-label="${label} minus">◀</button><button type="button" class="dl-pbtn" data-dl-pod="${u}:1" aria-label="${label} plus">▶</button></div><div class="dl-pl2">${label}</div></div>`;
+  root.querySelector('#dlPods').innerHTML = pod('H','HOUR',DL.H) + '<div class="dl-colon">:</div>' + pod('M','MINUTE',DL.M) + '<div class="dl-colon">:</div>' + pod('S','SECOND',DL.S);
+  const ev = dlMomentMs(), st = dlStack(bi.moonLon, bi.birthMs, ev, 6); DL.stack = st;
+  const before = ev < bi.birthMs;
+  crumb.innerHTML = st.levels.map((l,i)=>`<span class="dl-cr">${dlChip(l.lord)}</span>`).join('<span class="dl-ar">›</span>') + (before ? `<div class="dl-warn">This moment is before the birth moment. The periods shown are the ones that would have been running.</div>` : '');
+  crumb.dataset.txt = `${DL.y}-${dlP2(DL.m)}-${dlP2(DL.d)} ${dlP2(DL.H)}:${dlP2(DL.M)}:${dlP2(DL.S)}  ` + st.levels.map((l,i)=>`${DL_LV[i][1]} ${l.lord}`).join(' > ');
+  stackEl.innerHTML = st.levels.map((l,i)=>{
+    const len = l.end - l.start, done = Math.min(1, Math.max(0, (ev - l.start)/len)), left = l.end - ev;
+    return `<div class="dl-row lv${i}" style="--pc:${DL_PC[l.lord]}"><div class="dl-r1"><span class="dl-tag">${DL_LV[i][1]}</span><span class="dl-lvn">${DL_LV[i][0]}</span>${dlChip(l.lord,true)}<span class="dl-nat">${dlPlanetInfo(l.lord)}</span>
+      <span class="dl-hops"><button type="button" class="dl-hop" data-dl-hop="${i}:-1" title="Previous ${DL_LV[i][0]}">◀</button><button type="button" class="dl-hop" data-dl-hop="${i}:1" title="Next ${DL_LV[i][0]}">▶</button></span></div>
+      <div class="dl-r2"><span class="dl-when">${dlStamp(l.start)}</span><span class="dl-to">→</span><span class="dl-when">${dlStamp(l.end)}</span></div>
+      <div class="dl-r3"><span class="dl-len">lasts ${dlDur(len)}</span><span class="dl-left">${dlDur(left)} left</span><span class="dl-pct">${(done*100).toFixed(done<.1||done>.9?2:1)}%</span></div>
+      <div class="dl-prog"><span class="dl-prog-i" style="width:${(done*100).toFixed(2)}%"></span></div></div>`; }).join('');
+  // sensitivity: how far one second of birth-time error slides every boundary
+  const perSec = bi.shiftPerSecMs, pr = st.levels[4], prLen = pr.end - pr.start;
+  const secNeeded = perSec > 0 ? Math.max(1, Math.round(prLen/2/perSec)) : 0;
+  root.querySelector('#dlSens').innerHTML = `<div class="dl-sens-t">🎚 Sensitivity</div>
+    <div>1 minute of birth-time error moves every dasha date by about <b>${bi.shiftPerMinDays.toFixed(1)} days</b> (≈ ${dlDur(perSec)} per second). This Prana lasts ${dlDur(prLen)}, so it is only certain if the birth time is right to about <b>±${secNeeded} second${secNeeded===1?'':'s'}</b>.</div>
+    <div class="dl-sens-s">Birth moment used: ${bi.date} ${bi.time} (${DL.src==='dial'?'Time Dial':'recorded'}).</div>`;
+  // timeline for the chosen level
+  const lv = Math.min(DL.lv, 5), tabs = root.querySelector('#dlLvTabs');
+  tabs.innerHTML = DL_LV.map((x,i)=>`<button type="button" class="dl-lt${i===lv?' on':''}" data-dl-lv="${i}">${x[1]}<span class="dl-lt2">${x[0]}</span></button>`).join('');
+  const sibs = lv===0 ? st.mahas : dlChildren(st.levels[lv-1]), cur = st.levels[lv], tot = sibs[sibs.length-1].end - sibs[0].start;
+  root.querySelector('#dlBar').innerHTML = sibs.map(s=>{ const on = s.lord===cur.lord && s.start===cur.start; return `<button type="button" class="dl-seg2${on?' on':''}" style="width:${Math.max(3,(s.end-s.start)/tot*100).toFixed(2)}%;--pc:${DL_PC[s.lord]}" data-dl-goto="${s.start}" title="${s.lord}: ${dlDur(s.end-s.start)}"><span class="dl-gl2">${DL_GL[s.lord]}</span></button>`; }).join('') +
+    `<span class="dl-marker" style="left:${Math.min(100,Math.max(0,(ev - sibs[0].start)/tot*100)).toFixed(2)}%"></span>`;
+  root.querySelector('#dlList').innerHTML = `<div class="dl-ltitle">${lv===0 ? 'The 9 Mahadashas from the start of the cycle' : `The 9 ${DL_LV[lv][0]}s inside ${st.levels[lv-1].lord} ${DL_LV[lv-1][0]}`}</div>` +
+    sibs.map(s=>{ const on = s.lord===cur.lord && s.start===cur.start; return `<button type="button" class="dl-li${on?' on':''}" style="--pc:${DL_PC[s.lord]}" data-dl-goto="${s.start}">${on?'<span class="dl-now">NOW</span>':''}${dlChip(s.lord)}<span class="dl-lwhen">${dlStamp(s.start)}</span><span class="dl-lto">→</span><span class="dl-lwhen">${dlStamp(s.end)}</span><span class="dl-llen">${dlDur(s.end - s.start)}</span></button>`; }).join('');
+}
+window.DLENS = { stack:dlStack, children:dlChildren, dur:dlDur };
 <\/script>
 <script>
 /* ============================================================================
