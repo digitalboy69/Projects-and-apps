@@ -47603,13 +47603,35 @@ const PRB = (() => {
   };
   const SENSITIVE = { harm: 1, loss: 1 };
 
+  /* ---------- functional nature (S21): which planets help or harm THIS ascendant ---------- */
+  const SIGNLORD = ['Mars', 'Venus', 'Mercury', 'Moon', 'Sun', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Saturn', 'Jupiter'];
+  /* lagna sign -> { planet: {houses, sc, cls: 'yoga'|'benefic'|'neutral'|'malefic'} }. Parashari rules: 1/5/9 lords help; 3/6/8/11/12 lords harm; kendra lords soften natural malefics and tax natural benefics;
+     a lord of a kendra AND a trikona (5 or 9) is a yogakaraka; the Sun and Moon owning the 8th are not harmed by it. */
+  function fnature(lagna) {
+    const own = {}; for (let h = 1; h <= 12; h++) { const l = SIGNLORD[(lagna + h - 1) % 12]; (own[l] = own[l] || []).push(h); }
+    const out = {};
+    ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'].forEach(n => {
+      const hs = own[n] || [], natMal = n === 'Sun' || n === 'Mars' || n === 'Saturn'; let sc = 0;
+      hs.forEach(h => { if (h === 1 || h === 5 || h === 9) sc += 2; else if (h === 4 || h === 7 || h === 10) sc += natMal ? 0.5 : -0.5; else if (h === 3 || h === 11) sc -= 1; else if (h === 6) sc -= 1.5; else if (h === 8) sc -= (n === 'Sun' || n === 'Moon') ? 0 : 2; else if (h === 12) sc -= 0.8; });
+      const kend = hs.some(h => h === 4 || h === 7 || h === 10), trik = hs.some(h => h === 5 || h === 9), yoga = kend && trik;
+      out[n] = { houses: hs, sc, cls: yoga ? 'yoga' : (hs.indexOf(1) >= 0 || sc >= 1.5) ? 'benefic' : sc <= -1 ? 'malefic' : 'neutral' };
+    });
+    out.Rahu = { houses: [], sc: 0, cls: 'node' }; out.Ketu = { houses: [], sc: 0, cls: 'node' };
+    return out;
+  }
+  /* how a planet that is naturally harsh behaves for this ascendant: 'harsh' | 'mild' (Sun) | 'helper' | 'yoga' */
+  const harshKind = (X, m) => { if (m === 'Rahu' || m === 'Ketu') return 'harsh'; const c = X.FN[m].cls; return c === 'yoga' ? 'yoga' : c === 'benefic' ? 'helper' : m === 'Sun' ? 'mild' : 'harsh'; };
+  const helperWhy = (X, m) => { const f = X.FN[m], hs = f.houses; return `For your ascendant ${m} rules your ${nm(hs.map(ordn))} ${hs.length > 1 ? 'houses' : 'house'}, so it acts as ${f.cls === 'yoga' ? 'a yogakaraka, a planet that gives lasting support' : 'a helpful planet'} here`; };
+  const dignMult = (X, m) => { const st = X.P[m] && X.P[m].dignity && X.P[m].dignity.status; return st === 'Exalted' || st === 'OwnSign' || st === 'Moolatrikona' ? 0.6 : st === 'Debilitated' ? 0.85 : 1; };
+
   /* ---------- helpers on the chart ---------- */
+  const helpM = (X, m) => (m === 'Saturn' || m === 'Mars' || m === 'Sun') && ['helper', 'yoga'].indexOf(harshKind(X, m)) >= 0;
   const rules = (D1, n) => { const o = []; D1.forEach(h => { if (h.signLord === n) o.push(h.houseNum); }); return o; };
   function ctx(chart) {
     const P = chart.planets, D1 = chart.vargas.D1.houses, SAV = chart.ashtakavarga && chart.ashtakavarga.sav || [], asc = chart.ascendant.sign;
     const occ = h => Object.keys(P).filter(n => P[n].house === h);
     const asp = h => Object.keys(P).filter(n => (P[n].aspectsHouses || []).indexOf(h) >= 0 && P[n].house !== h);
-    return { P, D1, SAV, asc, occ, asp };
+    return { P, D1, SAV, asc, occ, asp, FN: fnature(asc) };
   }
 
   /* ---------- findings: w > 0 strains the matter, w < 0 supports it ---------- */
@@ -47624,8 +47646,8 @@ const PRB = (() => {
     if (p.combustion && p.combustion.combust) F(1.5, `${n} is combust, too close to the Sun, which can dim or overshadow what ${n} stands for.`, { combust: true });
     if (p.retrograde && ['Sun', 'Moon', 'Rahu', 'Ketu'].indexOf(n) < 0) F(0.6, `${n} is retrograde, so its themes turn inward and tend to return for review before they settle.`, { retro: true });
     const hk = HKIND(p.house); if (hk === 'hard') F(1.4, `${n} sits in the ${ordn(p.house)}, a house of ${HNAME[p.house]}, so its matters tend to be met through effort or in hidden ways.`, { hk }); else if (hk === 'angle' || hk === 'luck') F(-0.8, `${n} sits in the ${ordn(p.house)}, a house of ${HNAME[p.house]}, a well-supported place for it.`, { hk });
-    Object.keys(X.P).filter(m => m !== n && X.P[m].house === p.house).forEach(m => { if (MAL.indexOf(m) >= 0 || m === 'Sun') F(m === 'Sun' ? 0.8 : 1.2, `${m} (${PWHY[m]}) shares the house with ${n}, bringing ${m === 'Saturn' ? 'weight and delay' : m === 'Mars' ? 'heat and friction' : m === 'Rahu' ? 'craving and confusion' : m === 'Ketu' ? 'detachment and withdrawal' : 'ego and heat'} into it.`, { conj: m }); else if (m === 'Jupiter' || m === 'Venus') F(-1.2, `${m} (${PWHY[m]}) shares the house with ${n}, which softens and protects it.`, { conj: m }); });
-    X.asp(p.house).forEach(m => { if (MAL.indexOf(m) >= 0) F(1, `${m} looks at ${n} from the ${ordn(X.P[m].house)} house, adding ${m === 'Saturn' ? 'pressure and delay' : m === 'Mars' ? 'friction' : 'confusion or detachment'}.`, { asp: m }); else if (m === 'Jupiter') F(-1.6, `Jupiter looks at ${n} from the ${ordn(X.P[m].house)} house, which protects and widens it.`, { asp: m }); else if (m === 'Venus') F(-0.6, `Venus looks at ${n}, adding warmth.`, { asp: m }); });
+    Object.keys(X.P).filter(m => m !== n && X.P[m].house === p.house).forEach(m => { if (helpM(X, m)) F(-0.8, `${m} (${PWHY[m]}) shares the house with ${n}. ${helperWhy(X, m)}, so it supports rather than harms.`, { conj: m }); else if (MAL.indexOf(m) >= 0 || m === 'Sun') F(m === 'Sun' ? 0.8 : 1.2, `${m} (${PWHY[m]}) shares the house with ${n}, bringing ${m === 'Saturn' ? 'weight and delay' : m === 'Mars' ? 'heat and friction' : m === 'Rahu' ? 'craving and confusion' : m === 'Ketu' ? 'detachment and withdrawal' : 'ego and heat'} into it.`, { conj: m }); else if (m === 'Jupiter' || m === 'Venus') F(-1.2, `${m} (${PWHY[m]}) shares the house with ${n}, which softens and protects it.`, { conj: m }); });
+    X.asp(p.house).forEach(m => { if (helpM(X, m)) F(-0.8, `${m} looks at ${n} from the ${ordn(X.P[m].house)} house. ${helperWhy(X, m)}, so its gaze supports rather than harms.`, { asp: m }); else if (MAL.indexOf(m) >= 0) F(1, `${m} looks at ${n} from the ${ordn(X.P[m].house)} house, adding ${m === 'Saturn' ? 'pressure and delay' : m === 'Mars' ? 'friction' : 'confusion or detachment'}.`, { asp: m }); else if (m === 'Jupiter') F(-1.6, `Jupiter looks at ${n} from the ${ordn(X.P[m].house)} house, which protects and widens it.`, { asp: m }); else if (m === 'Venus') F(-0.6, `Venus looks at ${n}, adding warmth.`, { asp: m }); });
     const nk = p.nakshatra; if (nk) out.push({ w: 0, text: `${n} is in ${nk.name}, ruled by ${nk.lord}, so ${n}'s result here is coloured by ${nk.lord}.`, fact: { kind: 'planet', p: n, house: p.house, sign: p.sign, nak: nk.name } });
     return out.filter(f => f.text);
   }
@@ -47643,16 +47665,16 @@ const PRB = (() => {
       else if (st === 'Exalted' || st === 'OwnSign' || st === 'Moolatrikona') F(-1.4, `${lord}, the lord of your ${ordn(h)} house, is ${st === 'Exalted' ? 'exalted' : 'in its own sign'}, so it is strong.`, { lordSt: st });
       if (lp.combustion && lp.combustion.combust) F(1.2, `${lord}, the lord of your ${ordn(h)} house, is combust, which can overshadow it.`, { lordCombust: true });
     }
-    X.occ(h).forEach(n => { if (MAL.indexOf(n) >= 0) F(1.4, `${n} sits in your ${ordn(h)} house, bringing ${n === 'Saturn' ? 'weight, delay and caution' : n === 'Mars' ? 'heat, speed and friction' : n === 'Rahu' ? 'craving, confusion and sudden turns' : 'detachment and a feeling of distance'}.`, { occ: n });
+    X.occ(h).forEach(n => { if (helpM(X, n)) F(-0.8, `${n} sits in your ${ordn(h)} house. ${helperWhy(X, n)}, so its presence supports rather than harms it.`, { occ: n }); else if (MAL.indexOf(n) >= 0) F(1.4, `${n} sits in your ${ordn(h)} house, bringing ${n === 'Saturn' ? 'weight, delay and caution' : n === 'Mars' ? 'heat, speed and friction' : n === 'Rahu' ? 'craving, confusion and sudden turns' : 'detachment and a feeling of distance'}.`, { occ: n });
       else if (n === 'Sun') F(0.8, `The Sun sits in your ${ordn(h)} house, adding pride and heat; it shines a light here but can overpower.`, { occ: n });
       else if (n === 'Jupiter') F(-1.6, `Jupiter sits in your ${ordn(h)} house, which protects and grows it.`, { occ: n }); else if (n === 'Venus') F(-1, `Venus sits in your ${ordn(h)} house, adding warmth and ease.`, { occ: n }); else F(-0.6, `${n} sits in your ${ordn(h)} house, a supportive presence.`, { occ: n }); });
-    X.asp(h).forEach(n => { if (MAL.indexOf(n) >= 0) F(1, `${n} looks at your ${ordn(h)} house from the ${ordn(X.P[n].house)}, adding ${n === 'Saturn' ? 'pressure and delay' : n === 'Mars' ? 'friction' : 'confusion or detachment'}.`, { asp: n }); else if (n === 'Jupiter') F(-1.6, `Jupiter looks at your ${ordn(h)} house from the ${ordn(X.P[n].house)}, which protects and widens it.`, { asp: n }); else if (n === 'Venus') F(-0.6, `Venus looks at your ${ordn(h)} house, adding warmth.`, { asp: n }); });
+    X.asp(h).forEach(n => { if (helpM(X, n)) F(-0.8, `${n} looks at your ${ordn(h)} house from the ${ordn(X.P[n].house)}. ${helperWhy(X, n)}, so its gaze supports rather than harms it.`, { asp: n }); else if (MAL.indexOf(n) >= 0) F(1, `${n} looks at your ${ordn(h)} house from the ${ordn(X.P[n].house)}, adding ${n === 'Saturn' ? 'pressure and delay' : n === 'Mars' ? 'friction' : 'confusion or detachment'}.`, { asp: n }); else if (n === 'Jupiter') F(-1.6, `Jupiter looks at your ${ordn(h)} house from the ${ordn(X.P[n].house)}, which protects and widens it.`, { asp: n }); else if (n === 'Venus') F(-0.6, `Venus looks at your ${ordn(h)} house, adding warmth.`, { asp: n }); });
     const sv = X.SAV[sign]; if (sv != null) { if (sv >= 30) F(-1, `Your ${ordn(h)} house holds ${sv} Ashtakavarga points (average is 28), so many planets support it.`, { sav: sv }); else if (sv <= 24) F(1.2, `Your ${ordn(h)} house holds only ${sv} Ashtakavarga points (average is 28), so it gets little support from the other planets.`, { sav: sv }); else out.push({ w: 0, text: `Your ${ordn(h)} house holds ${sv} Ashtakavarga points (average is 28): ordinary support.`, fact: { kind: 'house', h, sign, lord, sav: sv } }); }
     return out;
   }
   function culpritFindings(X, nat, houses, karakas) {
     const out = [], seen = {}; const pts = [...houses.map(h => ['house', h]), ...karakas.map(k => ['planet', k])];
-    NAT[nat].c.forEach(c => { const p = X.P[c]; if (!p) return;
+    NAT[nat].c.forEach(c => { const p = X.P[c]; if (!p || helpM(X, c)) return;
       pts.forEach(([kind, v]) => { const h = kind === 'house' ? v : X.P[v] && X.P[v].house; if (!h) return; const label = kind === 'house' ? `your ${ordn(h)} house` : `${v}`;
         let via = null; if (p.house === h) via = kind === 'house' ? 'sits in' : 'shares the house with'; else if ((p.aspectsHouses || []).indexOf(h) >= 0) via = 'looks at';
         if (!via || kind === 'planet' && c === v) return; const key = c + label + via; if (seen[key]) return; seen[key] = 1;
@@ -47697,55 +47719,75 @@ const PRB = (() => {
     Sun: { material: ['ego or an authority figure can overshadow {t}', 'stay modest and cooperative'], people: ['pride or clashes with authority can colour {t}', 'listen first'], inner: ['your sense of worth can feel pressed around {t}', 'build it from small promises you keep'] }
   };
   const fx = (n, a, mild) => { const f = FX[n][GRP[a.id] || 'material'], t = a.thing; return mild ? `Harsh planets usually do well in this house, so this tends to give strength to push through rather than plain harm, though ${t} may still need effort.` : `So ${f[0].replace(/\{t\}/g, t)}; ${f[1]}.`; };
-  const hcls = n => HARSH.indexOf(n) >= 0 ? (n === 'Sun' ? 'mild' : 'harsh') : (n === 'Jupiter' || n === 'Venus') ? 'kind' : 'neutral';
+  const hcls = (X, n) => { if (HARSH.indexOf(n) >= 0) { const k = harshKind(X, n); return k === 'yoga' || k === 'helper' ? 'helper' : k; } const f = X.FN[n]; return f && f.cls === 'malefic' && f.sc <= -2 ? 'mixed' : (n === 'Jupiter' || n === 'Venus' || f && (f.cls === 'benefic' || f.cls === 'yoga')) ? 'kind' : 'neutral'; };
   function chartCheck(X, a, houses, karakas, hn, nat, pr, span) {
     const BS = { new: 0.7, months: 0.9, years: 1, life: 1.5 }[span] || 1, SS = { new: 1.6, months: 1.3, years: 1, life: 0.6 }[span] || 1, HWT = { Saturn: 1, Rahu: 1, Mars: 0.9, Ketu: 0.8, Sun: 0.5 }, cands = [], culp = n => NAT[nat].c.indexOf(n) >= 0, extra = hs => hs.some(h => pr.eh.indexOf(h) >= 0 && a.houses.indexOf(h) < 0);
+    const fmult = m => (X.FN[m] && X.FN[m].cls === 'malefic' ? 1.25 : 1) * dignMult(X, m);
     const thing = a.thing, out = [], P = X.P, hw = h => a.hw[h] || HNAME[h], signOf = h => SIGN[X.D1[h - 1].sign], num = (n, h) => (h - P[n].house + 12) % 12 + 1;
     const I = (tone, text, fact, harsh) => out.push({ tone, text, fact: Object.assign({ kind: 'check' }, fact), harsh: harsh || null });
     const gaze = (n, hs, sky) => hs.map(h => `its ${ordn(sky ? (h - sky.house + 12) % 12 + 1 : num(n, h))} aspect falls on ${signOf(h)}, your ${ordn(h)} house (${hw(h)})`);
-    // birth chart: one paragraph per harsh planet that touches the area
+    const touching = m => { const k = P[m] && HARSH.indexOf(m) >= 0 ? harshKind(X, m) : null; return k === 'harsh' || k === 'mild'; };
+    // birth chart: one paragraph per planet that touches the area
     HARSH.forEach(m => {
       const pm = P[m]; if (!pm) return; const sits = houses.filter(h => pm.house === h), looks = houses.filter(h => (pm.aspectsHouses || []).indexOf(h) >= 0 && pm.house !== h);
       const shares = karakas.filter(k => k !== m && P[k] && P[k].house === pm.house), klooks = karakas.filter(k => k !== m && P[k] && P[k].house !== pm.house && (pm.aspectsHouses || []).indexOf(P[k].house) >= 0);
       if (!sits.length && !looks.length && !shares.length && !klooks.length) return;
+      const kind = harshKind(X, m);
       let t = `In your birth chart ${m} is in ${SIGN[pm.sign]}, your ${ordn(pm.house)} house${sits.length ? ' (' + hw(pm.house) + ')' : ''}.`;
       if (looks.length) t += ` ${cap(nm(gaze(m, looks)))}.`;
       if (shares.length) t += ` It shares the house with ${nm(shares.map(k => `${k} (${a.kw[k] || PWHY[k]})`))}.`;
       if (klooks.length) t += ` It looks at ${nm(klooks.map(k => `${k} (${a.kw[k] || PWHY[k]}) in your ${ordn(P[k].house)} house`))}.`;
-      const mild = !shares.length && !klooks.length && sits.concat(looks).every(h => UPA.indexOf(h) >= 0);
-      I(mild || m === 'Sun' ? 'n' : 'b', `${t} ${fx(m, a, mild)}`, { scope: 'birth', p: m, sits, looks, shares, klooks }, [m, 'birth chart']);
-      cands.push({ score: HWT[m] * Math.min(2.5, sits.length + looks.length * 0.7 + shares.length * 0.9 + klooks.length * 0.6) * (1 + (culp(m) ? 0.35 : 0) + (extra(sits.concat(looks)) ? 0.25 : 0)) * (mild ? 0.4 : 1) * BS, head: `${m} in ${SIGN[pm.sign]}, your ${ordn(pm.house)} house`, when: 'Birth chart', text: `${t} ${fx(m, a, mild)}`, fact: { kind: 'check', scope: 'birth', p: m, sits, looks, shares, klooks } });
+      const F = { scope: 'birth', p: m, sits, looks, shares, klooks, hk: kind };
+      if (kind === 'helper' || kind === 'yoga') { I('g', `${t} ${helperWhy(X, m)}, so its gaze tends to bring support rather than harm to ${thing}.`, F); return; }
+      const mild = kind === 'mild' || !shares.length && !klooks.length && sits.concat(looks).every(h => UPA.indexOf(h) >= 0), tx = `${t} ${fx(m, a, mild && kind !== 'mild' ? true : false)}`;
+      I(mild ? 'n' : 'b', tx, F, mild ? null : [m, 'birth chart']);
+      cands.push({ score: HWT[m] * Math.min(2.5, sits.length + looks.length * 0.7 + shares.length * 0.9 + klooks.length * 0.6) * (1 + (culp(m) ? 0.35 : 0) + (extra(sits.concat(looks)) ? 0.25 : 0)) * (mild ? 0.4 : 1) * fmult(m) * BS, head: `${m} in ${SIGN[pm.sign]}, your ${ordn(pm.house)} house`, when: 'Birth chart', text: tx, fact: Object.assign({ kind: 'check' }, F) });
     });
     ['Jupiter', 'Venus'].forEach(m => { const pm = P[m]; if (!pm) return; const sits = houses.filter(h => pm.house === h), looks = houses.filter(h => (pm.aspectsHouses || []).indexOf(h) >= 0 && pm.house !== h); if (!sits.length && !looks.length) return;
-      let t = `${m} is in ${SIGN[pm.sign]}, your ${ordn(pm.house)} house${sits.length ? ' (' + hw(pm.house) + ')' : ''}.`; if (looks.length) t += ` ${cap(nm(gaze(m, looks)))}.`; I('g', `${t} That is a protecting and softening influence on ${thing}.`, { scope: 'kind', p: m, sits, looks }); });
-    const hn0 = houses.filter(h => !HARSH.some(m => P[m] && (P[m].house === h || (P[m].aspectsHouses || []).indexOf(h) >= 0))), kn0 = karakas.filter(k => P[k] && !HARSH.some(m => m !== k && P[m] && (P[m].house === P[k].house || (P[m].aspectsHouses || []).indexOf(P[k].house) >= 0)));
-    if (hn0.length) I('g', `No harsh planet (Saturn, Mars, Rahu, Ketu or the Sun) sits in or looks at your ${nm(hn0.map(h => `${ordn(h)} house (${hw(h)})`))}. Nothing in the birth chart presses on ${hn0.length > 1 ? 'them' : 'it'} directly.`, { scope: 'none', hs: hn0 });
+      let t = `${m} is in ${SIGN[pm.sign]}, your ${ordn(pm.house)} house${sits.length ? ' (' + hw(pm.house) + ')' : ''}.`; if (looks.length) t += ` ${cap(nm(gaze(m, looks)))}.`;
+      if (hcls(X, m) === 'mixed') I('n', `${t} ${m} is usually kind, but for your ascendant it rules your ${nm(X.FN[m].houses.map(ordn))} houses, so its help comes with some strain.`, { scope: 'kind', p: m, sits, looks, mixed: true });
+      else I('g', `${t} That is a protecting and softening influence on ${thing}.`, { scope: 'kind', p: m, sits, looks }); });
+    const hn0 = houses.filter(h => !HARSH.some(m => touching(m) && (P[m].house === h || (P[m].aspectsHouses || []).indexOf(h) >= 0))), kn0 = karakas.filter(k => P[k] && !HARSH.some(m => m !== k && touching(m) && (P[m].house === P[k].house || (P[m].aspectsHouses || []).indexOf(P[k].house) >= 0)));
+    if (hn0.length) I('g', `No harsh planet (Saturn, Mars, Rahu, Ketu or the Sun, as they act for your ascendant) sits in or looks at your ${nm(hn0.map(h => `${ordn(h)} house (${hw(h)})`))}. Nothing in the birth chart presses on ${hn0.length > 1 ? 'them' : 'it'} directly.`, { scope: 'none', hs: hn0 });
     if (kn0.length) I('g', `No harsh planet shares a house with or looks at ${nm(kn0.map(k => `${k} (${a.kw[k] || PWHY[k]})`))}, so ${kn0.length > 1 ? 'these significators are' : 'this significator is'} not under direct pressure.`, { scope: 'knone', ks: kn0 });
     if (hn) {
       [['Mahadasha', hn.dasha.md], ['Antardasha', hn.dasha.ad], ['Pratyantar', hn.dasha.pd]].filter(x => x[1]).forEach(([lab, d]) => {
-        const n = d.lord, p = P[n]; if (!p) return; const r = rules(X.D1, n).filter(h => houses.indexOf(h) >= 0), sits = houses.indexOf(p.house) >= 0, lk = houses.filter(h => (p.aspectsHouses || []).indexOf(h) >= 0 && p.house !== h), kar = karakas.indexOf(n) >= 0, cl = hcls(n), bits = [];
+        const n = d.lord, p = P[n]; if (!p) return; const r = rules(X.D1, n).filter(h => houses.indexOf(h) >= 0), sits = houses.indexOf(p.house) >= 0, lk = houses.filter(h => (p.aspectsHouses || []).indexOf(h) >= 0 && p.house !== h), kar = karakas.indexOf(n) >= 0, cl = hcls(X, n), bits = [];
         if (r.length) bits.push(`rules your ${nm(r.map(ordn))} ${r.length > 1 ? 'houses' : 'house'}`); if (sits) bits.push(`sits in your ${ordn(p.house)} house`); if (lk.length) bits.push(`looks at your ${nm(lk.map(ordn))} ${lk.length > 1 ? 'houses' : 'house'}`); if (kar) bits.push('is a natural significator of this area');
         const f = { scope: 'dasha', dasha: lab, p: n, rules: r, sits, looks: lk, kar, cls: cl, none: !bits.length }, pre = `You are in the ${n} ${lab}`;
-        if (cl === 'harsh' || cl === 'mild') { if (bits.length) { I(cl === 'harsh' ? 'b' : 'n', `${pre}, a ${cl === 'harsh' ? 'harsh' : 'fiery'} period. ${cap(n)} ${nm(bits)}. ${fx(n, a, false)}`, f, [n, 'running period']); cands.push({ score: HWT[n] * { Mahadasha: 1.3, Antardasha: 1.1, Pratyantar: 0.7 }[lab] * Math.min(2.5, r.length + (sits ? 1 : 0) + lk.length * 0.7 + (kar ? 0.5 : 0)) * (1 + (culp(n) ? 0.35 : 0)) * SS, head: `${n} ${lab}`, when: 'Running period', text: `${pre}, a ${cl === 'harsh' ? 'harsh' : 'fiery'} period. ${cap(n)} ${nm(bits)}. ${fx(n, a, false)}`, fact: Object.assign({ kind: 'check' }, f) }); } else I('g', `${pre}, a ${cl === 'harsh' ? 'harsh' : 'fiery'} period, but ${n} does not rule, sit in or look at any of these houses, so it is not pressing on ${thing} directly.`, f); }
+        if (cl === 'harsh' || cl === 'mild') { if (bits.length) { const tx = `${pre}, a ${cl === 'harsh' ? 'harsh' : 'fiery'} period. ${cap(n)} ${nm(bits)}. ${fx(n, a, false)}`; I(cl === 'harsh' ? 'b' : 'n', tx, f, cl === 'harsh' ? [n, 'running period'] : null); if (cl === 'harsh') cands.push({ score: HWT[n] * { Mahadasha: 1.3, Antardasha: 1.1, Pratyantar: 0.7 }[lab] * Math.min(2.5, r.length + (sits ? 1 : 0) + lk.length * 0.7 + (kar ? 0.5 : 0)) * (1 + (culp(n) ? 0.35 : 0)) * fmult(n) * SS, head: `${n} ${lab}`, when: 'Running period', text: tx, fact: Object.assign({ kind: 'check' }, f) }); }
+          else I('g', `${pre}, a ${cl === 'harsh' ? 'harsh' : 'fiery'} period, but ${n} does not rule, sit in or look at any of these houses, so it is not pressing on ${thing} directly.`, f); }
+        else if (cl === 'helper') I(bits.length ? 'g' : 'n', bits.length ? `${pre}, a helpful period for your ascendant (${helperWhy(X, n).replace('For your ascendant ', '').replace(/, so it acts as .*$/, '')}). ${cap(n)} ${nm(bits)}, so this period tends to support ${thing}.` : `${pre}, a helpful period for your ascendant, but ${n} has no direct link to these houses.`, f);
         else if (cl === 'kind') I(bits.length ? 'g' : 'n', bits.length ? `${pre}, a kind period. ${n} ${nm(bits)}, so this period tends to support ${thing}.` : `${pre}, a kind period, but ${n} has no direct link to these houses.`, f);
+        else if (cl === 'mixed') I('n', `${pre}, a mixed period: ${n} is usually kind, but for your ascendant it rules your ${nm(X.FN[n].houses.map(ordn))} houses, so its help comes with some strain.${bits.length ? ` ${cap(n)} ${nm(bits)}, so this period speaks directly to ${thing}.` : ''}`, f);
         else I('n', bits.length ? `${pre}. ${n} ${nm(bits)}, so this period speaks directly to ${thing}.` : `${pre}. ${n} has no direct link to these houses.`, f);
       });
       const sky = {}; hn.sky.forEach(x => sky[x.n] = x); let touched = false;
       ['Saturn', 'Mars', 'Rahu', 'Ketu', 'Jupiter'].forEach(n => { const x = sky[n]; if (!x) return; const on = houses.filter(h => x.house === h), look = houses.filter(h => (x.asp || []).indexOf(h) >= 0 && x.house !== h); if (!on.length && !look.length) return;
         let t = `Right now ${n} is in ${SIGN[x.sign]}, your ${ordn(x.house)} house${on.length ? ' (' + hw(x.house) + ')' : ''}.`; if (look.length) t += ` ${cap(nm(gaze(n, look, x)))}.`;
-        if (n === 'Jupiter') { I('g', `${t} That is a protecting passage for ${thing}.`, { scope: 'sky', p: n, on, look }); return; }
-        touched = true; const mild = on.concat(look).every(h => UPA.indexOf(h) >= 0); I(mild ? 'n' : 'b', `${t} ${fx(n, a, mild)}`, { scope: 'sky', p: n, on, look }, [n, 'today\'s sky']);
-        cands.push({ score: HWT[n] * Math.min(2.5, on.length + look.length * 0.7) * (1 + (culp(n) ? 0.35 : 0) + (extra(on.concat(look)) ? 0.25 : 0)) * (mild ? 0.4 : 1) * SS, head: `${n} in ${SIGN[x.sign]}, your ${ordn(x.house)} house`, when: 'Right now', text: `${t} ${fx(n, a, mild)}`, fact: { kind: 'check', scope: 'sky', p: n, on, look } }); });
-      if (!touched) I('g', 'Right now none of Saturn, Mars, Rahu or Ketu is in or looking at these houses.', { scope: 'skynone' });
+        const F = { scope: 'sky', p: n, on, look };
+        if (n === 'Jupiter') { if (hcls(X, 'Jupiter') === 'mixed') I('n', `${t} Jupiter is usually kind, but for your ascendant it rules your ${nm(X.FN.Jupiter.houses.map(ordn))} houses, so this passage helps with some strain.`, F); else I('g', `${t} That is a protecting passage for ${thing}.`, F); return; }
+        const kind = harshKind(X, n); if (kind === 'helper' || kind === 'yoga') { I('g', `${t} ${helperWhy(X, n)}, so its passage tends to support rather than press on ${thing}.`, F); return; }
+        const mild = on.concat(look).every(h => UPA.indexOf(h) >= 0), tx = `${t} ${fx(n, a, mild)}`; if (!mild) touched = true; I(mild ? 'n' : 'b', tx, F, mild ? null : [n, 'today\'s sky']);
+        cands.push({ score: HWT[n] * Math.min(2.5, on.length + look.length * 0.7) * (1 + (culp(n) ? 0.35 : 0) + (extra(on.concat(look)) ? 0.25 : 0)) * (mild ? 0.4 : 1) * fmult(n) * SS, head: `${n} in ${SIGN[x.sign]}, your ${ordn(x.house)} house`, when: 'Right now', text: tx, fact: Object.assign({ kind: 'check' }, F) }); });
+      if (!touched) I('g', 'Right now none of Saturn, Mars, Rahu or Ketu is pressing on these houses.', { scope: 'skynone' });
       const sat = sky.Saturn, mo = P.Moon; if (sat && mo && karakas.indexOf('Moon') >= 0) { const d = (sat.sign - mo.sign + 12) % 12; if (d === 11 || d === 0 || d === 1) { const tx = `Saturn is in ${SIGN[sat.sign]}, ${d === 11 ? 'the sign before' : d === 0 ? 'the same sign as' : 'the sign after'} your Moon sign ${SIGN[mo.sign]}. This is Sade Sati, and the Moon is a significator here. ${fx('Saturn', a, false)}`; I('b', tx, { scope: 'sade', sadesati: true, d }, ['Saturn', 'today\'s sky']); cands.push({ score: 1.3 * SS, head: 'Sade Sati', when: 'Right now', text: tx, fact: { kind: 'check', scope: 'sade', sadesati: true, d } }); } }
     } else I('n', 'The running periods and today\'s sky could not be read for this date, so only the birth chart was checked.', { scope: 'unread', dasha: 'none', unread: true });
-    // verdict
+    // verdict: "found" only when a planet that really presses is there; mild and helpful influences do not count
     const by = { 'birth chart': [], 'running period': [], 'today\'s sky': [] }; out.forEach(i => { if (i.harsh && by[i.harsh[1]] && by[i.harsh[1]].indexOf(i.harsh[0]) < 0) by[i.harsh[1]].push(i.harsh[0]); });
-    const names = Object.keys(by).reduce((s, k) => s.concat(by[k].filter(x => s.indexOf(x) < 0)), []), clear = !names.length, bits = [];
+    const names = Object.keys(by).reduce((s, k) => s.concat(by[k].filter(x => s.indexOf(x) < 0)), []), clear = !names.length, bits = [], mildN = []; out.forEach(i => { if (!i.harsh && i.fact.p && i.tone === 'n' && (i.fact.scope === 'birth' || i.fact.scope === 'sky') && mildN.indexOf(i.fact.p) < 0) mildN.push(i.fact.p); });
     if (by['today\'s sky'].length) bits.push(`today's sky has ${nm(by['today\'s sky'])} acting on it`); if (by['running period'].length) bits.push(`your running period is led by ${nm(by['running period'])}`); if (by['birth chart'].length) bits.push(`your birth chart has ${nm(by['birth chart'])} touching it`);
-    const v = clear ? { tone: 'g', text: `In short: no harsh planet is sitting in, looking at or acting on these houses${hn ? ', and no harsh planet period or passing planet is pressing on them' : ''}. So nothing is pressing on them from outside. Any weakness listed below comes from a planet\'s own strength or position, and the problem may also be shaped by circumstances and choices.`, fact: { kind: 'check', scope: 'verdict', verdict: 'clear' } }
+    const v = clear ? { tone: 'g', text: `In short: nothing harsh is pressing on these houses${hn ? ', and no harsh planet period or passing planet is pressing on them' : ''}.${mildN.length ? ` ${nm(mildN)} touch${mildN.length > 1 ? '' : 'es'} them only mildly, in houses where harsh planets usually help, so that adds effort more than harm.` : ''} Any weakness listed below comes from a planet\'s own strength or position, and the problem may also be shaped by circumstances and choices.`, fact: { kind: 'check', scope: 'verdict', verdict: 'clear' } }
       : { tone: 'b', text: `In short, harsh influence is found: ${nm(bits)}.`, fact: { kind: 'check', scope: 'verdict', verdict: 'found', planets: names } };
     return { items: [v].concat(out.map(i => ({ tone: i.tone, text: i.text, fact: i.fact }))), cands };
+  }
+
+  /* ---------- S22: how this problem compares with every other problem in the same chart ---------- */
+  function baseline(chart, sel, now, hn) {
+    const day = now.getUTCFullYear() + '-' + now.getUTCMonth() + '-' + now.getUTCDate(), key = [sel.trigger || 'both', sel.feel || 'both', sel.span || 'years', day].join('|');
+    const C = chart.__prbBase || (chart.__prbBase = {}); if (C[key]) return C[key];
+    const arr = []; AREAS.forEach(a => a.problems.forEach(p => { const r = assess(chart, Object.assign({}, sel, { area: a.id, problem: p.id }), { now, hn, noBase: true }); arr.push(r.ratio); }));
+    return (C[key] = arr);
   }
 
   /* ---------- main ---------- */
@@ -47753,7 +47795,7 @@ const PRB = (() => {
     const now = (opts && opts.now) || new Date(), a = AREA[sel.area]; if (!a) return null; const pr = a.problems.find(p => p.id === sel.problem) || a.problems[0], nat = pr.nature, N = NAT[nat];
     const X = ctx(chart), trig = sel.trigger || 'both', feel = sel.feel || 'both', span = sel.span || 'years';
     const houses = a.houses.concat(pr.eh).filter((v, i, s) => s.indexOf(v) === i), karakas = a.karakas.concat(pr.ep).filter((v, i, s) => s.indexOf(v) === i);
-    let hn = null; try { hn = HNW.assess(chart, { now }); } catch (e) { hn = null; }
+    let hn = opts && opts.hn !== undefined ? opts.hn : null; if (!(opts && opts.hn !== undefined)) { try { hn = HNW.assess(chart, { now }); } catch (e) { hn = null; } }
     const sections = []; let strain = 0, support = 0; const all = [], memo = {};
     const add = (id, emoji, title, intro, items) => { items.forEach(i => { if (i.w > 0) strain += i.w; else support -= i.w; all.push(i); }); sections.push({ id, emoji, title, intro, items: items.map(i => ({ tone: i.tone || toneOf(i.w), text: i.text, fact: i.fact })) }); };
     const done = { h: {}, p: {} };
@@ -47789,8 +47831,12 @@ const PRB = (() => {
     sections.push({ id: 'support', emoji: '🛡️', title: 'What is on your side', intro: 'The parts of the chart that protect this area and give you something to build on.', items: supItems.length ? supItems.slice(0, 6) : [{ tone: 'n', text: 'No single strong protection stands out in the birth chart for this area, so the help here comes mainly from steady habits and good people around you.', fact: { kind: 'support', none: true } }] });
     // summary
     const top = all.filter(i => i.w >= 1 && i.fact.kind !== 'timing').sort((x, y) => y.w - x.w).slice(0, 4).map(i => ({ text: i.text, fact: i.fact }));
-    const ratio = strain / (strain + support + 2), level = ratio >= 0.63 ? 'strong' : ratio >= 0.52 ? 'clear' : 'light';
-    const levelText = level === 'strong' ? 'The chart shows strong indications for this problem: several parts of it line up.' : level === 'clear' ? 'The chart shows clear indications for this problem, with some protection alongside.' : 'The chart shows only light indications. This problem is likely shaped more by circumstances and choices than by the birth pattern.';
+    const ratio = strain / (strain + support + 2), verdict = CK.items[0].fact.verdict; let pct = null, NB = 0, level, levelText;
+    if (!(opts && opts.noBase)) { const B = baseline(chart, sel, now, hn); NB = B.length; pct = B.reduce((t, v) => t + (v < ratio - 1e-9 ? 1 : v <= ratio + 1e-9 ? 0.5 : 0), 0) / NB; }
+    if (pct == null) { level = ratio >= 0.63 ? 'strong' : ratio >= 0.52 ? 'clear' : 'light'; levelText = ''; }
+    else { level = verdict === 'clear' ? 'light' : pct >= 0.8 ? 'strong' : pct >= 0.4 ? 'clear' : 'light';
+      const hi = Math.max(1, Math.round((1 - pct) * 100)), lo = Math.round(pct * 100);
+      levelText = level === 'strong' ? `Among the strongest indications in your chart: this problem ranks in the top ${hi}% of the ${NB} problems checked.` : level === 'clear' ? `A moderate indication: this stands out somewhat, more than about ${lo}% of the ${NB} problems checked.` : verdict === 'clear' ? 'A light indication: nothing harsh presses on this area, so it is likely shaped more by circumstances and choices than by the birth pattern.' : `A light indication: your chart shows less for this than for most other problems (more than only about ${lo}% of the ${NB} checked), so it is likely shaped more by circumstances and choices than by the birth pattern.`; }
     const help = N.help.concat([a.tip]), safety = SENSITIVE[nat] || sel.area === 'mind' || sel.area === 'health' ? 'This reading describes tendencies and is not medical, legal or psychological advice. If you feel unsafe, or things feel too heavy to carry, please speak to someone you trust or a qualified professional or helpline in your area.' : 'This reading describes tendencies and is not medical, legal or financial advice.';
     // ranked reasons: the few that most likely explain THIS problem; everything else stays in the sections
     const BSf = { new: 0.7, months: 0.9, years: 1, life: 1.5 }[span] || 1, cand = CK.cands.slice();
@@ -47802,9 +47848,9 @@ const PRB = (() => {
     const ranked = merged.sort((x, y) => y.score - x.score).slice(0, 5).map((c, k) => ({ rank: k + 1, head: c.head, also: c.also, when: c.when, text: c.text, score: +c.score.toFixed(2), label: c.score >= 2.2 ? 'Strong' : c.score >= 1.2 ? 'Moderate' : 'Mild', fact: c.fact }));
     const chips = [{ k: 'Trigger', v: trig === 'ext' ? 'From outside' : trig === 'int' ? 'From inside' : 'Both' }, { k: 'It shows as', v: feel === 'int' ? 'Inner pain' : feel === 'ext' ? 'Real events' : 'Both' }, { k: 'Area', v: a.name }, { k: 'Problem', v: pr.label }];
     const words = sections.reduce((s, x) => s + x.items.reduce((t, i) => t + i.text.split(/\s+/).length, 0) + x.intro.split(/\s+/).length, 0);
-    return { sel: Object.assign({}, sel, { problem: pr.id }), ranked, others: Math.max(0, merged.length - ranked.length), verdict: CK.items[0].fact.verdict, chips, level, levelText, top, sections, help, safety, words, nature: nat, natureSay: N.say, area: a.id, problemLabel: pr.label, strain: +strain.toFixed(1), support: +support.toFixed(1) };
+    return { sel: Object.assign({}, sel, { problem: pr.id }), ranked, others: Math.max(0, merged.length - ranked.length), verdict, pct, ratio: +ratio.toFixed(6), checked: NB, chips, level, levelText, top, sections, help, safety, words, nature: nat, natureSay: N.say, area: a.id, problemLabel: pr.label, strain: +strain.toFixed(1), support: +support.toFixed(1) };
   }
-  return { areas: AREAS, natures: NAT, assess, area: id => AREA[id] };
+  return { areas: AREAS, natures: NAT, assess, area: id => AREA[id], fnature, harshKind };
 })();
 window.PRB = PRB;
 <\/script>
