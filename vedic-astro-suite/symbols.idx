@@ -69,7 +69,7 @@ aspects	fn	apps/birth-chart/js/69-divisional-areas.js:88	birth-chart
 assess	fn	apps/birth-chart/js/100-house-now.js:297	birth-chart
 assess	fn	apps/birth-chart/js/105-shadbala-reading.js:444	birth-chart
 assess	fn	apps/birth-chart/js/107-ashtakavarga-reading.js:315	birth-chart
-assess	fn	apps/birth-chart/js/111-problem-finder.js:243	birth-chart
+assess	fn	apps/birth-chart/js/111-problem-finder.js:257	birth-chart
 assess	fn	apps/birth-chart/js/94-life-areas.js:322	birth-chart
 assess	fn	apps/birth-chart/js/97-transit-reading.js:164	birth-chart
 at	fn	apps/birth-chart/js/73-tithi-pravesh.js:13	birth-chart
@@ -207,7 +207,7 @@ CHALDEAN_SEQUENCE	const	apps/birth-chart/js/14-shadbala-engine.js:117	birth-char
 changed	fn	apps/notepad/js/01-notepad.js:164	notepad
 changeHmsUnit	fn	apps/birth-chart/js/20-rectification-scan-tab.js:188	birth-chart
 chart	fn	apps/birth-chart/js/96-varga-reading.js:148	birth-chart
-chartCheck	fn	apps/birth-chart/js/111-problem-finder.js:200	birth-chart
+chartCheck	fn	apps/birth-chart/js/111-problem-finder.js:209	birth-chart
 chartModal	fn	apps/notepad/js/01-notepad.js:181	notepad
 chartName	fn	shell/js/shell.js:139	shell
 chartOpen	fn	shell/js/updater.js:10	shell
