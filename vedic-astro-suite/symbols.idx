@@ -69,7 +69,7 @@ aspects	fn	apps/birth-chart/js/69-divisional-areas.js:88	birth-chart
 assess	fn	apps/birth-chart/js/100-house-now.js:297	birth-chart
 assess	fn	apps/birth-chart/js/105-shadbala-reading.js:444	birth-chart
 assess	fn	apps/birth-chart/js/107-ashtakavarga-reading.js:315	birth-chart
-assess	fn	apps/birth-chart/js/111-problem-finder.js:257	birth-chart
+assess	fn	apps/birth-chart/js/111-problem-finder.js:260	birth-chart
 assess	fn	apps/birth-chart/js/94-life-areas.js:322	birth-chart
 assess	fn	apps/birth-chart/js/97-transit-reading.js:164	birth-chart
 at	fn	apps/birth-chart/js/73-tithi-pravesh.js:13	birth-chart
@@ -888,11 +888,11 @@ nvSpan	fn	apps/birth-chart/js/48-panchanga-panel.js:14	birth-chart
 nvTime	fn	apps/birth-chart/js/48-panchanga-panel.js:8	birth-chart
 obliquityOfEcliptic	fn	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:6	birth-chart
 ODD_SIGN_STRONG	const	apps/birth-chart/js/14-shadbala-engine.js:20	birth-chart
-onClick	fn	apps/birth-chart/js/112-problem-finder-ui.js:52	birth-chart
+onClick	fn	apps/birth-chart/js/112-problem-finder-ui.js:54	birth-chart
 onHouse	fn	apps/sky3d/js/46-dasha-transit-engine.js:163	sky3d
 onKey	fn	apps/birth-chart/js/86-popular-charts.js:69	birth-chart
 onResize	fn	apps/sky3d/js/09-free-fly-joystick.js:52	sky3d
-open	fn	apps/birth-chart/js/112-problem-finder-ui.js:66	birth-chart
+open	fn	apps/birth-chart/js/112-problem-finder-ui.js:68	birth-chart
 open	fn	apps/birth-chart/js/77-cloud-account.js:88	birth-chart
 open	fn	apps/sky3d/js/49-time-machine.js:130	sky3d
 open	fn	shell/js/locpicker.js:185	shell
@@ -962,7 +962,7 @@ panchangaAt	fn	apps/birth-chart/js/45-panchanga-engine.js:58	birth-chart
 pane	fn	apps/birth-chart/js/101-house-now-ui.js:16	birth-chart
 pane	fn	apps/birth-chart/js/106-shadbala-ui.js:15	birth-chart
 pane	fn	apps/birth-chart/js/108-ashtakavarga-ui.js:16	birth-chart
-pane	fn	apps/birth-chart/js/112-problem-finder-ui.js:63	birth-chart
+pane	fn	apps/birth-chart/js/112-problem-finder-ui.js:65	birth-chart
 pane	fn	apps/birth-chart/js/88-deep-reading.js:119	birth-chart
 panel-active	id	apps/birth-chart/js/58-render-results.js:236	birth-chart
 panel-ashtakavarga	id	apps/birth-chart/js/58-render-results.js:238	birth-chart
@@ -1125,7 +1125,7 @@ relation	fn	apps/birth-chart/js/89-vedic-nakshatra-db.js:1116	birth-chart
 RELLAB	const	apps/birth-chart/js/88-deep-reading.js:32	birth-chart
 reloadView	fn	shell/js/shell.js:37	shell
 remove	fn	apps/birth-chart/js/77-cloud-account.js:27	birth-chart
-render	fn	apps/birth-chart/js/112-problem-finder-ui.js:45	birth-chart
+render	fn	apps/birth-chart/js/112-problem-finder-ui.js:47	birth-chart
 render	fn	apps/birth-chart/js/71-life-activation.js:28	birth-chart
 render	fn	apps/birth-chart/js/73-tithi-pravesh.js:43	birth-chart
 render	fn	apps/birth-chart/js/86-popular-charts.js:53	birth-chart

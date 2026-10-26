@@ -73,7 +73,7 @@ Every session: build -> its own test -> commit -> push to `feature/full-reading`
 - [x] **Intake polish** (done: css/49-intake-polish.css; timeline steps, glass card, starfield, animated emblem and button)
 - [x] **Home polish** (done: css/50-home-polish.css; tinted glass tiles and cards, glowing icon tiles, arrow badges, staggered entrance)
 - [x] **S19 Problem finder** (done: js/111 + js/112 + css/51; pick trigger, how it shows up, area, problem and duration; reasons from the chart; Home tile; tests/problem_finder_test.py)
-- [x] **S20 Problem finder: more problems and Chart check** (done: 20 areas, 11-23 problems each, grouped with a find box; first section lists harsh planets in or aspecting each house and significator, running periods and today's sky, or says plainly that none is found; tests/problem_finder_test.py)
+- [x] **S20 Problem finder: more problems and Chart check** (done: 20 areas, 11-23 problems each, grouped with a find box; first section lists harsh planets in or aspecting each house and significator, running periods and today's sky, or says plainly that none is found; tests/problem_finder_test.py) Then: top-5 ranked reasons for the chosen problem first, the rest under Read more.
 
 ## 6. Working rules (every session)
 1. Start: read this file + `AI_GUIDE.md`; take the next unchecked session. Do not skip ahead.

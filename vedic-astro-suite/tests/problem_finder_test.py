@@ -64,6 +64,11 @@ CHECK = """()=>{const BAN=__BAN__,ch=currentChartForModal,P=ch.planets,D1=ch.var
    if(ks.indexOf('Moon')>=0){const d=(sky.Saturn.sign-P.Moon.sign+12)%12;if(d===11||d===0||d===1)touched=true;}
    const ver=C[0].fact;if(ver.verdict!=='clear'&&ver.verdict!=='found')bad.push('verdict missing '+tag);else if((ver.verdict==='found')!==touched)bad.push('verdict '+ver.verdict+' vs touched '+touched+' '+tag);
    if(ver.verdict==='clear'&&C.some(i=>i.tone==='b'||i.fact.scope==='birth'))bad.push('clear with harsh line '+tag);}
+  {const K=R.ranked;if(!Array.isArray(K)||K.length>5)bad.push('ranked size '+tag);for(let i=0;i<K.length;i++){const r=K[i];if(r.rank!==i+1||!r.head||!r.text||!r.fact||['Strong','Mild','Moderate'].indexOf(r.label)<0||['Birth chart','Right now','Running period'].indexOf(r.when)<0)bad.push('ranked item '+tag);if(i&&K[i-1].score<r.score)bad.push('ranked order '+tag);
+     if(!R.sections.some(s=>s.items.some(it=>it.text===r.text)))bad.push('ranked not traceable '+i+' '+tag);}
+   if(R.verdict==='clear'&&K.some(r=>r.label==='Strong'))bad.push('strong on clear '+tag);if(R.verdict==='found'&&!K.length&&0)bad.push('x');
+   if(R.verdict!=='clear'&&R.verdict!=='found')bad.push('verdict prop '+tag);}
+  // span changes the ranking weight: a recent problem leans on today's sky, a lifelong one on the birth chart
   R.top.forEach(t=>{if(!t.text)bad.push('top '+tag)});
  })));
  return {bad:bad.slice(0,8),nres,words}}""".replace('__BAN__', BAN)
@@ -87,7 +92,7 @@ with sync_playwright() as p:
         if have: pg.evaluate("([k,v])=>document.querySelector(`.pf [data-k=\"${k}\"][data-v=\"${v}\"]`).click()", [k, v]); pg.wait_for_timeout(500)
     ok('the five questions appear one after another', all(steps), steps)
     pg.wait_for_timeout(400)
-    o = pg.evaluate("""()=>({secs:document.querySelectorAll('.pf-sec').length,chips:document.querySelectorAll('.pf-crumbs span').length,lv:!!document.querySelector('.pf-lv'),help:document.querySelectorAll('.pf-help li').length,safe:!!document.querySelector('.pf-safe'),main:document.querySelectorAll('.pf-main li').length,over:document.documentElement.scrollWidth>innerWidth+1})""")
+    o = pg.evaluate("""()=>({secs:document.querySelectorAll('.pf-sec').length,chips:document.querySelectorAll('.pf-crumbs span').length,lv:!!document.querySelector('.pf-lv'),help:document.querySelectorAll('.pf-help li').length,safe:!!document.querySelector('.pf-safe'),rank:document.querySelectorAll('.pf-rank .pf-r').length,more:!!document.querySelector('details.pf-more:not([open])'),over:document.documentElement.scrollWidth>innerWidth+1})""")
     pg.evaluate("document.querySelector('.pf [data-pf=\"again\"]').click()"); pg.wait_for_timeout(400)
     pg.evaluate("document.querySelector('.pf [data-k=\"area\"][data-v=\"money\"]').click()"); pg.wait_for_timeout(500)
     f = pg.evaluate("({n:document.querySelectorAll('.pf-p').length,g:document.querySelectorAll('.pf-grp').length,f:!!document.querySelector('.pf-find')})")
@@ -98,11 +103,12 @@ with sync_playwright() as p:
     ok('long problem lists are grouped by kind and have a find box that filters them', f['n'] >= 15 and f['g'] >= 4 and f['f'] and v and all('loan' in x.lower() for x in v) and nn, [f, v, nn])
     pg.evaluate("document.querySelector('.pf .pf-find').value='';document.querySelector('.pf .pf-find').dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('.pf [data-k=\"problem\"][data-v=\"shortage\"]').click()"); pg.wait_for_timeout(500)
     pg.evaluate("document.querySelector('.pf [data-k=\"span\"][data-v=\"years\"]').click()"); pg.wait_for_timeout(500)
-    ok('the result opens with the Chart check section expanded', pg.evaluate("(()=>{const d=document.querySelector('.pf-sec');return !!d&&d.open&&/Chart check/.test(d.textContent)&&/In short/.test(d.textContent)})()"))
+    pg.evaluate("document.querySelector('details.pf-more').open=true"); pg.wait_for_timeout(200)
+    ok('Read more opens with the Chart check section expanded', pg.evaluate("(()=>{const d=document.querySelector('.pf-more .pf-sec');return !!d&&d.open&&/Chart check/.test(d.textContent)&&/In short/.test(d.textContent)})()"))
     pg.evaluate("document.querySelector('.pf [data-pf=\"reset\"]').click()"); pg.wait_for_timeout(300)
     for k, v in (('trigger', 'ext'), ('feel', 'int'), ('area', 'mother'), ('problem', 'hurt'), ('span', 'years')):
         pg.evaluate("([k,v])=>document.querySelector(`.pf [data-k=\"${k}\"][data-v=\"${v}\"]`).click()", [k, v]); pg.wait_for_timeout(500)
-    ok('result: 7 sections, 4 choice chips, strength meter, reasons, help list, safety note', o['secs'] == 7 and o['chips'] == 4 and o['lv'] and o['help'] >= 4 and o['safe'] and o['main'] >= 1, o)
+    ok('result: top-5 ranked reasons, a closed Read more holding 7 sections, 4 choice chips, strength meter, help list, safety note', o['secs'] == 7 and o['chips'] == 4 and o['lv'] and o['help'] >= 4 and o['safe'] and 1 <= o['rank'] <= 5 and o['more'], o)
     ok('result fits a 360px phone without sideways scroll', not o['over'])
     pg.evaluate("document.querySelector('.pf [data-pf=\"again\"]').click()"); pg.wait_for_timeout(500)
     ok('"Another problem" returns to the area question and keeps the first answers', pg.evaluate("!!document.querySelector('.pf .pf-areas')&&document.querySelectorAll('.pf-crumbs span').length===2"))

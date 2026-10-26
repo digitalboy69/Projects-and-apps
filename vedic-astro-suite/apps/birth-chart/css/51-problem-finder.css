@@ -49,3 +49,17 @@
 .pf-grp{margin:0 0 16px}.pf-gh{margin:0 0 8px;font:600 12px/1.3 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--pf-gold);opacity:.85}
 .pf-none{margin:8px 0;font:500 13px/1.5 var(--font-sans);opacity:.7}
 .pf p[hidden],.pf .pf-grp[hidden],.pf .pf-p[hidden]{display:none}
+.pf-rk{margin:6px 0 18px}.pf-rkn{margin:0 0 12px;font:500 13px/1.5 var(--font-sans);opacity:.75}
+.pf-rank{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.pf-r{padding:14px 15px;border-radius:16px;border:1px solid var(--pf-line);background:rgba(255,255,255,.03);border-left:3px solid rgba(217,184,90,.5);contain:layout paint}
+.pf-r.pf-l-strong{border-left-color:#e07a6a;background:rgba(224,122,106,.07)}.pf-r.pf-l-moderate{border-left-color:var(--pf-gold)}.pf-r.pf-l-mild{border-left-color:rgba(255,255,255,.28)}
+.pf-rh{display:flex;gap:11px;align-items:center}.pf-rn{flex:0 0 26px;height:26px;border-radius:50%;display:grid;place-items:center;font:700 13px/1 var(--font-sans);background:rgba(217,184,90,.16);color:var(--pf-gold)}
+.pf-rt{font:600 15px/1.35 var(--font-sans);color:var(--pf-ink)}
+.pf-rm{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 7px}.pf-chip{font:600 11px/1 var(--font-sans);font-style:normal;padding:5px 9px;border-radius:99px;background:rgba(255,255,255,.07);letter-spacing:.04em}
+.pf-l-strong .pf-chip:first-child{background:rgba(224,122,106,.18)}.pf-l-moderate .pf-chip:first-child{background:rgba(217,184,90,.18)}
+.pf-r p{margin:0;font:400 14px/1.6 var(--font-sans);opacity:.88}
+.pf-more{margin:4px 0 16px;border:1px dashed var(--pf-line);border-radius:16px;padding:4px 12px}
+.pf-more>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:center;padding:12px 2px}.pf-more>summary::-webkit-details-marker{display:none}
+.pf-more>summary b{font:600 15px/1.3 var(--font-sans);color:var(--pf-gold)}.pf-more>summary span{grid-column:1;font:400 12.5px/1.4 var(--font-sans);opacity:.7}
+.pf-more>summary i{grid-row:1/3;grid-column:2;width:9px;height:9px;border-right:2px solid var(--pf-gold);border-bottom:2px solid var(--pf-gold);transform:rotate(45deg);transition:transform .25s}.pf-more[open]>summary i{transform:rotate(-135deg)}
+.pf-r .pf-also{margin-top:8px;font:400 12.5px/1.5 var(--font-sans);opacity:.65}
