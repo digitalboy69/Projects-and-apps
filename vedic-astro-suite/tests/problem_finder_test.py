@@ -18,13 +18,13 @@ CHARTS = [('1995-03-14', '11:00', 17.385, 78.4867, 5.5), ('1961-08-04', '19:24',
 BAN = r"/\b(always|never|certainly|definitely|guaranteed|doomed|destined|fatal|cursed|will die|death|you will|you are going to)\b/i"
 CHECK = """()=>{const BAN=__BAN__,ch=currentChartForModal,P=ch.planets,D1=ch.vargas.D1.houses,SAV=ch.ashtakavarga.sav,now=new Date('2026-10-25T00:00:00Z'),bad=[],hn=HNW.assess(ch,{now});
  const sky={};hn.sky.forEach(x=>sky[x.n]=x);const rules=n=>D1.filter(h=>h.signLord===n).map(h=>h.houseNum);
- const combos=[['ext','int'],['int','ext'],['both','both']];let nres=0,words=0;const seen={};
+ const HARSH=['Saturn','Mars','Rahu','Ketu','Sun'];const combos=[['ext','int'],['int','ext'],['both','both']];let nres=0,words=0;const seen={};
  PRB.areas.forEach(a=>a.problems.forEach(p=>combos.forEach(([t,f])=>{
   const sel={trigger:t,feel:f,area:a.id,problem:p.id,span:'years'},R=PRB.assess(ch,sel,{now}),R2=PRB.assess(ch,sel,{now});nres++;words+=R.words;const tag=a.id+'/'+p.id+'/'+t+f;
   if(JSON.stringify(R)!==JSON.stringify(R2))bad.push('nondeterministic '+tag);
-  if(R.sections.length!==6||R.sections.map(s=>s.id).join()!=='area,signature,trigger,pain,timing,support')bad.push('sections '+tag);
+  if(R.sections.length!==7||R.sections.map(s=>s.id).join()!=='check,area,signature,trigger,pain,timing,support')bad.push('sections '+tag);
   if(['light','clear','strong'].indexOf(R.level)<0)bad.push('level '+tag);if(R.words<250)bad.push('short '+R.words+' '+tag);if(R.chips.length!==4||R.help.length<3||!R.safety)bad.push('parts '+tag);
-  a.houses.forEach(h=>{if(!R.sections[0].items.some(i=>i.fact.kind==='house'&&i.fact.h===h&&i.fact.intro))bad.push('area house '+h+' '+tag)});
+  a.houses.forEach(h=>{if(!R.sections.find(s=>s.id==='area').items.some(i=>i.fact.kind==='house'&&i.fact.h===h&&i.fact.intro))bad.push('area house '+h+' '+tag)});
   R.sections.forEach(s=>{if(!s.items.length)bad.push('empty '+s.id+' '+tag);s.items.forEach(it=>{const x=it.text,F=it.fact;
    if(BAN.test(x)||/undefined|NaN|\\[object|\\bnull\\b|\\{|\\}|  /.test(x)||/(^|[.!?] )[a-z]/.test(x)||/\\b1 points\\b/.test(x)||x.length<20)bad.push('text '+tag+': '+x.slice(0,50));
    if(F.kind==='house'){const d=D1[F.h-1];if(d.sign!==F.sign||d.signLord!==F.lord)bad.push('house fact '+tag);
@@ -34,6 +34,15 @@ CHECK = """()=>{const BAN=__BAN__,ch=currentChartForModal,P=ch.planets,D1=ch.var
      if(F.asp&&((P[F.asp].aspectsHouses||[]).indexOf(F.h)<0||P[F.asp].house===F.h))bad.push('asp '+tag);if(F.sav!=null&&(SAV[F.sign]!==F.sav||!x.includes(F.sav+' Ashtakavarga')))bad.push('sav '+tag);}
    else if(F.kind==='planet'){const q=P[F.p];if(q.house!==F.house||q.sign!==F.sign)bad.push('planet fact '+tag);if(F.st&&q.dignity.status!==F.st)bad.push('planet st '+tag);if(F.combust&&!q.combustion.combust)bad.push('combust '+tag);
      if(F.retro&&!q.retrograde)bad.push('retro '+tag);if(F.conj&&P[F.conj].house!==q.house)bad.push('conj '+tag);if(F.asp&&(P[F.asp].aspectsHouses||[]).indexOf(q.house)<0)bad.push('pasp '+tag);if(F.nak&&q.nakshatra.name!==F.nak)bad.push('nak '+tag);}
+   else if(F.kind==='check'){
+     if(F.via&&F.h!=null&&!F.target){if(F.via==='sits'&&P[F.p].house!==F.h)bad.push('chk sits '+tag);if(F.via==='looks'&&((P[F.p].aspectsHouses||[]).indexOf(F.h)<0||P[F.p].house===F.h))bad.push('chk looks '+tag);}
+     if(F.target){const th=P[F.target].house;if(F.h!==th)bad.push('chk target house '+tag);if(F.via==='shares'&&(P[F.p].house!==th||F.p===F.target))bad.push('chk shares '+tag);if(F.via==='looks'&&((P[F.p].aspectsHouses||[]).indexOf(th)<0||P[F.p].house===th))bad.push('chk tlooks '+tag);}
+     if(F.none&&F.h!=null&&!F.target){if(HARSH.some(m=>P[m].house===F.h||(P[m].aspectsHouses||[]).indexOf(F.h)>=0&&P[m].house!==F.h))bad.push('chk false none house '+tag);}
+     if(F.none&&F.target){const th=P[F.target].house;if(HARSH.some(m=>m!==F.target&&(P[m].house===th||(P[m].aspectsHouses||[]).indexOf(th)>=0)))bad.push('chk false none karaka '+tag);}
+     if(F.dasha&&F.dasha!=='none'){const key={Mahadasha:'md',Antardasha:'ad',Pratyantar:'pd'}[F.dasha];if(hn.dasha[key].lord!==F.p)bad.push('chk dasha lord '+tag);const hs=a.houses.concat(p.eh).filter((v,i,x)=>x.indexOf(v)===i);if(F.rules.some(h=>rules(F.p).indexOf(h)<0)||F.looks.some(h=>(P[F.p].aspectsHouses||[]).indexOf(h)<0))bad.push('chk dasha links '+tag);if(F.none!==(!F.rules.length&&!F.sits&&!F.looks.length&&!F.kar))bad.push('chk dasha none flag '+tag);
+       const trueRules=hs.filter(h=>rules(F.p).indexOf(h)>=0);if(trueRules.slice().sort((x,y)=>x-y).join()!==F.rules.slice().sort((x,y)=>x-y).join())bad.push('chk dasha rules complete '+tag);}
+     if(F.transit&&F.transit!=='none'){const sx=sky[F.transit];if(F.on.some(h=>sx.house!==h)||F.look.some(h=>(sx.asp||[]).indexOf(h)<0||sx.house===h))bad.push('chk transit '+tag);}
+   }
    else if(F.kind==='culprit'&&!F.none){const q=P[F.p];if(F.via==='sits in'||F.via==='shares the house with'){if(q.house!==F.h)bad.push('cul sits '+tag)}else if((q.aspectsHouses||[]).indexOf(F.h)<0)bad.push('cul looks '+tag);}
    else if(F.kind==='timing'&&!F.none&&!F.span){
      if(F.dasha){const key={Mahadasha:'md',Antardasha:'ad',Pratyantar:'pd'}[F.dasha],lord=hn.dasha[key]&&hn.dasha[key].lord;if(lord!==F.p)bad.push('dasha lord '+tag);if(F.rules&&F.rules.some(h=>rules(F.p).indexOf(h)<0))bad.push('dasha rules '+tag);if(F.sits&&a.houses.concat(p.eh).indexOf(P[F.p].house)<0)bad.push('dasha sits '+tag);}
@@ -41,6 +50,15 @@ CHECK = """()=>{const BAN=__BAN__,ch=currentChartForModal,P=ch.planets,D1=ch.var
      if(F.sadesati){const d=(sky.Saturn.sign-P.Moon.sign+12)%12;if(!(d===11||d===0||d===1))bad.push('sadesati '+tag);}
      if(F.score!=null&&hn.houses[F.house-1].score!==F.score)bad.push('house score '+tag);}
   })});
+  {const hs=a.houses.concat(p.eh).filter((v,i,x)=>x.indexOf(v)===i),ks=a.karakas.concat(p.ep).filter((v,i,x)=>x.indexOf(v)===i),C=R.sections[0].items;let touched=false;
+   hs.forEach(h=>{HARSH.forEach(m=>{const sits=P[m].house===h,looks=(P[m].aspectsHouses||[]).indexOf(h)>=0&&!sits;if(sits||looks){touched=true;if(!C.some(i=>i.fact.h===h&&i.fact.p===m&&i.fact.via===(sits?'sits':'looks')&&!i.fact.target))bad.push('chk missing '+m+' '+h+' '+tag);}});
+     const any=HARSH.some(m=>P[m].house===h||(P[m].aspectsHouses||[]).indexOf(h)>=0);if(!any&&!C.some(i=>i.fact.none&&i.fact.h===h&&!i.fact.target))bad.push('chk none missing '+h+' '+tag);});
+   ks.forEach(k=>{const th=P[k].house;HARSH.forEach(m=>{if(m===k)return;const sh=P[m].house===th,lk=(P[m].aspectsHouses||[]).indexOf(th)>=0&&!sh;if(sh||lk){touched=true;if(!C.some(i=>i.fact.target===k&&i.fact.p===m))bad.push('chk missing karaka '+m+k+' '+tag);}})});
+   ['md','ad','pd'].forEach(key=>{const d=hn.dasha[key];if(!d)return;const n=d.lord,hr=['Saturn','Mars','Rahu','Ketu'].indexOf(n)>=0;const conn=hs.some(h=>rules(n).indexOf(h)>=0||P[n].house===h||(P[n].aspectsHouses||[]).indexOf(h)>=0&&P[n].house!==h)||ks.indexOf(n)>=0;if(hr&&conn)touched=true;if(n==='Sun'&&conn)touched=true;});
+   ['Saturn','Mars','Rahu','Ketu'].forEach(n=>{const x=sky[n];if(x&&hs.some(h=>x.house===h||(x.asp||[]).indexOf(h)>=0))touched=true;});
+   if(ks.indexOf('Moon')>=0){const d=(sky.Saturn.sign-P.Moon.sign+12)%12;if(d===11||d===0||d===1)touched=true;}
+   const ver=C[0].fact;if(ver.verdict!=='clear'&&ver.verdict!=='found')bad.push('verdict missing '+tag);else if((ver.verdict==='found')!==touched)bad.push('verdict '+ver.verdict+' vs touched '+touched+' '+tag);
+   if(ver.verdict==='clear'&&C.some(i=>i.tone==='b'))bad.push('clear with harsh line '+tag);}
   R.top.forEach(t=>{if(!t.text)bad.push('top '+tag)});
  })));
  return {bad:bad.slice(0,8),nres,words}}""".replace('__BAN__', BAN)
@@ -48,11 +66,11 @@ with sync_playwright() as p:
     b = p.chromium.launch(executable_path=CHROME); pg = b.new_page(viewport={'width': 360, 'height': 800}); errs = []
     pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto(PAGE); pg.wait_for_selector('#birthForm')
-    ok('PRB and PFUI loaded, 17 areas, every area has 4+ problems', pg.evaluate("typeof PRB==='object'&&typeof PFUI==='object'&&PRB.areas.length>=16&&PRB.areas.every(a=>a.problems.length>=4)"))
+    ok('PRB and PFUI loaded, 20 areas, every area has 10+ problems', pg.evaluate("typeof PRB==='object'&&typeof PFUI==='object'&&PRB.areas.length>=20&&PRB.areas.every(a=>a.problems.length>=10)"))
     for i, c in enumerate(CHARTS):
         pg.evaluate(CAST, dict(name='x', dob=c[0], tob=c[1], place='x', lat=c[2], lon=c[3], tz=c[4])); pg.wait_for_selector('#results.show', timeout=15000)
         r = pg.evaluate(CHECK)
-        ok('chart %d: %d readings, every house, planet, aspect, points, dasha and transit fact matches the chart; clean wording; 6 sections each' % (i + 1, r['nres']), not r['bad'], r['bad'])
+        ok('chart %d: %d readings, every house, planet, aspect, points, dasha and transit fact matches the chart; clean wording; 7 sections each' % (i + 1, r['nres']), not r['bad'], r['bad'])
     pg.evaluate(CAST, dict(name='Asha', dob='1995-03-14', tob='11:00', place='Hyderabad', lat=17.385, lon=78.4867, tz=5.5)); pg.wait_for_selector('#results.show', timeout=15000)
     pg.evaluate("document.querySelectorAll('.app-panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-home').classList.add('active')"); pg.wait_for_timeout(600)
     ok('Home has a Problem Finder tile that opens the Problem finder tab', pg.evaluate("!!document.querySelector('#panel-home [data-go=\"panel-problem\"]')"))
@@ -65,7 +83,21 @@ with sync_playwright() as p:
     ok('the five questions appear one after another', all(steps), steps)
     pg.wait_for_timeout(400)
     o = pg.evaluate("""()=>({secs:document.querySelectorAll('.pf-sec').length,chips:document.querySelectorAll('.pf-crumbs span').length,lv:!!document.querySelector('.pf-lv'),help:document.querySelectorAll('.pf-help li').length,safe:!!document.querySelector('.pf-safe'),main:document.querySelectorAll('.pf-main li').length,over:document.documentElement.scrollWidth>innerWidth+1})""")
-    ok('result: 6 sections, 4 choice chips, strength meter, reasons, help list, safety note', o['secs'] == 6 and o['chips'] == 4 and o['lv'] and o['help'] >= 4 and o['safe'] and o['main'] >= 1, o)
+    pg.evaluate("document.querySelector('.pf [data-pf=\"again\"]').click()"); pg.wait_for_timeout(400)
+    pg.evaluate("document.querySelector('.pf [data-k=\"area\"][data-v=\"money\"]').click()"); pg.wait_for_timeout(500)
+    f = pg.evaluate("({n:document.querySelectorAll('.pf-p').length,g:document.querySelectorAll('.pf-grp').length,f:!!document.querySelector('.pf-find')})")
+    pg.fill('.pf-find', 'loan'); pg.wait_for_timeout(200)
+    v = pg.evaluate("[...document.querySelectorAll('.pf-p')].filter(b=>!b.hidden).map(b=>b.textContent)")
+    pg.fill('.pf-find', 'zzzz'); pg.wait_for_timeout(200)
+    nn = pg.evaluate("!document.querySelector('.pf-none').hidden")
+    ok('long problem lists are grouped by kind and have a find box that filters them', f['n'] >= 15 and f['g'] >= 4 and f['f'] and v and all('loan' in x.lower() for x in v) and nn, [f, v, nn])
+    pg.evaluate("document.querySelector('.pf .pf-find').value='';document.querySelector('.pf .pf-find').dispatchEvent(new Event('input',{bubbles:true}));document.querySelector('.pf [data-k=\"problem\"][data-v=\"shortage\"]').click()"); pg.wait_for_timeout(500)
+    pg.evaluate("document.querySelector('.pf [data-k=\"span\"][data-v=\"years\"]').click()"); pg.wait_for_timeout(500)
+    ok('the result opens with the Chart check section expanded', pg.evaluate("(()=>{const d=document.querySelector('.pf-sec');return !!d&&d.open&&/Chart check/.test(d.textContent)&&/In short/.test(d.textContent)})()"))
+    pg.evaluate("document.querySelector('.pf [data-pf=\"reset\"]').click()"); pg.wait_for_timeout(300)
+    for k, v in (('trigger', 'ext'), ('feel', 'int'), ('area', 'mother'), ('problem', 'hurt'), ('span', 'years')):
+        pg.evaluate("([k,v])=>document.querySelector(`.pf [data-k=\"${k}\"][data-v=\"${v}\"]`).click()", [k, v]); pg.wait_for_timeout(500)
+    ok('result: 7 sections, 4 choice chips, strength meter, reasons, help list, safety note', o['secs'] == 7 and o['chips'] == 4 and o['lv'] and o['help'] >= 4 and o['safe'] and o['main'] >= 1, o)
     ok('result fits a 360px phone without sideways scroll', not o['over'])
     pg.evaluate("document.querySelector('.pf [data-pf=\"again\"]').click()"); pg.wait_for_timeout(500)
     ok('"Another problem" returns to the area question and keeps the first answers', pg.evaluate("!!document.querySelector('.pf .pf-areas')&&document.querySelectorAll('.pf-crumbs span').length===2"))

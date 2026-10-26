@@ -13,6 +13,7 @@ const PFUI = (() => {
     span: { q: 'How long has it been with you?', s: 'This decides whether to lean on your birth pattern or on today\'s sky.', o: [
       ['new', '🌱', 'Just started', 'Days or a few weeks'], ['months', '🗓️', 'A few months', 'It has been building'], ['years', '⏳', 'Years', 'It keeps coming back'], ['life', '♾️', 'As long as I remember', 'It feels part of my life']] }
   };
+  const GRP = { delay: 'Delays and waiting', conflict: 'Conflict and arguments', loss: 'Loss and endings', pain: 'Hurt and pain', betrayal: 'Trust and betrayal', pressure: 'Pressure and strain', lack: 'Distance and emptiness', instability: 'Ups, downs and instability', harm: 'Harm and danger', confusion: 'Confusion and direction', general: 'Other' };
   const chart = () => (typeof currentChartForModal !== 'undefined' ? currentChartForModal : null);
   const st = root => root._pf || (root._pf = { step: 0, sel: {} });
   const dots = i => `<div class="pf-dots" aria-label="Step ${i + 1} of 5">${STEPS.map((_, k) => `<i class="${k < i ? 'done' : k === i ? 'on' : ''}"></i>`).join('')}</div>`;
@@ -27,14 +28,15 @@ const PFUI = (() => {
     const S = st(root), key = STEPS[S.step], sel = S.sel; let body = '', q, sub;
     if (OPT[key]) { q = OPT[key].q; sub = OPT[key].s; body = `<div class="pf-opts">${OPT[key].o.map(o => `<button type="button" class="pf-o${sel[key] === o[0] ? ' on' : ''}" data-pf="pick" data-k="${key}" data-v="${o[0]}"><b class="pf-oi">${o[1]}</b><span><strong>${esc(o[2])}</strong><small>${esc(o[3])}</small></span></button>`).join('')}</div>`; }
     else if (key === 'area') { q = 'Which part of life is it in?'; sub = 'Pick the area that hurts most right now.'; body = `<div class="pf-areas">${PRB.areas.map(a => `<button type="button" class="pf-a${sel.area === a.id ? ' on' : ''}" data-pf="pick" data-k="area" data-v="${a.id}"><span>${a.emoji}</span><b>${esc(a.name)}</b></button>`).join('')}</div>`; }
-    else { const a = PRB.area(sel.area); q = 'What exactly is the problem?'; sub = `Choose the one that fits ${a.who} best.`; body = `<div class="pf-list">${a.problems.map(p => `<button type="button" class="pf-p${sel.problem === p.id ? ' on' : ''}" data-pf="pick" data-k="problem" data-v="${p.id}"><i></i><span>${esc(p.label)}</span></button>`).join('')}</div>`; }
+    else { const a = PRB.area(sel.area); q = 'What exactly is the problem?'; sub = `${a.problems.length} options for ${a.name.toLowerCase()}. Choose the one that fits ${a.who} best.`; const G = []; a.problems.forEach(p => { let g = G.find(x => x.n === p.nature); if (!g) G.push(g = { n: p.nature, l: [] }); g.l.push(p); });
+      body = `${a.problems.length > 10 ? '<input type="search" class="pf-find" placeholder="Type a word to find your problem" aria-label="Find your problem" autocomplete="off">' : ''}<div class="pf-groups">${G.map(g => `<div class="pf-grp" data-n="${g.n}"><h5 class="pf-gh">${esc(GRP[g.n] || 'Other')}</h5><div class="pf-list">${g.l.map(p => `<button type="button" class="pf-p${sel.problem === p.id ? ' on' : ''}" data-pf="pick" data-k="problem" data-v="${p.id}"><i></i><span>${esc(p.label)}</span></button>`).join('')}</div></div>`).join('')}<p class="pf-none" hidden>Nothing matches. Try another word, or clear the box.</p></div>`; }
     return `${dots(S.step)}${crumbs(sel)}<h4 class="pf-q">${esc(q)}</h4><p class="pf-s">${esc(sub)}</p>${body}<div class="pf-nav">${S.step ? '<button type="button" class="pf-back" data-pf="back">← Back</button>' : '<span></span>'}<button type="button" class="pf-link" data-pf="reset">Start over</button></div>`;
   }
   function resultHtml(root) {
     const S = st(root), c = chart(); let R; try { R = PRB.assess(c, S.sel, { now: new Date() }); } catch (e) { R = null; }
     if (!R) return `<p class="pf-s">The reading could not be built for this chart.</p><div class="pf-nav"><button type="button" class="pf-back" data-pf="reset">Start over</button></div>`;
     const lv = { light: 1, clear: 2, strong: 3 }[R.level], lt = { light: 'Light indications', clear: 'Clear indications', strong: 'Strong indications' }[R.level];
-    const sec = (s, i) => `<details class="pf-sec"${s.id === 'signature' || s.id === 'timing' ? ' open' : ''}><summary><span class="pf-se">${s.emoji}</span><b>${esc(s.title)}</b><i></i></summary><p class="pf-si">${esc(s.intro)}</p><ul>${s.items.map(it => `<li class="t-${it.tone}"><i></i><span>${esc(it.text)}</span></li>`).join('')}</ul></details>`;
+    const sec = (s, i) => `<details class="pf-sec"${s.id === 'check' || s.id === 'signature' || s.id === 'timing' ? ' open' : ''}><summary><span class="pf-se">${s.emoji}</span><b>${esc(s.title)}</b><i></i></summary><p class="pf-si">${esc(s.intro)}</p><ul>${s.items.map(it => `<li class="t-${it.tone}"><i></i><span>${esc(it.text)}</span></li>`).join('')}</ul></details>`;
     return `${crumbs(S.sel)}<div class="pf-res"><div class="pf-top"><div class="pf-lv" data-lv="${lv}"><span><i></i><i></i><i></i></span><b>${lt}</b></div><p class="pf-lt">${esc(R.levelText)}</p>${R.top.length ? `<h5 class="pf-h5">Main reasons in your chart</h5><ul class="pf-main">${R.top.map(t => `<li>${esc(t.text)}</li>`).join('')}</ul>` : ''}</div>
       ${R.sections.map(sec).join('')}
       <div class="pf-help"><h5 class="pf-h5">What tends to help</h5><ul>${R.help.map(h => `<li>${esc(h)}</li>`).join('')}</ul><p class="pf-safe">${esc(R.safety)}</p></div>
@@ -55,6 +57,9 @@ const PFUI = (() => {
     else if (act === 'again') { S.step = 2; delete S.sel.area; delete S.sel.problem; render(root); }
   }
   document.addEventListener('click', onClick);
+  document.addEventListener('input', e => { const f = e.target.closest && e.target.closest('.pf-find'); if (!f) return; const q = f.value.trim().toLowerCase(), root = f.closest('.pf'); let any = false;
+    root.querySelectorAll('.pf-grp').forEach(g => { let n = 0; g.querySelectorAll('.pf-p').forEach(b => { const hit = !q || b.textContent.toLowerCase().indexOf(q) >= 0; b.hidden = !hit; if (hit) n++; }); g.hidden = !n; if (n) any = true; });
+    const none = root.querySelector('.pf-none'); if (none) none.hidden = any; });
   function pane() { const r = document.createElement('div'); return `<div class="pf" data-pf-root><div class="pf-hero"><div class="pf-ico">🧭</div><div><h3>Problem finder</h3><p>Choose what is troubling you, step by step. You get the reasons your chart gives for it, in plain words.</p></div></div><div class="pf-stage in">${stepHtml({ _pf: { step: 0, sel: {} } })}</div></div>`; }
   /* the stage inside a freshly built pane is plain HTML; bind its state lazily on first click */
   document.addEventListener('click', e => { const root = e.target.closest && e.target.closest('.pf'); if (root && !root._pf) root._pf = { step: 0, sel: {} }; }, true);
