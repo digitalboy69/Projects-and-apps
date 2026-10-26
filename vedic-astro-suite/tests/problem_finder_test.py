@@ -34,12 +34,15 @@ CHECK = """()=>{const BAN=__BAN__,ch=currentChartForModal,P=ch.planets,D1=ch.var
      if(F.asp&&((P[F.asp].aspectsHouses||[]).indexOf(F.h)<0||P[F.asp].house===F.h))bad.push('asp '+tag);if(F.sav!=null&&(SAV[F.sign]!==F.sav||!x.includes(F.sav+' Ashtakavarga')))bad.push('sav '+tag);}
    else if(F.kind==='planet'){const q=P[F.p];if(q.house!==F.house||q.sign!==F.sign)bad.push('planet fact '+tag);if(F.st&&q.dignity.status!==F.st)bad.push('planet st '+tag);if(F.combust&&!q.combustion.combust)bad.push('combust '+tag);
      if(F.retro&&!q.retrograde)bad.push('retro '+tag);if(F.conj&&P[F.conj].house!==q.house)bad.push('conj '+tag);if(F.asp&&(P[F.asp].aspectsHouses||[]).indexOf(q.house)<0)bad.push('pasp '+tag);if(F.nak&&q.nakshatra.name!==F.nak)bad.push('nak '+tag);}
-   else if(F.kind==='check'){const sc=F.scope,OR=n=>n+(['th','st','nd','rd'][(n%100>10&&n%100<14)?0:Math.min(n%10,4)%4]||'th'),hs0=a.houses.concat(p.eh).filter((v,i,x)=>x.indexOf(v)===i),ks0=a.karakas.concat(p.ep).filter((v,i,x)=>x.indexOf(v)===i);
+   else if(F.kind==='check'){const sc=F.scope,OR=n=>n+(['th','st','nd','rd'][(n%100>10&&n%100<14)?0:Math.min(n%10,4)%4]||'th'),hs0=a.houses.concat(p.eh,PRB.natures[p.nature].nh).filter((v,i,x)=>x.indexOf(v)===i),ks0=a.karakas.concat(p.ep).filter((v,i,x)=>x.indexOf(v)===i);
      const asp=(m,h)=>(P[m].aspectsHouses||[]).indexOf(h)>=0&&P[m].house!==h;
      if(sc==='birth'||sc==='kind'){const m=F.p;if(F.sits.some(h=>P[m].house!==h||hs0.indexOf(h)<0)||F.looks.some(h=>!asp(m,h)||hs0.indexOf(h)<0))bad.push('chk birth houses '+tag);
        if(sc==='birth'){if(F.shares.some(k=>P[k].house!==P[m].house||k===m||ks0.indexOf(k)<0)||F.klooks.some(k=>P[k].house===P[m].house||(P[m].aspectsHouses||[]).indexOf(P[k].house)<0||ks0.indexOf(k)<0))bad.push('chk birth karakas '+tag);}
        if(!x.includes(m+' is in '+['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'][P[m].sign]+', your '+OR(P[m].house)+' house'))bad.push('chk birth sign/house text '+tag);
        F.looks.forEach(h=>{const n=(h-P[m].house+12)%12+1;if(!x.includes(OR(n)+' aspect falls on '+['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'][D1[h-1].sign]+', your '+OR(h)+' house'))bad.push('chk aspect text '+tag)});}
+     else if(sc==='varga'||sc==='vnone'){const V=ch.vargas[F.v];if(!V)bad.push('chk varga missing '+tag);else if(sc==='vnone'){const occ=(V.houses[F.key-1].planets||[]).map(q=>q.name);if(occ.some(n=>HARSH.indexOf(n)>=0&&kindOf(n)==='harsh'))bad.push('chk false vnone '+tag);}
+       else if(F.st){let f=null;V.houses.forEach(h=>(h.planets||[]).forEach(q=>{if(q.name===F.p)f=q.dignity&&q.dignity.status}));if(f!==F.st)bad.push('chk varga dignity '+tag);}
+       else if(!(V.houses[F.key-1].planets||[]).some(q=>q.name===F.p))bad.push('chk varga key planet '+tag);}
      else if(sc==='none'){if(F.hs.some(h=>HARSH.some(m=>['harsh','mild'].indexOf(kindOf(m))>=0&&(P[m].house===h||(P[m].aspectsHouses||[]).indexOf(h)>=0))))bad.push('chk false none house '+tag);}
      else if(sc==='knone'){if(F.ks.some(k=>HARSH.some(m=>m!==k&&['harsh','mild'].indexOf(kindOf(m))>=0&&(P[m].house===P[k].house||(P[m].aspectsHouses||[]).indexOf(P[k].house)>=0))))bad.push('chk false none karaka '+tag);}
      else if(sc==='dasha'){const key={Mahadasha:'md',Antardasha:'ad',Pratyantar:'pd'}[F.dasha];if(hn.dasha[key].lord!==F.p)bad.push('chk dasha lord '+tag);if(F.rules.some(h=>rules(F.p).indexOf(h)<0)||F.looks.some(h=>(P[F.p].aspectsHouses||[]).indexOf(h)<0))bad.push('chk dasha links '+tag);if(F.none!==(!F.rules.length&&!F.sits&&!F.looks.length&&!F.kar))bad.push('chk dasha none flag '+tag);
@@ -49,12 +52,12 @@ CHECK = """()=>{const BAN=__BAN__,ch=currentChartForModal,P=ch.planets,D1=ch.var
    }
    else if(F.kind==='culprit'&&!F.none){const q=P[F.p];if(F.via==='sits in'||F.via==='shares the house with'){if(q.house!==F.h)bad.push('cul sits '+tag)}else if((q.aspectsHouses||[]).indexOf(F.h)<0)bad.push('cul looks '+tag);}
    else if(F.kind==='timing'&&!F.none&&!F.span){
-     if(F.dasha){const key={Mahadasha:'md',Antardasha:'ad',Pratyantar:'pd'}[F.dasha],lord=hn.dasha[key]&&hn.dasha[key].lord;if(lord!==F.p)bad.push('dasha lord '+tag);if(F.rules&&F.rules.some(h=>rules(F.p).indexOf(h)<0))bad.push('dasha rules '+tag);if(F.sits&&a.houses.concat(p.eh).indexOf(P[F.p].house)<0)bad.push('dasha sits '+tag);}
+     if(F.dasha){const key={Mahadasha:'md',Antardasha:'ad',Pratyantar:'pd'}[F.dasha],lord=hn.dasha[key]&&hn.dasha[key].lord;if(lord!==F.p)bad.push('dasha lord '+tag);if(F.rules&&F.rules.some(h=>rules(F.p).indexOf(h)<0))bad.push('dasha rules '+tag);if(F.sits&&a.houses.concat(p.eh,PRB.natures[p.nature].nh).indexOf(P[F.p].house)<0)bad.push('dasha sits '+tag);}
      if(F.transit){const sx=sky[F.transit];if(F.on&&F.on.some(h=>sx.house!==h))bad.push('transit on '+tag);if(F.look&&F.look.some(h=>(sx.asp||[]).indexOf(h)<0))bad.push('transit look '+tag);}
      if(F.sadesati){const d=(sky.Saturn.sign-P.Moon.sign+12)%12;if(!(d===11||d===0||d===1))bad.push('sadesati '+tag);}
      if(F.score!=null&&hn.houses[F.house-1].score!==F.score)bad.push('house score '+tag);}
   })});
-  {const hs=a.houses.concat(p.eh).filter((v,i,x)=>x.indexOf(v)===i),ks=a.karakas.concat(p.ep).filter((v,i,x)=>x.indexOf(v)===i),C=R.sections[0].items,UP=[3,6,11];let pressing=false;
+  {const hs=a.houses.concat(p.eh,PRB.natures[p.nature].nh).filter((v,i,x)=>x.indexOf(v)===i),ks=a.karakas.concat(p.ep).filter((v,i,x)=>x.indexOf(v)===i),C=R.sections[0].items,UP=[3,6,11];let pressing=false;
    const tch=(m,h)=>P[m].house===h||(P[m].aspectsHouses||[]).indexOf(h)>=0;
    HARSH.forEach(m=>{const kd=kindOf(m),sits=hs.filter(h=>P[m].house===h),looks=hs.filter(h=>(P[m].aspectsHouses||[]).indexOf(h)>=0&&P[m].house!==h),shares=ks.filter(k=>k!==m&&P[k].house===P[m].house),kl=ks.filter(k=>k!==m&&P[k].house!==P[m].house&&(P[m].aspectsHouses||[]).indexOf(P[k].house)>=0);
      if(!sits.length&&!looks.length&&!shares.length&&!kl.length)return;const it=C.find(i=>i.fact.scope==='birth'&&i.fact.p===m);if(!it){bad.push('chk missing '+m+' '+tag);return;}
@@ -66,6 +69,10 @@ CHECK = """()=>{const BAN=__BAN__,ch=currentChartForModal,P=ch.planets,D1=ch.var
    ['md','ad','pd'].forEach(key=>{const d=hn.dasha[key];if(!d)return;const n=d.lord;if(kindOf(n)!=='harsh'||['Saturn','Mars','Rahu','Ketu'].indexOf(n)<0)return;const conn=hs.some(h=>rules(n).indexOf(h)>=0||P[n].house===h||(P[n].aspectsHouses||[]).indexOf(h)>=0&&P[n].house!==h)||ks.indexOf(n)>=0;if(conn)pressing=true;});
    ['Saturn','Mars','Rahu','Ketu'].forEach(n=>{const x=sky[n];if(!x||kindOf(n)!=='harsh')return;const t=hs.filter(h=>x.house===h||(x.asp||[]).indexOf(h)>=0);if(t.length&&!t.every(h=>UP.indexOf(h)>=0))pressing=true;});
    if(ks.indexOf('Moon')>=0){const d=(sky.Saturn.sign-P.Moon.sign+12)%12;if(d===11||d===0||d===1)pressing=true;}
+   const VGT={love:['D9',7,['Venus']],marriage:['D9',7,['Venus','Jupiter']],career:['D10',10,['Sun','Saturn']],children:['D7',5,['Jupiter']],mother:['D12',4,['Moon']],father:['D12',9,['Sun']],home:['D4',4,['Mars','Venus']],study:['D24',5,['Mercury','Jupiter']]}[a.id];
+   if(VGT){const V=ch.vargas[VGT[0]];const occ=(V.houses[VGT[1]-1].planets||[]).map(q=>q.name);let hp=0;occ.forEach(n=>{if(HARSH.indexOf(n)>=0&&kindOf(n)==='harsh'){hp++;pressing=true;if(!C.some(i=>i.fact.scope==='varga'&&i.fact.key===VGT[1]&&i.fact.p===n&&i.tone==='b'))bad.push('chk varga missing '+n+' '+tag);}});
+     if(!hp&&!C.some(i=>i.fact.scope==='vnone'))bad.push('chk vnone missing '+tag);
+     VGT[2].forEach(k=>{let st=null;V.houses.forEach(h=>(h.planets||[]).forEach(q=>{if(q.name===k)st=q.dignity&&q.dignity.status}));if(['Debilitated','Enemy','Exalted','OwnSign','Moolatrikona'].indexOf(st)>=0&&!C.some(i=>i.fact.scope==='varga'&&i.fact.p===k&&i.fact.st===st))bad.push('chk varga dignity missing '+k+' '+tag);});}
    const ver=C[0].fact;if(ver.verdict!=='clear'&&ver.verdict!=='found')bad.push('verdict missing '+tag);else if((ver.verdict==='found')!==pressing)bad.push('verdict '+ver.verdict+' vs pressing '+pressing+' '+tag);
    if(ver.verdict==='clear'&&R.level!=='light')bad.push('clear but level '+R.level+' '+tag);
    if(typeof R.pct!=='number'||R.pct<0||R.pct>1||R.checked<300)bad.push('pct '+tag);}
