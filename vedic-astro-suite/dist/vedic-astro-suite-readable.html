@@ -47743,7 +47743,7 @@ const PRB = (() => {
     const by = { 'birth chart': [], 'running period': [], 'today\'s sky': [] }; out.forEach(i => { if (i.harsh && by[i.harsh[1]] && by[i.harsh[1]].indexOf(i.harsh[0]) < 0) by[i.harsh[1]].push(i.harsh[0]); });
     const names = Object.keys(by).reduce((s, k) => s.concat(by[k].filter(x => s.indexOf(x) < 0)), []), clear = !names.length, bits = [];
     if (by['today\'s sky'].length) bits.push(`today's sky has ${nm(by['today\'s sky'])} acting on it`); if (by['running period'].length) bits.push(`your running period is led by ${nm(by['running period'])}`); if (by['birth chart'].length) bits.push(`your birth chart has ${nm(by['birth chart'])} touching it`);
-    const v = clear ? { tone: 'g', text: `In short: no harsh planet is sitting in, looking at or acting on these houses${hn ? ', and no harsh planet period or passing planet is pressing on them' : ''}. The chart does not show this as a built-in problem. It is more likely shaped by circumstances and choices.`, fact: { kind: 'check', scope: 'verdict', verdict: 'clear' } }
+    const v = clear ? { tone: 'g', text: `In short: no harsh planet is sitting in, looking at or acting on these houses${hn ? ', and no harsh planet period or passing planet is pressing on them' : ''}. So nothing is pressing on them from outside. Any weakness listed below comes from a planet\'s own strength or position, and the problem may also be shaped by circumstances and choices.`, fact: { kind: 'check', scope: 'verdict', verdict: 'clear' } }
       : { tone: 'b', text: `In short, harsh influence is found: ${nm(bits)}.`, fact: { kind: 'check', scope: 'verdict', verdict: 'found', planets: names } };
     return { items: [v].concat(out.map(i => ({ tone: i.tone, text: i.text, fact: i.fact }))), cands };
   }

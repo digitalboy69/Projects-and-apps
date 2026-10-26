@@ -66,7 +66,7 @@ CHECK = """()=>{const BAN=__BAN__,ch=currentChartForModal,P=ch.planets,D1=ch.var
    if(ver.verdict==='clear'&&C.some(i=>i.tone==='b'||i.fact.scope==='birth'))bad.push('clear with harsh line '+tag);}
   {const K=R.ranked;if(!Array.isArray(K)||K.length>5)bad.push('ranked size '+tag);for(let i=0;i<K.length;i++){const r=K[i];if(r.rank!==i+1||!r.head||!r.text||!r.fact||['Strong','Mild','Moderate'].indexOf(r.label)<0||['Birth chart','Right now','Running period'].indexOf(r.when)<0)bad.push('ranked item '+tag);if(i&&K[i-1].score<r.score)bad.push('ranked order '+tag);
      if(!R.sections.some(s=>s.items.some(it=>it.text===r.text)))bad.push('ranked not traceable '+i+' '+tag);}
-   if(R.verdict==='clear'&&K.some(r=>r.label==='Strong'))bad.push('strong on clear '+tag);if(R.verdict==='found'&&!K.length&&0)bad.push('x');
+   if(R.verdict==='clear'&&K.some(r=>r.fact&&r.fact.kind==='check'&&r.fact.scope!=='dasha'))bad.push('harsh-touch reason on clear '+tag);if(R.verdict==='found'&&!K.length&&0)bad.push('x');
    if(R.verdict!=='clear'&&R.verdict!=='found')bad.push('verdict prop '+tag);}
   // span changes the ranking weight: a recent problem leans on today's sky, a lifelong one on the birth chart
   R.top.forEach(t=>{if(!t.text)bad.push('top '+tag)});
