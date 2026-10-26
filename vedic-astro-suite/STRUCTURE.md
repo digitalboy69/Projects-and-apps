@@ -322,6 +322,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `shared/icons.js` — ICON LIBRARY: premium duotone line SVG icons that automatically replace UI emojis in every app + shell (MutationObserver, original emoji kept as hidden text). To add/change an icon edit `I` (svg) and `M` (emoji map) in this file. Astro glyphs, arrows, ✓ ✕ are intentionally left as text. Styles in `shared/meta.css`
 - `shared/export-addon.js` — export add-on UI used by apps (window.VAX); do not edit unless asked
 - `shared/copy-toggle.js` — hides every "Copy ..." button in an app while the main-menu Settings switch "Copy buttons" is off (default off; key vedicCopyBtns); loaded by all 4 apps
+- `shared/quick-menu.js` — Quick Menu: top-left ☰ button in 3D Sky, Birth Chart and Notepad; opens a sheet to jump to any tool or tab, pin favourites and make named groups (localStorage key vedicQuickMenu_v1; tool switching via postMessage {vqm:'go'} handled in shell/js/shell.js); loaded by each app after copy-toggle.js.
 - `shared/liquid-glass.css` — Liquid glass look for the shell and all apps (aurora background, frosted translucent cards, floating glass tab bar); every rule is scoped by `html.lg` + `data-app` (bc/3d/np/dev); no motion
 - `shared/liquid-glass.js` — turns class `lg` on <html> (on by default; main-menu Settings switch "Liquid glass look", key vedicGlass; off if the device asks for less transparency)
 - `vendor/qrlibs.js` — QR code libraries (third party)

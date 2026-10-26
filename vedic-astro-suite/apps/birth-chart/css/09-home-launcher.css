@@ -29,5 +29,6 @@ body.app-mode .header-actions{flex-direction:row!important;width:auto!important;
 body.app-mode .header-actions .btn{padding:8px 12px!important;min-width:40px;justify-content:center;border-radius:999px}
 body.app-mode.on-sub #hdrBack{display:block}
 body.app-mode.on-sub .brand-glyph{display:none}
+body.app-mode.vqm-on .brand{padding-left:40px}   /* room for the Quick Menu button (shared/quick-menu.js) at the top-left */
 body.app-mode main.wrap{padding-left:14px;padding-right:14px}
 @media (min-width:881px){body.app-mode .app-tabbar{top:50px;margin-bottom:24px}}

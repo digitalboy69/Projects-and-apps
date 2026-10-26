@@ -171,13 +171,15 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ---
 
+- Quick Menu: `shared/quick-menu.js` adds a top-left ☰ button to 3D Sky, Birth Chart and Notepad (one tap to jump to any tool or tab, 📌 pins, user-named groups; saved in localStorage `vedicQuickMenu_v1`). Tool switching: app posts `{vqm:'go',tool,id}` to the shell (handler above the floating switcher in `shell/js/shell.js`). Birth Chart header gets 40px left padding in app mode (`09-home-launcher.css`). Tested in a browser: tab jump, tool jump, pins across tools; smoke 5/5.
+
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-26 - 1548 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-26 - 1568 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 173 files, 27501 lines, 2108 KB
+**birth-chart** - 173 files, 27502 lines, 2108 KB
 ```
 index.html                                         595 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -307,7 +309,7 @@ css/05-results-sections.css                        970 lines   59 KB
 css/06-quick-search.css                             61 lines    3 KB
 css/07-ai-jyotish-chatbot.css                      297 lines   13 KB
 css/08-responsive.css                               71 lines    3 KB
-css/09-home-launcher.css                            34 lines    2 KB
+css/09-home-launcher.css                            35 lines    2 KB
 css/10-dasha-redesign.css                           71 lines    5 KB
 css/11-yogas-shadbala-redesign.css                  74 lines    6 KB
 css/12-export-and-profiles.css                      46 lines    4 KB
@@ -449,16 +451,16 @@ css/23-time-machine-polish.css                     126 lines   12 KB
 css/24-sky-dashboard.css                            55 lines    5 KB
 ```
 
-**shell** - 5 files, 580 lines, 66 KB
+**shell** - 5 files, 591 lines, 67 KB
 ```
 index.html                                           2 lines    2 KB
 shell/css/shell.css                                110 lines   11 KB
 shell/js/locpicker.js                              202 lines   34 KB
-shell/js/shell.js                                  237 lines   17 KB
+shell/js/shell.js                                  248 lines   18 KB
 shell/js/updater.js                                 29 lines    2 KB
 ```
 
-**shared** - 6 files, 1000 lines, 75 KB
+**shared** - 7 files, 1157 lines, 87 KB
 ```
 shared/copy-toggle.js                               28 lines    1 KB
 shared/export-addon.js                             643 lines   47 KB
@@ -466,6 +468,7 @@ shared/icons.js                                    169 lines   17 KB
 shared/liquid-glass.css                             46 lines    5 KB
 shared/liquid-glass.js                              16 lines    0 KB
 shared/meta.css                                     98 lines    5 KB
+shared/quick-menu.js                               157 lines   12 KB
 ```
 <!-- AUTO:END -->
 - Door v2 (login→Razorpay pay→app + local admin): see docs/DOOR.md and ../door-site/. Customer edition is DERIVED by tools/build_customer.py (editions/customer/customer-layer.js, customer_top.js); originals untouched. Old gate/ (encrypted blob) is superseded.
