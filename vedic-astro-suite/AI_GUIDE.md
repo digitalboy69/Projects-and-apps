@@ -178,7 +178,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-27 - 1596 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-27 - 1598 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -376,7 +376,7 @@ js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 77 files, 7275 lines, 431 KB
+**sky3d** - 77 files, 7290 lines, 432 KB
 ```
 index.html                                         466 lines   28 KB
 js/01-astro-engine.js                              157 lines    9 KB
@@ -405,7 +405,7 @@ js/23-north-indian-wheel.js                         78 lines    4 KB
 js/24-sign-selector.js                              83 lines    4 KB
 js/25-rich-sign-detail.js                           95 lines    7 KB
 js/26-sign-aspects.js                              103 lines    4 KB
-js/27-aspect-explorer-ui.js                        144 lines    6 KB
+js/27-aspect-explorer-ui.js                        159 lines    7 KB
 js/28-planet-detail-popup.js                       149 lines    6 KB
 js/29-planet-detail-content.js                     145 lines   18 KB
 js/30-outer-planet-knowledge.js                     38 lines    5 KB
@@ -508,3 +508,4 @@ shared/quick-menu.js                               157 lines   12 KB
 - Session 9 (fix): PDF printed twice (a blank print window first). An iframe fires 'load' for its empty about:blank before srcdoc; `generate()` now sets srcdoc first and prints only when `.cover` is in the frame, once. Test: print count must equal ['book'].
 - Session 10: S12 done: PDF brand (`brand()` in js/93 reads window.__VAX_BRAND), disclaimers, budgets in pdf_report_test, docs/RELEASE_CHECKLIST.md. Plan complete.
 - Sky Dashboard v2: zodiac-wheel hero + Moon phase, element colours, degree rings, scroll-spy nav, soft one-time fade-in (js/50, css/24).
+- Aspect Explorer now uses the time selected in the app even with a profile loaded (`getExplorerContext` in sky3d/js/27; profile only gives the Lagna); test tests/explorer_time_test.py.

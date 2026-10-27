@@ -4,7 +4,7 @@
 function openAspExp(){
   const block = document.getElementById('explorerBlock');
   document.getElementById('aspExpBody').appendChild(block);
-  try { renderExplorer(getChartContext()); } catch(e){}
+  try { renderExplorer(getExplorerContext()); } catch(e){}
   document.getElementById('aspExpOverlay').classList.add('show');
 }
 function closeAspExp(){

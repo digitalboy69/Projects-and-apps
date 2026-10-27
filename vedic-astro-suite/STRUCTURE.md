@@ -378,6 +378,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/rising_navamsha_test.py` — 3D rising view Navamsha test: current Navamsha line, 12 signs x 9 Navamshas, order rule per sign type, boundary accuracy, tap and back
 - `tests/time_wheels_test.py` — 3D date picker test: five snap wheels, tap/scroll select, steppers with month-end clamp, typed date
 - `tests/sky_dashboard_test.py` — Sky Dashboard test: button, all sections, 9 cards, 9x9 matrix, summary text, close
+- `tests/explorer_time_test.py` — Aspect Explorer follows the app time (not the birth time) when a profile is loaded
 - `tests/nakshatra_db_test.py` — Nakshatra layer: 972 unique placements, wording gates (no fatalistic/absolute words), pada->navamsa equals the app's D9 on 8 charts, Moon star = dasha start, on-screen check
 - `tests/manifest_test.py` — Manifestation layer: 1296 unique combinations, grammar/voice/wording gates, signature matches real chart data on 8 charts, on-screen blocks and report
 - `tests/dasha_reading_test.py` — Dasha layer: all Mahadashas + Antardashas equal the app's engine on 8 charts, current period, gap-free 5-year window, clean texts, screens + report

@@ -6,7 +6,16 @@ let explorerMode = "planet"; // 'planet' | 'sign'
 let explorerTarget = null;   // planet name (string) or sign index (number)
 let explorerBuilt = false;
 
+/* The explorer always shows the sky at the time picked in the app (the 3D date), even when a birth profile is loaded.
+   The profile only supplies the Lagna so house numbers stay yours. */
+function getExplorerContext(){
+  const snap = snapshotPositions(currentJD);
+  let lagnaLon = 0;
+  try { if (isValidProfile(activeNatalProfile)) lagnaLon = computeNatalAscendant(activeNatalProfile).lagnaLon; } catch(e){}
+  return { sidereal: snap.sidereal, retro: snap.retro, lagnaLon, label: 'Sky on ' + formatFullDate(currentJD), isNatal:false, jd: currentJD };
+}
 function renderExplorer(ctx){
+  ctx = getExplorerContext();
   if (!explorerBuilt){
     explorerBuilt = true;
     document.querySelectorAll('#explorerModeToggle .cam-mode-btn').forEach(btn=>{
@@ -16,13 +25,13 @@ function renderExplorer(ctx){
         explorerMode = btn.dataset.mode;
         explorerTarget = null;
         populateExplorerTargetSelect();
-        renderExplorerResult(getChartContext());
+        renderExplorerResult(getExplorerContext());
       });
     });
     document.getElementById('explorerTargetSelect').addEventListener('change', (e)=>{
       const v = e.target.value;
       explorerTarget = explorerMode==="sign" ? (v===""?null:parseInt(v,10)) : (v===""?null:v);
-      renderExplorerResult(getChartContext());
+      renderExplorerResult(getExplorerContext());
     });
     populateExplorerTargetSelect();
   }
@@ -54,6 +63,12 @@ function populateExplorerTargetSelect(){
 }
 
 function renderExplorerResult(ctx){
+  ctx = getExplorerContext();
+  renderExplorerResultInner(ctx);
+  const w = document.getElementById('explorerResult');
+  if (w && explorerTarget != null) w.insertAdjacentHTML('afterbegin', '<div class="empty-aspects" style="margin-bottom:8px;text-align:left">Showing the sky on <b>' + formatFullDate(ctx.jd) + '</b> (the time selected in the app)</div>');
+}
+function renderExplorerResultInner(ctx){
   const wrap = document.getElementById('explorerResult');
   if (explorerTarget==null){
     wrap.innerHTML = `<div class="empty-aspects">Pick a ${explorerMode} above to see exactly which ${explorerMode==='planet'?'signs it aspects, and what aspects it back':'planets aspect it, and what its occupants aspect out'}.</div>`;

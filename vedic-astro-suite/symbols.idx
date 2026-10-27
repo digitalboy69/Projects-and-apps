@@ -568,6 +568,7 @@ getDignity	fn	apps/birth-chart/js/07-planetary-dignity.js:42	birth-chart
 getDinaLord	fn	apps/birth-chart/js/14-shadbala-engine.js:114	birth-chart
 getDrekkanaBala	fn	apps/birth-chart/js/14-shadbala-engine.js:42	birth-chart
 getDrikBalaContribution	fn	apps/birth-chart/js/14-shadbala-engine.js:166	birth-chart
+getExplorerContext	fn	apps/sky3d/js/27-aspect-explorer-ui.js:11	sky3d
 getFocusTargetPos	fn	apps/sky3d/js/11-planet-visuals.js:167	sky3d
 getHoraLord	fn	apps/birth-chart/js/14-shadbala-engine.js:118	birth-chart
 getHouseLord	fn	apps/birth-chart/js/12-yoga-detection.js:32	birth-chart
@@ -1104,7 +1105,7 @@ pnRiseSet	fn	apps/birth-chart/js/45-panchanga-engine.js:41	birth-chart
 pnSum	fn	apps/birth-chart/js/45-panchanga-engine.js:18	birth-chart
 pnSunAlt	fn	apps/birth-chart/js/45-panchanga-engine.js:33	birth-chart
 pnWeekday	fn	apps/birth-chart/js/45-panchanga-engine.js:56	birth-chart
-populateExplorerTargetSelect	fn	apps/sky3d/js/27-aspect-explorer-ui.js:32	sky3d
+populateExplorerTargetSelect	fn	apps/sky3d/js/27-aspect-explorer-ui.js:41	sky3d
 populateFocusPlanetSelect	fn	apps/sky3d/js/13-camera-mode-control.js:25	sky3d
 populateNatalTz	fn	apps/sky3d/js/37-natal-form-location.js:4	sky3d
 populateTz	fn	apps/birth-chart/js/18-ui-location-profiles.js:12	birth-chart
@@ -1179,8 +1180,9 @@ renderAspectList	fn	apps/sky3d/js/25-rich-sign-detail.js:69	sky3d
 renderChartTab	fn	apps/sky3d/js/22-chart-tab.js:25	sky3d
 renderChartWheel	fn	apps/sky3d/js/23-north-indian-wheel.js:18	sky3d
 renderConjunctionFeed	fn	apps/sky3d/js/20-transit-conjunction-scanner.js:96	sky3d
-renderExplorer	fn	apps/sky3d/js/27-aspect-explorer-ui.js:9	sky3d
-renderExplorerResult	fn	apps/sky3d/js/27-aspect-explorer-ui.js:56	sky3d
+renderExplorer	fn	apps/sky3d/js/27-aspect-explorer-ui.js:17	sky3d
+renderExplorerResult	fn	apps/sky3d/js/27-aspect-explorer-ui.js:65	sky3d
+renderExplorerResultInner	fn	apps/sky3d/js/27-aspect-explorer-ui.js:71	sky3d
 renderHouseTable	fn	apps/sky3d/js/23-north-indian-wheel.js:54	sky3d
 renderHUD	fn	apps/sky3d/js/19-hud-render.js:1	sky3d
 renderIntakeSaved	fn	apps/birth-chart/js/68-intake-progress.js:13	birth-chart
