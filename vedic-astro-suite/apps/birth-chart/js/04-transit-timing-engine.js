@@ -43,12 +43,10 @@ function nowJulianDay(){
 // A JD, rendered as a wall-clock date/time string at a fixed UTC offset (the
 // same "local time" convention used everywhere else in this app).
 function jdToLocalParts(jd, tzOffsetHours){
-  const utcDate = jdToDate(jd);
-  const local = new Date(utcDate.getTime() + tzOffsetHours*3600*1000);
-  const pad2 = n => String(n).padStart(2,'0');
+  const p = jdToParts(jd + tzOffsetHours/24), pad2 = n => String(n).padStart(2,'0');   // calendar-exact for any year (BC, Julian)
   return {
-    dateStr: `${local.getUTCFullYear()}-${pad2(local.getUTCMonth()+1)}-${pad2(local.getUTCDate())}`,
-    timeStr: `${pad2(local.getUTCHours())}:${pad2(local.getUTCMinutes())}:${pad2(local.getUTCSeconds())}`,
+    dateStr: formatDobStr(p.y, p.m, p.d),
+    timeStr: `${pad2(p.h)}:${pad2(p.mi)}:${pad2(p.s)}`,
   };
 }
 

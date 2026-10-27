@@ -166,6 +166,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/109-pdf-download.js` — PDF DOWNLOAD (PDFD): turns the PDF book straight into a .pdf file with no print window (hidden A4 frame, page cuts at block ends, browser-drawn pages as JPEG, built-in PDF writer); PDFR falls back to print if it fails
 - `apps/birth-chart/js/111-problem-finder.js` — PROBLEM FINDER engine (PRB): areas of life, exact problems, trigger (outside/inside) and how it shows up (inner pain/real events); reads the chart and returns the reasons (houses, lords, planets, aspects, Ashtakavarga, running periods, today's sky); every line carries the chart fact it came from
 - `apps/birth-chart/js/112-problem-finder-ui.js` — Problem finder tab (PFUI): the five questions, the result screens, Home tile hook
+- `apps/birth-chart/js/113-date-entry.js` — type Day, Month, Year and AD/BC yourself (old and BC dates); inDobValue / inLoadDob; Julian calendar before 15 Oct 1582, accuracy notes, local-mean-time button
 - `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
 - `apps/birth-chart/js/95-life-narratives.js` — Life-area narratives (global LAN), GENERATED: a 450-700 word personal reading for each of the 9 life areas, composed from the engine facts (stance by band, house-lord arena, strengths, care points, yoga modifiers, timing, practices, self-check questions)
 - `apps/birth-chart/js/96-varga-reading.js` — Divisional chart readings (global VGR), GENERATED: D9, D10, D7, D4, D24, D20 each with rising sign, the houses that matter, planet-by-planet text, strength summary, vargottama and a score; positions come from the app's own varga engine
@@ -227,6 +228,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/49-intake-polish.css` — INTAKE POLISH, loaded last: the birth-details page (glowing emblem, starfield, glass card, three-step timeline that fills as you go, gold focus glow, segmented AM/PM, shimmering action button, staggered entrance); scoped to .in-wrap
 - `apps/birth-chart/css/50-home-polish.css` — HOME POLISH, loaded last: the tool hub on the Home tab (filter chips, Quick start tiles, tool cards with tinted glass, glowing icon tiles, arrow badges, staggered entrance and scroll reveal); scoped to #panel-home
 - `apps/birth-chart/css/51-problem-finder.css` — Problem finder screens (pf- prefix)
+- `apps/birth-chart/css/52-date-entry.css` — the typed-date panel on the birth-details page
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order
@@ -390,6 +392,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/updater_test.py` — silent updater: stale build triggers one silent reload and re-download, current build does nothing
 - `tests/pdf_download_test.py` — PDF download: a real multi-page A4 .pdf file is saved directly, no print window, page plan cuts only at block ends
 - `tests/problem_finder_test.py` — Problem finder: every fact in every reason vs the chart over 12 charts x all areas x all problems, wording, click-through, Home tile
+- `tests/date_entry_test.py` — Julian Day and calendar maths, parseDob, deltaT, typed old/BC dates through the form and every tab
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/life_narratives_test.py` — Life-area narratives: 12 charts x 9 areas (length, structure, wording, consistency with scores), variation, sensitivity, Deep reading + report + PDF wiring
 - `tests/varga_reading_test.py` — Divisional chart readings: 12 charts x 6 vargas cross-checked with the app's own varga data and VDB's D9 vargottama, variation, one-fact sensitivity, Deep reading + report + PDF wiring

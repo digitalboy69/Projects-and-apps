@@ -2,7 +2,7 @@
 (function(){
   let cur = null, last = null;
   const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  function toJD(dateStr, tz){ const p = dateStr.split('-').map(Number); return toJulianDay(p[0], p[1], p[2], 0, 0, 0) - tz / 24; }
+  function toJD(dateStr, tz){ const p = parseDob(dateStr); return toJulianDay(p.y, p.m, p.d, 0, 0, 0) - tz / 24; }
   window.buildYearTimelinePanel = function(c, P){
     cur = { c, P };
     const t = new Date(), e = new Date(t.getFullYear(), t.getMonth() + 12, t.getDate());

@@ -51,7 +51,7 @@ function pnRiseSet(y, m, d, lat, lon, tz){
   }
   return { rise, set };
 }
-function pnParts(jd, tz){ const p = jdToLocalParts(jd, tz); const [y, m, d] = p.dateStr.split('-').map(Number); return { y, m, d, dateStr: p.dateStr, timeStr: p.timeStr }; }
+function pnParts(jd, tz){ const p = jdToLocalParts(jd, tz); const {y, m, d} = parseDob(p.dateStr); return { y, m, d, dateStr: p.dateStr, timeStr: p.timeStr }; }
 function pnAddDay(y, m, d, n){ const t = new Date(Date.UTC(y, m - 1, d + n)); return [t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate()]; }
 function pnWeekday(y, m, d){ return new Date(Date.UTC(y, m - 1, d)).getUTCDay(); }
 

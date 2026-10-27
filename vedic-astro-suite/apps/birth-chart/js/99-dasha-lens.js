@@ -119,7 +119,7 @@ function rsBuildDasha(p){
 }
 function dlPreset(k){
   const pr = currentProfileForExport; if (!pr) return;
-  if (k==='birth'){ const [y,m,d] = pr.dob.split('-').map(Number), t = String(pr.tob||'12:00').split(':').map(Number); DL.y = y; DL.m = m; DL.d = d; DL.H = t[0]||0; DL.M = t[1]||0; DL.S = t[2]||0; }
+  if (k==='birth'){ const {y,m,d} = parseDob(pr.dob), t = String(pr.tob||'12:00').split(':').map(Number); DL.y = y; DL.m = m; DL.d = d; DL.H = t[0]||0; DL.M = t[1]||0; DL.S = t[2]||0; }
   else if (k==='now') dlSetMs(Date.now());
   else if (k==='dial'){ const de = document.getElementById('rectDate'); if (de && de.value){ const [y,m,d] = de.value.split('-').map(Number), h = (typeof rectHms !== 'undefined') ? rectHms : { h:0, m:0, s:0 }; DL.y = y; DL.m = m; DL.d = d; DL.H = h.h; DL.M = h.m; DL.S = h.s; } }
   else if (k==='mid'){ DL.H = 0; DL.M = 0; DL.S = 0; }

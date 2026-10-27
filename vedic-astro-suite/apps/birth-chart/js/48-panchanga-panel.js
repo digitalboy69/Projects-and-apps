@@ -2,7 +2,7 @@
    PHASE 1 UI — Panchanga · Transits & Sade Sati · Bhava Chalit
    ============================================================================= */
 function nvDate(jd, tz, withTime){
-  const p = jdToLocalParts(jd, tz), [y, m, d] = p.dateStr.split('-').map(Number);
+  const p = jdToLocalParts(jd, tz), {y, m, d} = parseDob(p.dateStr);
   return `${d} ${PN_MON[m - 1]} ${y}` + (withTime ? ` · ${p.timeStr.slice(0, 5)}` : '');
 }
 function nvTime(jd, tz, refDate){

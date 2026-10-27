@@ -164,6 +164,7 @@ function loadProfileIntoForm(p){
   coordReadout.textContent = (p.lat !== null && p.lon !== null) ? `${p.lat.toFixed(4)}°, ${p.lon.toFixed(4)}°` : "— not yet selected —";
   const sel = document.getElementById('tzInput');
   [...sel.options].forEach(o=>{ if (parseFloat(o.value)===p.tz) o.selected = true; });
+  try{ if (window.inLoadDob) inLoadDob(p.dob); }catch(e){}
   try{ inSyncFriendly(); inUpdate(); }catch(e){}
 }
 

@@ -13123,6 +13123,20 @@ html{scroll-behavior:auto!important}
 .pf-more>summary i{grid-row:1/3;grid-column:2;width:9px;height:9px;border-right:2px solid var(--pf-gold);border-bottom:2px solid var(--pf-gold);transform:rotate(45deg);transition:transform .25s}.pf-more[open]>summary i{transform:rotate(-135deg)}
 .pf-r .pf-also{margin-top:8px;font:400 12.5px/1.5 var(--font-sans);opacity:.65}
 </style>
+<style>
+/* Date entry for old and BC dates (js/113-date-entry.js); matches the friendly intake look */
+.in-oldwrap{display:flex;flex-direction:column;gap:10px;margin-top:2px}
+.in-oldbtn{align-self:flex-start;background:transparent;border:1px dashed rgba(217,184,90,.55);color:var(--gold,#d4af37);border-radius:12px;padding:10px 14px;font:600 13px/1.3 var(--font-sans);cursor:pointer;text-align:left;transition:background .2s,transform .2s}
+.in-oldbtn:hover{background:rgba(217,184,90,.08);transform:translateY(-1px)}
+.in-old{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;border:1px solid rgba(217,184,90,.28);background:rgba(217,184,90,.05)}
+.in-old[hidden],.in-oldbtn[hidden]{display:none}
+.in-old .in-row3.o{grid-template-columns:.8fr 1.5fr 1fr}
+.in-old input[type=number],.in-old select{width:100%;box-sizing:border-box;min-height:50px;padding:0 12px;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid var(--border-light);color:var(--text-main);font:500 16px var(--font-sans);min-width:0}
+.in-old input[type=number]{-moz-appearance:textfield}.in-old input::-webkit-outer-spin-button,.in-old input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.in-old input:focus,.in-old select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.18)}
+.in-old .ok{border-color:rgba(94,196,183,.6)}
+.in-oldnote p{margin:0 0 6px;font:400 13px/1.5 var(--font-sans);color:var(--text-muted)}.in-oldnote p.bad{color:#ff9a8a}.in-oldnote b{color:var(--text-main)}
+</style>
 
 
 
@@ -13943,12 +13957,57 @@ const DEG = Math.PI / 180, RAD = 180 / Math.PI, J2000 = 2451545.0;
 function normDeg(d){ d = d % 360; return d < 0 ? d + 360 : d; }
 
 function toJulianDay(year, month, day, hour, minute, second){
+  /* Meeus: dates before 15 Oct 1582 are in the Julian calendar (the one in use then); later dates are Gregorian.
+     `year` is astronomical (1 BC = 0, 2 BC = -1). Valid from -4712. */
   let Y = year, M = month;
   if (M <= 2) { Y -= 1; M += 12; }
-  const A = Math.floor(Y / 100);
-  const B = 2 - A + Math.floor(A / 4);
+  const greg = year > 1582 || (year === 1582 && (month > 10 || (month === 10 && day >= 15)));
+  let B = 0;
+  if (greg) { const A = Math.floor(Y / 100); B = 2 - A + Math.floor(A / 4); }
   const dayFrac = day + (hour + minute/60 + second/3600) / 24;
   return Math.floor(365.25*(Y+4716)) + Math.floor(30.6001*(M+1)) + dayFrac + B - 1524.5;
+}
+
+/* Birth-date strings: "YYYY-MM-DD" for years 1..9999, and the ISO expanded form "-000499-03-14" for years before year 0
+   (astronomical numbering: "0000" is 1 BC, "-000499" is 500 BC). Always use this instead of split("-"). */
+function parseDob(str){
+  const m = /^([+-]?\d{4,6})-(\d{2})-(\d{2})/.exec(String(str || '').trim());
+  if (!m) return { y: NaN, m: NaN, d: NaN };
+  return { y: parseInt(m[1], 10), m: parseInt(m[2], 10), d: parseInt(m[3], 10) };
+}
+function formatDobStr(y, m, d){
+  const p2 = n => String(n).padStart(2, '0');
+  return (y < 0 ? '-' + String(-y).padStart(6, '0') : String(y).padStart(4, '0')) + '-' + p2(m) + '-' + p2(d);
+}
+/* ΔT = TT − UT in seconds (Espenak and Meeus, NASA polynomials). The series for the Sun, Moon and planets are in
+   Terrestrial Time, so for ancient dates (when ΔT is hours) the clock time must be moved by ΔT. */
+function deltaT(year, month){
+  const y = year + ((month || 6) - 0.5) / 12;
+  let t, u;
+  if (y < -500) { u = (y - 1820) / 100; return -20 + 32 * u * u; }
+  if (y < 500) { u = y / 100; return 10583.6 - 1014.41*u + 33.78311*u*u - 5.952053*u**3 - 0.1798452*u**4 + 0.022174192*u**5 + 0.0090316521*u**6; }
+  if (y < 1600) { u = (y - 1000) / 100; return 1574.2 - 556.01*u + 71.23472*u*u + 0.319781*u**3 - 0.8503463*u**4 - 0.005050998*u**5 + 0.0083572073*u**6; }
+  if (y < 1700) { t = y - 1600; return 120 - 0.9808*t - 0.01532*t*t + t**3 / 7129; }
+  if (y < 1800) { t = y - 1700; return 8.83 + 0.1603*t - 0.0059285*t*t + 0.00013336*t**3 - t**4 / 1174000; }
+  if (y < 1860) { t = y - 1800; return 13.72 - 0.332447*t + 0.0068612*t*t + 0.0041116*t**3 - 0.00037436*t**4 + 0.0000121272*t**5 - 0.0000001699*t**6 + 0.000000000875*t**7; }
+  if (y < 1900) { t = y - 1860; return 7.62 + 0.5737*t - 0.251754*t*t + 0.01680668*t**3 - 0.0004473624*t**4 + t**5 / 233174; }
+  if (y < 1920) { t = y - 1900; return -2.79 + 1.494119*t - 0.0598939*t*t + 0.0061966*t**3 - 0.000197*t**4; }
+  if (y < 1941) { t = y - 1920; return 21.20 + 0.84493*t - 0.076100*t*t + 0.0020936*t**3; }
+  if (y < 1961) { t = y - 1950; return 29.07 + 0.407*t - t*t / 233 + t**3 / 2547; }
+  if (y < 1986) { t = y - 1975; return 45.45 + 1.067*t - t*t / 260 - t**3 / 718; }
+  if (y < 2005) { t = y - 2000; return 63.86 + 0.3345*t - 0.060374*t*t + 0.0017275*t**3 + 0.000651814*t**4 + 0.00002373599*t**5; }
+  if (y < 2050) { t = y - 2000; return 62.92 + 0.32217*t + 0.005589*t*t; }
+  if (y < 2150) { u = (y - 1820) / 100; return -20 + 32*u*u - 0.5628 * (2150 - y); }
+  u = (y - 1820) / 100; return -20 + 32 * u * u;
+}
+
+/* Julian Day -> calendar parts (Julian calendar before 15 Oct 1582, Gregorian after), rounded to the second; no JS Date, so any year works. */
+function jdToParts(jd){
+  const secs = Math.round((jd + 0.5) * 86400), Z = Math.floor(secs / 86400), rem = secs - Z * 86400;
+  let A = Z; if (Z >= 2299161){ const alpha = Math.floor((Z - 1867216.25) / 36524.25); A = Z + 1 + alpha - Math.floor(alpha / 4); }
+  const B = A + 1524, C = Math.floor((B - 122.1) / 365.25), D = Math.floor(365.25 * C), E = Math.floor((B - D) / 30.6001);
+  const day = B - D - Math.floor(30.6001 * E), month = E < 14 ? E - 1 : E - 13, year = month > 2 ? C - 4716 : C - 4715;
+  return { y: year, m: month, d: day, h: Math.floor(rem / 3600), mi: Math.floor((rem % 3600) / 60), s: rem % 60 };
 }
 
 function lahiriAyanamsa(jd){
@@ -14191,12 +14250,10 @@ function nowJulianDay(){
 // A JD, rendered as a wall-clock date/time string at a fixed UTC offset (the
 // same "local time" convention used everywhere else in this app).
 function jdToLocalParts(jd, tzOffsetHours){
-  const utcDate = jdToDate(jd);
-  const local = new Date(utcDate.getTime() + tzOffsetHours*3600*1000);
-  const pad2 = n => String(n).padStart(2,'0');
+  const p = jdToParts(jd + tzOffsetHours/24), pad2 = n => String(n).padStart(2,'0');   // calendar-exact for any year (BC, Julian)
   return {
-    dateStr: `${local.getUTCFullYear()}-${pad2(local.getUTCMonth()+1)}-${pad2(local.getUTCDate())}`,
-    timeStr: `${pad2(local.getUTCHours())}:${pad2(local.getUTCMinutes())}:${pad2(local.getUTCSeconds())}`,
+    dateStr: formatDobStr(p.y, p.m, p.d),
+    timeStr: `${pad2(p.h)}:${pad2(p.mi)}:${pad2(p.s)}`,
   };
 }
 
@@ -15369,8 +15426,8 @@ function computeShadbala(siderealLongitudes, planets, ascSignIdx, jd, localJD, h
 function getSunriseSunsetJD(jd, lat, lon){
   // The old routine assumed `jd` was exactly 0h UT, so sunrise/sunset were wrong by hours for real birth instants.
   // Use the same refraction-corrected routine as the Panchang tab, for the solar-local day containing `jd`.
-  const tzs = lon/15, ds = jdToLocalParts(jd, tzs).dateStr.split('-').map(Number);
-  const rs = pnRiseSet(ds[0], ds[1], ds[2], lat, lon, tzs);
+  const tzs = lon/15, dp = parseDob(jdToLocalParts(jd, tzs).dateStr);
+  const rs = pnRiseSet(dp.y, dp.m, dp.d, lat, lon, tzs);
   if (rs.rise != null && rs.set != null) return { sunriseJD: rs.rise, sunsetJD: rs.set };
   return getSunriseSunsetApprox(jd, lat, lon);
 }
@@ -15395,20 +15452,21 @@ function getSunriseSunsetApprox(jd, lat, lon){
 }
 
 function computeChart(dateStr, timeStr, lat, lon, tzOffsetHours){
-  const [year,month,day] = dateStr.split("-").map(Number);
+  const {y:year,m:month,d:day} = parseDob(dateStr);
   const [hour,minute,second] = timeStr.split(":").map(Number);
   const sec = second || 0;
   const localJD = toJulianDay(year,month,day,hour,minute,sec);
   const jd = localJD - tzOffsetHours/24;
   const ayanamsa = lahiriAyanamsa(jd);
 
+  const jdT = jd + deltaT(year, month)/86400;   // Terrestrial Time for the Sun, Moon and planets (matters for ancient dates)
   const tropicalLongitudes = {
-    Sun: sunLongitude(jd), Moon: moonLongitude(jd),
-    Mercury: planetGeocentricLongitude("mercury",jd), Venus: planetGeocentricLongitude("venus",jd),
-    Mars: planetGeocentricLongitude("mars",jd), Jupiter: planetGeocentricLongitude("jupiter",jd),
-    Saturn: planetGeocentricLongitude("saturn",jd)
+    Sun: sunLongitude(jdT), Moon: moonLongitude(jdT),
+    Mercury: planetGeocentricLongitude("mercury",jdT), Venus: planetGeocentricLongitude("venus",jdT),
+    Mars: planetGeocentricLongitude("mars",jdT), Jupiter: planetGeocentricLongitude("jupiter",jdT),
+    Saturn: planetGeocentricLongitude("saturn",jdT)
   };
-  const rahuTropical = rahuLongitude(jd);
+  const rahuTropical = rahuLongitude(jdT);
   const siderealLongitudes = {};
   for (const p in tropicalLongitudes) siderealLongitudes[p] = normDeg(tropicalLongitudes[p]-ayanamsa);
   siderealLongitudes.Rahu = normDeg(rahuTropical-ayanamsa);
@@ -15446,7 +15504,7 @@ function computeChart(dateStr, timeStr, lat, lon, tzOffsetHours){
     planets[w.planetB].war = { with:w.planetA, won: w.winner===w.planetB, separation:w.separation };
   });
 
-  const birthUTC = new Date(Date.UTC(year, month-1, day, hour, minute, sec) - tzOffsetHours*60*60*1000);
+  const birthUTC = new Date((jd - 2440587.5) * 86400000);   // from the Julian Day, so years 0-99 and BC dates are exact
   const dashaData = calculateVimshottariDasha(siderealLongitudes.Moon, birthUTC);
 
   const yogas = {
@@ -15528,7 +15586,7 @@ function computeChart(dateStr, timeStr, lat, lon, tzOffsetHours){
    twenty divisional charts, Shadbala, dashas, etc. for every candidate.
    ============================================================================ */
 function rectifyPoint(dateStr, timeStr, lat, lon, tzOffsetHours){
-  const [year,month,day] = dateStr.split("-").map(Number);
+  const {y:year,m:month,d:day} = parseDob(dateStr);
   const [hour,minute,second] = timeStr.split(":").map(Number);
   const sec = second || 0;
   const localJD = toJulianDay(year,month,day,hour,minute,sec);
@@ -15548,13 +15606,11 @@ function rectifyPoint(dateStr, timeStr, lat, lon, tzOffsetHours){
 }
 
 function shiftLocalDateTime(dateStr, timeStr, offsetSeconds){
-  const [year,month,day] = dateStr.split("-").map(Number);
+  const {y,m,d} = parseDob(dateStr);
   const [hour,minute,second] = timeStr.split(":").map(Number);
-  const base = new Date(Date.UTC(year, month-1, day, hour, minute, second||0));
-  const t = new Date(base.getTime() + offsetSeconds*1000);
-  const d2 = `${t.getUTCFullYear()}-${String(t.getUTCMonth()+1).padStart(2,'0')}-${String(t.getUTCDate()).padStart(2,'0')}`;
-  const t2 = `${String(t.getUTCHours()).padStart(2,'0')}:${String(t.getUTCMinutes()).padStart(2,'0')}:${String(t.getUTCSeconds()).padStart(2,'0')}`;
-  return { dateStr: d2, timeStr: t2 };
+  const p = jdToParts(toJulianDay(y,m,d,hour,minute,second||0) + offsetSeconds/86400);
+  const p2 = n => String(n).padStart(2,'0');
+  return { dateStr: formatDobStr(p.y, p.m, p.d), timeStr: `${p2(p.h)}:${p2(p.mi)}:${p2(p.s)}` };
 }
 <\/script>
 <script>
@@ -16814,7 +16870,7 @@ function wireVargaTimelinePanel(){
 }
 
 function getBirthJD(profile){
-  const [year,month,day] = profile.dob.split("-").map(Number);
+  const {y:year,m:month,d:day} = parseDob(profile.dob);
   const timeStr = (profile.tob && profile.tob.length===5) ? profile.tob+":00" : profile.tob;
   const [hour,minute,second] = timeStr.split(":").map(Number);
   const localJD = toJulianDay(year,month,day,hour,minute,second||0);
@@ -18668,6 +18724,7 @@ function loadProfileIntoForm(p){
   coordReadout.textContent = (p.lat !== null && p.lon !== null) ? `${p.lat.toFixed(4)}°, ${p.lon.toFixed(4)}°` : "— not yet selected —";
   const sel = document.getElementById('tzInput');
   [...sel.options].forEach(o=>{ if (parseFloat(o.value)===p.tz) o.selected = true; });
+  try{ if (window.inLoadDob) inLoadDob(p.dob); }catch(e){}
   try{ inSyncFriendly(); inUpdate(); }catch(e){}
 }
 
@@ -18721,7 +18778,7 @@ document.getElementById('birthForm').addEventListener('submit', (e)=>{
   errorBanner.classList.remove('show');
 
   const name = document.getElementById('profileName').value.trim();
-  const dob = document.getElementById('dobInput').value;
+  const dob = (window.inDobValue ? inDobValue() : document.getElementById('dobInput').value);
   const tob = document.getElementById('tobInput').value;
   const tz = parseFloat(document.getElementById('tzInput').value);
 
@@ -19725,7 +19782,7 @@ function pnRiseSet(y, m, d, lat, lon, tz){
   }
   return { rise, set };
 }
-function pnParts(jd, tz){ const p = jdToLocalParts(jd, tz); const [y, m, d] = p.dateStr.split('-').map(Number); return { y, m, d, dateStr: p.dateStr, timeStr: p.timeStr }; }
+function pnParts(jd, tz){ const p = jdToLocalParts(jd, tz); const {y, m, d} = parseDob(p.dateStr); return { y, m, d, dateStr: p.dateStr, timeStr: p.timeStr }; }
 function pnAddDay(y, m, d, n){ const t = new Date(Date.UTC(y, m - 1, d + n)); return [t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate()]; }
 function pnWeekday(y, m, d){ return new Date(Date.UTC(y, m - 1, d)).getUTCDay(); }
 
@@ -19855,7 +19912,7 @@ function computeBhavaChalit(chart, lat, lon){
    PHASE 1 UI — Panchanga · Transits & Sade Sati · Bhava Chalit
    ============================================================================= */
 function nvDate(jd, tz, withTime){
-  const p = jdToLocalParts(jd, tz), [y, m, d] = p.dateStr.split('-').map(Number);
+  const p = jdToLocalParts(jd, tz), {y, m, d} = parseDob(p.dateStr);
   return `${d} ${PN_MON[m - 1]} ${y}` + (withTime ? ` · ${p.timeStr.slice(0, 5)}` : '');
 }
 function nvTime(jd, tz, refDate){
@@ -22005,9 +22062,9 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 function formatDateHuman(dob){
-  const [y,m,d] = dob.split('-').map(Number);
+  const {y,m,d} = parseDob(dob);
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  return `${d} ${months[m-1]} ${y}`;
+  return `${d} ${months[m-1]} ${y > 0 ? y : (1 - y) + ' BC'}`;
 }
 
 function downloadActiveChartImage(format, vargaKey, styleName, personName) {
@@ -22319,7 +22376,7 @@ function inFoundUpdate(){
 /* ---- Intake: progress + welcome-back chips ---- */
 function inUpdate(){
   const v = id => (document.getElementById(id).value||'').trim();
-  const d1 = v('profileName').length>0, d2 = !!(v('dobInput') && v('tobInput')), d3 = (typeof selectedLat==='number' && !isNaN(selectedLat));
+  const d1 = v('profileName').length>0, d2 = !!((window.inDobValue ? inDobValue() : v('dobInput')) && v('tobInput')), d3 = (typeof selectedLat==='number' && !isNaN(selectedLat));
   [d1,d2,d3].forEach((d,i)=> document.querySelector(`.in-step[data-step="${i+1}"]`).classList.toggle('done', d));
   const n=[d1,d2,d3].filter(Boolean).length, hints=["First, tell us your name","Now, when were you born?","Last one: where were you born?"];
   document.getElementById('inBarFill').style.width = (n/3*100)+'%';
@@ -35960,7 +36017,7 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
   function fromText(t){ const m=/[#&?]c=([A-Za-z0-9_-]+)/.exec(t||'') || /^([A-Za-z0-9_-]{20,})$/.exec((t||'').trim()); return m?unpack(m[1]):null; }
   function formProfile(){
     const lat=typeof selectedLat==='number'?selectedLat:NaN, lon=typeof selectedLon==='number'?selectedLon:NaN;
-    const p={name:$('profileName').value.trim(),dob:$('dobInput').value,tob:$('tobInput').value,lat:lat,lon:lon,tz:parseFloat($('tzInput').value),place:$('placeInput').value};
+    const p={name:$('profileName').value.trim(),dob:(window.inDobValue?inDobValue():$('dobInput').value),tob:$('tobInput').value,lat:lat,lon:lon,tz:parseFloat($('tzInput').value),place:$('placeInput').value};
     return (p.name&&p.dob&&p.tob&&isFinite(lat)&&isFinite(lon)&&isFinite(p.tz))?p:null;
   }
   function openShared(p){
@@ -45527,7 +45584,7 @@ function rsBuildDasha(p){
 }
 function dlPreset(k){
   const pr = currentProfileForExport; if (!pr) return;
-  if (k==='birth'){ const [y,m,d] = pr.dob.split('-').map(Number), t = String(pr.tob||'12:00').split(':').map(Number); DL.y = y; DL.m = m; DL.d = d; DL.H = t[0]||0; DL.M = t[1]||0; DL.S = t[2]||0; }
+  if (k==='birth'){ const {y,m,d} = parseDob(pr.dob), t = String(pr.tob||'12:00').split(':').map(Number); DL.y = y; DL.m = m; DL.d = d; DL.H = t[0]||0; DL.M = t[1]||0; DL.S = t[2]||0; }
   else if (k==='now') dlSetMs(Date.now());
   else if (k==='dial'){ const de = document.getElementById('rectDate'); if (de && de.value){ const [y,m,d] = de.value.split('-').map(Number), h = (typeof rectHms !== 'undefined') ? rectHms : { h:0, m:0, s:0 }; DL.y = y; DL.m = m; DL.d = d; DL.H = h.h; DL.M = h.m; DL.S = h.s; } }
   else if (k==='mid'){ DL.H = 0; DL.M = 0; DL.S = 0; }
@@ -47975,6 +48032,93 @@ const PFUI = (() => {
 window.PFUI = PFUI;
 <\/script>
 <script>
+/* DATE ENTRY for old and BC dates: type Day, Month, Year and AD/BC yourself (the date lists only reach back to 1900).
+   Sets window.__dobExt (the date string the app uses everywhere: parseDob / formatDobStr in js/03) while the panel is open.
+   inDobValue() is what the form reads. Dates before 15 Oct 1582 are Julian-calendar dates; BC years are entered the everyday way (1 BC is year 0 inside). */
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const st = { on: false, ext: '', era: 'AD' };
+  window.inDobValue = () => st.on ? (st.ext || '') : (($('dobInput') || {}).value || '');
+  const isGreg = (y, m, d) => y > 1582 || (y === 1582 && (m > 10 || (m === 10 && d >= 15)));
+  function dim(y, m) { const leapJ = ((y % 4) + 4) % 4 === 0, leapG = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0, leap = y > 1582 || (y === 1582 && m >= 10) ? leapG : leapJ; return [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1]; }
+  function check(d, m, yNum, era) {
+    if (!(d >= 1 && m >= 1 && yNum >= 1)) return { ok: false, empty: true };
+    const y = era === 'BC' ? 1 - yNum : yNum;
+    if (era === 'BC' && yNum > 4713) return { ok: false, msg: 'The calculations start at 4713 BC. Please use a later year.' };
+    if (era === 'AD' && yNum > 9999) return { ok: false, msg: 'The latest year is 9999.' };
+    if (y === 1582 && m === 10 && d >= 5 && d <= 14) return { ok: false, msg: 'These days do not exist: the calendar jumped from 4 October to 15 October 1582.' };
+    if (d > dim(y, m)) return { ok: false, msg: `${MONTHS[m - 1]} ${era === 'BC' ? yNum + ' BC' : yNum} has only ${dim(y, m)} days${isGreg(y, m, d) ? '' : ' (old Julian calendar)'}.` };
+    return { ok: true, y, str: formatDobStr(y, m, d), julian: !isGreg(y, m, d) };
+  }
+  function notes(r, era, yNum) {
+    const y = r.y, L = [];
+    if (r.julian) L.push('📜 This date is read in the <b>Julian calendar</b>, the one in use at that time.');
+    if (era === 'BC') L.push('🗓️ BC years are entered the everyday way: 1 BC is the year just before 1 AD.');
+    const far = y < 1000 || y > 3000, mid = !far && (y < 1800 || y > 2200);
+    if (far) L.push('⚠️ <b>Approximate.</b> The planet calculations are built for modern dates. Treat the Moon sign, the nakshatra and the ascendant as a rough guide for a date this far from today.');
+    else if (mid) L.push('ℹ️ Positions this far from today are a little less exact. Check anything that sits near the edge of a sign or a star.');
+    if (y < 1900) L.push('🕰️ Before about 1900 people used <b>local sun time</b>, not time zones. If that is what you know, use the button below.');
+    return L;
+  }
+  function refresh() {
+    const note = $('oNote'); if (!note) return;
+    const d = +$('oDay').value, m = +$('oMon').value, yN = +$('oYear').value, c = check(d, m, yN, st.era);
+    ['oDay', 'oMon', 'oYear'].forEach(i => $(i).classList.toggle('ok', !!$(i).value));
+    if (c.ok) { st.ext = c.str; note.innerHTML = notes(c, st.era, yN).map(x => `<p>${x}</p>`).join(''); }
+    else { st.ext = ''; note.innerHTML = c.msg ? `<p class="bad">${c.msg}</p>` : ''; }
+    $('oLmt').hidden = !(c.ok && c.y < 1900);
+    try { if (typeof inUpdate === 'function') inUpdate(); } catch (e) {}
+  }
+  function setOn(on) {
+    st.on = !!on; const box = $('inOld'), lists = $('inDay') && $('inDay').closest('.in-row3'), btn = $('inOldBtn');
+    if (!box) return;
+    box.hidden = !on; if (lists) lists.hidden = on; $('inBadDate').hidden = true;
+    btn.innerHTML = on ? '← Use the date lists instead' : '📜 Born before 1900, or in the BC era? Type the date yourself';
+    if (on) { const dob = $('dobInput'); if (dob && dob.value) { dob.value = ''; } st.ext = ''; refresh(); }
+    else { st.ext = ''; try { if (typeof inUpdate === 'function') inUpdate(); } catch (e) {} }
+  }
+  function build() {
+    const bad = $('inBadDate'); if (!bad || $('inOld')) return !!$('inOld');
+    const wrap = document.createElement('div'); wrap.className = 'in-oldwrap';
+    wrap.innerHTML = `<button type="button" class="in-oldbtn" id="inOldBtn">📜 Born before 1900, or in the BC era? Type the date yourself</button>
+      <div class="in-old" id="inOld" hidden>
+        <div class="in-q">📜 Type the date</div>
+        <div class="in-row3 o"><input type="number" id="oDay" min="1" max="31" inputmode="numeric" placeholder="Day" aria-label="Day"><select id="oMon" aria-label="Month"><option value="">Month</option>${MONTHS.map((x, i) => `<option value="${i + 1}">${x}</option>`).join('')}</select><input type="number" id="oYear" min="1" max="9999" inputmode="numeric" placeholder="Year" aria-label="Year"></div>
+        <div class="in-ampm in-era" id="oEra" role="group" aria-label="Era"><button type="button" data-era="AD" class="on">AD (CE)</button><button type="button" data-era="BC">BC (BCE)</button></div>
+        <div class="in-oldnote" id="oNote" aria-live="polite"></div>
+        <button type="button" class="in-oldbtn lmt" id="oLmt" hidden>🕰️ Use local mean time for the birthplace</button>
+      </div>`;
+    bad.parentNode.insertBefore(wrap, bad.nextSibling);
+    $('inOldBtn').addEventListener('click', () => setOn(!st.on));
+    ['oDay', 'oYear'].forEach(i => $(i).addEventListener('input', e => { e.stopPropagation(); refresh(); }));
+    $('oMon').addEventListener('change', refresh);
+    $('oEra').addEventListener('click', e => { const b = e.target.closest('[data-era]'); if (!b) return; st.era = b.dataset.era; $('oEra').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); refresh(); });
+    $('oLmt').addEventListener('click', () => {
+      const lon = typeof selectedLon === 'number' ? selectedLon : null, note = $('oNote');
+      if (lon === null || isNaN(lon)) { note.innerHTML += '<p class="bad">Pick the birthplace first (step 3), then tap this button again.</p>'; return; }
+      const sel = $('tzInput'), v = (lon / 15).toFixed(4), h = lon / 15, a = Math.abs(h), hh = Math.floor(a), mm = Math.round((a - hh) * 60);
+      let opt = [...sel.options].find(o => o.dataset.lmt); if (!opt) { opt = document.createElement('option'); opt.dataset.lmt = '1'; sel.appendChild(opt); }
+      opt.value = v; opt.textContent = `UTC${h < 0 ? '-' : '+'}${hh}:${String(mm).padStart(2, '0')} (local mean time)`; sel.value = v;
+      sel.dispatchEvent(new Event('change', { bubbles: true })); note.innerHTML += `<p>✓ Time zone set to local mean time: ${opt.textContent}.</p>`;
+    });
+    const f = $('birthForm'); if (f) f.addEventListener('reset', () => setTimeout(() => { ['oDay', 'oMon', 'oYear'].forEach(i => { $(i).value = ''; $(i).classList.remove('ok'); }); st.era = 'AD'; $('oEra').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.era === 'AD')); $('oNote').innerHTML = ''; setOn(false); }, 0));
+    return true;
+  }
+  /* a saved or shared date that the date lists cannot hold (BC, or before the 1583 calendar change) opens the typing panel */
+  window.inLoadDob = function (dobStr) {
+    if (!build()) return; const p = parseDob(dobStr);
+    if (!isNaN(p.y) && p.y < 1583) {
+      if (!st.on) setOn(true);
+      st.era = p.y <= 0 ? 'BC' : 'AD'; $('oEra').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.era === st.era));
+      $('oDay').value = p.d; $('oMon').value = p.m; $('oYear').value = p.y <= 0 ? 1 - p.y : p.y; refresh();
+    } else if (st.on) setOn(false);
+  };
+  let tries = 0; (function init() { if (!build() && ++tries < 40) setTimeout(init, 100); })();
+})();
+<\/script>
+<script>
 /* ============================================================================
    YEAR TIMELINE ENGINE  (data only, no wording about life)
    Scans a date range and returns facts for the "Year Timeline File": sign changes, nakshatra changes, stations,
@@ -48436,7 +48580,7 @@ if (typeof window !== 'undefined') window.YTW = YTW;
 (function(){
   let cur = null, last = null;
   const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  function toJD(dateStr, tz){ const p = dateStr.split('-').map(Number); return toJulianDay(p[0], p[1], p[2], 0, 0, 0) - tz / 24; }
+  function toJD(dateStr, tz){ const p = parseDob(dateStr); return toJulianDay(p.y, p.m, p.d, 0, 0, 0) - tz / 24; }
   window.buildYearTimelinePanel = function(c, P){
     cur = { c, P };
     const t = new Date(), e = new Date(t.getFullYear(), t.getMonth() + 12, t.getDate());

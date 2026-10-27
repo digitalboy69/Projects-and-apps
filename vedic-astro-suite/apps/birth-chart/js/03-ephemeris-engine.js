@@ -5,12 +5,57 @@ const DEG = Math.PI / 180, RAD = 180 / Math.PI, J2000 = 2451545.0;
 function normDeg(d){ d = d % 360; return d < 0 ? d + 360 : d; }
 
 function toJulianDay(year, month, day, hour, minute, second){
+  /* Meeus: dates before 15 Oct 1582 are in the Julian calendar (the one in use then); later dates are Gregorian.
+     `year` is astronomical (1 BC = 0, 2 BC = -1). Valid from -4712. */
   let Y = year, M = month;
   if (M <= 2) { Y -= 1; M += 12; }
-  const A = Math.floor(Y / 100);
-  const B = 2 - A + Math.floor(A / 4);
+  const greg = year > 1582 || (year === 1582 && (month > 10 || (month === 10 && day >= 15)));
+  let B = 0;
+  if (greg) { const A = Math.floor(Y / 100); B = 2 - A + Math.floor(A / 4); }
   const dayFrac = day + (hour + minute/60 + second/3600) / 24;
   return Math.floor(365.25*(Y+4716)) + Math.floor(30.6001*(M+1)) + dayFrac + B - 1524.5;
+}
+
+/* Birth-date strings: "YYYY-MM-DD" for years 1..9999, and the ISO expanded form "-000499-03-14" for years before year 0
+   (astronomical numbering: "0000" is 1 BC, "-000499" is 500 BC). Always use this instead of split("-"). */
+function parseDob(str){
+  const m = /^([+-]?\d{4,6})-(\d{2})-(\d{2})/.exec(String(str || '').trim());
+  if (!m) return { y: NaN, m: NaN, d: NaN };
+  return { y: parseInt(m[1], 10), m: parseInt(m[2], 10), d: parseInt(m[3], 10) };
+}
+function formatDobStr(y, m, d){
+  const p2 = n => String(n).padStart(2, '0');
+  return (y < 0 ? '-' + String(-y).padStart(6, '0') : String(y).padStart(4, '0')) + '-' + p2(m) + '-' + p2(d);
+}
+/* ΔT = TT − UT in seconds (Espenak and Meeus, NASA polynomials). The series for the Sun, Moon and planets are in
+   Terrestrial Time, so for ancient dates (when ΔT is hours) the clock time must be moved by ΔT. */
+function deltaT(year, month){
+  const y = year + ((month || 6) - 0.5) / 12;
+  let t, u;
+  if (y < -500) { u = (y - 1820) / 100; return -20 + 32 * u * u; }
+  if (y < 500) { u = y / 100; return 10583.6 - 1014.41*u + 33.78311*u*u - 5.952053*u**3 - 0.1798452*u**4 + 0.022174192*u**5 + 0.0090316521*u**6; }
+  if (y < 1600) { u = (y - 1000) / 100; return 1574.2 - 556.01*u + 71.23472*u*u + 0.319781*u**3 - 0.8503463*u**4 - 0.005050998*u**5 + 0.0083572073*u**6; }
+  if (y < 1700) { t = y - 1600; return 120 - 0.9808*t - 0.01532*t*t + t**3 / 7129; }
+  if (y < 1800) { t = y - 1700; return 8.83 + 0.1603*t - 0.0059285*t*t + 0.00013336*t**3 - t**4 / 1174000; }
+  if (y < 1860) { t = y - 1800; return 13.72 - 0.332447*t + 0.0068612*t*t + 0.0041116*t**3 - 0.00037436*t**4 + 0.0000121272*t**5 - 0.0000001699*t**6 + 0.000000000875*t**7; }
+  if (y < 1900) { t = y - 1860; return 7.62 + 0.5737*t - 0.251754*t*t + 0.01680668*t**3 - 0.0004473624*t**4 + t**5 / 233174; }
+  if (y < 1920) { t = y - 1900; return -2.79 + 1.494119*t - 0.0598939*t*t + 0.0061966*t**3 - 0.000197*t**4; }
+  if (y < 1941) { t = y - 1920; return 21.20 + 0.84493*t - 0.076100*t*t + 0.0020936*t**3; }
+  if (y < 1961) { t = y - 1950; return 29.07 + 0.407*t - t*t / 233 + t**3 / 2547; }
+  if (y < 1986) { t = y - 1975; return 45.45 + 1.067*t - t*t / 260 - t**3 / 718; }
+  if (y < 2005) { t = y - 2000; return 63.86 + 0.3345*t - 0.060374*t*t + 0.0017275*t**3 + 0.000651814*t**4 + 0.00002373599*t**5; }
+  if (y < 2050) { t = y - 2000; return 62.92 + 0.32217*t + 0.005589*t*t; }
+  if (y < 2150) { u = (y - 1820) / 100; return -20 + 32*u*u - 0.5628 * (2150 - y); }
+  u = (y - 1820) / 100; return -20 + 32 * u * u;
+}
+
+/* Julian Day -> calendar parts (Julian calendar before 15 Oct 1582, Gregorian after), rounded to the second; no JS Date, so any year works. */
+function jdToParts(jd){
+  const secs = Math.round((jd + 0.5) * 86400), Z = Math.floor(secs / 86400), rem = secs - Z * 86400;
+  let A = Z; if (Z >= 2299161){ const alpha = Math.floor((Z - 1867216.25) / 36524.25); A = Z + 1 + alpha - Math.floor(alpha / 4); }
+  const B = A + 1524, C = Math.floor((B - 122.1) / 365.25), D = Math.floor(365.25 * C), E = Math.floor((B - D) / 30.6001);
+  const day = B - D - Math.floor(30.6001 * E), month = E < 14 ? E - 1 : E - 13, year = month > 2 ? C - 4716 : C - 4715;
+  return { y: year, m: month, d: day, h: Math.floor(rem / 3600), mi: Math.floor((rem % 3600) / 60), s: rem % 60 };
 }
 
 function lahiriAyanamsa(jd){

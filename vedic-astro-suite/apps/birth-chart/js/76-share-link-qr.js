@@ -20,7 +20,7 @@
   function fromText(t){ const m=/[#&?]c=([A-Za-z0-9_-]+)/.exec(t||'') || /^([A-Za-z0-9_-]{20,})$/.exec((t||'').trim()); return m?unpack(m[1]):null; }
   function formProfile(){
     const lat=typeof selectedLat==='number'?selectedLat:NaN, lon=typeof selectedLon==='number'?selectedLon:NaN;
-    const p={name:$('profileName').value.trim(),dob:$('dobInput').value,tob:$('tobInput').value,lat:lat,lon:lon,tz:parseFloat($('tzInput').value),place:$('placeInput').value};
+    const p={name:$('profileName').value.trim(),dob:(window.inDobValue?inDobValue():$('dobInput').value),tob:$('tobInput').value,lat:lat,lon:lon,tz:parseFloat($('tzInput').value),place:$('placeInput').value};
     return (p.name&&p.dob&&p.tob&&isFinite(lat)&&isFinite(lon)&&isFinite(p.tz))?p:null;
   }
   function openShared(p){

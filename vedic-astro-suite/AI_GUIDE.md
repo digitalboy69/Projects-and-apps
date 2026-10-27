@@ -167,23 +167,24 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Home polish: `css/50-home-polish.css` (loaded last, scoped to `#panel-home`) is the look layer of the Home tool hub (chips, Quick start tiles, tool cards); the markup comes from `js/25-home-and-tabs.js`.
 - Problem finder: `js/111-problem-finder.js` (PRB, hand-written data and engine: AREAS list, NAT natures, planetFindings/houseFindings/culpritFindings/timing) + `js/112-problem-finder-ui.js` (PFUI) give the last Chart Reading tab '🧭 Problem finder' and the Home tile (panel-problem). To add a problem, add a row to its area in AREAS (id, label, nature, extra houses, extra planets). Test: `problem_finder_test`.
 - Problem finder S20: 20 areas with 11-23 exact problems each (MORE list in `js/111`), grouped by kind with a find box in `js/112`; new first section `check` = `chartCheck()` lists harsh planets (Saturn, Mars, Rahu, Ketu, Sun) sitting in or looking at each house and significator, harsh or kind running periods, today's sky, and says plainly when nothing is found (verdict clear|found). Harsh planets in houses 3, 6, 11 are read as mild. Chart check lines are one paragraph per planet (sign, house, Nth aspect and the sign it falls on) plus an area-kind effect and help from FX (people/material/inner), for the birth chart and today's sky alike. Result now leads with `R.ranked` (top 5 reasons for THIS problem, merged per planet and timing, scored by planet weight x touches x problem-specific houses x culprit planet, with the span answer shifting birth vs sky weight; labels Strong/Moderate/Mild; a relative ranking, not a statistic); all sections sit under a closed 'Read more'. S21: `fnature(lagna)` classes planets for the ascendant (yoga/benefic/neutral/malefic); `harshKind` turns naturally harsh planets into harsh|mild|helper|yoga, and helpers/yogakarakas read as support in every layer. S22: level is the percentile of this problem's strain ratio among all problems of the same chart (`baseline`, cached on `chart.__prbBase`): top 20% strong, 40-80% moderate, below 40% light; verdict 'clear' forces light; 'found' needs a pressing (non-mild, non-helper) planet. S23: houses = area houses + the problem's `eh` + its nature's `nh`; weights W (eh 1, area first house 0.8, other area 0.5, nature 0.35) and KWT scale area findings, check scores and ranked candidates (items from the trigger/pain layers count 0.35); `chartCheck` also reads the divisional chart for love/marriage (D9), career (D10), children (D7), mother/father (D12), home (D4), study (D24): karaka dignity there and harsh planets in the key house. S24: `ingress(planet, now)` scans the app ephemeris (getSiderealLongitudeAt) to date when a slow planet entered its sign and moves on (cached per hour); dasha lines show end dates and dusthana (6/8/12) rulership; Saturn (4th/8th from the Moon = harsh, 3/6/11 = easy) and Jupiter (2/5/7/9/11 = supportive) are counted from the Moon. Check items carry w 0 so the level calibration is unchanged.
+- Date entry S26: `js/113-date-entry.js` panel (day, month, year, AD/BC) feeds `inDobValue()`/`inLoadDob()`; engine in `js/03` has `toJulianDay` (Julian before 1582-10-15), `parseDob` (handles negative years, never use split("-") or Date.UTC for dob), `formatDobStr`, `deltaT`, `jdToParts`. Astronomical years (1 BC = 0). Far dates are approximate; modern-date tools (Panchanga, date finder, Vedic birthday) not verified for them.
 - Performance rule for the polish layers (css/48-50): animate only transform and opacity, no backdrop-filter, no mask-image, no looping box-shadow or text-shadow animation, no scroll-timeline on lists; use `contain:layout paint` on repeated cards.
 
 ---
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-27 - 1549 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-27 - 1560 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 173 files, 27526 lines, 2112 KB
+**birth-chart** - 175 files, 27670 lines, 2123 KB
 ```
-index.html                                         595 lines   34 KB
+index.html                                         597 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
-js/03-ephemeris-engine.js                          210 lines    7 KB
-js/04-transit-timing-engine.js                     249 lines   11 KB
+js/03-ephemeris-engine.js                          255 lines   11 KB
+js/04-transit-timing-engine.js                     247 lines   11 KB
 js/05-ascendant-nakshatra-vargas.js                210 lines   12 KB
 js/06-outer-planet-knowledge.js                     37 lines    5 KB
 js/07-planetary-dignity.js                          77 lines    3 KB
@@ -203,11 +204,12 @@ js/109-pdf-download.js                             145 lines    9 KB
 js/11-ashtakavarga-engine.js                        32 lines    2 KB
 js/111-problem-finder.js                           406 lines   85 KB
 js/112-problem-finder-ui.js                         77 lines   10 KB
+js/113-date-entry.js                                86 lines    7 KB
 js/12-yoga-detection.js                            117 lines    4 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
-js/15-chart-core-compute.js                        155 lines    7 KB
-js/16-rectification-engine.js                       38 lines    2 KB
+js/15-chart-core-compute.js                        156 lines    7 KB
+js/16-rectification-engine.js                       36 lines    2 KB
 js/17-special-lagnas.js                            404 lines   23 KB
 js/18-ui-location-profiles.js                      124 lines    5 KB
 js/19-planets-panel.js                             223 lines   16 KB
@@ -225,7 +227,7 @@ js/30-life-event-checker.js                        160 lines   10 KB
 js/31-smart-search.js                              190 lines   16 KB
 js/32-ask-ai.js                                    317 lines   39 KB
 js/33-quick-search.js                               99 lines    4 KB
-js/34-relationships-tab.js                         210 lines    8 KB
+js/34-relationships-tab.js                         211 lines    8 KB
 js/35-form-submit-compute-render.js                 55 lines    2 KB
 js/36-render-helpers.js                             43 lines    2 KB
 js/37-dasha-check-date.js                           30 lines    1 KB
@@ -297,7 +299,7 @@ js/97-transit-reading.js                           224 lines   17 KB
 js/98-life-event-engine.js                         419 lines   39 KB
 js/98-pdf-pages.js                                 176 lines   32 KB
 js/99-area-deep.js                                 268 lines   37 KB
-js/99-dasha-lens.js                                176 lines   19 KB
+js/99-dasha-lens.js                                176 lines   18 KB
 js/99-jump-3d-bridge.js                             37 lines    2 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
@@ -352,6 +354,7 @@ css/48-reading-polish.css                           84 lines    8 KB
 css/49-intake-polish.css                           102 lines   12 KB
 css/50-home-polish.css                              52 lines    7 KB
 css/51-problem-finder.css                           66 lines    9 KB
+css/52-date-entry.css                               13 lines    1 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB

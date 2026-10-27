@@ -2,8 +2,8 @@
 function getSunriseSunsetJD(jd, lat, lon){
   // The old routine assumed `jd` was exactly 0h UT, so sunrise/sunset were wrong by hours for real birth instants.
   // Use the same refraction-corrected routine as the Panchang tab, for the solar-local day containing `jd`.
-  const tzs = lon/15, ds = jdToLocalParts(jd, tzs).dateStr.split('-').map(Number);
-  const rs = pnRiseSet(ds[0], ds[1], ds[2], lat, lon, tzs);
+  const tzs = lon/15, dp = parseDob(jdToLocalParts(jd, tzs).dateStr);
+  const rs = pnRiseSet(dp.y, dp.m, dp.d, lat, lon, tzs);
   if (rs.rise != null && rs.set != null) return { sunriseJD: rs.rise, sunsetJD: rs.set };
   return getSunriseSunsetApprox(jd, lat, lon);
 }
@@ -28,20 +28,21 @@ function getSunriseSunsetApprox(jd, lat, lon){
 }
 
 function computeChart(dateStr, timeStr, lat, lon, tzOffsetHours){
-  const [year,month,day] = dateStr.split("-").map(Number);
+  const {y:year,m:month,d:day} = parseDob(dateStr);
   const [hour,minute,second] = timeStr.split(":").map(Number);
   const sec = second || 0;
   const localJD = toJulianDay(year,month,day,hour,minute,sec);
   const jd = localJD - tzOffsetHours/24;
   const ayanamsa = lahiriAyanamsa(jd);
 
+  const jdT = jd + deltaT(year, month)/86400;   // Terrestrial Time for the Sun, Moon and planets (matters for ancient dates)
   const tropicalLongitudes = {
-    Sun: sunLongitude(jd), Moon: moonLongitude(jd),
-    Mercury: planetGeocentricLongitude("mercury",jd), Venus: planetGeocentricLongitude("venus",jd),
-    Mars: planetGeocentricLongitude("mars",jd), Jupiter: planetGeocentricLongitude("jupiter",jd),
-    Saturn: planetGeocentricLongitude("saturn",jd)
+    Sun: sunLongitude(jdT), Moon: moonLongitude(jdT),
+    Mercury: planetGeocentricLongitude("mercury",jdT), Venus: planetGeocentricLongitude("venus",jdT),
+    Mars: planetGeocentricLongitude("mars",jdT), Jupiter: planetGeocentricLongitude("jupiter",jdT),
+    Saturn: planetGeocentricLongitude("saturn",jdT)
   };
-  const rahuTropical = rahuLongitude(jd);
+  const rahuTropical = rahuLongitude(jdT);
   const siderealLongitudes = {};
   for (const p in tropicalLongitudes) siderealLongitudes[p] = normDeg(tropicalLongitudes[p]-ayanamsa);
   siderealLongitudes.Rahu = normDeg(rahuTropical-ayanamsa);
@@ -79,7 +80,7 @@ function computeChart(dateStr, timeStr, lat, lon, tzOffsetHours){
     planets[w.planetB].war = { with:w.planetA, won: w.winner===w.planetB, separation:w.separation };
   });
 
-  const birthUTC = new Date(Date.UTC(year, month-1, day, hour, minute, sec) - tzOffsetHours*60*60*1000);
+  const birthUTC = new Date((jd - 2440587.5) * 86400000);   // from the Julian Day, so years 0-99 and BC dates are exact
   const dashaData = calculateVimshottariDasha(siderealLongitudes.Moon, birthUTC);
 
   const yogas = {

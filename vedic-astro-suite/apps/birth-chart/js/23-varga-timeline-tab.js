@@ -30,7 +30,7 @@ function wireVargaTimelinePanel(){
 }
 
 function getBirthJD(profile){
-  const [year,month,day] = profile.dob.split("-").map(Number);
+  const {y:year,m:month,d:day} = parseDob(profile.dob);
   const timeStr = (profile.tob && profile.tob.length===5) ? profile.tob+":00" : profile.tob;
   const [hour,minute,second] = timeStr.split(":").map(Number);
   const localJD = toJulianDay(year,month,day,hour,minute,second||0);

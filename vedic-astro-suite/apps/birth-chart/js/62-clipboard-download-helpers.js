@@ -35,9 +35,9 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 function formatDateHuman(dob){
-  const [y,m,d] = dob.split('-').map(Number);
+  const {y,m,d} = parseDob(dob);
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  return `${d} ${months[m-1]} ${y}`;
+  return `${d} ${months[m-1]} ${y > 0 ? y : (1 - y) + ' BC'}`;
 }
 
 function downloadActiveChartImage(format, vargaKey, styleName, personName) {

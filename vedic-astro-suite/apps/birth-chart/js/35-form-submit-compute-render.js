@@ -7,7 +7,7 @@ document.getElementById('birthForm').addEventListener('submit', (e)=>{
   errorBanner.classList.remove('show');
 
   const name = document.getElementById('profileName').value.trim();
-  const dob = document.getElementById('dobInput').value;
+  const dob = (window.inDobValue ? inDobValue() : document.getElementById('dobInput').value);
   const tob = document.getElementById('tobInput').value;
   const tz = parseFloat(document.getElementById('tzInput').value);
 

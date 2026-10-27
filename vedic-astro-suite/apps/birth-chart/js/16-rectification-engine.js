@@ -6,7 +6,7 @@
    twenty divisional charts, Shadbala, dashas, etc. for every candidate.
    ============================================================================ */
 function rectifyPoint(dateStr, timeStr, lat, lon, tzOffsetHours){
-  const [year,month,day] = dateStr.split("-").map(Number);
+  const {y:year,m:month,d:day} = parseDob(dateStr);
   const [hour,minute,second] = timeStr.split(":").map(Number);
   const sec = second || 0;
   const localJD = toJulianDay(year,month,day,hour,minute,sec);
@@ -26,12 +26,10 @@ function rectifyPoint(dateStr, timeStr, lat, lon, tzOffsetHours){
 }
 
 function shiftLocalDateTime(dateStr, timeStr, offsetSeconds){
-  const [year,month,day] = dateStr.split("-").map(Number);
+  const {y,m,d} = parseDob(dateStr);
   const [hour,minute,second] = timeStr.split(":").map(Number);
-  const base = new Date(Date.UTC(year, month-1, day, hour, minute, second||0));
-  const t = new Date(base.getTime() + offsetSeconds*1000);
-  const d2 = `${t.getUTCFullYear()}-${String(t.getUTCMonth()+1).padStart(2,'0')}-${String(t.getUTCDate()).padStart(2,'0')}`;
-  const t2 = `${String(t.getUTCHours()).padStart(2,'0')}:${String(t.getUTCMinutes()).padStart(2,'0')}:${String(t.getUTCSeconds()).padStart(2,'0')}`;
-  return { dateStr: d2, timeStr: t2 };
+  const p = jdToParts(toJulianDay(y,m,d,hour,minute,second||0) + offsetSeconds/86400);
+  const p2 = n => String(n).padStart(2,'0');
+  return { dateStr: formatDobStr(p.y, p.m, p.d), timeStr: `${p2(p.h)}:${p2(p.mi)}:${p2(p.s)}` };
 }
 

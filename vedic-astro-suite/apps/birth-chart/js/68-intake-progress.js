@@ -1,7 +1,7 @@
 /* ---- Intake: progress + welcome-back chips ---- */
 function inUpdate(){
   const v = id => (document.getElementById(id).value||'').trim();
-  const d1 = v('profileName').length>0, d2 = !!(v('dobInput') && v('tobInput')), d3 = (typeof selectedLat==='number' && !isNaN(selectedLat));
+  const d1 = v('profileName').length>0, d2 = !!((window.inDobValue ? inDobValue() : v('dobInput')) && v('tobInput')), d3 = (typeof selectedLat==='number' && !isNaN(selectedLat));
   [d1,d2,d3].forEach((d,i)=> document.querySelector(`.in-step[data-step="${i+1}"]`).classList.toggle('done', d));
   const n=[d1,d2,d3].filter(Boolean).length, hints=["First, tell us your name","Now, when were you born?","Last one: where were you born?"];
   document.getElementById('inBarFill').style.width = (n/3*100)+'%';
