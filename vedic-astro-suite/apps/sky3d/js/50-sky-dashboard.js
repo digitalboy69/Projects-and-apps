@@ -30,6 +30,43 @@ const DBX = (function(){
   const chips = a => a.length ? a.map(x => '<span class="dbx-chip">' + x + '</span>').join('') : '<span class="dbx-none">none</span>';
   const kv = (k, v) => '<div class="dbx-kv"><span>' + k + '</span><b>' + v + '</b></div>';
 
+
+  const ECOL = ['#ff9a5c', '#8fd18a', '#7cc7f2', '#8f9cff']; /* fire earth air water */
+  const SECI = { pan: '☾', hi: '✦', pl: '♃', as: '☍', rel: '△', sg: '♈', nk: '✧', hs: '⌂', bal: '◐', out: '♅' };
+  function gauge(deg, col){
+    const r = 15, C = 2 * Math.PI * r, f = Math.max(0, Math.min(1, deg / 30));
+    return '<svg class="dbx-g" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="' + r + '" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="3"/><circle cx="20" cy="20" r="' + r + '" fill="none" stroke="' + col + '" stroke-width="3" stroke-linecap="round" stroke-dasharray="' + (C * f).toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 20 20)"/><text x="20" y="23.5" text-anchor="middle" font-size="9.5" fill="#e8edf7">' + Math.floor(deg) + '°</text></svg>';
+  }
+  function moonSVG(e, size){
+    const w = e > 180, ee = w ? 360 - e : e, k = Math.cos(ee * Math.PI / 180), r = 20, rx = Math.abs(k) * r;
+    const d = 'M20 0A20 20 0 0 1 20 40A' + rx.toFixed(2) + ' 20 0 0 ' + (k > 0 ? 0 : 1) + ' 20 0Z';
+    return '<svg class="dbx-moon" width="' + size + '" height="' + size + '" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#1a2234"/><path d="' + d + '" fill="#f3e6c4"' + (w ? ' transform="translate(40 0) scale(-1 1)"' : '') + '/></svg>';
+  }
+  function wheel(A, c){
+    const cx = 150, cy = 150, R1 = 138, R2 = 108, RP = 90, pt = (r, lon) => { const t = (180 - lon) * Math.PI / 180; return [cx + r * Math.cos(t), cy - r * Math.sin(t)]; };
+    let g = '<svg class="dbx-wheel" viewBox="0 0 300 300" role="img" aria-label="Zodiac wheel"><circle cx="150" cy="150" r="146" fill="none" stroke="rgba(212,162,74,.25)"/>';
+    for (let i = 0; i < 12; i++){
+      const a0 = pt(R1, i * 30), a1 = pt(R1, i * 30 + 30), b1 = pt(R2, i * 30 + 30), b0 = pt(R2, i * 30), m = pt((R1 + R2) / 2, i * 30 + 15);
+      g += '<path d="M' + a0[0].toFixed(1) + ' ' + a0[1].toFixed(1) + 'A' + R1 + ' ' + R1 + ' 0 0 1 ' + a1[0].toFixed(1) + ' ' + a1[1].toFixed(1) + 'L' + b1[0].toFixed(1) + ' ' + b1[1].toFixed(1) + 'A' + R2 + ' ' + R2 + ' 0 0 0 ' + b0[0].toFixed(1) + ' ' + b0[1].toFixed(1) + 'Z" fill="' + ECOL[i % 4] + '" fill-opacity="' + (A.signOcc[i].length ? .34 : .16) + '" stroke="rgba(255,255,255,.12)"/>'
+        + '<text x="' + m[0].toFixed(1) + '" y="' + (m[1] + 4.5).toFixed(1) + '" text-anchor="middle" font-size="14" fill="' + ECOL[i % 4] + '">' + SIGNS[i].symbol + '</text>';
+    }
+    g += '<circle cx="150" cy="150" r="' + (R2 - 2) + '" fill="rgba(8,11,20,.55)" stroke="rgba(255,255,255,.08)"/>';
+    A.mutual.forEach(m => { const a = pt(RP - 14, A.pl[m[0]].l), b = pt(RP - 14, A.pl[m[1]].l); g += '<line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + b[0].toFixed(1) + '" y2="' + b[1].toFixed(1) + '" stroke="#d4a24a" stroke-opacity=".38" stroke-width="1"/>'; });
+    if (c.lagna != null){ const a = pt(R2 - 2, c.lagna), b = pt(R1 + 4, c.lagna); g += '<line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + b[0].toFixed(1) + '" y2="' + b[1].toFixed(1) + '" stroke="#f0d9a8" stroke-width="2.5" stroke-linecap="round"/>'; }
+    const used = {};
+    PLANET_LIST.forEach(n => {
+      const p = A.pl[n], k = (used[p.si] = (used[p.si] || 0) + 1) - 1, q = pt(RP - k * 17, p.l);
+      g += '<g class="dbx-pd"><circle cx="' + q[0].toFixed(1) + '" cy="' + q[1].toFixed(1) + '" r="9" fill="' + PLANET_COLORS[n] + '" fill-opacity=".92" stroke="rgba(0,0,0,.35)"/><text x="' + q[0].toFixed(1) + '" y="' + (q[1] + 3.6).toFixed(1) + '" text-anchor="middle" font-size="10.5" fill="#0b0f19" font-weight="700">' + G(n) + '</text></g>';
+    });
+    return g + '</svg>';
+  }
+  function hero(A, c){
+    const e = nd(c.sid.Moon - c.sid.Sun), pn = A.pan, mk = (k, v) => '<div class="dbx-hk"><small>' + k + '</small><b>' + v + '</b></div>';
+    const sun = A.pl.Sun, moon = A.pl.Moon;
+    return '<section class="dbx-hero"><div class="dbx-hw">' + wheel(A, c) + '</div><div class="dbx-hi"><div class="dbx-mn">' + moonSVG(e, 54) + '<div><b>' + pn.tName + '</b><small>' + pn.paksha + ' · ' + pn.lit + '% lit</small></div></div>'
+      + '<div class="dbx-hks">' + (A.lagnaSign != null ? mk('Lagna', SIGNS[A.lagnaSign].symbol + ' ' + sname(A.lagnaSign)) : '') + mk('Sun', SIGNS[sun.si].symbol + ' ' + sname(sun.si)) + mk('Moon', SIGNS[moon.si].symbol + ' ' + sname(moon.si)) + mk('Moon star', NAKSHATRAS[moon.ni]) + mk('Yoga', pn.yoga) + mk('Day', pn.vara) + '</div></div></section>';
+  }
+
   function ctx(){
     const p = isValidProfile(activeNatalProfile) ? activeNatalProfile : null;
     let lagna = null, label;
@@ -125,7 +162,7 @@ const DBX = (function(){
     if (p.gand) flags.push(pill('Gandanta', 'bad'));
     const dc = { 'Exalted': 'good', 'Own sign': 'good', 'Friendly': 'soft', 'Neutral': '', 'Enemy': 'warn', 'Debilitated': 'bad' }[p.dign];
     const lordAt = (x) => { const q = A.pl[x]; return x + ' (' + sname(q.si) + (q.house ? ', H' + q.house : '') + ')'; };
-    return '<div class="dbx-card" style="--pc:' + col + '"><div class="dbx-ch"><span class="dbx-gl">' + G(n) + '</span><div><b>' + n + '</b><small>' + SIGNS[p.si].symbol + ' ' + sname(p.si) + ' ' + dm(p.l) + '</small></div>' + pill(p.dign, dc) + '</div>'
+    return '<div class="dbx-card" style="--pc:' + col + ';--ec:' + ECOL[p.si % 4] + '"><div class="dbx-ch"><span class="dbx-gl">' + G(n) + '</span><div><b>' + n + '</b><small>' + SIGNS[p.si].symbol + ' ' + sname(p.si) + ' ' + dm(p.l) + '</small></div>' + gauge(p.l % 30, ECOL[p.si % 4]) + '</div><div class="dbx-flags">' + pill(p.dign, dc) + '</div>'
       + '<div class="dbx-flags">' + flags.join('') + '</div>'
       + kv('Nakshatra', NAKSHATRAS[p.ni] + ' · pada ' + p.pada) + kv('Star lord', lordAt(p.nl)) + kv('Sign lord', p.sl === n ? 'itself (own sign)' : lordAt(p.sl))
       + (p.house ? kv('House', ord(p.house)) : '') + kv('From Moon', ord(p.fromMoon) + ' house') + kv('Navamsha', sname(p.nav))
@@ -152,7 +189,7 @@ const DBX = (function(){
   function build(){
     const c = ctx(), A = analyse(c), T = [];
     const Hs = [];
-    const sec = (id, title, body) => '<section class="dbx-sec" id="dbx-' + id + '"><h3>' + title + '</h3>' + body + '</section>';
+    const sec = (id, title, body) => '<section class="dbx-sec" id="dbx-' + id + '"><h3><i>' + (SECI[id] || '✦') + '</i>' + title + '</h3>' + body + '</section>';
     const pn = A.pan;
     let html = '';
     T.push('SKY DASHBOARD · ' + c.label, 'Ayanamsa (Lahiri): ' + c.ayan.toFixed(4) + '°');
@@ -193,7 +230,7 @@ const DBX = (function(){
     T.push('', 'DISPOSITOR CHAINS'); PLANET_LIST.forEach(n => T.push(n + ': ' + A.chain[n].path.join(' > ') + ' · ' + A.chain[n].end));
     T.push('', 'HOUSE DISTANCE (from row planet to column planet)'); PLANET_LIST.forEach(r => T.push(r + ': ' + PLANET_LIST.filter(x => x !== r).map(x => x + ' ' + hs(A.pl[r].si, A.pl[x].si)).join(', ')));
     // signs
-    html += sec('sg', 'Signs', '<div class="dbx-signs">' + SIGNS.map((s, i) => '<div class="dbx-sign' + (A.signOcc[i].length ? ' occ' : '') + '"><b>' + s.symbol + ' ' + s.name + '</b><small>' + ELEM[i % 4] + ' · ' + MODE[i % 3] + (A.lagnaSign != null ? ' · H' + hs(A.lagnaSign, i) : '') + '</small><div>' + (A.signOcc[i].length ? A.signOcc[i].map(n => '<span class="dbx-chip">' + nm(n) + '</span>').join('') : '<span class="dbx-none">empty</span>') + '</div><small>Lord ' + s.lord + ' in ' + sname(A.pl[s.lord].si) + '</small></div>').join('') + '</div>');
+    html += sec('sg', 'Signs', '<div class="dbx-signs">' + SIGNS.map((s, i) => '<div class="dbx-sign' + (A.signOcc[i].length ? ' occ' : '') + '" style="--ec:' + ECOL[i % 4] + '"><b>' + s.symbol + ' ' + s.name + '</b><small>' + ELEM[i % 4] + ' · ' + MODE[i % 3] + (A.lagnaSign != null ? ' · H' + hs(A.lagnaSign, i) : '') + '</small><div>' + (A.signOcc[i].length ? A.signOcc[i].map(n => '<span class="dbx-chip">' + nm(n) + '</span>').join('') : '<span class="dbx-none">empty</span>') + '</div><small>Lord ' + s.lord + ' in ' + sname(A.pl[s.lord].si) + '</small></div>').join('') + '</div>');
     T.push('', 'SIGNS'); SIGNS.forEach((s, i) => A.signOcc[i].length && T.push(s.name + ': ' + A.signOcc[i].join(', ') + ' (lord ' + s.lord + ' in ' + sname(A.pl[s.lord].si) + ')'));
     // nakshatras
     const nks = Object.keys(A.nakOcc).map(Number).sort((a, b) => a - b);
@@ -216,16 +253,22 @@ const DBX = (function(){
     html += sec('out', 'Outer planets (shown for reference, not part of the 9 grahas)', '<div class="dbx-outer">' + OUTER_LIST.map(n => { const l = c.sid[n], si = sg(l); return '<div class="dbx-card slim"><b>' + n + '</b>' + kv('Sign', sname(si) + ' ' + dm(l)) + kv('Nakshatra', NAKSHATRAS[getNakshatraIndex(l)] + ' ' + (getPadaIndex(l) + 1)) + (A.lagnaSign != null ? kv('House', ord(hs(A.lagnaSign, si))) : '') + kv('Motion', c.retro[n] ? 'Retrograde' : 'Direct') + '</div>'; }).join('') + '</div>');
     T.push('', 'OUTER: ' + OUTER_LIST.map(n => n + ' ' + sname(sg(c.sid[n])) + ' ' + dm(c.sid[n]) + (c.retro[n] ? ' R' : '')).join(' · '));
     lastText = T.join('\n');
-    return { c, html };
+    return { c, html: hero(A, c) + html };
   }
 
+
+  let io = null;
+  function spy(){
+    try { if (io) io.disconnect(); io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ const id = e.target.id.slice(4); el('dbxNav').querySelectorAll('button').forEach(b => { const on = b.dataset.s === id; b.classList.toggle('on', on); if (on) b.scrollIntoView({ inline: 'center', block: 'nearest' }); }); } }), { root: el('dbxBody'), rootMargin: '-10% 0px -80% 0px' });
+      el('dbxBody').querySelectorAll('.dbx-sec').forEach(x => io.observe(x)); } catch (e) {}
+  }
   const NAV = [['pan', 'Panchang'], ['hi', 'Highlights'], ['pl', 'Planets'], ['as', 'Aspects'], ['rel', 'Trines'], ['sg', 'Signs'], ['nk', 'Nakshatras'], ['hs', 'Houses'], ['bal', 'Balance'], ['out', 'Outer']];
   function render(){
     const b = build(), p = isValidProfile(activeNatalProfile);
     el('dbxLabel').textContent = b.c.label;
     el('dbxMode').style.display = p ? '' : 'none';
     el('dbxMode').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.m === mode));
-    el('dbxBody').innerHTML = b.html;
+    el('dbxBody').innerHTML = b.html; spy();
   }
   function show(){
     if (!el('dbxRoot')){

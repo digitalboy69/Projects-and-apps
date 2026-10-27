@@ -25,7 +25,7 @@ with sync_playwright() as p:
     ok('no undefined/NaN in text', not f.evaluate("()=>/undefined|NaN/.test(document.getElementById('dbxBody').innerText)"))
     # fixed date: 15 Aug 1947 00:00 IST check Moon/Sun via same engine as the dashboard summary
     t = f.evaluate("()=>DBX.text()"); ok('summary text', 'PLANETS' in t and 'PANCHANG' in t and len(t) > 1500, len(t))
-    if SP: pg.screenshot(path=SP + '/dbx_top.png'); f.evaluate("()=>document.getElementById('dbxBody').scrollTo(0,1400)"); pg.screenshot(path=SP + '/dbx_mid.png'); f.evaluate("()=>document.getElementById('dbx-rel').scrollIntoView()"); pg.screenshot(path=SP + '/dbx_rel.png')
+    if SP: pg.screenshot(path=SP + '/dbx_top.png'); f.evaluate("()=>document.getElementById('dbxBody').scrollTo({top:document.getElementById('dbx-pl').offsetTop,behavior:'instant'})"); pg.screenshot(path=SP + '/dbx_mid.png'); f.evaluate("()=>document.getElementById('dbx-rel').scrollIntoView({behavior:'instant'})"); pg.screenshot(path=SP + '/dbx_rel.png')
     f.evaluate("()=>document.getElementById('dbxClose').click()"); f.wait_for_timeout(300)
     ok('closes', not f.evaluate("()=>document.getElementById('dbxRoot').classList.contains('show')"))
     ok('no page errors', not errs, errs)

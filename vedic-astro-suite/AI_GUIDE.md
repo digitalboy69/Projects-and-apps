@@ -178,7 +178,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-27 - 1591 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-27 - 1596 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -376,7 +376,7 @@ js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 77 files, 7195 lines, 422 KB
+**sky3d** - 77 files, 7275 lines, 431 KB
 ```
 index.html                                         466 lines   28 KB
 js/01-astro-engine.js                              157 lines    9 KB
@@ -428,7 +428,7 @@ js/46-dasha-transit-engine.js                      319 lines   21 KB
 js/47-dasha-transit-ui.js                          145 lines   10 KB
 js/48-profile-bridge.js                             48 lines    2 KB
 js/49-time-machine.js                              189 lines   15 KB
-js/50-sky-dashboard.js                             249 lines   20 KB
+js/50-sky-dashboard.js                             292 lines   26 KB
 js/51-jump-from-rectification.js                    33 lines    2 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
@@ -453,7 +453,7 @@ css/20-hud-ascendant-rising.css                     56 lines    4 KB
 css/21-premium-polish.css                           32 lines    3 KB
 css/22-dasha-transit-triggers.css                   31 lines    3 KB
 css/23-time-machine-polish.css                     126 lines   12 KB
-css/24-sky-dashboard.css                            55 lines    5 KB
+css/24-sky-dashboard.css                            92 lines    8 KB
 css/25-date-entry.css                                8 lines    0 KB
 ```
 
@@ -507,3 +507,4 @@ shared/quick-menu.js                               157 lines   12 KB
 - Session 9 (cont.): PDF is now a one-click book (`PDFR.generate`, no settings). Core + design in js/93, extra sections in js/98 via `PDFR.reg`. A new section = a builder + `PDFR.reg` + an entry in PARTS (js/93). Beware: never give a CSS class the same name as a status value used on rows (e.g. 'ahead'); keep tables narrower than the page or Chrome shrinks the whole book.
 - Session 9 (fix): PDF printed twice (a blank print window first). An iframe fires 'load' for its empty about:blank before srcdoc; `generate()` now sets srcdoc first and prints only when `.cover` is in the frame, once. Test: print count must equal ['book'].
 - Session 10: S12 done: PDF brand (`brand()` in js/93 reads window.__VAX_BRAND), disclaimers, budgets in pdf_report_test, docs/RELEASE_CHECKLIST.md. Plan complete.
+- Sky Dashboard v2: zodiac-wheel hero + Moon phase, element colours, degree rings, scroll-spy nav, soft one-time fade-in (js/50, css/24).

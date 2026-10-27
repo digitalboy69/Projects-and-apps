@@ -52,3 +52,40 @@ body.dbx-open .viewport-actions,body.dbx-open .viewport-hud{visibility:hidden}
 .dbx-sign.occ{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.14)}
 .dbx-sign b{display:block}.dbx-sign small{display:block;color:#7e8aa2;margin:2px 0 4px}
 @media(max-width:560px){.dbx-hl,.dbx-ar{grid-template-columns:1fr;gap:3px}.dbx-seg button{padding:6px 8px}.dbx-top{flex-wrap:wrap}.dbx-t{flex-basis:60%}}
+
+/* ---- v2: livelier but still calm. Motion = one soft fade/rise when the page opens (transform+opacity only). ---- */
+.dbx{background:radial-gradient(80% 40% at 50% -5%,rgba(212,162,74,.13),transparent 70%),radial-gradient(60% 40% at 100% 30%,rgba(110,130,255,.09),transparent 70%),#070a12}
+.dbx-top{background:rgba(9,12,20,.92)}
+.dbx-body{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
+.dbx-nav button{transition:background .2s,color .2s,border-color .2s}
+.dbx-nav button.on{background:linear-gradient(135deg,rgba(212,162,74,.28),rgba(212,162,74,.12));border-color:rgba(212,162,74,.55);color:#f6e2b3}
+.dbx-hero{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:18px;align-items:center;padding:16px 0 10px;border-bottom:1px solid rgba(255,255,255,.06)}
+.dbx-hw{display:flex;justify-content:center}
+.dbx-wheel{width:100%;max-width:330px;height:auto;filter:drop-shadow(0 10px 30px rgba(212,162,74,.12))}
+.dbx-mn{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.dbx-mn b{display:block;font-size:17px;color:#f6e2b3}.dbx-mn small{color:#9aa6bd}
+.dbx-moon{border-radius:50%;box-shadow:0 0 22px rgba(243,230,196,.18)}
+.dbx-hks{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+.dbx-hk{padding:9px 11px;border-radius:12px;background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.09)}
+.dbx-hk small{display:block;color:#7f8ba3;font-size:11px;letter-spacing:.06em;text-transform:uppercase}.dbx-hk b{font-weight:600;font-size:14px}
+.dbx-sec h3{display:flex;align-items:center;gap:9px;font-size:12.5px}
+.dbx-sec h3 i{font-style:normal;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:9px;background:linear-gradient(135deg,rgba(212,162,74,.3),rgba(212,162,74,.08));border:1px solid rgba(212,162,74,.35);color:#f0d9a8;font-size:14px}
+.dbx-sec{content-visibility:auto;contain-intrinsic-size:auto 420px}
+.dbx-card{position:relative;overflow:hidden;background:linear-gradient(165deg,rgba(255,255,255,.065),rgba(255,255,255,.02) 55%);border:1px solid rgba(255,255,255,.1);border-top:0;contain:layout paint}
+.dbx-card::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--pc,#4a5e82),var(--ec,#4a5e82))}
+.dbx-card::after{content:"";position:absolute;right:-40px;top:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,var(--pc,#4a5e82),transparent 70%);opacity:.16;pointer-events:none}
+.dbx-ch{margin-top:2px}.dbx-gl{font-size:26px;text-shadow:0 0 18px var(--pc)}
+.dbx-g{width:42px;height:42px;flex:none}
+.dbx-sign{background:linear-gradient(165deg,rgba(255,255,255,.04),rgba(255,255,255,.015));border-left:3px solid color-mix(in srgb,var(--ec) 45%,transparent)}
+.dbx-sign.occ{border-left-color:var(--ec);background:linear-gradient(165deg,color-mix(in srgb,var(--ec) 14%,transparent),rgba(255,255,255,.03))}
+.dbx-sign b{color:var(--ec)}
+.dbx-chip{background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.035))}
+.dbx-hl{transition:background .2s}
+.dbx-mx td{transition:background .15s}
+@keyframes dbxr{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.dbx.show .dbx-hero,.dbx.show .dbx-card,.dbx.show .dbx-sec>h3{animation:dbxr .5s cubic-bezier(.2,.7,.2,1) both}
+.dbx.show .dbx-card:nth-child(2){animation-delay:.04s}.dbx.show .dbx-card:nth-child(3){animation-delay:.08s}.dbx.show .dbx-card:nth-child(4){animation-delay:.12s}.dbx.show .dbx-card:nth-child(5){animation-delay:.16s}.dbx.show .dbx-card:nth-child(n+6){animation-delay:.2s}
+.dbx.show .dbx-pd{animation:dbxp .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes dbxp{from{opacity:0}to{opacity:1}}
+@media(max-width:700px){.dbx-hero{grid-template-columns:1fr;gap:10px}.dbx-wheel{max-width:300px}}
+@media(prefers-reduced-motion:reduce){.dbx *{animation:none!important;scroll-behavior:auto!important}}
