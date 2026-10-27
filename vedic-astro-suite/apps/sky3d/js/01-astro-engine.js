@@ -20,20 +20,29 @@ function toJulianDay(year,month,day,hour,minute,second){
   const dayFrac = day + (hour+minute/60+second/3600)/24;
   return Math.floor(365.25*(Y+4716)) + Math.floor(30.6001*(M+1)) + dayFrac + B - 1524.5;
 }
+// Calendar-exact JD -> parts (Julian calendar before 15 Oct 1582, Gregorian after); works for every year, BC included.
+function jdToParts(jd){
+  const secs = Math.round((jd + 0.5) * 86400), Z = Math.floor(secs / 86400), rem = secs - Z * 86400;
+  let A = Z; if (Z >= 2299161){ const alpha = Math.floor((Z - 1867216.25) / 36524.25); A = Z + 1 + alpha - Math.floor(alpha / 4); }
+  const B = A + 1524, C = Math.floor((B - 122.1) / 365.25), D = Math.floor(365.25 * C), E = Math.floor((B - D) / 30.6001);
+  const day = B - D - Math.floor(30.6001 * E), month = E < 14 ? E - 1 : E - 13, year = month > 2 ? C - 4716 : C - 4715;
+  return { y: year, m: month, d: day, h: Math.floor(rem / 3600), mi: Math.floor((rem % 3600) / 60), s: rem % 60 };
+}
+// Year as people say it: astronomical year 0 = 1 BC, -499 = 500 BC.
+function yearLabel(y){ return y <= 0 ? (1 - y) + ' BC' : String(y); }
+// Minutes the browser's clock is ahead of UT. Old dates use today's offset (old zones were local sun time), 1900-2100 use the real one.
+function localOffsetMin(jd){
+  const c = Math.max(2415020, Math.min(2488070, jd));
+  return -new Date((c - 2440587.5) * 86400000).getTimezoneOffset();
+}
+// jdToDate(jd): local date/time of a JD. Returns a Date-like object (getFullYear/getMonth/getDate/getHours/getMinutes/getDay/getTime)
+// that is right for every year, BC and Julian-calendar dates included (a real JS Date cannot do either).
 function jdToDate(jd){
-  jd += 0.5;
-  const Z = Math.floor(jd), F = jd-Z;
-  let A = Z;
-  if (Z>=2299161){ const alpha=Math.floor((Z-1867216.25)/36524.25); A=Z+1+alpha-Math.floor(alpha/4); }
-  const B=A+1524, C=Math.floor((B-122.1)/365.25), D=Math.floor(365.25*C), E=Math.floor((B-D)/30.6001);
-  const day = B-D-Math.floor(30.6001*E)+F;
-  const month = E<14 ? E-1 : E-13;
-  const year = month>2 ? C-4716 : C-4715;
-  const dayInt = Math.floor(day);
-  const hourFrac = (day-dayInt)*24;
-  const hour = Math.floor(hourFrac);
-  const min = Math.round((hourFrac-hour)*60);
-  return new Date(Date.UTC(year, month-1, dayInt, hour, min>=60?0:min));
+  const off = localOffsetMin(jd), lj = jd + off / 1440, p = jdToParts(lj);
+  const wd = ((Math.floor(lj + 0.5) + 1) % 7 + 7) % 7;
+  return { getFullYear: () => p.y, getMonth: () => p.m - 1, getDate: () => p.d, getHours: () => p.h, getMinutes: () => p.mi, getSeconds: () => p.s, getDay: () => wd,
+    getUTCFullYear: () => jdToParts(jd).y, getUTCMonth: () => jdToParts(jd).m - 1, getUTCDate: () => jdToParts(jd).d,
+    getUTCHours: () => jdToParts(jd).h, getUTCMinutes: () => jdToParts(jd).mi, getTime: () => Math.round((jd - 2440587.5) * 86400000), jd };
 }
 
 function lahiriAyanamsa(jd){

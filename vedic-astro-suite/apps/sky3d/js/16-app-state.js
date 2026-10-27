@@ -20,7 +20,7 @@ const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov
 function formatHudDate(jd){
   const d = jdToDate(jd);
   // Replaced UTC getters with local browser timezone getters
-  return `${String(d.getDate()).padStart(2,'0')} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+  return `${String(d.getDate()).padStart(2,'0')} ${MONTHS[d.getMonth()]} ${yearLabel(d.getFullYear())}`;
 }
 function formatHudTime(jd){
   const d = jdToDate(jd);
@@ -28,6 +28,6 @@ function formatHudTime(jd){
 }
 function formatFullDate(jd){
   const d = jdToDate(jd);
-  return `${String(d.getDate()).padStart(2,'0')} ${MONTHS[d.getMonth()]} ${d.getFullYear()}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  return `${String(d.getDate()).padStart(2,'0')} ${MONTHS[d.getMonth()]} ${yearLabel(d.getFullYear())}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
 

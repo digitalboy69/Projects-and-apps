@@ -4,3 +4,4 @@
 .dob-note{font-size:11px;line-height:1.4;opacity:.8;margin-top:4px}
 .dob-note:empty{display:none}
 .dob-note.bad{color:#ff8a80;opacity:1}
+.tm-wide{display:block;margin:6px auto 0;background:none;border:1px solid rgba(255,255,255,.15);color:inherit;border-radius:10px;padding:6px 12px;font-size:12px;opacity:.85}
