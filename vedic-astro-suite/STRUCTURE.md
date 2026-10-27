@@ -307,6 +307,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/css/22-dasha-transit-triggers.css` — Triggers tab (dasha + transit) styles
 - `apps/sky3d/css/23-time-machine-polish.css` — Time Machine styles + 3D Sky visual polish (top bar, tabs, timeline dock, buttons)
 - `apps/sky3d/css/24-sky-dashboard.css` — Sky Dashboard page styles
+- `apps/sky3d/css/25-date-entry.css` — Day/Month/Year + AD/BC birth date fields
 
 ### apps/notepad/ — Notepad
 - `apps/notepad/index.html` — markup of this app; lists its css/js in load order
@@ -393,6 +394,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/pdf_download_test.py` — PDF download: a real multi-page A4 .pdf file is saved directly, no print window, page plan cuts only at block ends
 - `tests/problem_finder_test.py` — Problem finder: every fact in every reason vs the chart over 12 charts x all areas x all problems, wording, click-through, Home tile
 - `tests/date_entry_test.py` — Julian Day and calendar maths, parseDob, deltaT, typed old/BC dates through the form and every tab
+- `tests/sky3d_date_test.py` — 3D app BC/Julian date maths and Day/Month/Year checks (node, no browser)
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/life_narratives_test.py` — Life-area narratives: 12 charts x 9 areas (length, structure, wording, consistency with scores), variation, sensitivity, Deep reading + report + PDF wiring
 - `tests/varga_reading_test.py` — Divisional chart readings: 12 charts x 6 vargas cross-checked with the app's own varga data and VDB's D9 vargottama, variation, one-fact sensitivity, Deep reading + report + PDF wiring

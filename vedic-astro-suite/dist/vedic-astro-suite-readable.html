@@ -1984,6 +1984,14 @@ body.dbx-open .viewport-actions,body.dbx-open .viewport-hud{visibility:hidden}
 @media(max-width:560px){.dbx-hl,.dbx-ar{grid-template-columns:1fr;gap:3px}.dbx-seg button{padding:6px 8px}.dbx-top{flex-wrap:wrap}.dbx-t{flex-basis:60%}}
 </style>
 <style>
+/* Day / Month / Year + AD/BC birth date fields (js/37) */
+.dob-row{display:grid;grid-template-columns:1fr 1.3fr 1.5fr .9fr;gap:6px}
+.dob-row input,.dob-row select{min-width:0;width:100%}
+.dob-note{font-size:11px;line-height:1.4;opacity:.8;margin-top:4px}
+.dob-note:empty{display:none}
+.dob-note.bad{color:#ff8a80;opacity:1}
+</style>
+<style>
 /* ============================================================================
    META LAYER  ·  shared/meta.css
    One file for the "feel" of every screen: smooth motion, gentle touch feedback,
@@ -2461,7 +2469,14 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
           </div>
           <div class="mini-field">
             <label for="natalDob">Date of Birth</label>
-            <input type="date" id="natalDob">
+            <input type="hidden" id="natalDob">
+            <div class="dob-row">
+              <input type="number" id="ndDay" min="1" max="31" inputmode="numeric" placeholder="Day" aria-label="Day">
+              <select id="ndMon" aria-label="Month"><option value="">Month</option><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select>
+              <input type="number" id="ndYear" min="1" max="9999" inputmode="numeric" placeholder="Year" aria-label="Year">
+              <select id="ndEra" aria-label="Era"><option value="AD">AD</option><option value="BC">BC</option></select>
+            </div>
+            <div class="dob-note" id="ndNote" aria-live="polite"></div>
           </div>
           <div class="mini-field">
             <label for="natalTob">Time of Birth</label>
@@ -2691,11 +2706,16 @@ const DEG = Math.PI/180, RAD = 180/Math.PI, J2000 = 2451545.0;
 function normDeg(d){ d = d%360; return d<0 ? d+360 : d; }
 function angDiff(a,b){ let d = normDeg(a-b); if (d>180) d -= 360; return d; }
 
+// Birth-date strings: "YYYY-MM-DD" or "-000499-03-14" for years before 1 AD (astronomical numbering: 1 BC = year 0). Never split('-').
+function parseDob(s){ const m = /^([+-]?\d{4,6})-(\d{2})-(\d{2})/.exec(String(s||'')); return m ? [parseInt(m[1],10), +m[2], +m[3]] : [NaN,NaN,NaN]; }
+function formatDobStr(y,m,d){ const p=(n,w)=>String(n).padStart(w,'0'); return (y<0 ? '-'+p(-y,6) : p(y,4))+'-'+p(m,2)+'-'+p(d,2); }
+function dobHuman(s){ const [y,m,d]=parseDob(s); if(!isFinite(y)) return String(s||''); const M=['January','February','March','April','May','June','July','August','September','October','November','December']; return d+' '+M[m-1]+' '+(y<=0 ? (1-y)+' BC' : y); }
 function toJulianDay(year,month,day,hour,minute,second){
   let Y=year, M=month;
   if (M<=2){ Y-=1; M+=12; }
+  const greg = year>1582 || (year===1582 && (month>10 || (month===10 && day>=15)));   // Julian calendar before 15 Oct 1582
   const A = Math.floor(Y/100);
-  const B = 2-A+Math.floor(A/4);
+  const B = greg ? 2-A+Math.floor(A/4) : 0;
   const dayFrac = day + (hour+minute/60+second/3600)/24;
   return Math.floor(365.25*(Y+4716)) + Math.floor(30.6001*(M+1)) + dayFrac + B - 1524.5;
 }
@@ -3003,7 +3023,7 @@ function exploreSignAspects(sidereal, signIdx){
   return { signIdx, aspectedBy, occupants, occupantsThrow };
 }
 function computeNatalAscendant(profile){
-  const natalJD = toJulianDay(...profile.dob.split('-').map(Number), ...profile.tob.split(':').map(Number), 0) - profile.tz/24;
+  const natalJD = toJulianDay(...parseDob(profile.dob), ...profile.tob.split(':').map(Number), 0) - profile.tz/24;
   return { jd: natalJD, lagnaLon: siderealAscendant(natalJD, profile.lat, profile.lon) };
 }
 <\/script>
@@ -4996,7 +5016,7 @@ function renderNatalTab(){
     return;
   }
   const p = activeNatalProfile;
-  const natalJD = toJulianDay(...p.dob.split('-').map(Number), ...p.tob.split(':').map(Number), 0) - p.tz/24;
+  const natalJD = toJulianDay(...parseDob(p.dob), ...p.tob.split(':').map(Number), 0) - p.tz/24;
   const natalSnap = snapshotPositions(natalJD);
   let planetsHtml = "";
   PLANET_LIST.forEach(name=>{
@@ -5008,7 +5028,7 @@ function renderNatalTab(){
   });
   wrap.innerHTML = `<div class="natal-card">
     <div class="natal-name">${escapeHtml(p.name)}</div>
-    <div class="natal-meta">${p.dob} · ${p.tob} · ${p.place ? p.place.split(',')[0] : ''}</div>
+    <div class="natal-meta">${dobHuman(p.dob)} · ${p.tob} · ${p.place ? p.place.split(',')[0] : ''}</div>
   </div>
   <div class="panel-heading">Natal Positions</div>
   ${planetsHtml}`;
@@ -6342,6 +6362,34 @@ try{ if (window.parent && window.parent!==window && window.parent.LocPicker) win
   [...document.getElementById('natalTz').options].forEach(o=>{ o.selected = (parseFloat(o.value)===closest); });
 }, {title:'Place of birth', get:()=> natalSelectedLat!=null ? {lat:natalSelectedLat, lon:natalSelectedLon} : null}); }catch(e){}
 
+/* Date of birth: Day / Month / Year + AD/BC (years 4713 BC to 9999 AD; Julian calendar before 15 Oct 1582; 1 BC = year 0 inside).
+   Writes the date string into the hidden #natalDob; window.ndCheck is shared with tests. */
+(function(){
+  const $=id=>document.getElementById(id), MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const greg=(y,m,d)=>y>1582||(y===1582&&(m>10||(m===10&&d>=15)));
+  const dim=(y,m)=>{ const lj=((y%4)+4)%4===0, lg=(y%4===0&&y%100!==0)||y%400===0, leap=(y>1582||(y===1582&&m>=10))?lg:lj; return [31,leap?29:28,31,30,31,30,31,31,30,31,30,31][m-1]; };
+  window.ndCheck=function(d,m,yN,era){
+    if(!(d>=1&&m>=1&&yN>=1)) return {ok:false,empty:true};
+    const y=era==='BC'?1-yN:yN;
+    if(era==='BC'&&yN>4713) return {ok:false,msg:'The calculations start at 4713 BC.'};
+    if(yN>9999) return {ok:false,msg:'The latest year is 9999.'};
+    if(y===1582&&m===10&&d>=5&&d<=14) return {ok:false,msg:'These days do not exist: the calendar jumped from 4 to 15 October 1582.'};
+    if(d>dim(y,m)) return {ok:false,msg:MN[m-1]+' '+(era==='BC'?yN+' BC':yN)+' has only '+dim(y,m)+' days'+(greg(y,m,d)?'':' (old Julian calendar)')+'.'};
+    return {ok:true,y,str:formatDobStr(y,m,d),julian:!greg(y,m,d)};
+  };
+  function refresh(){
+    const c=ndCheck(+$('ndDay').value,+$('ndMon').value,+$('ndYear').value,$('ndEra').value), n=$('ndNote'), L=[];
+    $('natalDob').value=c.ok?c.str:'';
+    if(c.ok){
+      if(c.julian) L.push('📜 Read in the Julian calendar, the one used then.');
+      if(c.y<1000||c.y>3000) L.push('⚠️ Approximate: the planet maths is built for modern dates.');
+      if(c.y<1900) L.push('🕰️ Before about 1900 use local sun time for the timezone.');
+    } else if(c.msg) L.push(c.msg);
+    n.textContent=L.join(' '); n.classList.toggle('bad',!c.ok&&!!c.msg);
+  }
+  ['ndDay','ndMon','ndYear','ndEra'].forEach(i=>{ $(i).addEventListener('input',refresh); $(i).addEventListener('change',refresh); });
+  window.ndSet=function(dob){ const [y,m,d]=parseDob(dob); if(!isFinite(y)) return; $('ndDay').value=d; $('ndMon').value=m; $('ndEra').value=y<=0?'BC':'AD'; $('ndYear').value=y<=0?1-y:y; refresh(); };
+})();
 document.getElementById('natalForm').addEventListener('submit', (e)=>{
   e.preventDefault();
   const name = document.getElementById('natalName').value.trim();
@@ -6349,7 +6397,7 @@ document.getElementById('natalForm').addEventListener('submit', (e)=>{
   const tob = document.getElementById('natalTob').value;
   const tz = parseFloat(document.getElementById('natalTz').value);
   if (!name || !dob || !tob || natalSelectedLat===null){
-    alert("Please fill all fields and select a place from the location suggestions.");
+    alert(document.getElementById('ndNote').classList.contains('bad') ? document.getElementById('ndNote').textContent : "Please fill all fields and select a place from the location suggestions.");
     return;
   }
   const profile = { name, dob, tob, tz, lat:natalSelectedLat, lon:natalSelectedLon, place:natalPlaceInput.value, savedAt:Date.now() };
@@ -6946,7 +6994,7 @@ async function renderReturns(){
     $('retGoNatal').addEventListener('click', () => document.querySelector('[data-tab="natal"]').click());
     return;
   }
-  const [Y,M,D] = prof.dob.split('-').map(Number), [hh,mm] = prof.tob.split(':').map(Number);
+  const [Y,M,D] = parseDob(prof.dob), [hh,mm] = prof.tob.split(':').map(Number);
   const natalJD = toJulianDay(Y,M,D,hh,mm||0,0) - prof.tz/24, now = currentJD;
   const key = `${prof.name}|${prof.dob}|${prof.tob}|${prof.tz}|${Math.floor(now)}`;
   note.textContent = `${prof.name} · born ${fmtDate(natalJD)} · sidereal (Lahiri) · times in your device timezone`;
@@ -7692,7 +7740,7 @@ document.querySelector('[data-tab="triggers"]').addEventListener('click', ()=> s
     $('tmNow').addEventListener('click', () => go(new Date()));
     $('tmY0').addEventListener('click', () => { const c = cur(); go(mk(c.getFullYear(), 0, 1, 0, 0)); });
     $('tmMid').addEventListener('click', () => { const c = cur(); go(mk(c.getFullYear(), c.getMonth(), c.getDate(), 0, 0)); });
-    $('tmBirth').addEventListener('click', () => { const p = activeNatalProfile; if (!p) return; const [y,m,d] = p.dob.split('-').map(Number), [h,mi] = p.tob.split(':').map(Number); jumpToJD(toJulianDay(y,m,d,h,mi,0) - p.tz/24); paint(); });
+    $('tmBirth').addEventListener('click', () => { const p = activeNatalProfile; if (!p) return; const [y,m,d] = parseDob(p.dob), [h,mi] = p.tob.split(':').map(Number); jumpToJD(toJulianDay(y,m,d,h,mi,0) - p.tz/24); paint(); });
     // hold-to-repeat steppers
     ov.querySelectorAll('.tm-st').forEach(box => {
       let t1, t2;

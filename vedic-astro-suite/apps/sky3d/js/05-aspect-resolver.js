@@ -51,7 +51,7 @@ function exploreSignAspects(sidereal, signIdx){
   return { signIdx, aspectedBy, occupants, occupantsThrow };
 }
 function computeNatalAscendant(profile){
-  const natalJD = toJulianDay(...profile.dob.split('-').map(Number), ...profile.tob.split(':').map(Number), 0) - profile.tz/24;
+  const natalJD = toJulianDay(...parseDob(profile.dob), ...profile.tob.split(':').map(Number), 0) - profile.tz/24;
   return { jd: natalJD, lagnaLon: siderealAscendant(natalJD, profile.lat, profile.lon) };
 }
 

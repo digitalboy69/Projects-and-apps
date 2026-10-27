@@ -182,7 +182,7 @@ async function renderReturns(){
     $('retGoNatal').addEventListener('click', () => document.querySelector('[data-tab="natal"]').click());
     return;
   }
-  const [Y,M,D] = prof.dob.split('-').map(Number), [hh,mm] = prof.tob.split(':').map(Number);
+  const [Y,M,D] = parseDob(prof.dob), [hh,mm] = prof.tob.split(':').map(Number);
   const natalJD = toJulianDay(Y,M,D,hh,mm||0,0) - prof.tz/24, now = currentJD;
   const key = `${prof.name}|${prof.dob}|${prof.tob}|${prof.tz}|${Math.floor(now)}`;
   note.textContent = `${prof.name} · born ${fmtDate(natalJD)} · sidereal (Lahiri) · times in your device timezone`;

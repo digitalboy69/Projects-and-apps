@@ -1,0 +1,6 @@
+/* Day / Month / Year + AD/BC birth date fields (js/37) */
+.dob-row{display:grid;grid-template-columns:1fr 1.3fr 1.5fr .9fr;gap:6px}
+.dob-row input,.dob-row select{min-width:0;width:100%}
+.dob-note{font-size:11px;line-height:1.4;opacity:.8;margin-top:4px}
+.dob-note:empty{display:none}
+.dob-note.bad{color:#ff8a80;opacity:1}

@@ -99,7 +99,7 @@
     $('tmNow').addEventListener('click', () => go(new Date()));
     $('tmY0').addEventListener('click', () => { const c = cur(); go(mk(c.getFullYear(), 0, 1, 0, 0)); });
     $('tmMid').addEventListener('click', () => { const c = cur(); go(mk(c.getFullYear(), c.getMonth(), c.getDate(), 0, 0)); });
-    $('tmBirth').addEventListener('click', () => { const p = activeNatalProfile; if (!p) return; const [y,m,d] = p.dob.split('-').map(Number), [h,mi] = p.tob.split(':').map(Number); jumpToJD(toJulianDay(y,m,d,h,mi,0) - p.tz/24); paint(); });
+    $('tmBirth').addEventListener('click', () => { const p = activeNatalProfile; if (!p) return; const [y,m,d] = parseDob(p.dob), [h,mi] = p.tob.split(':').map(Number); jumpToJD(toJulianDay(y,m,d,h,mi,0) - p.tz/24); paint(); });
     // hold-to-repeat steppers
     ov.querySelectorAll('.tm-st').forEach(box => {
       let t1, t2;

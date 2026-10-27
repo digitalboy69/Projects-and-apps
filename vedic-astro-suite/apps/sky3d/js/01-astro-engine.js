@@ -7,11 +7,16 @@ const DEG = Math.PI/180, RAD = 180/Math.PI, J2000 = 2451545.0;
 function normDeg(d){ d = d%360; return d<0 ? d+360 : d; }
 function angDiff(a,b){ let d = normDeg(a-b); if (d>180) d -= 360; return d; }
 
+// Birth-date strings: "YYYY-MM-DD" or "-000499-03-14" for years before 1 AD (astronomical numbering: 1 BC = year 0). Never split('-').
+function parseDob(s){ const m = /^([+-]?\d{4,6})-(\d{2})-(\d{2})/.exec(String(s||'')); return m ? [parseInt(m[1],10), +m[2], +m[3]] : [NaN,NaN,NaN]; }
+function formatDobStr(y,m,d){ const p=(n,w)=>String(n).padStart(w,'0'); return (y<0 ? '-'+p(-y,6) : p(y,4))+'-'+p(m,2)+'-'+p(d,2); }
+function dobHuman(s){ const [y,m,d]=parseDob(s); if(!isFinite(y)) return String(s||''); const M=['January','February','March','April','May','June','July','August','September','October','November','December']; return d+' '+M[m-1]+' '+(y<=0 ? (1-y)+' BC' : y); }
 function toJulianDay(year,month,day,hour,minute,second){
   let Y=year, M=month;
   if (M<=2){ Y-=1; M+=12; }
+  const greg = year>1582 || (year===1582 && (month>10 || (month===10 && day>=15)));   // Julian calendar before 15 Oct 1582
   const A = Math.floor(Y/100);
-  const B = 2-A+Math.floor(A/4);
+  const B = greg ? 2-A+Math.floor(A/4) : 0;
   const dayFrac = day + (hour+minute/60+second/3600)/24;
   return Math.floor(365.25*(Y+4716)) + Math.floor(30.6001*(M+1)) + dayFrac + B - 1524.5;
 }

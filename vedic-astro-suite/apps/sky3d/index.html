@@ -31,6 +31,7 @@
 <link rel="stylesheet" href="css/22-dasha-transit-triggers.css">
 <link rel="stylesheet" href="css/23-time-machine-polish.css">
 <link rel="stylesheet" href="css/24-sky-dashboard.css">
+<link rel="stylesheet" href="css/25-date-entry.css">
 <link rel="stylesheet" href="../../shared/meta.css">
 <script src="../../shared/icons.js"></script>
 <link rel="stylesheet" href="../../shared/liquid-glass.css">
@@ -180,7 +181,14 @@
           </div>
           <div class="mini-field">
             <label for="natalDob">Date of Birth</label>
-            <input type="date" id="natalDob">
+            <input type="hidden" id="natalDob">
+            <div class="dob-row">
+              <input type="number" id="ndDay" min="1" max="31" inputmode="numeric" placeholder="Day" aria-label="Day">
+              <select id="ndMon" aria-label="Month"><option value="">Month</option><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select>
+              <input type="number" id="ndYear" min="1" max="9999" inputmode="numeric" placeholder="Year" aria-label="Year">
+              <select id="ndEra" aria-label="Era"><option value="AD">AD</option><option value="BC">BC</option></select>
+            </div>
+            <div class="dob-note" id="ndNote" aria-live="polite"></div>
           </div>
           <div class="mini-field">
             <label for="natalTob">Time of Birth</label>

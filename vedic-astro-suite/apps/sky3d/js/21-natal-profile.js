@@ -26,7 +26,7 @@ function renderNatalTab(){
     return;
   }
   const p = activeNatalProfile;
-  const natalJD = toJulianDay(...p.dob.split('-').map(Number), ...p.tob.split(':').map(Number), 0) - p.tz/24;
+  const natalJD = toJulianDay(...parseDob(p.dob), ...p.tob.split(':').map(Number), 0) - p.tz/24;
   const natalSnap = snapshotPositions(natalJD);
   let planetsHtml = "";
   PLANET_LIST.forEach(name=>{
@@ -38,7 +38,7 @@ function renderNatalTab(){
   });
   wrap.innerHTML = `<div class="natal-card">
     <div class="natal-name">${escapeHtml(p.name)}</div>
-    <div class="natal-meta">${p.dob} · ${p.tob} · ${p.place ? p.place.split(',')[0] : ''}</div>
+    <div class="natal-meta">${dobHuman(p.dob)} · ${p.tob} · ${p.place ? p.place.split(',')[0] : ''}</div>
   </div>
   <div class="panel-heading">Natal Positions</div>
   ${planetsHtml}`;

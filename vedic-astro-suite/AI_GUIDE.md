@@ -168,13 +168,14 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Problem finder: `js/111-problem-finder.js` (PRB, hand-written data and engine: AREAS list, NAT natures, planetFindings/houseFindings/culpritFindings/timing) + `js/112-problem-finder-ui.js` (PFUI) give the last Chart Reading tab '🧭 Problem finder' and the Home tile (panel-problem). To add a problem, add a row to its area in AREAS (id, label, nature, extra houses, extra planets). Test: `problem_finder_test`.
 - Problem finder S20: 20 areas with 11-23 exact problems each (MORE list in `js/111`), grouped by kind with a find box in `js/112`; new first section `check` = `chartCheck()` lists harsh planets (Saturn, Mars, Rahu, Ketu, Sun) sitting in or looking at each house and significator, harsh or kind running periods, today's sky, and says plainly when nothing is found (verdict clear|found). Harsh planets in houses 3, 6, 11 are read as mild. Chart check lines are one paragraph per planet (sign, house, Nth aspect and the sign it falls on) plus an area-kind effect and help from FX (people/material/inner), for the birth chart and today's sky alike. Result now leads with `R.ranked` (top 5 reasons for THIS problem, merged per planet and timing, scored by planet weight x touches x problem-specific houses x culprit planet, with the span answer shifting birth vs sky weight; labels Strong/Moderate/Mild; a relative ranking, not a statistic); all sections sit under a closed 'Read more'. S21: `fnature(lagna)` classes planets for the ascendant (yoga/benefic/neutral/malefic); `harshKind` turns naturally harsh planets into harsh|mild|helper|yoga, and helpers/yogakarakas read as support in every layer. S22: level is the percentile of this problem's strain ratio among all problems of the same chart (`baseline`, cached on `chart.__prbBase`): top 20% strong, 40-80% moderate, below 40% light; verdict 'clear' forces light; 'found' needs a pressing (non-mild, non-helper) planet. S23: houses = area houses + the problem's `eh` + its nature's `nh`; weights W (eh 1, area first house 0.8, other area 0.5, nature 0.35) and KWT scale area findings, check scores and ranked candidates (items from the trigger/pain layers count 0.35); `chartCheck` also reads the divisional chart for love/marriage (D9), career (D10), children (D7), mother/father (D12), home (D4), study (D24): karaka dignity there and harsh planets in the key house. S24: `ingress(planet, now)` scans the app ephemeris (getSiderealLongitudeAt) to date when a slow planet entered its sign and moves on (cached per hour); dasha lines show end dates and dusthana (6/8/12) rulership; Saturn (4th/8th from the Moon = harsh, 3/6/11 = easy) and Jupiter (2/5/7/9/11 = supportive) are counted from the Moon. Check items carry w 0 so the level calibration is unchanged.
 - Date entry S26: `js/113-date-entry.js` panel (day, month, year, AD/BC) feeds `inDobValue()`/`inLoadDob()`; engine in `js/03` has `toJulianDay` (Julian before 1582-10-15), `parseDob` (handles negative years, never use split("-") or Date.UTC for dob), `formatDobStr`, `deltaT`, `jdToParts`. Astronomical years (1 BC = 0). Far dates are approximate; modern-date tools (Panchanga, date finder, Vedic birthday) not verified for them.
+- Date entry S27 (3D app): `apps/sky3d/js/01` has the same `toJulianDay` (Julian before 1582-10-15), `parseDob`, `formatDobStr`, `dobHuman`; `js/37` builds the hidden `#natalDob` from `#ndDay/#ndMon/#ndYear/#ndEra` (`ndCheck`, `ndSet`). No ΔT correction in the 3D engine; never `split("-")` a dob.
 - Performance rule for the polish layers (css/48-50): animate only transform and opacity, no backdrop-filter, no mask-image, no looping box-shadow or text-shadow animation, no scroll-timeline on lists; use `contain:layout paint` on repeated cards.
 
 ---
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-27 - 1560 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-27 - 1566 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -372,10 +373,10 @@ js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 76 files, 7117 lines, 415 KB
+**sky3d** - 77 files, 7165 lines, 419 KB
 ```
-index.html                                         458 lines   27 KB
-js/01-astro-engine.js                              143 lines    7 KB
+index.html                                         466 lines   28 KB
+js/01-astro-engine.js                              148 lines    8 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
 js/04-sign-level-aspects.js                         22 lines    0 KB
@@ -411,7 +412,7 @@ js/33-timeline-scrubber.js                          58 lines    2 KB
 js/34-main-refresh-loop.js                          60 lines    2 KB
 js/35-ui-wiring.js                                  21 lines    1 KB
 js/36-mobile-bottom-sheet.js                        90 lines    4 KB
-js/37-natal-form-location.js                        90 lines    5 KB
+js/37-natal-form-location.js                       118 lines    7 KB
 js/38-data-export-wiring.js                        124 lines    4 KB
 js/39-smoothness.js                                 51 lines    3 KB
 js/40-3d-astro-layers.js                           135 lines   10 KB
@@ -450,6 +451,7 @@ css/21-premium-polish.css                           32 lines    3 KB
 css/22-dasha-transit-triggers.css                   31 lines    3 KB
 css/23-time-machine-polish.css                     126 lines   12 KB
 css/24-sky-dashboard.css                            55 lines    5 KB
+css/25-date-entry.css                                7 lines    0 KB
 ```
 
 **shell** - 5 files, 580 lines, 66 KB
