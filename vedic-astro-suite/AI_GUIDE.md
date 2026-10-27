@@ -175,14 +175,16 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 ---
 
 - Quick Menu: `shared/quick-menu.js` adds a top-left ☰ button to 3D Sky, Birth Chart and Notepad (one tap to jump to any tool or tab, 📌 pins, user-named groups; saved in localStorage `vedicQuickMenu_v1`). Tool switching: app posts `{vqm:'go',tool,id}` to the shell (handler above the floating switcher in `shell/js/shell.js`). Birth Chart header gets 40px left padding in app mode (`09-home-launcher.css`). Tested in a browser: tab jump, tool jump, pins across tools; smoke 5/5.
+- D-chart images (North, South, West) now have a full gold border: glowing double outer frame with beaded inner line and edge diamonds, thick chart-body border with corner studs, centre diamond/box, and degree ticks plus extra rings on the wheel (`chFrame` in birth-chart/js/61-varga-chart-svg.js).
+
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-27 - 1602 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-28 - 1603 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 177 files, 27988 lines, 2162 KB
+**birth-chart** - 177 files, 27996 lines, 2165 KB
 ```
 index.html                                         599 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -259,7 +261,7 @@ js/57-my-chart-overview.js                         100 lines    6 KB
 js/58-render-results.js                            755 lines   34 KB
 js/59-live-transit-form.js                         150 lines    7 KB
 js/60-interactive-varga-svg.js                     162 lines    6 KB
-js/61-varga-chart-svg.js                            61 lines    9 KB
+js/61-varga-chart-svg.js                            69 lines   12 KB
 js/62-clipboard-download-helpers.js                121 lines    4 KB
 js/63-profile-cards.js                              32 lines    2 KB
 js/64-edit-saved-profile.js                         32 lines    2 KB
