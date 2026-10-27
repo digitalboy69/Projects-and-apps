@@ -92,6 +92,17 @@
   function closeDev(){ if (devF) devF.classList.remove('on'); }
   window.addEventListener('message', e=>{ if (e.data === 'vedic-dev-close') closeDev(); else if (e.data === 'vedic-open-chart') show('B'); else if (e.data === 'vedic-open-3d'){ show('A'); [300, 1500].forEach(t=>setTimeout(()=>{ try{ frames.A.contentWindow.postMessage('vedic-bridge-ping','*'); }catch(x){} }, t)); } });
 
+  /* Quick Menu (shared/quick-menu.js): a tool asks the shell to open another tool, optionally on a given tab */
+  window.addEventListener('message', e=>{
+    const d = e.data; if (!d || d.vqm !== 'go' || !NAME[d.tool]) return;
+    show(d.tool);
+    if (!d.id) return;
+    let n = 0; const t = setInterval(()=>{
+      let w = null; try{ w = frames[d.tool].contentWindow; }catch(x){}
+      if (w && w.VQM){ clearInterval(t); w.VQM.go(d.id); } else if (++n > 60) clearInterval(t);
+    }, 150);
+  });
+
   /* ---- floating, draggable switcher ---- */
   const SZ = 40, M = 10;
   let pos = { x:null, y:null };
