@@ -183,24 +183,17 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-28 - 1604 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-27 - 1624 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 177 files, 28018 lines, 2167 KB
-_Generated 2026-10-27 - 1551 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
-
-### File map (lines / KB) - file names say what is inside
-
-**birth-chart** - 168 files, 27051 lines, 2013 KB
+**birth-chart** - 177 files, 28252 lines, 2193 KB
 ```
 index.html                                         599 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
-js/03-ephemeris-engine.js                          255 lines   11 KB
+js/03-ephemeris-engine.js                          280 lines   13 KB
 js/04-transit-timing-engine.js                     247 lines   11 KB
-js/03-ephemeris-engine.js                          235 lines    9 KB
-js/04-transit-timing-engine.js                     249 lines   11 KB
 js/05-ascendant-nakshatra-vargas.js                210 lines   12 KB
 js/06-outer-planet-knowledge.js                     37 lines    5 KB
 js/07-planetary-dignity.js                          77 lines    3 KB
@@ -316,7 +309,6 @@ js/97-transit-reading.js                           224 lines   17 KB
 js/98-life-event-engine.js                         421 lines   39 KB
 js/98-pdf-pages.js                                 176 lines   32 KB
 js/99-area-deep.js                                 268 lines   37 KB
-js/99-dasha-lens.js                                176 lines   18 KB
 js/99-dasha-lens.js                                324 lines   36 KB
 js/99-jump-3d-bridge.js                             37 lines    2 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB

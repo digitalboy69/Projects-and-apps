@@ -24,6 +24,8 @@ ok(maxAsc<35,'sidereal Ascendant within 35 arcsec (max '+maxAsc.toFixed(1)+'"; m
 ok(maxAyan<20,'Lahiri ayanamsa within 20 arcsec of the Swiss Lahiri over 1863-2024 (max '+maxAyan.toFixed(1)+'")');
 const off=23+15/60+0.658/3600, jd1956=Date.UTC(1956,2,21)/86400000+2440587.5;
 ok(Math.abs(run(`lahiriAyanamsa(${jd1956})`)-off)*3600<2,'ayanamsa equals the official Indian Calendar Reform Committee value on 21 Mar 1956 (23 15 00.658) within 2 arcsec');
+{ let worst=0; for(const [name,d,t,lat,lon,tz] of REF){ const c=run(`computeChart('${d}','${t}',${lat},${lon},${tz})`); const direct=run(`getSiderealLongitudeAt('Moon',${c.julianDay})`); worst=Math.max(worst,Math.abs(dA(c.planets.Moon.longitude,direct))); }
+  ok(worst<0.01,'delta-T is applied exactly ONCE: the chart Moon equals the direct ephemeris Moon (worst '+worst.toFixed(3)+'")'); }
 const dt=run('deltaTSeconds(2451545.0)'); ok(dt>63&&dt<65,'delta-T at J2000 is about 64 s ('+dt.toFixed(1)+' s)');
 const SEQ=['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury'],DY={Ketu:7,Venus:20,Sun:6,Moon:10,Mars:7,Rahu:18,Jupiter:16,Saturn:19,Mercury:17};
 function ref(moon,birthMs,evMs){ const span=360/27,ni=Math.floor(moon/span),el=(moon-ni*span)/span; let cur=birthMs-el*DY[SEQ[ni%9]]*365.25*86400000,i=ni%9;const lv=[];

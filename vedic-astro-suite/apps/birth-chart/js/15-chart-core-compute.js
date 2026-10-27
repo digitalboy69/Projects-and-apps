@@ -35,7 +35,7 @@ function computeChart(dateStr, timeStr, lat, lon, tzOffsetHours){
   const jd = localJD - tzOffsetHours/24;
   const ayanamsa = lahiriAyanamsa(jd);
 
-  const jdT = jd + deltaT(year, month)/86400;   // Terrestrial Time for the Sun, Moon and planets (matters for ancient dates)
+  const jdT = jd;   // delta-T (UT -> TT) is applied INSIDE the Sun/Moon/planet/node series (js/03 jdTT), so every caller gets it. Adding deltaT() here too would count it twice.
   const tropicalLongitudes = {
     Sun: sunLongitude(jdT), Moon: moonLongitude(jdT),
     Mercury: planetGeocentricLongitude("mercury",jdT), Venus: planetGeocentricLongitude("venus",jdT),
