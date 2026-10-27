@@ -1,0 +1,18 @@
+/* How-to-read guide under each divisional chart (js/114-varga-guide.js). Calm: no motion. */
+.vgg{margin:14px 0 6px;border:1px solid var(--border-light,rgba(255,255,255,.1));border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden}
+.vgg>summary{list-style:none;cursor:pointer;padding:13px 15px;font-weight:600;color:var(--gold,#d4a24a);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.vgg>summary::-webkit-details-marker{display:none}
+.vgg>summary::after{content:"＋";color:var(--gold,#d4a24a);font-weight:400}
+.vgg[open]>summary::after{content:"－"}
+.vgg[open]>summary{border-bottom:1px solid var(--border-light,rgba(255,255,255,.08))}
+.vgg-body{padding:6px 16px 16px;line-height:1.6;font-size:14px;color:var(--text-secondary,#cfd6e4)}
+.vgg-body h4{margin:12px 0 4px;font-size:16px;color:var(--text-primary,#f4f1ea)}
+.vgg-body h5{margin:16px 0 5px;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold,#d4a24a)}
+.vgg-body p{margin:0 0 6px}
+.vgg-body ol{margin:0;padding-left:20px}.vgg-body ol li{margin:0 0 5px}
+.vgg-rules{margin:0;padding:0;list-style:none}
+.vgg-rules li{margin:0 0 8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--border-light,rgba(255,255,255,.06))}
+.vgg-tag{display:inline-block;margin-right:8px;padding:1px 8px;border-radius:999px;font-size:10.5px;font-weight:600;letter-spacing:.04em;vertical-align:1px}
+.vgg-tag.c{color:#e9c97f;border:1px solid rgba(212,162,74,.5);background:rgba(212,162,74,.1)}
+.vgg-tag.p{color:#9fc1e8;border:1px solid rgba(120,160,220,.4);background:rgba(120,160,220,.08)}
+.vgg-src{display:inline-block;margin:10px 0 0;padding:3px 10px;border-radius:999px;font-size:12px;color:#aab6cc;border:1px solid rgba(255,255,255,.12)}

@@ -178,13 +178,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-27 - 1598 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-27 - 1602 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 175 files, 27671 lines, 2123 KB
+**birth-chart** - 177 files, 27988 lines, 2162 KB
 ```
-index.html                                         597 lines   34 KB
+index.html                                         599 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          255 lines   11 KB
@@ -209,6 +209,7 @@ js/11-ashtakavarga-engine.js                        32 lines    2 KB
 js/111-problem-finder.js                           406 lines   85 KB
 js/112-problem-finder-ui.js                         77 lines   10 KB
 js/113-date-entry.js                                86 lines    7 KB
+js/114-varga-guide.js                              294 lines   38 KB
 js/12-yoga-detection.js                            117 lines    4 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
@@ -255,7 +256,7 @@ js/54-vedic-birthday-ui.js                         156 lines   13 KB
 js/55-numerology-engine.js                          54 lines    9 KB
 js/56-numerology-ui.js                             126 lines   13 KB
 js/57-my-chart-overview.js                         100 lines    6 KB
-js/58-render-results.js                            753 lines   34 KB
+js/58-render-results.js                            755 lines   34 KB
 js/59-live-transit-form.js                         150 lines    7 KB
 js/60-interactive-varga-svg.js                     162 lines    6 KB
 js/61-varga-chart-svg.js                            61 lines    9 KB
@@ -359,6 +360,7 @@ css/49-intake-polish.css                           102 lines   12 KB
 css/50-home-polish.css                              52 lines    7 KB
 css/51-problem-finder.css                           66 lines    9 KB
 css/52-date-entry.css                               13 lines    1 KB
+css/53-varga-guide.css                              19 lines    1 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -511,3 +513,4 @@ shared/quick-menu.js                               157 lines   12 KB
 - Sky Dashboard v2: zodiac-wheel hero + Moon phase, element colours, degree rings, scroll-spy nav, soft one-time fade-in (js/50, css/24).
 - Aspect Explorer now uses the time selected in the app even with a profile loaded (`getExplorerContext` in sky3d/js/27; profile only gives the Lagna); test tests/explorer_time_test.py.
 - 3D panels made solid (no see-through tab bar), calm motion, gold accent: sky3d/css/25-solid-panels.css (loaded last).
+- Divisional chart guide for all 24 charts (D1 to D144 + RTN): birth-chart/js/114-varga-guide.js (`VGG.html/text`), css/53-varga-guide.css, shown as a collapsible block under every D-chart in js/58; rules tagged From the texts / Common practice; test tests/varga_guide_test.py. If calcVarga changes, update the "how this app divides it" lines.
