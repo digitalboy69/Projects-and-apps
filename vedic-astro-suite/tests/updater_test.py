@@ -1,4 +1,4 @@
-# Silent updater (shell/js/updater.js): a stale build triggers one silent reload and a re-download of the files; a current build does nothing; the single-file build skips it.
+# Silent updater (shell/js/updater.js): a stale build re-downloads the files quietly and NEVER reloads the page itself; a current build does nothing; the single-file build skips it.
 import functools, http.server, os, socketserver, threading, json
 from playwright.sync_api import sync_playwright
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -18,12 +18,12 @@ with sync_playwright() as p:
     b = p.chromium.launch(executable_path=CHROME); pg = b.new_page(); loads = []; errs = []
     pg.on('pageerror', lambda e: errs.append(str(e))); pg.on('load', lambda _p: loads.append(1))
     pg.goto(BASE); pg.wait_for_timeout(6000)
-    ok('stale or first visit: stores the build id after one silent reload', pg.evaluate("localStorage.getItem('vasBuild')") == v['id'] and len(loads) == 2, loads)
+    ok('stale or first visit: stores the build id and does NOT reload (one load only)', pg.evaluate("localStorage.getItem('vasBuild')") == v['id'] and len(loads) == 1, loads)
     ok('every listed file was re-downloaded', all(('/' + f) in set(h.split('?')[0] for h in hits) for f in v['files'][:40]))
     n = len(hits); loads.clear(); pg.reload(); pg.wait_for_timeout(2500)
     ok('current build: no second reload and no re-download', len(loads) == 1 and not any(h.startswith('/apps/birth-chart/js/') and 'reload' in h for h in hits[n:]), loads)
     pg.evaluate("localStorage.setItem('vasBuild','old')"); pg.evaluate("sessionStorage.clear()"); loads.clear(); pg.reload(); pg.wait_for_timeout(6000)
-    ok('old build id: refreshed again', pg.evaluate("localStorage.getItem('vasBuild')") == v['id'] and len(loads) == 2, loads)
+    ok('old build id: refreshed quietly, still one load', pg.evaluate("localStorage.getItem('vasBuild')") == v['id'] and len(loads) == 1, loads)
     ok('no JavaScript errors', not errs, errs[:3]); b.close()
 for n, c, d in res: print(('PASS ' if c else 'FAIL ') + n + ('' if c or d == '' else '  -> ' + str(d)[:300]))
 print('ALL PASS' if all(c for _, c, _ in res) else 'FAILED'); raise SystemExit(0 if all(c for _, c, _ in res) else 1)

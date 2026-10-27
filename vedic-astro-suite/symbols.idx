@@ -212,14 +212,14 @@ chart	fn	apps/birth-chart/js/96-varga-reading.js:148	birth-chart
 chartCheck	fn	apps/birth-chart/js/111-problem-finder.js:249	birth-chart
 chartModal	fn	apps/notepad/js/01-notepad.js:181	notepad
 chartName	fn	shell/js/shell.js:139	shell
-chartOpen	fn	shell/js/updater.js:10	shell
+chartOpen	fn	shell/js/updater.js:11	shell
 chartSvg	fn	apps/birth-chart/js/93-pdf-report.js:100	birth-chart
 chartSVG	fn	apps/notepad/js/01-notepad.js:185	notepad
 chAspects	fn	apps/birth-chart/js/61-varga-chart-svg.js:11	birth-chart
 chBadge	fn	apps/birth-chart/js/61-varga-chart-svg.js:5	birth-chart
 chDefs	fn	apps/birth-chart/js/61-varga-chart-svg.js:9	birth-chart
 check	fn	apps/birth-chart/js/113-date-entry.js:12	birth-chart
-check	fn	shell/js/updater.js:11	shell
+check	fn	shell/js/updater.js:14	shell
 chips	fn	apps/sky3d/js/47-dasha-transit-ui.js:74	sky3d
 chipsHtml	fn	apps/birth-chart/js/82-dasha-systems-ui.js:90	birth-chart
 chk	fn	shell/js/locpicker.js:11	shell
@@ -541,7 +541,8 @@ generateExportData	fn	apps/sky3d/js/38-data-export-wiring.js:4	sky3d
 generateExportData	fn	shared/export-addon.js:597	shared
 generatePlanetTexture	fn	apps/sky3d/js/10-procedural-textures.js:2	sky3d
 generateRingTexture	fn	apps/sky3d/js/10-procedural-textures.js:92	sky3d
-get	fn	shell/js/updater.js:8	shell
+get	fn	shell/js/updater.js:9	shell
+get0	fn	shell/js/updater.js:8	shell
 getAhargana	fn	apps/birth-chart/js/14-shadbala-engine.js:109	birth-chart
 getAspectedHouses	fn	apps/birth-chart/js/09-aspect-events.js:3	birth-chart
 getAspectsText	fn	apps/sky3d/js/38-data-export-wiring.js:45	sky3d
@@ -1106,7 +1107,7 @@ pump	fn	apps/birth-chart/js/86-popular-charts.js:37	birth-chart
 PUSH	const	apps/birth-chart/js/75-fate-meter.js:6	birth-chart
 pushDate	fn	apps/birth-chart/js/67-friendly-input-page.js:30	birth-chart
 pushTime	fn	apps/birth-chart/js/67-friendly-input-page.js:37	birth-chart
-put	fn	shell/js/updater.js:9	shell
+put	fn	shell/js/updater.js:10	shell
 qnStatus	fn	shell/js/shell.js:142	shell
 qrCanvas	fn	apps/birth-chart/js/76-share-link-qr.js:31	birth-chart
 quickClose	fn	shell/js/shell.js:162	shell
