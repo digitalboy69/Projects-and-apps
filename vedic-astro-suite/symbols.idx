@@ -69,7 +69,7 @@ aspects	fn	apps/birth-chart/js/69-divisional-areas.js:88	birth-chart
 assess	fn	apps/birth-chart/js/100-house-now.js:297	birth-chart
 assess	fn	apps/birth-chart/js/105-shadbala-reading.js:444	birth-chart
 assess	fn	apps/birth-chart/js/107-ashtakavarga-reading.js:315	birth-chart
-assess	fn	apps/birth-chart/js/111-problem-finder.js:317	birth-chart
+assess	fn	apps/birth-chart/js/111-problem-finder.js:342	birth-chart
 assess	fn	apps/birth-chart/js/94-life-areas.js:322	birth-chart
 assess	fn	apps/birth-chart/js/97-transit-reading.js:164	birth-chart
 at	fn	apps/birth-chart/js/73-tithi-pravesh.js:13	birth-chart
@@ -83,7 +83,7 @@ AVR_DATA	const	apps/birth-chart/js/107-ashtakavarga-reading.js:7	birth-chart
 ayanaBalaFor	fn	apps/birth-chart/js/14-shadbala-engine.js:199	birth-chart
 BALA_PLANETS	const	apps/birth-chart/js/14-shadbala-engine.js:2	birth-chart
 bAreas	fn	apps/birth-chart/js/93-pdf-report.js:168	birth-chart
-baseline	fn	apps/birth-chart/js/111-problem-finder.js:309	birth-chart
+baseline	fn	apps/birth-chart/js/111-problem-finder.js:334	birth-chart
 baseUrl	fn	apps/birth-chart/js/76-share-link-qr.js:8	birth-chart
 bAshtakavarga	fn	apps/birth-chart/js/98-pdf-pages.js:104	birth-chart
 BAV_PLANETS	const	apps/birth-chart/js/11-ashtakavarga-engine.js:11	birth-chart
@@ -208,7 +208,7 @@ CHALDEAN_SEQUENCE	const	apps/birth-chart/js/14-shadbala-engine.js:117	birth-char
 changed	fn	apps/notepad/js/01-notepad.js:164	notepad
 changeHmsUnit	fn	apps/birth-chart/js/20-rectification-scan-tab.js:188	birth-chart
 chart	fn	apps/birth-chart/js/96-varga-reading.js:148	birth-chart
-chartCheck	fn	apps/birth-chart/js/111-problem-finder.js:231	birth-chart
+chartCheck	fn	apps/birth-chart/js/111-problem-finder.js:249	birth-chart
 chartModal	fn	apps/notepad/js/01-notepad.js:181	notepad
 chartName	fn	shell/js/shell.js:139	shell
 chartOpen	fn	shell/js/updater.js:10	shell
@@ -635,6 +635,7 @@ INDU_LAGNA_KALAS	const	apps/birth-chart/js/17-special-lagnas.js:121	birth-chart
 infl	fn	apps/sky3d/js/46-dasha-transit-engine.js:156	sky3d
 INFO	const	apps/sky3d/js/44-retrograde-planner.js:7	sky3d
 inFoundUpdate	fn	apps/birth-chart/js/67-friendly-input-page.js:98	birth-chart
+ingress	fn	apps/birth-chart/js/111-problem-finder.js:233	birth-chart
 init	fn	apps/sky3d/js/42-init.js:4	sky3d
 initAstroLayers	fn	apps/sky3d/js/40-3d-astro-layers.js:12	sky3d
 initPlanetPicker	fn	apps/sky3d/js/41-quick-planet-picker.js:4	sky3d

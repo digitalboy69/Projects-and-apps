@@ -227,8 +227,26 @@ const PRB = (() => {
     Sun: { material: ['ego or an authority figure can overshadow {t}', 'stay modest and cooperative'], people: ['pride or clashes with authority can colour {t}', 'listen first'], inner: ['your sense of worth can feel pressed around {t}', 'build it from small promises you keep'] }
   };
   const fx = (n, a, mild) => { const f = FX[n][GRP[a.id] || 'material'], t = a.thing; return mild ? `Harsh planets usually do well in this house, so this tends to give strength to push through rather than plain harm, though ${t} may still need effort.` : `So ${f[0].replace(/\{t\}/g, t)}; ${f[1]}.`; };
+  /* ---------- S24: when a slow planet entered its sign and when it moves on (from the app's own ephemeris), and dates for the dasha ---------- */
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], ING = {};
+  const fmtMY = d => MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(), fmtD = d => d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+  function ingress(n, now) {
+    const day = Math.floor(now.getTime() / 3600000), key = n + '|' + day; if (key in ING) return ING[key];
+    let res = null;
+    try {
+      const jd0 = toJulianDay(now.getUTCFullYear(), now.getUTCMonth() + 1, now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()), t0 = now.getTime();
+      const sg = d => getSignIndex(getSiderealLongitudeAt(n, jd0 + d)), s0 = sg(0), step = n === 'Mars' ? 2 : n === 'Jupiter' ? 5 : 8, max = n === 'Mars' ? 130 : n === 'Jupiter' ? 620 : 1300;
+      const scan = dir => { let prev = 0; for (let d = step; d <= max; d += step) { if (sg(dir * d) !== s0) { let lo = dir * prev, hi = dir * d; while (Math.abs(hi - lo) > 1) { const mid = Math.round((lo + hi) / 2); if (mid === lo || mid === hi) break; if (sg(mid) === s0) lo = mid; else hi = mid; } return { lo, hi }; } prev = d; } return null; };
+      const f = scan(1), b = scan(-1), dt = d => new Date(t0 + d * 86400000);
+      if (f || b) res = { sign: s0, since: b ? dt(b.lo) : null, until: f ? dt(f.hi) : null, next: f ? sg(f.hi) : null };
+    } catch (e) { res = null; }
+    return (ING[key] = res);
+  }
+  const ingText = (n, x, now) => { const g = ingress(n, now); if (!g || !g.until) return { text: '', fact: {} }; const fm = n === 'Mars' ? fmtD : fmtMY;
+    const pre = n === 'Mars' ? 'on' : 'in';
+    return { text: ` ${n} ${g.since ? 'entered ' + SIGN[x.sign] + ' ' + pre + ' ' + fm(g.since) + ' and ' : 'is in ' + SIGN[x.sign] + ' and '}moves into ${SIGN[g.next]} ${pre} ${fm(g.until)}.`, fact: { since: g.since ? g.since.toISOString().slice(0, 10) : null, until: g.until.toISOString().slice(0, 10), next: g.next } }; };
   const hcls = (X, n) => { if (HARSH.indexOf(n) >= 0) { const k = harshKind(X, n); return k === 'yoga' || k === 'helper' ? 'helper' : k; } const f = X.FN[n]; return f && f.cls === 'malefic' && f.sc <= -2 ? 'mixed' : (n === 'Jupiter' || n === 'Venus' || f && (f.cls === 'benefic' || f.cls === 'yoga')) ? 'kind' : 'neutral'; };
-  function chartCheck(X, a, houses, karakas, hn, nat, pr, span, W, KWT, chart) {
+  function chartCheck(X, a, houses, karakas, hn, nat, pr, span, W, KWT, chart, now) {
     const BS = { new: 0.7, months: 0.9, years: 1, life: 1.5 }[span] || 1, SS = { new: 1.6, months: 1.3, years: 1, life: 0.6 }[span] || 1, HWT = { Saturn: 1, Rahu: 1, Mars: 0.9, Ketu: 0.8, Sun: 0.5 }, cands = [], culp = n => NAT[nat].c.indexOf(n) >= 0, extra = hs => hs.some(h => pr.eh.indexOf(h) >= 0 && a.houses.indexOf(h) < 0);
     const sum = hs => hs.reduce((t, h) => t + (W[h] || 0.35), 0), sumk = ks => ks.reduce((t, k) => t + (KWT[k] || 0.7), 0);
     const fmult = m => (X.FN[m] && X.FN[m].cls === 'malefic' ? 1.25 : 1) * dignMult(X, m);
@@ -277,24 +295,31 @@ const PRB = (() => {
       [['Mahadasha', hn.dasha.md], ['Antardasha', hn.dasha.ad], ['Pratyantar', hn.dasha.pd]].filter(x => x[1]).forEach(([lab, d]) => {
         const n = d.lord, p = P[n]; if (!p) return; const r = rules(X.D1, n).filter(h => houses.indexOf(h) >= 0), sits = houses.indexOf(p.house) >= 0, lk = houses.filter(h => (p.aspectsHouses || []).indexOf(h) >= 0 && p.house !== h), kar = karakas.indexOf(n) >= 0, cl = hcls(X, n), bits = [];
         if (r.length) bits.push(`rules your ${nm(r.map(ordn))} ${r.length > 1 ? 'houses' : 'house'}`); if (sits) bits.push(`sits in your ${ordn(p.house)} house`); if (lk.length) bits.push(`looks at your ${nm(lk.map(ordn))} ${lk.length > 1 ? 'houses' : 'house'}`); if (kar) bits.push('is a natural significator of this area');
-        const f = { scope: 'dasha', dasha: lab, p: n, rules: r, sits, looks: lk, kar, cls: cl, none: !bits.length }, pre = `You are in the ${n} ${lab}`;
-        if (cl === 'harsh' || cl === 'mild') { if (bits.length) { const tx = `${pre}, a ${cl === 'harsh' ? 'harsh' : 'fiery'} period. ${cap(n)} ${nm(bits)}. ${fx(n, a, false)}`; I(cl === 'harsh' ? 'b' : 'n', tx, f, cl === 'harsh' ? [n, 'running period'] : null); if (cl === 'harsh') cands.push({ score: HWT[n] * { Mahadasha: 1.3, Antardasha: 1.1, Pratyantar: 0.7 }[lab] * Math.min(2.5, sum(r) + (sits ? (W[p.house] || 0.5) : 0) + 0.7 * sum(lk) + (kar ? 0.5 * (KWT[n] || 0.7) : 0)) * (1 + (culp(n) ? 0.5 : 0)) * fmult(n) * SS, head: `${n} ${lab}`, when: 'Running period', text: tx, fact: Object.assign({ kind: 'check' }, f) }); }
+        const dust = rules(X.D1, n).filter(h => h === 6 || h === 8 || h === 12), dEnd = d.endDate ? new Date(d.endDate) : null, f = { scope: 'dasha', dasha: lab, p: n, rules: r, sits, looks: lk, kar, cls: cl, none: !bits.length, until: dEnd ? dEnd.toISOString().slice(0, 10) : null, dust }, pre = `You are in the ${n} ${lab}${dEnd ? ' (until ' + fmtMY(dEnd) + ')' : ''}`, dtx = dust.length && (cl === 'harsh' || cl === 'mild' || cl === 'mixed' || cl === 'neutral') ? ` ${cap(n)} also rules your ${nm(dust.map(ordn))} ${dust.length > 1 ? 'houses' : 'house'} (${nm(dust.map(h => HNAME[h]))}), which makes this period harder to ride.` : '';
+        if (cl === 'harsh' || cl === 'mild') { if (bits.length) { const tx = `${pre}, a ${cl === 'harsh' ? 'harsh' : 'fiery'} period. ${cap(n)} ${nm(bits)}.${dtx} ${fx(n, a, false)}`; I(cl === 'harsh' ? 'b' : 'n', tx, f, cl === 'harsh' ? [n, 'running period'] : null); if (cl === 'harsh') cands.push({ score: HWT[n] * { Mahadasha: 1.3, Antardasha: 1.1, Pratyantar: 0.7 }[lab] * Math.min(2.5, sum(r) + (sits ? (W[p.house] || 0.5) : 0) + 0.7 * sum(lk) + (kar ? 0.5 * (KWT[n] || 0.7) : 0)) * (1 + (culp(n) ? 0.5 : 0)) * (dust.length ? 1.15 : 1) * fmult(n) * SS, head: `${n} ${lab}`, when: 'Running period', text: tx, fact: Object.assign({ kind: 'check' }, f) }); }
           else I('g', `${pre}, a ${cl === 'harsh' ? 'harsh' : 'fiery'} period, but ${n} does not rule, sit in or look at any of these houses, so it is not pressing on ${thing} directly.`, f); }
         else if (cl === 'helper') I(bits.length ? 'g' : 'n', bits.length ? `${pre}, a helpful period for your ascendant (${helperWhy(X, n).replace('For your ascendant ', '').replace(/, so it acts as .*$/, '')}). ${cap(n)} ${nm(bits)}, so this period tends to support ${thing}.` : `${pre}, a helpful period for your ascendant, but ${n} has no direct link to these houses.`, f);
         else if (cl === 'kind') I(bits.length ? 'g' : 'n', bits.length ? `${pre}, a kind period. ${n} ${nm(bits)}, so this period tends to support ${thing}.` : `${pre}, a kind period, but ${n} has no direct link to these houses.`, f);
         else if (cl === 'mixed') I('n', `${pre}, a mixed period: ${n} is usually kind, but for your ascendant it rules your ${nm(X.FN[n].houses.map(ordn))} houses, so its help comes with some strain.${bits.length ? ` ${cap(n)} ${nm(bits)}, so this period speaks directly to ${thing}.` : ''}`, f);
-        else I('n', bits.length ? `${pre}. ${n} ${nm(bits)}, so this period speaks directly to ${thing}.` : `${pre}. ${n} has no direct link to these houses.`, f);
+        else I('n', bits.length ? `${pre}. ${n} ${nm(bits)}, so this period speaks directly to ${thing}.${dtx}` : `${pre}. ${n} has no direct link to these houses.${dtx}`, f);
       });
       const sky = {}; hn.sky.forEach(x => sky[x.n] = x); let touched = false;
       ['Saturn', 'Mars', 'Rahu', 'Ketu', 'Jupiter'].forEach(n => { const x = sky[n]; if (!x) return; const on = houses.filter(h => x.house === h), look = houses.filter(h => (x.asp || []).indexOf(h) >= 0 && x.house !== h); if (!on.length && !look.length) return;
         let t = `Right now ${n} is in ${SIGN[x.sign]}, your ${ordn(x.house)} house${on.length ? ' (' + hw(x.house) + ')' : ''}.`; if (look.length) t += ` ${cap(nm(gaze(n, look, x)))}.`;
-        const F = { scope: 'sky', p: n, on, look };
+        const IG = ingText(n, x, now); t += IG.text; const F = Object.assign({ scope: 'sky', p: n, on, look }, IG.fact);
         if (n === 'Jupiter') { if (hcls(X, 'Jupiter') === 'mixed') I('n', `${t} Jupiter is usually kind, but for your ascendant it rules your ${nm(X.FN.Jupiter.houses.map(ordn))} houses, so this passage helps with some strain.`, F); else I('g', `${t} That is a protecting passage for ${thing}.`, F); return; }
         const kind = harshKind(X, n); if (kind === 'helper' || kind === 'yoga') { I('g', `${t} ${helperWhy(X, n)}, so its passage tends to support rather than press on ${thing}.`, F); return; }
         const mild = on.concat(look).every(h => UPA.indexOf(h) >= 0), tx = `${t} ${fx(n, a, mild)}`; if (!mild) touched = true; I(mild ? 'n' : 'b', tx, F, mild ? null : [n, 'today\'s sky']);
         cands.push({ score: HWT[n] * Math.min(2.5, sum(on) + 0.7 * sum(look)) * (1 + (culp(n) ? 0.5 : 0) + (extra(on.concat(look)) ? 0.25 : 0)) * (mild ? 0.4 : 1) * fmult(n) * SS, head: `${n} in ${SIGN[x.sign]}, your ${ordn(x.house)} house`, when: 'Right now', text: tx, fact: Object.assign({ kind: 'check' }, F) }); });
       if (!touched) I('g', 'Right now none of Saturn, Mars, Rahu or Ketu is pressing on these houses.', { scope: 'skynone' });
       const sat = sky.Saturn, mo = P.Moon; if (sat && mo && karakas.indexOf('Moon') >= 0) { const d = (sat.sign - mo.sign + 12) % 12; if (d === 11 || d === 0 || d === 1) { const tx = `Saturn is in ${SIGN[sat.sign]}, ${d === 11 ? 'the sign before' : d === 0 ? 'the same sign as' : 'the sign after'} your Moon sign ${SIGN[mo.sign]}. This is Sade Sati, and the Moon is a significator here. ${fx('Saturn', a, false)}`; I('b', tx, { scope: 'sade', sadesati: true, d }, ['Saturn', 'today\'s sky']); cands.push({ score: 1.3 * SS, head: 'Sade Sati', when: 'Right now', text: tx, fact: { kind: 'check', scope: 'sade', sadesati: true, d } }); } }
+      // Saturn and Jupiter counted from the Moon sign
+      if (mo && sky.Saturn && sky.Jupiter) { const pS = (sky.Saturn.sign - mo.sign + 12) % 12 + 1, pJ = (sky.Jupiter.sign - mo.sign + 12) % 12 + 1;
+        if (pS === 8) { const tx = `Counted from your Moon sign (${SIGN[mo.sign]}), Saturn is now in the 8th. This is Ashtama Shani, a stretch of strain and slow results. ${fx('Saturn', a, false)}`; I('b', tx, { scope: 'gochar', p: 'Saturn', pos: pS }); cands.push({ score: 1.2 * SS * (GRP[a.id] === 'inner' ? 1 : 0.6), head: 'Saturn in the 8th from your Moon', when: 'Right now', text: tx, fact: { kind: 'check', scope: 'gochar', p: 'Saturn', pos: pS } }); }
+        else if (pS === 4) { const tx = `Counted from your Moon sign (${SIGN[mo.sign]}), Saturn is now in the 4th. This is called Kantaka Shani, a heavy stretch for home and peace of mind. ${fx('Saturn', a, false)}`; I('b', tx, { scope: 'gochar', p: 'Saturn', pos: pS }); cands.push({ score: 1 * SS * (GRP[a.id] === 'inner' ? 1 : 0.6), head: 'Saturn in the 4th from your Moon', when: 'Right now', text: tx, fact: { kind: 'check', scope: 'gochar', p: 'Saturn', pos: pS } }); }
+        else if (pS === 3 || pS === 6 || pS === 11) I('g', `Counted from your Moon sign (${SIGN[mo.sign]}), Saturn is in the ${ordn(pS)}, one of its easier positions (3rd, 6th or 11th), where it usually helps you push through.`, { scope: 'gochar', p: 'Saturn', pos: pS });
+        if ([2, 5, 7, 9, 11].indexOf(pJ) >= 0) I('g', `Counted from your Moon sign, Jupiter is in the ${ordn(pJ)}, one of its supportive positions, so its help is real right now.`, { scope: 'gochar', p: 'Jupiter', pos: pJ });
+        else I('n', `Counted from your Moon sign, Jupiter is in the ${ordn(pJ)}, which is not one of its supportive positions (2nd, 5th, 7th, 9th or 11th), so its help is lighter right now.`, { scope: 'gochar', p: 'Jupiter', pos: pJ }); }
     } else I('n', 'The running periods and today\'s sky could not be read for this date, so only the birth chart was checked.', { scope: 'unread', dasha: 'none', unread: true });
     // verdict: "found" only when a planet that really presses is there; mild and helpful influences do not count
     const by = { 'birth chart': [], 'running period': [], 'today\'s sky': [] }; out.forEach(i => { if (i.harsh && by[i.harsh[1]] && by[i.harsh[1]].indexOf(i.harsh[0]) < 0) by[i.harsh[1]].push(i.harsh[0]); });
@@ -326,7 +351,7 @@ const PRB = (() => {
     const sum = (key, label, list) => { let st = 0, su = 0; list.forEach(i => { if (i.w > 0) st += i.w; else su -= i.w; }); memo[key] = { st, su, label }; };
     const again = key => { const m = memo[key]; if (!m) return null; const net = m.st - m.su * 0.6; const verdict = net >= 3 ? 'it carries real strain' : net <= -1 ? 'it is mostly supportive' : 'it is mixed'; return { tone: net >= 3 ? 'b' : net <= -1 ? 'g' : 'n', text: `${cap(m.label)} was already read above; ${verdict}, so it is part of this layer too.`, fact: { kind: 'again', key }, w: 0 }; };
     // 0. the chart check: only what is really there
-    const CK = chartCheck(X, a, houses, karakas, hn, nat, pr, span, W, KWT, chart);
+    const CK = chartCheck(X, a, houses, karakas, hn, nat, pr, span, W, KWT, chart, now);
     add('check', '🔍', 'Chart check: what is really there', 'Every line below is something your chart actually has. Where nothing is found, it says so plainly.', CK.items.map(i => Object.assign(i, { w: 0 })));
     // 1. the area
     const areaItems = []; houses.forEach(h => { if (done.h[h]) return; done.h[h] = 1; const hw = a.hw[h] || HNAME[h], L = mk(houseFindings(X, h, hw), W[h]); sum('h' + h, `your ${ordn(h)} house`, L); L.forEach(i => areaItems.push(i)); });
