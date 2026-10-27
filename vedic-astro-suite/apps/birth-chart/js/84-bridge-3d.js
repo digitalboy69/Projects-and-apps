@@ -25,7 +25,7 @@
     const tb = document.querySelector('#panel-vargas .varga-toolbar');
     if (!tb || document.getElementById('vx3dBtn')) return;
     const g = document.createElement('div'); g.className = 'varga-control-group';
-    g.innerHTML = '<span class="varga-control-label">3D Sky:</span><button type="button" class="vx-3d-btn" id="vx3dBtn">🌌 View this chart in 3D</button>';
+    g.innerHTML = '<button type="button" class="vx-3d-btn" id="vx3dBtn" title="View this chart in the 3D sky">🌌 View in 3D</button>';
     tb.appendChild(g);
   }
   const res = document.getElementById('results');

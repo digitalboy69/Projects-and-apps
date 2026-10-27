@@ -177,6 +177,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Quick Menu: `shared/quick-menu.js` adds a top-left ☰ button to 3D Sky, Birth Chart and Notepad (one tap to jump to any tool or tab, 📌 pins, user-named groups; saved in localStorage `vedicQuickMenu_v1`). Tool switching: app posts `{vqm:'go',tool,id}` to the shell (handler above the floating switcher in `shell/js/shell.js`). Birth Chart header gets 40px left padding in app mode (`09-home-launcher.css`). Tested in a browser: tab jump, tool jump, pins across tools; smoke 5/5.
 - D-chart images (North, South, West) now have a full gold border: glowing double outer frame with beaded inner line and edge diamonds, thick chart-body border with corner studs, centre diamond/box, and degree ticks plus extra rings on the wheel (`chFrame` in birth-chart/js/61-varga-chart-svg.js).
 - D-chart borders were missing in the app because every chart reused the same gradient ids (`ng`, `sg`, `wg`); a hidden copy (My Chart overview) earlier in the page made browsers drop all gold strokes. `chUniq` in birth-chart/js/61-varga-chart-svg.js now gives each chart unique ids.
+- Divisional Charts page tidied (step 1 of the layout clean-up): shorter title, compact controls card (picker, style, one options row), compact chart head so the chart shows on the first screen (css/27 end block, text in js/58 and js/84).
 
 
 ## 8. Auto-generated map (do not edit)
@@ -185,7 +186,7 @@ _Generated 2026-10-28 - 1604 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 177 files, 27998 lines, 2166 KB
+**birth-chart** - 177 files, 28018 lines, 2167 KB
 ```
 index.html                                         599 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -335,7 +336,7 @@ css/23-vedic-birthday.css                           59 lines    6 KB
 css/24-dasha-navigator.css                          32 lines    4 KB
 css/25-vedic-birthday-hero.css                      97 lines   12 KB
 css/26-developer-card.css                           59 lines    7 KB
-css/27-d-chart-explorer.css                         60 lines    7 KB
+css/27-d-chart-explorer.css                         80 lines    8 KB
 css/28-drishti-explorer.css                         31 lines    3 KB
 css/29-special-lagnas.css                           63 lines    9 KB
 css/30-ashtakavarga.css                             99 lines   16 KB

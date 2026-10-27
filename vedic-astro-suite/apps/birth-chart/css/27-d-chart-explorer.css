@@ -57,3 +57,23 @@
 .vx-row.vg{background:linear-gradient(90deg,rgba(212,175,55,.2),rgba(212,175,55,.04));border:1px solid var(--gold-dim)}
 @media(max-width:820px){#panel-vargas .varga-card{padding:18px 12px}#panel-vargas .varga-body-full{grid-template-columns:1fr}.vg-tile{width:104px}}
 
+/* ===== Divisional Charts page: tidy order (pick chart > how to see it > chart) ===== */
+#panel-vargas>.section-heading{margin:6px 0 14px;gap:6px 14px}
+#panel-vargas>.section-heading h3{font-size:20px}
+#panel-vargas>.section-heading .section-sub{flex:1 1 100%;white-space:normal;font-size:12.5px}
+#panel-vargas .varga-toolbar{gap:10px;padding:12px;margin-bottom:14px}
+#panel-vargas .varga-toolbar .varga-control-group>.varga-control-label{display:none}
+#panel-vargas .varga-toolbar .varga-control-group:has(#vargaStyleToggle){flex:1 1 100%}
+#panel-vargas .varga-toolbar .varga-control-group:has(#vargaStyleToggle) .varga-style-toggle{width:100%}
+#panel-vargas .varga-toolbar .varga-control-group{width:auto;flex:0 1 auto}
+#panel-vargas .outer-chk{padding:7px 12px;border-radius:99px}
+#panel-vargas .vx-3d-btn{padding:7px 14px;border-radius:99px;font-size:12.5px}
+#panel-vargas .varga-card{padding:16px 14px}
+#panel-vargas .varga-card-head{gap:8px;margin-bottom:14px;padding-bottom:12px}
+#panel-vargas .varga-card-title{margin-bottom:2px}
+#panel-vargas .varga-code{font-size:28px}#panel-vargas .varga-name{font-size:20px}
+#panel-vargas .varga-sanskrit{font-size:13.5px}
+#panel-vargas .varga-desc{margin-top:4px;font-size:13px;line-height:1.45}
+#panel-vargas .varga-asc-tag{width:100%;box-sizing:border-box;text-align:left;display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px;padding:7px 12px;font-size:12px}
+#panel-vargas .varga-asc-tag br{display:none}
+#panel-vargas .varga-chart-container{padding:14px 10px}

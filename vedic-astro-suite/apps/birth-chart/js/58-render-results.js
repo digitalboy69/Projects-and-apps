@@ -278,7 +278,7 @@ function renderResults(profile){
 
   html += `<div class="app-panel" id="panel-vargas">`;
   html += `
-  <div class="section-heading"><h3>Shodasa Varga — Divisional Charts (D1–D144)</h3><div class="rule"></div><span class="section-sub">Interactive chart viewer</span></div>
+  <div class="section-heading"><h3>Divisional Charts (D1–D144)</h3><div class="rule"></div><span class="section-sub">Pick a chart, then choose how to see it</span></div>
   
   <div class="varga-toolbar">
     <div class="varga-control-group">
@@ -293,7 +293,7 @@ function renderResults(profile){
 
     <div class="varga-control-group">
       <span class="varga-control-label">Outer planets:</span>
-      <label class="outer-chk"><input type="checkbox" class="outer-chk-input" ${window.__showOuter!==false?'checked':''}> <span>♅ Uranus · ♆ Neptune · ♇ Pluto</span></label>
+      <label class="outer-chk" title="Show Uranus, Neptune and Pluto"><input type="checkbox" class="outer-chk-input" ${window.__showOuter!==false?'checked':''}> <span>Outer planets ♅ ♆ ♇</span></label>
     </div>
 
     <div class="varga-control-group">
@@ -309,7 +309,7 @@ function renderResults(profile){
       <label class="varga-aspect-toggle-label" for="vargaAspectToggle">
         <input type="checkbox" id="vargaAspectToggle" class="varga-aspect-checkbox">
         <span class="varga-aspect-toggle-track"><span class="varga-aspect-toggle-thumb"></span></span>
-        <span class="varga-control-label" style="text-transform:none; font-weight:600;">✦ Show Planetary Aspects (Drishti)</span>
+        <span class="varga-control-label" style="text-transform:none; font-weight:600;">✦ Aspects (Drishti)</span>
       </label>
     </div>
 
@@ -363,7 +363,7 @@ function renderResults(profile){
 
     <div class="varga-control-group">
       <span class="varga-control-label">Outer planets:</span>
-      <label class="outer-chk"><input type="checkbox" class="outer-chk-input" ${window.__showOuter!==false?'checked':''}> <span>♅ Uranus · ♆ Neptune · ♇ Pluto</span></label>
+      <label class="outer-chk" title="Show Uranus, Neptune and Pluto"><input type="checkbox" class="outer-chk-input" ${window.__showOuter!==false?'checked':''}> <span>Outer planets ♅ ♆ ♇</span></label>
     </div>
 
     <div class="varga-control-group">
@@ -379,7 +379,7 @@ function renderResults(profile){
       <label class="varga-aspect-toggle-label" for="lagnaAspectToggle">
         <input type="checkbox" id="lagnaAspectToggle" class="varga-aspect-checkbox">
         <span class="varga-aspect-toggle-track"><span class="varga-aspect-toggle-thumb"></span></span>
-        <span class="varga-control-label" style="text-transform:none; font-weight:600;">✦ Show Planetary Aspects (Drishti)</span>
+        <span class="varga-control-label" style="text-transform:none; font-weight:600;">✦ Aspects (Drishti)</span>
       </label>
     </div>
 
