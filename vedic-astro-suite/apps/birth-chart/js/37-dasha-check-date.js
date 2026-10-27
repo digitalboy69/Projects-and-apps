@@ -1,8 +1,8 @@
-/* ---------- Check any date & time: all 5 levels ---------- */
+/* ---------- Check any date & time: all 6 levels (Mahadasha to Deha) ---------- */
 function dxLadderHtml(at){
   const act = findActiveDasha(DX.dasha.mahadashas, at);
   if (!act) return '<div class="pl-empty">That moment is outside this chart’s Vimshottari cycle (before birth or beyond the calculated range).</div>';
-  const lv = [act.mahadasha, act.antardasha, act.pratyantardasha, act.sookshmaDasha, act.pranaDasha];
+  const lv = [act.mahadasha, act.antardasha, act.pratyantardasha, act.sookshmaDasha, act.pranaDasha, act.dehaDasha];
   const path = [];
   const cards = lv.map((p,i) => {
     if (!p) return '';

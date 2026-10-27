@@ -71,7 +71,7 @@ function findActiveDasha(mahadashas, atDate){
   if (!md) return null;
   const ads = calculateSubPeriods(md);
   const ad = ads.find(a=> atDate>=a.startDate && atDate<a.endDate);
-  let pd = null, pds = null, sd = null, sds = null, prd = null, prds = null;
+  let pd = null, pds = null, sd = null, sds = null, prd = null, prds = null, dd = null, dds = null;
   if (ad){
     pds = calculateSubPeriods(ad);
     pd = pds.find(p=> atDate>=p.startDate && atDate<p.endDate);
@@ -81,6 +81,10 @@ function findActiveDasha(mahadashas, atDate){
       if (sd){
         prds = calculateSubPeriods(sd);
         prd = prds.find(p=> atDate>=p.startDate && atDate<p.endDate);
+        if (prd){
+          dds = calculateSubPeriods(prd);          // 6th level: Deha dasha (about an hour long)
+          dd = dds.find(p=> atDate>=p.startDate && atDate<p.endDate);
+        }
       }
     }
   }
@@ -88,6 +92,7 @@ function findActiveDasha(mahadashas, atDate){
     mahadasha: md, antardasha: ad, allAntardashas: ads,
     pratyantardasha: pd, allPratyantardashas: pds,
     sookshmaDasha: sd, allSookshmaDashas: sds,
-    pranaDasha: prd, allPranaDashas: prds
+    pranaDasha: prd, allPranaDashas: prds,
+    dehaDasha: dd, allDehaDashas: dds
   };
 }

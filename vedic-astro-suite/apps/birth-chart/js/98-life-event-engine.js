@@ -416,3 +416,5 @@ async function rsRunLife(){
   rsToast('Done ✨ Top fit: ' + sg.name + ' · min confidence ' + Math.round(c.floor*100) + '%');
 }
 window.LEE = { analyse:leAnalyse, vim:leVim, links:leLinks, catalog:LEC };
+/* Same guard: if the studio was built before this file loaded, fill the Life Events pane now (keeping its Back/Next footer). */
+(function(){ const pn = document.querySelector('.rs-pane[data-rs-pane="life"]'); if (pn && !pn.querySelector('.le-root') && typeof rsBuildLife === 'function'){ const nx = pn.querySelector('.rs-next'); try { rsBuildLife(pn); if (nx) pn.appendChild(nx); } catch(e){ console.error('Life Events', e); } } })();

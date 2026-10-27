@@ -169,7 +169,8 @@ function buildFullReportText(chart, profile, sections, liveSkyData){
       if (activeNow.pratyantardasha) add(`Pratyantardasha: ${activeNow.pratyantardasha.lord}  (${formatDashaDatePrecise(activeNow.pratyantardasha.startDate)} -> ${formatDashaDatePrecise(activeNow.pratyantardasha.endDate)})`);
       if (activeNow.sookshmaDasha) add(`Sookshma Dasha:  ${activeNow.sookshmaDasha.lord}  (${formatDashaDatePrecise(activeNow.sookshmaDasha.startDate)} -> ${formatDashaDatePrecise(activeNow.sookshmaDasha.endDate)})`);
       if (activeNow.pranaDasha) add(`Prana Dasha:     ${activeNow.pranaDasha.lord}  (${formatDashaDateTime(activeNow.pranaDasha.startDate)} -> ${formatDashaDateTime(activeNow.pranaDasha.endDate)})`);
-      add('Note: Pratyantardasha/Sookshma/Prana are shown only for the currently active window, not the full lifespan, since expanding all levels across a lifetime produces tens of thousands of entries.');
+      if (activeNow.dehaDasha) add(`Deha Dasha:      ${activeNow.dehaDasha.lord}  (${formatDashaDateTime(activeNow.dehaDasha.startDate)} -> ${formatDashaDateTime(activeNow.dehaDasha.endDate)})`);
+      add('Note: Pratyantardasha/Sookshma/Prana/Deha are shown only for the currently active window, not the full lifespan, since expanding all levels across a lifetime produces tens of thousands of entries.');
     }
     subsection('Full Lifespan — Mahadasha and Antardasha');
     add();

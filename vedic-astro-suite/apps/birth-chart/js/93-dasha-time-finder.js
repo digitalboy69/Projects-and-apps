@@ -1,6 +1,6 @@
 /* ============================================================================
-   DASHA TIME FINDER  (Vimshottari, all 5 levels)
-   Five cards: Mahadasha > Antardasha > Pratyantardasha > Sookshma > Prana.
+   DASHA TIME FINDER  (Vimshottari, all 6 levels)
+   Six cards: Mahadasha > Antardasha > Pratyantardasha > Sookshma > Prana > Deha.
    Pick a planet in a card -> that card shows the EXACT start and end date + time
    (to the second) and the next card unlocks with that period's sub-periods.
    No new astrology maths: periods come from the existing engine only
@@ -13,11 +13,12 @@ const DTF_LEVELS = [
   { name:'Antardasha',      hint:'Sub-period inside the Mahadasha' },
   { name:'Pratyantardasha', hint:'Sub-period inside the Antardasha' },
   { name:'Sookshma Dasha',  hint:'Fourth level · inside the Pratyantardasha' },
-  { name:'Prana Dasha',     hint:'Fifth level · inside the Sookshma' }
+  { name:'Prana Dasha',     hint:'Fifth level · inside the Sookshma' },
+  { name:'Deha Dasha',      hint:'Sixth level · inside the Prana, about an hour long' }
 ];
 const DTF_MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 // sel[i] = chosen planet at level i, occ[i] = which occurrence (only Mahadasha can repeat inside 120 years)
-let DTF = { sel:[null,null,null,null,null], occ:[0,0,0,0,0], msg:'' };
+let DTF = { sel:[null,null,null,null,null,null], occ:[0,0,0,0,0,0], msg:'' };
 
 /* ---------- formatting ---------- */
 function dtfP2(n){ return String(n).padStart(2,'0'); }
@@ -55,7 +56,7 @@ function dtfList(chain, i){                 // the 9 (or fewer) periods offered 
 }
 function dtfChain(){                        // resolve current selection into real periods
   const chain = []; let list = DX.mds;
-  for (let i = 0; i < 5; i++){
+  for (let i = 0; i < DTF_LEVELS.length; i++){
     const lord = DTF.sel[i]; if (!lord || !list) break;
     const matches = list.filter(p => p.lord === lord); if (!matches.length) break;
     const k = Math.min(DTF.occ[i] || 0, matches.length - 1);
@@ -64,7 +65,7 @@ function dtfChain(){                        // resolve current selection into re
   }
   return chain;
 }
-function dtfClearFrom(i){ for (let j = i; j < 5; j++){ DTF.sel[j] = null; DTF.occ[j] = 0; } }
+function dtfClearFrom(i){ for (let j = i; j < DTF_LEVELS.length; j++){ DTF.sel[j] = null; DTF.occ[j] = 0; } }
 function dtfSetPath(periods){               // select an existing chain of periods (used by "current dasha")
   dtfClearFrom(0); let list = DX.mds;
   periods.forEach((p, i) => {
@@ -84,7 +85,7 @@ function dtfSummary(chain, now){
   const stTxt = st === 'now' ? 'Running now' : (st === 'next' ? 'Upcoming' : 'Finished');
   const bar = st === 'now' ? `<div class="dx-bar"><i style="width:${dxPct(p,now).toFixed(1)}%;background:${c}"></i></div><div class="dtf-left">${dxPct(p,now).toFixed(0)}% through · ${dxLeft(p.endDate - now)} left</div>` : '';
   return `<div class="dtf-sum" style="--pc:${c}">
-    <div class="dtf-sum-top"><small>${DTF_LEVELS[i].name}${i < 4 ? ' · pick the next level below to go deeper' : ''}</small><span class="dtf-st ${st}">${stTxt}</span></div>
+    <div class="dtf-sum-top"><small>${DTF_LEVELS[i].name}${i < DTF_LEVELS.length - 1 ? ' · pick the next level below to go deeper' : ''}</small><span class="dtf-st ${st}">${stTxt}</span></div>
     <div class="dtf-path">${path}</div>
     <div class="dtf-times"><div><span>Starts</span><b>${dtfStamp(p.startDate)}</b></div><div><span>Ends</span><b>${dtfStamp(p.endDate)}</b></div><div><span>Length</span><b>${dtfDur(p.endDate - p.startDate)}</b></div></div>
     <div class="dtf-tz">Local time at the birth place (${dtfTzLabel()}) · seconds shown</div>${bar}</div>`;
@@ -129,7 +130,7 @@ function dtfRender(){ const r = document.getElementById('dtfRoot'); if (r) r.inn
   buildDashaSection = function(chart, profile){      // js/38 builds DX; we append our section inside the .dx wrapper
     const html = base(chart, profile);
     DTF = { sel:[null,null,null,null,null], occ:[0,0,0,0,0], msg:'' };
-    const block = `<div class="dx-sec dtf"><h5>⏱ Dasha Time Finder <span>pick a planet at each of the 5 levels</span></h5>
+    const block = `<div class="dx-sec dtf"><h5>⏱ Dasha Time Finder <span>pick a planet at each of the 6 levels</span></h5>
       <p class="dtf-intro">Choose a planet in each card. You get the <b>exact start and end date and time</b> of that period. Vimshottari years are 365.25 days, as in the rest of the app.</p>
       <div id="dtfRoot">${dtfHtml()}</div></div>`;
     const k = html.lastIndexOf('</div>');
@@ -155,7 +156,7 @@ document.addEventListener('click', (e) => {
   if (e.target.closest('[data-dtf-now]')){
     const act = findActiveDasha(DX.dasha.mahadashas, new Date());
     if (!act){ dtfClearFrom(0); DTF.msg = 'Today is outside this chart’s 120-year range.'; }
-    else { DTF.msg = ''; dtfSetPath([act.mahadasha, act.antardasha, act.pratyantardasha, act.sookshmaDasha, act.pranaDasha].filter(Boolean)); }
+    else { DTF.msg = ''; dtfSetPath([act.mahadasha, act.antardasha, act.pratyantardasha, act.sookshmaDasha, act.pranaDasha, act.dehaDasha].filter(Boolean)); }
     dtfRender();
   }
 });

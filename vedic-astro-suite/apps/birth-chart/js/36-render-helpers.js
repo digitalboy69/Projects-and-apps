@@ -15,7 +15,7 @@ const DASHA_PLANET_COLORS = {
 };
 
 /* ===== Dasha — 120-year timeline with drill-down navigator (v2) ===== */
-const DX_LEVELS = ['Mahadasha','Antardasha','Pratyantar','Sookshma','Prana'];
+const DX_LEVELS = ['Mahadasha','Antardasha','Pratyantar','Sookshma','Prana','Deha'];
 const DX_SHORT = ['Maha','Antar','Pratyantar','Sookshma','Prana'];
 const DX_ABBR = {Ketu:'Ke',Venus:'Ve',Sun:'Su',Moon:'Mo',Mars:'Ma',Rahu:'Ra',Jupiter:'Ju',Saturn:'Sa',Mercury:'Me'};
 let DX = { dasha:null, birth:null, tz:0, mds:[] };

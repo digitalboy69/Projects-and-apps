@@ -389,6 +389,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/yoga_engine_test.py` — Yoga engine: 41 hand-built charts that have each yoga and 41 that do not, cross-check with the app's own detectors on 8 real charts, texts, screen and report
 - `tests/life_event_pro_test.js` — Life-Event Pro engine in a Node vm: catalog integrity, dasha equals the app engine, recovers a known rising sign and time, flags wrong dates, random events stay below a 40% floor
 - `tests/dasha_lens_test.js` — Dasha Lens engine in a Node vm: levels 1-5 equal the app's dasha engine on 1,200 random moments over 3 charts, nesting laws, Prana length, duration text
+- `tests/ephemeris_vs_swiss_test.js` — REAL-CHART verification: 14 real births vs the Swiss Ephemeris (Moon within 25 arcsec, Ascendant, Lahiri anchor = official ICRC value, delta-T) and 504 Vimshottari boundaries over 6 levels equal an independent calculation
 - `tests/pdf_report_test.py` — PDF report: 4 theme/paper variants x 4 charts clean and self-contained, sections/options, Studio dialog, real PDF render
 - `tests/area_deep_test.py` — area deep dive: every quoted number vs the chart over 12 charts, wording rules, determinism, Deep reading/report/PDF wiring
 - `tests/house_now_test.py` — Right now: sky, dasha chain, signs, lords, Ashtakavarga and scores vs the engines at two dates over 12 charts, wording, first tab, report and PDF

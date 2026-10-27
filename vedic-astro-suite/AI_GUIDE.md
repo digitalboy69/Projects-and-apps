@@ -150,6 +150,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - AI session system: start every session with `docs/AI_START_HERE.md` (session loop, `tools/ai/session.sh start|check|test|ship`, token hygiene, lessons). The four reading databases (js/87, 89, 90, 91) are GENERATED from `tools/reading_gen/*.py`: edit the tables there and run `regen.sh`, never the JS. `.gitattributes` auto-merges STRUCTURE.md/AI_GUIDE.md (union) and dist/symbols.idx (ours, then build.py).
 - Navigation plan: see `docs/APP_NAVIGATION_PLAN.md` (audit: 32 tools / 26 panels, Home = 4 screens, 17 tools with no bottom tab; target hubs Start / Chart / Time / Strength / Tools, one `TOOLS` registry, 9 sessions N1-N9). Nothing built yet; read AI_START_HERE first.
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
+- Vimshottari now has 6 levels (Deha added: js/10 `dehaDasha`/`allDehaDashas`, js/36 DX_LEVELS, js/37, js/38, js/43, js/93). Ephemeris uses delta-T (js/03 `deltaTSeconds`, switch `EPH_DELTA_T`). Verified against Swiss Ephemeris: `node tests/ephemeris_vs_swiss_test.js`. Known: Lahiri here follows the official ICRC value (23 15 00.658 on 21 Mar 1956), about 15" above the Swiss Ephemeris Lahiri.
 - Dasha Lens (studio tab, js/99-dasha-lens.js, css/44) + 3D jump (js/99-jump-3d-bridge.js -> apps/sky3d/js/51-jump-from-rectification.js via localStorage 'vax_jump_3d' + the shell's 'vedic-open-3d'). Test: `node tests/dasha_lens_test.js`.
 - Rectification Studio redesign + speed: css/31 + css/32 rewritten (class selectors only); scan table is virtual + chunked (js/20); panels Vedic Birthday (js/54) and Tithi Pravesh (js/73) build lazily (`vxEnsurePanels` before export); moonLongitude uses a hoisted term table (js/03); icons.js pre-check; studio excluded from the global `-card` hover rules (css/13).
 - Life-Event Checker Pro: `js/97-life-event-catalog.js` (278 events by house/planet/sign, plain words, sharpness) + `js/98-life-event-engine.js` (dasha recomputed per candidate minute, aspects, Jup/Sat/Mars/Rahu/Ketu transits, Monte-Carlo luck test, bootstrap + drop-one, confidence floor) + `css/42`. Overrides the functions of js/30. Catalog facets (js/97 end): theme, who, mood, life stage, date accuracy + house/planet/sign; browse views are built by `leDefs` in js/98; UI styles use only `.le-` classes (never bare span/i/b, the icon layer inserts `.vxi` spans). Test: `node tests/life_event_pro_test.js`. Floor is a consistency check of the rules, not proof of astrology.
@@ -187,18 +188,25 @@ _Generated 2026-10-28 - 1604 symbols in `symbols.idx` (paths are real files now:
 ### File map (lines / KB) - file names say what is inside
 
 **birth-chart** - 177 files, 28018 lines, 2167 KB
+_Generated 2026-10-27 - 1551 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+
+### File map (lines / KB) - file names say what is inside
+
+**birth-chart** - 168 files, 27051 lines, 2013 KB
 ```
 index.html                                         599 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          255 lines   11 KB
 js/04-transit-timing-engine.js                     247 lines   11 KB
+js/03-ephemeris-engine.js                          235 lines    9 KB
+js/04-transit-timing-engine.js                     249 lines   11 KB
 js/05-ascendant-nakshatra-vargas.js                210 lines   12 KB
 js/06-outer-planet-knowledge.js                     37 lines    5 KB
 js/07-planetary-dignity.js                          77 lines    3 KB
 js/08-combustion-and-war.js                         30 lines    1 KB
 js/09-aspect-events.js                              69 lines    2 KB
-js/10-vimshottari-dasha-engine.js                   94 lines    4 KB
+js/10-vimshottari-dasha-engine.js                   99 lines    4 KB
 js/100-house-now.js                                300 lines   21 KB
 js/101-house-now-ui.js                              61 lines    8 KB
 js/102-planet-states.js                            451 lines   47 KB
@@ -245,7 +253,7 @@ js/39-yogas.js                                      67 lines    4 KB
 js/40-shadbala.js                                   55 lines    3 KB
 js/41-ashtakavarga-section.js                       35 lines    5 KB
 js/42-relationships-section.js                      21 lines    1 KB
-js/43-full-report-text.js                          262 lines   14 KB
+js/43-full-report-text.js                          263 lines   14 KB
 js/44-export-modal.js                              203 lines    9 KB
 js/45-panchanga-engine.js                          107 lines    7 KB
 js/46-transit-stays-engine.js                       43 lines    2 KB
@@ -298,17 +306,18 @@ js/91-dasha-reading.js                             274 lines   14 KB
 js/91-year-timeline-writer.js                      190 lines   18 KB
 js/92-year-timeline-ui.js                           57 lines    4 KB
 js/92-yoga-engine.js                              1379 lines   63 KB
-js/93-dasha-time-finder.js                         162 lines   10 KB
+js/93-dasha-time-finder.js                         163 lines   10 KB
 js/93-pdf-report.js                                405 lines   57 KB
 js/94-life-areas.js                                416 lines   16 KB
 js/95-life-narratives.js                           331 lines   21 KB
 js/96-varga-reading.js                             189 lines   11 KB
 js/97-life-event-catalog.js                        451 lines   43 KB
 js/97-transit-reading.js                           224 lines   17 KB
-js/98-life-event-engine.js                         419 lines   39 KB
+js/98-life-event-engine.js                         421 lines   39 KB
 js/98-pdf-pages.js                                 176 lines   32 KB
 js/99-area-deep.js                                 268 lines   37 KB
 js/99-dasha-lens.js                                176 lines   18 KB
+js/99-dasha-lens.js                                324 lines   36 KB
 js/99-jump-3d-bridge.js                             37 lines    2 KB
 css/01-premium-tokens-reset.css                     85 lines    2 KB
 css/02-header.css                                   55 lines    3 KB
@@ -354,7 +363,7 @@ css/40-year-timeline.css                             8 lines    0 KB
 css/41-dasha-time-finder.css                        63 lines    5 KB
 css/42-life-event-pro.css                          193 lines   22 KB
 css/43-house-now.css                                 8 lines    1 KB
-css/44-dasha-lens.css                               72 lines    9 KB
+css/44-dasha-lens.css                              124 lines   15 KB
 css/44-reading-style.css                            47 lines    6 KB
 css/45-shadbala-reading.css                         11 lines    2 KB
 css/46-ashtakavarga-reading.css                     10 lines    2 KB

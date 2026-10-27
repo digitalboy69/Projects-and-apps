@@ -1,6 +1,6 @@
 /* ---------- Drill-down navigator ---------- */
 function dxRowHtml(p, idx, lvl, path, ref){
-  const st = dxStatus(p, ref), c = DASHA_PLANET_COLORS[p.lord], drill = lvl < 4;
+  const st = dxStatus(p, ref), c = DASHA_PLANET_COLORS[p.lord], drill = lvl < 5;
   return `<div class="dx-row ${st}"><button type="button" class="dx-row-h" ${drill ? `data-dx-in="${idx}"` : 'disabled'}>
       <span class="dx-dot" style="background:${c}">${PLANET_GLYPHS[p.lord]}</span>
       <span class="dx-row-main"><b>${dxNames(path.concat([p]), lvl)}</b><small>${dxFmt(p.startDate,lvl)} → ${dxFmt(p.endDate,lvl)}</small></span>
@@ -40,7 +40,7 @@ function dxNavRender(scroll){
 }
 function dxPathAt(at, depth){ // chain of periods containing `at`, up to `depth` levels
   const act = findActiveDasha(DX.dasha.mahadashas, at); if (!act) return [];
-  return [act.mahadasha, act.antardasha, act.pratyantardasha, act.sookshmaDasha, act.pranaDasha].filter(Boolean).slice(0, depth);
+  return [act.mahadasha, act.antardasha, act.pratyantardasha, act.sookshmaDasha, act.pranaDasha, act.dehaDasha].filter(Boolean).slice(0, depth);
 }
 
 function buildDashaSection(chart, profile){
@@ -54,7 +54,7 @@ function buildDashaSection(chart, profile){
 
   let nowCard;
   if (active){
-    const lv = [active.mahadasha, active.antardasha, active.pratyantardasha, active.sookshmaDasha, active.pranaDasha].filter(Boolean);
+    const lv = [active.mahadasha, active.antardasha, active.pratyantardasha, active.sookshmaDasha, active.pranaDasha, active.dehaDasha].filter(Boolean);
     const m = active.mahadasha, c = DASHA_PLANET_COLORS[m.lord];
     nowCard = `<div class="dx-now" style="--pc:${c}">
       <div class="dx-now-top"><span class="dx-bigglyph">${PLANET_GLYPHS[m.lord]}</span>
@@ -80,7 +80,7 @@ function buildDashaSection(chart, profile){
   return `<div class="dx">
     <div class="dx-intro">Your life runs through nine planetary periods in a fixed 120-year cycle, starting from the Moon's nakshatra. Begins with <b>${dasha.startLord}</b> (${dasha.balanceYears.toFixed(1)} years remaining at birth).</div>
     ${nowCard}
-    <div class="dx-sec"><h5>🔎 Check any date &amp; time <span>all 5 levels at that moment</span></h5>
+    <div class="dx-sec"><h5>🔎 Check any date &amp; time <span>all 6 levels at that moment</span></h5>
       <div class="dx-chk"><div class="dx-chk-in">
         <label>Date<input type="date" id="dxDate"></label><label>Time<input type="time" id="dxTime"></label>
         <div class="dx-chk-q"><button type="button" data-dx-q="now">Now</button><button type="button" data-dx-q="birth">At birth</button><button type="button" data-dx-q="open" class="gold">Open in navigator →</button></div></div>
@@ -131,8 +131,8 @@ function formatDashaDateTime(d){
 }
 
 const dashaPeriodCache = {};
-const DASHA_LEVEL_NEXT = { antardasha:"pratyantar", pratyantar:"sookshma", sookshma:"prana", prana:null };
-const DASHA_LEVEL_PREFIX = { pratyantar:"pr", sookshma:"sk", prana:"pn" };
+const DASHA_LEVEL_NEXT = { antardasha:"pratyantar", pratyantar:"sookshma", sookshma:"prana", prana:"deha", deha:null };
+const DASHA_LEVEL_PREFIX = { pratyantar:"pr", sookshma:"sk", prana:"pn", deha:"dh" };
 
 function buildDashaLevelChips(parentPeriod, parentKey, level, now){
   const periods = calculateSubPeriods(parentPeriod);
@@ -165,7 +165,7 @@ function expandDashaLevel(key, level){
     panel.style.display = panel.style.display === 'none' ? '' : 'none';
     return;
   }
-  const label = level === "pratyantar" ? "Pratyantardasha" : level === "sookshma" ? "Sookshma Dasha" : "Prana Dasha";
+  const label = level === "pratyantar" ? "Pratyantardasha" : level === "sookshma" ? "Sookshma Dasha" : level === "prana" ? "Prana Dasha" : "Deha Dasha";
   panel.innerHTML = `<div class="dasha-drill-label">${label} (within ${parentPeriod.lord}):</div><div class="dasha-drill-chips">${buildDashaLevelChips(parentPeriod, key, level, now)}</div>`;
   panel.dataset.expanded = 'true';
   panel.style.display = '';
