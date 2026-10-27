@@ -2025,6 +2025,39 @@ body.dbx-open .viewport-actions,body.dbx-open .viewport-hud{visibility:hidden}
 @media(prefers-reduced-motion:reduce){.dbx *{animation:none!important;scroll-behavior:auto!important}}
 </style>
 <style>
+/* 3D Sky panels, tabs and popups: SOLID surfaces (nothing shows through), calm motion (colour changes only, no sliding/lifting/glow).
+   Loaded last so it wins over the older polish layers (04, 12-15, 21, 23) and shared/liquid-glass.css. */
+html[data-app] .sidepanel{background:#0b0f1a!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-color:rgba(255,255,255,.08)!important;box-shadow:0 -12px 36px rgba(0,0,0,.55)!important}
+html[data-app] .panel-tabs{background:#0e1320!important;border-bottom:1px solid rgba(255,255,255,.07)!important;box-shadow:none!important;gap:2px!important;padding:8px 10px!important}
+html[data-app] .panel-tab{position:relative;color:#7f8aa3;background:none!important;box-shadow:none!important;text-shadow:none!important;border-radius:12px;transform:none!important;translate:none!important;transition:color .15s ease,background-color .15s ease!important}
+html[data-app] .panel-tab .ti{filter:none!important;transition:none}
+html[data-app] .panel-tab:hover:not(.active){color:#c3cde0;background:rgba(255,255,255,.04)!important}
+html[data-app] .panel-tab.active{color:#f0d9a8;background:rgba(212,162,74,.12)!important;box-shadow:inset 0 -2px 0 #d4a24a!important}
+html[data-app] .panel-section.active{animation:none!important}
+html[data-app] .sky-row,html[data-app] .transit-card,html[data-app] .house-row,html[data-app] .aspect-row,html[data-app] .acc{background:#111726!important;border:1px solid rgba(255,255,255,.07)!important;border-radius:14px;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;transform:none!important;transition:background-color .15s ease,border-color .15s ease!important}
+html[data-app] .sky-row:hover,html[data-app] .transit-card:hover,html[data-app] .house-row:hover,html[data-app] .aspect-row:hover{background:#161d30!important;border-color:rgba(212,162,74,.28)!important}
+html[data-app] .timeline,html[data-app] .topbar{background:#0b0f1a!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-color:rgba(255,255,255,.08)!important}
+/* popups: Aspect Explorer, planet detail, rising, date picker */
+html[data-app] .pdmodal-overlay,html[data-app] .modal-overlay{background:rgba(3,5,10,.86)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;transition:opacity .15s ease!important}
+html[data-app] .pdmodal,html[data-app] .tm-card,html[data-app] .modal-overlay>div{background:#0e1320!important;border:1px solid rgba(255,255,255,.1)!important;box-shadow:0 20px 60px rgba(0,0,0,.6)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;transform:none!important;animation:none!important;transition:none!important}
+html[data-app] .expl-hero{background:#111726;border:1px solid rgba(255,255,255,.08);border-radius:14px}
+html[data-app] .empty-aspects{background:#111726;border:1px solid rgba(255,255,255,.06);border-radius:12px;color:#8d99b0}
+html[data-app] .vp-btn,html[data-app] .viewport-hud{transform:none!important}
+html[data-app] .vp-btn:hover{transform:none!important;border-color:#d4a24a;color:#f0d9a8;background:rgba(212,162,74,.12)}
+html[data-app] .vp-btn.active{border-color:#d4a24a;color:#f0d9a8;background:rgba(212,162,74,.14)}
+/* Sky Dashboard: opacity-only fade */
+@keyframes dbxr{from{opacity:0}to{opacity:1}}
+/* one calm accent (gold) across the panel instead of cyan/violet gradients */
+html[data-app] .tab-intro{background:#111726!important;border:1px solid rgba(212,162,74,.22)!important;border-radius:14px;box-shadow:none!important}
+html[data-app] .tab-intro .ico{color:#d4a24a!important}
+html[data-app] .panel-heading{color:#d9b774!important;letter-spacing:.1em}
+html[data-app] .panel-heading::before{background:#d4a24a!important;box-shadow:none!important}
+html[data-app] .cam-mode-btn{transition:color .15s ease,background-color .15s ease!important;transform:none!important}
+html[data-app] .cam-mode-btn.active{background:rgba(212,162,74,.18)!important;color:#f0d9a8!important;box-shadow:inset 0 0 0 1px rgba(212,162,74,.45)!important}
+html[data-app] .speed-chip.active{background:rgba(212,162,74,.2)!important;color:#f0d9a8!important;box-shadow:inset 0 0 0 1px rgba(212,162,74,.45)!important}
+html[data-app] .pdmodal-close{background:rgba(255,255,255,.06)!important;box-shadow:none!important}
+</style>
+<style>
 /* Day / Month / Year + AD/BC birth date fields (js/37) */
 .dob-row{display:grid;grid-template-columns:1fr 1.3fr 1.5fr .9fr;gap:6px}
 .dob-row input,.dob-row select{min-width:0;width:100%}

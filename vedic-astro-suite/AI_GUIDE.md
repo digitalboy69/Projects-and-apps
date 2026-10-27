@@ -376,9 +376,9 @@ js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 77 files, 7290 lines, 432 KB
+**sky3d** - 78 files, 7323 lines, 436 KB
 ```
-index.html                                         466 lines   28 KB
+index.html                                         467 lines   28 KB
 js/01-astro-engine.js                              157 lines    9 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -455,6 +455,7 @@ css/22-dasha-transit-triggers.css                   31 lines    3 KB
 css/23-time-machine-polish.css                     126 lines   12 KB
 css/24-sky-dashboard.css                            92 lines    8 KB
 css/25-date-entry.css                                8 lines    0 KB
+css/25-solid-panels.css                             32 lines    4 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -509,3 +510,4 @@ shared/quick-menu.js                               157 lines   12 KB
 - Session 10: S12 done: PDF brand (`brand()` in js/93 reads window.__VAX_BRAND), disclaimers, budgets in pdf_report_test, docs/RELEASE_CHECKLIST.md. Plan complete.
 - Sky Dashboard v2: zodiac-wheel hero + Moon phase, element colours, degree rings, scroll-spy nav, soft one-time fade-in (js/50, css/24).
 - Aspect Explorer now uses the time selected in the app even with a profile loaded (`getExplorerContext` in sky3d/js/27; profile only gives the Lagna); test tests/explorer_time_test.py.
+- 3D panels made solid (no see-through tab bar), calm motion, gold accent: sky3d/css/25-solid-panels.css (loaded last).
