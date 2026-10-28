@@ -184,16 +184,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-27 - 1624 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-28 - 1648 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 177 files, 28252 lines, 2193 KB
-_Generated 2026-10-28 - 1628 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
-
-### File map (lines / KB) - file names say what is inside
-
-**birth-chart** - 179 files, 28309 lines, 2190 KB
+**birth-chart** - 179 files, 28543 lines, 2216 KB
 ```
 index.html                                         601 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
