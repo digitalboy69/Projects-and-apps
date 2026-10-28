@@ -167,6 +167,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/111-problem-finder.js` — PROBLEM FINDER engine (PRB): areas of life, exact problems, trigger (outside/inside) and how it shows up (inner pain/real events); reads the chart and returns the reasons (houses, lords, planets, aspects, Ashtakavarga, running periods, today's sky); every line carries the chart fact it came from
 - `apps/birth-chart/js/112-problem-finder-ui.js` — Problem finder tab (PFUI): the five questions, the result screens, Home tile hook
 - `apps/birth-chart/js/113-date-entry.js` — type Day, Month, Year and AD/BC yourself (old and BC dates); inDobValue / inLoadDob; Julian calendar before 15 Oct 1582, accuracy notes, local-mean-time button
+- `apps/birth-chart/js/115-compare-lab.js` — Compare Lab experiment (global CMPLAB): full-screen canvas in Divisional Charts to compare up to 4 charts (D1 vs D9, any vs any); three-dot menu, follow a planet across charts, planet-by-chart table, plain-language notes, copy as text
 - `apps/birth-chart/js/114-varga-guide.js` — How to read each divisional chart (global VGG): for all 24 charts (D1 to D144 + RTN) what it is, how the app divides it, houses, step-by-step reading, rules marked "From the texts" or "Common practice", planets to check, strength, timing, cautions; shown as a collapsible guide under every D-chart
 - `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
 - `apps/birth-chart/js/95-life-narratives.js` — Life-area narratives (global LAN), GENERATED: a 450-700 word personal reading for each of the 9 life areas, composed from the engine facts (stance by band, house-lord arena, strengths, care points, yoga modifiers, timing, practices, self-check questions)
@@ -230,6 +231,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/50-home-polish.css` — HOME POLISH, loaded last: the tool hub on the Home tab (filter chips, Quick start tiles, tool cards with tinted glass, glowing icon tiles, arrow badges, staggered entrance and scroll reveal); scoped to #panel-home
 - `apps/birth-chart/css/51-problem-finder.css` — Problem finder screens (pf- prefix)
 - `apps/birth-chart/css/52-date-entry.css` — the typed-date panel on the birth-details page
+- `apps/birth-chart/css/54-compare-lab.css` — styles for the Compare Lab (cl- prefix)
 - `apps/birth-chart/css/53-varga-guide.css` — styles for the divisional chart guide (vgg- prefix)
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
@@ -382,6 +384,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/time_wheels_test.py` — 3D date picker test: five snap wheels, tap/scroll select, steppers with month-end clamp, typed date
 - `tests/sky_dashboard_test.py` — Sky Dashboard test: button, all sections, 9 cards, 9x9 matrix, summary text, close
 - `tests/explorer_time_test.py` — Aspect Explorer follows the app time (not the birth time) when a profile is loaded
+- `tests/compare_lab_test.py` — Compare Lab test: opens from Divisional Charts, three-dot menu, up to 4 charts, follow a planet, table, notes, copy text
 - `tests/varga_guide_test.py` — Divisional chart guide test: one guide per chart, all sections, tagged rules, follows the chart picker
 - `tests/nakshatra_db_test.py` — Nakshatra layer: 972 unique placements, wording gates (no fatalistic/absolute words), pada->navamsa equals the app's D9 on 8 charts, Moon star = dasha start, on-screen check
 - `tests/manifest_test.py` — Manifestation layer: 1296 unique combinations, grammar/voice/wording gates, signature matches real chart data on 8 charts, on-screen blocks and report

@@ -13546,6 +13546,70 @@ html{scroll-behavior:auto!important}
 .vgg-tag.p{color:#9fc1e8;border:1px solid rgba(120,160,220,.4);background:rgba(120,160,220,.08)}
 .vgg-src{display:inline-block;margin:10px 0 0;padding:3px 10px;border-radius:999px;font-size:12px;color:#aab6cc;border:1px solid rgba(255,255,255,.12)}
 </style>
+<style>
+/* Compare Lab (experiment): full-screen canvas for comparing divisional charts. Prefix cl-. See js/115-compare-lab.js */
+body.cl-open{overflow:hidden}
+.cl-root{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;color:var(--text-main,#eee);background:#07090f radial-gradient(rgba(212,175,55,.13) 1px,transparent 1.3px) 0 0/22px 22px;font-family:var(--font-sans,system-ui,sans-serif)}
+.cl-bar{flex:none;display:flex;align-items:center;gap:12px;padding:max(10px,env(safe-area-inset-top)) 12px 10px;background:rgba(10,12,20,.92);border-bottom:1px solid var(--border-light,rgba(255,255,255,.1));position:relative;z-index:3}
+.cl-dots-wrap{position:relative}
+.cl-dots{width:42px;height:42px;border-radius:50%;border:1px solid var(--gold-dim,#8c7323);background:rgba(212,175,55,.1);color:var(--gold-bright,#f0c46a);font-size:26px;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
+.cl-dots[aria-expanded="true"]{background:linear-gradient(135deg,var(--gold-bright,#f0c46a),var(--gold,#d4a24a));color:#1a1405}
+.cl-title{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.cl-title b{font-family:var(--font-display,Georgia,serif);font-size:19px;color:var(--gold-bright,#f0c46a);white-space:nowrap}
+.cl-exp{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:99px;border:1px solid var(--teal,#42877e);color:var(--teal-bright,#5ec4b7);background:rgba(66,135,126,.14)}
+.cl-x{width:40px;height:40px;border-radius:50%;border:1px solid var(--border-light,rgba(255,255,255,.14));background:rgba(255,255,255,.05);color:inherit;font-size:16px;cursor:pointer}
+.cl-menu{position:absolute;top:50px;left:0;width:min(340px,calc(100vw - 24px));max-height:calc(100vh - 90px);overflow:auto;padding:14px;border-radius:18px;border:1px solid var(--gold-dim,#8c7323);background:#10131c;box-shadow:0 18px 50px rgba(0,0,0,.65);z-index:5}
+.cl-menu h5{margin:12px 0 8px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold,#d4a24a)}.cl-menu h5:first-child{margin-top:0}
+.cl-menu h5 em{font-style:normal;text-transform:none;letter-spacing:0;color:var(--text-muted,#999)}
+.cl-menu summary{margin:8px 0;font-size:12.5px;color:var(--teal-bright,#5ec4b7);cursor:pointer}
+.cl-chips{display:flex;flex-wrap:wrap;gap:6px}
+.cl-chip{display:inline-flex;gap:5px;align-items:center;padding:7px 11px;border-radius:99px;border:1px solid var(--border-light,rgba(255,255,255,.16));background:rgba(255,255,255,.05);color:var(--text-main,#eee);font:600 12px var(--font-sans,system-ui);cursor:pointer}
+.cl-chip b{color:var(--gold-bright,#f0c46a)}.cl-chip:disabled{opacity:.35;cursor:not-allowed}
+.cl-chip:not(:disabled):hover,.cl-chip.on{border-color:var(--gold,#d4a24a);background:rgba(212,175,55,.16)}
+.cl-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:14px 12px calc(40px + env(safe-area-inset-bottom))}
+.cl-wrap{max-width:1500px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.cl-grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:760px){.cl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1180px){.cl-grid.n3,.cl-grid.n4{grid-template-columns:repeat(auto-fit,minmax(0,1fr))}}
+.cl-card{border-radius:20px;border:1px solid var(--border-light,rgba(255,255,255,.12));background:linear-gradient(160deg,rgba(24,28,44,.92),rgba(10,12,20,.94));padding:12px;min-width:0;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.cl-card header{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+.cl-let{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold-bright,#f0c46a),var(--gold,#d4a24a));color:#1a1405;font:800 13px var(--font-sans,system-ui);flex:none}
+.cl-sel{flex:1 1 0;min-width:0;text-overflow:ellipsis;padding:7px 8px;border-radius:10px;border:1px solid var(--border-light,rgba(255,255,255,.16));background:#0b0d15;color:var(--text-main,#eee);font:600 13px var(--font-sans,system-ui)}
+.cl-sty-grp{display:inline-flex;border-radius:99px;border:1px solid var(--border-light,rgba(255,255,255,.14));overflow:hidden}
+.cl-sty{border:0;background:transparent;color:var(--text-muted,#999);padding:6px 8px;font-size:14px;cursor:pointer}
+.cl-sty.on{background:linear-gradient(135deg,var(--gold-bright,#f0c46a),var(--gold,#d4a24a));color:#1a1405}
+.cl-ic{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--border-light,rgba(255,255,255,.14));background:rgba(255,255,255,.05);color:var(--text-muted,#aaa);cursor:pointer;font-size:13px;padding:0}
+.cl-ic:hover{color:var(--gold-bright,#f0c46a);border-color:var(--gold,#d4a24a)}
+.cl-meta{display:flex;justify-content:space-between;gap:8px;margin:10px 2px 6px;font-size:12px;color:var(--text-muted,#999)}.cl-meta b{color:var(--teal-bright,#5ec4b7);font-weight:600}
+.cl-svg svg{display:block;width:100%;max-width:520px;height:auto;margin:0 auto}
+.cl-svg .ch-pl{cursor:pointer;transition:opacity .2s}
+.cl-svg .cl-dim{opacity:.16}.cl-svg .cl-hit{filter:drop-shadow(0 0 5px #f9d976)}
+.cl-add{min-height:220px;border-radius:20px;border:2px dashed var(--gold-dim,#8c7323);background:rgba(212,175,55,.05);color:var(--gold-bright,#f0c46a);font:600 14px var(--font-sans,system-ui);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+.cl-add span{font-size:34px;line-height:1}
+.cl-empty{display:flex;flex-direction:column;align-items:center;gap:14px;padding:60px 20px;color:var(--text-muted,#999);text-align:center}
+.cl-hint{text-align:center;color:var(--text-muted,#999);font-size:13px;margin:0}
+.cl-sec{border-radius:20px;border:1px solid var(--border-light,rgba(255,255,255,.12));background:rgba(14,16,26,.9);padding:14px}
+.cl-sec h3{margin:0 0 6px;font:600 16px var(--font-display,Georgia,serif);color:var(--gold-bright,#f0c46a);display:flex;align-items:center;gap:8px}
+.cl-sec h3 .cl-ic{margin-left:auto}
+.cl-sub{margin:0 0 10px;font-size:12px;color:var(--text-muted,#999);line-height:1.5}
+.cl-tw{overflow-x:auto}.cl-tbl{width:100%;border-collapse:separate;border-spacing:0 4px;font-size:13px;min-width:320px}
+.cl-tbl th{font-weight:600;text-align:left;padding:7px 8px;white-space:nowrap;color:var(--text-main,#eee)}
+.cl-tbl thead th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold,#d4a24a)}
+.cl-tbl td{padding:7px 8px;background:rgba(255,255,255,.04);white-space:nowrap}.cl-tbl td small{color:var(--text-muted,#999)}
+.cl-tbl tbody tr[data-p]{cursor:pointer}.cl-tbl tbody tr[data-p]:hover td{background:rgba(255,255,255,.08)}
+.cl-tbl td.same{background:rgba(212,175,55,.2);color:var(--gold-bright,#f0c46a)}
+.cl-tbl tr.foc td,.cl-tbl tr.foc th{background:rgba(94,196,183,.18)}
+.cl-tbl td i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:5px;vertical-align:middle}.cl-tbl td i.g{background:#6fcf97}.cl-tbl td i.r{background:#e2625f}
+.cl-tbl td em{font-style:normal;color:#ff8a8a;font-size:10px;font-weight:800;margin-left:4px}
+.cl-tbl .cl-st{background:transparent;font-size:11px;color:var(--text-muted,#999)}.cl-tbl .cl-st .g{color:var(--gold-bright,#f0c46a)}
+.cl-tbl .cl-cnt th,.cl-tbl .cl-cnt td{font-size:11.5px;color:var(--text-muted,#999)}
+.cl-j{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.cl-j div{padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--border-light,rgba(255,255,255,.1))}
+.cl-j small{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold,#d4a24a)}.cl-j b{display:block;font-size:16px;margin:2px 0}.cl-j span{font-size:12px;color:var(--text-muted,#999)}
+.cl-note h4{margin:12px 0 6px;font-size:13.5px;color:var(--teal-bright,#5ec4b7)}
+.cl-note ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.5;color:var(--text-main,#ddd)}
+.cl-toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);padding:10px 16px;border-radius:99px;background:#1c2236;border:1px solid var(--gold,#d4a24a);font-size:13px;z-index:6}
+</style>
 
 
 
@@ -21622,6 +21686,8 @@ function renderResults(profile){
       </label>
     </div>
 
+    <div class="varga-control-group"><button type="button" class="vx-3d-btn" id="vxLabBtn" title="Experiment: compare any chart with any other chart">🧪 Compare Lab</button></div>
+
     <div class="varga-quick-chips">
       <span style="font-size:11px; text-transform:uppercase; color:var(--text-subtle); align-self:center; margin-right:4px;">Quick Jump:</span>`;
   ["D1","D9","D10","D2","D3","D7","D12","D60"].forEach(key => {
@@ -22382,7 +22448,7 @@ function chMeta(v){const inf={},c=window.__vgC;v.houses.forEach(h=>h.planets.for
   chOuter(v).forEach(n=>{inf[n]={st:'',rx:!!(v.outerRx&&v.outerRx[n]),vg:false};});
   PLANET_LIST.forEach(n=>{inf[n]=inf[n]||{st:'',rx:false};inf[n].vg=!!(c&&c.planets&&c.planets[n]&&v!==c.vargas.D1&&v.planetVargaSign[n]===c.planets[n].sign);});return inf;}
 function chBadge(n,x,y,r,i,lab){const c=PCOL[n],f=(r*1.3).toFixed(1);
-  return `<g><title>${n}${i.rx?' (retrograde)':''}${i.st?' · '+i.st:''}${i.vg?' · Vargottama':''}</title><circle cx="${x}" cy="${y}" r="${r}" fill="${c}" fill-opacity=".17" stroke="${dRing(i.st)}" stroke-width="1.5"/><text x="${x}" y="${y+.5}" text-anchor="middle" dominant-baseline="central" font-size="${f}" fill="${c}" font-family="sans-serif" font-weight="700">${PLANET_GLYPHS[n]||OUTER_GLYPHS[n]}</text>${i.rx?`<text x="${x+r*.95}" y="${y-r*.6}" font-size="${(r*.85).toFixed(1)}" fill="#FF8A8A" font-weight="800" font-family="sans-serif" text-anchor="middle">R</text>`:''}${i.vg?`<text x="${x-r*.95}" y="${y-r*.5}" font-size="${(r*.95).toFixed(1)}" fill="#F9D976" text-anchor="middle">★</text>`:''}${lab?`<text x="${x}" y="${y+r+6}" font-size="5.6" fill="${c}" fill-opacity=".85" font-family="sans-serif" text-anchor="middle">${n.slice(0,2)}</text>`:''}</g>`;}
+  return `<g class="ch-pl" data-p="${n}"><title>${n}${i.rx?' (retrograde)':''}${i.st?' · '+i.st:''}${i.vg?' · Vargottama':''}</title><circle cx="${x}" cy="${y}" r="${r}" fill="${c}" fill-opacity=".17" stroke="${dRing(i.st)}" stroke-width="1.5"/><text x="${x}" y="${y+.5}" text-anchor="middle" dominant-baseline="central" font-size="${f}" fill="${c}" font-family="sans-serif" font-weight="700">${PLANET_GLYPHS[n]||OUTER_GLYPHS[n]}</text>${i.rx?`<text x="${x+r*.95}" y="${y-r*.6}" font-size="${(r*.85).toFixed(1)}" fill="#FF8A8A" font-weight="800" font-family="sans-serif" text-anchor="middle">R</text>`:''}${i.vg?`<text x="${x-r*.95}" y="${y-r*.5}" font-size="${(r*.95).toFixed(1)}" fill="#F9D976" text-anchor="middle">★</text>`:''}${lab?`<text x="${x}" y="${y+r+6}" font-size="5.6" fill="${c}" fill-opacity=".85" font-family="sans-serif" text-anchor="middle">${n.slice(0,2)}</text>`:''}</g>`;}
 function chPlanets(list,inf,cx,cy,maxCols){const n=list.length;if(!n)return '';const r=n<=2?9:n<=4?8:6.5,cols=n<=2?n:(n>4&&maxCols?maxCols:2),gap=2*r+(n<=4?8:3),rows=Math.ceil(n/cols);
   return list.map((p,i)=>{const ro=Math.floor(i/cols),k=Math.min(cols,n-ro*cols),j=i%cols;return chBadge(p,+(cx+(j-(k-1)/2)*gap).toFixed(1),+(cy+(ro-(rows-1)/2)*gap).toFixed(1),r,inf[p],n<=4);}).join('');}
 function chFrame(id){const g=`url(#${id}g)`,dm=(x,y,r)=>`<path d="M${x} ${y-r}L${x+r} ${y}L${x} ${y+r}L${x-r} ${y}Z" fill="${g}"/>`;
@@ -48832,6 +48898,231 @@ const VGG = (function(){
     return key + ' · ' + d.head + '\n' + SRC[d.src] + '\n\n' + d.gist + '\n\nHow this app divides it: ' + d.how + '\nRising sign and houses: ' + d.lagna + '\n\nSteps:\n' + L(d.steps) + '\n\nRules:\n' + R(d.rules) + '\n\nPlanets to check: ' + d.karakas + '\nStrength: ' + d.strength + '\nTiming: ' + d.timing + '\nBe careful: ' + d.care + '\n\nRules for every divisional chart:\n' + R(GEN);
   }
   return { html, text, keys: () => Object.keys(D) };
+})();
+<\/script>
+<script>
+/* Compare Lab (experiment): a full-screen canvas in the Divisional Charts tab to put up to 4 charts side by side
+   (D1 vs D9, any chart vs any chart). Three-dot menu (top left) adds charts. Tap a planet in any chart to follow it
+   across all charts. Below the charts: a planet-by-chart table and plain-language notes about what matches and what differs.
+   Global: CMPLAB { open, close, add, setCards, text }. Chart data comes from window.__vgC (set when the chart is built). */
+window.CMPLAB = (function () {
+  'use strict';
+  const KEY = 'vx-cmplab-v1', MAX = 4, LET = ['A', 'B', 'C', 'D'];
+  const STYLES = [['north', '◇', 'North Indian'], ['south', '▦', 'South Indian'], ['west', '◯', 'Western wheel']];
+  const POPULAR = ['D1', 'D9', 'D10', 'D2', 'D3', 'D4', 'D7', 'D12', 'D60'];
+  const PAIRS = [['D1 vs D9', ['D1', 'D9']], ['D1 vs D10', ['D1', 'D10']], ['D9 vs D10', ['D9', 'D10']], ['D1 vs D2', ['D1', 'D2']], ['D1 · D9 · D10', ['D1', 'D9', 'D10']], ['D1 · D2 · D4 · D9', ['D1', 'D2', 'D4', 'D9']]];
+  const STRONG = ['Exalted', 'OwnSign', 'Moolatrikona'], WEAK = ['Debilitated'];
+  const nice = s => s === 'OwnSign' ? 'Own sign' : s;
+  let st = { cards: [], focus: null, style: 'north' }, root = null, uid = 0, menuOpen = false;
+
+  const chart = () => window.__vgC || window.currentChartForModal || null;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const abbr = si => SIGNS[si].name.slice(0, 3);
+  const keys = () => Object.keys(VARGAS);
+
+  function save() { try { localStorage.setItem(KEY, JSON.stringify({ cards: st.cards.map(c => ({ k: c.k, sty: c.sty })), style: st.style })); } catch (e) {} }
+  function restore() {
+    try {
+      const s = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (s && Array.isArray(s.cards)) {
+        st.style = STYLES.some(x => x[0] === s.style) ? s.style : 'north';
+        return s.cards.filter(c => VARGAS[c.k]).slice(0, MAX).map(c => ({ id: ++uid, k: c.k, sty: STYLES.some(x => x[0] === c.sty) ? c.sty : st.style }));
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  /* ---------- data helpers ---------- */
+  function info(c, k) {
+    const v = c.vargas[k]; if (!v) return null;
+    const asc = v.ascendantSign, byName = {};
+    v.houses.forEach(h => h.planets.forEach(p => { byName[p.name] = p; }));
+    const rows = {};
+    PLANET_LIST.forEach(n => {
+      const sign = v.planetVargaSign[n], house = ((sign - asc + 12) % 12) + 1, p = byName[n] || {};
+      const stt = (p.dignity && p.dignity.status) || '';
+      rows[n] = { sign, house, st: stt, rx: !!p.retrograde, strong: STRONG.includes(stt), weak: WEAK.includes(stt) };
+    });
+    return { k, v, asc, rows, lord: SIGNS[asc].lord };
+  }
+  const htype = h => ([1, 4, 7, 10].includes(h) ? 'K' : [5, 9].includes(h) ? 'T' : [6, 8, 12].includes(h) ? 'D' : 'O');
+  function infos() { const c = chart(); if (!c) return []; return st.cards.map(cd => info(c, cd.k)).filter(Boolean); }
+
+  /* ---------- compare logic ---------- */
+  function compare(A, B) {
+    const same = [], sameH = [], both = [], mixed = [];
+    PLANET_LIST.forEach(n => {
+      const a = A.rows[n], b = B.rows[n];
+      if (a.sign === b.sign) same.push(n);
+      if (a.house === b.house) sameH.push(n);
+      if (a.strong && b.strong) both.push(n);
+      if ((a.strong && b.weak) || (a.weak && b.strong)) mixed.push(n);
+    });
+    return { same, sameH, both, mixed };
+  }
+  const gl = n => (PLANET_GLYPHS[n] || '') + ' ' + n;
+  const list = a => a.map(gl).join(', ');
+  function notes(I) {
+    if (I.length < 2) return [];
+    const A = I[0], out = [];
+    for (let i = 1; i < I.length; i++) {
+      const B = I[i], c = compare(A, B), L = [];
+      L.push(c.same.length
+        ? `${c.same.length} of 9 planets sit in the same sign in both charts (${list(c.same)}). Those planets tend to tell a consistent story in both areas of life.`
+        : 'No planet sits in the same sign in both charts, so the two charts describe their areas of life quite independently.');
+      if (c.sameH.length) L.push(`Same house in both: ${list(c.sameH)}.`);
+      L.push(c.both.length ? `Strong in both charts (own, exalted or moolatrikona): ${list(c.both)}. These are the most dependable supports across the two.` : 'No planet is in an own, exalted or moolatrikona sign in both charts.');
+      if (c.mixed.length) L.push(`Mixed signals: ${list(c.mixed)} ${c.mixed.length > 1 ? 'are' : 'is'} strong in one chart and debilitated in the other. Read ${c.mixed.length > 1 ? 'them' : 'it'} as strong in one area and under strain in the other.`);
+      const lA = A.rows[A.lord] && A.rows[A.lord].house, lB = B.rows[B.lord] && B.rows[B.lord].house;
+      if (lA && lB) L.push(`Lagna lord: ${A.lord} sits in house ${lA} of ${A.k}, and ${B.lord} sits in house ${lB} of ${B.k}.`);
+      out.push({ title: `${A.k} (A) compared with ${B.k} (${LET[i]})`, lines: L });
+    }
+    return out;
+  }
+  function counts(i) { const c = { K: 0, T: 0, D: 0 }; PLANET_LIST.forEach(n => { const t = htype(i.rows[n].house); if (c[t] !== undefined) c[t]++; }); return c; }
+  function journey(I, p) {
+    return I.map((i, x) => { const r = i.rows[p]; return { tag: `${LET[x]} · ${i.k}`, sign: SIGNS[r.sign].name, house: r.house, st: r.st, rx: r.rx }; });
+  }
+
+  function text() {
+    const I = infos(); if (!I.length) return 'Compare Lab is empty.';
+    let t = 'Compare Lab: ' + I.map((i, x) => `${LET[x]} ${i.k} (${VARGAS[i.k].name}, ${SIGNS[i.asc].name} rising)`).join('  |  ') + '\n\n';
+    t += 'Planet'.padEnd(10) + I.map((i, x) => `${LET[x]} ${i.k}`.padEnd(22)).join('') + '\n';
+    PLANET_LIST.forEach(n => { t += n.padEnd(10) + I.map(i => { const r = i.rows[n]; return `${abbr(r.sign)} H${r.house}${r.st && r.st !== 'Neutral' ? ' ' + nice(r.st) : ''}${r.rx ? ' R' : ''}`.padEnd(22); }).join('') + '\n'; });
+    notes(I).forEach(n => { t += '\n' + n.title + '\n' + n.lines.map(l => '- ' + l).join('\n') + '\n'; });
+    return t;
+  }
+
+  /* ---------- rendering ---------- */
+  function cardHtml(cd, x, n) {
+    const c = chart(), v = c.vargas[cd.k], m = VARGAS[cd.k];
+    const opts = keys().map(k => `<option value="${k}"${k === cd.k ? ' selected' : ''}>${k} · ${esc(VARGAS[k].name)}</option>`).join('');
+    const sty = STYLES.map(s => `<button type="button" class="cl-sty${s[0] === cd.sty ? ' on' : ''}" data-act="style" data-id="${cd.id}" data-v="${s[0]}" title="${s[2]}" aria-label="${s[2]}">${s[1]}</button>`).join('');
+    return `<section class="cl-card" data-id="${cd.id}">
+      <header><span class="cl-let">${LET[x]}</span>
+        <select class="cl-sel" data-act="pick" data-id="${cd.id}" aria-label="Chart ${LET[x]}">${opts}</select>
+        <span class="cl-sty-grp">${sty}</span>
+        ${x > 0 ? `<button type="button" class="cl-ic" data-act="first" data-id="${cd.id}" title="Make this the first chart (A)" aria-label="Make first">⇱</button>` : ''}
+        <button type="button" class="cl-ic" data-act="del" data-id="${cd.id}" title="Remove" aria-label="Remove chart">✕</button></header>
+      <div class="cl-meta"><b>${esc(m.full)}</b><span>${SIGNS[v.ascendantSign].symbol} ${SIGNS[v.ascendantSign].name} rising</span></div>
+      <div class="cl-svg">${buildInteractiveVargaSvg(v, m, cd.sty, null)}</div>
+    </section>`;
+  }
+  function tableHtml(I) {
+    const head = I.map((i, x) => `<th>${LET[x]} · ${i.k}</th>`).join('');
+    let body = `<tr class="cl-lag"><th>Lagna</th>${I.map((i, x) => `<td class="${x && i.asc === I[0].asc ? 'same' : ''}">${abbr(i.asc)}</td>`).join('')}<td></td></tr>`;
+    PLANET_LIST.forEach(n => {
+      const rs = I.map(i => i.rows[n]), allSign = rs.every(r => r.sign === rs[0].sign), allHouse = rs.every(r => r.house === rs[0].house);
+      body += `<tr data-p="${n}" class="${st.focus === n ? 'foc' : ''}"><th><span style="color:${PCOL[n]}">${PLANET_GLYPHS[n]}</span> ${n}</th>` + rs.map((r, x) => {
+        const dot = r.strong ? '<i class="g" title="strong"></i>' : r.weak ? '<i class="r" title="debilitated"></i>' : '';
+        return `<td class="${x && r.sign === rs[0].sign ? 'same' : ''}">${abbr(r.sign)} <small>H${r.house}</small>${dot}${r.rx ? '<em>R</em>' : ''}</td>`;
+      }).join('') + `<td class="cl-st">${allSign ? '<span class="g" title="same sign in every chart">★ same sign</span>' : allHouse ? '<span title="same house in every chart">same house</span>' : ''}</td></tr>`;
+    });
+    const cnt = I.map(counts);
+    body += `<tr class="cl-cnt"><th>Kendra · Trikona · Dusthana</th>${cnt.map(c => `<td>${c.K} · ${c.T} · ${c.D}</td>`).join('')}<td></td></tr>`;
+    return `<div class="cl-sec"><h3>Planet by chart</h3><p class="cl-sub">Gold cells share the sign of chart A. Tap a planet row to follow it. Green dot: own, exalted or moolatrikona. Red dot: debilitated.</p>
+      <div class="cl-tw"><table class="cl-tbl"><thead><tr><th></th>${head}<th></th></tr></thead><tbody>${body}</tbody></table></div></div>`;
+  }
+  function focusHtml(I) {
+    if (!st.focus) return '';
+    const p = st.focus, J = journey(I, p);
+    return `<div class="cl-sec cl-focus"><h3><span style="color:${PCOL[p]}">${PLANET_GLYPHS[p]}</span> ${p} across your charts <button type="button" class="cl-ic" data-act="unfocus" aria-label="Stop following">✕</button></h3>
+      <div class="cl-j">${J.map(j => `<div><small>${j.tag}</small><b>${j.sign}</b><span>House ${j.house}${j.st && j.st !== 'Neutral' ? ' · ' + esc(nice(j.st)) : ''}${j.rx ? ' · retrograde' : ''}</span></div>`).join('')}</div></div>`;
+  }
+  function notesHtml(I) {
+    const N = notes(I); if (!N.length) return '';
+    return `<div class="cl-sec"><h3>What this comparison shows</h3>${N.map(n => `<div class="cl-note"><h4>${esc(n.title)}</h4><ul>${n.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>`).join('')}
+      <p class="cl-sub">These are patterns in the chart data, read as tendencies. They are not predictions, and a chart is best read as a whole by a trained astrologer.</p></div>`;
+  }
+  function menuHtml() {
+    const full = st.cards.length >= MAX;
+    const chip = k => `<button type="button" class="cl-chip" data-act="add" data-k="${k}"${full ? ' disabled' : ''}><b>${k}</b> ${esc(VARGAS[k].name)}</button>`;
+    return `<div class="cl-menu" role="menu">
+      <h5>Add a chart ${full ? '<em>(4 is the maximum)</em>' : ''}</h5>
+      <div class="cl-chips">${POPULAR.map(chip).join('')}</div>
+      <details><summary>All ${keys().length} charts</summary><div class="cl-chips">${keys().filter(k => !POPULAR.includes(k)).map(chip).join('')}</div></details>
+      <h5>Quick comparisons</h5>
+      <div class="cl-chips">${PAIRS.map((p, i) => `<button type="button" class="cl-chip" data-act="pair" data-i="${i}">${p[0]}</button>`).join('')}</div>
+      <h5>Style for all charts</h5>
+      <div class="cl-chips">${STYLES.map(s => `<button type="button" class="cl-chip${st.style === s[0] ? ' on' : ''}" data-act="allstyle" data-v="${s[0]}">${s[1]} ${s[2]}</button>`).join('')}</div>
+      <h5>More</h5>
+      <div class="cl-chips"><button type="button" class="cl-chip" data-act="copy">📋 Copy comparison</button><button type="button" class="cl-chip" data-act="clear">🗑 Clear all</button></div>
+    </div>`;
+  }
+  function render() {
+    if (!root) return;
+    const c = chart(), keep = root.querySelector('.cl-scroll'), y = keep ? keep.scrollTop : 0;
+    if (!c) { root.innerHTML = '<div class="cl-empty"><p>Cast a chart first, then open the Compare Lab.</p><button type="button" class="cl-chip" data-act="close">Close</button></div>'; return; }
+    const I = infos();
+    root.innerHTML = `<div class="cl-bar">
+        <div class="cl-dots-wrap"><button type="button" class="cl-dots" data-act="menu" aria-label="Menu" aria-expanded="${menuOpen}">⋮</button>${menuOpen ? menuHtml() : ''}</div>
+        <div class="cl-title"><b>Compare Lab</b><span class="cl-exp">Experiment</span></div>
+        <button type="button" class="cl-x" data-act="close" aria-label="Close">✕</button></div>
+      <div class="cl-scroll"><div class="cl-wrap">
+        ${st.cards.length ? `<div class="cl-grid n${st.cards.length}">${st.cards.map((cd, x) => cardHtml(cd, x)).join('')}${st.cards.length < MAX ? `<button type="button" class="cl-add" data-act="menu"><span>＋</span>Add a chart</button>` : ''}</div>`
+          : `<div class="cl-empty"><p>Your canvas is empty.</p><button type="button" class="cl-chip" data-act="menu">⋮ Open the menu to add a chart</button></div>`}
+        ${I.length === 1 ? '<p class="cl-hint">Add a second chart to compare. Try D9 next to D1.</p>' : ''}
+        ${focusHtml(I)}${I.length >= 2 ? tableHtml(I) + notesHtml(I) : ''}
+      </div></div>`;
+    root.querySelector('.cl-scroll').scrollTop = y;
+    applyFocus();
+  }
+  function applyFocus() {
+    root.querySelectorAll('.ch-pl').forEach(g => { const on = st.focus && g.getAttribute('data-p') === st.focus; g.classList.toggle('cl-hit', !!on); g.classList.toggle('cl-dim', !!st.focus && !on); });
+  }
+
+  /* ---------- actions ---------- */
+  const find = id => st.cards.find(c => String(c.id) === String(id));
+  function add(k) { if (!VARGAS[k] || st.cards.length >= MAX) return false; st.cards.push({ id: ++uid, k, sty: st.style }); save(); return true; }
+  function setCards(ks) { st.cards = []; ks.slice(0, MAX).forEach(add); save(); }
+  function toast(msg) { const t = document.createElement('div'); t.className = 'cl-toast'; t.textContent = msg; root.appendChild(t); setTimeout(() => t.remove(), 1800); }
+  function onClick(e) {
+    const f = e.target.closest('.ch-pl[data-p]');
+    if (f && root.contains(f)) { const p = f.getAttribute('data-p'); st.focus = st.focus === p ? null : p; render(); return; }
+    const tr = e.target.closest('tr[data-p]');
+    if (tr && root.contains(tr)) { const p = tr.getAttribute('data-p'); st.focus = st.focus === p ? null : p; render(); return; }
+    const b = e.target.closest('[data-act]'); if (!b || !root.contains(b)) { if (menuOpen && !e.target.closest('.cl-menu')) { menuOpen = false; render(); } return; }
+    const a = b.dataset.act, id = b.dataset.id;
+    if (a === 'menu') { menuOpen = !menuOpen; render(); return; }
+    if (a === 'close') { close(); return; }
+    if (a === 'add') { add(b.dataset.k); menuOpen = false; render(); return; }
+    if (a === 'pair') { setCards(PAIRS[+b.dataset.i][1]); menuOpen = false; render(); return; }
+    if (a === 'allstyle') { st.style = b.dataset.v; st.cards.forEach(c => { c.sty = st.style; }); save(); render(); return; }
+    if (a === 'style') { const c = find(id); if (c) { c.sty = b.dataset.v; save(); render(); } return; }
+    if (a === 'del') { st.cards = st.cards.filter(c => String(c.id) !== String(id)); save(); render(); return; }
+    if (a === 'first') { const c = find(id); if (c) { st.cards = [c, ...st.cards.filter(x => x !== c)]; save(); render(); } return; }
+    if (a === 'unfocus') { st.focus = null; render(); return; }
+    if (a === 'clear') { st.cards = []; st.focus = null; menuOpen = false; save(); render(); return; }
+    if (a === 'copy') {
+      const t = text(); menuOpen = false; render();
+      (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast('Comparison copied'), () => toast('Could not copy on this browser'));
+    }
+  }
+  function onChange(e) { const s = e.target.closest('select[data-act="pick"]'); if (!s) return; const c = find(s.dataset.id); if (c) { c.k = s.value; save(); render(); } }
+  function onKey(e) { if (e.key === 'Escape' && root) { if (menuOpen) { menuOpen = false; render(); } else close(); } }
+
+  function open(first) {
+    if (root) return;
+    const c = chart();
+    root = document.createElement('div'); root.id = 'cmpLab'; root.className = 'cl-root'; root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', 'Compare Lab');
+    document.body.appendChild(root); document.body.classList.add('cl-open');
+    st.focus = null; menuOpen = false;
+    const saved = restore();
+    if (saved && saved.length) st.cards = saved;
+    else { const k = VARGAS[first] ? first : 'D1'; st.cards = []; add(k); add(k === 'D9' ? 'D1' : 'D9'); }
+    root.addEventListener('click', onClick); root.addEventListener('change', onChange); document.addEventListener('keydown', onKey);
+    render();
+    return !!c;
+  }
+  function close() {
+    if (!root) return;
+    document.removeEventListener('keydown', onKey); root.remove(); root = null; document.body.classList.remove('cl-open');
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('#vxLabBtn'); if (!b) return;
+    const sel = document.getElementById('vargaSelect'); open(sel && sel.value);
+  });
+  return { open, close, add, setCards, text, isOpen: () => !!root, cards: () => st.cards.map(c => c.k) };
 })();
 <\/script>
 <script>

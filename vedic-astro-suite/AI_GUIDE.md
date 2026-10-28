@@ -178,17 +178,18 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - D-chart images (North, South, West) now have a full gold border: glowing double outer frame with beaded inner line and edge diamonds, thick chart-body border with corner studs, centre diamond/box, and degree ticks plus extra rings on the wheel (`chFrame` in birth-chart/js/61-varga-chart-svg.js).
 - D-chart borders were missing in the app because every chart reused the same gradient ids (`ng`, `sg`, `wg`); a hidden copy (My Chart overview) earlier in the page made browsers drop all gold strokes. `chUniq` in birth-chart/js/61-varga-chart-svg.js now gives each chart unique ids.
 - Divisional Charts page tidied (step 1 of the layout clean-up): shorter title, compact controls card (picker, style, one options row), compact chart head so the chart shows on the first screen (css/27 end block, text in js/58 and js/84).
+- Compare Lab (experiment, 🧪 button on Divisional Charts): full-screen canvas, three-dot menu adds up to 4 charts (D1 vs D9, any vs any), per-chart style, tap a planet to follow it across charts, planet-by-chart table, plain-language notes, copy as text (hidden while the app's Copy-buttons setting is off). js/115-compare-lab.js (CMPLAB), css/54-compare-lab.css, test tests/compare_lab_test.py; planet badges in js/61 now carry class ch-pl + data-p.
 
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-28 - 1604 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-28 - 1628 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 177 files, 28018 lines, 2167 KB
+**birth-chart** - 179 files, 28309 lines, 2190 KB
 ```
-index.html                                         599 lines   34 KB
+index.html                                         601 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          255 lines   11 KB
@@ -214,6 +215,7 @@ js/111-problem-finder.js                           406 lines   85 KB
 js/112-problem-finder-ui.js                         77 lines   10 KB
 js/113-date-entry.js                                86 lines    7 KB
 js/114-varga-guide.js                              294 lines   38 KB
+js/115-compare-lab.js                              224 lines   16 KB
 js/12-yoga-detection.js                            117 lines    4 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
@@ -260,7 +262,7 @@ js/54-vedic-birthday-ui.js                         156 lines   13 KB
 js/55-numerology-engine.js                          54 lines    9 KB
 js/56-numerology-ui.js                             126 lines   13 KB
 js/57-my-chart-overview.js                         100 lines    6 KB
-js/58-render-results.js                            755 lines   34 KB
+js/58-render-results.js                            757 lines   34 KB
 js/59-live-transit-form.js                         150 lines    7 KB
 js/60-interactive-varga-svg.js                     162 lines    6 KB
 js/61-varga-chart-svg.js                            71 lines   13 KB
@@ -365,6 +367,7 @@ css/50-home-polish.css                              52 lines    7 KB
 css/51-problem-finder.css                           66 lines    9 KB
 css/52-date-entry.css                               13 lines    1 KB
 css/53-varga-guide.css                              19 lines    1 KB
+css/54-compare-lab.css                              63 lines    7 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB

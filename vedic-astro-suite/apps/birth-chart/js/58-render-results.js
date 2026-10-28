@@ -313,6 +313,8 @@ function renderResults(profile){
       </label>
     </div>
 
+    <div class="varga-control-group"><button type="button" class="vx-3d-btn" id="vxLabBtn" title="Experiment: compare any chart with any other chart">🧪 Compare Lab</button></div>
+
     <div class="varga-quick-chips">
       <span style="font-size:11px; text-transform:uppercase; color:var(--text-subtle); align-self:center; margin-right:4px;">Quick Jump:</span>`;
   ["D1","D9","D10","D2","D3","D7","D12","D60"].forEach(key => {
