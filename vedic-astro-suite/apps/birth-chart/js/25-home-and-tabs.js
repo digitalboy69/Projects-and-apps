@@ -26,6 +26,7 @@ const HOME_ITEMS=[
  ['panel-tithi','🪔','Tithi Pravesh','Your yearly lunar-birthday chart','Time & Cycles','home'],
  ['panel-transits','♄','Transits & Sade Sati','Saturn, Jupiter & node ingress dates','Time & Cycles','home'],
  ['panel-transit','⟲','Live Sky','Today\'s planets vs your chart','Time & Cycles','home'],
+ ['panel-planetency','📚','Planet Encyclopedia','Every planet in full: nature, aspects, exalted & debilitated, friends & foes','Analysis','home'],
  ['panel-numerology','🔢','Numerology','Name number & birth-date numbers with meanings','Analysis','home'],
  ['panel-yogas','✦','Yogas','Notable planet combinations','Analysis','home'],
  ['panel-shadbala','⚖','Shadbala','Planet strength','Analysis','home'],

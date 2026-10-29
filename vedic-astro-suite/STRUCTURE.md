@@ -170,6 +170,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/115-compare-lab.js` — Compare Lab experiment (global CMPLAB): full-screen canvas in Divisional Charts to compare up to 4 charts (D1 vs D9, any vs any); three-dot menu, follow a planet across charts, planet-by-chart table, plain-language notes, copy as text
 - `apps/birth-chart/js/114-varga-guide.js` — How to read each divisional chart (global VGG): for all 24 charts (D1 to D144 + RTN) what it is, how the app divides it, houses, step-by-step reading, rules marked "From the texts" or "Common practice", planets to check, strength, timing, cautions; shown as a collapsible guide under every D-chart
 - `apps/birth-chart/js/114-varga-guide.js` — Full how-to-read guide for every divisional chart (global VGG, all 24 charts D1 to D144 + RTN): presiding lords (BPHS ch.6), how the app divides it, a section built from the user's own chart, all 12 houses and 9 planets read for the chart's topic, steps, rules tagged From the texts or Common practice, combinations, what each strength state means, cross-checks, timing, cautions, rules for every chart; D30 part-lords and D60 parts per planet; collapsible block under every D-chart
+- `apps/birth-chart/js/116-planet-encyclopedia.js` — Planet Encyclopedia (global PEN, panel-planetency, Home > Analysis): one page per graha with tabs Nature, Aspects, Strength (all dignities + 12 signs), Friends & foes, Houses, Your chart; hand-written PEN_DATA + VDB texts
 - `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
 - `apps/birth-chart/js/95-life-narratives.js` — Life-area narratives (global LAN), GENERATED: a 450-700 word personal reading for each of the 9 life areas, composed from the engine facts (stance by band, house-lord arena, strengths, care points, yoga modifiers, timing, practices, self-check questions)
 - `apps/birth-chart/js/96-varga-reading.js` — Divisional chart readings (global VGR), GENERATED: D9, D10, D7, D4, D24, D20 each with rising sign, the houses that matter, planet-by-planet text, strength summary, vargottama and a score; positions come from the app's own varga engine
@@ -234,6 +235,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/52-date-entry.css` — the typed-date panel on the birth-details page
 - `apps/birth-chart/css/54-compare-lab.css` — styles for the Compare Lab (cl- prefix)
 - `apps/birth-chart/css/53-varga-guide.css` — styles for the divisional chart guide (vgg- prefix)
+- `apps/birth-chart/css/55-planet-encyclopedia.css` — styles for the Planet Encyclopedia panel (pen- prefix)
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order
@@ -380,6 +382,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/knowledge_db_test.py` — Knowledge database: completeness, quality gates, cross-check of signs/nakshatras/aspects/dignity against the app tables, `VDB.reading()` on real charts
 - `tests/deep_reading_test.py` — Deep reading: 6 tabs, 12 house cards, every on-screen text equals the database text for the chart's real placements, report section + export checkbox, 6 more charts, phone layout
 - `tests/year_timeline_test.py` — Year Timeline File test: scan + file on a real chart (ids, order, known Saturn/Rahu ingress dates, dasha changes, size) and the panel at 400 px
+- `tests/planet_encyclopedia_test.py` — Planet Encyclopedia test: Home card, 9 planets x 6 tabs have text, Saturn/Mars aspects and dignities, taps, 390 px
 - `tests/notepad_test.py` — Notepad test: typing order, note links, templates from every view, side menu, Settings tab switches (copy buttons off by default), at 390 px and 1280 px
 - `tests/rising_navamsha_test.py` — 3D rising view Navamsha test: current Navamsha line, 12 signs x 9 Navamshas, order rule per sign type, boundary accuracy, tap and back
 - `tests/time_wheels_test.py` — 3D date picker test: five snap wheels, tap/scroll select, steppers with month-end clamp, typed date

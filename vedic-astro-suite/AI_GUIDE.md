@@ -184,13 +184,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-29 - 1650 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-29 - 1666 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 179 files, 28784 lines, 2292 KB
+**birth-chart** - 181 files, 29225 lines, 2341 KB
 ```
-index.html                                         601 lines   34 KB
+index.html                                         603 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          280 lines   13 KB
@@ -217,6 +217,7 @@ js/112-problem-finder-ui.js                         77 lines   10 KB
 js/113-date-entry.js                                86 lines    7 KB
 js/114-varga-guide.js                              522 lines  113 KB
 js/115-compare-lab.js                              224 lines   16 KB
+js/116-planet-encyclopedia.js                      350 lines   42 KB
 js/12-yoga-detection.js                            117 lines    4 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
@@ -230,7 +231,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             122 lines   12 KB
+js/25-home-and-tabs.js                             123 lines   12 KB
 js/26-rectification-studio.js                      246 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -263,7 +264,7 @@ js/54-vedic-birthday-ui.js                         156 lines   13 KB
 js/55-numerology-engine.js                          54 lines    9 KB
 js/56-numerology-ui.js                             126 lines   13 KB
 js/57-my-chart-overview.js                         100 lines    6 KB
-js/58-render-results.js                            757 lines   34 KB
+js/58-render-results.js                            758 lines   34 KB
 js/59-live-transit-form.js                         150 lines    7 KB
 js/60-interactive-varga-svg.js                     162 lines    6 KB
 js/61-varga-chart-svg.js                            71 lines   13 KB
@@ -369,6 +370,7 @@ css/51-problem-finder.css                           66 lines    9 KB
 css/52-date-entry.css                               13 lines    1 KB
 css/53-varga-guide.css                              32 lines    2 KB
 css/54-compare-lab.css                              63 lines    7 KB
+css/55-planet-encyclopedia.css                      87 lines    7 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -497,6 +499,7 @@ shared/quick-menu.js                               157 lines   12 KB
 - Quick note (shell/js/shell.js, shell/css/shell.css, apps/notepad/js/01-notepad.js `vedicQuickAdd`): long-press (or right-click) the Notepad item in the switcher menu opens a small draggable note window over any view; Save adds a note ("quick note" tag, unfiled; chart name in title) to the Notepad data (`vedicNotepad_v1`) via the open app or straight to storage; draft kept in `vedicQuickDraft`. A short tap still opens Notepad.
 - Year Timeline Pack: research + plan only (docs/YEAR_TIMELINE_RESEARCH.md). Data-only file for a chosen date range for any AI; no code yet. Next: S1 range scanner.
 - Year Timeline File (Birth Chart): js/90-year-timeline-engine.js (scan, facts only) + 91-writer (Markdown) + 92-ui (panel-yeartimeline, Home > Time & Cycles); test tests/year_timeline_test.py; v1 has no Tajika, no auto-split for very long ranges.
+- Planet Encyclopedia (Birth Chart): js/116-planet-encyclopedia.js (PEN) + css/55; panel-planetency, Home > Analysis; per-planet nature, aspects, dignities, relations, houses; edit texts in PEN_DATA; test tests/planet_encyclopedia_test.py.
 - Notepad: fixed typing cursor jump, note-link exit, template-from-Tasks, open side menu; new Settings tab (view settings) with switches stored in S.set.o (defaults in OPT_DEF; line copy + card copy OFF); test tests/notepad_test.py.
 - Notepad phone: added a menu button (☰) to the note-list header and made the drawer open in focus mode, so every screen has a way back to the menu (not tested).
 - Main menu Settings (shell): popup with one switch "Copy buttons" (off by default, key vedicCopyBtns); shared/copy-toggle.js in every app hides/shows buttons whose label starts with "Copy" (not tested).
