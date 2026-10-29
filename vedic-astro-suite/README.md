@@ -1,3 +1,5 @@
+<div align="center"><img src="../assets/hero.png" alt="Vedic Astro Suite" width="100%"></div>
+
 # Vedic Astro Suite
 
 Four small apps behind one floating switcher: **3D Sky**, **Birth Chart** (Vedic charts, rectification, Date Finder, Smart Search, Ask-AI, numerology, matching…), **Notepad** and the **Developer** card.
