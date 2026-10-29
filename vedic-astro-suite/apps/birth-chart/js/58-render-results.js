@@ -473,7 +473,7 @@ function renderResults(profile){
         <span>Harmonic Division: <strong>1/${meta.n} (${meta.n} parts)</strong></span>
         <span><strong>${vdata.houses.filter(h=>!h.isEmpty).length}</strong> of 12 houses occupied</span>
       </div>
-      ${typeof VGG!=='undefined' ? VGG.html(key) : ''}
+      ${typeof VGG!=='undefined' ? VGG.html(key, chart) : ''}
       ${key==="RTN" && typeof buildRtnExtras==='function' ? buildRtnExtras(chart, vdata) : ''}
       ${aspectRows ? buildAspectsTableHtml(aspectRows, 'varga') : ''}
     </div>`;
@@ -626,7 +626,7 @@ function renderResults(profile){
         <span>Harmonic Division: <strong>1/${meta.n} (${meta.n} parts)</strong></span>
         <span><strong>${vdata.houses.filter(h=>!h.isEmpty).length}</strong> of 12 houses occupied</span>
       </div>
-      ${typeof VGG!=='undefined' ? VGG.html(vargaKey) : ''}
+      ${typeof VGG!=='undefined' ? VGG.html(vargaKey, null) : ''}
       ${aspectRows ? buildAspectsTableHtml(aspectRows, 'lagna') : ''}
     </div>`;
 

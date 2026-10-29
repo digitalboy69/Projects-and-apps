@@ -13597,6 +13597,19 @@ body.dl-lock{overflow:hidden}
 .vgg-tag.c{color:#e9c97f;border:1px solid rgba(212,162,74,.5);background:rgba(212,162,74,.1)}
 .vgg-tag.p{color:#9fc1e8;border:1px solid rgba(120,160,220,.4);background:rgba(120,160,220,.08)}
 .vgg-src{display:inline-block;margin:10px 0 0;padding:3px 10px;border-radius:999px;font-size:12px;color:#aab6cc;border:1px solid rgba(255,255,255,.12)}
+/* v2: inner sections */
+.vgg-s{margin:8px 0;border:1px solid var(--border-light,rgba(255,255,255,.08));border-radius:12px;background:rgba(255,255,255,.02);overflow:hidden}
+.vgg-s>summary{list-style:none;cursor:pointer;padding:11px 13px;font-weight:600;font-size:13.5px;color:var(--text-primary,#f4f1ea);display:flex;justify-content:space-between;gap:10px}
+.vgg-s>summary::-webkit-details-marker{display:none}
+.vgg-s>summary::after{content:"＋";color:var(--gold,#d4a24a);font-weight:400}
+.vgg-s[open]>summary::after{content:"－"}
+.vgg-s[open]>summary{border-bottom:1px solid var(--border-light,rgba(255,255,255,.06));color:var(--gold,#d4a24a)}
+.vgg-sb{padding:8px 13px 12px}
+.vgg-list{margin:0;padding:0;list-style:none}
+.vgg-list li{margin:0 0 7px;padding:0 0 7px;border-bottom:1px dashed rgba(255,255,255,.07)}
+.vgg-list li:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
+.vgg-list b{color:var(--text-primary,#f4f1ea)}
+.vgg-note{color:#7f8ba3;font-size:12px;margin:8px 0 0}
 </style>
 <style>
 /* Compare Lab (experiment): full-screen canvas for comparing divisional charts. Prefix cl-. See js/115-compare-lab.js */
@@ -21929,7 +21942,7 @@ function renderResults(profile){
         <span>Harmonic Division: <strong>1/${meta.n} (${meta.n} parts)</strong></span>
         <span><strong>${vdata.houses.filter(h=>!h.isEmpty).length}</strong> of 12 houses occupied</span>
       </div>
-      ${typeof VGG!=='undefined' ? VGG.html(key) : ''}
+      ${typeof VGG!=='undefined' ? VGG.html(key, chart) : ''}
       ${key==="RTN" && typeof buildRtnExtras==='function' ? buildRtnExtras(chart, vdata) : ''}
       ${aspectRows ? buildAspectsTableHtml(aspectRows, 'varga') : ''}
     </div>`;
@@ -22082,7 +22095,7 @@ function renderResults(profile){
         <span>Harmonic Division: <strong>1/${meta.n} (${meta.n} parts)</strong></span>
         <span><strong>${vdata.houses.filter(h=>!h.isEmpty).length}</strong> of 12 houses occupied</span>
       </div>
-      ${typeof VGG!=='undefined' ? VGG.html(vargaKey) : ''}
+      ${typeof VGG!=='undefined' ? VGG.html(vargaKey, null) : ''}
       ${aspectRows ? buildAspectsTableHtml(aspectRows, 'lagna') : ''}
     </div>`;
 
@@ -48838,295 +48851,523 @@ window.PFUI = PFUI;
 <\/script>
 <script>
 /* ============================================================================
-   HOW TO READ EACH DIVISIONAL CHART (VGG): a written guide for every chart in VARGAS (D1 to D144 + RTN).
-   For each chart: what it is, how this app divides it, what the rising sign and houses mean there, a step-by-step way to read it,
-   the rules astrologers use (marked "From the texts" or "Common practice"), the planets to check, how to judge strength, timing and cautions.
-   Sources: Brihat Parashara Hora Shastra (BPHS) chapters on the sixteen divisions (Shodasavarga, about ch. 6 to 7) and Vimshopaka Bala (ch. 16);
-   Jaimini Upadesa Sutras (Karakamsa, and the charts D5, D6, D8, D11 that sources attribute to Jaimini); teachers' common practice, clearly marked.
-   No new yogas are defined here. Static text only (no chart maths except the birth-time sensitivity line).
-   API: VGG.html(key) -> HTML string for a <details> block (key = 'D9', 'RTN', ...). VGG.text(key) -> plain text (for copy).
+   HOW TO READ EACH DIVISIONAL CHART (VGG): a full written guide for every chart in VARGAS (D1 to D144 + RTN).
+   For each chart: what it is and who presides over its parts (BPHS ch.6), how this app divides it, a section built from YOUR chart (rising sign,
+   key houses, key planets, dignities, vargottama), every house and every planet read through the topic of that chart, step-by-step reading,
+   rules (marked "From the texts" or "Common practice"), combinations to look for, questions the chart can and cannot answer, what each
+   strength state means there, cross-checks, timing and cautions, then the rules that apply to every divisional chart.
+   Sources: Brihat Parashara Hora Shastra (BPHS) ch.6 (lords of the divisions, varga names, results, ch.6 verses 41-53) read on enjoylearningsanskrit.com;
+   Jaimini Upadesa Sutras (Karakamsa, the charts D5/D6/D8/D11 that sources attribute to Jaimini); Phaladeepika, Saravali and Jataka Parijata as named by
+   teaching sources (those sources give paraphrases, not verses, so every such rule is marked "Common practice"); teachers' practice, always marked.
+   No new yogas are defined. Text is static; the "your chart" section only reports facts the app already computed (signs, houses, dignities).
+   API: VGG.html(key, chart) -> HTML for a <details> block; VGG.text(key, chart) -> plain text; VGG.keys().
    "How this app divides it" matches calcVarga() in js/05-ascendant-nakshatra-vargas.js; change both together.
    ============================================================================ */
 const VGG = (function(){
   const C = 'c', P = 'p'; /* c = from the texts, p = common practice */
-  const SRC = { core:'One of the sixteen divisions in Parashara (BPHS)', jaim:'Attributed to Jaimini (not in the sixteen of Parashara); teachers differ on its method', later:'Not in the sixteen of Parashara; used by some schools, so treat as a fine detail only', app:'A helper view built for this app' };
+  const SRC = { core:'One of the sixteen divisions of Parashara (BPHS chapter 6)', jaim:'Attributed to Jaimini, not one of Parashara\'s sixteen; teachers differ on its method', later:'Not one of Parashara\'s sixteen; used by some schools, so treat it as a fine detail only', app:'A helper view built for this app' };
+  const PL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+  const SG = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const ordn = n => n + ((n % 100 >= 11 && n % 100 <= 13) ? 'th' : ({1:'st',2:'nd',3:'rd'}[n % 10] || 'th'));
+  const DIG = { Exalted:'exalted', OwnSign:'own sign', Moolatrikona:'own (moolatrikona)', Friend:'friend\'s sign', Neutral:'neutral sign', Enemy:'enemy\'s sign', Debilitated:'debilitated' };
+  /* ---------- rules for every divisional chart ---------- */
   const GEN = [
-    [C,'The Rasi chart (D1) is the body of the reading. The divisional charts are closer looks at one subject each. Always read a divisional chart together with D1, never alone.'],
-    [C,'A planet that stands in the same sign in D1 and in D9 is called vargottama and is read as strong. Some teachers extend the idea to other divisions.'],
-    [C,'A planet in its own or exalted sign in several divisions gains rank by how many it holds (classical names run from Parijata for 2, Uttama for 3, Gopura for 4, Simhasana for 5, up to Sridhama for 10; names differ slightly between translations). More divisions in good signs = more dependable results.'],
-    [C,'In the classical strength count (Vimshopaka Bala, BPHS ch. 16) D9 and D60 carry large weight, together with D1; the smaller charts add small amounts.'],
-    [P,'Houses are counted from that chart\'s own rising sign (whole-sign houses), and planets look at houses the same way as in D1 (7th for all; Mars 4th and 8th; Jupiter 5th and 9th; Saturn 3rd and 10th).'],
-    [P,'For any life topic: find the house of the topic, its lord, the natural significator (karaka), then see how each stands in this chart, and check the planet whose dasha is running.'],
-    [P,'A planet weak in D1 but strong in its divisional chart is read as better than it first looks; strong in D1 but weak in the divisional chart is read as a promise that does not fully ripen.'],
-    [P,'Do not predict from one divisional chart alone. Agreement between D1, the topic chart and the dasha timing is what makes a reading dependable.']
+    [C,'BPHS chapter 6 names sixteen divisions: Rasi (body), Hora, Drekkana, Chaturthamsa, Saptamsa, Navamsa, Dasamsa, Dwadasamsa, Shodasamsa, Vimsamsa, Siddhamsa (D24), Bhamsa (D27), Trimsamsa, Khavedamsa, Akshavedamsa and Shashtiamsa. D5, D6, D8 and D11 are attributed by other sources to Jaimini.'],
+    [C,'Strength by number of divisions (BPHS 6.41 to 6.51): in the six-division scheme (D1, D2, D3, D9, D12, D30) holding good signs in 2 divisions is called Kimshuka, 3 Vyanjana, 4 Chamara, 5 Chatra, 6 Kundala. In the seven-division scheme (those six plus D7) and the ten-division scheme (D1, D2, D3, D7, D9, D10, D12, D16, D30, D60), 2 is Parijata, 3 Uttama, 4 Gopura, 5 Simhasana, 6 Paravata, 7 Devaloka, 8 Brahmaloka, 9 Sakravahana, 10 Sridhama. In the sixteen-division scheme further grades are named up to 16 (Uchchaisravas, Dhanvantari, Suryakanta, Vidruma, Sakra Simhasana, Goloka, Strivallabha). A "good sign" is usually taken as the planet\'s own, exalted or moolatrikona sign.'],
+    [C,'BPHS 6.52: the wise should look at the divisions of planets that are exalted, in moolatrikona or in their own signs, and of the lords of the angles counted from the Arudha lagna.'],
+    [C,'BPHS 6.53: planets that are combust, defeated in planetary war, debilitated or weak (sleeping and similar states) destroy the yogas they take part in. Always check the planets of a yoga are healthy in the divisions.'],
+    [C,'BPHS 6.41: a planet joined with a benefic one of the 60 parts of D60 gives good results; joined with a cruel part, its results are destroyed.'],
+    [C,'The Navamsa (D9) and Shashtiamsa (D60) carry the largest weights, with D1, in the classical strength count (Vimshopaka Bala, BPHS). D16 also carries a large weight; the rest add small amounts. Sources print slightly different weights, so use the strength tool in this app and not a hand count.'],
+    [C,'A planet in the same sign in D1 and D9 is vargottama and is read as strong (BPHS, term introduced in chapter 6).'],
+    [P,'The Rasi chart is the promise and the divisional chart is the detail. Read the divisional chart for one topic at a time and always beside D1. Reading every chart at once only adds noise.'],
+    [P,'The lagna lord of a divisional chart is the main carrier of that chart. A lagna lord that is strong, well placed and unharmed shows the topic works smoothly; one in a hard house (6, 8, 12) or in a bad sign shows effort.'],
+    [P,'For any topic: house of the topic, its lord, the natural significator (karaka). Judge all three in D1 and in the matching divisional chart. All three strong = firm result; two strong = good with a gap; one = shaky.'],
+    [P,'D1 strong and divisional weak: the promise is there but this area needs effort. D1 weak and divisional strong: hidden potential that often shows later. Both strong: dependable. Both weak: a real weak area to protect.'],
+    [P,'Exalted in D1 and debilitated in the divisional chart: it shines on the surface but does not last. Debilitated in D1 and exalted in the divisional chart: early friction, lasting recovery (teachers use this as a form of cancellation of debilitation).'],
+    [P,'A planet is helped when benefics sit with it or look at it, and when the signs on both sides of it hold benefics. It is harmed when hard planets (Saturn, Mars, Rahu, Ketu, the Sun) sit with it, look at it, or sit on both sides of it.'],
+    [P,'Planets look at houses in the divisional chart the same way as in D1: all see the 7th; Mars also the 4th and 8th; Jupiter the 5th and 9th; Saturn the 3rd and 10th; Rahu and Ketu the 5th and 9th as in this app. Mutual aspects between the lagna lord and the topic lord are strong.'],
+    [P,'The running dasha and antardasha lords decide when a chart speaks. Look at their sign, house and dignity in the divisional chart of the topic: a dasha lord strong there gives its fruit for that topic; one weak there gives less than D1 promises.'],
+    [P,'Transits confirm timing: Jupiter and Saturn over the lagna, the topic house or the topic lord (in D1 and, for fine work, in the divisional chart) open and close periods. A divisional chart alone gives the kind of result, not the date.'],
+    [P,'Check the Moon and the lagna lord in every divisional chart you read: they show how the mind and the self carry the topic.'],
+    [P,'Birth-time ladder: D1 and D2 survive an error of an hour or so; D3 to D12 need the time to within about 10 minutes; D16 to D45 within a few minutes; D60 and the nested charts within a minute or two. If the time is only approximate, stay with D1, D2 and D9 and say so.'],
+    [P,'Use the strength tools together: Shadbala for the planets, Ashtakavarga for the houses, divisional dignity for the topic. When they agree the reading is firm.'],
+    [P,'Words of care: speak of tendencies, ease or effort, and timing windows. Never state death, certain illness, certain childlessness or certain divorce from any chart.']
   ];
+  /* ---------- strength states in a chart ---------- */
+  function states(d){
+    const n = d.noun;
+    return [
+      ['Own or exalted sign', 'The planet is at home. The matters of ' + n + ' that it governs come clearly, with ease and lasting strength.'],
+      ['Friend\'s sign', 'Good and dependable results, with a little effort. Support comes from the lord of that sign, so check where that lord stands.'],
+      ['Neutral sign', 'Average results. Judge by the house the planet rules, who joins it and who looks at it.'],
+      ['Enemy\'s sign', 'Results come with friction, delay or conditions. Help comes if the sign lord is strong or if a benefic looks at the planet.'],
+      ['Debilitated', 'Weak. The matters of ' + n + ' that it governs need real effort. Teachers look for cancellation: the lord of its sign, or the lord of the sign where it would be exalted, standing in an angle from the lagna or the Moon, or the planet being exalted in D1 or D9.'],
+      ['Retrograde', 'Intensity turns inward and results come after a delay or a second try. A retrograde planet is read as strong in effort, not as bad.'],
+      ['Joined or looked at by hard planets', 'Strain on the matters of ' + n + ' that the planet governs. A benefic joining or looking at it softens this.'],
+      ['Vargottama (same sign as in D1)', 'Strong and steady. The planet gives in this area what D1 promises.']
+    ];
+  }
+  /* ---------- the D30 lord and the D60 part of a longitude (for the "your chart" block) ---------- */
+  const T_ODD = [[5,'Mars'],[10,'Saturn'],[18,'Jupiter'],[25,'Mercury'],[30,'Venus']], T_EVEN = [[5,'Venus'],[12,'Mercury'],[20,'Jupiter'],[25,'Saturn'],[30,'Mars']];
+  const trimLord = lon => { const si = Math.floor(((lon % 360) + 360) % 360 / 30), d = (((lon % 360) + 360) % 360) % 30, t = si % 2 === 0 ? T_ODD : T_EVEN; for (let i = 0; i < t.length; i++) if (d < t[i][0]) return t[i][1]; return t[4][1]; };
+  /* 60 parts, odd signs in this order, even signs reversed (a commonly printed list; names and natures differ a little between printed lists) */
+  const S60 = [['Ghoransh',0],['Rakshasa',0],['Deva',1],['Kubera',1],['Rakshogana',1],['Kinnara',1],['Bhrashta',0],['Kulaghna',0],['Garala',0],['Agni',0],['Maya',0],['Yama',0],['Varuna',1],['Indra',1],['Kala',0],['Ahibhaga',1],['Amritansu',1],['Chandra',1],['Madhu',1],['Komala',1],['Padma',1],['Vishnu',1],['Vagisha',1],['Digchara',1],['Dava',1],['Ardra',1],['Kalanasha',0],['Kshitisha',1],['Kamalakara',1],['Manda',0],['Mrityu',0],['Kala',0],['Davagni',0],['Ghora',0],['Maya',0],['Kantaka',0],['Sudha',1],['Amrita',1],['Purnachandra',1],['Vishapradigdha',0],['Kulanasha',0],['Mukhya',1],['Vamshakshaya',0],['Utpata',0],['Kalarupa',1],['Saumya',1],['Mridu',1],['Sheetala',1],['Damshtrakara',0],['Indumukha',0],['Praveena',1],['Kalagni',0],['Dandayudha',1],['Nirmala',1],['Shubha',1],['Ashubha',1],['Atisheeta',1],['Sudhayoga',1],['Bhramana',0],['Indurekha',1]];
+  const part60 = lon => { const L = ((lon % 360) + 360) % 360, si = Math.floor(L / 30), n = Math.min(60, Math.floor((L % 30) / 0.5) + 1), k = si % 2 === 0 ? n : 61 - n; return { n: k, name: S60[k - 1][0], good: S60[k - 1][1] === 1 }; };
   const D = {};
-  D.D1 = { head:'Rashi: the whole life in outline', src:'core',
-    gist:'The main birth chart. It shows the body, mind, character and the whole life in outline. Every other chart is a closer look at one part of this one.',
+  D.D1 = { head:'Rashi: the whole life in outline', src:'core', noun:'the whole life',
+    gist:'The main birth chart. It shows the body, mind, character and the whole life in outline. BPHS calls it the chart of the body. Every other chart is a closer look at one part of this one, and none of them replaces it.',
+    lords:'The Rasi has no division. The planet that rules the sign is the lord of the part (kshetra lord): Mars for Aries and Scorpio, Venus for Taurus and Libra, Mercury for Gemini and Virgo, Moon for Cancer, Sun for Leo, Jupiter for Sagittarius and Pisces, Saturn for Capricorn and Aquarius.',
     how:'Each planet stays in the sign where it really is. Nothing is divided.',
-    lagna:'The rising sign is you: body and personality. House 1 self, 2 money, family and speech, 3 courage, efforts and younger siblings, 4 mother, home and peace of mind, 5 children, intelligence and past merit, 6 enemies, debts, illness and service, 7 spouse and partners, 8 sudden change, obstacles and depth, 9 luck, father, teachers and dharma, 10 career and public standing, 11 gains, friends and elder siblings, 12 expenses, loss, sleep, foreign lands and liberation.',
-    steps:['Read the rising sign, its lord and where that lord stands. The strength of the whole chart rests on this.','Read the Moon (sign, star, house) for the mind, and the Sun for the soul and vitality. Many teachers also read the whole chart from the Moon.','For each house find: its lord, where the lord stands, who sits in it, who looks at it.','Judge each planet: sign (exalted, own, friend, enemy, debilitated), retrograde, too close to the Sun (combust), planetary war.','Look for links between the lords of the angles (1, 4, 7, 10) and trines (1, 5, 9): joining, looking at each other, or exchanging signs.','Open the divisional chart for the subject you care about (D9 marriage, D10 career, D7 children) and compare.'],
-    rules:[[C,'Angles (1, 4, 7, 10) and trines (1, 5, 9) are the strong houses. Houses 6, 8 and 12 are the hard houses (dusthana).'],[C,'The lord of a trine and the lord of an angle joining, looking at each other or exchanging signs makes the chart strong (BPHS chapters on Raja Yoga).'],[P,'Houses 3, 6, 10 and 11 are growth houses (upachaya): hard planets do better there and improve with time.'],[P,'A planet in a hard house or enemy sign gives mixed results; in own, exalted or friendly sign gives clean results.'],[P,'Read the lord of a house by the house it sits in: the lord carries the matters of its house into the house where it stands.']],
-    karakas:'Sun: soul, father, authority. Moon: mind, mother. Mars: energy, younger siblings, land. Mercury: speech, learning, trade. Jupiter: wisdom, children, teachers. Venus: spouse, comfort, art. Saturn: work, time, hardship, long life. Rahu and Ketu: hunger and detachment, often sudden or unusual events.',
-    strength:'Use sign dignity first, then the strength tools in this app (Shadbala, Ashtakavarga, Bhava Bala).',
-    timing:'Vimshottari dasha: the running planets decide which houses wake up. Check each running planet in D1 and in the chart of the topic.',
-    care:'A strong D1 shows the promise. Whether it is kept needs the divisional charts and the timing.' };
-  D.D2 = { head:'Hora: wealth and family resources', src:'core',
-    gist:'Shows money, resources and family wealth. Only two signs appear in this chart: Leo (the Sun\'s half) and Cancer (the Moon\'s half). It is the simplest chart and is read by counting who sits in which half.',
+    lagna:'The rising sign is you: body and personality. The twelve houses are counted from it, sign by sign (whole-sign houses).',
+    focus:[1,10,7,5,9], kar:['Sun','Moon','Jupiter','Saturn'],
+    houses:['Body, looks, health, character, the self, the start of life.','Money you keep, family, food, speech, the face, early upbringing, savings.','Courage, effort, skills, hands, younger siblings, short journeys, writing and media.','Mother, home, land, vehicles, peace of mind, schooling, inner happiness.','Children, intelligence, creativity, love affairs, teachers, merit from the past, mantra.','Enemies, debts, disease, daily work, service, competition, pets, healing skills.','Spouse, partners, business partners, open enemies, travel, public dealings.','Sudden change, hidden matters, inheritance, long illness, secrets, research, the length of life (with the 3rd).','Luck, father, teachers, religion, higher study, long journeys, dharma.','Career, status, public name, authority, actions in the world, the government.','Gains, income, friends, elder siblings, fulfilment of wishes, networks.','Expenses, loss, sleep, bed pleasures, foreign lands, hospitals, retreat, liberation.'],
+    planets:{Sun:'Soul, vitality, father, authority, ego, the heart and bones. Strong: confident leader. Weak: low confidence or clashes with authority.',Moon:'Mind, emotions, mother, the public, memory, fluids. Strong and waxing: steady mind. Weak or hurt: moods, worry.',Mars:'Energy, courage, drive, anger, blood, land, younger siblings, engineers and fighters. Strong: bold. Weak: reckless or timid.',Mercury:'Intellect, speech, trade, skills, nerves, friends, writing. Strong: sharp and adaptable. Weak: scattered or nervous.',Jupiter:'Wisdom, children, teachers, wealth, faith, guidance, the liver. Strong: wise and protected. Weak: poor judgement, missed guidance.',Venus:'Spouse, love, comforts, art, beauty, vehicles, money from pleasure. Strong: charm and ease. Weak: trouble in love or comforts.',Saturn:'Work, time, discipline, delay, hardship, the old, long life, laborers. Strong: lasting success by effort. Weak: heavy burden and delay.',Rahu:'Hunger, ambition, the foreign, technology, sudden events, illusions. Acts like the sign lord it sits with.',Ketu:'Detachment, past skill, spirituality, loss, sudden cuts. Acts like the sign lord it sits with.'},
+    steps:['Read the rising sign, its lord and the house, sign and dignity of that lord. The lagna lord carries the whole chart.','Read the Moon: sign, star, house, phase and who joins or looks at it. Read the Sun for soul and vitality. Many teachers also read the whole chart from the Moon.','Go house by house: for each find its lord, where the lord stands, who sits in it, who looks at it.','Judge each planet: sign (exalted, own, friend, neutral, enemy, debilitated), retrograde, combust, planetary war.','Find the planets that rule the angles (1, 4, 7, 10) and the trines (1, 5, 9) and see how they connect: joining, looking at each other, exchanging signs.','Mark the hard houses (6, 8, 12) and see which planets sit there or rule them.','Open the divisional chart of the topic you care about and compare. Use the dasha for timing.'],
+    rules:[[C,'Angles (1, 4, 7, 10) and trines (1, 5, 9) are the strong houses; houses 6, 8 and 12 are the hard houses (dusthana). This is the base of Parashari reading.'],[C,'The lord of a trine linked with the lord of an angle (joining, mutual aspect, or exchange of signs) makes the chart strong (BPHS chapters on Raja Yoga). A planet that rules both an angle and a trine is called a yogakaraka.'],[C,'Lords of trines (1, 5, 9) give good results; lords of 3, 6 and 11 tend to give hard results; the lord of the 8th is read as hard; lords of 2 and 12 take on the colour of the sign they sit in and of their partners (Parashari lordship rules).'],[P,'Lagna lord in an angle or trine: strong chart. In 6, 8 or 12: effort and obstacles, unless it is exalted, in its own sign or helped.'],[P,'Houses 3, 6, 10 and 11 are growth houses (upachaya): hard planets do well there and improve with time.'],[P,'The lord of a house carries that house\'s matters into the house where it stands (for example the 2nd lord in the 10th brings money through career).'],[P,'A planet in its own or exalted sign gives clean results. A planet in an enemy or debilitated sign gives mixed results unless cancelled.'],[P,'Planets far from the Sun are bright; planets close to the Sun are combust (Moon 12°, Mars 17°, Mercury 14°, Jupiter 11°, Venus 10°, Saturn 15°) and give less of what they signify. This app shows it for every planet.'],[P,'Two planets within one degree, among Mars, Mercury, Jupiter, Venus and Saturn, are in planetary war: the loser gives less than its strength shows (teachers differ on how to pick the winner, so read the pair as strained and check both).'],[P,'Rahu and Ketu give the results of their sign lord and of the planets that join or look at them, plus their own hunger or detachment.'],[P,'Mutual aspect or exchange between two lords ties their houses together for life.'],[C,'Check that the planets of every yoga you use are not combust, defeated, debilitated or weak, because such planets destroy the yoga (BPHS 6.53).']],
+    combos:['Lagna lord with the 9th or 10th lord, or in the 10th or 9th: strong career and luck.','Several planets in the 6th, 8th or 12th house: heavy burdens in those matters, to be balanced by strong lagna and angles.','Planets in only a few houses (a cramped chart) show a life focused on a few themes; spread across the chart shows many themes.','A strong 10th lord with a strong 9th lord: career helped by luck.','A planet exalted or in its own sign in an angle from the lagna: a standing for its matters (teachers call these Pancha Mahapurusha yogas when Mars, Mercury, Jupiter, Venus or Saturn do it).'],
+    ask:['What is the person like (body, mind, temperament)?','Which houses are strong and which weak?','Which topic deserves its divisional chart?','Which dasha is running and what does it activate?'],
+    cannot:'It cannot by itself show the fine detail of marriage, children, career or parents. Those need their divisional charts.',
+    cross:'Compare every topic house in D1 with its divisional chart: 7th with D9, 10th with D10, 5th with D7 and D24, 4th with D4 and D16, 9th and 4th with D12, 3rd with D3.',
+    timing:'Vimshottari dasha: the running lords show which houses wake up. Read each running planet in D1 first, then in the matching divisional chart. Jupiter and Saturn transits over the lagna, the Moon and the topic house give the dates.',
+    care:'A strong D1 shows the promise; whether it is kept needs the divisional charts and the timing. A single bad planet is not the whole chart.' };
+  D.D2 = { head:'Hora: wealth and family resources', src:'core', noun:'wealth and family resources',
+    gist:'Shows money, resources and family wealth. Only two signs appear in this chart: Leo (the Sun\'s half) and Cancer (the Moon\'s half). It is the simplest chart: you count who sits in which half.',
+    lords:'BPHS 6.6: the Moon\'s hora (Cancer) belongs to the Pitris (ancestors); the Sun\'s hora (Leo) belongs to the Devas (gods). The Sun is the lord of Leo and the Moon is the lord of Cancer.',
     how:'Each sign is cut into two halves of 15 degrees. In an odd sign (Aries, Gemini, Leo...) the first half is Leo and the second half is Cancer. In an even sign (Taurus, Cancer, Virgo...) it is the other way round: first half Cancer, second half Leo.',
-    lagna:'The rising sign is Leo or Cancer. House 2 (stored money), 11 (income and gains), 5 and 9 (luck that brings money) are the houses to watch.',
-    steps:['Count the planets in the Sun\'s half (Leo) and in the Moon\'s half (Cancer).','Read the lord of the Hora lagna: Sun for Leo, Moon for Cancer.','Check the lords of houses 2 and 11 of D1: are they strong in D2?','Check Jupiter (natural significator of wealth) and Venus (comforts).','Compare with D1 houses 2, 5, 9, 11 and the Ashtakavarga of the 2nd and 11th houses.'],
-    rules:[[C,'D2 is for wealth and family resources (BPHS list of sixteen divisions).'],[P,'The Sun, Mars and Jupiter are read as strong in the Sun\'s half, and the Moon, Venus and Saturn as strong in the Moon\'s half. Mercury fits either.'],[P,'Planets in the Sun\'s half: wealth by own effort, authority, direct action. In the Moon\'s half: wealth by care, trade, public, steady saving.'],[P,'Most planets in one half show one clear way of earning; a mix shows more than one source.']],
-    karakas:'Jupiter for wealth, Venus for comforts, the Sun and Moon as the two halves, lords of houses 2 and 11.',
-    strength:'Count of planets in their favoured half, plus how the lords of 2 and 11 stand in D1.',
-    timing:'Check the dasha of the lords of houses 2 and 11 and of Jupiter.',
-    care:'Only two outcomes exist here, so it is a rough guide. Use it as a check, not as the main source for money.' };
-  D.D3 = { head:'Drekkana: brothers, sisters and courage', src:'core',
-    gist:'Shows younger and older siblings, courage, effort, and the spirit you work with.',
+    lagna:'The rising sign of D2 is Leo or Cancer. Leo lagna: wealth by your own effort and authority. Cancer lagna: wealth by care, public dealing, family and saving.',
+    focus:[2,11], kar:['Jupiter','Venus'],
+    houses:['The wealth style of the person: Leo (own effort) or Cancer (by care and the public).','Savings, stored money, family money, speech that earns.','Money from effort and skill, selling, small trade; support from siblings.','Money tied up in the home, land, property; money from the mother\'s side.','Money from luck, speculation, children, investment, past merit.','Money lost to debt, illness, enemies and service costs; also money from service and loans.','Money from partners, marriage, business with others.','Sudden money or loss, inheritance, insurance, the spouse\'s money, taxes.','Fortune, father, big luck, money from teachers and long-term good deeds.','Money from career, status and authority.','Gains and income, income from many sources, friends\' help; the main house of earning.','Expenses, loss, donations, foreign money, investments abroad.'],
+    planets:{Sun:'Strong in Leo\'s half: self-earned wealth, authority, command. In Cancer\'s half: needs care.',Moon:'Strong in Cancer\'s half: wealth by the public, care, saving. Weak in Leo\'s half: needs effort.',Mars:'In Leo\'s half: energy turns into earning. In Cancer\'s half: money may be spent fast.',Mercury:'Fits either half: trade, skills, advice; adaptable earner.',Jupiter:'In Leo\'s half: wealth by honest effort and guidance. In Cancer\'s half: wealth by trust and family. Jupiter is the main wealth significator.',Venus:'In Cancer\'s half: wealth by comforts, art and relationships. In Leo\'s half: spends on show.',Saturn:'In Cancer\'s half: slow steady saving. In Leo\'s half: hard work for money, delays.',Rahu:'Sudden or unusual money, foreign or technical sources; swings.',Ketu:'Detachment from money, gains and cuts that come without effort.'},
+    steps:['Count the planets in Leo\'s half (Sun\'s hora) and in Cancer\'s half (Moon\'s hora).','Note which half holds more planets and which planets: this is the main way wealth comes.','Read the D2 lagna and its lord (Sun for Leo, Moon for Cancer): is the Sun or the Moon strong in D1?','Check the lords of houses 2 and 11 of D1 and where they stand in D2.','Check Jupiter and Venus, the natural significators of wealth and comforts.','Compare with D1 houses 2, 5, 9 and 11 and the Ashtakavarga of the 2nd and 11th houses.'],
+    rules:[[C,'D2 is for wealth and family resources (BPHS list of sixteen divisions).'],[P,'The Sun, Mars and Jupiter are read as strong in the Sun\'s half; the Moon, Venus and Saturn as strong in the Moon\'s half. Mercury fits either.'],[P,'Benefics (Jupiter, Venus, Moon, Mercury) in the Sun\'s half: wealth by personal effort and authority. Benefics in the Moon\'s half: wealth by the public, trade or inheritance.'],[P,'Hard planets in either half: money comes with struggle or hard work; they do not forbid it.'],[P,'Most planets in one half: one clear way of earning. A balanced split: more than one source.'],[P,'The lords of houses 2 and 11 strong in D1 and also in D2: money comes easily. Weak in both: constant effort or leaks.'],[P,'Does not tell the amount of income: it shows ease or effort in money.'],[P,'D2 has very wide parts, so a small birth-time error does not change it much.']],
+    combos:['Jupiter and Venus both in the Moon\'s half with the 2nd or 11th lord strong in D1: steady comfortable wealth.','Many hard planets in Leo\'s half with a strong Sun: wealth through leadership, government or command.','All planets in one half and the other empty: a one-track way of earning; check the empty half\'s lord.','Both the 2nd and the 11th lord in the same half with their karaka Jupiter: money from a single reliable source.'],
+    ask:['Does money come easily or by effort?','By own effort (Sun\'s half) or by care and the public (Moon\'s half)?','Which planets support or drain the wealth?'],
+    cannot:'It cannot give amounts, dates or the exact source of money. Use D1 houses 2, 5, 9, 11, the Ashtakavarga and the dasha for that.',
+    cross:'Compare with D1 houses 2 and 11 and their lords, with D4 (property), D10 (career income), and the Dhana yogas of D1 (a lord of 2, 5, 9, 11 linked).',
+    timing:'Dasha and antardasha of the lords of 2 and 11, and of Jupiter; Jupiter over the 2nd or 11th house.',
+    care:'Only two outcomes exist, so it is a rough guide. Use it as a check, never as the main source for money.' };
+  D.D3 = { head:'Drekkana: brothers, sisters, courage and effort', src:'core', noun:'siblings, courage and effort',
+    gist:'Shows younger and older siblings, courage, effort, short journeys and the spirit you work with. The name means "a third" and the classical drekkana also describes the nature of the planet that sits in it.',
+    lords:'BPHS 6.7 to 6.8: the three parts of a sign are presided over by Narada (first part), Agastya (second part) and Durvasa (third part); the signs are counted from the sign itself, then its 5th, then its 9th.',
     how:'Each sign is cut into 3 parts of 10 degrees. The first part is the sign itself, the second is its 5th sign, the third is its 9th sign (the Parashara method).',
-    lagna:'Rising sign of D3. House 3 (younger siblings, courage), 11 (elder siblings), 1 (the person), 9 and 5 (support).',
-    steps:['Look at the 3rd and 11th houses and their lords in D3.','Check Mars (courage and younger siblings) and Jupiter (elder siblings in many teachers; some use Saturn).','Compare with the 3rd and 11th houses of D1.','Check the lagna lord of D3 for the strength of effort.'],
-    rules:[[C,'D3 is for siblings (BPHS list of divisions).'],[P,'The 3rd house and its lord show younger siblings, the 11th elder siblings.'],[P,'Mars strong in D1 and D3 gives courage and initiative; Mars weak in both gives hesitation or conflict with siblings.'],[P,'Malefics in the 3rd house of D3 are tolerated (growth house); benefics there give gentle help from siblings.']],
-    karakas:'Mars (younger siblings, courage), Jupiter (elder siblings), Mercury (skills and communication).',
-    strength:'Dignity of Mars and of the lords of 3 and 11 in D3.',
-    timing:'Dasha of the lord of the 3rd or 11th, or of Mars.',
-    care:'Do not state numbers of siblings from this chart alone.' };
-  D.D4 = { head:'Chaturthamsa: home, land and fortune', src:'core',
+    lagna:'Rising sign of D3 shows how you act and fight. Houses 3 and 11 matter most: the 3rd for younger siblings and courage, the 11th for elder siblings and friends.',
+    focus:[3,11,1], kar:['Mars','Jupiter'],
+    houses:['You as a doer: courage, how you take initiative.','Family speech and support from relatives; the brother\'s family wealth.','Younger siblings, courage, skills, efforts, short travel; the main house of D3.','Siblings\' home life; peace at home that supports your effort.','Siblings\' intelligence and children; creativity in your efforts.','Quarrels or competition with siblings; service and small jobs.','Siblings\' marriage or partners; business with siblings.','Hardship or sudden change affecting siblings; hidden effort.','Luck through siblings; father\'s support for your efforts.','Siblings\' career; recognition of your efforts.','Elder siblings, friends, gains from effort; support from older brothers and sisters.','Distance from siblings, loss through siblings, travel away.'],
+    planets:{Sun:'Authority in the family of siblings; a proud or leading eldest; pride in effort.',Moon:'Close, caring bond with siblings; moods and changeable effort.',Mars:'Main significator of courage and younger siblings: strong gives bold siblings and initiative; weak gives conflict or hesitation.',Mercury:'Skills, speaking, writing, clever siblings, communication.',Jupiter:'Elder siblings and guidance; protection; strong Jupiter shows helpful elders.',Venus:'Affectionate, artistic siblings; gentle effort.',Saturn:'Distance, delay or a heavy sense of duty with siblings; slow disciplined effort.',Rahu:'Unusual or foreign sibling ties; daring, risk-taking effort.',Ketu:'Detached siblings; separations; sudden ending of a bond.'},
+    steps:['Look at the 3rd and 11th houses and their lords in D3.','Check Mars (courage and younger siblings) and Jupiter (elder siblings in many teachers; some use Saturn).','Compare with the 3rd and 11th houses of D1 and with the Moon.','Check the D3 lagna lord for the strength of effort.','Look at hard planets in the 3rd (growth house): they are tolerated and give courage.'],
+    rules:[[C,'D3 is for siblings (BPHS list of sixteen divisions); BPHS names Narada, Agastya and Durvasa as the lords of the three parts.'],[P,'The 3rd house and its lord show younger siblings; the 11th shows elder siblings.'],[P,'Mars strong in D1 and D3 gives courage and initiative; Mars weak in both gives hesitation or conflict with siblings.'],[P,'Hard planets in the 3rd house of D3 are tolerated (growth house) and give courage; benefics there give gentle help from siblings.'],[P,'The 3rd lord in a hard house (6, 8, 12) shows strain or distance with siblings; in 1, 3, 5, 9, 11 shows support.'],[P,'Benefics in the 11th of D3 show help from older siblings and friends; hard planets there show competition but gains.'],[P,'The count of siblings is not read as a number; read the 3rd and 11th houses, their lords and Mars, and speak of many or few.'],[P,'The 3rd house of D1 is read first, then D3 refines it.']],
+    combos:['Mars in its own or exalted sign in D3 with a benefic looking at the 3rd house: bold and supported.','The 3rd lord in the 11th, or the 11th lord in the 3rd: a close bond between siblings and gains.','The 3rd lord with Saturn or Rahu: delay or distance from siblings; slow, effortful life.'],
+    ask:['How is the bond with siblings?','Is courage and initiative strong?','Do siblings help or hold back?'],
+    cannot:'It cannot give the exact number of siblings, their gender or their fate.',
+    cross:'Compare with the 3rd and 11th of D1, with Mars and Jupiter in D1, and with D12 for family.',
+    timing:'Dasha of the 3rd or 11th lord, or of Mars or Jupiter; Mars and Jupiter transits over the 3rd house.',
+    care:'D3 changes about every 40 minutes, so it is fairly forgiving; still, do not state numbers of siblings from this chart.' };
+  D.D4 = { head:'Chaturthamsa: home, land and fortune', src:'core', noun:'home, land and fortune',
     gist:'Shows fixed property, house, land, vehicles of the home, and the luck that comes through them.',
+    lords:'BPHS 6.9: the four parts are presided over by the four Kumaras: Sanaka, Sananda, Kumara and Sanatana. The parts go to the sign and its angles (1st, 4th, 7th, 10th).',
     how:'Each sign is cut into 4 parts of 7.5 degrees. The parts go to the 1st, 4th, 7th and 10th sign from it.',
-    lagna:'Rising sign of D4. House 4 (house, land, mother, peace), 9 (luck), 11 (gains), 2 (family wealth).',
-    steps:['Check the 4th house and its lord in D4, and the 9th.','Check Mars (land), Venus (comforts, vehicles), Moon (home and peace).','Compare with D1 house 4 and with D16 for vehicles.','See the lagna lord of D4 for how supported the home life is.'],
-    rules:[[C,'D4 is for fortune and property (BPHS list).'],[P,'A strong 4th lord in D4, not tied to 6, 8, 12, supports owning land and a settled home.'],[P,'Mars strong in D4 favours land; Venus strong favours a comfortable house and vehicles; the Moon strong favours peace at home.'],[P,'Malefics in the 4th house of D4 show repairs, disputes or moving around; benefics show a pleasant home.']],
-    karakas:'Mars (land), Venus (comfort), Moon (home, mother), Saturn (old buildings, slow gain).',
-    strength:'Dignity of the 4th lord and Mars in D4 and D1.',
-    timing:'Dasha and transits to the 4th lord, Mars and Venus.',
+    lagna:'Rising sign of D4 shows how you relate to home and property. House 4 is the home; house 9 is luck; house 11 gains from property; house 2 family wealth.',
+    focus:[4,9,11,2], kar:['Mars','Venus','Moon'],
+    houses:['You as owner or settler; the identity linked to home.','Family wealth, inherited money, savings from property.','Effort to build or buy; small repairs; siblings\' help.','The house, land, mother, peace of mind, buildings; the main house of D4.','Luck from property; children\'s home; investment in land.','Disputes, loans or repairs for property; tenants; illness at home.','Shared property, partner\'s home, rented homes, business premises.','Sudden gain or loss in property, inheritance, hidden land matters.','Fortune, luck in owning, father\'s property, ancestral land.','Property linked with career; work from home or at a fixed place.','Gains from property, rent, sale of land.','Loss in property, moving away, living abroad or in a hostel.'],
+    planets:{Sun:'Government or ancestral property; father\'s house; pride of ownership.',Moon:'The home, mother, peace of mind, liquid property; the main karaka of a peaceful home.',Mars:'Land, plots, construction, brick and stone; the main karaka of land.',Mercury:'Documents, deals, trade in property, brokers.',Jupiter:'Blessing and growth of property; temples and large holdings.',Venus:'Comforts, a beautiful and well-kept house, furnishings, vehicles of the home.',Saturn:'Old buildings, slow gain, delays in purchase; heavy repair or long possession.',Rahu:'Unusual or foreign property, disputes, speculative property.',Ketu:'Detachment from home; property lost or given up.'},
+    steps:['Check the 4th house and its lord in D4, then the 9th.','Check Mars (land), Venus (comforts, vehicles) and the Moon (peace at home).','Compare with D1 house 4 and its lord, and with D16 for vehicles.','See the lagna lord of D4 for how supported your home life is.','Look at hard planets in the 4th: they show repairs, disputes or moving.'],
+    rules:[[C,'D4 is for fortune and property (BPHS list of sixteen divisions; Chaturthamsa is called the division of luck and residence).'],[P,'A strong 4th lord in D4, not tied to 6, 8, 12, supports owning land and a settled home.'],[P,'Mars strong in D4 favours land; Venus strong favours a comfortable house and vehicles; the Moon strong favours peace at home.'],[P,'Hard planets in the 4th house of D4 show repairs, disputes or moving around; benefics show a pleasant home.'],[P,'The 4th lord and the 9th lord linked in D4: property comes with luck.'],[P,'The 4th lord in the 12th or 8th of D4: moving away from the birth home or loss of property.'],[P,'Mars and Saturn both afflicting the 4th: trouble in property matters or a gap before a house is owned.'],[P,'Check D1 house 4 first; D4 then shows whether the promise becomes ownership.']],
+    combos:['The 4th lord exalted or in its own sign in an angle of D4: lasting ownership.','Mars and Venus linked in D4 with the 4th lord: land and a nice house.','The 4th lord with Rahu: unusual, foreign or disputed property.','The Moon strong in the 4th of D4: peace of mind at home.'],
+    ask:['Will land or a house be owned, and with what ease?','Is home life peaceful?','Does property bring luck or trouble?'],
+    cannot:'It cannot tell the date of purchase or the price. Use dasha and transits for timing.',
+    cross:'Compare with D1 houses 4, 9 and 11, with D16 for vehicles, and with D12 for ancestral property.',
+    timing:'Dasha and transits of the 4th lord, Mars, Venus and Saturn; Jupiter over the 4th house.',
     care:'Good for tendency. Do not name a purchase date from D4 alone.' };
-  D.D5 = { head:'Panchamsa: fame, authority and merit', src:'jaim',
-    gist:'Used for fame, power, authority and the merit stored from before. Sources attribute it to Jaimini and teachers give it different meanings, so read it lightly.',
+  D.D5 = { head:'Panchamsa: fame, authority and stored merit', src:'jaim', noun:'fame, authority and stored merit',
+    gist:'Used for fame, power, authority and the merit stored from before (the 5th house is called purva punya). Sources attribute D5 to Jaimini; teachers give it different meanings, so read it lightly and beside D1 and D10.',
+    lords:'BPHS chapter 6 does not name presiding lords for D5 in the text read for this guide, so none are given here.',
     how:'Each sign is cut into 5 parts of 6 degrees. Parts of an odd sign go to Aries, Aquarius, Sagittarius, Gemini, Libra; parts of an even sign go to Taurus, Virgo, Pisces, Capricorn, Scorpio.',
-    lagna:'Rising sign of D5. House 5 (merit, mantra, intelligence), 10 (rank), 9 (luck), 1 (the self).',
-    steps:['Check the 5th and 10th houses and their lords in D5.','Check the Sun (authority) and Jupiter (wisdom, merit).','Compare with D1 houses 5 and 10 and with D10 for the actual career rank.'],
-    rules:[[C,'Sources attribute D5 to Jaimini for fame and power (not in the sixteen of Parashara).'],[P,'A strong Sun and a strong 10th lord here support rank and recognition.'],[P,'A strong 5th lord and Jupiter here show stored merit that helps at the right time.']],
-    karakas:'Sun, Jupiter, lords of 5 and 10.',
-    strength:'Dignity of the Sun, Jupiter and the lords of 5 and 10.',
-    timing:'Dasha of the 5th or 10th lord, Sun or Jupiter.',
-    care:'The method and meaning of D5 are not agreed. Use only as a side check.' };
-  D.D6 = { head:'Shashthamsa: health, debts and obstacles', src:'jaim',
-    gist:'Used for illness, debts, enemies and daily struggles. Sources attribute it to Jaimini. It is not a medical tool.',
+    lagna:'Rising sign of D5 shows how your standing and authority are built. The 5th (merit, mantra, intelligence), 9th (luck, teachers), 10th (rank) and 1st (the self) are the main houses.',
+    focus:[5,9,10,1], kar:['Sun','Jupiter'],
+    houses:['The self and its standing; how authority sits on you.','Reputation within the family; wealth that comes with name.','Courage to lead; efforts that bring recognition.','Public trust, homeland, base of support; education that gives name.','Stored merit, intelligence, advice, love and followers; the main house of D5.','Opponents and criticism; service that builds name through struggle.','Public dealings, partners who raise your standing; fame through others.','Hidden power, sudden rise or fall, secret influence.','Luck, teachers, blessings that bring fame; dharma.','Rank, authority, public position, achievements; the second main house of D5.','Recognition, network, gains from fame.','Withdrawal from fame, foreign recognition, loss of position, retreat.'],
+    planets:{Sun:'The main significator of authority and recognition; strong gives rank and respect.',Moon:'Popularity, public affection, followers.',Mars:'Command, drive, achievement by action.',Mercury:'Fame through words, skill or trade.',Jupiter:'Merit, wisdom, honour from teachers and the wise.',Venus:'Fame through art, charm, luxury.',Saturn:'Slow, lasting rank by work; late recognition.',Rahu:'Sudden rise, foreign or unusual fame; also falls.',Ketu:'Detachment from fame; recognition in spiritual or hidden fields.'},
+    steps:['Check the 5th and 10th houses and their lords in D5.','Check the Sun (authority) and Jupiter (wisdom, merit).','Compare with D1 houses 5 and 10 and with D10 for the actual career rank.','Look at the lagna lord of D5 for how the standing is carried.'],
+    rules:[[C,'Sources attribute D5 to Jaimini for fame and power; it is not one of Parashara\'s sixteen divisions.'],[P,'A strong Sun and a strong 10th lord here support rank and recognition.'],[P,'A strong 5th lord and Jupiter here show stored merit that helps at the right time.'],[P,'The 5th and 10th lords linked in D5 (joining, looking at each other or exchanging signs): recognition that comes naturally.'],[P,'Hard planets on the Sun or the 10th lord in D5: opposition or loss of position at times.'],[P,'Judge D5 only after D1 and D10 agree; if they disagree, trust D10 for career and D1 for the overall chart.']],
+    combos:['The Sun in its own or exalted sign in D5 with Jupiter looking at it: honour and recognition.','The 10th lord in the 5th or the 5th lord in the 10th: merit turns into rank.','Rahu with the 10th lord or Sun: fame that rises fast and can change quickly.'],
+    ask:['Does the person gain recognition or authority?','Is there stored merit that helps?'],
+    cannot:'It cannot name the field or the date of fame; that needs D10 and the dasha.',
+    cross:'D1 houses 5, 9, 10, D10, D9, and Jupiter and the Sun in D1.',
+    timing:'Dasha of the 5th, 9th or 10th lord, the Sun and Jupiter.',
+    care:'The method and meaning of D5 are not agreed. Use only as a side check; D5 changes about every 24 minutes, so the birth time should be good.' };
+  D.D6 = { head:'Shashthamsa: health, debts and obstacles', src:'jaim', noun:'health, debts and obstacles',
+    gist:'Used for illness, debts, enemies and daily struggles. Sources attribute it to Jaimini. It is a tendency chart and it is never a medical tool.',
+    lords:'BPHS chapter 6 does not name presiding lords for D6 in the text read for this guide, so none are given here.',
     how:'Each sign is cut into 6 parts of 5 degrees. An odd sign starts from Aries, an even sign starts from Libra, and the parts go on one sign at a time.',
-    lagna:'Rising sign of D6. House 6 (illness, debts, enemies, service), 8 (long illness, shocks), 12 (hospital, loss), 1 (body).',
-    steps:['Check the 6th, 8th and 12th houses and their lords in D6.','Check the lagna lord of D6: a strong one shows resilience.','Check the Sun (vitality), Moon (mind), Mars (inflammation, injury), Saturn (long and slow trouble).','Compare with D1 houses 1, 6, 8 and with D30.'],
-    rules:[[C,'Sources attribute D6 to Jaimini for health (not in the sixteen of Parashara).'],[P,'Malefics in the 6th house are a growth position (they fight trouble); benefics in the 6th soften the fight but may show slow recovery.'],[P,'A strong lagna lord of D6 supports recovery; the lagna lord tied to 8th or 12th shows weak stamina.']],
-    karakas:'Sun (vitality), Moon (mind, fluids), Mars (blood, injury), Saturn (chronic), Mercury (nerves), 6th lord.',
-    strength:'Dignity of the lagna lord and of the 6th lord in D6 and D1.',
-    timing:'Dasha and transit of the 6th, 8th and 12th lords and of Saturn and Mars.',
-    care:'This chart shows tendencies only. Never use it to diagnose or to decide treatment; see a doctor for health.' };
-  D.D7 = { head:'Saptamsa: children', src:'core',
-    gist:'Shows children and grandchildren, and the creative work you bring into the world.',
+    lagna:'Rising sign of D6 shows the strength of the body and how you meet illness and debt. Houses 1 (body), 6 (illness, debts, enemies), 8 (long or sudden illness) and 12 (hospital, loss) matter most.',
+    focus:[1,6,8,12], kar:['Sun','Moon','Mars','Saturn'],
+    houses:['The body, vitality, resistance, how quickly you recover.','Food, speech, face, mouth, eyes; family money worries.','Courage in illness, hands, arms, ears; small ailments.','Chest, heart, home comfort, peace of mind; digestion tied to mood.','Stomach, intelligence, children\'s health; stress from worry.','Illness itself, debts, enemies, daily struggles, service; the main house of D6.','Marriage and partner\'s health; kidneys, lower back; shared debt.','Long, hidden or sudden illness; surgery; chronic conditions.','Father\'s health; hips and thighs; luck through recovery.','Joints, knees, bones; strain from work; reputation.','Gains after illness, recovery, support of friends; ankles, circulation.','Hospital, rest, sleep, feet, expenses on health; isolation.'],
+    planets:{Sun:'Vitality and resistance; heart, eyes, bones; weak Sun: low stamina.',Moon:'Mind, fluids, sleep; weak or hurt Moon: anxiety or mood trouble.',Mars:'Blood, fevers, inflammation, injury, surgery; strong: fighting spirit.',Mercury:'Nerves, skin, speech, breathing; stress ailments.',Jupiter:'Liver, fat, healing and support; strong Jupiter protects.',Venus:'Kidneys, hormones, sugar, sexual health, comforts.',Saturn:'Chronic, slow conditions; bones, joints, teeth; long-lasting effort.',Rahu:'Mysterious, hard-to-diagnose or toxic troubles; allergies; fear.',Ketu:'Sudden or hidden problems; the need for rest or detachment.'},
+    steps:['Check the lagna lord of D6: a strong one shows resilience.','Check the 6th, 8th and 12th houses and their lords in D6.','Check the Sun (vitality), Moon (mind), Mars (inflammation, injury) and Saturn (long, slow trouble).','Compare with D1 houses 1, 6, 8 and with D30.','Look at which planets sit in the 6th of D6: they colour the kind of trouble.'],
+    rules:[[C,'Sources attribute D6 to Jaimini for health and disease; it is not one of Parashara\'s sixteen divisions.'],[P,'Hard planets in the 6th house are in a growth position (they fight trouble); benefics in the 6th soften the fight but can show slow recovery.'],[P,'A strong lagna lord of D6 supports recovery; the lagna lord tied to the 8th or 12th shows weak stamina.'],[P,'The 6th lord in the 6th, 8th or 12th (a "vipareeta" idea some teachers use): trouble tends to cancel itself; the lord in other houses brings trouble to that house\'s matters.'],[P,'The Sun and Moon both strong and well placed: good vitality and mind.'],[P,'Saturn or Mars on the lagna lord, Sun or Moon of D6: needs care of that part of the body; take it as a prompt for check-ups, not a diagnosis.']],
+    combos:['A strong lagna lord and benefics in angles of D6: good health and quick recovery.','The 6th lord with the 8th lord or lagna lord in D6: recurring trouble that needs steady care.','Hard planets on the Moon of D6: stress-related issues.'],
+    ask:['How strong is the body and how quickly does it recover?','Which area of life takes the strain: debt, enemies or illness?'],
+    cannot:'It cannot name an illness, its date, or any treatment.',
+    cross:'D1 lagna, 6th, 8th and 12th, D30, D8, and the Ashtakavarga of the 6th and 8th houses.',
+    timing:'Dasha and transits of the 6th, 8th and 12th lords, Saturn and Mars.',
+    care:'This chart shows tendencies only. Never use it to diagnose or decide treatment; see a doctor. D6 changes about every 20 minutes.' };
+  D.D7 = { head:'Saptamsa: children and creative fruit', src:'core', noun:'children and creative fruit',
+    gist:'Shows children and grandchildren, the bond with them, and the creative work you bring into the world.',
+    lords:'BPHS 6.10 to 6.11: the seven parts have lords counted from the sign\'s own lord (odd signs) or from the lord of the 7th sign (even signs), and each part is linked to a substance: salt, milk, curd, ghee, sugarcane juice, wine and pure water (reversed for even signs).',
     how:'Each sign is cut into 7 parts of about 4.29 degrees. An odd sign starts from itself; an even sign starts from its 7th sign. The parts go on one sign at a time.',
-    lagna:'Rising sign of D7. House 5 (children), 9 (children of children, luck), 2 and 11 (the family grows), 1 (the parent).',
-    steps:['Check the 5th house and its lord in D7.','Check Jupiter, the natural significator of children.','Check the lagna lord of D7 and the 9th house.','Compare with D1 house 5, its lord and Jupiter.'],
-    rules:[[C,'D7 is for children (BPHS list).'],[P,'Jupiter strong in D1 and D7, with a clean 5th house and lord, supports children; heavy hard planets on the 5th house or Jupiter suggest delay or more effort.'],[P,'The 5th lord in a hard house (6, 8, 12) in D7 shows worry or delay around children.'],[P,'Check D9 5th house as well; many teachers read both.']],
-    karakas:'Jupiter (children), the 5th lord, the Moon (care) and Venus.',
-    strength:'Dignity of Jupiter and the 5th lord in D7 and D1.',
-    timing:'Dasha of the 5th lord, Jupiter, the 9th lord; Jupiter transit over the 5th house or its lord.',
-    care:'Handle with care. Do not give yes or no on children; speak of ease or effort and of timing windows.' };
-  D.D8 = { head:'Ashtamsa: sudden troubles and the long run', src:'jaim',
-    gist:'Used for sudden troubles, hidden matters, inheritances and the length of the road. Sources attribute it to Jaimini and teachers differ; read it lightly.',
+    lagna:'Rising sign of D7 is the parent in you. The 5th house is the main house for children; the 9th is children of children and luck; the 2nd and 11th are the family growing.',
+    focus:[5,9,1,11], kar:['Jupiter'],
+    houses:['The parent; your own health and vigour for having children.','Family growth, speech with children, money for children.','Courage; younger children; efforts toward conceiving; the number of children (with 11th).','Home for children, mother\'s role, emotional ease.','Children, their nature, creativity; the main house of D7.','Illness, trouble or quarrels with children; adoption or step-children in some teachers.','The spouse as parent; the other parent\'s role.','Delays, secrets, risk or sudden events around children; medical care.','Grandchildren, children\'s luck, blessings from teachers; the second house of children.','Children\'s career and standing; the parent\'s public role.','Gains through children, elder children, fulfilment of the wish for children.','Separation from children, children abroad, loss or cost.'],
+    planets:{Sun:'Authority, a strong-willed child; the father\'s side.',Moon:'Care and emotion; the mother\'s side; the feeling of nurturing.',Mars:'Active, courageous children; risk around birth; a quarrelsome streak.',Mercury:'Clever, talkative children; learning.',Jupiter:'The main significator of children; strong Jupiter supports children and wisdom in them.',Venus:'Loving, artistic children; ease of pleasure.',Saturn:'Disciplined children, slow path to maturity, delay.',Rahu:'Unusual paths to children (adoption, medical help); intense children.',Ketu:'Detached children; spiritual bent; sudden cuts or lessons.'},
+    steps:['Check the 5th house and its lord in D7, then the 9th and the lagna lord.','Check Jupiter, the natural significator of children, by sign, house and who looks at it.','Check planets in or looking at the D7 5th: they colour the children.','Compare with D1 house 5, its lord, and Jupiter; also with D9 for the 5th lord\'s strength.','Do the same for the spouse\'s chart if the question is about both of you.'],
+    rules:[[C,'D7 is for children (BPHS list of sixteen divisions); BPHS ties each of the seven parts to a substance (salt, milk, curd, ghee, sugarcane juice, wine, pure water).'],[P,'The 5th house from the D7 lagna is the main indicator; the natal 5th lord\'s place in D7 is another.'],[P,'Jupiter strong in D1 and D7, with a clean 5th house and lord, supports children; heavy hard planets on the 5th house or Jupiter suggest delay or more effort, not impossibility.'],[P,'Jupiter in its own sign (Sagittarius or Pisces) or exalted (Cancer) in D7: a strong favourable sign.'],[P,'The natal 5th lord exalted in D7: sustained support. Debilitated: a deficit that needs effort.'],[P,'Benefics (Jupiter, well-placed Mercury or Venus, a strong waxing Moon) in the 5th of D7: favourable and more than one child is possible.'],[P,'Saturn, Mars, Rahu or Ketu joining or looking at the 5th of D7: friction, delay or a non-usual path.'],[P,'The 5th lord in a hard house (6, 8, 12) of D7: worry or delay around children.'],[P,'Planet tone: Jupiter suggests wise children, Saturn disciplined and slow-to-mature, Mars action-oriented.'],[P,'Reading both partners\' D7 charts is the careful way.']],
+    combos:['Jupiter in the lagna or 5th of D7, in its own sign or exalted: a very good sign.','The 5th lord and Jupiter both in angles or trines of D7: supported.','Saturn and Mars both on the 5th house or lord: delay and effort.','The 5th lord in the 9th or 9th lord in the 5th: blessing for children.'],
+    ask:['Is the road to children easy or effortful?','What is the nature of the bond with children?','Which phase of life is most active for children?'],
+    cannot:'It cannot give a yes or no, the number or gender of children, or exact dates. It also cannot replace medical advice.',
+    cross:'D1 5th house and lord, Jupiter in D1, D9 5th house, D24 for children\'s education, and the spouse\'s D7.',
+    timing:'Dasha of the 5th lord, Jupiter, the 9th lord; Jupiter transit over the 5th house or lord in D1; Saturn transit over the 5th from the Moon.',
+    care:'Handle with care. Speak of ease or effort and timing windows, not of yes or no. D7 changes about every 17 minutes.' };
+  D.D8 = { head:'Ashtamsa: sudden change, hidden matters and the long road', src:'jaim', noun:'sudden change and hidden matters',
+    gist:'Used for sudden troubles, hidden matters, inheritance and the length of the road. Sources attribute it to Jaimini and teachers differ; read it lightly.',
+    lords:'BPHS chapter 6 does not name presiding lords for D8 in the text read for this guide, so none are given here.',
     how:'Each sign is cut into 8 parts of 3.75 degrees. Moving signs start from Aries, fixed signs start from Leo, dual signs start from Sagittarius; the parts go on one sign at a time.',
-    lagna:'Rising sign of D8. House 8 (sudden events, hidden things, inheritance), 3 (the other house of life span), 12 (loss), 1 (the body).',
-    steps:['Check the 8th house and its lord in D8.','Check Saturn, the significator of long life, and the lagna lord of D8.','Compare with D1 houses 8, 3 and 12.'],
-    rules:[[C,'Sources attribute D8 to Jaimini for unexpected troubles (not in the sixteen of Parashara).'],[P,'A strong lagna lord and a strong 8th lord not tied to hard planets shows the ability to pass through sudden changes.'],[P,'Planets in the 8th house of D8 are read as hidden or sudden themes tied to that planet.']],
-    karakas:'Saturn (long life, delays), Mars (sudden events), 8th lord.',
-    strength:'Dignity of Saturn, the lagna lord and the 8th lord.',
+    lagna:'Rising sign of D8 shows how you face sudden change. The 8th (sudden events, inheritance), 3rd (the other house of life span), 12th (loss) and 1st (body) matter most.',
+    focus:[8,3,1,12], kar:['Saturn','Mars'],
+    houses:['The person who carries the change; resilience.','Family wealth that can change suddenly; inheritance through family.','The second house of life span; courage to face change.','The mother\'s side and home in sudden change; peace after turmoil.','Intelligence in crisis; children as a source of change.','Illness, debts, enemies that bring sudden trouble.','Partner\'s role in turning points; sudden gain or loss through partners.','Sudden events, hidden matters, inheritance, surgery, transformation; the main house of D8.','Luck that rescues; father; protection from teachers.','Reputation affected by sudden events; turning points in career.','Gains after change, from inheritance or insurance.','Losses, foreign moves, retreat, endings.'],
+    planets:{Sun:'Authority through crises; vitality in change.',Moon:'Emotional upheaval, the mother, public reaction.',Mars:'Sudden events, accidents, surgery, fighting spirit.',Mercury:'Hidden information, paperwork, mental stress.',Jupiter:'Protection, rescue, guidance through change.',Venus:'Pleasure or relationships that turn suddenly; inheritance from spouse.',Saturn:'Main significator of long life and slow trouble; endurance.',Rahu:'Sudden, strange or foreign events; shocks.',Ketu:'Cuts, losses, spiritual turns.'},
+    steps:['Check the 8th house and its lord in D8.','Check Saturn, the significator of long life, and the lagna lord of D8.','Compare with D1 houses 8, 3 and 12.','Look at planets in the 8th: they colour the kind of sudden event.'],
+    rules:[[C,'Sources attribute D8 to Jaimini for unexpected troubles; it is not one of Parashara\'s sixteen divisions.'],[P,'A strong lagna lord and a strong 8th lord not tied to hard planets show the ability to pass through sudden changes.'],[P,'Planets in the 8th house of D8 are read as hidden or sudden themes tied to that planet.'],[P,'Benefics looking at the 8th or the lagna lord of D8 soften the shocks.'],[P,'Always read the 3rd and the 8th of D1 together for the matter of life span, as the old texts do; do not use D8 alone.']],
+    combos:['The 8th lord in the 12th of D8 (and the reverse): turning points that end cleanly.','Mars and Saturn on the 8th of D8: big or sudden events; take care.','Jupiter in the lagna or 8th of D8: protection through change.'],
+    ask:['How does the person meet sudden change?','Which planets stand for the turning points?'],
+    cannot:'It cannot state the length of life or a date of death. Do not try.',
+    cross:'D1 3rd and 8th houses, D30, D6, D12, and Saturn\'s strength.',
     timing:'Dasha and transit of the 8th lord, Saturn and Mars.',
-    care:'Never state the length of life or a date of death from this or any chart.' };
-  D.D9 = { head:'Navamsa: marriage, dharma and the real strength of planets', src:'core',
-    gist:'The most used divisional chart. Parashara treats it as the fruit of the tree: D1 is the tree, D9 shows whether the fruit comes and how sweet it is. It shows the spouse, the marriage, the inner nature, and the real strength of each planet.',
+    care:'Never state the length of life or a date of death from this or any chart. D8 changes about every 15 minutes.' };
+  D.D9 = { head:'Navamsa: marriage, dharma and the real strength of planets', src:'core', noun:'marriage, dharma and inner strength',
+    gist:'The most used divisional chart, second only to D1. The old teaching is that D1 is the tree and D9 is the fruit: it shows whether the fruit comes and how sweet it is. It shows the spouse, the marriage, the inner nature, and the true strength of each planet.',
+    lords:'BPHS 6.12: the count starts from the sign itself for moving signs, from the 9th sign for fixed signs and from the 5th sign for dual signs; the text also links gods, humans and demons with the three kinds of signs. Each of the nine parts therefore has its own sign and lord.',
     how:'Each sign is cut into 9 parts of 3 degrees 20 minutes. In a moving sign (Aries, Cancer, Libra, Capricorn) the first part is the sign itself. In a fixed sign (Taurus, Leo, Scorpio, Aquarius) the first part is its 9th sign. In a dual sign (Gemini, Virgo, Sagittarius, Pisces) the first part is its 5th sign. The parts then go on one sign at a time.',
-    lagna:'Rising sign of D9 is the inner self. House 7 (spouse and marriage), 9 (dharma and luck), 5 (love, wisdom, children), 1 (inner nature), 2 and 8 (family and the marriage bond).',
-    steps:['Compare each planet in D1 and D9. Same sign in both means vargottama (strong).','Read each planet\'s dignity in D9. It shows the planet\'s true inner strength.','Read the D9 rising sign and its lord, then the 7th house and its lord for the spouse and marriage.','Check Venus (for a man\'s wife) or Jupiter (for a woman\'s husband), the classical significators of marriage.','Check the D9 sign of the planets running the dasha.','Find the Atmakaraka (the planet with the highest degree inside its sign). Its D9 sign is the Karakamsa (Jaimini). Read houses from it; its 12th is read for liberation and the inner calling.'],
-    rules:[[C,'Vargottama (same sign in D1 and D9) makes a planet strong.'],[C,'Venus is the significator of the wife for a man and Jupiter of the husband for a woman (BPHS).'],[C,'D9 carries heavy weight in the classical strength count (Vimshopaka Bala).'],[C,'Karakamsa: the Navamsa sign of the Atmakaraka is read as a second rising sign (Jaimini).'],[P,'Weak (debilitated) in D1 but strong in D9: results improve with time. Strong in D1 but weak in D9: the result looks good but does not satisfy for long.'],[P,'The 7th lord in a hard house or with hard planets in D9 shows strain in marriage; check D1 house 7 and the dasha of the 7th lord.'],[P,'A strong D9 lagna lord shows steady inner character and faith.']],
-    karakas:'Venus, Jupiter, the Moon (mind), the 7th and 9th lords, the Atmakaraka.',
-    strength:'Dignity of every planet in D9, and vargottama planets.',
-    timing:'Dasha of the 7th lord, Venus (or Jupiter) and the Navamsa lagna lord for marriage matters; the Atmakaraka dasha for the inner turning point.',
-    care:'The D9 rising sign changes about every 13 minutes, so the birth time must be right before you trust D9 houses.' };
-  D.RTN = { head:'Rasi Tulya Navamsa: Navamsa signs on the Rasi lagna', src:'later',
-    gist:'A teaching view used by some schools. Each planet\'s Navamsa sign is shown on the Rasi chart while the D1 rising sign stays fixed, so you see which D1 house each planet\'s Navamsa nature falls in.',
-    how:'Every planet takes its D9 sign. The rising sign is kept as the D1 rising sign. Houses are counted from that D1 lagna.',
+    lagna:'Rising sign of D9 is the inner self and the character you grow into. Houses 7 (spouse and marriage) and 9 (dharma and luck) are the main houses.',
+    focus:[7,9,1,5], kar:['Venus','Jupiter','Moon'],
+    houses:['The inner self, faith, character, the person you become.','The family you marry into; money after marriage; speech between partners.','Effort and courage in marriage; the spouse\'s siblings; small trips together.','Home life after marriage; inner peace; the spouse\'s comfort; mother-in-law.','Love, romance, children, wisdom, devotion; the heart of the marriage.','Quarrels, health strain, service, debts in the marriage; adjustment.','The spouse, the marriage, partners; the main house of D9.','Depth, intimacy, secrets, crises, the spouse\'s money; trials that bind or break the tie.','Dharma, luck after marriage, blessings, teachers, shared faith.','Duty, status gained through marriage, working together; the spouse\'s career.','Fulfilment of wishes, gains through the spouse, friends as a couple.','Bed pleasures, privacy, separation, living abroad together, liberation.'],
+    planets:{Sun:'Self-respect, a proud or authoritative spouse or the father\'s side in the marriage; weak: ego clashes.',Moon:'The mind in the marriage, emotional bond, mother\'s side; weak or hurt: moods and insecurity.',Mars:'Passion, drive, quarrels, the husband in a woman\'s chart (some teachers); strong: loyal and active; weak or afflicting the 7th: friction.',Mercury:'Communication, friendship in marriage, a younger or clever spouse.',Jupiter:'The husband in a woman\'s chart; also wisdom, children, guidance; strong: a supportive, wise bond.',Venus:'The wife in a man\'s chart; love, comfort, harmony; strong: a loving partner; weak: trouble in love.',Saturn:'Duty, delay, a serious or older spouse; a late but lasting marriage when well placed.',Rahu:'Unusual, foreign or intense bonds; obsession; karmic relationships.',Ketu:'Detachment, spiritual partner, sudden cuts or a past-life feel to the bond.'},
+    steps:['Compare each planet in D1 and D9. Same sign in both means vargottama (strong).','Read each planet\'s dignity in D9. It shows the planet\'s true inner strength.','Read the D9 rising sign and its lord, then the 7th house and its lord for the spouse and marriage.','Check Venus (for a man\'s wife) or Jupiter (for a woman\'s husband), the classical significators of marriage.','Check the D9 sign, house and dignity of the planets running the dasha.','Find the Atmakaraka (the planet with the highest degree inside its sign). Its D9 sign is the Karakamsa (Jaimini). Read houses from it: its 5th for inborn talent, its 12th for liberation and the inner calling.','For compatibility, set the D9 charts of both partners side by side.'],
+    rules:[[C,'Vargottama (same sign in D1 and D9) makes a planet strong (BPHS chapter 6).'],[C,'Venus is the significator of the wife for a man and Jupiter of the husband for a woman (Parashari rule).'],[C,'D9 carries heavy weight in the classical strength count (Vimshopaka Bala).'],[C,'Karakamsa: the Navamsa sign of the Atmakaraka is read as a second rising sign (Jaimini Upadesa Sutras, first chapter, second section).'],[P,'A planet in its own or exalted sign in D9 is strong; in a friend\'s sign is moderate; debilitated is weak.'],[P,'Exalted in D1 but debilitated in D9: strong on the surface, poor in lasting power. Debilitated in D1 but exalted in D9: early friction, durable recovery.'],[P,'Teachers say the Navamsa strength outweighs the Rasi placement (they cite Phaladeepika for this), but it modifies D1 and does not cancel it.'],[P,'The natal 7th shows the surface look of the marriage; the D9 7th shows its lasting texture. Where they disagree, trust the D9 for the long run.'],[P,'The 7th lord in a hard house or with hard planets in D9 shows strain in marriage; check D1 house 7 and the dasha of the 7th lord.'],[P,'Planets in or looking at the D9 7th describe the spouse: benefics gentle, hard planets sharp.'],[P,'The D9 lagna being the same sign as in D1 (a vargottama lagna) is read as especially fortunate.'],[P,'A strong D9 lagna lord shows steady inner character and faith; in a hard house it shows inner struggle.'],[P,'Worked out from the rule: a planet is automatically vargottama in the first 3°20\' of a moving sign, the middle part (13°20\' to 16°40\') of a fixed sign and the last 3°20\' (26°40\' to 30°) of a dual sign.'],[P,'A strong D9 does not guarantee marriage; the dasha and transit must also agree.'],[P,'Compatibility needs the D9 of both partners.']],
+    combos:['Venus (or Jupiter for a woman) exalted or in its own sign in D9 and well supported: a loving, steady bond.','The D9 7th lord exalted or in its own sign: a strong marriage house.','Planets in the D9 angles (1, 4, 7, 10) in own or exalted sign: durable results.','The D9 lagna lord in the 9th or 5th with Jupiter: faith and dharma.','Mars and Saturn on the D9 7th: strain; check the dasha and Venus.','Rahu or Ketu on the D9 7th: unusual or karmic partner; read with care.','A planet vargottama and exalted or in its own sign in D9: a very strong planet.','The Atmakaraka in Cancer (Karakamsa): themes of learning and care; in Leo: authority (as some teachers read).'],
+    ask:['What kind of marriage and partner does the chart point to?','Which planets are truly strong or weak under the surface?','Where is the dharma of the person?'],
+    cannot:'It cannot say when the marriage happens or give a yes or no. It shows the kind of bond, not the date.',
+    cross:'D1 7th house and lord, Venus or Jupiter in D1, D7 for children, D10 for work, the Upapada from the Rasi chart for the spouse, and the dasha.',
+    timing:'Dasha and antardasha of the 7th lord, Venus (or Jupiter), the D9 lagna lord, the Atmakaraka; Jupiter and Saturn over the 7th house in D1 or D9.',
+    care:'The D9 rising sign changes about every 13 minutes, so the birth time must be right before you trust D9 houses. A planet near the end of a 3°20\' part can change its D9 sign with a small time or ayanamsa difference.' };
+  D.RTN = { head:'Rasi Tulya Navamsa: Navamsa signs on the Rasi lagna', src:'later', noun:'the inner (Navamsa) nature of each planet',
+    gist:'A teaching view used by some schools. Each planet\'s Navamsa sign is shown while the D1 rising sign stays fixed, so you see which D1 house each planet\'s Navamsa nature falls in.',
+    lords:'No lords of its own: it uses the D9 signs.',
+    how:'Every planet takes its D9 sign. The rising sign is kept as the D1 rising sign. Houses are counted from the D1 lagna.',
     lagna:'The rising sign is the D1 rising sign. House meanings are the same as in D1.',
+    focus:[1,7,10], kar:['Venus','Jupiter'],
+    houses:['The inner nature of the planets that land here shows in personality and body.','Inner values land here: money and family carry their Navamsa nature.','Inner courage and skill land here.','Inner peace and home carry the Navamsa nature of the planets here.','Inner devotion and creativity; children carry the Navamsa nature.','Inner struggle: the planet\'s fruit is tested by work and debt.','Inner needs shape partnerships and marriage.','Inner depth lands here: hidden matters; the Navamsa nature feels heavy.','Inner faith and luck carry the Navamsa nature.','Inner drive lands in career and standing.','Inner wishes land in gains and friends.','Inner letting go lands in loss, sleep and foreign matters.'],
+    planets:{Sun:'Where the self-respect of the Navamsa shows up in D1 life.',Moon:'Where the inner mind lands in D1 life.',Mars:'Where inner drive lands.',Mercury:'Where inner skill lands.',Jupiter:'Where inner wisdom lands.',Venus:'Where inner love and comfort land.',Saturn:'Where inner duty and delay land.',Rahu:'Where inner hunger lands.',Ketu:'Where inner detachment lands.'},
     steps:['Compare each planet\'s house here with its house in D1.','A planet that stays in the same house in both is steady and clear in its matters.','A planet that moves to another house shows where its inner (D9) nature works through your outer life.','Read it together with D9 and D1, never alone.'],
-    rules:[[P,'This view is a teaching aid used by some schools; it is not a Parashara or Jaimini rule.'],[P,'Planets that move into houses 6, 8, 12 here point to an inner theme that feels heavier than the D1 position suggests.']],
-    karakas:'As in D1.',
-    strength:'Same as D9 dignity.',
-    timing:'Dasha lords as in D1 and D9.',
+    rules:[[P,'This view is a teaching aid used by some schools; it is not a Parashara or Jaimini rule.'],[P,'Planets that move into houses 6, 8, 12 here point to an inner theme that feels heavier than the D1 position suggests.'],[P,'Planets that move into the angles or trines here show an inner strength that supports the D1 house.'],[P,'A planet in the same sign in both D1 and D9 (vargottama) stays in the same house here: it is steady.']],
+    combos:['The D1 7th lord landing in the 7th, 1st, 5th or 9th here: the inner nature supports the marriage.','Several planets landing in the 6th, 8th and 12th here: the inner life is heavier than the outer.'],
+    ask:['Which D1 houses carry the inner (Navamsa) nature of which planets?'],
+    cannot:'It cannot stand alone; it is a side view of D9 and D1.',
+    cross:'D1 and D9.',
+    timing:'As in D1 and D9.',
     care:'Use only as a side view. Do not rely on it alone.' };
-  D.D10 = { head:'Dasamsa: career and actions in the world', src:'core',
-    gist:'Shows career, public work, status and achievements, and how your actions are seen by society.',
+  D.D10 = { head:'Dasamsa: career and actions in the world', src:'core', noun:'career and public work',
+    gist:'Shows career, public work, status and achievements, and how your actions are seen by society. Read it to see the durable field of work and the setting you work in.',
+    lords:'BPHS 6.13 to 6.14: the ten parts are presided over by the ten guardians of the directions, in order: Indra, Agni, Yama, Nirriti (the demon), Varuna, Vayu, Kubera, Ishana, Brahma and Ananta. Odd signs count from the sign itself, even signs from the 9th sign; the order for even signs is reversed.',
     how:'Each sign is cut into 10 parts of 3 degrees. An odd sign starts from itself; an even sign starts from its 9th sign. The parts go on one sign at a time.',
-    lagna:'Rising sign of D10 is you at work. House 10 (profession, rank), 6 (service, daily work), 7 (business and partners), 11 (gains), 2 (earning), 1 (the worker), 9 (luck and mentors).',
-    steps:['Read the D10 rising sign and its lord for working style.','Read the 10th house, its lord and any planet in it.','Check the Sun (authority), Saturn (long hard work), Mercury (trade, skill), Jupiter (guidance, teaching), Mars (technical, action), Venus (arts, luxury), Moon (public, care).','Check houses 6, 7 and 11 for service, business and gains.','Check the D10 sign of the planets running the dasha.','Compare with D1 house 10 and its lord.'],
-    rules:[[C,'D10 is for actions in society and profession (BPHS list).'],[P,'The 10th lord strong in D10 and D1 supports steady career growth.'],[P,'A planet in the 10th house of D10 colours the kind of work: Sun leadership or government, Moon public or care, Mars technical or action, Mercury trade or writing, Jupiter teaching or advice, Venus arts or comfort, Saturn labour, systems or service.'],[P,'The D10 lagna lord in houses 6, 8, 12 shows a tiring path; in 1, 5, 9, 10, 11 an easier path.'],[P,'Houses 6 and 7 here help tell service from business.']],
-    karakas:'Sun, Saturn, Mercury, Jupiter, the 10th lord, the lord of D10 lagna.',
-    strength:'Dignity of the 10th lord and of the planets running the dasha in D10.',
-    timing:'Dasha and antardasha of the 10th lord, the 6th, 11th and 2nd lords and the D10 lagna lord; Saturn and Jupiter transits over D1 house 10.',
-    care:'The D10 rising sign changes about every 12 minutes. Confirm the birth time with a known career event before relying on it.' };
-  D.D11 = { head:'Rudramsa (Ekadasamsa): endings and gains', src:'jaim',
-    gist:'Sources attribute it to Jaimini and give it two readings: older texts call it Rudramsa (destruction, endings); many modern teachers read it for gains. Treat as a minor, uncertain chart.',
+    lagna:'Rising sign of D10 is you at work. House 10 is the profession; 6 service, 7 business and partners, 11 gains, 2 earning, 9 luck and mentors.',
+    focus:[10,6,7,11,1], kar:['Sun','Saturn','Mercury','Jupiter'],
+    houses:['You at work: how you act, lead and are seen; the worker; the durable field of work.','Earnings, speech at work, family business, savings from work.','Effort, initiative, skills, communication, short trips, marketing, media.','Base of support, workplace, property used at work, the public and the homeland; also education.','Creativity, ideas, advisors, speculation, teaching; the minister\'s house in old texts.','Daily work, service, employees, competition, healing and technical skills; steady grind.','Business, partners, clients, the public, contracts; the second house of trade.','Hidden work, research, shocks, sudden career changes, inheritance, other people\'s money.','Luck, mentors, the guru, higher study, big opportunities, law, foreign trips.','The profession itself, rank, reputation, authority, achievements; the main house of D10.','Gains, income, networks, fulfilment of ambitions, promotions and bonuses.','Expenses, hidden work, working abroad, retreat, loss of position, institutions.'],
+    planets:{Sun:'Authority, leadership, government, rank, father\'s influence; strong: command; weak: lack of recognition.',Moon:'Public work, care, food, liquids, travel, popularity; changing roles.',Mars:'Technical, military, sports, construction, surgery, competition; drive and courage.',Mercury:'Trade, writing, accounts, speech, computing, skill; adaptable career.',Jupiter:'Teaching, advice, law, finance, religion; guidance and ethical standing.',Venus:'Arts, beauty, luxury, entertainment, hospitality; ease and charm at work.',Saturn:'Long hard work, systems, labour, administration, industry; slow, lasting rise.',Rahu:'Unusual, foreign, technology, media; sudden rises and falls; boldness.',Ketu:'Detached or spiritual work, research, behind-the-scenes; sudden changes.'},
+    steps:['Read the D10 rising sign and its lord for working style and the durable field.','Read the 10th house, its lord and any planet in it, for the setting (milieu) and the kind of work.','Check the Sun (authority), Saturn (long hard work), Mercury (trade, skill), Jupiter (guidance, teaching), Mars (technical, action), Venus (arts, luxury), Moon (public, care).','Check houses 6, 7 and 11 for service, business and gains.','Find where the natal 10th lord (from D1) stands in D10: this shows how durable the career is.','Find the Amatyakaraka (the planet with the second-highest degree in its sign) in D10: its place shows whether work lines up with your purpose (Jaimini).','Check the D10 sign of the planets running the dasha.','Compare with D1 house 10 and its lord, and with D9 and D24.'],
+    rules:[[C,'D10 is for actions in society and profession (BPHS list of sixteen divisions); BPHS names the ten guardians of the directions as lords of the ten parts.'],[P,'The 10th lord strong in D10 and D1 supports steady career growth.'],[P,'The natal 10th lord in an angle or trine of D10: stable, dharma-aligned career. In 6, 8 or 12: sustained effort, unusual or service-based work.'],[P,'The natal 10th lord exalted or in its own sign in D10: support over time even through friction. Debilitated: effort needed to recover the deficit.'],[P,'Benefics in the D10 10th: a supportive setting and colleagues. Hard planets there: competition, pressure or disruption, but not failure.'],[P,'A planet in the 10th house of D10 colours the kind of work: Sun leadership or government, Moon public or care, Mars technical or action, Mercury trade or writing, Jupiter teaching or advice, Venus arts or comfort, Saturn labour, systems or service.'],[P,'The D10 lagna lord in 6, 8, 12 shows a tiring path; in 1, 5, 9, 10, 11 an easier path.'],[P,'The Amatyakaraka in the D10 lagna, an angle or a trine: work and purpose are aligned. In a hard house: visible career and felt calling differ.'],[P,'Where the D1 10th and the D10 lagna disagree, many teachers read the D10 lagna for the durable field and the D1 10th for the surface field.'],[P,'Houses 6 and 7 of D10 help tell service (6) from business (7).'],[P,'D10 does not predict job titles, employers or salary.'],[P,'A favourable career call needs agreement from at least three layers: field, milieu, durability and purpose, plus the dasha.']],
+    combos:['The D10 lagna lord in the 10th of D10: a self-aligned career.','Natal 10th lord exalted in D10 (e.g. Saturn in Libra for a Saturn-ruled 10th): long-term structural support.','Many planets in the 10th from the Moon in D10: an emotionally engaging, visible career.','Amatyakaraka joining the Atmakaraka in D10: a work that feels like a calling.','Saturn in its own sign (Capricorn or Aquarius) or exalted (Libra) in D10: strength in long-arc work; Saturn debilitated (Aries): friction in structured fields.','Jupiter and Mercury strong in D10: advice, teaching, writing or trade does well.','Rahu with the 10th lord: foreign, unusual or media-linked rises.'],
+    signs:{Aries:'action, leadership, defence, sport, engineering, surgery',Taurus:'finance, food, arts, farming, luxury goods, steady business',Gemini:'communication, trade, media, writing, teaching, technology',Cancer:'care, nursing, public service, hospitality, property, food',Leo:'authority, government, management, performance, politics',Virgo:'analysis, accounts, health, service, quality, research',Libra:'law, design, diplomacy, trade, arts, partnerships',Scorpio:'research, investigation, surgery, insurance, hidden or deep work',Sagittarius:'teaching, law, advice, religion, travel, publishing',Capricorn:'structure, administration, industry, government, infrastructure',Aquarius:'technology, networks, social causes, large systems, science',Pisces:'healing, spiritual or creative work, hospitality, foreign, institutions'},
+    ask:['In what field and setting does the work life run?','How durable and supported is the career?','Is the work in line with the person\'s purpose?'],
+    cannot:'It cannot give a job title, an employer or a salary, or the date of a job.',
+    cross:'D1 house 10 and its lord, D9 10th lord, D24 for study, D2 for money, Saturn and the Sun in D1, and the Ashtakavarga of the 10th house.',
+    timing:'Dasha and antardasha of the 10th lord, the lords of 6, 11 and 2, the D10 lagna lord and the Amatyakaraka; Jupiter and Saturn over D1 house 10, the 10th lord and the D10 lagna.',
+    care:'The D10 rising sign changes about every 12 minutes. Confirm the birth time with a known career event before relying on it. The native chooses within the structure the chart shows.' };
+  D.D11 = { head:'Rudramsa (Ekadasamsa): endings and gains', src:'jaim', noun:'gains and endings',
+    gist:'Sources attribute D11 to Jaimini and give it two readings: older texts call it Rudramsa (destruction, endings); many modern teachers read it for gains (the 11th house). Treat as a minor, uncertain chart.',
+    lords:'BPHS chapter 6 does not name presiding lords for D11 in the text read for this guide, so none are given here.',
     how:'Each sign is cut into 11 parts of about 2.73 degrees. The starting sign is found by counting backward from Aries as many signs as the sign is forward from Aries; the parts go on one sign at a time.',
-    lagna:'Rising sign of D11. House 11 (gains), 8 (endings), 12 (loss), 1 (the self).',
+    lagna:'Rising sign of D11. House 11 (gains), 8 (endings), 12 (loss), 1 (the self) are the main houses.',
+    focus:[11,8,12,1], kar:['Saturn','Jupiter'],
+    houses:['The self facing gains and endings.','Wealth that accumulates; family gains.','Efforts that bring gains; courage in endings.','The home base after gains or endings.','Merit and ideas that turn into gains.','Obstacles to gains; debts; competition.','Gains through others; partnerships ending or starting.','Endings, transformation, sudden turns; the Rudramsa theme.','Luck in gains, blessings.','Gains through career; rank.','Income, fulfilment of wishes, friends; the main house of the gains reading.','Losses, expenses, last endings, release.'],
+    planets:{Sun:'Authority in gains; power to end things.',Moon:'Public gains, changing fortunes.',Mars:'Sudden gains or cuts; forceful endings.',Mercury:'Trade gains.',Jupiter:'Supported gains, protection.',Venus:'Gains from comforts, arts.',Saturn:'Slow gains; long endings.',Rahu:'Sudden, unusual gains and falls.',Ketu:'Release, cut, loss without regret.'},
     steps:['Check the 11th and 8th houses and their lords in D11.','Check the lagna lord of D11.','Compare with D1 houses 11 and 8.'],
-    rules:[[C,'Sources attribute D11 to Jaimini, with the sense of destruction (Rudramsa).'],[P,'Modern teachers often read it for gains and for the end of cycles; the meaning varies, so state the school you follow.']],
-    karakas:'Saturn, Jupiter (gains), 11th lord.',
-    strength:'Dignity of the lagna lord and the 11th lord.',
+    rules:[[C,'Sources attribute D11 to Jaimini, with the sense of destruction (Rudramsa).'],[P,'Modern teachers often read it for gains and for the end of cycles; the meaning varies, so say which school you follow.'],[P,'A strong 11th lord and lagna lord in D11: gains come; a strong 8th lord not tied to hard planets: endings are met well.']],
+    combos:['The 11th lord in an angle of D11: gains that last.','The 8th lord with the lagna lord: a turning point that reshapes the life.'],
+    ask:['How do gains and endings tend to come?'],
+    cannot:'It cannot make a firm statement. Treat as a side view.',
+    cross:'D1 houses 11 and 8, D2, D10.',
     timing:'Dasha of the 11th and 8th lords.',
-    care:'Uncertain method. Do not use it for firm statements.' };
-  D.D12 = { head:'Dwadasamsa: parents and ancestry', src:'core',
+    care:'Uncertain method. Do not use it for firm statements. D11 changes about every 11 minutes.' };
+  D.D12 = { head:'Dwadasamsa: parents and ancestry', src:'core', noun:'parents and ancestry',
     gist:'Shows the parents, the family line and what you inherit from it (looks, nature, luck).',
+    lords:'BPHS 6.15: the twelve parts are presided over by Ganesha, the Ashvini Kumaras, Yama and others, in a repeating order, counted from the sign itself.',
     how:'Each sign is cut into 12 parts of 2.5 degrees, starting from the sign itself and going on one sign at a time.',
     lagna:'Rising sign of D12. House 4 (mother), 9 (father in the main Parashari method; some also use 10), 2 (family), 8 (hidden family matters), 1 (the child).',
-    steps:['Check the 4th house and Moon for the mother, and the 9th house and Sun for the father.','Check the lagna lord of D12 for what you carry from the family.','Compare with D1 houses 4 and 9 and with D45 and D40.'],
-    rules:[[C,'D12 is for parents (BPHS list).'],[P,'Sun strong and well placed shows a supportive father; Moon strong and well placed shows a supportive mother.'],[P,'Planets in the 4th or 9th house of D12 show how the parents were or what their life was like.'],[P,'Some teachers use the 10th house for the father; say which method you use.']],
-    karakas:'Sun (father), Moon (mother), 4th and 9th lords.',
-    strength:'Dignity of the Sun, Moon and the 4th and 9th lords.',
-    timing:'Dasha and transits to the Sun, Moon and the 4th and 9th lords.',
-    care:'Do not claim illness or death of parents from this chart.' };
-  D.D16 = { head:'Shodasamsa: vehicles and comforts', src:'core',
-    gist:'Shows vehicles, travel, comforts and ease of daily life.',
+    focus:[4,9,10,1], kar:['Sun','Moon'],
+    houses:['You as the child of this family; what you carry in looks and nature.','The family wealth and the family name; the family\'s speech and customs.','The parents\' effort; siblings from the family; courage you inherit.','The mother, her home and health, her influence, emotional inheritance.','Your connection to the family line; the parents\' wisdom; the family\'s children; ancestral merit.','Illness, debts and quarrels inside the family; the mother\'s side\'s service.','The parents\' marriage; how your parents were together.','Hidden family matters, inheritance, family secrets, the parents\' hard times.','The father, his luck and dharma, ancestors, lineage blessings.','The father in some teachers\' method; the parents\' work and standing.','The family\'s gains, the elder siblings, support from the family.','Loss in the family, separation from parents, parents living abroad, rest.'],
+    planets:{Sun:'The father, his health and standing; the family\'s authority; the paternal line.',Moon:'The mother, her health and mind; the maternal line; nurturing.',Mars:'Vigour and fights in the family; younger siblings; the mother\'s brothers.',Mercury:'Education and speech of the parents; cousins.',Jupiter:'Blessings of the lineage; elders and teachers; family wisdom.',Venus:'The mother\'s comfort, harmony in the home; the parents\' love.',Saturn:'Duty, old age, the weight of the family; distance from a parent.',Rahu:'Foreign or unusual ancestry; unclear family matters.',Ketu:'Spiritual line; past-life family ties; detachment from a parent.'},
+    steps:['Check the 4th house and Moon for the mother, and the 9th house and Sun for the father (some teachers use the 10th for the father).','Check the lagna lord of D12 for what you carry from the family.','Compare with D1 houses 4 and 9 and with D45 and D40.','Look at the planets in the 4th and 9th of D12: they colour the parents.'],
+    rules:[[C,'D12 is for parents (BPHS list of sixteen divisions).'],[P,'The Sun strong and well placed shows a supportive father; the Moon strong and well placed shows a supportive mother.'],[P,'Planets in the 4th or 9th house of D12 show how the parents were or what their life was like.'],[P,'Malefic influences on the Sun, the Moon, or on the 4th and 9th houses: a hard childhood home or a parent\'s health worries; benefics soften them.'],[P,'Some teachers use the 4th for the mother and the 10th for the father; others use the 9th for the father. Say which method you use.'],[P,'The lagna lord of D12 strong: you carry good family strengths; weak: you may have to build apart from the family.'],[P,'D12 also shows ancestral and heredity themes: look at the lord of the 9th and the Sun.']],
+    combos:['The Sun and Moon both well placed in D12: both parents supportive.','The 4th lord in the 12th, or the 9th lord in the 8th: distance or hardship with a parent.','Jupiter in an angle of D12: blessing of the lineage.'],
+    ask:['How are the parents and the family line?','What do you inherit?'],
+    cannot:'It cannot say whether a parent lives or dies, or when.',
+    cross:'D1 houses 4 and 9, D40, D45, D144, and the Moon and Sun in D1.',
+    timing:'Dasha and transit of the Sun, Moon, and the 4th and 9th lords.',
+    care:'Do not claim illness or death of parents from this chart. D12 changes about every 10 minutes.' };
+  D.D16 = { head:'Shodasamsa: vehicles, travel and comforts', src:'core', noun:'vehicles, travel and comforts',
+    gist:'Shows vehicles, travel, comforts and the ease of daily life, and the happiness or worry that comes from them.',
+    lords:'BPHS 6.16: the sixteen parts are presided over in turn by Aja (Brahma), Vishnu, Hara (Shiva) and Surya; the order is reversed for even signs. Counting starts from Aries for moving signs, from Leo for fixed signs and from Sagittarius for dual signs.',
     how:'Each sign is cut into 16 parts of 1.875 degrees. Moving signs start from Aries, fixed signs start from Leo, dual signs start from Sagittarius (BPHS); the parts go on one sign at a time.',
-    lagna:'Rising sign of D16. House 4 (vehicles, comfort), 2 (possessions), 11 (gains), 12 (spending on pleasures), 1 (the owner).',
-    steps:['Check the 4th house and its lord in D16.','Check Venus (vehicles and luxury) and Moon, Mars (machines).','Compare with D1 house 4 and with D4.'],
-    rules:[[C,'D16 is for vehicles and comforts (BPHS list); the classical strength count gives it a large weight among the smaller charts.'],[P,'A strong 4th lord and Venus show comfort and vehicles; hard planets there show repairs or accidents with vehicles.']],
-    karakas:'Venus, Mars (engines), Moon, the 4th lord.',
-    strength:'Dignity of Venus and the 4th lord.',
-    timing:'Dasha of the 4th lord and Venus.',
-    care:'Use for tendency only; it changes about every 7 to 8 minutes, so the birth time must be exact.' };
-  D.D20 = { head:'Vimsamsa: worship and spiritual practice', src:'core',
-    gist:'Shows spiritual practice, worship, faith and inner discipline.',
+    lagna:'Rising sign of D16 shows your style of comfort and movement. House 4 (vehicles, comfort), 2 (possessions), 11 (gains), 12 (spending on pleasures), 9 (luck in travel).',
+    focus:[4,2,11,12], kar:['Venus','Moon','Mars'],
+    houses:['The owner: your taste and how you carry comfort.','Possessions, savings for comforts, family vehicle.','Short trips, courage in driving, small machines, siblings\' vehicles.','Vehicles, house comforts, mother, peace of mind; the main house of D16.','Fun, outings, pleasure of owning, children\'s vehicles; creativity of design.','Breakdowns, repairs, loans for vehicles, servants, accidents of small kind.','Business vehicles, partners\' vehicles, public travel, travel with the spouse.','Accidents, sudden loss or damage, vehicles that are suddenly lost or gained, insurance.','Long journeys, luck in travel, pilgrimages, foreign travel.','Vehicles for work, status symbols, official cars.','Gains of vehicles and comforts, fulfilment of the wish to own.','Spending on luxury, foreign travel, losses of vehicles, rest.'],
+    planets:{Sun:'Official or prestigious vehicles; pride of ownership; heat and engines.',Moon:'Comfort, public transport, water travel, mood in driving; the sense of ease.',Mars:'Engines, speed, motorbikes, accidents; strong: control; hurt: risk.',Mercury:'Light vehicles, gadgets, deals in vehicles, short travel.',Jupiter:'Large, safe vehicles; blessing on journeys.',Venus:'The main significator of vehicles and luxury: beautiful, comfortable cars; strong gives pleasure in comforts.',Saturn:'Old, heavy or slow vehicles; delays; hard-working machines.',Rahu:'Foreign, unusual or fast vehicles, technology, sudden journeys.',Ketu:'Detachment from comforts; sudden loss of a vehicle; spiritual travel.'},
+    steps:['Check the 4th house and its lord in D16.','Check Venus (vehicles and luxury), the Moon (ease) and Mars (engines).','Compare with D1 house 4 and with D4.','Look at the D16 lagna lord for the owner\'s ease.'],
+    rules:[[C,'D16 is for vehicles and comforts (BPHS list of sixteen divisions); in the classical strength count it carries a large weight among the smaller charts.'],[P,'A strong 4th lord and Venus show comfort and vehicles; hard planets there show repairs or accidents with vehicles.'],[P,'Mars and Saturn on the 4th of D16, or the 4th lord in 6, 8, 12: trouble or delay with vehicles.'],[P,'The 11th lord and the 4th lord linked: you get the vehicle you wish for.'],[P,'Venus exalted or in its own sign in D16: lasting comfort.'],[P,'Rahu in the 4th or 3rd of D16: foreign, unusual or sudden journeys and vehicles.']],
+    combos:['The 4th lord and Venus both in angles: a comfortable life with vehicles.','Mars with the 4th lord: speed or accident risk; drive with care.'],
+    ask:['Do vehicles and comforts come easily?','Is travel smooth or troubled?'],
+    cannot:'It cannot give the date of a purchase or predict accidents.',
+    cross:'D1 house 4, D4, Venus and the Moon in D1.',
+    timing:'Dasha of the 4th lord and Venus; transits over the 4th house.',
+    care:'Use for tendency only; D16 changes about every 7 to 8 minutes, so the birth time must be exact.' };
+  D.D20 = { head:'Vimsamsa: worship and spiritual practice', src:'core', noun:'worship and spiritual practice',
+    gist:'Shows spiritual practice, worship, faith, the path of a teacher and the inner discipline you keep.',
+    lords:'BPHS 6.17 to 6.21: each of the twenty parts has a goddess (Shakti) for its lord, for example Kali, Gauri, Lakshmi, Vijaya, Vimala, Sati, Tara, Jwalamukhi, Shweta, Lalita, Bagalamukhi, Pratyangira, Shachi, Raudri, Bhavani, Varada, Jaya, Tripura, Sumukhi (odd signs) and Daya, Medha, Chinnashirsha, Pishachini, Dhumavati, Matangi, Bala, Bhadra, Aruna, Anala, Pingala, Chuchuka, Ghora, Varahi, Vaishnavi, Sita, Bhuvaneshwari, Bhairavi, Mangala, Aparajita (even signs). Counting starts from Aries for moving signs and from Leo or Sagittarius for the others.',
     how:'Each sign is cut into 20 parts of 1.5 degrees. Moving signs start from Aries, fixed signs start from Sagittarius, dual signs start from Leo; the parts go on one sign at a time.',
-    lagna:'Rising sign of D20. House 5 (mantra, devotion), 9 (dharma, teacher), 12 (liberation), 8 (deep practice), 1 (the practitioner).',
-    steps:['Check the 5th, 9th and 12th houses and their lords in D20.','Check Jupiter (guru), Ketu (detachment) and the Moon (faith).','Compare with D1 houses 5, 9, 12 and with D9 Karakamsa.'],
-    rules:[[C,'D20 is for worship and spiritual pursuits (BPHS list).'],[P,'Jupiter, the Moon or Ketu strong in D20 show steady practice or a pull toward renunciation.'],[P,'Hard planets in the 5th or 9th house show a path of effort or doubt before faith.']],
-    karakas:'Jupiter, Ketu, Moon, lords of 5, 9, 12.',
-    strength:'Dignity of Jupiter and the lords of 5 and 9.',
-    timing:'Dasha of the 5th, 9th and 12th lords, Jupiter and Ketu.',
-    care:'Spiritual life cannot be measured by a chart. Use it as a mirror, not a score.' };
-  D.D24 = { head:'Chaturvimsamsa (Siddhamsa): education and learning', src:'core',
-    gist:'Shows schooling, learning, skill and the knowledge you gain.',
+    lagna:'Rising sign of D20 shows the style of your worship. House 5 (mantra, devotion), 9 (dharma, teacher), 12 (liberation), 8 (deep practice), 4 (inner peace), 1 (the practitioner).',
+    focus:[5,9,12,8], kar:['Jupiter','Ketu','Moon'],
+    houses:['The practitioner; the discipline you bring.','Speech, mantra recitation, family traditions of worship.','Effort in practice, courage in discipline, writing and teaching practice.','Inner peace, the home shrine, devotion of the heart, ease in meditation.','Mantra, devotion, intelligence, initiation; the first main house of D20.','Fasting, service, battling the mind, healing practice.','Spiritual partners, teaching others, devotion shared in a couple.','Deep practice, occult, transformation, hidden knowledge, tantra.','Dharma, the teacher, grace, pilgrimage; the second main house of D20.','Public religious role, duty, karma yoga, status in a spiritual community.','Fulfilment of spiritual wishes, friends on the path.','Liberation, solitude, retreat, meditation, ashram life, foreign spiritual places.'],
+    planets:{Sun:'The soul, light, devotion to a solar deity, authority in practice; ego as a block.',Moon:'Faith, the heart, mother goddess, emotion in prayer; steady mind.',Mars:'Discipline, fire practice, heroic devotion, protective deities.',Mercury:'Study of scripture, chanting, teaching, mantra.',Jupiter:'The main significator of guru, wisdom and faith; strong Jupiter shows steady grace.',Venus:'Devotion, beauty, bhakti, rituals.',Saturn:'Austerity, renunciation, long discipline, service.',Rahu:'Intense, unusual or foreign practice; hunger for the spiritual or for powers.',Ketu:'The main significator of detachment and liberation; mystic bent.'},
+    steps:['Check the 5th, 9th and 12th houses and their lords in D20.','Check Jupiter (guru), Ketu (detachment) and the Moon (faith).','Compare with D1 houses 5, 9, 12 and with the D9 Karakamsa (its 12th).','Look at which planets sit in the 5th and 9th of D20: they colour the path.'],
+    rules:[[C,'D20 is for worship and spiritual pursuits (BPHS list of sixteen divisions); BPHS gives a goddess for each of its twenty parts.'],[P,'Jupiter, the Moon or Ketu strong in D20: steady practice or a pull toward renunciation.'],[P,'Hard planets in the 5th or 9th house of D20: a path of effort or doubt before faith.'],[P,'The 12th house of D20 and its lord with benefics: a gentle path to liberation.'],[P,'The 9th lord of D20 in the 5th (or the reverse): practice and grace work together.'],[P,'Many teachers also look at the planet in the 12th from the Karakamsa for the path and the deity; check your school.'],[P,'Spiritual life cannot be scored by a chart; read for the style of practice.']],
+    combos:['Jupiter in the 5th or 9th of D20 in own or exalted sign: faith and guidance.','Ketu in the 12th of D20 with benefic aspect: a mystic inclination.','Saturn strong in D20: long, disciplined practice.'],
+    ask:['What path of worship suits this person?','Is the faith steady or testing?'],
+    cannot:'It cannot say how spiritual a person is.',
+    cross:'D1 houses 5, 9, 12, D9 Karakamsa and its 12th, Jupiter and Ketu in D1.',
+    timing:'Dasha of the 5th, 9th and 12th lords, Jupiter and Ketu; Jupiter over the 5th, 9th or 12th house.',
+    care:'Use it as a mirror, not a score. D20 changes about every 6 minutes.' };
+  D.D24 = { head:'Chaturvimsamsa (Siddhamsa): education and learning', src:'core', noun:'education and learning',
+    gist:'Shows schooling, learning, skill and the knowledge you gain. The name Siddhamsa points to the attainment (siddhi) that study gives.',
+    lords:'BPHS 6.22 to 6.23: the twenty-four parts have lords such as Skanda, Parashurama, Agni, Vishwakarma, Bhaga, Mitra, Maya, Antaka, Vrishadhvaja, Govinda, Madana and Bhima; odd signs count from Leo and even signs from Cancer (even signs run in reverse).',
     how:'Each sign is cut into 24 parts of 1.25 degrees. Odd signs start from Leo, even signs start from Cancer; the parts go on one sign at a time.',
-    lagna:'Rising sign of D24. House 4 (basic schooling), 5 (intelligence, higher study), 9 (higher learning), 2 (speech and memory), 1 (the student).',
-    steps:['Check the 4th and 5th houses and their lords in D24.','Check Mercury (learning), Jupiter (higher knowledge) and the Moon (memory).','Compare with D1 houses 4, 5, 9 and with D10 for the work that follows from study.'],
-    rules:[[C,'D24 is for education and knowledge (BPHS list).'],[P,'Mercury and Jupiter strong in D24 support study and teaching; hard planets in the 4th or 5th show interruptions.'],[P,'The D24 lagna lord strong shows ability to finish what you study.']],
-    karakas:'Mercury, Jupiter, Moon, lords of 4 and 5.',
-    strength:'Dignity of Mercury, Jupiter and the 4th and 5th lords.',
+    lagna:'Rising sign of D24 shows the learner in you. House 4 (basic schooling), 5 (intelligence, higher study), 9 (higher learning), 2 (speech and memory), 11 (gains from study), 1 (the student).',
+    focus:[4,5,9,2], kar:['Mercury','Jupiter'],
+    houses:['The student: curiosity, discipline, how you learn.','Speech, memory, recitation, languages, the family\'s education.','Skills of hand, writing, practice, short courses, courage in exams.','Basic education, school, mother\'s role, peace for study; the first main house of D24.','Intelligence, higher study, creative thinking, teachers; the second main house of D24.','Competitive exams, debt for study, struggles, medicine and service studies.','Study abroad or with partners, debating, teaching others.','Research, depth, occult study, interruptions, hidden talent.','Higher learning, philosophy, law, the guru, long study abroad.','Career from study, the status that learning brings.','Gains from study, scholarship, friends in school, fulfilment of academic wishes.','Study abroad, hostel life, loss of years in study, solitude for research.'],
+    planets:{Sun:'Authority, government, science, medicine, leadership in study.',Moon:'Memory, care, school years, the Moon strengthens retention.',Mars:'Technical subjects, engineering, discipline, competition.',Mercury:'The main significator of learning, language, maths, trade; strong Mercury gives quick learning.',Jupiter:'Higher knowledge, law, teaching, philosophy, a good guru; strong Jupiter gives depth.',Venus:'Arts, design, music, beauty, fashion, hospitality.',Saturn:'Slow, steady study; research; technical or labour subjects.',Rahu:'Foreign education, computers, unusual subjects; restlessness.',Ketu:'Spiritual or research subjects; sudden changes in study.'},
+    steps:['Check the 4th and 5th houses and their lords in D24.','Check Mercury (learning), Jupiter (higher knowledge) and the Moon (memory).','Compare with D1 houses 4, 5, 9 and with D10 for the work that follows study.','Look at which planets sit in the 4th and 5th of D24: they colour the subjects.'],
+    rules:[[C,'D24 is for education and knowledge (BPHS list of sixteen divisions).'],[P,'Mercury and Jupiter strong in D24 support study and teaching; hard planets in the 4th or 5th show interruptions.'],[P,'The D24 lagna lord strong shows the ability to finish what you study.'],[P,'The 4th lord and the 5th lord linked in D24: smooth education from school to college.'],[P,'The 9th lord strong with Jupiter: higher study and a good guru.'],[P,'Rahu in the 4th or 5th of D24: foreign or technical studies; breaks; Ketu: spiritual or research subjects.'],[P,'Planet in the 5th of D24 shows the subject flavour: Sun science or leadership, Moon humanities, Mars engineering, Mercury commerce or language, Jupiter law or teaching, Venus arts, Saturn technical or research.']],
+    combos:['Mercury and Jupiter in angles of D24: a scholar.','The 5th lord in the 9th or 11th of D24: higher study that pays off.','Saturn and Mars on the 4th: breaks or hard schooling years.'],
+    ask:['How is the learning ability and which subjects suit?','Is the road of study smooth?'],
+    cannot:'It cannot name exact marks or results.',
+    cross:'D1 houses 4, 5, 9, D10, Mercury and Jupiter in D1, and D7 for children\'s education.',
     timing:'Dasha of the 4th, 5th and 9th lords, Mercury and Jupiter during school years.',
-    care:'Changes about every 5 minutes; confirm the time first.' };
-  D.D27 = { head:'Bhamsa (Nakshatramsa): strengths and weaknesses', src:'core',
-    gist:'Shows your inborn strengths and weak points, stamina and the kind of strength you can use.',
+    care:'D24 changes about every 5 minutes; confirm the birth time first.' };
+  D.D27 = { head:'Bhamsa (Nakshatramsa): strengths and weaknesses', src:'core', noun:'inborn strengths and weaknesses',
+    gist:'Shows your inborn strengths and weak points, stamina and the kind of strength you can use. It uses the same 27-fold scheme as the lunar stars.',
+    lords:'BPHS 6.24 to 6.26: the twenty-seven parts have the presiding deities of the stars as lords: the Ashvins, Yama, Agni, Brahma, Chandra, Ishana (Rudra), Aditi, Brihaspati and so on through to Govinda and Ambupa. The star lords also serve as lords of these parts.',
     how:'Each sign is cut into 27 parts of about 1.11 degrees (one for each lunar star). Fire signs start from Aries, earth signs from Cancer, air signs from Libra, water signs from Capricorn; the parts go on one sign at a time.',
-    lagna:'Rising sign of D27. House 1 (strength of the self), 3 (courage), 6 (fight), 8 (endurance).',
-    steps:['Check the D27 rising sign, its lord and the Moon.','Check the dignity of each planet; strong ones are your reliable strengths.','Check houses 3, 6 and 8 for courage and endurance.','Compare with the strength tools (Shadbala) and D1.'],
-    rules:[[C,'D27 is for strengths and weaknesses (BPHS list).'],[P,'Planets exalted or in own sign in D27 are read as natural strengths; debilitated ones as weak points to work on.']],
-    karakas:'Mars (strength), Sun (vitality), the lagna lord.',
-    strength:'Dignity of each planet in D27.',
-    timing:'Dasha of the strongest and the weakest planets show when strengths or weak points are tested.',
-    care:'Use for self-knowledge, not for labelling people.' };
-  D.D30 = { head:'Trimsamsa: faults, troubles and misfortunes', src:'core',
-    gist:'Shows faults, troubles and misfortunes, and the kind of hardship that tests you.',
+    lagna:'Rising sign of D27 shows the base of your strength. House 1 (strength of the self), 3 (courage), 6 (fight), 8 (endurance), 10 (action).',
+    focus:[1,3,6,8], kar:['Mars','Sun','Moon'],
+    houses:['Your core strength and vitality.','Resources in reserve; the strength to hold on.','Courage and initiative; stamina in effort.','Inner resilience, peace of mind; emotional strength.','Mental strength, creativity; the strength of intelligence.','Fighting power, immunity, ability to overcome enemies and illness.','Strength in partnership; how you stand with others.','Endurance, staying power in crisis; hidden strength.','Strength of faith and fortune; moral strength.','Strength in action, drive in work.','Strength to gain; social strength.','Where strength drains: expenses, sleep, retreat.'],
+    planets:{Sun:'Vitality and willpower.',Moon:'Emotional strength and stability of mind.',Mars:'Physical strength, courage, stamina; the main significator of strength.',Mercury:'Mental agility, nervous strength.',Jupiter:'Moral strength, optimism, protection.',Venus:'Strength of the senses and vitality of the reproductive system; charm.',Saturn:'Endurance, patience, long-term stamina.',Rahu:'Daring, unusual strength; also burn-out.',Ketu:'Detachment; strength through letting go; weak points when over-withdrawn.'},
+    steps:['Check the D27 rising sign, its lord and the Moon.','Check the dignity of each planet; strong ones are your reliable strengths, weak ones your weak points.','Check houses 3, 6 and 8 for courage and endurance.','Compare with the strength tools (Shadbala) and D1.'],
+    rules:[[C,'D27 is for strengths and weaknesses (BPHS list of sixteen divisions); its parts follow the twenty-seven lunar stars.'],[P,'Planets exalted or in their own sign in D27 are read as natural strengths; debilitated ones as weak points to work on.'],[P,'The D27 lagna lord and Mars strong: physical and moral strength; weak: low stamina or less drive.'],[P,'The Moon strong and well placed in D27: emotional steadiness.'],[P,'Do not use D27 to label a person; use it to find where support or caution is needed.']],
+    combos:['Mars and the Sun both strong in D27: strong body and will.','The Moon debilitated in D27 with hard aspects: emotional strain; support helps.'],
+    ask:['Where are the natural strengths and soft spots?'],
+    cannot:'It cannot give a score or a health verdict.',
+    cross:'Shadbala, D1 lagna lord, Mars and the Moon, D6 and D30.',
+    timing:'Dasha of the strongest and the weakest planets show when strengths or soft spots are tested.',
+    care:'Use for self-knowledge, not for labelling people. D27 changes about every 4.4 minutes.' };
+  D.D30 = { head:'Trimsamsa: faults, troubles and misfortunes', src:'core', noun:'troubles and misfortunes',
+    gist:'Shows faults, troubles and misfortunes, and the kind of hardship that tests you. Some older texts also use it for character; modern teachers read it for vulnerability and what to prepare for.',
+    lords:'BPHS 6.27 to 6.28: each sign is split in five uneven parts ruled by Mars (Agni), Saturn (Vayu), Jupiter (Indra), Mercury (Kubera) and Venus (Varuna). Odd signs: 5 degrees Mars, 5 Saturn, 8 Jupiter, 7 Mercury, 5 Venus. Even signs run the other way: 5 Venus, 7 Mercury, 8 Jupiter, 5 Saturn, 5 Mars.',
     how:'Each sign is split in 5 uneven parts, each ruled by a planet. Odd signs: 0 to 5 degrees Mars (Aries), 5 to 10 Saturn (Aquarius), 10 to 18 Jupiter (Sagittarius), 18 to 25 Mercury (Gemini), 25 to 30 Venus (Libra). Even signs are the reverse: 0 to 5 Venus (Taurus), 5 to 12 Mercury (Virgo), 12 to 20 Jupiter (Pisces), 20 to 25 Saturn (Capricorn), 25 to 30 Mars (Scorpio).',
-    lagna:'Rising sign of D30. House 6 (struggle), 8 (shocks), 12 (loss), 1 (the one who faces it).',
-    steps:['Check the 6th, 8th and 12th houses and their lords in D30.','Check the D30 lagna lord and which hard planets are strong.','Compare with D1 and D6.'],
-    rules:[[C,'D30 is for evils and misfortunes (BPHS list); each part is ruled by Mars, Saturn, Jupiter, Mercury or Venus.'],[P,'Hard planets strong here show where hardship tends to come; benefics strong here soften it.'],[P,'A planet in its own part shows that its themes can become the test.']],
-    karakas:'Saturn, Mars, Rahu, lords of 6, 8, 12.',
-    strength:'Dignity of the hard planets and the lagna lord.',
+    lagna:'Rising sign of D30 shows how you meet hardship. Houses 6 (struggle), 8 (shocks), 12 (loss) and 1 (the one who faces it).',
+    focus:[1,6,8,12], kar:['Saturn','Mars','Rahu'],
+    houses:['The one who faces trouble: resilience and temper.','Family troubles, harsh speech, money worries.','Quarrels with siblings or neighbours; hasty acts.','Home troubles, loss of peace, trouble with the mother or property.','Troubles with children, wrong judgement, regret.','Enemies, disease, debt, daily struggle; a main house of D30.','Troubles in marriage and partnerships; open enemies.','Sudden shocks, scandals, accidents, long trouble; a main house of D30.','Loss of luck; trouble with father or teachers.','Trouble in career, loss of reputation.','Blocked gains, troubles with friends.','Losses, confinement, hidden troubles; a main house of D30.'],
+    planets:{Sun:'Ego clashes, trouble with authority or father.',Moon:'Mental distress, trouble with mother or the public.',Mars:'Quarrels, accidents, injury, anger, fire and weapons.',Mercury:'Anxiety, trouble through speech, letters, trade.',Jupiter:'Bad advice or over-trust; less trouble when well placed; protection.',Venus:'Troubles through relationships, pleasure, excess.',Saturn:'Slow, long troubles, loss, delay, hardship, chronic strain.',Rahu:'Scandal, deception, toxic or mysterious troubles.',Ketu:'Sudden cuts, losses, isolation.'},
+    steps:['Check the 6th, 8th and 12th houses and their lords in D30.','Check the D30 lagna lord and which hard planets are strong.','Find, for each planet, which planet\'s part (Mars, Saturn, Jupiter, Mercury, Venus) it stands in: that part colours its troubles (see the section built from your chart).','Compare with D1 and D6.'],
+    rules:[[C,'D30 is for evils and misfortunes (BPHS list of sixteen divisions); each part is ruled by Mars, Saturn, Jupiter, Mercury or Venus and has a deity (Agni, Vayu, Indra, Kubera, Varuna).'],[P,'Hard planets strong here show where hardship tends to come; benefics strong here soften it.'],[P,'A planet in Mars\'s part: quarrels, anger or accidents are the trouble. In Saturn\'s part: delay, loss, long strain. In Jupiter\'s part: mild troubles, help comes. In Mercury\'s part: worry, speech or paper troubles. In Venus\'s part: troubles through pleasure or relationships.'],[P,'The lagna lord of D30 in the 6th, 8th or 12th: a tougher road; in angles or trines: stronger resilience.'],[P,'Benefics in the 6th, 8th and 12th of D30: the troubles are lighter.'],[P,'Some older texts use D30 to read character; this guide treats it as a map of vulnerability, not fate.']],
+    combos:['Hard planets strong in D30 with a weak lagna lord: pronounced trouble; use caution and support.','Jupiter or Venus strong in D30 in angles: protection from trouble.'],
+    ask:['Where is the person vulnerable and how can they prepare?'],
+    cannot:'It cannot predict events. It shows tests, not fate.',
+    cross:'D1 houses 6, 8, 12, D6, D8, D27.',
     timing:'Dasha of the 6th, 8th and 12th lords and of Saturn, Mars or Rahu.',
-    care:'It shows tests, not fate. Speak of what to guard against and how to prepare.' };
-  D.D40 = { head:'Khavedamsa: inherited good and bad effects', src:'core',
+    care:'Speak of what to guard against and how to prepare. D30 changes about every 4 minutes.' };
+  D.D40 = { head:'Khavedamsa: inherited good and bad effects', src:'core', noun:'inherited good and bad effects',
     gist:'Shows the auspicious and inauspicious effects that work in the chart; many teachers use it for the mother\'s line and what is inherited from it.',
+    lords:'BPHS 6.29 to 6.30: the parts have the lords Vishnu, Chandra, Marichi, Tvashta, Dhata, Shiva, Ravi, Yama, Yaksha, Gandharva, Kala and Varuna, repeating. Odd signs count from Aries and even signs from Libra.',
     how:'Each sign is cut into 40 parts of 0.75 degrees. Odd signs start from Aries, even signs start from Libra; the parts go on one sign at a time.',
-    lagna:'Rising sign of D40. House 4 (mother\'s line), 9 (luck), 1 (the self).',
-    steps:['Check the lagna lord, the 4th and 9th houses and their lords in D40.','Check the Moon (mother) and the benefic planets.','Compare with D12 for family and D1.'],
-    rules:[[C,'D40 is for auspicious and inauspicious effects (BPHS list).'],[P,'Many teachers read it for the mother\'s side; benefics strong show inherited good, hard planets strong show inherited trouble.']],
-    karakas:'Moon, Jupiter, 4th and 9th lords.',
-    strength:'Dignity of the Moon, Jupiter and the lagna lord.',
+    lagna:'Rising sign of D40. House 4 (mother\'s line), 9 (luck), 1 (the self), 5 (merit).',
+    focus:[4,9,1,5], kar:['Moon','Jupiter'],
+    houses:['Your own auspicious or hard effects at the core.','The family\'s fortune; maternal wealth.','Efforts that bring fortune or loss.','The mother\'s line, home luck, inherited peace; a main house of D40.','Merit, intelligence, past good deeds; a main house of D40.','Hard effects: illness, debt, inherited quarrels.','Effects through partners.','Inherited hard effects, hidden matters.','Luck and blessings; the second main house of D40.','Effects in career and status.','Gains from the family\'s fortune.','Loss of inherited fortune, spending.'],
+    planets:{Sun:'Father\'s side; authority; vitality of the line.',Moon:'The main significator of the mother\'s line; the heart of D40.',Mars:'Energy of the line; quarrels or courage.',Mercury:'Skills and business sense in the line.',Jupiter:'Blessings of the family; protection.',Venus:'Comfort and love in the line.',Saturn:'Burdens and duties of the line.',Rahu:'Unusual, foreign or unclear inheritances.',Ketu:'Spiritual line or past-life ties.'},
+    steps:['Check the lagna lord, the 4th and 9th houses and their lords in D40.','Check the Moon (mother) and the benefic planets.','Compare with D12 for family and D1.','Read the strong planets as inherited strengths and the weak ones as inherited soft spots.'],
+    rules:[[C,'D40 is for auspicious and inauspicious effects (BPHS list of sixteen divisions).'],[P,'Many teachers read it for the mother\'s side; benefics strong show inherited good, hard planets strong show inherited trouble.'],[P,'The lagna lord and the Moon both strong in D40: an auspicious base.'],[P,'The 4th and 9th lords linked: blessings come through the family.']],
+    combos:['Jupiter strong in an angle of D40: protection from the lineage.','Saturn and Rahu on the Moon: inherited anxieties.'],
+    ask:['What good or hard effects are inherited?'],
+    cannot:'It cannot name a specific event.',
+    cross:'D12, D1 houses 4 and 9, the Moon in D1.',
     timing:'Dasha of the 4th and 9th lords.',
-    care:'Changes about every 3 minutes. Use only with a verified birth time.' };
-  D.D45 = { head:'Akshavedamsa: character and conduct', src:'core',
+    care:'D40 changes about every 3 minutes. Use only with a verified birth time.' };
+  D.D45 = { head:'Akshavedamsa: character and conduct', src:'core', noun:'character and conduct',
     gist:'Shows character, conduct and the general feel of a life; many teachers use it for the father\'s line.',
+    lords:'BPHS 6.31 to 6.32: the lords are Brahma, Shiva and Vishnu in turn for moving signs, and further names (such as Isha, Achyuta, Surajyeshtha, Keshava) for fixed and dual signs. Counting starts from Aries (moving), Leo (fixed) and Sagittarius (dual).',
     how:'Each sign is cut into 45 parts of about 0.67 degrees. Moving signs start from Aries, fixed signs from Leo, dual signs from Sagittarius; the parts go on one sign at a time.',
-    lagna:'Rising sign of D45. House 1 (conduct), 9 (father\'s line, dharma), 10 (deeds).',
-    steps:['Check the lagna lord and the 1st, 9th and 10th houses in D45.','Check the Sun (father) and benefic planets.','Compare with D12 and D1.'],
-    rules:[[C,'D45 is for general indications: character and conduct (BPHS list).'],[P,'Many teachers read it for the father\'s side; benefics strong show a clean line, hard planets strong show a rough one.']],
-    karakas:'Sun, Jupiter, the lagna lord.',
-    strength:'Dignity of the lagna lord and the Sun.',
+    lagna:'Rising sign of D45 shows your conduct. House 1 (conduct), 9 (father\'s line, dharma), 10 (deeds), 5 (character).',
+    focus:[1,9,10,5], kar:['Sun','Jupiter'],
+    houses:['Your conduct and the way you carry yourself.','Speech and honesty; family customs.','Courage and habits in effort.','Inner character, peace, mother\'s teaching.','Moral sense, wisdom, learning of values.','Habits that harm: anger, laziness, addictions; service.','Conduct towards partners and the public.','Hidden habits, crises of character.','Dharma, father\'s line, ideals.','Deeds in the world; reputation.','Friends\' influence; ambitions.','Withdrawal, hidden conduct, private life.'],
+    planets:{Sun:'Self-respect, father\'s line, honour.',Moon:'Emotional character, mother\'s teaching.',Mars:'Courage, temper, discipline.',Mercury:'Honesty in speech, cleverness.',Jupiter:'Ethics, wisdom, goodwill.',Venus:'Charm, indulgence, refinement.',Saturn:'Discipline, restraint, sternness.',Rahu:'Ambition, deception, rule-breaking.',Ketu:'Detachment, simplicity, aloofness.'},
+    steps:['Check the lagna lord and the 1st, 9th and 10th houses in D45.','Check the Sun (father) and benefic planets.','Compare with D12 and D1.','Read benefic strength as a clean line and hard planets strong as a rough one.'],
+    rules:[[C,'D45 is for general indications: character and conduct (BPHS list of sixteen divisions).'],[P,'Many teachers read it for the father\'s side; benefics strong show a clean line, hard planets strong show a rough one.'],[P,'The lagna lord strong in D45: conduct is steady and honourable; weak: struggles with habits.'],[P,'Moral weaknesses show as hard planets on the lagna lord or the Moon; as always, read them as work to do.']],
+    combos:['Jupiter and the Sun strong in D45: honour, ethics.','Rahu on the lagna lord: ambition that tests ethics.'],
+    ask:['What is the quality of conduct and the father\'s line?'],
+    cannot:'It cannot judge a person; treat it as a mirror.',
+    cross:'D12, D1 lagna lord and Sun, D9 for dharma.',
     timing:'Dasha of the 1st, 9th and 10th lords.',
     care:'The rising sign changes about every 2.7 minutes. Only use with a very exact time.' };
-  D.D60 = { head:'Shashtiamsa: the finest division, past karma', src:'core',
-    gist:'The finest classical chart. Teachers read it for the root of the whole chart and for karma carried from before. It carries great weight in the classical strength count and is the most sensitive to birth time.',
+  D.D60 = { head:'Shashtiamsa: the finest division, karma and its root', src:'core', noun:'the root and karma of everything',
+    gist:'The finest classical chart. Teachers read it for the root of the whole chart and for the karma carried from before: the birth chart shows when events happen and D60 is said to show why. It carries great weight in the classical strength count and is the most sensitive to birth time.',
+    lords:'BPHS 6.33 to 6.41 gives sixty names for the sixty parts of a sign, starting from the sign itself, and says planets joined with the auspicious parts give good results, while planets with cruel parts see their results destroyed. Odd signs use the list from the first part to the last; even signs use it in reverse. The list shown in this guide is a commonly printed one; names and natures differ a little between printed lists.',
     how:'Each sign is cut into 60 parts of 0.5 degrees. They start from the sign itself and go on one sign at a time.',
-    lagna:'Rising sign of D60. Read its houses like D1, but as the root: what the chart is made of.',
-    steps:['Read the D60 rising sign and its lord.','Check each planet\'s dignity in D60: strong ones carry good karma, weak ones show work to do.','Check the planets running the dasha in D60.','Compare with D1 and D9; if all three agree the reading is firm.'],
-    rules:[[C,'D60 is for general indications, past birth and karma, and carries large weight in the classical strength count (BPHS).'],[P,'A planet strong in D1, D9 and D60 gives its result without fail; a planet strong in D1 but weak in D60 may give less than it shows.'],[P,'Teachers also read the nature of each of the 60 parts (each part has a name and is counted good or bad); use a source you trust for those names.']],
-    karakas:'All planets; the lagna lord and the planets of the running dasha first.',
-    strength:'Dignity of each planet in D60.',
-    timing:'Dasha lords; read their D60 placement.',
-    care:'The rising sign changes about every 2 minutes. A few minutes of error give a different D60 chart, so use it only with a verified time.' };
-  D.D81 = { head:'Nava-navamsa: Navamsa of the Navamsa', src:'later',
+    lagna:'Rising sign of D60. Read its houses like D1, but as the root: what the chart is made of and which karma it carries.',
+    focus:[1,5,9,10], kar:['Sun','Moon','Jupiter','Saturn'],
+    houses:['The root of the self: the deep nature you are born with.','The root of family and wealth; karma around money and speech.','The root of courage and effort; karma with siblings.','The root of home and peace; karma with the mother.','The root of children, intelligence and merit; the karma of past deeds.','The root of enemies, debt and illness; karma of service.','The root of marriage and partnerships; karma with the spouse.','The root of sudden change and hidden matters; karma of transformation.','The root of luck and dharma; karma with father and teachers.','The root of career and reputation; karma in action.','The root of gains and wishes; karma of fulfilment.','The root of loss, retreat and liberation; karma of letting go.'],
+    planets:{Sun:'The root of the soul and the father; karma of authority.',Moon:'The root of the mind and the mother; emotional karma.',Mars:'The root of drive, courage and conflict.',Mercury:'The root of skill and speech.',Jupiter:'The root of wisdom, children and grace.',Venus:'The root of love, comforts and art.',Saturn:'The root of work, time and debt of karma.',Rahu:'The root of desire and the unfinished from before.',Ketu:'The root of release and past mastery.'},
+    steps:['Read the D60 rising sign and its lord.','Check each planet\'s dignity in D60 and the part (benefic or cruel) it stands in; benefic parts give karmic backing, cruel parts add obstruction.','Check the planets running the dasha in D60.','Compare with D1 and D9; if all three agree the reading is firm.','Use the section built from your chart: it lists the part each planet stands in.'],
+    rules:[[C,'D60 is for general indications, past birth and karma, and carries a large weight in the classical strength count (BPHS).'],[C,'BPHS 6.41: a planet joined with benefic parts gives good results; with cruel parts, its results are destroyed.'],[P,'A planet in a benefic part is read as having karmic backing for what it signifies. A planet in a cruel part faces obstruction even when its other placements look good.'],[P,'A benefic planet in a cruel part keeps its gentle nature but loses some effect; a hard planet in a benefic part keeps its hardness but gains support for what it governs.'],[P,'Even an exalted or moolatrikona planet at full strength can lose its good effect if it stands in a cruel part, say teachers.'],[P,'Benefics in cruel parts do not give good results during their dasha and antardasha (a teaching rule).'],[P,'The 2nd lord in a cruel part brings debts rather than wealth, even in an angle or trine (a teaching rule).'],[P,'The 10th lord in a cruel part along with bad vargas is said to bring a poor name (a teaching rule).'],[P,'A planet strong in D1, D9 and D60 gives its result without fail; strong in D1 but weak in D60 may give less than it shows.'],[P,'D60 is qualitative; judgement is needed. Do not use a single D60 fact to make a firm statement.']],
+    combos:['The lagna lord in a benefic part of D60 and strong: a person with strong karmic backing.','The lagna lord in a cruel part: some friction in the identity layer; the rest of the chart must be read carefully.','The dasha lord in a cruel part: its period needs patience even if D1 looks strong.'],
+    ask:['Which planets have karmic backing and which meet obstruction?','Where is the deepest root of the chart\'s story?'],
+    cannot:'It cannot be used with an approximate birth time. A few minutes of error give a different D60.',
+    cross:'D1, D9, Shadbala, the dasha, and the Ashtakavarga.',
+    timing:'Dasha lords; read their D60 placement. D1 shows when; D60 is said to show why.',
+    care:'The rising sign changes about every 2 minutes. A few minutes of error give a different D60 chart, so use it only with a verified time. Printed lists of the sixty names differ a little; check your own source.' };
+  D.D81 = { head:'Nava-navamsa: Navamsa of the Navamsa', src:'later', noun:'fine detail of dharma and fortune', from:'D9',
     gist:'A very fine chart built from D9: the planet\'s D9 position is divided into nine again. Some schools read it for the finer details of dharma and fortune.',
+    lords:'No lords of its own: it uses the sign and the D9 rule.',
     how:'The planet\'s position inside its D9 sign is stretched back to a full 30 degrees, then divided in 9 by the D9 rule.',
     lagna:'Rising sign of D81. Read like D9: 7th spouse, 9th dharma, 1st the inner self.',
-    steps:['Read D9 first and decide what it says.','Use D81 only to confirm or fine-tune it: are the same planets strong?','Look for planets in the same sign in D9 and D81 (repeat strength).'],
-    rules:[[P,'Used by some schools; not in the sixteen of Parashara.'],[P,'A planet strong in D1, D9 and D81 is read as very dependable.']],
-    karakas:'As in D9.',
-    strength:'Dignity in D81 beside D9.',
+    focus:[7,9,1], kar:['Venus','Jupiter'],
+    steps:['Read D9 first and decide what it says.','Use D81 only to confirm or fine-tune it: are the same planets strong?','Look for planets in the same sign in D9 and D81 (repeat strength).','Compare the D81 rising sign with D9 and D1.'],
+    rules:[[P,'Used by some schools; not one of Parashara\'s sixteen.'],[P,'A planet strong in D1, D9 and D81 is read as very dependable.'],[P,'A planet exalted or in its own sign in D9 and D81: the strength is confirmed at a finer level.'],[P,'Debilitated in both D9 and D81: the weakness is deep; give it extra care.']],
+    combos:['Same sign in D9 and D81 and strong: a steady planet.','The D81 lagna lord strong with the D9 lagna lord: steady inner character.'],
+    ask:['Do the strengths seen in D9 hold up at a finer level?'],
+    cannot:'It cannot stand alone.',
+    cross:'D9, D1.',
     timing:'Dasha lords as in D9.',
     care:'Changes about every 1.5 minutes. Only worth reading when the birth time is known to the minute.' };
-  D.D108 = { head:'Ashtottaramsa: finest karmic detail', src:'later',
+  D.D108 = { head:'Ashtottaramsa: finest karmic detail', src:'later', noun:'fine karmic detail', from:'D9',
     gist:'A very fine chart used by some schools for deep karmic themes. Definitions vary between teachers; this app builds it from D9 and D12.',
+    lords:'No lords of its own: the app builds it from the D9 and D12 rules.',
     how:'The planet\'s D9 position is stretched to 30 degrees and then divided in 12 by the D12 rule.',
     lagna:'Rising sign of D108. Read as a fine view of the D9 and D12 themes.',
+    focus:[7,9,1], kar:['Venus','Jupiter'],
     steps:['Read D9 and D12 first.','Use D108 only to confirm: are the same planets strong?','Note planets that repeat their sign in D9 and D108.'],
-    rules:[[P,'Used by some schools; not in the sixteen of Parashara; definitions differ.']],
-    karakas:'As in D9 and D12.',
-    strength:'Dignity beside D9.',
+    rules:[[P,'Used by some schools; not one of Parashara\'s sixteen; definitions differ.'],[P,'Use it to confirm the strong and weak planets of D9, not to start a new story.']],
+    combos:['A planet strong in D9 and D108 with the same lord: a steady strength.'],
+    ask:['Do the D9 strengths persist at the deepest level?'],
+    cannot:'It cannot stand alone and it is not a proof.',
+    cross:'D9 and D12.',
     timing:'Dasha lords as in D9.',
     care:'Changes about every 1 minute. Use only with a birth time checked to the minute. Treat as a curiosity, not as proof.' };
-  D.D144 = { head:'Dwadasa-dwadasamsa: the 12 of the 12', src:'later',
+  D.D144 = { head:'Dwadasa-dwadasamsa: the 12 of the 12', src:'later', noun:'fine ancestral detail', from:'D12',
     gist:'The 12th part of the 12th part: a very fine chart for family and ancestry themes used by some schools.',
+    lords:'No lords of its own: it uses the D12 rule twice.',
     how:'The planet\'s D12 position is stretched to 30 degrees and then divided in 12 again by the D12 rule.',
     lagna:'Rising sign of D144. Read as a fine view of D12 (family line).',
+    focus:[4,9,1], kar:['Sun','Moon'],
     steps:['Read D12 first.','Use D144 only to confirm: are the same planets strong?','Note planets that repeat their sign in D12 and D144.'],
-    rules:[[P,'Used by some schools; not in the sixteen of Parashara; definitions differ.']],
-    karakas:'As in D12.',
-    strength:'Dignity beside D12.',
+    rules:[[P,'Used by some schools; not one of Parashara\'s sixteen; definitions differ.'],[P,'Use it to confirm the strong and weak planets of D12, not to start a new story.']],
+    combos:['The Sun and Moon strong in D12 and D144: a supportive line confirmed at a fine level.'],
+    ask:['Do the family-line strengths in D12 persist at the finest level?'],
+    cannot:'It cannot stand alone.',
+    cross:'D12 and D1.',
     timing:'Dasha lords as in D12.',
     care:'Changes about every 50 seconds. Use only with a birth time known to the second. Treat as a curiosity.' };
-
-  const tag = t => t === C ? '<b class="vgg-tag c">From the texts</b>' : '<b class="vgg-tag p">Common practice</b>';
-  const li = a => '<li>' + a + '</li>', ol = a => '<ol>' + a.map(li).join('') + '</ol>';
-  const rules = a => '<ul class="vgg-rules">' + a.map(r => '<li>' + tag(r[0]) + r[1] + '</li>').join('') + '</ul>';
-  function mins(key){ const n = (typeof VARGAS !== 'undefined' && VARGAS[key]) ? VARGAS[key].n : 1; if (key === 'RTN') return ''; const m = 120 / n; return m >= 3 ? 'about every ' + (m >= 10 ? Math.round(m) : m.toFixed(1)) + ' minutes' : 'about every ' + Math.round(m * 60) + ' seconds'; }
-  function html(key){
-    const d = D[key]; if (!d) return '';
-    const t = mins(key);
-    return '<details class="vgg"><summary><span>📖 How to read this chart: guide and rules</span></summary><div class="vgg-body">'
-      + '<div class="vgg-src">' + SRC[d.src] + '</div>'
-      + '<h4>' + d.head + '</h4><p>' + d.gist + '</p>'
-      + '<h5>How this app divides it</h5><p>' + d.how + '</p>'
-      + '<h5>Rising sign and houses in this chart</h5><p>' + d.lagna + '</p>'
-      + '<h5>How to read it, step by step</h5>' + ol(d.steps)
-      + '<h5>Rules astrologers use</h5>' + rules(d.rules)
-      + '<h5>Planets to check</h5><p>' + d.karakas + '</p>'
-      + '<h5>How to judge strength</h5><p>' + d.strength + '</p>'
-      + '<h5>Timing</h5><p>' + d.timing + '</p>'
-      + '<h5>Be careful</h5><p>' + d.care + (t ? ' In this chart the rising sign can change ' + t + ' on average, so a small birth-time error can change the whole picture.' : '') + '</p>'
-      + '<h5>Rules for every divisional chart</h5>' + rules(GEN)
-      + '</div></details>';
+  /* ---------- facts about THIS chart in this division (nothing is guessed: signs, houses and dignities the app already computed) ---------- */
+  function mineLines(key, chart){
+    try {
+      const v = chart && chart.vargas && chart.vargas[key]; if (!v) return [];
+      const d = D[key], out = [], asc = v.ascendantSign, ascName = SG[asc];
+      const houseOf = n => { const h = v.houses.find(x => x.planets.some(p => p.name === n)); return h ? h.houseNum : null; };
+      const digOf = n => { for (const h of v.houses) for (const p of h.planets) if (p.name === n) return DIG[p.dignity.status] || p.dignity.status; return ''; };
+      const signOf = n => SG[v.planetVargaSign[n]];
+      const where = n => n + ' in ' + signOf(n) + ' (' + ordn(houseOf(n)) + ' house, ' + digOf(n) + (chart.planets[n].retrograde && n !== 'Rahu' && n !== 'Ketu' ? ', retrograde' : '') + ')';
+      const lagLord = v.houses[0].signLord;
+      out.push('Rising sign in this chart: ' + ascName + '. Its lord ' + lagLord + ' stands in ' + (houseOf(lagLord) ? 'the ' + ordn(houseOf(lagLord)) + ' house, ' + signOf(lagLord) + ', ' + digOf(lagLord) : 'a sign of this chart') + '.');
+      (d.focus || []).forEach(h => {
+        const H = v.houses[h - 1], lord = H.signLord;
+        out.push('House ' + h + ' is ' + H.signName + ' (lord ' + lord + (houseOf(lord) ? ' in the ' + ordn(houseOf(lord)) + ' house, ' + digOf(lord) : '') + '). ' + (H.planets.length ? 'Planets here: ' + H.planets.map(p => p.name + ' (' + (DIG[p.dignity.status] || p.dignity.status) + ')').join(', ') + '.' : 'No planet sits here.'));
+      });
+      (d.kar || []).forEach(n => out.push('Key planet ' + where(n) + '.'));
+      const strong = PL.filter(n => ['Exalted','OwnSign','Moolatrikona'].includes(v.houses.flatMap(h => h.planets).find(p => p.name === n).dignity.status));
+      const weak = PL.filter(n => v.houses.flatMap(h => h.planets).find(p => p.name === n).dignity.status === 'Debilitated');
+      const varg = PL.filter(n => key !== 'D1' && v.planetVargaSign[n] === chart.planets[n].sign);
+      out.push('Strong here (own, exalted or moolatrikona sign): ' + (strong.length ? strong.join(', ') : 'none') + '. Debilitated here: ' + (weak.length ? weak.join(', ') : 'none') + '.');
+      if (key !== 'D1') out.push('Same sign as in D1 (vargottama): ' + (varg.length ? varg.join(', ') : 'none') + '.');
+      out.push('Houses with planets: ' + v.houses.filter(h => !h.isEmpty).map(h => 'H' + h.houseNum + ' ' + h.planets.map(p => p.name).join('+')).join(' · ') + '.');
+      if (key === 'D30') out.push('The part (ruling planet) each planet stands in: ' + PL.map(n => n + ' in ' + trimLord(chart.planets[n].longitude) + '\'s part').join(', ') + '. Ascendant in ' + trimLord(chart.ascendant.longitude) + '\'s part.');
+      if (key === 'D60'){
+        const pr = n => { const q = part60(chart.planets[n].longitude); return n + ': part ' + q.n + ' ' + q.name + (q.good ? ' (benefic)' : ' (cruel)'); };
+        const qa = part60(chart.ascendant.longitude);
+        out.push('The part of D60 each planet stands in (names from a commonly printed list): ' + PL.map(pr).join('; ') + '. Ascendant: part ' + qa.n + ' ' + qa.name + (qa.good ? ' (benefic)' : ' (cruel)') + '.');
+      }
+      return out;
+    } catch (e) { return []; }
   }
-  function text(key){
-    const d = D[key]; if (!d) return '';
-    const L = a => a.map((x, i) => (i + 1) + '. ' + x).join('\n'), R = a => a.map(r => '- [' + (r[0] === C ? 'From the texts' : 'Common practice') + '] ' + r[1]).join('\n');
-    return key + ' · ' + d.head + '\n' + SRC[d.src] + '\n\n' + d.gist + '\n\nHow this app divides it: ' + d.how + '\nRising sign and houses: ' + d.lagna + '\n\nSteps:\n' + L(d.steps) + '\n\nRules:\n' + R(d.rules) + '\n\nPlanets to check: ' + d.karakas + '\nStrength: ' + d.strength + '\nTiming: ' + d.timing + '\nBe careful: ' + d.care + '\n\nRules for every divisional chart:\n' + R(GEN);
+  const mins = key => { const n = (typeof VARGAS !== 'undefined' && VARGAS[key]) ? VARGAS[key].n : 1; if (key === 'RTN') return ''; const m = 120 / n; return m >= 3 ? 'about every ' + (m >= 10 ? Math.round(m) : m.toFixed(1)) + ' minutes' : 'about every ' + Math.round(m * 60) + ' seconds'; };
+  const tag = t => t === C ? '<b class="vgg-tag c">From the texts</b>' : '<b class="vgg-tag p">Common practice</b>';
+  const li = a => '<li>' + a + '</li>', ol = a => '<ol>' + a.map(li).join('') + '</ol>', ul = a => '<ul class="vgg-list">' + a.map(li).join('') + '</ul>';
+  const rules = a => '<ul class="vgg-rules">' + a.map(r => '<li>' + tag(r[0]) + r[1] + '</li>').join('') + '</ul>';
+  const sec = (t, body, open) => '<details class="vgg-s"' + (open ? ' open' : '') + '><summary>' + t + '</summary><div class="vgg-sb">' + body + '</div></details>';
+  function parts(key){
+    const d = D[key], base = d.from ? D[d.from] : d;
+    const houses = d.houses || base.houses, planets = d.planets || base.planets;
+    const note = d.from ? 'Same meaning as in ' + d.from + ' (this is a finer cut of it). ' : '';
+    return { d, houses, planets, note };
+  }
+  function html(key, chart){
+    if (!D[key]) return '';
+    const q = parts(key), d = q.d, t = mins(key), mine = mineLines(key, chart);
+    let h = '<details class="vgg"><summary><span>📖 How to read this chart: full guide and rules</span></summary><div class="vgg-body">';
+    h += '<div class="vgg-src">' + SRC[d.src] + '</div><h4>' + d.head + '</h4><p>' + d.gist + '</p>';
+    h += sec('Who presides over the parts, and how this app divides it', '<p><b>Presiding lords:</b> ' + d.lords + '</p><p><b>How this app divides it:</b> ' + d.how + '</p><p><b>Rising sign and houses:</b> ' + d.lagna + '</p>', false);
+    if (mine.length) h += sec('Your chart in this division', ul(mine) + '<p class="vgg-note">These are facts the app computed for your chart. Read them with the rules below.</p>', true);
+    h += sec('The twelve houses, one by one', ul(q.houses.map((x, i) => '<b>House ' + (i + 1) + ':</b> ' + x)), false);
+    h += sec('The nine planets, one by one', ul(PL.map(n => '<b>' + n + ':</b> ' + q.planets[n])), false);
+    if (d.signs) h += sec('The rising sign of this chart and the field of work', ul(Object.keys(d.signs).map(s => '<b>' + s + ':</b> ' + d.signs[s])), false);
+    h += sec('How to read it, step by step', ol(d.steps), true);
+    h += sec('Rules astrologers use', rules(d.rules), true);
+    h += sec('Combinations to look for', ul(d.combos), false);
+    h += sec('What each state means in this chart', ul(states(d).map(s => '<b>' + s[0] + ':</b> ' + s[1])), false);
+    h += sec('What this chart can answer, and what it cannot', '<p><b>It can help answer:</b></p>' + ul(d.ask) + '<p><b>It cannot:</b> ' + d.cannot + '</p>', false);
+    h += sec('Planets to check, strength and cross-checks', '<p><b>Planets to check:</b> ' + (d.karakas || (d.kar || []).join(', ')) + '.</p><p><b>Cross-check with:</b> ' + d.cross + '</p>', false);
+    h += sec('Timing', '<p>' + d.timing + '</p>', false);
+    h += sec('Be careful', '<p>' + d.care + (t ? ' In this chart the rising sign can change ' + t + ' on average, so a small birth-time error can change the whole picture.' : '') + '</p>', false);
+    h += sec('Rules for every divisional chart', rules(GEN), false);
+    return h + '</div></details>';
+  }
+  function text(key, chart){
+    if (!D[key]) return '';
+    const q = parts(key), d = q.d, t = mins(key), mine = mineLines(key, chart);
+    const R = a => a.map(r => '- [' + (r[0] === C ? 'From the texts' : 'Common practice') + '] ' + r[1]).join('\n'), B = a => a.map(x => '- ' + x).join('\n');
+    return key + ' · ' + d.head + '\n' + SRC[d.src] + '\n\n' + d.gist + '\n\nPresiding lords: ' + d.lords + '\nHow this app divides it: ' + d.how + '\nRising sign and houses: ' + d.lagna
+      + (mine.length ? '\n\nYOUR CHART IN THIS DIVISION\n' + B(mine) : '')
+      + '\n\nHOUSES\n' + B(q.houses.map((x, i) => 'House ' + (i + 1) + ': ' + x)) + '\n\nPLANETS\n' + B(PL.map(n => n + ': ' + q.planets[n]))
+      + (d.signs ? '\n\nRISING SIGN AND FIELD\n' + B(Object.keys(d.signs).map(s => s + ': ' + d.signs[s])) : '')
+      + '\n\nSTEPS\n' + d.steps.map((x, i) => (i + 1) + '. ' + x).join('\n') + '\n\nRULES\n' + R(d.rules) + '\n\nCOMBINATIONS\n' + B(d.combos)
+      + '\n\nSTATES\n' + B(states(d).map(s => s[0] + ': ' + s[1])) + '\n\nCAN ANSWER\n' + B(d.ask) + '\nCannot: ' + d.cannot
+      + '\n\nPlanets to check: ' + (d.karakas || (d.kar || []).join(', ')) + '\nCross-check: ' + d.cross + '\nTiming: ' + d.timing + '\nBe careful: ' + d.care + (t ? ' Rising sign changes ' + t + '.' : '')
+      + '\n\nRULES FOR EVERY DIVISIONAL CHART\n' + R(GEN);
   }
   return { html, text, keys: () => Object.keys(D) };
 })();

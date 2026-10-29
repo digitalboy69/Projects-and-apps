@@ -13,7 +13,7 @@ res = []
 def ok(n, c, d=''): res.append((n, bool(c), d))
 CAST = "(p)=>{loadProfileIntoForm(p);document.getElementById('birthForm').requestSubmit();}"
 OB = dict(name='Test', dob='1961-08-04', tob='19:24', place='Honolulu', lat=21.3069, lon=-157.8583, tz=-10)
-SECT = ['How this app divides it', 'Rising sign and houses in this chart', 'How to read it, step by step', 'Rules astrologers use', 'Planets to check', 'How to judge strength', 'Timing', 'Be careful', 'Rules for every divisional chart']
+SECT = ['Who presides over the parts', 'The twelve houses, one by one', 'The nine planets, one by one', 'How to read it, step by step', 'Rules astrologers use', 'Combinations to look for', 'What each state means in this chart', 'What this chart can answer', 'Timing', 'Be careful', 'Rules for every divisional chart']
 with sync_playwright() as p:
     b = p.chromium.launch(executable_path=CHROME); pg = b.new_page(viewport={'width': 430, 'height': 900}); errs = []
     pg.on('pageerror', lambda e: errs.append(str(e)))
@@ -23,18 +23,23 @@ with sync_playwright() as p:
     ok('a guide exists for every chart', all(pg.evaluate("(k)=>VGG.keys().includes(k)", k) for k in keys), keys)
     bad = []
     for k in keys:
-        h = pg.evaluate("(k)=>VGG.html(k)", k)
+        h = pg.evaluate("(k)=>VGG.html(k, null)", k)
         miss = [s for s in SECT if s not in h]
-        if miss or h.count('vgg-tag') < 3 or len(h) < 3000 or 'undefined' in h or 'TODO' in h or 'NaN' in h: bad.append((k, miss, len(h)))
+        if miss or h.count('vgg-tag') < 4 or len(h) < 9000 or 'undefined' in h or 'TODO' in h or 'NaN' in h: bad.append((k, miss, len(h)))
     ok('every guide complete (sections, tagged rules, length)', not bad, bad[:3])
-    ok('plain text version for each', all(len(pg.evaluate("(k)=>VGG.text(k)", k)) > 1500 for k in keys))
-    ok('birth-time line says how often the rising sign changes', 'about every 13 minutes' in pg.evaluate("()=>VGG.html('D9')") and 'about every 50 seconds' in pg.evaluate("()=>VGG.html('D144')"))
+    ok('plain text version for each', all(len(pg.evaluate("(k)=>VGG.text(k, null)", k)) > 5000 for k in keys))
+    ok('birth-time line says how often the rising sign changes', 'about every 13 minutes' in pg.evaluate("()=>VGG.html('D9',null)") and 'about every 50 seconds' in pg.evaluate("()=>VGG.html('D144',null)"))
     # on screen, follows the selected chart
     seen = {}
     for k in ['D1', 'D9', 'D60', 'RTN', 'D144']:
         pg.evaluate("(k)=>{const s=document.getElementById('vargaSelect');s.value=k;s.dispatchEvent(new Event('change',{bubbles:true}))}", k); pg.wait_for_timeout(500)
         seen[k] = pg.evaluate("()=>{const d=document.querySelector('#vargaDisplayContainer .vgg');return d?d.querySelector('h4').textContent:null}")
     ok('guide shows under the chart and follows the picker', all(seen.values()) and len(set(seen.values())) == 5, seen)
+    ok('your-chart section shows real facts', pg.evaluate("()=>{const d=document.querySelector('#vargaDisplayContainer .vgg');d.open=true;const t=d.innerText;return /Rising sign in this chart/.test(t) && /Key planet/.test(t)}"))
+    pg.evaluate("()=>{const s=document.getElementById('vargaSelect');s.value='D60';s.dispatchEvent(new Event('change',{bubbles:true}))}"); pg.wait_for_timeout(400)
+    ok('D60 shows the part of every planet', pg.evaluate("()=>/part \\d+ [A-Za-z]+ \\((benefic|cruel)\\)/.test(document.querySelector('#vargaDisplayContainer .vgg').innerText.replace(/\\n/g,' ') ) || /part \\d+/.test(document.querySelector('#vargaDisplayContainer .vgg').textContent)"))
+    pg.evaluate("()=>{const s=document.getElementById('vargaSelect');s.value='D30';s.dispatchEvent(new Event('change',{bubbles:true}))}"); pg.wait_for_timeout(400)
+    ok('D30 shows the part-lord of every planet', pg.evaluate("()=>/'s part/.test(document.querySelector('#vargaDisplayContainer .vgg').textContent)"))
     ok('guide opens and shows text', pg.evaluate("()=>{const d=document.querySelector('#vargaDisplayContainer .vgg');d.open=true;return d.innerText.length>1500}"))
     ok('no page errors', not errs, errs[:2]); b.close()
 for n, c, d in res: print(('PASS ' if c else 'FAIL ') + n, '' if c else d)
