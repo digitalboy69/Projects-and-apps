@@ -84,3 +84,5 @@
 .pen-tabs button:not(.on),.pen-pick button:not(.on),.pen-signs button:not(.on),.pen-pills button:not(.on){background:transparent;color:var(--text-muted,#9f9a8f);box-shadow:none}
 .pen-tabs button:not(.on):hover,.pen-tabs button:not(.on):focus{background:rgba(255,255,255,.05);outline:none}
 .pen-signs button:not(.on),.pen-pills button:not(.on){color:var(--text-main,#eae6df);background:rgba(255,255,255,.03)}
+.pl-gulika{margin-top:12px}.pl-gulika .pl-card{cursor:default}
+.pl-note{display:block;margin-top:8px;font-size:12.5px;line-height:1.5;color:var(--text-muted,#9f9a8f)}

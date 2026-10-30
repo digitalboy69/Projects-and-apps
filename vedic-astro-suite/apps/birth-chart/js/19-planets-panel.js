@@ -1,4 +1,16 @@
 /* ===== Planets panel + detail popup (redesigned) ===== */
+function gulikaCard(chart){
+  const g = chart.upagraha && chart.upagraha.Gulika; if (!g) return '';
+  const sg = SIGNS[g.sign], c = OUTER_COL.Gulika;
+  return `<div class="pl-grid pl-gulika"><div class="pl-card" data-flags="gulika" style="--pc:${c}">
+      <span class="pl-top"><span class="pl-dot" style="background:${c}">Gu</span>
+        <span class="pl-name"><b>Gulika <em>(Mandi)</em></b><small>${g.nakshatra.name} · Pada ${g.nakshatra.pada}</small></span>
+        <span class="pl-house">H${g.house}</span></span>
+      <span class="pl-sign">${sg.symbol} ${sg.name}<em>${formatDeg(g.degInSign)}</em></span>
+      <span class="pl-track"><i style="width:${(g.degInSign/30*100).toFixed(1)}%"></i></span>
+      <span class="pl-tags"><span class="pl-tag">Son of Saturn · upagraha point</span></span>
+      <span class="pl-note">The rising sign at the start of Saturn's part of the ${g.isDay?'day':'night'} (part ${g.part} of 8). Teachers differ on the start, middle or end of that part. Read like a Saturn-type point: it adds delay and pressure to the house and planets it touches.</span></div></div>`;
+}
 function plDigInfo(pl){
   const st = pl.dignity.status;
   const good = st==='Exalted'||st==='OwnSign'||st==='Moolatrikona', bad = st==='Debilitated';
@@ -59,6 +71,7 @@ function buildPlanetsPanel(chart){
       <button type="button" class="pl-chip" data-pl-f="chall">⚠ Challenged <b>${nChall}</b></button>
     </div>
     <div class="pl-grid">${cards}</div>
+    ${gulikaCard(chart)}
     <div class="pl-empty" id="plEmpty" hidden>No planets match this filter in your chart.</div>
     <div class="pl-sec"><h5>Outer planets <span>Modern · tap for details</span></h5><div class="pl-grid">${outerCards}</div>
       <div class="pl-asplist" style="margin-top:10px">${outerAsp}</div></div>

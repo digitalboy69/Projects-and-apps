@@ -295,6 +295,7 @@ function renderResults(profile){
     <div class="varga-control-group">
       <span class="varga-control-label">Outer planets:</span>
       <label class="outer-chk" title="Show Uranus, Neptune and Pluto"><input type="checkbox" class="outer-chk-input" ${window.__showOuter!==false?'checked':''}> <span>Outer planets ♅ ♆ ♇</span></label>
+      <label class="outer-chk" title="Show Gulika (Mandi), the son of Saturn"><input type="checkbox" class="gulika-chk-input" ${window.__showGulika!==false?'checked':''}> <span>Gulika Gu</span></label>
     </div>
 
     <div class="varga-control-group">
@@ -367,6 +368,7 @@ function renderResults(profile){
     <div class="varga-control-group">
       <span class="varga-control-label">Outer planets:</span>
       <label class="outer-chk" title="Show Uranus, Neptune and Pluto"><input type="checkbox" class="outer-chk-input" ${window.__showOuter!==false?'checked':''}> <span>Outer planets ♅ ♆ ♇</span></label>
+      <label class="outer-chk" title="Show Gulika (Mandi), the son of Saturn"><input type="checkbox" class="gulika-chk-input" ${window.__showGulika!==false?'checked':''}> <span>Gulika Gu</span></label>
     </div>
 
     <div class="varga-control-group">

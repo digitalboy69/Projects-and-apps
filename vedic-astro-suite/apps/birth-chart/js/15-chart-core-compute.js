@@ -144,12 +144,17 @@ function computeChart(dateStr, timeStr, lat, lon, tzOffsetHours){
     for (const vk in vargaResults){ const V = vargaResults[vk]; (V.outerSign = V.outerSign || {})[n] = calcVarga(vk, l); (V.outerRx = V.outerRx || {})[n] = rx; }
   });
 
+  const upagraha = {};
+  try { const gk = computeGulika(jd, lat, lon, tzOffsetHours, 'start');
+    if (gk){ gk.house = ((gk.sign-ascSignIdx+12)%12)+1; upagraha.Gulika = gk;
+      for (const vk in vargaResults){ const V = vargaResults[vk]; (V.outerSign = V.outerSign || {}).Gulika = calcVarga(vk, gk.longitude); (V.outerRx = V.outerRx || {}).Gulika = false; } } } catch(e){ console.warn('gulika skipped', e); }
+
   return {
     julianDay: jd, ayanamsa, tzOffsetHours,
     sunriseJD: todaySunriseSunset.sunriseJD, sunsetJD: todaySunriseSunset.sunsetJD,
     prevSunsetJD: (function(){ const y = getSunriseSunsetJD(jd-1, lat, lon); return y.sunsetJD; })(),
     ascendant: { longitude: ascSidereal, sign: ascSignIdx, degInSign: getDegInSign(ascSidereal), nakshatra: getNakshatra(ascSidereal) },
-    planets, outer, vargas: vargaResults, siderealLongitudes, wars, dashaData, yogas, ashtakavarga, charaKarakas, shadbala
+    planets, outer, upagraha, vargas: vargaResults, siderealLongitudes, wars, dashaData, yogas, ashtakavarga, charaKarakas, shadbala
   };
 }
 

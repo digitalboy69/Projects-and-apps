@@ -184,18 +184,18 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-29 - 1666 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-30 - 1674 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 181 files, 29225 lines, 2341 KB
+**birth-chart** - 182 files, 29289 lines, 2347 KB
 ```
-index.html                                         603 lines   34 KB
+index.html                                         604 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          280 lines   13 KB
 js/04-transit-timing-engine.js                     247 lines   11 KB
-js/05-ascendant-nakshatra-vargas.js                210 lines   12 KB
+js/05-ascendant-nakshatra-vargas.js                211 lines   12 KB
 js/06-outer-planet-knowledge.js                     37 lines    5 KB
 js/07-planetary-dignity.js                          77 lines    3 KB
 js/08-combustion-and-war.js                         30 lines    1 KB
@@ -218,14 +218,15 @@ js/113-date-entry.js                                86 lines    7 KB
 js/114-varga-guide.js                              522 lines  113 KB
 js/115-compare-lab.js                              224 lines   16 KB
 js/116-planet-encyclopedia.js                      350 lines   42 KB
+js/117-gulika.js                                    34 lines    3 KB
 js/12-yoga-detection.js                            117 lines    4 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
-js/15-chart-core-compute.js                        156 lines    7 KB
+js/15-chart-core-compute.js                        161 lines    7 KB
 js/16-rectification-engine.js                       36 lines    2 KB
 js/17-special-lagnas.js                            404 lines   23 KB
 js/18-ui-location-profiles.js                      124 lines    5 KB
-js/19-planets-panel.js                             223 lines   16 KB
+js/19-planets-panel.js                             236 lines   17 KB
 js/20-rectification-scan-tab.js                    302 lines   15 KB
 js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
@@ -249,7 +250,7 @@ js/39-yogas.js                                      67 lines    4 KB
 js/40-shadbala.js                                   55 lines    3 KB
 js/41-ashtakavarga-section.js                       35 lines    5 KB
 js/42-relationships-section.js                      21 lines    1 KB
-js/43-full-report-text.js                          263 lines   14 KB
+js/43-full-report-text.js                          268 lines   14 KB
 js/44-export-modal.js                              203 lines    9 KB
 js/45-panchanga-engine.js                          107 lines    7 KB
 js/46-transit-stays-engine.js                       43 lines    2 KB
@@ -264,9 +265,9 @@ js/54-vedic-birthday-ui.js                         156 lines   13 KB
 js/55-numerology-engine.js                          54 lines    9 KB
 js/56-numerology-ui.js                             126 lines   13 KB
 js/57-my-chart-overview.js                         100 lines    6 KB
-js/58-render-results.js                            758 lines   34 KB
+js/58-render-results.js                            760 lines   35 KB
 js/59-live-transit-form.js                         150 lines    7 KB
-js/60-interactive-varga-svg.js                     162 lines    6 KB
+js/60-interactive-varga-svg.js                     163 lines    7 KB
 js/61-varga-chart-svg.js                            71 lines   13 KB
 js/62-clipboard-download-helpers.js                121 lines    4 KB
 js/63-profile-cards.js                              32 lines    2 KB
@@ -370,7 +371,7 @@ css/51-problem-finder.css                           66 lines    9 KB
 css/52-date-entry.css                               13 lines    1 KB
 css/53-varga-guide.css                              32 lines    2 KB
 css/54-compare-lab.css                              63 lines    7 KB
-css/55-planet-encyclopedia.css                      87 lines    7 KB
+css/55-planet-encyclopedia.css                      89 lines    7 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -388,9 +389,9 @@ js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 78 files, 7323 lines, 436 KB
+**sky3d** - 79 files, 7390 lines, 442 KB
 ```
-index.html                                         467 lines   28 KB
+index.html                                         468 lines   29 KB
 js/01-astro-engine.js                              157 lines    9 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -430,7 +431,7 @@ js/36-mobile-bottom-sheet.js                        90 lines    4 KB
 js/37-natal-form-location.js                       118 lines    7 KB
 js/38-data-export-wiring.js                        124 lines    4 KB
 js/39-smoothness.js                                 51 lines    3 KB
-js/40-3d-astro-layers.js                           135 lines   10 KB
+js/40-3d-astro-layers.js                           145 lines   11 KB
 js/41-quick-planet-picker.js                        47 lines    3 KB
 js/42-init.js                                       24 lines    0 KB
 js/43-degree-finder-returns.js                     211 lines   13 KB
@@ -440,8 +441,9 @@ js/46-dasha-transit-engine.js                      319 lines   21 KB
 js/47-dasha-transit-ui.js                          145 lines   10 KB
 js/48-profile-bridge.js                             48 lines    2 KB
 js/49-time-machine.js                              189 lines   15 KB
-js/50-sky-dashboard.js                             292 lines   26 KB
+js/50-sky-dashboard.js                             295 lines   26 KB
 js/51-jump-from-rectification.js                    33 lines    2 KB
+js/52-gulika.js                                     53 lines    4 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -500,6 +502,7 @@ shared/quick-menu.js                               157 lines   12 KB
 - Year Timeline Pack: research + plan only (docs/YEAR_TIMELINE_RESEARCH.md). Data-only file for a chosen date range for any AI; no code yet. Next: S1 range scanner.
 - Year Timeline File (Birth Chart): js/90-year-timeline-engine.js (scan, facts only) + 91-writer (Markdown) + 92-ui (panel-yeartimeline, Home > Time & Cycles); test tests/year_timeline_test.py; v1 has no Tajika, no auto-split for very long ranges.
 - Planet Encyclopedia (Birth Chart): js/116-planet-encyclopedia.js (PEN) + css/55; panel-planetency, Home > Analysis; per-planet nature, aspects, dignities, relations, houses; edit texts in PEN_DATA; test tests/planet_encyclopedia_test.py.
+- Gulika (Mandi): birth-chart js/117-gulika.js (computeGulika, GUL; chart.upagraha.Gulika; drawn like outer planets, checkbox .gulika-chk-input; Planets card in 19-planets-panel) + sky3d js/52-gulika.js (GK; ring marker in 40-3d-astro-layers, switch L_gulika, card in 50-sky-dashboard). Default = start of Saturn's part; schools differ. Change both engines. Test tests/gulika_test.py.
 - Notepad: fixed typing cursor jump, note-link exit, template-from-Tasks, open side menu; new Settings tab (view settings) with switches stored in S.set.o (defaults in OPT_DEF; line copy + card copy OFF); test tests/notepad_test.py.
 - Notepad phone: added a menu button (☰) to the note-list header and made the drawer open in focus mode, so every screen has a way back to the menu (not tested).
 - Main menu Settings (shell): popup with one switch "Copy buttons" (off by default, key vedicCopyBtns); shared/copy-toggle.js in every app hides/shows buttons whose label starts with "Copy" (not tested).

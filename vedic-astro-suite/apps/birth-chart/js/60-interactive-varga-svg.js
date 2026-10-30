@@ -148,12 +148,13 @@ function aspectRowsToPlainText(aspectRows, vargaKey){
 }
 
 // 1. NORTH INDIAN DIAMOND CHART (Kendra-centric diamond layout)
-const PCOL={Uranus:'#7DE3E0',Neptune:'#5B7CFA',Pluto:'#C9A38A',Sun:'#F4A340',Moon:'#E6EBF5',Mars:'#E2625F',Mercury:'#6FCF97',Jupiter:'#F9D976',Venus:'#F4A9D3',Saturn:'#8EA2D6',Rahu:'#B393E0',Ketu:'#C4A484'};
+const PCOL={Gulika:'#A8789E',Uranus:'#7DE3E0',Neptune:'#5B7CFA',Pluto:'#C9A38A',Sun:'#F4A340',Moon:'#E6EBF5',Mars:'#E2625F',Mercury:'#6FCF97',Jupiter:'#F9D976',Venus:'#F4A9D3',Saturn:'#8EA2D6',Rahu:'#B393E0',Ketu:'#C4A484'};
 const ELC={Fire:'#F26B4F',Earth:'#79B868',Air:'#E7C95A',Water:'#5BA7E0'};
 const HTc=h=>[1,4,7,10].includes(h)?'#D4AF37':[5,9].includes(h)?'#5EC4B7':[6,8,12].includes(h)?'#E25555':'#8C93A8';
 const HAl=h=>h===1?.26:[4,7,10].includes(h)?.13:[5,9].includes(h)?.11:[6,8,12].includes(h)?.10:.04;
 const dRing=s=>/Exalt/i.test(s)?'#F9D976':/Own|Moola/i.test(s)?'#5EC4B7':/Debil/i.test(s)?'#E25555':/Enemy/i.test(s)?'#C26B45':/Friend/i.test(s)?'#7FC8A9':'#6B7390';
 document.addEventListener('change',e=>{
+  if(e.target.classList&&e.target.classList.contains('gulika-chk-input')){window.__showGulika=e.target.checked;document.querySelectorAll('.gulika-chk-input').forEach(c=>c.checked=window.__showGulika);document.querySelectorAll('.varga-style-toggle .varga-style-btn.active').forEach(b=>b.click());return;}
   if(!e.target.classList||!e.target.classList.contains('outer-chk-input'))return;
   window.__showOuter=e.target.checked;
   document.querySelectorAll('.outer-chk-input').forEach(c=>c.checked=window.__showOuter);

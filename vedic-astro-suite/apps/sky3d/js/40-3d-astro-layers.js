@@ -47,6 +47,11 @@ function initAstroLayers(){
   // rahu-ketu axis
   const ag = new THREE.PlaneGeometry(20.4, 0.05); ag.rotateX(-Math.PI/2); ag.translate(0, 0.015, 0);
   T.axis = flat(ag, 0x9B8CFF, 0.3); G.add(T.axis); T.axisLbl = mkLabel('ghost_axis', '☊ Eclipse season', 'sade');
+  // Gulika (Mandi): live point for the viewer's place and shown time, plus a natal ring
+  T.gulL = mkLabel('ghost_gul', 'Gu', 'ghost'); T.gulL.el.style.color = '#C79BC0';
+  T.gulR = flat(new THREE.RingGeometry(0.2, 0.3, 28), 0xC79BC0, 0.95); T.gulR.rotation.x = Math.PI/2; T.gulL.obj.add(T.gulR);
+  T.gulN = mkLabel('ghost_gulN', 'Gu·N', 'ghost'); T.gulN.el.style.color = '#C79BC0';
+  const gnr = flat(new THREE.RingGeometry(0.2, 0.27, 28), 0xC79BC0, 0.7); gnr.rotation.x = Math.PI/2; T.gulN.obj.add(gnr); T.gulNR = gnr;
   // moon phase shell
   const moon = bodyMeshes.geo_Moon, mr = moon.geometry.parameters.radius;
   T.moonU = { sd:{ value:new THREE.Vector3(1,0,0) } };
@@ -100,6 +105,11 @@ function _updateOverlays(snap){
   const liveL = getLiveLoc(), lonR = siderealAscendant(snap.jd, liveL.lat, liveL.lon), rsI = getSignIndex(lonR), riseOn = _on('L_rise');
   A.lagnaLon = lonR; T.riseG.visible = riseOn; T.riseG.rotation.y = rsI*30*DEG;
   T.riseLbl.obj.position.copy(_pt(rsI*30 + 15, 14.4)); T.riseLbl.el.innerHTML = `↑ Rising ${SIGNS[rsI].symbol} ${SIGNS[rsI].name}`; vis(T.riseLbl, riseOn);
+  const gOn = _on('L_gulika') && typeof GK !== 'undefined', gl = gOn ? GK.live(snap.jd) : null, gn = (gOn && has) ? GK.natal(p) : null;
+  if (gl) T.gulL.obj.position.copy(_pt(gl.lon, 11.9));
+  if (gn) T.gulN.obj.position.copy(_pt(gn.lon, 11.9));
+  vis(T.gulL, !!gl); T.gulR.visible = !!gl; vis(T.gulN, !!gn); T.gulNR.visible = !!gn;
+  if (gl) T.gulL.el.innerHTML = `<span class="dot" style="background:#C79BC0"></span>Gu <span class="cond">${SIGNS[gl.sign].symbol}${Math.floor(gl.deg)}°</span>`;
   const showN = has && _on('L_natal');
   PLANET_LIST.forEach(n=>{ const g = T.ghosts[n]; if (showN) g.obj.position.copy(_pt(A.natal[n], ORB_R[n])); vis(g, showN); g.ring.visible = showN; });
   const now = performance.now();

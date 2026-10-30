@@ -2692,7 +2692,7 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
         <div class="panel-heading">3D Layers</div>
         <div class="cam-mode-row" id="presetRow"><button class="pbtn" data-preset="top">Top</button><button class="pbtn" data-preset="tilt">Tilt</button><button class="pbtn" data-preset="side">Side</button></div>
         <button type="button" class="btn-secondary-block" id="lagnaViewBtn" style="margin:0 0 14px">Rotate wheel to Lagna</button>
-        <div class="line-toggle-row"><div><div class="lt-label">Natal ghosts + transit arcs</div><div class="lt-sub">Your birth planets stay as rings; arcs show transit aspects to them</div></div><label class="switch"><input type="checkbox" id="L_natal" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Live Lagna pointer</div><div class="lt-sub">Rising sign line (ASC / DSC) for where you are now</div></div><label class="switch"><input type="checkbox" id="L_lagna" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Rising sign lines</div><div class="lt-sub">Gold lines where the current rising sign starts and ends (tap the Rising chip at the top to set your place)</div></div><label class="switch"><input type="checkbox" id="L_rise" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">House numbers</div><div class="lt-sub">Houses 1 to 12 counted from the Lagna, Lagna sign highlighted</div></div><label class="switch"><input type="checkbox" id="L_houses" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Planet condition marks</div><div class="lt-sub">▲ exalted · ▼ debilitated · ★ own sign · ☀ combust · ℞ retrograde</div></div><label class="switch"><input type="checkbox" id="L_cond" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Sade Sati zone</div><div class="lt-sub">Highlights the 3 signs around your natal Moon</div></div><label class="switch"><input type="checkbox" id="L_sade" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Rahu–Ketu axis</div><div class="lt-sub">Axis line; turns red in eclipse season</div></div><label class="switch"><input type="checkbox" id="L_axis" checked><span class="slider"></span></label></div>
+        <div class="line-toggle-row"><div><div class="lt-label">Natal ghosts + transit arcs</div><div class="lt-sub">Your birth planets stay as rings; arcs show transit aspects to them</div></div><label class="switch"><input type="checkbox" id="L_natal" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Live Lagna pointer</div><div class="lt-sub">Rising sign line (ASC / DSC) for where you are now</div></div><label class="switch"><input type="checkbox" id="L_lagna" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Rising sign lines</div><div class="lt-sub">Gold lines where the current rising sign starts and ends (tap the Rising chip at the top to set your place)</div></div><label class="switch"><input type="checkbox" id="L_rise" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">House numbers</div><div class="lt-sub">Houses 1 to 12 counted from the Lagna, Lagna sign highlighted</div></div><label class="switch"><input type="checkbox" id="L_houses" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Planet condition marks</div><div class="lt-sub">▲ exalted · ▼ debilitated · ★ own sign · ☀ combust · ℞ retrograde</div></div><label class="switch"><input type="checkbox" id="L_cond" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Sade Sati zone</div><div class="lt-sub">Highlights the 3 signs around your natal Moon</div></div><label class="switch"><input type="checkbox" id="L_sade" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Rahu–Ketu axis</div><div class="lt-sub">Axis line; turns red in eclipse season</div></div><label class="switch"><input type="checkbox" id="L_axis" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Gulika (Mandi) point</div><div class="lt-sub">Son of Saturn: the rising point at Saturn's part of the day or night, for your place and the time shown (and your birth, as a ring)</div></div><label class="switch"><input type="checkbox" id="L_gulika" checked><span class="slider"></span></label></div>
         <button type="button" class="btn-block" id="saveImgBtn">Save wheel as image</button>
         
       </div>
@@ -6752,6 +6752,11 @@ function initAstroLayers(){
   // rahu-ketu axis
   const ag = new THREE.PlaneGeometry(20.4, 0.05); ag.rotateX(-Math.PI/2); ag.translate(0, 0.015, 0);
   T.axis = flat(ag, 0x9B8CFF, 0.3); G.add(T.axis); T.axisLbl = mkLabel('ghost_axis', '☊ Eclipse season', 'sade');
+  // Gulika (Mandi): live point for the viewer's place and shown time, plus a natal ring
+  T.gulL = mkLabel('ghost_gul', 'Gu', 'ghost'); T.gulL.el.style.color = '#C79BC0';
+  T.gulR = flat(new THREE.RingGeometry(0.2, 0.3, 28), 0xC79BC0, 0.95); T.gulR.rotation.x = Math.PI/2; T.gulL.obj.add(T.gulR);
+  T.gulN = mkLabel('ghost_gulN', 'Gu·N', 'ghost'); T.gulN.el.style.color = '#C79BC0';
+  const gnr = flat(new THREE.RingGeometry(0.2, 0.27, 28), 0xC79BC0, 0.7); gnr.rotation.x = Math.PI/2; T.gulN.obj.add(gnr); T.gulNR = gnr;
   // moon phase shell
   const moon = bodyMeshes.geo_Moon, mr = moon.geometry.parameters.radius;
   T.moonU = { sd:{ value:new THREE.Vector3(1,0,0) } };
@@ -6805,6 +6810,11 @@ function _updateOverlays(snap){
   const liveL = getLiveLoc(), lonR = siderealAscendant(snap.jd, liveL.lat, liveL.lon), rsI = getSignIndex(lonR), riseOn = _on('L_rise');
   A.lagnaLon = lonR; T.riseG.visible = riseOn; T.riseG.rotation.y = rsI*30*DEG;
   T.riseLbl.obj.position.copy(_pt(rsI*30 + 15, 14.4)); T.riseLbl.el.innerHTML = `↑ Rising ${SIGNS[rsI].symbol} ${SIGNS[rsI].name}`; vis(T.riseLbl, riseOn);
+  const gOn = _on('L_gulika') && typeof GK !== 'undefined', gl = gOn ? GK.live(snap.jd) : null, gn = (gOn && has) ? GK.natal(p) : null;
+  if (gl) T.gulL.obj.position.copy(_pt(gl.lon, 11.9));
+  if (gn) T.gulN.obj.position.copy(_pt(gn.lon, 11.9));
+  vis(T.gulL, !!gl); T.gulR.visible = !!gl; vis(T.gulN, !!gn); T.gulNR.visible = !!gn;
+  if (gl) T.gulL.el.innerHTML = `<span class="dot" style="background:#C79BC0"></span>Gu <span class="cond">${SIGNS[gl.sign].symbol}${Math.floor(gl.deg)}°</span>`;
   const showN = has && _on('L_natal');
   PLANET_LIST.forEach(n=>{ const g = T.ghosts[n]; if (showN) g.obj.position.copy(_pt(A.natal[n], ORB_R[n])); vis(g, showN); g.ring.visible = showN; });
   const now = performance.now();
@@ -8180,7 +8190,10 @@ const DBX = (function(){
     // balance
     html += sec('bal', 'Balance', '<div class="dbx-hl"><span>Elements</span><div>' + A.elem.map((a, i) => '<span class="dbx-chip">' + ELEM[i] + ' ' + a.length + '</span>').join('') + '</div></div><div class="dbx-hl"><span>Modes</span><div>' + A.modes.map((a, i) => '<span class="dbx-chip">' + MODE[i] + ' ' + a.length + '</span>').join('') + '</div></div>');
     // outer planets
-    html += sec('out', 'Outer planets (shown for reference, not part of the 9 grahas)', '<div class="dbx-outer">' + OUTER_LIST.map(n => { const l = c.sid[n], si = sg(l); return '<div class="dbx-card slim"><b>' + n + '</b>' + kv('Sign', sname(si) + ' ' + dm(l)) + kv('Nakshatra', NAKSHATRAS[getNakshatraIndex(l)] + ' ' + (getPadaIndex(l) + 1)) + (A.lagnaSign != null ? kv('House', ord(hs(A.lagnaSign, si))) : '') + kv('Motion', c.retro[n] ? 'Retrograde' : 'Direct') + '</div>'; }).join('') + '</div>');
+    const gk = (function(){ try { return (mode === 'natal' && c.p) ? GK.natal(c.p) : GK.live(c.jd); } catch(e){ return null; } })();
+    const gCard = gk ? '<div class="dbx-card slim"><b>Gulika (Mandi)</b>' + kv('Sign', sname(gk.sign) + ' ' + dm(gk.lon)) + kv('Nakshatra', NAKSHATRAS[gk.nak] + ' ' + gk.pada) + (A.lagnaSign != null ? kv('House', ord(hs(A.lagnaSign, gk.sign))) : '') + kv('Found from', 'Saturn part ' + gk.part + ' of 8 · ' + (gk.isDay ? 'day' : 'night')) + '</div>' : '';
+    html += sec('out', 'Gulika, and outer planets (shown for reference, not part of the 9 grahas)', '<div class="dbx-outer">' + gCard + OUTER_LIST.map(n => { const l = c.sid[n], si = sg(l); return '<div class="dbx-card slim"><b>' + n + '</b>' + kv('Sign', sname(si) + ' ' + dm(l)) + kv('Nakshatra', NAKSHATRAS[getNakshatraIndex(l)] + ' ' + (getPadaIndex(l) + 1)) + (A.lagnaSign != null ? kv('House', ord(hs(A.lagnaSign, si))) : '') + kv('Motion', c.retro[n] ? 'Retrograde' : 'Direct') + '</div>'; }).join('') + '</div>');
+    if (gk) T.push('', 'GULIKA (Mandi, son of Saturn; start of Saturn\'s part, schools differ): ' + sname(gk.sign) + ' ' + dm(gk.lon) + ' · ' + NAKSHATRAS[gk.nak] + ' ' + gk.pada + (A.lagnaSign != null ? ' · H' + hs(A.lagnaSign, gk.sign) : ''));
     T.push('', 'OUTER: ' + OUTER_LIST.map(n => n + ' ' + sname(sg(c.sid[n])) + ' ' + dm(c.sid[n]) + (c.retro[n] ? ' R' : '')).join(' · '));
     lastText = T.join('\n');
     return { c, html: hero(A, c) + html };
@@ -8252,6 +8265,60 @@ const DBX = (function(){
   window.addEventListener('message', e=>{ if (e.data === 'vedic-bridge-ping') consume(); });
   window.addEventListener('storage', e=>{ if (e.key === KEY) consume(); });
   setTimeout(consume, 600);
+})();
+<\/script>
+<script>
+/* ============================================================================
+   GULIKA (Mandi), son of Saturn: an upagraha point on the zodiac, not a body. Same method as the Birth Chart (apps/birth-chart/js/117-gulika.js): change both.
+   The day (sunrise to sunset) or night (sunset to next sunrise) is cut into 8 parts. Day: the first part is the weekday lord's. Night: the first part
+   is the 5th planet from the weekday lord. Gulika = the rising sign and degree at the moment of Saturn's part (BPHS chapter 3, upagrahas; teaching sources).
+   Saturn's part, day: Sun 7, Mon 6, Tue 5, Wed 4, Thu 3, Fri 2, Sat 1. Night: Sun 3, Mon 2, Tue 1, Wed 7, Thu 6, Fri 5, Sat 4.
+   Schools differ on the moment inside Saturn's part (start, middle or end); the default is the start.
+   API: GK.at(jd, lat, lon, tz, where) -> {lon, sign, deg, nak, pada, isDay, part, weekday, jd} | null ; GK.live(jd) uses the viewer's place; GK.natal(profile).
+   ============================================================================ */
+const GK = (function(){
+  const DAYP = [7,6,5,4,3,2,1], NIGHTP = [3,2,1,7,6,5,4];
+  const sunAlt = (jd, lat, lon) => {
+    const T = (jd - J2000) / 36525, lam = sunLongitude(jd) * DEG, eps = (23.4392911 - 0.0130042 * T) * DEG;
+    const sd = Math.sin(eps) * Math.sin(lam), dec = Math.asin(sd), ra = Math.atan2(Math.cos(eps) * Math.sin(lam), Math.cos(lam));
+    const gm = normDeg(280.46061837 + 360.98564736629 * (jd - J2000) + 0.000387933 * T * T), H = (gm + lon) * DEG - ra;
+    return Math.asin(Math.sin(lat * DEG) * sd + Math.cos(lat * DEG) * Math.cos(dec) * Math.cos(H)) * RAD;
+  };
+  const addDay = (y, m, d, n) => { const t = new Date(Date.UTC(y, m - 1, d + n)); return [t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate()]; };
+  function riseSet(y, m, d, lat, lon, tz){
+    const h0 = -0.8333, start = toJulianDay(y, m, d, 0, 0, 0) - tz / 24, N = 96, f = t => sunAlt(t, lat, lon) - h0;
+    const bis = (a, b) => { for (let i = 0; i < 40; i++){ const mid = (a + b) / 2; if ((f(a) < 0) === (f(mid) < 0)) a = mid; else b = mid; } return (a + b) / 2; };
+    let rise = null, set = null, prev = f(start);
+    for (let i = 1; i <= N; i++){ const t = start + i / N, v = f(t);
+      if (rise === null && prev < 0 && v >= 0) rise = bis(t - 1 / N, t); else if (rise !== null && set === null && prev >= 0 && v < 0) set = bis(t - 1 / N, t); prev = v; }
+    return { rise, set };
+  }
+  function at(jd, lat, lon, tz, where){
+    where = ['start','middle','end'].includes(where) ? where : 'start';
+    const loc = new Date((jd + tz / 24 - 2440587.5) * 86400000), y = loc.getUTCFullYear(), m = loc.getUTCMonth() + 1, d = loc.getUTCDate();
+    const rs = riseSet(y, m, d, lat, lon, tz); if (rs.rise === null || rs.set === null) return null;
+    let from, to, isDay, wy = y, wm = m, wd = d;
+    if (jd >= rs.rise && jd < rs.set){ from = rs.rise; to = rs.set; isDay = true; }
+    else if (jd >= rs.set){ const [ny, nm, nd] = addDay(y, m, d, 1), nx = riseSet(ny, nm, nd, lat, lon, tz); if (nx.rise === null) return null; from = rs.set; to = nx.rise; isDay = false; }
+    else { [wy, wm, wd] = addDay(y, m, d, -1); const pv = riseSet(wy, wm, wd, lat, lon, tz); if (pv.set === null) return null; from = pv.set; to = rs.rise; isDay = false; }
+    const w = new Date(Date.UTC(wy, wm - 1, wd)).getUTCDay(), n = (isDay ? DAYP : NIGHTP)[w], part = (to - from) / 8;
+    const t = from + (n - 1) * part + (where === 'start' ? 0 : where === 'middle' ? part / 2 : part);
+    const l = siderealAscendant(t, lat, lon), ni = getNakshatraIndex(l);
+    return { lon: l, sign: getSignIndex(l), deg: normDeg(l) % 30, nak: ni, pada: getPadaIndex(l) + 1, isDay, part: n, weekday: w, jd: t, where };
+  }
+  const browserTz = jd => -new Date((jd - 2440587.5) * 86400000).getTimezoneOffset() / 60;
+  let memo = null;
+  function live(jd){
+    const L = getLiveLoc(), tz = browserTz(jd), k = [Math.round(jd * 1440), L.lat, L.lon].join('|');   // same minute and place = same answer
+    if (memo && memo.k === k) return memo.v;
+    let v = null; try { v = at(jd, L.lat, L.lon, tz); } catch(e){ console.warn('gulika', e); }
+    memo = { k, v }; return v;
+  }
+  function natal(p){
+    if (!p) return null; const j = computeNatalAscendant(p).jd; let v = null;
+    try { v = at(j, p.lat, p.lon, p.tz); } catch(e){ console.warn('gulika natal', e); } return v;
+  }
+  return { at, live, natal };
 })();
 <\/script>
 <script>
@@ -13762,6 +13829,8 @@ body.cl-open{overflow:hidden}
 .pen-tabs button:not(.on),.pen-pick button:not(.on),.pen-signs button:not(.on),.pen-pills button:not(.on){background:transparent;color:var(--text-muted,#9f9a8f);box-shadow:none}
 .pen-tabs button:not(.on):hover,.pen-tabs button:not(.on):focus{background:rgba(255,255,255,.05);outline:none}
 .pen-signs button:not(.on),.pen-pills button:not(.on){color:var(--text-main,#eae6df);background:rgba(255,255,255,.03)}
+.pl-gulika{margin-top:12px}.pl-gulika .pl-card{cursor:default}
+.pl-note{display:block;margin-top:8px;font-size:12.5px;line-height:1.5;color:var(--text-muted,#9f9a8f)}
 </style>
 
 
@@ -15308,10 +15377,11 @@ function calcVarga(varga, lon){
 const PLANET_LIST = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"];
 // Outer (trans-Saturnian) planets: plotted on the charts and listed, but kept out of the classical Vedic engines.
 const OUTER_LIST = ["Uranus","Neptune","Pluto"];
-const OUTER_GLYPHS = {Uranus:"♅",Neptune:"♆",Pluto:"♇"};
-const OUTER_COL = {Uranus:"#7DE3E0",Neptune:"#5B7CFA",Pluto:"#C9A38A"};
+const OUTER_GLYPHS = {Uranus:"♅",Neptune:"♆",Pluto:"♇",Gulika:"Gu"};
+const OUTER_COL = {Uranus:"#7DE3E0",Neptune:"#5B7CFA",Pluto:"#C9A38A",Gulika:"#A8789E"};
 const OUTER_SK = {Uranus:"Prajapati",Neptune:"Varuna",Pluto:"Yama"};
 window.__showOuter = true;
+window.__showGulika = true;
 <\/script>
 <script>
 /* ---- Outer (trans-Saturnian) planet knowledge, shared by popups, reports and aspects ---- */
@@ -16224,12 +16294,17 @@ function computeChart(dateStr, timeStr, lat, lon, tzOffsetHours){
     for (const vk in vargaResults){ const V = vargaResults[vk]; (V.outerSign = V.outerSign || {})[n] = calcVarga(vk, l); (V.outerRx = V.outerRx || {})[n] = rx; }
   });
 
+  const upagraha = {};
+  try { const gk = computeGulika(jd, lat, lon, tzOffsetHours, 'start');
+    if (gk){ gk.house = ((gk.sign-ascSignIdx+12)%12)+1; upagraha.Gulika = gk;
+      for (const vk in vargaResults){ const V = vargaResults[vk]; (V.outerSign = V.outerSign || {}).Gulika = calcVarga(vk, gk.longitude); (V.outerRx = V.outerRx || {}).Gulika = false; } } } catch(e){ console.warn('gulika skipped', e); }
+
   return {
     julianDay: jd, ayanamsa, tzOffsetHours,
     sunriseJD: todaySunriseSunset.sunriseJD, sunsetJD: todaySunriseSunset.sunsetJD,
     prevSunsetJD: (function(){ const y = getSunriseSunsetJD(jd-1, lat, lon); return y.sunsetJD; })(),
     ascendant: { longitude: ascSidereal, sign: ascSignIdx, degInSign: getDegInSign(ascSidereal), nakshatra: getNakshatra(ascSidereal) },
-    planets, outer, vargas: vargaResults, siderealLongitudes, wars, dashaData, yogas, ashtakavarga, charaKarakas, shadbala
+    planets, outer, upagraha, vargas: vargaResults, siderealLongitudes, wars, dashaData, yogas, ashtakavarga, charaKarakas, shadbala
   };
 }
 <\/script>
@@ -16800,6 +16875,18 @@ let currentProfileForExport = null;
 <\/script>
 <script>
 /* ===== Planets panel + detail popup (redesigned) ===== */
+function gulikaCard(chart){
+  const g = chart.upagraha && chart.upagraha.Gulika; if (!g) return '';
+  const sg = SIGNS[g.sign], c = OUTER_COL.Gulika;
+  return `<div class="pl-grid pl-gulika"><div class="pl-card" data-flags="gulika" style="--pc:${c}">
+      <span class="pl-top"><span class="pl-dot" style="background:${c}">Gu</span>
+        <span class="pl-name"><b>Gulika <em>(Mandi)</em></b><small>${g.nakshatra.name} · Pada ${g.nakshatra.pada}</small></span>
+        <span class="pl-house">H${g.house}</span></span>
+      <span class="pl-sign">${sg.symbol} ${sg.name}<em>${formatDeg(g.degInSign)}</em></span>
+      <span class="pl-track"><i style="width:${(g.degInSign/30*100).toFixed(1)}%"></i></span>
+      <span class="pl-tags"><span class="pl-tag">Son of Saturn · upagraha point</span></span>
+      <span class="pl-note">The rising sign at the start of Saturn's part of the ${g.isDay?'day':'night'} (part ${g.part} of 8). Teachers differ on the start, middle or end of that part. Read like a Saturn-type point: it adds delay and pressure to the house and planets it touches.</span></div></div>`;
+}
 function plDigInfo(pl){
   const st = pl.dignity.status;
   const good = st==='Exalted'||st==='OwnSign'||st==='Moolatrikona', bad = st==='Debilitated';
@@ -16860,6 +16947,7 @@ function buildPlanetsPanel(chart){
       <button type="button" class="pl-chip" data-pl-f="chall">⚠ Challenged <b>${nChall}</b></button>
     </div>
     <div class="pl-grid">${cards}</div>
+    ${gulikaCard(chart)}
     <div class="pl-empty" id="plEmpty" hidden>No planets match this filter in your chart.</div>
     <div class="pl-sec"><h5>Outer planets <span>Modern · tap for details</span></h5><div class="pl-grid">${outerCards}</div>
       <div class="pl-asplist" style="margin-top:10px">${outerAsp}</div></div>
@@ -20000,6 +20088,11 @@ function buildFullReportText(chart, profile, sections, liveSkyData){
       add(`${pad('',10)} Western aspects: ${a.length ? a.map(r=>`${r.asp.name} ${r.target} (${r.dev.toFixed(1)}° orb)`).join('; ') : 'none within orb'}`);
     });
 
+    if (chart.upagraha && chart.upagraha.Gulika && typeof GUL !== 'undefined'){
+      subsection('Gulika (Mandi, son of Saturn; an upagraha point, not a planet)');
+      add(GUL.text(chart));
+    }
+
     subsection('Combustion Status');
     PLANET_LIST.forEach(name=>{
       const p = chart.planets[name];
@@ -21853,6 +21946,7 @@ function renderResults(profile){
     <div class="varga-control-group">
       <span class="varga-control-label">Outer planets:</span>
       <label class="outer-chk" title="Show Uranus, Neptune and Pluto"><input type="checkbox" class="outer-chk-input" ${window.__showOuter!==false?'checked':''}> <span>Outer planets ♅ ♆ ♇</span></label>
+      <label class="outer-chk" title="Show Gulika (Mandi), the son of Saturn"><input type="checkbox" class="gulika-chk-input" ${window.__showGulika!==false?'checked':''}> <span>Gulika Gu</span></label>
     </div>
 
     <div class="varga-control-group">
@@ -21925,6 +22019,7 @@ function renderResults(profile){
     <div class="varga-control-group">
       <span class="varga-control-label">Outer planets:</span>
       <label class="outer-chk" title="Show Uranus, Neptune and Pluto"><input type="checkbox" class="outer-chk-input" ${window.__showOuter!==false?'checked':''}> <span>Outer planets ♅ ♆ ♇</span></label>
+      <label class="outer-chk" title="Show Gulika (Mandi), the son of Saturn"><input type="checkbox" class="gulika-chk-input" ${window.__showGulika!==false?'checked':''}> <span>Gulika Gu</span></label>
     </div>
 
     <div class="varga-control-group">
@@ -22614,12 +22709,13 @@ function aspectRowsToPlainText(aspectRows, vargaKey){
 }
 
 // 1. NORTH INDIAN DIAMOND CHART (Kendra-centric diamond layout)
-const PCOL={Uranus:'#7DE3E0',Neptune:'#5B7CFA',Pluto:'#C9A38A',Sun:'#F4A340',Moon:'#E6EBF5',Mars:'#E2625F',Mercury:'#6FCF97',Jupiter:'#F9D976',Venus:'#F4A9D3',Saturn:'#8EA2D6',Rahu:'#B393E0',Ketu:'#C4A484'};
+const PCOL={Gulika:'#A8789E',Uranus:'#7DE3E0',Neptune:'#5B7CFA',Pluto:'#C9A38A',Sun:'#F4A340',Moon:'#E6EBF5',Mars:'#E2625F',Mercury:'#6FCF97',Jupiter:'#F9D976',Venus:'#F4A9D3',Saturn:'#8EA2D6',Rahu:'#B393E0',Ketu:'#C4A484'};
 const ELC={Fire:'#F26B4F',Earth:'#79B868',Air:'#E7C95A',Water:'#5BA7E0'};
 const HTc=h=>[1,4,7,10].includes(h)?'#D4AF37':[5,9].includes(h)?'#5EC4B7':[6,8,12].includes(h)?'#E25555':'#8C93A8';
 const HAl=h=>h===1?.26:[4,7,10].includes(h)?.13:[5,9].includes(h)?.11:[6,8,12].includes(h)?.10:.04;
 const dRing=s=>/Exalt/i.test(s)?'#F9D976':/Own|Moola/i.test(s)?'#5EC4B7':/Debil/i.test(s)?'#E25555':/Enemy/i.test(s)?'#C26B45':/Friend/i.test(s)?'#7FC8A9':'#6B7390';
 document.addEventListener('change',e=>{
+  if(e.target.classList&&e.target.classList.contains('gulika-chk-input')){window.__showGulika=e.target.checked;document.querySelectorAll('.gulika-chk-input').forEach(c=>c.checked=window.__showGulika);document.querySelectorAll('.varga-style-toggle .varga-style-btn.active').forEach(b=>b.click());return;}
   if(!e.target.classList||!e.target.classList.contains('outer-chk-input'))return;
   window.__showOuter=e.target.checked;
   document.querySelectorAll('.outer-chk-input').forEach(c=>c.checked=window.__showOuter);
@@ -22629,7 +22725,7 @@ document.addEventListener('change',e=>{
 <script>
 /* Every chart gets its own gradient/filter ids: the same id twice in one page (e.g. a hidden overview chart) makes browsers drop every gold stroke. */
 function chUniq(s){const u=window.__chUid=(window.__chUid||0)+1;return s.replace(/id="([nws])([bgf])"/g,(m,a,b)=>`id="${a}${b}${u}"`).replace(/url\(#([nws])([bgf])\)/g,(m,a,b)=>`url(#${a}${b}${u})`);}
-function chOuter(v){return (window.__showOuter!==false&&v&&v.outerSign)?OUTER_LIST:[];}
+function chOuter(v){const a=(window.__showOuter!==false&&v&&v.outerSign)?OUTER_LIST.slice():[];if(window.__showGulika!==false&&v&&v.outerSign&&v.outerSign.Gulika!=null)a.push('Gulika');return a;}
 function chMeta(v){const inf={},c=window.__vgC;v.houses.forEach(h=>h.planets.forEach(p=>{inf[p.name]={st:(p.dignity||{}).status||'',rx:!!p.retrograde};}));
   chOuter(v).forEach(n=>{inf[n]={st:'',rx:!!(v.outerRx&&v.outerRx[n]),vg:false};});
   PLANET_LIST.forEach(n=>{inf[n]=inf[n]||{st:'',rx:false};inf[n].vg=!!(c&&c.planets&&c.planets[n]&&v!==c.vargas.D1&&v.planetVargaSign[n]===c.planets[n].sign);});return inf;}
@@ -50037,6 +50133,41 @@ const PEN = (function(){
   return { html, open, text, data: PEN_DATA, planets: PL, rules: { aspects: ASP_RULES, strength: STR_RULES, relations: REL_RULES } };
 })();
 window.buildPlanetEncyPanel = function(chart){ return PEN.html(chart); };
+<\/script>
+<script>
+/* ============================================================================
+   GULIKA (also called Mandi by many teachers): the son of Saturn, an upagraha (sub-planet), a point in the zodiac, not a body.
+   Method (as taught in BPHS chapter 3 on the upagrahas and in teaching sources): the daytime (sunrise to sunset) or the night (sunset to next sunrise)
+   is cut into 8 equal parts. For a day birth the first part belongs to the weekday lord; for a night birth the first part belongs to the 5th planet
+   counted from the weekday lord. Gulika is the rising sign and degree (the lagna) at the moment of Saturn's part.
+     Saturn's part, day : Sun 7, Mon 6, Tue 5, Wed 4, Thu 3, Fri 2, Sat 1
+     Saturn's part, night: Sun 3, Mon 2, Tue 1, Wed 7, Thu 6, Fri 5, Sat 4
+   Born before sunrise, the night before is used (previous weekday). SCHOOLS DIFFER on which moment of Saturn's part is used: the start, the middle
+   or the end. The default here is the start; GUL.where() / chart.upagraha.Gulika.where tells which one was used and GUL.at(...,where) can show another.
+   Nothing here is a prediction. Uses pnRiseSet/pnParts/pnWeekday/pnAddDay (js/45) and ascendantLongitude/lahiriAyanamsa. 3D Sky has its own copy (apps/sky3d/js/52-gulika.js): change both.
+   API: computeGulika(jd, lat, lon, tz, where) -> {longitude, sign, degInSign, nakshatra, jd, isDay, weekday, part, where} | null ; GUL.text(chart)
+   ============================================================================ */
+const GUL_DAY = [7,6,5,4,3,2,1], GUL_NIGHT = [3,2,1,7,6,5,4], GUL_WHERE = ['start','middle','end'];
+function computeGulika(jd, lat, lon, tz, where){
+  where = GUL_WHERE.includes(where) ? where : 'start';
+  const lp = pnParts(jd, tz), rs = pnRiseSet(lp.y, lp.m, lp.d, lat, lon, tz);
+  let from, to, isDay, wy = lp.y, wm = lp.m, wd = lp.d;
+  if (rs.rise === null || rs.set === null) return null;
+  if (jd >= rs.rise && jd < rs.set){ from = rs.rise; to = rs.set; isDay = true; }
+  else if (jd >= rs.set){ const [ny, nm, nd] = pnAddDay(lp.y, lp.m, lp.d, 1), nx = pnRiseSet(ny, nm, nd, lat, lon, tz); if (nx.rise === null) return null; from = rs.set; to = nx.rise; isDay = false; }
+  else { [wy, wm, wd] = pnAddDay(lp.y, lp.m, lp.d, -1); const pv = pnRiseSet(wy, wm, wd, lat, lon, tz); if (pv.set === null) return null; from = pv.set; to = rs.rise; isDay = false; }
+  const w = pnWeekday(wy, wm, wd), n = (isDay ? GUL_DAY : GUL_NIGHT)[w], part = (to - from) / 8;
+  const t = from + (n - 1) * part + (where === 'start' ? 0 : where === 'middle' ? part / 2 : part);
+  const l = normDeg(ascendantLongitude(t, lat, lon) - lahiriAyanamsa(t));
+  return { longitude: l, sign: getSignIndex(l), degInSign: getDegInSign(l), nakshatra: getNakshatra(l), jd: t, isDay, weekday: w, part: n, where };
+}
+const GUL = {
+  text: function(chart){
+    const g = chart && chart.upagraha && chart.upagraha.Gulika; if (!g) return '';
+    return `Gulika (Mandi): ${SIGNS[g.sign].name} ${g.degInSign.toFixed(2)}°, house ${g.house}, ${g.nakshatra.name} pada ${g.nakshatra.pada}. Found from Saturn's part (part ${g.part} of 8) of the ${g.isDay ? 'day' : 'night'}, taken at the ${g.where} of that part (schools differ).`;
+  },
+  where: GUL_WHERE
+};
 <\/script>
 <script>
 /* ============================================================================

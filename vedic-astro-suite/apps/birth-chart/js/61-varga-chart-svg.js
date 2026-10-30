@@ -1,6 +1,6 @@
 /* Every chart gets its own gradient/filter ids: the same id twice in one page (e.g. a hidden overview chart) makes browsers drop every gold stroke. */
 function chUniq(s){const u=window.__chUid=(window.__chUid||0)+1;return s.replace(/id="([nws])([bgf])"/g,(m,a,b)=>`id="${a}${b}${u}"`).replace(/url\(#([nws])([bgf])\)/g,(m,a,b)=>`url(#${a}${b}${u})`);}
-function chOuter(v){return (window.__showOuter!==false&&v&&v.outerSign)?OUTER_LIST:[];}
+function chOuter(v){const a=(window.__showOuter!==false&&v&&v.outerSign)?OUTER_LIST.slice():[];if(window.__showGulika!==false&&v&&v.outerSign&&v.outerSign.Gulika!=null)a.push('Gulika');return a;}
 function chMeta(v){const inf={},c=window.__vgC;v.houses.forEach(h=>h.planets.forEach(p=>{inf[p.name]={st:(p.dignity||{}).status||'',rx:!!p.retrograde};}));
   chOuter(v).forEach(n=>{inf[n]={st:'',rx:!!(v.outerRx&&v.outerRx[n]),vg:false};});
   PLANET_LIST.forEach(n=>{inf[n]=inf[n]||{st:'',rx:false};inf[n].vg=!!(c&&c.planets&&c.planets[n]&&v!==c.vargas.D1&&v.planetVargaSign[n]===c.planets[n].sign);});return inf;}

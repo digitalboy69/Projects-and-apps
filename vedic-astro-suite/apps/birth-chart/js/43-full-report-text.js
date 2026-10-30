@@ -77,6 +77,11 @@ function buildFullReportText(chart, profile, sections, liveSkyData){
       add(`${pad('',10)} Western aspects: ${a.length ? a.map(r=>`${r.asp.name} ${r.target} (${r.dev.toFixed(1)}° orb)`).join('; ') : 'none within orb'}`);
     });
 
+    if (chart.upagraha && chart.upagraha.Gulika && typeof GUL !== 'undefined'){
+      subsection('Gulika (Mandi, son of Saturn; an upagraha point, not a planet)');
+      add(GUL.text(chart));
+    }
+
     subsection('Combustion Status');
     PLANET_LIST.forEach(name=>{
       const p = chart.planets[name];

@@ -203,7 +203,8 @@ function calcVarga(varga, lon){
 const PLANET_LIST = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn","Rahu","Ketu"];
 // Outer (trans-Saturnian) planets: plotted on the charts and listed, but kept out of the classical Vedic engines.
 const OUTER_LIST = ["Uranus","Neptune","Pluto"];
-const OUTER_GLYPHS = {Uranus:"♅",Neptune:"♆",Pluto:"♇"};
-const OUTER_COL = {Uranus:"#7DE3E0",Neptune:"#5B7CFA",Pluto:"#C9A38A"};
+const OUTER_GLYPHS = {Uranus:"♅",Neptune:"♆",Pluto:"♇",Gulika:"Gu"};
+const OUTER_COL = {Uranus:"#7DE3E0",Neptune:"#5B7CFA",Pluto:"#C9A38A",Gulika:"#A8789E"};
 const OUTER_SK = {Uranus:"Prajapati",Neptune:"Varuna",Pluto:"Yama"};
 window.__showOuter = true;
+window.__showGulika = true;
