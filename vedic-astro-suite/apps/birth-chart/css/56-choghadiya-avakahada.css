@@ -1,0 +1,19 @@
+/* Choghadiya (js/118) and Avakahada Chakra (js/119). Calm: no motion. */
+.chg-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:620px){.chg-grid{grid-template-columns:1fr 1fr}}
+.chg-col h6{margin:0 0 6px;font:600 12px var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted,#9f9a8f)}
+.chg-r{display:grid;grid-template-columns:78px 1fr auto;gap:8px;align-items:center;margin:0 0 5px;padding:8px 11px;border-radius:11px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);border-left:3px solid #6b7390}
+.chg-r b{font-size:14px}.chg-r span{font:12px var(--font-mono);color:var(--text-muted,#9f9a8f)}.chg-r em{font:600 10.5px var(--font-sans);font-style:normal;text-transform:uppercase;letter-spacing:.05em}
+.chg-r.good{border-left-color:#5fd08a}.chg-r.good b,.chg-r.good em{color:#5fd08a}
+.chg-r.bad{border-left-color:#e0725a}.chg-r.bad b,.chg-r.bad em{color:#e0725a}
+.chg-r.mid{border-left-color:#d4af37}.chg-r.mid b,.chg-r.mid em{color:#d4af37}
+.chg-r.now{background:rgba(212,175,55,.14);border-color:var(--gold,#d4af37)}
+.chg-d{margin-top:10px}.chg-d summary{cursor:pointer;color:var(--gold,#d4af37);font-size:13px}
+.chg-keys div{margin:7px 0;font-size:13.5px;line-height:1.5}.chg-keys b.good{color:#5fd08a}.chg-keys b.bad{color:#e0725a}.chg-keys b.mid{color:#d4af37}
+.avk-intro{font-size:14px;line-height:1.6;color:var(--text-muted,#9f9a8f);margin:0 0 12px}
+.avk-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.avk-c{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);min-width:0}
+.avk-c small{display:block;font-size:11px;letter-spacing:.04em;color:var(--text-muted,#9f9a8f);margin-bottom:2px}
+.avk-c b{font-weight:600;font-size:14.5px;word-break:break-word}
+.avk-c details{margin-top:6px}.avk-c summary{cursor:pointer;font-size:11.5px;color:var(--gold,#d4af37)}
+.avk-c p{margin:5px 0 0;font-size:12.5px;line-height:1.5;color:var(--text-muted,#c9c4b9)}

@@ -184,13 +184,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-30 - 1674 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-30 - 1684 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 182 files, 29289 lines, 2347 KB
+**birth-chart** - 185 files, 29413 lines, 2357 KB
 ```
-index.html                                         604 lines   34 KB
+index.html                                         607 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          280 lines   13 KB
@@ -219,6 +219,8 @@ js/114-varga-guide.js                              522 lines  113 KB
 js/115-compare-lab.js                              224 lines   16 KB
 js/116-planet-encyclopedia.js                      350 lines   42 KB
 js/117-gulika.js                                    34 lines    3 KB
+js/118-choghadiya.js                                40 lines    3 KB
+js/119-avakahada.js                                 58 lines    6 KB
 js/12-yoga-detection.js                            117 lines    4 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
@@ -232,7 +234,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             123 lines   12 KB
+js/25-home-and-tabs.js                             124 lines   12 KB
 js/26-rectification-studio.js                      246 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -255,7 +257,7 @@ js/44-export-modal.js                              203 lines    9 KB
 js/45-panchanga-engine.js                          107 lines    7 KB
 js/46-transit-stays-engine.js                       43 lines    2 KB
 js/47-bhava-chalit-engine.js                        29 lines    1 KB
-js/48-panchanga-panel.js                            96 lines    7 KB
+js/48-panchanga-panel.js                            97 lines    7 KB
 js/49-transits-panel.js                             78 lines    7 KB
 js/50-bhava-chalit-panel.js                         30 lines    2 KB
 js/51-kundali-matching-engine.js                    94 lines    7 KB
@@ -265,7 +267,7 @@ js/54-vedic-birthday-ui.js                         156 lines   13 KB
 js/55-numerology-engine.js                          54 lines    9 KB
 js/56-numerology-ui.js                             126 lines   13 KB
 js/57-my-chart-overview.js                         100 lines    6 KB
-js/58-render-results.js                            760 lines   35 KB
+js/58-render-results.js                            761 lines   35 KB
 js/59-live-transit-form.js                         150 lines    7 KB
 js/60-interactive-varga-svg.js                     163 lines    7 KB
 js/61-varga-chart-svg.js                            71 lines   13 KB
@@ -372,6 +374,7 @@ css/52-date-entry.css                               13 lines    1 KB
 css/53-varga-guide.css                              32 lines    2 KB
 css/54-compare-lab.css                              63 lines    7 KB
 css/55-planet-encyclopedia.css                      89 lines    7 KB
+css/56-choghadiya-avakahada.css                     20 lines    1 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -503,6 +506,7 @@ shared/quick-menu.js                               157 lines   12 KB
 - Year Timeline File (Birth Chart): js/90-year-timeline-engine.js (scan, facts only) + 91-writer (Markdown) + 92-ui (panel-yeartimeline, Home > Time & Cycles); test tests/year_timeline_test.py; v1 has no Tajika, no auto-split for very long ranges.
 - Planet Encyclopedia (Birth Chart): js/116-planet-encyclopedia.js (PEN) + css/55; panel-planetency, Home > Analysis; per-planet nature, aspects, dignities, relations, houses; edit texts in PEN_DATA; test tests/planet_encyclopedia_test.py.
 - Gulika (Mandi): birth-chart js/117-gulika.js (computeGulika, GUL; chart.upagraha.Gulika; drawn like outer planets, checkbox .gulika-chk-input; Planets card in 19-planets-panel) + sky3d js/52-gulika.js (GK; ring marker in 40-3d-astro-layers, switch L_gulika, card in 50-sky-dashboard). Default = start of Saturn's part; schools differ. Change both engines. Test tests/gulika_test.py.
+- Choghadiya + Avakahada Chakra (Birth Chart): js/118-choghadiya.js (CHG, inside Panchanga panel) and js/119-avakahada.js (AVK, panel-avakahada); tables for Choghadiya are almanac practice, Avakahada tables equal KM_* in js/51; test tests/choghadiya_avakahada_test.py.
 - Notepad: fixed typing cursor jump, note-link exit, template-from-Tasks, open side menu; new Settings tab (view settings) with switches stored in S.set.o (defaults in OPT_DEF; line copy + card copy OFF); test tests/notepad_test.py.
 - Notepad phone: added a menu button (☰) to the note-list header and made the drawer open in focus mode, so every screen has a way back to the menu (not tested).
 - Main menu Settings (shell): popup with one switch "Copy buttons" (off by default, key vedicCopyBtns); shared/copy-toggle.js in every app hides/shows buttons whose label starts with "Copy" (not tested).

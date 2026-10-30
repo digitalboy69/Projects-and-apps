@@ -13832,6 +13832,27 @@ body.cl-open{overflow:hidden}
 .pl-gulika{margin-top:12px}.pl-gulika .pl-card{cursor:default}
 .pl-note{display:block;margin-top:8px;font-size:12.5px;line-height:1.5;color:var(--text-muted,#9f9a8f)}
 </style>
+<style>
+/* Choghadiya (js/118) and Avakahada Chakra (js/119). Calm: no motion. */
+.chg-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:620px){.chg-grid{grid-template-columns:1fr 1fr}}
+.chg-col h6{margin:0 0 6px;font:600 12px var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted,#9f9a8f)}
+.chg-r{display:grid;grid-template-columns:78px 1fr auto;gap:8px;align-items:center;margin:0 0 5px;padding:8px 11px;border-radius:11px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);border-left:3px solid #6b7390}
+.chg-r b{font-size:14px}.chg-r span{font:12px var(--font-mono);color:var(--text-muted,#9f9a8f)}.chg-r em{font:600 10.5px var(--font-sans);font-style:normal;text-transform:uppercase;letter-spacing:.05em}
+.chg-r.good{border-left-color:#5fd08a}.chg-r.good b,.chg-r.good em{color:#5fd08a}
+.chg-r.bad{border-left-color:#e0725a}.chg-r.bad b,.chg-r.bad em{color:#e0725a}
+.chg-r.mid{border-left-color:#d4af37}.chg-r.mid b,.chg-r.mid em{color:#d4af37}
+.chg-r.now{background:rgba(212,175,55,.14);border-color:var(--gold,#d4af37)}
+.chg-d{margin-top:10px}.chg-d summary{cursor:pointer;color:var(--gold,#d4af37);font-size:13px}
+.chg-keys div{margin:7px 0;font-size:13.5px;line-height:1.5}.chg-keys b.good{color:#5fd08a}.chg-keys b.bad{color:#e0725a}.chg-keys b.mid{color:#d4af37}
+.avk-intro{font-size:14px;line-height:1.6;color:var(--text-muted,#9f9a8f);margin:0 0 12px}
+.avk-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.avk-c{padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);min-width:0}
+.avk-c small{display:block;font-size:11px;letter-spacing:.04em;color:var(--text-muted,#9f9a8f);margin-bottom:2px}
+.avk-c b{font-weight:600;font-size:14.5px;word-break:break-word}
+.avk-c details{margin-top:6px}.avk-c summary{cursor:pointer;font-size:11.5px;color:var(--gold,#d4af37)}
+.avk-c p{margin:5px 0 0;font-size:12.5px;line-height:1.5;color:var(--text-muted,#c9c4b9)}
+</style>
 
 
 
@@ -17750,6 +17771,7 @@ const HOME_ITEMS=[
  ['panel-reading','📖','Chart Reading','Plain-language reading, life areas & timing','Your Chart','chart'],
  ['panel-problem','🧭','Problem Finder','Pick a life problem; see the chart reasons','Your Chart','chart'],
  ['panel-overview','◈','Overview','Birth chart & key details','Your Chart','chart'],
+ ['panel-avakahada','🪪','Avakahada Chakra','The standard kundli table: varna, yoni, gana, nadi, paya, name sounds','Your Chart','chart'],
  ['panel-planets','☉','Planets','Positions & aspects of every planet','Your Chart','chart'],
  ['panel-bhava','⌂','Bhava Chalit','Sripati house cusps & shifted planets','Your Chart','chart'],
  ['panel-vargas','◫','Divisional Charts','D1 to D144 chart viewer','Your Chart','chart'],
@@ -20743,6 +20765,7 @@ function pnRender(){
     <div class="pn-facts">${facts}</div>
     <div class="pn-chips">${calChips}</div>
     ${day}
+    ${typeof CHG !== 'undefined' ? CHG.html(P, c, jd, ref) : ''}
     <div class="pn-note">Vedic day runs sunrise to sunrise, so births before sunrise take the previous weekday. Sunrise uses the upper limb with standard refraction (−0.833°). Lunar month is the Amanta (new-moon to new-moon) system; Purnimanta calendars name the Krishna fortnight one month later. Vishti karana is traditionally avoided for new beginnings.</div>`;
 }
 document.addEventListener('input', (e) => { if (e.target.id === 'pnDate' || e.target.id === 'pnTime') { document.querySelectorAll('[data-pn-set]').forEach(b => b.classList.remove('on')); pnRender(); } });
@@ -21885,6 +21908,7 @@ function renderResults(profile){
   html += `<div class="app-panel" id="panel-tithi">${window.buildTithiPraveshPanel(chart, profile)}</div>`;
   html += `<div class="app-panel" id="panel-bhavabala">${window.buildBhavaBalaPanel(chart, profile)}</div>`;
   html += `<div class="app-panel" id="panel-active">${window.buildActivationPanel(chart)}</div>`;
+  try { html += `<div class="app-panel" id="panel-avakahada">${window.buildAvakahadaPanel(chart, profile)}</div>`; } catch(e) { console.warn('avakahada panel', e); }
   try { html += `<div class="app-panel" id="panel-planetency">${window.buildPlanetEncyPanel(chart)}</div>`; } catch(e) { console.warn('planet encyclopedia panel', e); }
   try { html += `<div class="app-panel" id="panel-yeartimeline">${window.buildYearTimelinePanel(chart, profile)}</div>`; } catch(e) { console.warn('year timeline panel', e); }
   html += `<div class="app-panel" id="panel-ashtakavarga">`;
@@ -50168,6 +50192,106 @@ const GUL = {
   },
   where: GUL_WHERE
 };
+<\/script>
+<script>
+/* ============================================================================
+   CHOGHADIYA (CHG): the daily "good and bad time" slots used all over India. The daytime (sunrise to sunset) and the night (sunset to next sunrise) are each cut
+   into 8 equal parts; every part has one of 7 names, always in the same order, and the first name depends on the weekday.
+   Day order   : Udveg, Chal, Labh, Amrit, Kaal, Shubh, Rog      first part: Sun Udveg, Mon Amrit, Tue Rog, Wed Labh, Thu Shubh, Fri Chal, Sat Kaal
+   Night order : Shubh, Amrit, Chal, Rog, Kaal, Labh, Udveg      first part: Sun Shubh, Mon Chal, Tue Kaal, Wed Udveg, Thu Amrit, Fri Rog, Sat Labh
+   (the 8th part of each run repeats the 1st name). This is a popular almanac practice (panchang tables), not from the BPHS, and it is marked so on screen.
+   Uses the Panchanga result P from panchangaAt() (js/45): P.sunrise, P.sunset, P.nextSunrise, P.vara.idx (0 = Sunday).
+   API: CHG.parts(P) -> {day:[{name,from,to,tone}], night:[...]} | null ; CHG.html(P, c, jd, ref) -> HTML section (uses nvTime from js/48).
+   ============================================================================ */
+const CHG = (function(){
+  const DAYO = ['Udveg','Chal','Labh','Amrit','Kaal','Shubh','Rog'], NIGHTO = ['Shubh','Amrit','Chal','Rog','Kaal','Labh','Udveg'];
+  const DAYS = [0,3,6,2,5,1,4], NIGHTS = [0,2,4,6,1,3,5];   // start index in DAYO / NIGHTO for Sun..Sat
+  const INFO = {
+    Amrit:['good','Best slot. Good for almost anything: starting work, learning, travel, buying.'],
+    Shubh:['good','Auspicious. Good for ceremonies, new work, meeting elders and teachers.'],
+    Labh:['good','Gain. Good for business, trade, money matters and study.'],
+    Chal:['mid','Moving. Fine for travel and quick errands; not for things that must stay fixed.'],
+    Udveg:['bad','Restless. Said to suit government or authority matters; avoid starting anything peaceful.'],
+    Rog:['bad','Illness. Avoid new work, medical decisions and travel if you can.'],
+    Kaal:['bad','Loss. Avoid new work, deals and journeys.']
+  };
+  function parts(P){
+    if (!P || P.sunrise == null || P.sunset == null) return null;
+    const w = P.vara.idx, mk = (from, to, order, st) => { const l = (to - from) / 8; return Array.from({length: 8}, (_, i) => { const name = order[(st + i) % 7]; return { name, from: from + i * l, to: from + (i + 1) * l, tone: INFO[name][0] }; }); };
+    return { day: mk(P.sunrise, P.sunset, DAYO, DAYS[w]), night: P.nextSunrise != null ? mk(P.sunset, P.nextSunrise, NIGHTO, NIGHTS[w]) : null };
+  }
+  function html(P, c, jd, ref){
+    const ps = parts(P); if (!ps) return '';
+    const row = r => { const now = jd >= r.from && jd < r.to;
+      return `<div class="chg-r ${r.tone}${now ? ' now' : ''}"><b>${r.name}</b><span>${nvTime(r.from, c.tz, ref)} – ${nvTime(r.to, c.tz, ref)}</span><em>${now ? 'now' : ({good:'good',mid:'so-so',bad:'avoid'})[r.tone]}</em></div>`; };
+    const grid = (t, a) => a ? `<div class="chg-col"><h6>${t}</h6>${a.map(row).join('')}</div>` : '';
+    const keys = Object.keys(INFO).map(k => `<div><b class="${INFO[k][0]}">${k}</b> ${INFO[k][1]}</div>`).join('');
+    return `<div class="pn-sec chg"><h5>Choghadiya <span>8 day slots · 8 night slots · ${P.vara.name}</span></h5>
+      <div class="chg-grid">${grid('Day', ps.day)}${grid('Night', ps.night)}</div>
+      <details class="chg-d"><summary>What each name means</summary><div class="chg-keys">${keys}</div>
+        <p class="pn-note">Choghadiya is a popular almanac practice, not a rule from Parashara. Many families prefer Abhijit Muhurta and avoid Rahu Kalam on top of it. Use it as guidance.</p></details></div>`;
+  }
+  return { parts, html, info: INFO };
+})();
+<\/script>
+<script>
+/* ============================================================================
+   AVAKAHADA CHAKRA (AVK): the standard table printed at the top of a kundli: the Moon-based markers (varna, vashya, yoni, gana, nadi), the
+   sign and star with their lords, the birth tithi / karana / yoga / weekday, the element, the paya, and the name sounds (naam akshar).
+   Tables are the standard Ashtakoota ones used in Kundali Matching (js: matching panel): varna/vashya by Moon SIGN (Capricorn and Sagittarius split at 15 degrees),
+   yoni/gana/nadi by Moon NAKSHATRA. Paya (common rule): the Moon in houses 1,6,11 gold; 2,5,9 silver; 3,7,10 copper; 4,8,12 iron, counted from the rising sign.
+   Name sounds: the usual 108-sound table by nakshatra and pada; North and South Indian lists differ for a few stars, so it is marked "usual".
+   Tithi / karana / yoga come from panchangaAt() (js/45) for the birth moment and place. Nothing here is a prediction.
+   API: AVK.compute(chart, profile) -> {rows:[{k,v,note}], ...}; AVK.html(chart, profile); AVK.text(chart, profile).
+   ============================================================================ */
+const AVK = (function(){
+  const VARNA = ['Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin','Kshatriya','Vaishya','Shudra','Brahmin'];
+  const YONI = ['Horse','Elephant','Sheep','Serpent','Serpent','Dog','Cat','Sheep','Cat','Rat','Rat','Cow','Buffalo','Tiger','Buffalo','Tiger','Deer','Deer','Dog','Monkey','Mongoose','Monkey','Lion','Horse','Lion','Cow','Elephant'];
+  const GANA = ['Deva','Manushya','Rakshasa','Manushya','Deva','Manushya','Deva','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva','Rakshasa','Deva','Rakshasa','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva','Rakshasa','Rakshasa','Manushya','Manushya','Deva'];
+  const NADI = ['Adi','Madhya','Antya','Antya','Madhya','Adi'];   // by nakshatra index mod 6
+  const SYL = ['Chu Che Cho La','Li Lu Le Lo','A I U E','O Va Vi Vu','Ve Vo Ka Ki','Ku Gha Ng Chha','Ke Ko Ha Hi','Hu He Ho Da','Di Du De Do','Ma Mi Mu Me','Mo Ta Ti Tu','Te To Pa Pi','Pu Sha Na Tha','Pe Po Ra Ri','Ru Re Ro Ta','Ti Tu Te To','Na Ni Nu Ne','No Ya Yi Yu','Ye Yo Bha Bhi','Bhu Dha Pha Dha','Bhe Bho Ja Ji','Khi Khu Khe Kho','Ga Gi Gu Ge','Go Sa Si Su','Se So Da Di','Du Tha Jha Na','De Do Cha Chi'];
+  const PAYA = {1:'Gold',6:'Gold',11:'Gold',2:'Silver',5:'Silver',9:'Silver',3:'Copper',7:'Copper',10:'Copper',4:'Iron',8:'Iron',12:'Iron'};
+  const MEAN = {
+    varna:'A traditional marker of temperament and ego (not of caste in real life): Brahmin = reflective, Kshatriya = leading, Vaishya = practical, Shudra = serving.',
+    vashya:'Whom the person can easily guide or be guided by. Chatushpad = four-footed, Manav = human, Jalachara = water, Vanachara = wild, Keeta = insect.',
+    yoni:'Instinct and natural nature, shown through an animal. Used in matching for physical and instinctive harmony.',
+    gana:'Basic temperament: Deva = gentle and giving, Manushya = balanced and worldly, Rakshasa = intense and forceful.',
+    nadi:'A body-type and health marker used in matching (Adi = Vata, Madhya = Pitta, Antya = Kapha). Same nadi in a couple is traditionally avoided.',
+    paya:'A traditional marker from the Moon\'s house: Gold and Silver are said to be gentler, Copper middle, Iron harder. It is a folk indicator, read lightly.',
+    syllable:'The sounds a baby\'s name often starts with, from the Moon\'s star and pada. The lists differ a little between regions.'
+  };
+  function vashya(sign, deg){
+    if ([0,1].includes(sign)) return 'Chatushpad'; if ([2,5,6,10].includes(sign)) return 'Manav'; if (sign === 3 || sign === 11) return 'Jalachara';
+    if (sign === 4) return 'Vanachara'; if (sign === 7) return 'Keeta';
+    if (sign === 8) return deg < 15 ? 'Manav' : 'Chatushpad'; return deg < 15 ? 'Chatushpad' : 'Jalachara';   // Capricorn
+  }
+  function compute(chart, profile){
+    const mo = chart.planets.Moon, ni = mo.nakshatra.index != null ? mo.nakshatra.index : NAKSHATRAS.findIndex(n => n.name === mo.nakshatra.name), pada = mo.nakshatra.pada;
+    const sg = SIGNS[mo.sign], nk = NAKSHATRAS[ni], asc = SIGNS[chart.ascendant.sign];
+    let P = null; try { P = panchangaAt(chart.julianDay, profile.lat, profile.lon, profile.tz != null ? profile.tz : chart.tzOffsetHours); } catch(e){ console.warn('avakahada panchang', e); }
+    const rows = [
+      {k:'Name sound', v: SYL[ni].split(' ')[pada - 1] + '  (' + SYL[ni] + ')', note: MEAN.syllable},
+      {k:'Moon sign (Rashi)', v: sg.symbol + ' ' + sg.name + ' (' + sg.sk + ')'}, {k:'Sign lord', v: sg.lord},
+      {k:'Birth star (Nakshatra)', v: nk.name + ', pada ' + pada}, {k:'Star lord', v: nk.lord},
+      {k:'Rising sign (Lagna)', v: asc.symbol + ' ' + asc.name}, {k:'Lagna lord', v: asc.lord},
+      {k:'Varna', v: VARNA[mo.sign], note: MEAN.varna}, {k:'Vashya', v: vashya(mo.sign, mo.degInSign != null ? mo.degInSign : getDegInSign(mo.longitude)), note: MEAN.vashya},
+      {k:'Yoni', v: YONI[ni], note: MEAN.yoni}, {k:'Gana', v: GANA[ni], note: MEAN.gana}, {k:'Nadi', v: NADI[ni % 6], note: MEAN.nadi},
+      {k:'Element (Tatva)', v: sg.element}, {k:'Paya', v: PAYA[mo.house] + ' (Moon in house ' + mo.house + ')', note: MEAN.paya}
+    ];
+    if (P){ rows.push({k:'Tithi', v: P.tithi.paksha + ' ' + P.tithi.name}, {k:'Karana', v: P.karana.name}, {k:'Yoga', v: P.yoga.name}, {k:'Weekday (Vara)', v: P.vara.name + ' · ' + P.vara.lord}); }
+    return { rows, P };
+  }
+  function html(chart, profile){
+    let d; try { d = compute(chart, profile); } catch(e){ console.warn('avakahada', e); return '<div class="meta-err">Could not build the Avakahada Chakra.</div>'; }
+    const cell = r => `<div class="avk-c"><small>${r.k}</small><b>${r.v}</b>${r.note ? `<details><summary>What is this?</summary><p>${r.note}</p></details>` : ''}</div>`;
+    return `<div class="avk"><div class="avk-intro">The standard table at the top of a kundli. Everything here comes from the Moon and the birth moment. Tap "What is this?" on any item.</div>
+      <div class="avk-grid">${d.rows.map(cell).join('')}</div>
+      <p class="pn-note">Tables are the standard Ashtakoota ones. Paya and name sounds follow the usual rule; regions differ slightly. These are traditional markers, not predictions.</p></div>`;
+  }
+  function text(chart, profile){ try { return compute(chart, profile).rows.map(r => r.k + ': ' + r.v).join('\n'); } catch(e){ return ''; } }
+  return { compute, html, text, tables: { VARNA, YONI, GANA, NADI } };
+})();
+window.buildAvakahadaPanel = function(chart, profile){ try { return AVK.html(chart, profile || {}); } catch(e){ return ''; } };
 <\/script>
 <script>
 /* ============================================================================
