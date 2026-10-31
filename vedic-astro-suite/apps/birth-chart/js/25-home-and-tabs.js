@@ -18,6 +18,7 @@ const HOME_ITEMS=[
  ['panel-vargatimeline','🗺️','Varga Timeline','Map the birth window on any chart','Fix Birth Time','rectify'],
  ['panel-transittimer','⏳','Transit Timer','When a planet changes house','Fix Birth Time','rectify'],
  ['panel-lifeevents','🌟','Life-Event Checker','Confirm the time with real events','Fix Birth Time','rectify'],
+ ['panel-today','🌅','Today for You','Your day from your own Moon: Chandrabala, Tarabala, planets & good slots','Time & Cycles','home'],
  ['panel-choghadiya','🕰️','Choghadiya','Good and bad time slots for the day and night','Time & Cycles','home'],
  ['panel-panchanga','🌙','Panchanga','Tithi, nakshatra, yoga, karana & day timings','Time & Cycles','home'],
  ['panel-vbday','🎂','Vedic Birthday','Tithi, Nakshatra & solar birthday for any year','Time & Cycles','home'],
