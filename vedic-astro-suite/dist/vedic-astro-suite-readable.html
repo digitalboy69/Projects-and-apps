@@ -13852,6 +13852,28 @@ body.cl-open{overflow:hidden}
 .avk-c b{font-weight:600;font-size:14.5px;word-break:break-word}
 .avk-c details{margin-top:6px}.avk-c summary{cursor:pointer;font-size:11.5px;color:var(--gold,#d4af37)}
 .avk-c p{margin:5px 0 0;font-size:12.5px;line-height:1.5;color:var(--text-muted,#c9c4b9)}
+/* Choghadiya panel and Dosha Check */
+.chgp-in{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin:0 0 12px}
+.chgp-in label{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--text-muted,#9f9a8f)}
+.chgp-in input{padding:9px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--text-main,#eae6df);font:inherit;font-size:14px}
+.chgp-btn{padding:10px 16px;border-radius:10px;border:1px solid var(--gold,#d4af37);background:rgba(212,175,55,.14);color:var(--gold,#d4af37);font:inherit;font-weight:600;cursor:pointer}
+.dsh-hero{padding:14px 16px;margin:0 0 10px;border-radius:14px;border:1px solid rgba(212,175,55,.35);background:rgba(212,175,55,.08);font-size:15px}
+.dsh-hero b{font-size:24px;color:var(--gold,#d4af37);margin-right:4px}
+.dsh-h{margin:16px 0 8px;font:600 12px var(--font-sans);letter-spacing:.09em;text-transform:uppercase;color:var(--gold,#d4af37)}
+.dsh-c{margin:0 0 8px;border-radius:13px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);border-left:3px solid #6b7390}
+.dsh-c.present{border-left-color:#e0925a}.dsh-c.softened{border-left-color:#d4af37}.dsh-c.clear{border-left-color:#5fd08a}
+.dsh-c>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dsh-c>summary::-webkit-details-marker{display:none}
+.dsh-c>summary b{font-size:14.5px}
+.dsh-p{font:600 10.5px var(--font-sans);text-transform:uppercase;letter-spacing:.05em;padding:3px 9px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.dsh-c.present .dsh-p{color:#e0925a}.dsh-c.softened .dsh-p{color:#d4af37}.dsh-c.clear .dsh-p{color:#5fd08a}
+.dsh-c>p,.dsh-c>ul{margin:0;padding:0 14px 10px;font-size:13.5px;line-height:1.6}
+.dsh-c>ul{padding-left:30px;color:var(--text-muted,#c9c4b9)}
+.dsh-sub{color:var(--text-muted,#9f9a8f);font-size:12.5px}
+.dsh-soft{color:#e9c97f}
+.dsh-lv{font-style:normal;font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid rgba(255,255,255,.25);margin-left:4px}
+.dsh-tag{font-size:11.5px!important;color:var(--text-muted,#9f9a8f)}
+.dsh-none{padding:14px;border-radius:12px;border:1px dashed rgba(95,208,138,.4);color:#5fd08a;font-size:14px}
 </style>
 
 
@@ -17782,6 +17804,7 @@ const HOME_ITEMS=[
  ['panel-vargatimeline','🗺️','Varga Timeline','Map the birth window on any chart','Fix Birth Time','rectify'],
  ['panel-transittimer','⏳','Transit Timer','When a planet changes house','Fix Birth Time','rectify'],
  ['panel-lifeevents','🌟','Life-Event Checker','Confirm the time with real events','Fix Birth Time','rectify'],
+ ['panel-choghadiya','🕰️','Choghadiya','Good and bad time slots for the day and night','Time & Cycles','home'],
  ['panel-panchanga','🌙','Panchanga','Tithi, nakshatra, yoga, karana & day timings','Time & Cycles','home'],
  ['panel-vbday','🎂','Vedic Birthday','Tithi, Nakshatra & solar birthday for any year','Time & Cycles','home'],
  ['panel-active','🔥','Life Activation','Houses lit up now · pick any date','Time & Cycles','home'],
@@ -17793,6 +17816,7 @@ const HOME_ITEMS=[
  ['panel-transit','⟲','Live Sky','Today\'s planets vs your chart','Time & Cycles','home'],
  ['panel-planetency','📚','Planet Encyclopedia','Every planet in full: nature, aspects, exalted & debilitated, friends & foes','Analysis','home'],
  ['panel-numerology','🔢','Numerology','Name number & birth-date numbers with meanings','Analysis','home'],
+ ['panel-dosha','🧿','Dosha Check','Manglik, Kaal Sarp, Pitru, Gand Mool & more: the reason and what softens it','Analysis','home'],
  ['panel-yogas','✦','Yogas','Notable planet combinations','Analysis','home'],
  ['panel-shadbala','⚖','Shadbala','Planet strength','Analysis','home'],
  ['panel-bhavabala','🏠','Bhava Bala','House strength — which life areas are strong','Analysis','home'],
@@ -20765,7 +20789,6 @@ function pnRender(){
     <div class="pn-facts">${facts}</div>
     <div class="pn-chips">${calChips}</div>
     ${day}
-    ${typeof CHG !== 'undefined' ? CHG.html(P, c, jd, ref) : ''}
     <div class="pn-note">Vedic day runs sunrise to sunrise, so births before sunrise take the previous weekday. Sunrise uses the upper limb with standard refraction (−0.833°). Lunar month is the Amanta (new-moon to new-moon) system; Purnimanta calendars name the Krishna fortnight one month later. Vishti karana is traditionally avoided for new beginnings.</div>`;
 }
 document.addEventListener('input', (e) => { if (e.target.id === 'pnDate' || e.target.id === 'pnTime') { document.querySelectorAll('[data-pn-set]').forEach(b => b.classList.remove('on')); pnRender(); } });
@@ -50231,7 +50254,32 @@ const CHG = (function(){
       <details class="chg-d"><summary>What each name means</summary><div class="chg-keys">${keys}</div>
         <p class="pn-note">Choghadiya is a popular almanac practice, not a rule from Parashara. Many families prefer Abhijit Muhurta and avoid Rahu Kalam on top of it. Use it as guidance.</p></details></div>`;
   }
-  return { parts, html, info: INFO };
+  /* standalone panel: pick a date and time, see the slots for the birth place */
+  function panel(chart, profile){
+    const tz = Number(profile.tz != null ? profile.tz : chart.tzOffsetHours), now = jdToLocalParts(Date.now() / 86400000 + 2440587.5, tz);
+    return `<div class="chgp"><div class="avk-intro">Today's good and bad time slots for <b>${escapeHtml(profile.place || 'your place')}</b>. Change the date or time to see another day.</div>
+      <div class="chgp-in"><label>Date <input type="date" id="chgDate" value="${now.dateStr}"></label><label>Time <input type="time" id="chgTime" value="${now.timeStr.slice(0, 5)}"></label>
+      <button type="button" id="chgNow" class="chgp-btn">Now</button></div><div id="chgBody"></div></div>`;
+  }
+  function draw(){
+    const b = document.getElementById('chgBody'); if (!b) return;
+    const pf = window.__vgProf, ch = (typeof currentChartForModal !== 'undefined') ? currentChartForModal : null; if (!pf || !ch) return;
+    const tz = Number(pf.tz != null ? pf.tz : ch.tzOffsetHours), lat = Number(pf.lat), lon = Number(pf.lon);
+    const ds = document.getElementById('chgDate').value, ts = document.getElementById('chgTime').value || '12:00'; if (!ds) return;
+    const [y, m, d] = ds.split('-').map(Number), [hh, mm] = ts.split(':').map(Number), jd = toJulianDay(y, m, d, hh, mm, 0) - tz / 24;
+    try { const P = panchangaAt(jd, lat, lon, tz), h = html(P, { tz }, jd, P.vara.date);
+      b.innerHTML = h || '<div class="pl-empty">The Sun does not rise and set normally at this place and date, so Choghadiya cannot be worked out.</div>'; }
+    catch(e){ b.innerHTML = '<div class="meta-err">Could not work out Choghadiya for this moment.</div>'; console.warn(e); }
+  }
+  document.addEventListener('input', e => { if (e.target.id === 'chgDate' || e.target.id === 'chgTime') draw(); });
+  document.addEventListener('click', e => {
+    if (e.target.id !== 'chgNow') return; const pf = window.__vgProf; if (!pf) return;
+    const tz = Number(pf.tz != null ? pf.tz : 0), n = jdToLocalParts(Date.now() / 86400000 + 2440587.5, tz);
+    document.getElementById('chgDate').value = n.dateStr; document.getElementById('chgTime').value = n.timeStr.slice(0, 5); draw();
+  });
+  window.buildChoghadiyaPanel = function(chart, profile){ setTimeout(draw, 0); return panel(chart, profile); };
+  const _sw = window.switchAppTab; if (typeof _sw === 'function' && !window.__chgSw){ window.__chgSw = 1; window.switchAppTab = function(id){ const r = _sw.apply(this, arguments); if (id === 'panel-choghadiya') setTimeout(draw, 30); return r; }; }
+  return { parts, html, info: INFO, draw };
 })();
 <\/script>
 <script>
@@ -50268,7 +50316,7 @@ const AVK = (function(){
   function compute(chart, profile){
     const mo = chart.planets.Moon, ni = mo.nakshatra.index != null ? mo.nakshatra.index : NAKSHATRAS.findIndex(n => n.name === mo.nakshatra.name), pada = mo.nakshatra.pada;
     const sg = SIGNS[mo.sign], nk = NAKSHATRAS[ni], asc = SIGNS[chart.ascendant.sign];
-    let P = null; try { P = panchangaAt(chart.julianDay, profile.lat, profile.lon, profile.tz != null ? profile.tz : chart.tzOffsetHours); } catch(e){ console.warn('avakahada panchang', e); }
+    let P = null; try { P = panchangaAt(chart.julianDay, Number(profile.lat), Number(profile.lon), Number(profile.tz != null ? profile.tz : chart.tzOffsetHours)); } catch(e){ console.warn('avakahada panchang', e); }
     const rows = [
       {k:'Name sound', v: SYL[ni].split(' ')[pada - 1] + '  (' + SYL[ni] + ')', note: MEAN.syllable},
       {k:'Moon sign (Rashi)', v: sg.symbol + ' ' + sg.name + ' (' + sg.sk + ')'}, {k:'Sign lord', v: sg.lord},
@@ -50292,6 +50340,112 @@ const AVK = (function(){
   return { compute, html, text, tables: { VARNA, YONI, GANA, NADI } };
 })();
 window.buildAvakahadaPanel = function(chart, profile){ try { return AVK.html(chart, profile || {}); } catch(e){ return ''; } };
+<\/script>
+<script>
+/* ============================================================================
+   LATE PANELS: makes new Home cards safe. A panel registered here is built on demand the first time it is opened, from the chart already on screen,
+   so a card can never open to a blank screen, even if the browser still holds an older copy of js/58-render-results.js (the file that normally
+   adds each panel). It also puts Choghadiya into the Panchanga panel without needing js/48 to call it, and gives Choghadiya its own panel.
+   API: registerLatePanel(id, (chart, profile) => html). Loaded after js/25 (switchAppTab) and js/45/48 (Panchanga).
+   ============================================================================ */
+(function(){
+  const REG = {};
+  window.registerLatePanel = function(id, fn){ REG[id] = fn; };
+  function ensure(id){
+    if (!REG[id] || document.getElementById(id)) return;
+    const r = document.getElementById('results'), ch = (typeof currentChartForModal !== 'undefined') ? currentChartForModal : null, pf = window.__vgProf;
+    if (!r || !ch || !pf) return;
+    let h = ''; try { h = REG[id](ch, pf); } catch(e){ console.warn('late panel', id, e); h = '<div class="meta-err">This screen could not be built. Please refresh the page.</div>'; }
+    const d = document.createElement('div'); d.className = 'app-panel'; d.id = id; d.innerHTML = h; r.appendChild(d);
+  }
+  if (typeof switchAppTab === 'function'){
+    const _s = switchAppTab;
+    window.switchAppTab = function(id){ ensure(id); return _s.apply(this, arguments); };
+  }
+  /* Choghadiya inside the Panchanga panel (works with or without a hook in js/48) */
+  if (typeof pnRender === 'function'){
+    const _p = pnRender;
+    window.pnRender = function(){
+      _p.apply(this, arguments);
+      try {
+        const body = document.getElementById('pnBody'); if (!body || body.querySelector('.chg') || typeof PN_CTX === 'undefined' || !PN_CTX || typeof CHG === 'undefined') return;
+        const c = PN_CTX, ds = document.getElementById('pnDate').value, ts = document.getElementById('pnTime').value || '00:00'; if (!ds) return;
+        const [y, m, d] = ds.split('-').map(Number), [hh, mm] = ts.split(':').map(Number), jd = toJulianDay(y, m, d, hh, mm, 0) - c.tz / 24;
+        const P = panchangaAt(jd, c.lat, c.lon, c.tz), h = CHG.html(P, c, jd, P.vara.date); if (!h) return;
+        const note = body.querySelector('.pn-note'); if (note) note.insertAdjacentHTML('beforebegin', h); else body.insertAdjacentHTML('beforeend', h);
+      } catch(e){ console.warn('choghadiya inject', e); }
+    };
+  }
+  /* registrations */
+  const reg = (id, name) => registerLatePanel(id, (c, p) => (window[name] ? window[name](c, p) : ''));
+  reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel');
+})();
+<\/script>
+<script>
+/* ============================================================================
+   DOSHA CHECK (DSH): one screen for the doshas people ask about most. It uses the app's own yoga engine (YGE, js/92) for Manglik, Kaal Sarp, Guru Chandala,
+   Surya Grahan, Chandra Grahan, Shrapit and Angaraka (the exact placement it matched is shown as "Why"), and adds two checks that the engine does not have:
+     Pitru dosha (common practice, schools differ): any of  Rahu or Ketu in the 9th house; the 9th lord in the same sign as Rahu, Ketu or Saturn;
+                                                          the Sun in the 9th house with Saturn, Rahu or Ketu.
+     Gand Mool (traditional birth-star rule): the Moon in Ashwini, Ashlesha, Magha, Jyeshtha, Mula or Revati (the six junction stars).
+   Every item says what it traditionally means and what can soften it, in plain words. These are traditional markers to understand a chart, not verdicts or
+   predictions, and the page says so. Whole-sign houses from the Lagna. No remedies are given. No new yoga is invented.
+   API: DSH.compute(chart) -> [{id, name, present, why, level, note, meaning, scenes, best, watch, cancelled, tag}] ; DSH.text(chart)
+   ============================================================================ */
+const DSH = (function(){
+  const IDS = ['manglik','kaal_sarp','pitru','gand_mool','guru_chandala','surya_grahan','chandra_grahan','shrapit','angaraka'];
+  const GM = {0:'Ashwini (Ketu)',8:'Ashlesha (Mercury)',9:'Magha (Ketu)',17:'Jyeshtha (Mercury)',18:'Mula (Ketu)',26:'Revati (Mercury)'};
+  const ord = n => n + ((n % 100 >= 11 && n % 100 <= 13) ? 'th' : ({1:'st',2:'nd',3:'rd'}[n % 10] || 'th'));
+  const TAG = { manglik:'Common practice. Rules and cancellations differ by school.', kaal_sarp:'Modern tradition. It is not in the BPHS.', pitru:'Common practice. Schools differ on the signs.', gand_mool:'Traditional birth-star rule.',
+    guru_chandala:'Common practice (from the Jupiter-node conjunction).', surya_grahan:'Common practice.', chandra_grahan:'Common practice.', shrapit:'Common practice (Saturn with Rahu).', angaraka:'Common practice (Mars with Rahu).' };
+  function pitru(chart){
+    const P = chart.planets, asc = chart.ascendant.sign, s9 = (asc + 8) % 12, lord = SIGNS[s9].lord, why = [];
+    if (P.Rahu.house === 9) why.push('Rahu is in the 9th house'); if (P.Ketu.house === 9) why.push('Ketu is in the 9th house');
+    const L = P[lord];
+    ['Rahu','Ketu','Saturn'].forEach(n => { if (n !== lord && L.sign === P[n].sign) why.push(`the 9th lord ${lord} is with ${n} in ${SIGNS[L.sign].name}`); });
+    if (P.Sun.house === 9) ['Saturn','Rahu','Ketu'].forEach(n => { if (P[n].house === 9) why.push(`the Sun is with ${n} in the 9th house`); });
+    return { present: why.length > 0, why: why.join('; '), level: why.length >= 2 ? 'Notable' : why.length ? 'Mild' : null };
+  }
+  function gandMool(chart){
+    const m = chart.planets.Moon, ni = m.nakshatra.index, hit = GM[ni] != null;
+    return { present: hit, why: hit ? `the Moon is in ${GM[ni].split(' (')[0]}, pada ${m.nakshatra.pada}` : '', level: null };
+  }
+  function compute(chart){
+    let det = []; try { det = (typeof YGE !== 'undefined' && YGE) ? YGE.detect(chart) : []; } catch(e){ console.warn('dosha yge', e); }
+    const by = {}; det.forEach(y => { by[y.id] = y; });
+    const dat = {}; if (typeof YGE_DATA !== 'undefined') YGE_DATA.yogas.forEach(y => { dat[y.id] = y; });
+    const EXTRA = {
+      pitru: { name:'Pitru Dosha (ancestors)', meaning:'The 9th house, the house of father, elders and inherited merit, is touched by Rahu, Ketu or Saturn, which is traditionally read as a karmic theme with family elders or a delayed inheritance of luck', scenes:['you may feel your luck comes later than for others','you may carry a sense of duty towards parents and elders'], best:'deep respect for family roots and steady service', watch:'delays or distance from the father or elders', tone:'challenge' },
+      gand_mool: { name:'Gand Mool (birth star)', meaning:'The Moon is in one of the six stars at the junctions of the water and fire signs. Tradition treats the birth as sensitive and asks families to take the birth star seriously', scenes:['you may have felt big changes early in life','you may have an unusually strong inner drive'], best:'strong intuition and the ability to start over', watch:'sudden turns in early life', tone:'challenge' }
+    };
+    const own = { pitru: pitru(chart), gand_mool: gandMool(chart) };
+    return IDS.map(id => {
+      const d = dat[id] || EXTRA[id] || {}, x = by[id] || (own[id] && own[id].present ? own[id] : null);
+      return { id, name: d.name || id, present: !!x, why: x ? x.why : '', level: x ? (x.level || null) : null, levelWhy: x ? x.levelWhy : '', note: x && x.note ? x.note : '',
+        cancelled: x ? !!x.cancelled : false, meaning: d.meaning || '', scenes: d.scenes || [], best: d.best || '', watch: d.watch || '', tone: d.tone || '', tag: TAG[id] || '' };
+    });
+  }
+  function card(r, open){
+    const st = r.present ? (r.cancelled ? 'softened' : 'present') : 'clear', lab = { present:'Present', softened:'Present, softened', clear:'Not found' }[st];
+    const body = r.present ? `<p><b>Why:</b> ${escapeHtml(r.why)}${r.level ? ` <em class="dsh-lv">${escapeHtml(r.level)}</em>` : ''}</p>${r.levelWhy ? `<p class="dsh-sub">${escapeHtml(r.levelWhy)}</p>` : ''}${r.note ? `<p class="dsh-soft"><b>What can soften it:</b> ${escapeHtml(r.note)}</p>` : ''}${r.cancelled && !r.note ? '<p class="dsh-soft"><b>Softened:</b> a classical relief condition applies in your chart.</p>' : ''}
+      <p><b>What it is said to mean:</b> ${escapeHtml(r.meaning)}.</p>${r.scenes.length ? `<ul>${r.scenes.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul>` : ''}
+      <p><b>At its best:</b> ${escapeHtml(r.best)}. <b>Watch for:</b> ${escapeHtml(r.watch)}.</p>`
+      : `<p>Your chart does not show this. <span class="dsh-sub">What was checked: ${escapeHtml(r.meaning)}.</span></p>`;
+    return `<details class="dsh-c ${st}"${open && r.present ? ' open' : ''}><summary><b>${escapeHtml(r.name)}</b><span class="dsh-p">${lab}</span></summary>${body}<p class="dsh-tag">${escapeHtml(r.tag)}</p></details>`;
+  }
+  function html(chart){
+    let rs; try { rs = compute(chart); } catch(e){ console.warn('dosha', e); return '<div class="meta-err">Could not build the Dosha Check.</div>'; }
+    const pres = rs.filter(r => r.present), clr = rs.filter(r => !r.present), soft = pres.filter(r => r.cancelled).length;
+    return `<div class="dsh"><div class="dsh-hero"><b>${pres.length}</b> of ${rs.length} checks found in your chart${soft ? ` · ${soft} softened` : ''}</div>
+      <p class="avk-intro">A dosha is a traditional marker that asks for care, not a verdict on your life. Each one shows the exact reason from your chart and what can soften it. Many people with a dosha live very full lives, and many astrologers read them lightly.</p>
+      ${pres.length ? `<h4 class="dsh-h">Found in your chart</h4>${pres.map(r => card(r, true)).join('')}` : '<div class="dsh-none">None of these checks are found in your chart.</div>'}
+      ${clr.length ? `<h4 class="dsh-h">Not found</h4>${clr.map(r => card(r, false)).join('')}` : ''}
+      <p class="pn-note">Houses are counted from the rising sign (whole signs). The yoga engine on the Yogas screen uses the same rules. Schools differ on several of these, so read them with an astrologer you trust.</p></div>`;
+  }
+  function text(chart){ try { return compute(chart).map(r => `${r.name}: ${r.present ? 'present' + (r.cancelled ? ' (softened)' : '') + ' - ' + r.why : 'not found'}`).join('\n'); } catch(e){ return ''; } }
+  return { compute, html, text, ids: IDS };
+})();
+window.buildDoshaPanel = function(chart){ return DSH.html(chart); };
 <\/script>
 <script>
 /* ============================================================================

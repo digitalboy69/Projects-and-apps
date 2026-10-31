@@ -35,5 +35,30 @@ const CHG = (function(){
       <details class="chg-d"><summary>What each name means</summary><div class="chg-keys">${keys}</div>
         <p class="pn-note">Choghadiya is a popular almanac practice, not a rule from Parashara. Many families prefer Abhijit Muhurta and avoid Rahu Kalam on top of it. Use it as guidance.</p></details></div>`;
   }
-  return { parts, html, info: INFO };
+  /* standalone panel: pick a date and time, see the slots for the birth place */
+  function panel(chart, profile){
+    const tz = Number(profile.tz != null ? profile.tz : chart.tzOffsetHours), now = jdToLocalParts(Date.now() / 86400000 + 2440587.5, tz);
+    return `<div class="chgp"><div class="avk-intro">Today's good and bad time slots for <b>${escapeHtml(profile.place || 'your place')}</b>. Change the date or time to see another day.</div>
+      <div class="chgp-in"><label>Date <input type="date" id="chgDate" value="${now.dateStr}"></label><label>Time <input type="time" id="chgTime" value="${now.timeStr.slice(0, 5)}"></label>
+      <button type="button" id="chgNow" class="chgp-btn">Now</button></div><div id="chgBody"></div></div>`;
+  }
+  function draw(){
+    const b = document.getElementById('chgBody'); if (!b) return;
+    const pf = window.__vgProf, ch = (typeof currentChartForModal !== 'undefined') ? currentChartForModal : null; if (!pf || !ch) return;
+    const tz = Number(pf.tz != null ? pf.tz : ch.tzOffsetHours), lat = Number(pf.lat), lon = Number(pf.lon);
+    const ds = document.getElementById('chgDate').value, ts = document.getElementById('chgTime').value || '12:00'; if (!ds) return;
+    const [y, m, d] = ds.split('-').map(Number), [hh, mm] = ts.split(':').map(Number), jd = toJulianDay(y, m, d, hh, mm, 0) - tz / 24;
+    try { const P = panchangaAt(jd, lat, lon, tz), h = html(P, { tz }, jd, P.vara.date);
+      b.innerHTML = h || '<div class="pl-empty">The Sun does not rise and set normally at this place and date, so Choghadiya cannot be worked out.</div>'; }
+    catch(e){ b.innerHTML = '<div class="meta-err">Could not work out Choghadiya for this moment.</div>'; console.warn(e); }
+  }
+  document.addEventListener('input', e => { if (e.target.id === 'chgDate' || e.target.id === 'chgTime') draw(); });
+  document.addEventListener('click', e => {
+    if (e.target.id !== 'chgNow') return; const pf = window.__vgProf; if (!pf) return;
+    const tz = Number(pf.tz != null ? pf.tz : 0), n = jdToLocalParts(Date.now() / 86400000 + 2440587.5, tz);
+    document.getElementById('chgDate').value = n.dateStr; document.getElementById('chgTime').value = n.timeStr.slice(0, 5); draw();
+  });
+  window.buildChoghadiyaPanel = function(chart, profile){ setTimeout(draw, 0); return panel(chart, profile); };
+  const _sw = window.switchAppTab; if (typeof _sw === 'function' && !window.__chgSw){ window.__chgSw = 1; window.switchAppTab = function(id){ const r = _sw.apply(this, arguments); if (id === 'panel-choghadiya') setTimeout(draw, 30); return r; }; }
+  return { parts, html, info: INFO, draw };
 })();

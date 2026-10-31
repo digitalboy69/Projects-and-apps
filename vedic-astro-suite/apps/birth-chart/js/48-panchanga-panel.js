@@ -82,7 +82,6 @@ function pnRender(){
     <div class="pn-facts">${facts}</div>
     <div class="pn-chips">${calChips}</div>
     ${day}
-    ${typeof CHG !== 'undefined' ? CHG.html(P, c, jd, ref) : ''}
     <div class="pn-note">Vedic day runs sunrise to sunrise, so births before sunrise take the previous weekday. Sunrise uses the upper limb with standard refraction (−0.833°). Lunar month is the Amanta (new-moon to new-moon) system; Purnimanta calendars name the Krishna fortnight one month later. Vishti karana is traditionally avoided for new beginnings.</div>`;
 }
 document.addEventListener('input', (e) => { if (e.target.id === 'pnDate' || e.target.id === 'pnTime') { document.querySelectorAll('[data-pn-set]').forEach(b => b.classList.remove('on')); pnRender(); } });

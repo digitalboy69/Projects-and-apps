@@ -17,3 +17,25 @@
 .avk-c b{font-weight:600;font-size:14.5px;word-break:break-word}
 .avk-c details{margin-top:6px}.avk-c summary{cursor:pointer;font-size:11.5px;color:var(--gold,#d4af37)}
 .avk-c p{margin:5px 0 0;font-size:12.5px;line-height:1.5;color:var(--text-muted,#c9c4b9)}
+/* Choghadiya panel and Dosha Check */
+.chgp-in{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin:0 0 12px}
+.chgp-in label{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--text-muted,#9f9a8f)}
+.chgp-in input{padding:9px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--text-main,#eae6df);font:inherit;font-size:14px}
+.chgp-btn{padding:10px 16px;border-radius:10px;border:1px solid var(--gold,#d4af37);background:rgba(212,175,55,.14);color:var(--gold,#d4af37);font:inherit;font-weight:600;cursor:pointer}
+.dsh-hero{padding:14px 16px;margin:0 0 10px;border-radius:14px;border:1px solid rgba(212,175,55,.35);background:rgba(212,175,55,.08);font-size:15px}
+.dsh-hero b{font-size:24px;color:var(--gold,#d4af37);margin-right:4px}
+.dsh-h{margin:16px 0 8px;font:600 12px var(--font-sans);letter-spacing:.09em;text-transform:uppercase;color:var(--gold,#d4af37)}
+.dsh-c{margin:0 0 8px;border-radius:13px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);border-left:3px solid #6b7390}
+.dsh-c.present{border-left-color:#e0925a}.dsh-c.softened{border-left-color:#d4af37}.dsh-c.clear{border-left-color:#5fd08a}
+.dsh-c>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dsh-c>summary::-webkit-details-marker{display:none}
+.dsh-c>summary b{font-size:14.5px}
+.dsh-p{font:600 10.5px var(--font-sans);text-transform:uppercase;letter-spacing:.05em;padding:3px 9px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.dsh-c.present .dsh-p{color:#e0925a}.dsh-c.softened .dsh-p{color:#d4af37}.dsh-c.clear .dsh-p{color:#5fd08a}
+.dsh-c>p,.dsh-c>ul{margin:0;padding:0 14px 10px;font-size:13.5px;line-height:1.6}
+.dsh-c>ul{padding-left:30px;color:var(--text-muted,#c9c4b9)}
+.dsh-sub{color:var(--text-muted,#9f9a8f);font-size:12.5px}
+.dsh-soft{color:#e9c97f}
+.dsh-lv{font-style:normal;font-size:11px;padding:1px 8px;border-radius:99px;border:1px solid rgba(255,255,255,.25);margin-left:4px}
+.dsh-tag{font-size:11.5px!important;color:var(--text-muted,#9f9a8f)}
+.dsh-none{padding:14px;border-radius:12px;border:1px dashed rgba(95,208,138,.4);color:#5fd08a;font-size:14px}

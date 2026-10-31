@@ -31,7 +31,7 @@ const AVK = (function(){
   function compute(chart, profile){
     const mo = chart.planets.Moon, ni = mo.nakshatra.index != null ? mo.nakshatra.index : NAKSHATRAS.findIndex(n => n.name === mo.nakshatra.name), pada = mo.nakshatra.pada;
     const sg = SIGNS[mo.sign], nk = NAKSHATRAS[ni], asc = SIGNS[chart.ascendant.sign];
-    let P = null; try { P = panchangaAt(chart.julianDay, profile.lat, profile.lon, profile.tz != null ? profile.tz : chart.tzOffsetHours); } catch(e){ console.warn('avakahada panchang', e); }
+    let P = null; try { P = panchangaAt(chart.julianDay, Number(profile.lat), Number(profile.lon), Number(profile.tz != null ? profile.tz : chart.tzOffsetHours)); } catch(e){ console.warn('avakahada panchang', e); }
     const rows = [
       {k:'Name sound', v: SYL[ni].split(' ')[pada - 1] + '  (' + SYL[ni] + ')', note: MEAN.syllable},
       {k:'Moon sign (Rashi)', v: sg.symbol + ' ' + sg.name + ' (' + sg.sk + ')'}, {k:'Sign lord', v: sg.lord},
