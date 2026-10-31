@@ -92,12 +92,19 @@ document.addEventListener('mouseover',e=>{if(OPT('lineCopy')&&e.target.closest&&
 document.addEventListener('scroll',()=>{if(lcBlk)lineCopyPlace();},true);window.addEventListener('resize',()=>{if(lcBlk)lineCopyPlace();});
 lcBtn.addEventListener('mousedown',e=>e.preventDefault());lcBtn.addEventListener('click',()=>{if(lcBlk)copyText((lcBlk.innerText||'').trim(),'Line copied');});
 
-function renderNav(){const L=live(),tags={};L.forEach(n=>n.tags.forEach(t=>tags[t]=(tags[t]||0)+1));const tk=tasksAll().filter(t=>!t.done).length,pe=S.preds.filter(x=>x.st==='pending').length;
- const it=(v,e,l,c)=>`<button class="nv${ui.view===v?' on':''}" data-v="${esc(v)}"><span class="e">${e}</span>${esc(l)}${c!=null?`<span class="n">${c}</span>`:''}</button>`;
+function navColl(){try{return JSON.parse(localStorage.getItem('jn_nvc')||'{}')||{};}catch(e){return {};}}
+function navCollSet(id){const c=navColl();c[id]=!c[id];try{localStorage.setItem('jn_nvc',JSON.stringify(c));}catch(e){}}
+function renderNav(){const L=live(),tags={};L.forEach(n=>n.tags.forEach(t=>tags[t]=(tags[t]||0)+1));const tk=tasksAll().filter(t=>!t.done).length,pe=S.preds.filter(x=>x.st==='pending').length,col=navColl();
+ const it=(v,e,l,c,cls)=>`<button class="nv${ui.view===v?' on':''}${cls?' '+cls:''}" data-v="${esc(v)}"><span class="e">${e}</span><span class="l">${esc(l)}</span>${c!=null?`<span class="n${c>0&&(v==='tasks'||v==='pred')?' hot':''}">${c}</span>`:''}</button>`;
+ const sec=(id,title,body,act)=>`<div class="nh"><button class="nht" data-sec="${id}" aria-expanded="${!col[id]}"><i>▾</i>${title}</button>${act||''}</div><div class="ng${col[id]?' shut':''}">${body}</div>`;
+ const tn=Object.keys(tags).sort((x,y)=>tags[y]-tags[x]||(x<y?-1:1)),tshow=ui.allTags?tn:tn.slice(0,10);
+ const rec=L.slice().sort((x,y)=>(y.updated||0)-(x.updated||0)).slice(0,3);
+ $('#sst').innerHTML=`<button class="nv st" data-v="all"><b>${L.length}</b><small>notes</small></button><button class="nv st${tk?' hot':''}" data-v="tasks"><b>${tk}</b><small>to do</small></button><button class="nv st${pe?' hot':''}" data-v="pred"><b>${pe}</b><small>waiting</small></button>`;
  $('#nav').innerHTML=it('home','🏛️','Home')+it('all','🗒️','All notes',L.length)+it('pinned','📌','Pinned',L.filter(n=>n.pin).length)+it('tasks','✅','Tasks',tk)+it('pred','🎯','Predictions',pe)+
- `<div class="nh">Notebooks<button data-a="addnb" title="New notebook">＋</button></div>`+S.nbs.map(b=>it('nb:'+b.id,b.ic,b.name,L.filter(n=>n.nb===b.id).length)).join('')+
- (Object.keys(tags).length?`<div class="nh">Tags</div>`+Object.keys(tags).sort().map(t=>it('tag:'+t,'#',t,tags[t])).join(''):'')+
- `<div class="nh">System</div>`+it('trash','🗑️','Trash',S.notes.filter(n=>n.trash).length)+it('settings','⚙️','Settings');}
+ (rec.length?sec('rec','Recent',rec.map(n=>`<button class="nv rc${ui.sel===n.id?' on':''}" data-id="${esc(n.id)}"><span class="e">🕘</span><span class="l">${esc(n.title||'Untitled')}</span></button>`).join('')):'')+
+ sec('nb','Notebooks',S.nbs.map(b=>it('nb:'+b.id,b.ic,b.name,L.filter(n=>n.nb===b.id).length)).join(''),`<button class="nha" data-a="addnb" title="New notebook" aria-label="New notebook">＋</button>`)+
+ (tn.length?sec('tags','Tags',`<div class="tgc">${tshow.map(t=>it('tag:'+t,'#',t,tags[t],'tagc')).join('')}</div>`+(tn.length>10?`<button class="nmore" data-sec="alltags">${ui.allTags?'Show fewer':'Show all '+tn.length}</button>`:'')):'')+
+ sec('sys','System',it('trash','🗑️','Trash',S.notes.filter(n=>n.trash).length)+it('settings','⚙️','Settings'));}
 function renderList(){const titles={home:'Home',all:'All notes',pinned:'Pinned',trash:'Trash',tasks:'Tasks',pred:'Predictions',settings:'Settings'};let t=titles[ui.view];if(!t){if(ui.view.startsWith('nb:')){const b=S.nbs.find(x=>x.id===ui.view.slice(3));t=b?b.ic+' '+b.name:'Notebook';}else t='#'+ui.view.slice(4);}
  const a=PV(ui.view)?live():listFor();const base=PV(ui.view)?listForAll():a;
  $('#lTitle').innerHTML=esc(t)+` <small>${base.length} note${base.length===1?'':'s'}</small>`;
@@ -257,6 +264,7 @@ function addTag(v){const n=N(ui.sel);v=(v||'').trim().toLowerCase().replace(/[^a
 document.addEventListener('click',e=>{const T=e.target;
  const ed0=T.closest('#ed');
  if(ed0){const li=T.closest('ul.cl li');if(li&&T===li&&e.offsetX<28){li.classList.toggle('done');changed();renderNav();return;}const wl=T.closest('a.wl');if(wl){e.preventDefault();const id=wl.dataset.note;if(N(id)){ui.view='all';openNote(id);}else toast('That linked note no longer exists');return;}const fg=T.closest('figure.chartfig');return;}
+ const sc=T.closest('[data-sec]');if(sc){if(sc.dataset.sec==='alltags')ui.allTags=!ui.allTags;else navCollSet(sc.dataset.sec);renderNav();return;}
  const nv=T.closest('.nv[data-v]');if(nv){go(nv.dataset.v);$('#app').classList.remove('sidev');return;}
  const a=T.closest('[data-a]'),act=a&&a.dataset.a;
  if(T.closest('[data-id]')&&!a){const el=T.closest('[data-id]');e.preventDefault();ui.view=PV(ui.view)?'all':ui.view;openNote(el.dataset.id);return;}
@@ -329,7 +337,7 @@ document.addEventListener('click',e=>{const h=e.target.closest('[data-hc]'),t=e.
  if(c){const k=c.dataset.ct,ic={info:'💡',ok:'✅',warn:'⚠️',bad:'⛔'}[k];closeModal();insBlock(`<div class="callout c-${k}"><b>${ic} </b>&nbsp;</div><p><br></p>`);}
  if(w){const x=N(w.dataset.wk);closeModal();ins(`<a class="wl" data-note="${x.id}" contenteditable="false">${esc(x.title||'Untitled')}</a>&nbsp;`);}},true);
 document.addEventListener('input',e=>{if(e.target.id==='wq'){const q=e.target.value.toLowerCase();$$('#wl button').forEach(b=>b.style.display=b.textContent.toLowerCase().includes(q)?'':'none');}});
-const shut=f=>()=>{$('#app').classList.remove('sidev');f();};$('#bNew').onclick=shut(doNew);$('#bNew2').onclick=doNew;$('#bTpl').onclick=shut(tplModal);$('#bSet').onclick=shut(setModal);$('#bCmd').onclick=shut(cmdOpen);$('#bLock').onclick=shut(lockNow);
+const shut=f=>()=>{$('#app').classList.remove('sidev');f();};$('#bNew').onclick=shut(doNew);$('#bNew2').onclick=doNew;$('#bTpl').onclick=shut(tplModal);$('#bSet').onclick=shut(setModal);$('#bCmd').onclick=shut(cmdOpen);$('#bFind').onclick=shut(cmdOpen);$('#bLock').onclick=shut(lockNow);
 document.addEventListener('click',e=>{const a=$('#app');if(a.classList.contains('sidev')&&!e.target.closest('#side,#bMenu,#bMenu2'))a.classList.remove('sidev');},true);
 $('#bMenu').onclick=()=>$('#app').classList.toggle('sidev');$('#bMenu2').onclick=()=>$('#app').classList.toggle('sidev');$('#bBack').onclick=()=>{$('#app').classList.remove('edit');};
 $('#q').addEventListener('keydown',e=>{if(e.key==='Escape'){e.target.value='';ui.q='';renderList();e.target.blur();}else if(e.key==='Enter'){const f=$('#items .it');if(f)f.click();}});

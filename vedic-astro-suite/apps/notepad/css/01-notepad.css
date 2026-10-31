@@ -188,3 +188,58 @@ input,select,textarea{font:inherit;color:inherit}
 
 .lmenu{display:none}
 @media(max-width:760px){.lmenu{display:grid}.focus .app.sidev .side{display:flex}}
+
+/* ===== side menu redesign: stats, quick find, grouped & collapsible sections, tag chips, recent notes, labelled footer ===== */
+.side{padding:16px 12px 10px;gap:0}
+.brand{padding:2px 6px 12px}
+.brand .lg{width:40px;height:40px;border-radius:13px;font-size:20px}
+.sst{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 10px}
+.nv.st{flex-direction:column;align-items:flex-start;gap:0;padding:8px 10px;border-radius:12px;background:color-mix(in srgb,var(--panel2) 85%,transparent);border:1px solid var(--line)}
+.nv.st b{font:700 18px/1.1 var(--serif);color:var(--tx)}.nv.st small{font-size:10.5px;letter-spacing:.06em;color:var(--tx3);text-transform:uppercase}
+.nv.st.hot{border-color:color-mix(in srgb,var(--acc) 45%,transparent)}.nv.st.hot b{color:var(--acc)}
+.nv.st:hover{border-color:var(--line2);background:var(--panel2)}.nv.st.on{border-color:var(--acc)}
+.find{display:flex;align-items:center;gap:8px;width:100%;margin:0 0 10px;padding:9px 11px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);color:var(--tx3);font-size:13.5px;text-align:left;transition:border-color .15s}
+.find:hover,.find:focus-visible{border-color:var(--acc);outline:none}
+.find em{flex:1;font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.find kbd{font:600 10px var(--mono);border:1px solid var(--line2);border-radius:5px;padding:1px 5px;color:var(--tx3)}
+.navs{margin-top:12px;padding-right:2px;scrollbar-width:thin}
+.nv{position:relative;gap:10px;padding:7px 10px;border-radius:11px;font-size:14px}
+.nv .e{flex:none;width:26px;height:26px;display:grid;place-items:center;border-radius:8px;font-size:14px;background:rgba(255,255,255,.04)}
+[data-theme="parch"] .nv .e{background:rgba(60,40,10,.06)}
+.nv .l{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nv.on{background:color-mix(in srgb,var(--acc) 14%,transparent)}
+.nv.on .e{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+.nv.on::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--acc)}
+.nv .n{margin-left:0;padding:1px 8px;border-radius:99px;background:rgba(255,255,255,.06);font-size:11px;line-height:1.5}
+[data-theme="parch"] .nv .n{background:rgba(60,40,10,.08)}
+.nv .n.hot,.nv.on .n{background:color-mix(in srgb,var(--acc) 22%,transparent);color:var(--acc)}
+.nv.rc .e{font-size:12px}.nv.rc{font-size:13px;color:var(--tx3)}.nv.rc:hover{color:var(--tx)}
+.nh{margin:14px 4px 4px 6px;justify-content:space-between}
+.nht{display:flex;align-items:center;gap:5px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);padding:4px 4px;border-radius:6px}
+.nht:hover{color:var(--tx)}.nht i{font-style:normal;font-size:11px;transition:transform .15s}
+.nht[aria-expanded="false"] i{transform:rotate(-90deg)}
+.nha{width:26px;height:26px;border-radius:8px;font-size:16px;line-height:1;color:var(--tx3)}.nha:hover{color:var(--acc);background:rgba(255,255,255,.07)}
+.ng.shut{display:none}
+.tgc{display:flex;flex-wrap:wrap;gap:6px;padding:4px 6px 2px}
+.nv.tagc{width:auto;padding:4px 10px;border-radius:99px;border:1px solid var(--line);font-size:12.5px;gap:5px}
+.nv.tagc .e{width:auto;height:auto;background:none;color:var(--tx3);font-size:12px}
+.nv.tagc .n{padding:0;background:none;font-size:11px;color:var(--tx3)}
+.nv.tagc.on{border-color:color-mix(in srgb,var(--acc) 55%,transparent)}.nv.tagc.on::before{display:none}
+.nmore{margin:4px 10px 0;font-size:12px;color:var(--acc);padding:3px 4px;border-radius:6px}.nmore:hover{text-decoration:underline}
+.sfoot{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding-top:8px}
+.ib.fb{width:auto;height:auto;flex-direction:column;gap:1px;padding:6px 2px;border-radius:11px}
+.ib.fb span{font-size:16px;line-height:1.2}.ib.fb small{font-size:10px;color:var(--tx3)}.ib.fb:hover small{color:var(--tx2)}
+.ib.fb{display:flex;align-items:center;justify-content:center}
+@media(max-width:760px){
+  .app.sidev::after{content:"";position:absolute;inset:0;z-index:29;background:rgba(0,0,0,.55)}
+  .side{z-index:30;width:86%;max-width:320px;padding-top:max(16px,env(safe-area-inset-top))}
+  .nv{padding:9px 10px}.nv .e{width:30px;height:30px}.nv.on::before{left:-12px}
+  .find kbd{display:none}
+  .sfoot{padding-bottom:max(6px,env(safe-area-inset-bottom))}
+}
+/* the drawer must be solid (under the glass look the theme colour is see-through) and must not sit under the floating switcher button */
+.brand .lg{display:none}.brand{padding-left:46px;min-height:40px}
+@media(max-width:760px){
+  .app.sidev .side{background:#0c1120;box-shadow:0 0 0 1px var(--line2),var(--sh)}
+  [data-theme="parch"] .app.sidev .side{background:#efe6d2}[data-theme="night"] .app.sidev .side{background:#050505}
+}

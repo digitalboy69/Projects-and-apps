@@ -184,7 +184,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-31 - 1732 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-31 - 1734 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -394,11 +394,11 @@ css/01-base.css                                     62 lines    2 KB
 css/02-developer-card.css                           66 lines    8 KB
 ```
 
-**notepad** - 3 files, 592 lines, 100 KB
+**notepad** - 3 files, 657 lines, 108 KB
 ```
-index.html                                          50 lines    2 KB
-js/01-notepad.js                                   351 lines   71 KB
-css/01-notepad.css                                 191 lines   27 KB
+index.html                                          52 lines    3 KB
+js/01-notepad.js                                   359 lines   73 KB
+css/01-notepad.css                                 246 lines   32 KB
 ```
 
 **sky3d** - 79 files, 7394 lines, 442 KB
@@ -523,6 +523,7 @@ shared/quick-menu.js                               157 lines   12 KB
 - KP system (js/125-kp-system.js, KP; late panel panel-kp): Placidus by semi-arc iteration (null above 66 deg), lords() splits each nakshatra by Vimshottari proportions into sub and sub-sub; planet signifies = star lord's occupied+owned houses plus own; house owners = cusp sign lord plus lords of signs fully inside; promise sets (marriage 2-7-11, job 2-6-10-11, children 2-5-11, property 4-11-12, education 4-9-11, foreign 3-9-12) are common KP-Reader practice, not source-checked. Placidus checked only for internal consistency, not against other software.
 - Notepad: fixed typing cursor jump, note-link exit, template-from-Tasks, open side menu; new Settings tab (view settings) with switches stored in S.set.o (defaults in OPT_DEF; line copy + card copy OFF); test tests/notepad_test.py.
 - Notepad phone: added a menu button (☰) to the note-list header and made the drawer open in focus mode, so every screen has a way back to the menu (not tested).
+- Notepad side menu redesigned (renderNav in apps/notepad/js/01-notepad.js + block at end of css/01-notepad.css): stat tiles, Search-or-jump field, grouped collapsible sections (saved in localStorage jn_nvc), tag chips (top 10 + Show all), Recent notes, labelled footer, dimmed backdrop; fixed the phone drawer being see-through under the glass theme and the floating switcher covering the logo. data-v/data-a/ids unchanged.
 - Main menu Settings (shell): popup with one switch "Copy buttons" (off by default, key vedicCopyBtns); shared/copy-toggle.js in every app hides/shows buttons whose label starts with "Copy" (not tested).
 - 3D Rising view: "Navamsha now" line + tap any of the 12 signs for its 9 Navamshas with start/end to the second (`_navSign`, `_navBounds`, `navDetailHTML`, `risingSel` in sky3d/js/18); test tests/rising_navamsha_test.py.
 - Liquid glass UI: shared/liquid-glass.css + .js loaded by shell and all 4 apps (<html data-app="bc|3d|np|dev">); rules only under `html.lg`; switch in main-menu Settings (vedicGlass, default on). To restyle a new card class, add it to the :is(...) list for its app. Copy-toggle now also hides the floating `.vax-fb` button.

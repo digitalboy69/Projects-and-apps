@@ -52805,6 +52805,61 @@ input,select,textarea{font:inherit;color:inherit}
 
 .lmenu{display:none}
 @media(max-width:760px){.lmenu{display:grid}.focus .app.sidev .side{display:flex}}
+
+/* ===== side menu redesign: stats, quick find, grouped & collapsible sections, tag chips, recent notes, labelled footer ===== */
+.side{padding:16px 12px 10px;gap:0}
+.brand{padding:2px 6px 12px}
+.brand .lg{width:40px;height:40px;border-radius:13px;font-size:20px}
+.sst{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 10px}
+.nv.st{flex-direction:column;align-items:flex-start;gap:0;padding:8px 10px;border-radius:12px;background:color-mix(in srgb,var(--panel2) 85%,transparent);border:1px solid var(--line)}
+.nv.st b{font:700 18px/1.1 var(--serif);color:var(--tx)}.nv.st small{font-size:10.5px;letter-spacing:.06em;color:var(--tx3);text-transform:uppercase}
+.nv.st.hot{border-color:color-mix(in srgb,var(--acc) 45%,transparent)}.nv.st.hot b{color:var(--acc)}
+.nv.st:hover{border-color:var(--line2);background:var(--panel2)}.nv.st.on{border-color:var(--acc)}
+.find{display:flex;align-items:center;gap:8px;width:100%;margin:0 0 10px;padding:9px 11px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);color:var(--tx3);font-size:13.5px;text-align:left;transition:border-color .15s}
+.find:hover,.find:focus-visible{border-color:var(--acc);outline:none}
+.find em{flex:1;font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.find kbd{font:600 10px var(--mono);border:1px solid var(--line2);border-radius:5px;padding:1px 5px;color:var(--tx3)}
+.navs{margin-top:12px;padding-right:2px;scrollbar-width:thin}
+.nv{position:relative;gap:10px;padding:7px 10px;border-radius:11px;font-size:14px}
+.nv .e{flex:none;width:26px;height:26px;display:grid;place-items:center;border-radius:8px;font-size:14px;background:rgba(255,255,255,.04)}
+[data-theme="parch"] .nv .e{background:rgba(60,40,10,.06)}
+.nv .l{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nv.on{background:color-mix(in srgb,var(--acc) 14%,transparent)}
+.nv.on .e{background:color-mix(in srgb,var(--acc) 22%,transparent)}
+.nv.on::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--acc)}
+.nv .n{margin-left:0;padding:1px 8px;border-radius:99px;background:rgba(255,255,255,.06);font-size:11px;line-height:1.5}
+[data-theme="parch"] .nv .n{background:rgba(60,40,10,.08)}
+.nv .n.hot,.nv.on .n{background:color-mix(in srgb,var(--acc) 22%,transparent);color:var(--acc)}
+.nv.rc .e{font-size:12px}.nv.rc{font-size:13px;color:var(--tx3)}.nv.rc:hover{color:var(--tx)}
+.nh{margin:14px 4px 4px 6px;justify-content:space-between}
+.nht{display:flex;align-items:center;gap:5px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);padding:4px 4px;border-radius:6px}
+.nht:hover{color:var(--tx)}.nht i{font-style:normal;font-size:11px;transition:transform .15s}
+.nht[aria-expanded="false"] i{transform:rotate(-90deg)}
+.nha{width:26px;height:26px;border-radius:8px;font-size:16px;line-height:1;color:var(--tx3)}.nha:hover{color:var(--acc);background:rgba(255,255,255,.07)}
+.ng.shut{display:none}
+.tgc{display:flex;flex-wrap:wrap;gap:6px;padding:4px 6px 2px}
+.nv.tagc{width:auto;padding:4px 10px;border-radius:99px;border:1px solid var(--line);font-size:12.5px;gap:5px}
+.nv.tagc .e{width:auto;height:auto;background:none;color:var(--tx3);font-size:12px}
+.nv.tagc .n{padding:0;background:none;font-size:11px;color:var(--tx3)}
+.nv.tagc.on{border-color:color-mix(in srgb,var(--acc) 55%,transparent)}.nv.tagc.on::before{display:none}
+.nmore{margin:4px 10px 0;font-size:12px;color:var(--acc);padding:3px 4px;border-radius:6px}.nmore:hover{text-decoration:underline}
+.sfoot{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding-top:8px}
+.ib.fb{width:auto;height:auto;flex-direction:column;gap:1px;padding:6px 2px;border-radius:11px}
+.ib.fb span{font-size:16px;line-height:1.2}.ib.fb small{font-size:10px;color:var(--tx3)}.ib.fb:hover small{color:var(--tx2)}
+.ib.fb{display:flex;align-items:center;justify-content:center}
+@media(max-width:760px){
+  .app.sidev::after{content:"";position:absolute;inset:0;z-index:29;background:rgba(0,0,0,.55)}
+  .side{z-index:30;width:86%;max-width:320px;padding-top:max(16px,env(safe-area-inset-top))}
+  .nv{padding:9px 10px}.nv .e{width:30px;height:30px}.nv.on::before{left:-12px}
+  .find kbd{display:none}
+  .sfoot{padding-bottom:max(6px,env(safe-area-inset-bottom))}
+}
+/* the drawer must be solid (under the glass look the theme colour is see-through) and must not sit under the floating switcher button */
+.brand .lg{display:none}.brand{padding-left:46px;min-height:40px}
+@media(max-width:760px){
+  .app.sidev .side{background:#0c1120;box-shadow:0 0 0 1px var(--line2),var(--sh)}
+  [data-theme="parch"] .app.sidev .side{background:#efe6d2}[data-theme="night"] .app.sidev .side{background:#050505}
+}
 </style>
 <style>
 /* ============================================================================
@@ -53144,13 +53199,15 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
 <div class="app" id="app">
   <aside class="side" id="side">
     <div class="brand"><div class="lg">📝</div><div><b>Jyotish Notebook</b><small>your private desk</small></div></div>
+    <div class="sst" id="sst"></div>
+    <button class="find" id="bFind" type="button"><span>🔎</span><em>Search or jump to…</em><kbd>Ctrl K</kbd></button>
     <button class="newbtn" id="bNew" type="button">＋ New note</button>
     <nav class="navs" id="nav"></nav>
     <div class="sfoot">
-      <button class="ib" id="bCmd" title="Command palette (Ctrl+K)">⌘</button>
-      <button class="ib" id="bTpl" title="Templates">🗂️</button>
-      <button class="ib" id="bSet" title="Settings, backup &amp; lock">⚙️</button>
-      <button class="ib" id="bLock" title="Lock notebook">🔒</button>
+      <button class="ib fb" id="bCmd" title="Command palette (Ctrl+K)"><span>⌘</span><small>Commands</small></button>
+      <button class="ib fb" id="bTpl" title="Templates"><span>🗂️</span><small>Templates</small></button>
+      <button class="ib fb" id="bSet" title="Settings, backup &amp; lock"><span>⚙️</span><small>Settings</small></button>
+      <button class="ib fb" id="bLock" title="Lock notebook"><span>🔒</span><small>Lock</small></button>
     </div>
   </aside>
   <section class="lst" id="lst">
@@ -53267,12 +53324,19 @@ document.addEventListener('mouseover',e=>{if(OPT('lineCopy')&&e.target.closest&&
 document.addEventListener('scroll',()=>{if(lcBlk)lineCopyPlace();},true);window.addEventListener('resize',()=>{if(lcBlk)lineCopyPlace();});
 lcBtn.addEventListener('mousedown',e=>e.preventDefault());lcBtn.addEventListener('click',()=>{if(lcBlk)copyText((lcBlk.innerText||'').trim(),'Line copied');});
 
-function renderNav(){const L=live(),tags={};L.forEach(n=>n.tags.forEach(t=>tags[t]=(tags[t]||0)+1));const tk=tasksAll().filter(t=>!t.done).length,pe=S.preds.filter(x=>x.st==='pending').length;
- const it=(v,e,l,c)=>`<button class="nv${ui.view===v?' on':''}" data-v="${esc(v)}"><span class="e">${e}</span>${esc(l)}${c!=null?`<span class="n">${c}</span>`:''}</button>`;
+function navColl(){try{return JSON.parse(localStorage.getItem('jn_nvc')||'{}')||{};}catch(e){return {};}}
+function navCollSet(id){const c=navColl();c[id]=!c[id];try{localStorage.setItem('jn_nvc',JSON.stringify(c));}catch(e){}}
+function renderNav(){const L=live(),tags={};L.forEach(n=>n.tags.forEach(t=>tags[t]=(tags[t]||0)+1));const tk=tasksAll().filter(t=>!t.done).length,pe=S.preds.filter(x=>x.st==='pending').length,col=navColl();
+ const it=(v,e,l,c,cls)=>`<button class="nv${ui.view===v?' on':''}${cls?' '+cls:''}" data-v="${esc(v)}"><span class="e">${e}</span><span class="l">${esc(l)}</span>${c!=null?`<span class="n${c>0&&(v==='tasks'||v==='pred')?' hot':''}">${c}</span>`:''}</button>`;
+ const sec=(id,title,body,act)=>`<div class="nh"><button class="nht" data-sec="${id}" aria-expanded="${!col[id]}"><i>▾</i>${title}</button>${act||''}</div><div class="ng${col[id]?' shut':''}">${body}</div>`;
+ const tn=Object.keys(tags).sort((x,y)=>tags[y]-tags[x]||(x<y?-1:1)),tshow=ui.allTags?tn:tn.slice(0,10);
+ const rec=L.slice().sort((x,y)=>(y.updated||0)-(x.updated||0)).slice(0,3);
+ $('#sst').innerHTML=`<button class="nv st" data-v="all"><b>${L.length}</b><small>notes</small></button><button class="nv st${tk?' hot':''}" data-v="tasks"><b>${tk}</b><small>to do</small></button><button class="nv st${pe?' hot':''}" data-v="pred"><b>${pe}</b><small>waiting</small></button>`;
  $('#nav').innerHTML=it('home','🏛️','Home')+it('all','🗒️','All notes',L.length)+it('pinned','📌','Pinned',L.filter(n=>n.pin).length)+it('tasks','✅','Tasks',tk)+it('pred','🎯','Predictions',pe)+
- `<div class="nh">Notebooks<button data-a="addnb" title="New notebook">＋</button></div>`+S.nbs.map(b=>it('nb:'+b.id,b.ic,b.name,L.filter(n=>n.nb===b.id).length)).join('')+
- (Object.keys(tags).length?`<div class="nh">Tags</div>`+Object.keys(tags).sort().map(t=>it('tag:'+t,'#',t,tags[t])).join(''):'')+
- `<div class="nh">System</div>`+it('trash','🗑️','Trash',S.notes.filter(n=>n.trash).length)+it('settings','⚙️','Settings');}
+ (rec.length?sec('rec','Recent',rec.map(n=>`<button class="nv rc${ui.sel===n.id?' on':''}" data-id="${esc(n.id)}"><span class="e">🕘</span><span class="l">${esc(n.title||'Untitled')}</span></button>`).join('')):'')+
+ sec('nb','Notebooks',S.nbs.map(b=>it('nb:'+b.id,b.ic,b.name,L.filter(n=>n.nb===b.id).length)).join(''),`<button class="nha" data-a="addnb" title="New notebook" aria-label="New notebook">＋</button>`)+
+ (tn.length?sec('tags','Tags',`<div class="tgc">${tshow.map(t=>it('tag:'+t,'#',t,tags[t],'tagc')).join('')}</div>`+(tn.length>10?`<button class="nmore" data-sec="alltags">${ui.allTags?'Show fewer':'Show all '+tn.length}</button>`:'')):'')+
+ sec('sys','System',it('trash','🗑️','Trash',S.notes.filter(n=>n.trash).length)+it('settings','⚙️','Settings'));}
 function renderList(){const titles={home:'Home',all:'All notes',pinned:'Pinned',trash:'Trash',tasks:'Tasks',pred:'Predictions',settings:'Settings'};let t=titles[ui.view];if(!t){if(ui.view.startsWith('nb:')){const b=S.nbs.find(x=>x.id===ui.view.slice(3));t=b?b.ic+' '+b.name:'Notebook';}else t='#'+ui.view.slice(4);}
  const a=PV(ui.view)?live():listFor();const base=PV(ui.view)?listForAll():a;
  $('#lTitle').innerHTML=esc(t)+` <small>${base.length} note${base.length===1?'':'s'}</small>`;
@@ -53432,6 +53496,7 @@ function addTag(v){const n=N(ui.sel);v=(v||'').trim().toLowerCase().replace(/[^a
 document.addEventListener('click',e=>{const T=e.target;
  const ed0=T.closest('#ed');
  if(ed0){const li=T.closest('ul.cl li');if(li&&T===li&&e.offsetX<28){li.classList.toggle('done');changed();renderNav();return;}const wl=T.closest('a.wl');if(wl){e.preventDefault();const id=wl.dataset.note;if(N(id)){ui.view='all';openNote(id);}else toast('That linked note no longer exists');return;}const fg=T.closest('figure.chartfig');return;}
+ const sc=T.closest('[data-sec]');if(sc){if(sc.dataset.sec==='alltags')ui.allTags=!ui.allTags;else navCollSet(sc.dataset.sec);renderNav();return;}
  const nv=T.closest('.nv[data-v]');if(nv){go(nv.dataset.v);$('#app').classList.remove('sidev');return;}
  const a=T.closest('[data-a]'),act=a&&a.dataset.a;
  if(T.closest('[data-id]')&&!a){const el=T.closest('[data-id]');e.preventDefault();ui.view=PV(ui.view)?'all':ui.view;openNote(el.dataset.id);return;}
@@ -53504,7 +53569,7 @@ document.addEventListener('click',e=>{const h=e.target.closest('[data-hc]'),t=e.
  if(c){const k=c.dataset.ct,ic={info:'💡',ok:'✅',warn:'⚠️',bad:'⛔'}[k];closeModal();insBlock(`<div class="callout c-${k}"><b>${ic} </b>&nbsp;</div><p><br></p>`);}
  if(w){const x=N(w.dataset.wk);closeModal();ins(`<a class="wl" data-note="${x.id}" contenteditable="false">${esc(x.title||'Untitled')}</a>&nbsp;`);}},true);
 document.addEventListener('input',e=>{if(e.target.id==='wq'){const q=e.target.value.toLowerCase();$$('#wl button').forEach(b=>b.style.display=b.textContent.toLowerCase().includes(q)?'':'none');}});
-const shut=f=>()=>{$('#app').classList.remove('sidev');f();};$('#bNew').onclick=shut(doNew);$('#bNew2').onclick=doNew;$('#bTpl').onclick=shut(tplModal);$('#bSet').onclick=shut(setModal);$('#bCmd').onclick=shut(cmdOpen);$('#bLock').onclick=shut(lockNow);
+const shut=f=>()=>{$('#app').classList.remove('sidev');f();};$('#bNew').onclick=shut(doNew);$('#bNew2').onclick=doNew;$('#bTpl').onclick=shut(tplModal);$('#bSet').onclick=shut(setModal);$('#bCmd').onclick=shut(cmdOpen);$('#bFind').onclick=shut(cmdOpen);$('#bLock').onclick=shut(lockNow);
 document.addEventListener('click',e=>{const a=$('#app');if(a.classList.contains('sidev')&&!e.target.closest('#side,#bMenu,#bMenu2'))a.classList.remove('sidev');},true);
 $('#bMenu').onclick=()=>$('#app').classList.toggle('sidev');$('#bMenu2').onclick=()=>$('#app').classList.toggle('sidev');$('#bBack').onclick=()=>{$('#app').classList.remove('edit');};
 $('#q').addEventListener('keydown',e=>{if(e.key==='Escape'){e.target.value='';ui.q='';renderList();e.target.blur();}else if(e.key==='Enter'){const f=$('#items .it');if(f)f.click();}});
