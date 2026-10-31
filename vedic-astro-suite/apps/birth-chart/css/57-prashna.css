@@ -1,0 +1,21 @@
+/* Prashna chart (js/123-prashna.js). Calm: no motion. Phone first. */
+.prnp{padding:2px 0 24px;color:var(--text-main,#eae6df)}
+.prn-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.prn-chips button,.prn-sw button{padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--text-muted,#9f9a8f);font:inherit;font-size:13px;cursor:pointer}
+.prn-chips button.on,.prn-sw button.on{background:rgba(212,175,55,.18);border-color:var(--gold,#d4af37);color:var(--text-main,#eae6df)}
+.prn-hero{margin:4px 0 12px;padding:14px 16px;border-radius:16px;border:1px solid rgba(255,255,255,.1);border-left:3px solid #aaa;background:rgba(255,255,255,.04)}
+.prn-hero.good{border-left-color:#5fd08a}.prn-hero.bad{border-left-color:#e0725a}.prn-hero.mid{border-left-color:var(--gold,#d4af37)}
+.prn-hero small{display:block;font-size:12px;color:var(--text-muted,#9f9a8f)}
+.prn-hero b{display:block;font-size:19px;margin:2px 0}
+.prn-hero span{font-size:13px;color:var(--text-muted,#9f9a8f)}
+.prn-sw{display:flex;gap:6px;margin:0 0 8px}
+.prn-svg{max-width:360px;margin:0 auto 12px}.prn-svg svg{width:100%;height:auto;display:block}
+.prn-i{margin:0 0 8px;padding:10px 13px;border-radius:12px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);border-left:3px solid #888}
+.prn-i.good{border-left-color:#5fd08a}.prn-i.bad{border-left-color:#e0725a}.prn-i.mid{border-left-color:var(--gold,#d4af37)}
+.prn-i b{display:block;font-size:14px}.prn-i p{margin:3px 0 0;font-size:13.5px;line-height:1.55;color:var(--text-muted,#c9c4b9)}
+.prn-d{margin:10px 0;border-radius:12px;border:1px solid rgba(255,255,255,.09)}
+.prn-d>summary{cursor:pointer;padding:10px 14px;font-size:14px}
+.prn-t{width:100%;border-collapse:collapse;font-size:13px;margin:0 0 8px}
+.prn-t th,.prn-t td{padding:6px 12px;text-align:left;border-top:1px solid rgba(255,255,255,.07)}
+.prn-t th{color:var(--text-muted,#9f9a8f);font-weight:500;font-size:12px}
+.prn-note{font-size:12px;line-height:1.5;color:var(--text-muted,#9f9a8f);margin:8px 0 12px}

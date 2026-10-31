@@ -177,6 +177,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/120-late-panels.js` — safety net: panels registered here (Avakahada, Planet Encyclopedia, Choghadiya, Dosha) are built on first open if js/58 did not add them; also puts Choghadiya into the Panchanga panel
 - `apps/birth-chart/js/121-dosha.js` — Dosha Check (global DSH, panel-dosha, Home > Analysis): Manglik, Kaal Sarp, Pitru, Gand Mool, Guru Chandala, Grahan, Shrapit, Angaraka with the reason and what softens it
 - `apps/birth-chart/js/122-today-for-you.js` — Today for You (global TDY, panel-today, Home > Time & Cycles): Chandrabala, Tarabala, Gochara from the birth Moon, good Choghadiya slots vs Rahu Kalam, any date
+- `apps/birth-chart/js/123-prashna.js` — Prashna (horary) chart (global PRN, panel-prashna, Home > Time & Cycles): chart cast for a question moment, topic→house, lagna lord / matter lord strength, Ithasala/Easarapha (Tajika orbs), Moon checks, North/South chart, copy reading
 - `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
 - `apps/birth-chart/js/95-life-narratives.js` — Life-area narratives (global LAN), GENERATED: a 450-700 word personal reading for each of the 9 life areas, composed from the engine facts (stance by band, house-lord arena, strengths, care points, yoga modifiers, timing, practices, self-check questions)
 - `apps/birth-chart/js/96-varga-reading.js` — Divisional chart readings (global VGR), GENERATED: D9, D10, D7, D4, D24, D20 each with rising sign, the houses that matter, planet-by-planet text, strength summary, vargottama and a score; positions come from the app's own varga engine
@@ -243,6 +244,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/53-varga-guide.css` — styles for the divisional chart guide (vgg- prefix)
 - `apps/birth-chart/css/55-planet-encyclopedia.css` — styles for the Planet Encyclopedia panel (pen- prefix)
 - `apps/birth-chart/css/56-choghadiya-avakahada.css` — styles for Choghadiya and Avakahada Chakra
+- `apps/birth-chart/css/57-prashna.css` — styles for the Prashna chart panel
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order
@@ -395,6 +397,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/choghadiya_avakahada_test.py` — Choghadiya order for all 7 weekdays, equal slots, Avakahada values for a known Moon, tables match Kundali Matching
 - `tests/dosha_late_panels_test.py` — Dosha Check rules, Choghadiya panel, every new Home card opens non-blank (also with an older js/58)
 - `tests/today_for_you_test.py` — Today for You: Chandrabala/Tarabala/Gochara maths over 10 days, tone, slots, panel, new profile
+- `tests/prashna_test.py` — Prashna: Ithasala/Easarapha maths, topic houses, panel, styles, rebuild if missing
 - `tests/notepad_test.py` — Notepad test: typing order, note links, templates from every view, side menu, Settings tab switches (copy buttons off by default), at 390 px and 1280 px
 - `tests/rising_navamsha_test.py` — 3D rising view Navamsha test: current Navamsha line, 12 signs x 9 Navamshas, order rule per sign type, boundary accuracy, tap and back
 - `tests/time_wheels_test.py` — 3D date picker test: five snap wheels, tap/scroll select, steppers with month-end clamp, typed date

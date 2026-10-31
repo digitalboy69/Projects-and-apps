@@ -184,13 +184,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-31 - 1706 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-31 - 1717 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 188 files, 29660 lines, 2384 KB
+**birth-chart** - 190 files, 29818 lines, 2399 KB
 ```
-index.html                                         610 lines   34 KB
+index.html                                         612 lines   34 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          280 lines   13 KB
@@ -225,6 +225,7 @@ js/12-yoga-detection.js                            117 lines    4 KB
 js/120-late-panels.js                               39 lines    2 KB
 js/121-dosha.js                                     65 lines    7 KB
 js/122-today-for-you.js                             70 lines    8 KB
+js/123-prashna.js                                  133 lines   13 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
@@ -237,7 +238,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             127 lines   13 KB
+js/25-home-and-tabs.js                             128 lines   13 KB
 js/26-rectification-studio.js                      246 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -378,6 +379,7 @@ css/53-varga-guide.css                              32 lines    2 KB
 css/54-compare-lab.css                              63 lines    7 KB
 css/55-planet-encyclopedia.css                      89 lines    7 KB
 css/56-choghadiya-avakahada.css                     63 lines    7 KB
+css/57-prashna.css                                  22 lines    2 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -512,6 +514,7 @@ shared/quick-menu.js                               157 lines   12 KB
 - Choghadiya + Avakahada Chakra (Birth Chart): js/118-choghadiya.js (CHG, inside Panchanga panel) and js/119-avakahada.js (AVK, panel-avakahada); tables for Choghadiya are almanac practice, Avakahada tables equal KM_* in js/51; test tests/choghadiya_avakahada_test.py.
 - Dosha Check (js/121-dosha.js, DSH; reuses YGE detectors + new Pitru and Gand Mool) and js/120-late-panels.js (registerLatePanel: new panels build on first open so a stale cached js/58 cannot leave a blank screen; use it for every new Home card). Choghadiya got its own panel (js/118). Test tests/dosha_late_panels_test.py.
 - Today for You (js/122-today-for-you.js, TDY; registered in js/120 late panels): Chandrabala (good houses 1,3,6,7,10,11), Tarabala (bad: Vipat, Pratyak, Naidhana), Gochara lists from the birth Moon; tone counts only Chandrabala + Tarabala. Test tests/today_for_you_test.py.
+- Prashna chart (js/123-prashna.js, PRN; late panel panel-prashna): chart cast for the question moment (now or chosen, birth place or geolocation); topic→house; lagna lord and matter lord by dignity/house/combust; Ithasala/Easarapha with Tajika orbs (Sun15 Moon12 Mars8 Mer7 Jup9 Ven7 Sat9, link orb=half the sum; common practice, not source-verified); retrograde and other Tajika yogas not covered.
 - Notepad: fixed typing cursor jump, note-link exit, template-from-Tasks, open side menu; new Settings tab (view settings) with switches stored in S.set.o (defaults in OPT_DEF; line copy + card copy OFF); test tests/notepad_test.py.
 - Notepad phone: added a menu button (☰) to the note-list header and made the drawer open in focus mode, so every screen has a way back to the menu (not tested).
 - Main menu Settings (shell): popup with one switch "Copy buttons" (off by default, key vedicCopyBtns); shared/copy-toggle.js in every app hides/shows buttons whose label starts with "Copy" (not tested).
