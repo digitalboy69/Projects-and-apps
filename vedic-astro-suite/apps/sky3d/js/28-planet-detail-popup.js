@@ -92,7 +92,7 @@ function openPlanetDetailLegacy(name, jd){
         <div class="pd-stat">
           <div class="pd-stat-label">Ecliptic Longitude</div>
           <div class="pd-stat-value">${lon.toFixed(3)}°</div>
-          <div class="pd-stat-sub">Sidereal (Lahiri)</div>
+          <div class="pd-stat-sub">Sidereal (${ayanName()})</div>
         </div>
         <div class="pd-stat">
           <div class="pd-stat-label">Speed</div>

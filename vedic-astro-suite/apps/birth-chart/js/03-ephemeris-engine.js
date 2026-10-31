@@ -83,6 +83,10 @@ function jdToParts(jd){
   return { y: year, m: month, d: day, h: Math.floor(rem / 3600), mi: Math.floor((rem % 3600) / 60), s: rem % 60 };
 }
 
+/* Ayanamsa choice: Lahiri (default), Raman, KP (Krishnamurti). Same precession as Lahiri, constant offset at J2000 (Swiss Ephemeris values: Lahiri 23.8570, Raman 22.4108, KP 23.7602). Saved in localStorage 'vax_ayanamsa'. */
+const AYAN_MODES = { lahiri:{ name:'Lahiri', off:0 }, raman:{ name:'Raman', off:-1.4462 }, kp:{ name:'KP (Krishnamurti)', off:-0.0968 } };
+function ayanKey(){ try { const k = localStorage.getItem('vax_ayanamsa'); return AYAN_MODES[k] ? k : 'lahiri'; } catch(e){ return 'lahiri'; } }
+function ayanName(){ return AYAN_MODES[ayanKey()].name; }
 function lahiriAyanamsa(jd){
   const ayan1900 = 22 + 27/60 + 54.33/3600;
   const precessionRate = 50.2564 / 3600;
@@ -90,7 +94,7 @@ function lahiriAyanamsa(jd){
   let ayan = ayan1900 + precessionRate * years;
   const correction = 0.000139 * Math.sin((jd - 2415020.0) / 365.25 * 0.98565 * DEG);
   ayan += correction;
-  return ayan;
+  return ayan + AYAN_MODES[ayanKey()].off;
 }
 
 function sunLongitude(jd){

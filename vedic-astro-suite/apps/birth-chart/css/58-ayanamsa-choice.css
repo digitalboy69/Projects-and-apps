@@ -1,0 +1,5 @@
+/* Ayanamsa selector on the intake form (js/124-ayanamsa-choice.js). */
+.ayn-row{margin:0 0 14px;display:flex;flex-direction:column;gap:5px}
+.ayn-row label{font-size:12.5px;color:var(--text-muted,#9f9a8f)}.ayn-row label span{opacity:.8}
+.ayn-row select{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--text-main,#eae6df);font:inherit;font-size:14px}
+.ayn-row small{font-size:11.5px;color:var(--text-muted,#9f9a8f)}

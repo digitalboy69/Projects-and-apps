@@ -2819,13 +2819,17 @@ function jdToDate(jd){
     getUTCHours: () => jdToParts(jd).h, getUTCMinutes: () => jdToParts(jd).mi, getTime: () => Math.round((jd - 2440587.5) * 86400000), jd };
 }
 
+/* Ayanamsa choice: Lahiri (default), Raman, KP (Krishnamurti). Same precession as Lahiri, constant offset at J2000 (Swiss Ephemeris values: Lahiri 23.8570, Raman 22.4108, KP 23.7602). Saved in localStorage 'vax_ayanamsa'. */
+const AYAN_MODES = { lahiri:{ name:'Lahiri', off:0 }, raman:{ name:'Raman', off:-1.4462 }, kp:{ name:'KP (Krishnamurti)', off:-0.0968 } };
+function ayanKey(){ try { const k = localStorage.getItem('vax_ayanamsa'); return AYAN_MODES[k] ? k : 'lahiri'; } catch(e){ return 'lahiri'; } }
+function ayanName(){ return AYAN_MODES[ayanKey()].name; }
 function lahiriAyanamsa(jd){
   const ayan1900 = 22+27/60+54.33/3600;
   const precessionRate = 50.2564/3600;
   const years = (jd-2415020.0)/365.25;
   let ayan = ayan1900 + precessionRate*years;
   ayan += 0.000139*Math.sin((jd-2415020.0)/365.25*0.98565*DEG);
-  return ayan;
+  return ayan + AYAN_MODES[ayanKey()].off;
 }
 
 function sunLongitude(jd){
@@ -5772,7 +5776,7 @@ function openPlanetDetailLegacy(name, jd){
         <div class="pd-stat">
           <div class="pd-stat-label">Ecliptic Longitude</div>
           <div class="pd-stat-value">${lon.toFixed(3)}°</div>
-          <div class="pd-stat-sub">Sidereal (Lahiri)</div>
+          <div class="pd-stat-sub">Sidereal (${ayanName()})</div>
         </div>
         <div class="pd-stat">
           <div class="pd-stat-label">Speed</div>
@@ -5919,7 +5923,7 @@ function openPlanetDetail(name, jd){
       <div class="pdx-h">Position</div>
       <div class="pd-gauge-row pdx-in" style="--i:1">${buildDegreeGaugeSVG(dms.raw, col)}<div class="pd-gauge-label"><div class="pd-gauge-deg">${dms.deg}° ${dms.min}' ${dms.sec}"</div><div class="pd-gauge-sign">into ${sign.symbol} ${sign.name} (${sign.sk})</div></div></div>
       <div class="pdx-grid" style="margin-top:12px">
-        ${card('Sidereal longitude', lon.toFixed(3)+'°', 'Lahiri ayanamsa')}${card('Nakshatra', nak, 'Lord '+NAKSHATRA_LORDS[nakIdx]+' · Pada '+pada+' of 4')}
+        ${card('Sidereal longitude', lon.toFixed(3)+'°', ayanName()+' ayanamsa')}${card('Nakshatra', nak, 'Lord '+NAKSHATRA_LORDS[nakIdx]+' · Pada '+pada+' of 4')}
         ${card('Sign lord', sign.lord, sign.sk+' rashi')}${card('Navamsa (D9)', SIGNS[nSign].symbol+' '+SIGNS[nSign].name, varg?'Vargottama: same sign in D1 and D9':'Soul and marriage strength')}${house}
         ${card('Daily motion', (speed>=0?'+':'')+speed.toFixed(4)+'°/day', speedCategory(name, jd))}
         ${conj.length ? `<div class="pdx-card wide pdx-in"><div class="k">Sharing the sign with</div><div class="pdx-chips" style="margin-top:8px">${conj.map(pchip).join('')}</div></div>` : ''}
@@ -6067,7 +6071,7 @@ function openOuterPlanetDetail(name, jd){
       <div class="pdx-h">Position</div>
       <div class="pd-gauge-row pdx-in" style="--i:1">${buildDegreeGaugeSVG(dms.raw, col)}<div class="pd-gauge-label"><div class="pd-gauge-deg">${dms.deg}° ${dms.min}' ${dms.sec}"</div><div class="pd-gauge-sign">into ${sign.symbol} ${sign.name} (${sign.sk})</div></div></div>
       <div class="pdx-grid" style="margin-top:12px">
-        ${card('Sidereal longitude', lon.toFixed(3)+'°', 'Lahiri ayanamsa')}${card('Nakshatra', nak, 'Lord '+NAKSHATRA_LORDS[nakIdx]+' · Pada '+pada+' of 4')}
+        ${card('Sidereal longitude', lon.toFixed(3)+'°', ayanName()+' ayanamsa')}${card('Nakshatra', nak, 'Lord '+NAKSHATRA_LORDS[nakIdx]+' · Pada '+pada+' of 4')}
         ${card('Sign lord', sign.lord, sign.sk+' rashi')}${house}
         ${card('Daily motion', (speed>=0?'+':'')+speed.toFixed(4)+'°/day', spTxt)}
         ${houseLine}
@@ -8132,7 +8136,7 @@ const DBX = (function(){
     const sec = (id, title, body) => '<section class="dbx-sec" id="dbx-' + id + '"><h3><i>' + (SECI[id] || '✦') + '</i>' + title + '</h3>' + body + '</section>';
     const pn = A.pan;
     let html = '';
-    T.push('SKY DASHBOARD · ' + c.label, 'Ayanamsa (Lahiri): ' + c.ayan.toFixed(4) + '°');
+    T.push('SKY DASHBOARD · ' + c.label, 'Ayanamsa (' + ayanName() + '): ' + c.ayan.toFixed(4) + '°');
     // panchang
     html += sec('pan', 'Panchang', '<div class="dbx-grid4">' + kv('Weekday', pn.vara) + kv('Tithi', pn.tName + ' (' + pn.tithi + ')') + kv('Paksha', pn.paksha) + kv('Moon lit', pn.lit + '%') + kv('Moon star', NAKSHATRAS[A.pl.Moon.ni] + ' ' + A.pl.Moon.pada) + kv('Yoga', pn.yoga) + kv('Karana', pn.karana) + kv('Ayanamsa', c.ayan.toFixed(3) + '°') + (A.lagnaSign != null ? kv('Lagna', sname(A.lagnaSign) + ' ' + dm(c.lagna)) : '') + '</div>');
     T.push('PANCHANG: ' + pn.vara + ', ' + pn.paksha + ' ' + pn.tName + ', Moon in ' + NAKSHATRAS[A.pl.Moon.ni] + ' pada ' + A.pl.Moon.pada + ', Yoga ' + pn.yoga + ', Karana ' + pn.karana + (A.lagnaSign != null ? ', Lagna ' + sname(A.lagnaSign) + ' ' + dm(c.lagna) : ''));
@@ -13919,6 +13923,13 @@ body.cl-open{overflow:hidden}
 .prn-t th{color:var(--text-muted,#9f9a8f);font-weight:500;font-size:12px}
 .prn-note{font-size:12px;line-height:1.5;color:var(--text-muted,#9f9a8f);margin:8px 0 12px}
 </style>
+<style>
+/* Ayanamsa selector on the intake form (js/124-ayanamsa-choice.js). */
+.ayn-row{margin:0 0 14px;display:flex;flex-direction:column;gap:5px}
+.ayn-row label{font-size:12.5px;color:var(--text-muted,#9f9a8f)}.ayn-row label span{opacity:.8}
+.ayn-row select{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--text-main,#eae6df);font:inherit;font-size:14px}
+.ayn-row small{font-size:11.5px;color:var(--text-muted,#9f9a8f)}
+</style>
 
 
 
@@ -14390,6 +14401,8 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
 
       <div class="error-banner" id="errorBanner"></div>
 
+      <div class="ayn-row"><label for="aynSel">Ayanamsa <span>(zodiac system)</span></label><select id="aynSel"><option value="lahiri">Lahiri (most common in India)</option><option value="raman">Raman</option><option value="kp">KP (Krishnamurti)</option></select><small id="aynNote">Lahiri is used unless you change it. Changing it re-draws the chart.</small></div>
+
       <div class="submit-row">
         <button type="submit" class="btn-cast" id="castBtn">✨ Show my chart</button>
         <div class="in-micro">Takes a few seconds · You can change anything later</div>
@@ -14817,6 +14830,10 @@ function jdToParts(jd){
   return { y: year, m: month, d: day, h: Math.floor(rem / 3600), mi: Math.floor((rem % 3600) / 60), s: rem % 60 };
 }
 
+/* Ayanamsa choice: Lahiri (default), Raman, KP (Krishnamurti). Same precession as Lahiri, constant offset at J2000 (Swiss Ephemeris values: Lahiri 23.8570, Raman 22.4108, KP 23.7602). Saved in localStorage 'vax_ayanamsa'. */
+const AYAN_MODES = { lahiri:{ name:'Lahiri', off:0 }, raman:{ name:'Raman', off:-1.4462 }, kp:{ name:'KP (Krishnamurti)', off:-0.0968 } };
+function ayanKey(){ try { const k = localStorage.getItem('vax_ayanamsa'); return AYAN_MODES[k] ? k : 'lahiri'; } catch(e){ return 'lahiri'; } }
+function ayanName(){ return AYAN_MODES[ayanKey()].name; }
 function lahiriAyanamsa(jd){
   const ayan1900 = 22 + 27/60 + 54.33/3600;
   const precessionRate = 50.2564 / 3600;
@@ -14824,7 +14841,7 @@ function lahiriAyanamsa(jd){
   let ayan = ayan1900 + precessionRate * years;
   const correction = 0.000139 * Math.sin((jd - 2415020.0) / 365.25 * 0.98565 * DEG);
   ayan += correction;
-  return ayan;
+  return ayan + AYAN_MODES[ayanKey()].off;
 }
 
 function sunLongitude(jd){
@@ -20134,7 +20151,7 @@ function buildFullReportText(chart, profile, sections, liveSkyData){
     add(`Timezone:        ${fmtTz(profile.tz)}`);
     add(`Place of Birth:  ${profile.place}`);
     add(`Coordinates:     ${profile.lat.toFixed(4)}°, ${profile.lon.toFixed(4)}°`);
-    add(`Ayanamsa:        Lahiri, ${chart.ayanamsa.toFixed(4)}°`);
+    add(`Ayanamsa:        ${ayanName()}, ${chart.ayanamsa.toFixed(4)}°`);
     add(`Julian Day (UT): ${chart.julianDay.toFixed(6)}`);
   }
 
@@ -20297,7 +20314,7 @@ function buildFullReportText(chart, profile, sections, liveSkyData){
     add(`Observed as of: ${liveSkyData.sky.now.toString()}`);
     add(`Observer location: ${liveSkyData.locationLabel || (liveSkyData.lat.toFixed(4)+'°, '+liveSkyData.lon.toFixed(4)+'°')}`);
     add(`Coordinates: ${liveSkyData.lat.toFixed(4)}°, ${liveSkyData.lon.toFixed(4)}°  |  Timezone: ${fmtTz(liveSkyData.tz)}`);
-    add(`Ayanamsa at this moment: Lahiri, ${liveSkyData.sky.ayanamsa.toFixed(4)}°`);
+    add(`Ayanamsa at this moment: ${ayanName()}, ${liveSkyData.sky.ayanamsa.toFixed(4)}°`);
     add();
     PLANET_LIST.forEach(name=>{
       const p = liveSkyData.sky.planets[name];
@@ -20359,7 +20376,7 @@ function buildFullReportText(chart, profile, sections, liveSkyData){
 
   add(rule('=', W));
   add(centerLine('END OF REPORT', W));
-  add(centerLine('Generated by Vedic Astrology — computed locally, Lahiri Ayanamsa', W));
+  add(centerLine('Generated by Vedic Astrology — computed locally, ' + ayanName() + ' Ayanamsa', W));
   add(rule('=', W));
 
   return lines.join('\n');
@@ -21729,7 +21746,7 @@ function buildOverviewPanel(chart, profile){
     </div>
 
     <details class="ov-tech"><summary>Calculation details</summary>
-      <div class="ov-techgrid"><div><small>Ayanamsa</small><b>Lahiri ${chart.ayanamsa.toFixed(4)}°</b></div><div><small>House system</small><b>Whole Sign</b></div>
+      <div class="ov-techgrid"><div><small>Ayanamsa</small><b>${ayanName()} ${chart.ayanamsa.toFixed(4)}°</b></div><div><small>House system</small><b>Whole Sign</b></div>
       <div><small>Coordinates</small><b>${profile.lat.toFixed(2)}°, ${profile.lon.toFixed(2)}°</b></div><div><small>Julian Day (UT)</small><b>${chart.julianDay.toFixed(4)}</b></div></div>
     </details>
   </div>`;
@@ -50696,6 +50713,25 @@ const PRN = (function(){
   });
   window.buildPrashnaPanel = function(chart, profile){ setTimeout(draw, 0); return panel(chart, profile); };
   return { compute, html, text, ithasala, TOPICS, ORB };
+})();
+<\/script>
+<script>
+/* ============================================================================
+   AYANAMSA CHOICE: selector on the intake form (Lahiri default, Raman, KP). The engine (js/03 lahiriAyanamsa) reads the saved choice, so every chart,
+   transit, panchang and report follows it. Changing it re-draws the chart already on screen. 3D Sky reads the same saved choice when it opens.
+   ============================================================================ */
+(function(){
+  const sel = document.getElementById('aynSel'); if (!sel) return;
+  sel.value = ayanKey();
+  function note(){ const n = document.getElementById('aynNote'); if (n) n.textContent = ayanKey() === 'lahiri' ? 'Lahiri is used unless you change it. Changing it re-draws the chart.' : 'Using ' + ayanName() + ' ayanamsa. Charts everywhere in this app follow it (3D Sky after you reopen it).'; }
+  note();
+  sel.addEventListener('change', function(){
+    try { localStorage.setItem('vax_ayanamsa', sel.value); } catch(e){}
+    note();
+    const r = document.getElementById('results'), f = document.getElementById('birthForm');
+    if (r && r.classList.contains('show') && f && window.__vgProf){ try { f.requestSubmit(); } catch(e){ console.warn('ayanamsa redraw', e); } }
+  });
+  window.setAyanamsa = function(k){ if (!AYAN_MODES[k]) return; sel.value = k; sel.dispatchEvent(new Event('change')); };
 })();
 <\/script>
 <script>

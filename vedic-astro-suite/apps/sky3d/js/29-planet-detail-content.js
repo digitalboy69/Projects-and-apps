@@ -90,7 +90,7 @@ function openPlanetDetail(name, jd){
       <div class="pdx-h">Position</div>
       <div class="pd-gauge-row pdx-in" style="--i:1">${buildDegreeGaugeSVG(dms.raw, col)}<div class="pd-gauge-label"><div class="pd-gauge-deg">${dms.deg}° ${dms.min}' ${dms.sec}"</div><div class="pd-gauge-sign">into ${sign.symbol} ${sign.name} (${sign.sk})</div></div></div>
       <div class="pdx-grid" style="margin-top:12px">
-        ${card('Sidereal longitude', lon.toFixed(3)+'°', 'Lahiri ayanamsa')}${card('Nakshatra', nak, 'Lord '+NAKSHATRA_LORDS[nakIdx]+' · Pada '+pada+' of 4')}
+        ${card('Sidereal longitude', lon.toFixed(3)+'°', ayanName()+' ayanamsa')}${card('Nakshatra', nak, 'Lord '+NAKSHATRA_LORDS[nakIdx]+' · Pada '+pada+' of 4')}
         ${card('Sign lord', sign.lord, sign.sk+' rashi')}${card('Navamsa (D9)', SIGNS[nSign].symbol+' '+SIGNS[nSign].name, varg?'Vargottama: same sign in D1 and D9':'Soul and marriage strength')}${house}
         ${card('Daily motion', (speed>=0?'+':'')+speed.toFixed(4)+'°/day', speedCategory(name, jd))}
         ${conj.length ? `<div class="pdx-card wide pdx-in"><div class="k">Sharing the sign with</div><div class="pdx-chips" style="margin-top:8px">${conj.map(pchip).join('')}</div></div>` : ''}

@@ -184,16 +184,16 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-31 - 1717 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-10-31 - 1725 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 190 files, 29818 lines, 2399 KB
+**birth-chart** - 192 files, 29850 lines, 2402 KB
 ```
-index.html                                         612 lines   34 KB
+index.html                                         616 lines   35 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
-js/03-ephemeris-engine.js                          280 lines   13 KB
+js/03-ephemeris-engine.js                          284 lines   14 KB
 js/04-transit-timing-engine.js                     247 lines   11 KB
 js/05-ascendant-nakshatra-vargas.js                211 lines   12 KB
 js/06-outer-planet-knowledge.js                     37 lines    5 KB
@@ -226,6 +226,7 @@ js/120-late-panels.js                               39 lines    2 KB
 js/121-dosha.js                                     65 lines    7 KB
 js/122-today-for-you.js                             70 lines    8 KB
 js/123-prashna.js                                  133 lines   13 KB
+js/124-ayanamsa-choice.js                           18 lines    1 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
@@ -380,6 +381,7 @@ css/54-compare-lab.css                              63 lines    7 KB
 css/55-planet-encyclopedia.css                      89 lines    7 KB
 css/56-choghadiya-avakahada.css                     63 lines    7 KB
 css/57-prashna.css                                  22 lines    2 KB
+css/58-ayanamsa-choice.css                           6 lines    0 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -397,10 +399,10 @@ js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 79 files, 7390 lines, 442 KB
+**sky3d** - 79 files, 7394 lines, 442 KB
 ```
 index.html                                         468 lines   29 KB
-js/01-astro-engine.js                              157 lines    9 KB
+js/01-astro-engine.js                              161 lines    9 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
 js/04-sign-level-aspects.js                         22 lines    0 KB
@@ -515,6 +517,7 @@ shared/quick-menu.js                               157 lines   12 KB
 - Dosha Check (js/121-dosha.js, DSH; reuses YGE detectors + new Pitru and Gand Mool) and js/120-late-panels.js (registerLatePanel: new panels build on first open so a stale cached js/58 cannot leave a blank screen; use it for every new Home card). Choghadiya got its own panel (js/118). Test tests/dosha_late_panels_test.py.
 - Today for You (js/122-today-for-you.js, TDY; registered in js/120 late panels): Chandrabala (good houses 1,3,6,7,10,11), Tarabala (bad: Vipat, Pratyak, Naidhana), Gochara lists from the birth Moon; tone counts only Chandrabala + Tarabala. Test tests/today_for_you_test.py.
 - Prashna chart (js/123-prashna.js, PRN; late panel panel-prashna): chart cast for the question moment (now or chosen, birth place or geolocation); topic→house; lagna lord and matter lord by dignity/house/combust; Ithasala/Easarapha with Tajika orbs (Sun15 Moon12 Mars8 Mer7 Jup9 Ven7 Sat9, link orb=half the sum; common practice, not source-verified); retrograde and other Tajika yogas not covered.
+- Ayanamsa choice (js/124 + engines js/03 and sky3d js/01): Lahiri default, Raman (-1.4462 deg), KP (-0.0968 deg) as constant offsets from Lahiri (Swiss Ephemeris J2000 values 23.857 / 22.4108 / 23.7602); saved in localStorage vax_ayanamsa; lahiriAyanamsa() keeps its name but returns the chosen one. Full KP system (sub-lords, cusps) not built.
 - Notepad: fixed typing cursor jump, note-link exit, template-from-Tasks, open side menu; new Settings tab (view settings) with switches stored in S.set.o (defaults in OPT_DEF; line copy + card copy OFF); test tests/notepad_test.py.
 - Notepad phone: added a menu button (☰) to the note-list header and made the drawer open in focus mode, so every screen has a way back to the menu (not tested).
 - Main menu Settings (shell): popup with one switch "Copy buttons" (off by default, key vedicCopyBtns); shared/copy-toggle.js in every app hides/shows buttons whose label starts with "Copy" (not tested).

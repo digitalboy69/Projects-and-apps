@@ -86,7 +86,7 @@ function buildOverviewPanel(chart, profile){
     </div>
 
     <details class="ov-tech"><summary>Calculation details</summary>
-      <div class="ov-techgrid"><div><small>Ayanamsa</small><b>Lahiri ${chart.ayanamsa.toFixed(4)}°</b></div><div><small>House system</small><b>Whole Sign</b></div>
+      <div class="ov-techgrid"><div><small>Ayanamsa</small><b>${ayanName()} ${chart.ayanamsa.toFixed(4)}°</b></div><div><small>House system</small><b>Whole Sign</b></div>
       <div><small>Coordinates</small><b>${profile.lat.toFixed(2)}°, ${profile.lon.toFixed(2)}°</b></div><div><small>Julian Day (UT)</small><b>${chart.julianDay.toFixed(4)}</b></div></div>
     </details>
   </div>`;

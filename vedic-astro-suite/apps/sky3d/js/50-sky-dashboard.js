@@ -192,7 +192,7 @@ const DBX = (function(){
     const sec = (id, title, body) => '<section class="dbx-sec" id="dbx-' + id + '"><h3><i>' + (SECI[id] || '✦') + '</i>' + title + '</h3>' + body + '</section>';
     const pn = A.pan;
     let html = '';
-    T.push('SKY DASHBOARD · ' + c.label, 'Ayanamsa (Lahiri): ' + c.ayan.toFixed(4) + '°');
+    T.push('SKY DASHBOARD · ' + c.label, 'Ayanamsa (' + ayanName() + '): ' + c.ayan.toFixed(4) + '°');
     // panchang
     html += sec('pan', 'Panchang', '<div class="dbx-grid4">' + kv('Weekday', pn.vara) + kv('Tithi', pn.tName + ' (' + pn.tithi + ')') + kv('Paksha', pn.paksha) + kv('Moon lit', pn.lit + '%') + kv('Moon star', NAKSHATRAS[A.pl.Moon.ni] + ' ' + A.pl.Moon.pada) + kv('Yoga', pn.yoga) + kv('Karana', pn.karana) + kv('Ayanamsa', c.ayan.toFixed(3) + '°') + (A.lagnaSign != null ? kv('Lagna', sname(A.lagnaSign) + ' ' + dm(c.lagna)) : '') + '</div>');
     T.push('PANCHANG: ' + pn.vara + ', ' + pn.paksha + ' ' + pn.tName + ', Moon in ' + NAKSHATRAS[A.pl.Moon.ni] + ' pada ' + A.pl.Moon.pada + ', Yoga ' + pn.yoga + ', Karana ' + pn.karana + (A.lagnaSign != null ? ', Lagna ' + sname(A.lagnaSign) + ' ' + dm(c.lagna) : ''));

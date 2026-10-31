@@ -55,7 +55,7 @@ function openOuterPlanetDetail(name, jd){
       <div class="pdx-h">Position</div>
       <div class="pd-gauge-row pdx-in" style="--i:1">${buildDegreeGaugeSVG(dms.raw, col)}<div class="pd-gauge-label"><div class="pd-gauge-deg">${dms.deg}° ${dms.min}' ${dms.sec}"</div><div class="pd-gauge-sign">into ${sign.symbol} ${sign.name} (${sign.sk})</div></div></div>
       <div class="pdx-grid" style="margin-top:12px">
-        ${card('Sidereal longitude', lon.toFixed(3)+'°', 'Lahiri ayanamsa')}${card('Nakshatra', nak, 'Lord '+NAKSHATRA_LORDS[nakIdx]+' · Pada '+pada+' of 4')}
+        ${card('Sidereal longitude', lon.toFixed(3)+'°', ayanName()+' ayanamsa')}${card('Nakshatra', nak, 'Lord '+NAKSHATRA_LORDS[nakIdx]+' · Pada '+pada+' of 4')}
         ${card('Sign lord', sign.lord, sign.sk+' rashi')}${house}
         ${card('Daily motion', (speed>=0?'+':'')+speed.toFixed(4)+'°/day', spTxt)}
         ${houseLine}
