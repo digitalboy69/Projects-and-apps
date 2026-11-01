@@ -2124,6 +2124,74 @@ html[data-app] .speed-chip.active{background:rgba(212,162,74,.2)!important;color
 html[data-app] .pdmodal-close{background:rgba(255,255,255,.06)!important;box-shadow:none!important}
 </style>
 <style>
+/* Unified panel look for every 3D tab (same language as the Aspects tab): hero intro, step headings, pill chips,
+   clean cards, calm notes, bigger inputs. Loaded last; html[data-app] raises specificity over earlier layers. */
+html[data-app]{--u-gold:#F4C45C;--u-line:rgba(255,255,255,.09);--u-card:rgba(255,255,255,.045);--u-card-h:rgba(255,255,255,.08)}
+
+/* intro card at the top of each tab */
+html[data-app] .tab-intro{display:flex;gap:12px;align-items:center;padding:13px 15px;margin-bottom:16px;border-radius:16px;
+  background:linear-gradient(135deg,rgba(244,196,92,.13),rgba(0,240,213,.06));border:1px solid rgba(244,196,92,.28);font-size:12.5px;line-height:1.55;color:var(--text-dim)}
+html[data-app] .tab-intro .ico{font-size:24px;color:var(--u-gold);filter:none;line-height:1}
+html[data-app] .tab-intro b{color:var(--text);font-weight:600}
+html[data-app] .tab-intro>div>b:first-child{display:block;font-size:14px;margin-bottom:2px}
+
+/* section headings */
+html[data-app] .panel-heading{margin:20px 0 10px;font-size:12px;font-weight:700;letter-spacing:.1em}
+html[data-app] .panel-heading::before{width:4px;height:15px;background:var(--u-gold);box-shadow:none}
+
+/* chips = pills (same as the Aspects planet grid) */
+html[data-app] .filter-row{gap:8px;margin-bottom:16px}
+html[data-app] .filter-chip{min-height:40px;padding:8px 14px;border-radius:12px;background:var(--u-card);border:1px solid var(--u-line);color:var(--text);font-size:13px;display:inline-flex;align-items:center;gap:6px;box-shadow:none}
+html[data-app] .filter-chip:hover:not(.active){background:var(--u-card-h);border-color:rgba(244,196,92,.5);color:var(--text)}
+html[data-app] .filter-chip.active{background:rgba(244,196,92,.2);border-color:var(--u-gold);color:#fff;font-weight:700;box-shadow:0 0 0 1px var(--u-gold) inset}
+html[data-app] .filter-chip.active .df-chip-glyph{color:var(--u-gold)!important}
+
+/* primary buttons */
+html[data-app] .btn-block{min-height:50px;border-radius:14px;font-size:15px;font-weight:700;letter-spacing:.01em;margin-top:12px}
+html[data-app] .btn-secondary-block{min-height:46px;border-radius:14px}
+
+/* cards (transits, meetings, degree results, retro, returns) */
+html[data-app] .transit-card,html[data-app] .ret-card{border-radius:14px;border:1px solid var(--u-line);background:var(--u-card);padding:13px 15px;margin-bottom:10px;box-shadow:none}
+html[data-app] .ret-card{border-left:4px solid var(--pc,var(--u-gold))}
+html[data-app] .transit-card:hover{border-color:var(--u-gold);background:var(--u-card-h);transform:none;box-shadow:none}
+html[data-app] .transit-card-top{align-items:center;margin-bottom:6px}
+html[data-app] .transit-card-title{font-size:15px;font-weight:700;letter-spacing:-.01em}
+html[data-app] .transit-card-date{font-size:12px;padding:3px 10px;border-radius:999px;background:rgba(244,196,92,.14);color:var(--u-gold);font-weight:600}
+html[data-app] .transit-card-desc{font-size:13px;line-height:1.55}
+html[data-app] .transit-card-tag{margin-top:8px;border-radius:999px;padding:3px 10px}
+html[data-app] .ret-row{border-radius:10px;border:1px solid transparent}
+html[data-app] .ret-row:hover{border-color:rgba(244,196,92,.45)}
+html[data-app] .ret-row .d{color:var(--u-gold)}
+html[data-app] .ret-label{margin-top:12px}
+
+/* quiet note instead of a teal box */
+html[data-app] .scan-range-note{background:none;border:0;border-left:3px solid var(--u-line);border-radius:0;padding:2px 0 2px 10px;margin:0 0 12px;font-size:12px;color:var(--text-faint);line-height:1.5}
+html[data-app] .df-preview{background:var(--u-card);border:1px solid var(--u-line);border-radius:12px;padding:8px 12px;margin:-4px 0 14px;color:var(--text-dim);font-size:12px;min-height:0}
+html[data-app] .df-preview:empty{display:none}
+html[data-app] .df-hint{font-size:12px;color:var(--text-faint);line-height:1.5;margin:0 0 14px}
+
+/* form fields */
+html[data-app] .mini-field{margin-bottom:14px}
+html[data-app] .mini-field label{font-size:11px;letter-spacing:.08em}
+html[data-app] .mini-field input,html[data-app] .mini-field select{min-height:46px;border-radius:12px;font-size:15px;background-color:var(--u-card);border:1px solid var(--u-line)}
+html[data-app] .mini-field input:focus,html[data-app] .mini-field select:focus{border-color:var(--u-gold);box-shadow:0 0 0 3px rgba(244,196,92,.18)}
+html[data-app] .df-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+
+/* empty and loading states */
+html[data-app] .empty-feed{border-radius:14px;border:1px dashed var(--u-line);background:var(--u-card);padding:28px 18px}
+
+/* retro year stepper */
+html[data-app] .rt-year button{border-radius:14px;border:1px solid var(--u-line)}
+html[data-app] .rt-year input{border-radius:14px;border-color:var(--u-gold);background:rgba(244,196,92,.08);color:var(--u-gold)}
+
+/* sky rows */
+html[data-app] .sky-row{border-radius:14px;margin-bottom:8px}
+
+@media (max-width:420px){html[data-app] .df-row2{grid-template-columns:1fr}}
+html[data-app] .btn-secondary-block{border:1px solid rgba(244,196,92,.45);background:rgba(244,196,92,.1);color:var(--u-gold)}
+html[data-app] .btn-secondary-block:hover{border-color:var(--u-gold);background:rgba(244,196,92,.18);color:#fff}
+</style>
+<style>
 /* Day / Month / Year + AD/BC birth date fields (js/37) */
 .dob-row{display:grid;grid-template-columns:1fr 1.3fr 1.5fr .9fr;gap:6px}
 .dob-row input,.dob-row select{min-width:0;width:100%}

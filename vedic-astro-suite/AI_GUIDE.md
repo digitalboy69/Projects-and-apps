@@ -402,9 +402,9 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 81 files, 7706 lines, 463 KB
+**sky3d** - 82 files, 7774 lines, 468 KB
 ```
-index.html                                         502 lines   31 KB
+index.html                                         503 lines   31 KB
 js/01-astro-engine.js                              161 lines    9 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -485,6 +485,7 @@ css/24-sky-dashboard.css                            92 lines    8 KB
 css/25-date-entry.css                                8 lines    0 KB
 css/25-solid-panels.css                             32 lines    4 KB
 css/26-exact-aspects.css                            65 lines    6 KB
+css/27-panel-unify.css                              67 lines    5 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -554,3 +555,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Divisional chart guide made full (v2): per chart lords from BPHS ch.6, your-chart facts, 12 houses, 9 planets, 5 to 15 tagged rules, combos, states, cross-checks; D30 part-lords and D60 parts per planet; `VGG.html(key, chart)`; test updated.
 - Exact Aspects tab (3D, new): `js/53-exact-aspects.js` + `css/26-exact-aspects.css`. Aspect point = mover longitude + (offset-1)*30 must equal target longitude; targets = natal planets/Lagna when a profile is active, live-sky planets (moving) otherwise, or a custom degree; offsets from `ASPECT_OFFSETS` plus conjunction; shows exact moments (retro passes grouped), orb entry/exit and duration. Test: `node tests/exact_aspects_test.js` (31 checks). Dasha logic untouched.
 - Aspects tab redesign: numbered steps (1 moving planet, 2 lands on, 3 options), planet grid, 'must stand at' summary, 'next exact moment at a glance', collapsible per-aspect groups, result cards with orb bar. Engine unchanged.
+- 3D tabs UI unify: new last-loaded `css/27-panel-unify.css` (html[data-app] selectors) restyles tab-intro, panel-heading, filter-chip, btn-block, transit/ret cards, scan-range-note, mini-field, empty-feed for ALL tabs; no JS or logic changed.
