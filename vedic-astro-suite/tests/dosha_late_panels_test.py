@@ -36,9 +36,9 @@ def run(stale):
         if not stale:
             pg.evaluate("()=>switchAppTab('panel-choghadiya')"); pg.wait_for_timeout(600)
             ok('Choghadiya panel shows 16 slots', pg.evaluate("()=>document.querySelectorAll('#chgBody .chg-r').length")==16)
-            pg.evaluate("()=>{const d=document.getElementById('chgDate');d.value='2026-11-01';d.dispatchEvent(new Event('input',{bubbles:true}))}"); pg.wait_for_timeout(300)
+            pg.evaluate("()=>{document.getElementById('chgTime').value='12:00';const d=document.getElementById('chgDate');d.value='2026-11-01';d.dispatchEvent(new Event('input',{bubbles:true}))}"); pg.wait_for_timeout(300)
             ok('Sunday 1 Nov: first day slot Udveg, first night Shubh', pg.evaluate("()=>{const r=[...document.querySelectorAll('#chgBody .chg-r b')].map(x=>x.textContent);return r[0]==='Udveg'&&r[8]==='Shubh'}"))
-            pg.evaluate("()=>{const d=document.getElementById('chgDate');d.value='2026-11-04';d.dispatchEvent(new Event('input',{bubbles:true}))}"); pg.wait_for_timeout(300)
+            pg.evaluate("()=>{document.getElementById('chgTime').value='12:00';const d=document.getElementById('chgDate');d.value='2026-11-04';d.dispatchEvent(new Event('input',{bubbles:true}))}"); pg.wait_for_timeout(300)
             ok('Wednesday 4 Nov: first day slot Labh', pg.evaluate("()=>document.querySelector('#chgBody .chg-r b').textContent==='Labh'"))
             pg.evaluate("()=>switchAppTab('panel-panchanga')"); pg.wait_for_timeout(700)
             ok('Panchanga panel still has exactly 16 slots (no duplicates)', pg.evaluate("()=>document.querySelectorAll('#panel-panchanga .chg-r').length")==16)

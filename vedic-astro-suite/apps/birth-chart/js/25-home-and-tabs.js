@@ -53,25 +53,37 @@ function homeAskHtml(){
   const tool=`<section class="hm-sec hm-ask-sec" hidden data-sec="ask" style="--sc:#D4AF37"><h3 class="hm-h"><i></i>Search tools<em>1</em></h3><div class="hm-grid"><button type="button" class="hm-c" data-qstoggle="1"><span class="hm-ci">🔍</span><span class="hm-ct"><b>Tap-to-search</b><small>Tap any placement in a chart to look it up</small></span></button></div></section>`;
   return `<p class="hm-ask-note hm-ask-sec" data-sec="ask" hidden>Pick a topic and a question. Google AI opens with your exact chart details.</p>`+tool+grp;
 }
+function hmChartSvg(ch,style){
+  const prev=window.__vgC; window.__vgC=ch;
+  try{ const v=ch.vargas.D1; return style==='south'?buildSouthIndianSvg(v,null):buildNorthIndianSvg(v,null); }catch(e){ console.warn('home chart',e); return ''; }
+  finally{ window.__vgC=prev; }
+}
 function buildHomePanel(name){
+  window.__hmPage='chart';
   const secs=[...new Set(HOME_ITEMS.map(i=>i[4]))], PL=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
   const pr=window.__vgProf||{}, ch=(typeof currentChartForModal!=='undefined')?currentChartForModal:null;
   const fd=d=>{try{return new Date(d+'T00:00').toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return d||'';}};
   const pct=(s,e)=>Math.max(0,Math.min(100,(Date.now()-s)/(e-s)*100));
-  let h=`<div class="app-panel" id="panel-home"><div class="home-wrap hm">`, top='';
+  let h=`<div class="app-panel" id="panel-home"><div class="home-wrap hm" data-page="chart">`, top='';
   try{
     const asc=SIGNS[ch.ascendant.sign],mo=ch.planets.Moon,su=ch.planets.Sun,nk=mo.nakshatra,act=findActiveDasha(ch.dashaData.mahadashas,new Date());
     const big=(l,s,sub)=>`<button type="button" class="hm-b" data-go="panel-overview"><small>${l}</small><b>${s.symbol} ${s.name}</b><span>${sub}</span></button>`;
-    top+=`<section class="hm-hero"><div class="hm-top"><div class="hm-av">${escapeHtml((name||'✦').trim().charAt(0).toUpperCase()||'✦')}</div><div class="hm-id"><small>Namaste 🙏</small><h2>${escapeHtml(name||'Your chart')}</h2><p>${pr.dob?'🗓 '+fd(pr.dob):''}${pr.tob?' · 🕒 '+pr.tob.slice(0,5):''}${pr.place?' · 📍 '+escapeHtml(String(pr.place).split(',')[0]):''}</p></div><button type="button" class="hm-3d" data-3d="1">🌌 3D Sky</button></div>
+    const hmStyle=(function(){try{return localStorage.getItem('vax_hm_style')==='south'?'south':'north';}catch(e){return 'north';}})();
+    const det=[pr.dob?'🗓 '+fd(pr.dob):'',pr.tob?'🕒 '+pr.tob.slice(0,5):'',pr.place?'📍 '+escapeHtml(String(pr.place).split(',')[0]):''].filter(Boolean).join('  ·  ');
+    top+=`<section class="hm-hero hm-chart-only"><div class="hm-top"><div class="hm-av">${escapeHtml((name||'✦').trim().charAt(0).toUpperCase()||'✦')}</div><div class="hm-id"><small>Namaste 🙏 · your birth chart</small><h2>${escapeHtml(name||'Your chart')}</h2>${det?`<button type="button" class="hm-dt" data-hmdt="1" aria-expanded="false">Birth details ▾</button><p class="hm-det" hidden>${det}</p>`:''}</div><button type="button" class="hm-3d" data-3d="1">🌌 3D Sky</button></div>
+      <div class="hm-cs" role="group" aria-label="Chart style"><button type="button" data-hmst="north" class="${hmStyle==='north'?'on':''}">North Indian</button><button type="button" data-hmst="south" class="${hmStyle==='south'?'on':''}">South Indian</button></div>
+      <button type="button" class="hm-svg" id="hmSvg" data-go="panel-vargas" aria-label="Open your chart and divisional charts">${hmChartSvg(ch,hmStyle)}</button>
+      <div class="hm-svg-cap">Tap the chart for all 24 divisional charts</div>
       <div class="hm-big">${big('Rising',asc,asc.sk)}${big('Moon',SIGNS[mo.sign],nk.name+' · pada '+nk.pada)}${big('Sun',SIGNS[su.sign],su.nakshatra?su.nakshatra.name:SIGNS[su.sign].sk)}</div></section>`;
     if(act&&act.antardasha){const m=act.mahadasha,ad=act.antardasha;
-      top+=`<button type="button" class="hm-now" data-go="panel-dasha"><div class="hm-now-h"><span>⏳ Running now</span><em>Open timeline ›</em></div><div class="hm-now-t">${PLANET_GLYPHS[m.lord]} ${m.lord} <i>›</i> ${PLANET_GLYPHS[ad.lord]} ${ad.lord}</div>
+      top+=`<button type="button" class="hm-now hm-chart-only" data-go="panel-dasha"><div class="hm-now-h"><span>⏳ Running now</span><em>Open timeline ›</em></div><div class="hm-now-t">${PLANET_GLYPHS[m.lord]} ${m.lord} <i>›</i> ${PLANET_GLYPHS[ad.lord]} ${ad.lord}</div>
         <div class="hm-pb"><label>${m.lord} Mahadasha<small>until ${formatDashaDate(m.endDate)}</small></label><i><u style="width:${pct(m.startDate,m.endDate)}%"></u></i></div>
         <div class="hm-pb"><label>${ad.lord} Antardasha<small>until ${formatDashaDate(ad.endDate)}</small></label><i><u style="width:${pct(ad.startDate,ad.endDate)}%"></u></i></div></button>`;}
-    top+=`<section><h3 class="hm-h">Your planets</h3><div class="hm-strip">${PL.map(n=>{const p=ch.planets[n],s=SIGNS[p.sign];return `<button type="button" class="hm-pl" data-go="panel-overview"><span>${PLANET_GLYPHS[n]}</span><b>${n}${p.retrograde?' ℞':''}</b><small>${s.symbol} ${s.name}</small><em>${Math.floor(p.degInSign)}° · H${p.house}</em></button>`}).join('')}</div></section>`;
+    top+=`<section class="hm-chart-only"><h3 class="hm-h">Your planets</h3><div class="hm-strip">${PL.map(n=>{const p=ch.planets[n],s=SIGNS[p.sign];return `<button type="button" class="hm-pl" data-go="panel-overview"><span>${PLANET_GLYPHS[n]}</span><b>${n}${p.retrograde?' ℞':''}</b><small>${s.symbol} ${s.name}</small><em>${Math.floor(p.degInSign)}° · H${p.house}</em></button>`}).join('')}</div></section>`;
+    top+=`<button type="button" class="hm-cta hm-chart-only" data-hmpage="tools"><span class="hm-cta-i">🧭</span><span class="hm-cta-t"><b>Explore all tools</b><small>${HOME_ITEMS.length} tools · timing, strengths, yogas, matching, ask AI</small></span><i>›</i></button>`;
   }catch(e){top=`<section class="hm-hero"><div class="hm-id"><small>Namaste 🙏</small><h2>${escapeHtml(name||'Your chart')}</h2><p>Your chart is ready. Pick what you want to explore.</p></div></section>`;}
   const segs=[['all','All','#D4AF37']].concat(secs.map(x=>[x,x,HOME_SEC_COL[x]||'#D4AF37'])).concat([['ask','Ask AI','#5EC4B7']]);
-  h+=top+`<div class="hm-seg" id="hmSeg" role="tablist">${segs.map((x,i)=>`<button type="button" role="tab" data-seg="${x[0]}" style="--sc:${x[2]}" class="${i?'':'on'}"><i></i>${x[1]}</button>`).join('')}</div>`;
+  h+=top+`<div class="hm-tp"><button type="button" data-hmpage="chart">‹ Your chart</button><b>All tools</b><span>${HOME_ITEMS.length}</span></div><div class="hm-seg" id="hmSeg" role="tablist">${segs.map((x,i)=>`<button type="button" role="tab" data-seg="${x[0]}" style="--sc:${x[2]}" class="${i?'':'on'}"><i></i>${x[1]}</button>`).join('')}</div>`;
   const pref=['panel-reading','panel-active','panel-overview','panel-dasha','panel-vargas','panel-lagnas','panel-yogas','panel-shadbala'];
   const feat=pref.map(id=>HOME_ITEMS.find(i=>i[0]===id)).filter(Boolean).concat(HOME_ITEMS).filter((v,i,a)=>a.indexOf(v)===i).slice(0,4);
   h+=`<section class="hm-qs" data-sec="all"><h3 class="hm-h">Quick start</h3><div class="hm-feat">${feat.map(i=>`<button type="button" class="hm-f" style="--sc:${HOME_SEC_COL[i[4]]||'#D4AF37'}" data-go="${i[0]}"><span>${i[1]}</span><b>${i[2]}</b><small>${i[4]}</small></button>`).join('')}</div></section><div id="hmSecs">`;
@@ -87,6 +99,11 @@ function buildHomePanel(name){
   seg.addEventListener('click',e=>{const b=e.target.closest('[data-seg]');if(!b)return;const k=b.dataset.seg;
     seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
     home.querySelectorAll('.hm-sec,.hm-qs,.hm-ask-sec').forEach(sec=>{const d=sec.dataset.sec;sec.hidden=!(k==='all'?d!=='ask':d===k);});});
+  home.addEventListener('click',e=>{
+    const pg=e.target.closest('[data-hmpage]'); if(pg){const w=home.querySelector('.hm'); window.__hmPage=pg.dataset.hmpage; w.dataset.page=window.__hmPage; window.scrollTo(0,0); return;}
+    const dt=e.target.closest('[data-hmdt]'); if(dt){const p=home.querySelector('.hm-det'); if(p){p.hidden=!p.hidden; dt.setAttribute('aria-expanded',String(!p.hidden)); dt.textContent=p.hidden?'Birth details ▾':'Hide details ▴';} return;}
+    const st=e.target.closest('[data-hmst]'); if(st){try{localStorage.setItem('vax_hm_style',st.dataset.hmst);}catch(x){} home.querySelectorAll('[data-hmst]').forEach(x=>x.classList.toggle('on',x===st)); const sv=document.getElementById('hmSvg'); if(sv&&ch)sv.innerHTML=hmChartSvg(ch,st.dataset.hmst); e.stopPropagation(); return;}
+  },true);
   home.addEventListener('click',e=>{const a=e.target.closest('[data-askt]');if(a&&typeof srchOpen==='function'){srchOpen();if(typeof srchTopicBox==='function')srchTopicBox(+a.dataset.askt);return;}
     if(e.target.closest('[data-qstoggle]')){const t=document.getElementById('qsearchToggle');if(t){t.click();e.target.closest('[data-qstoggle]').classList.toggle('on',typeof qsearchActive!=='undefined'&&qsearchActive);}}});
 }

@@ -249,6 +249,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/57-prashna.css` — styles for the Prashna chart panel
 - `apps/birth-chart/css/58-ayanamsa-choice.css` — styles for the ayanamsa selector
 - `apps/birth-chart/css/59-kp-system.css` — styles for the KP system panel
+- `apps/birth-chart/css/60-home-chart-first.css` — Home in two screens: chart first (hero chart, details hidden), then All tools (data-page switch, tinted tool panels)
 
 ### apps/sky3d/ — 3D Sky (Three.js r128 from CDN)
 - `apps/sky3d/index.html` — markup of this app; lists its css/js in load order
@@ -410,6 +411,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/notepad_test.py` — Notepad test: typing order, note links, templates from every view, side menu, Settings tab switches (copy buttons off by default), at 390 px and 1280 px
 - `tests/notepad_sidemenu_test.py` — Notepad side menu redesign: stats tiles, quick find, collapsible sections (saved), tag chips + show all, recent notes, solid drawer, at 1100 and 390 px
 - `tests/quick_menu_test.py` — Quick Menu: descriptions, collapsible sections, search by name or description, Organise (pin/group), Recent, Enter to open, 390 px
+- `tests/home_chart_first_test.py` — Home chart-first: chart + Rising/Moon/Sun, details hidden then shown, North/South saved, Explore all tools / back, returns to tools page from a tool, new chart resets
 - `tests/rising_navamsha_test.py` — 3D rising view Navamsha test: current Navamsha line, 12 signs x 9 Navamshas, order rule per sign type, boundary accuracy, tap and back
 - `tests/time_wheels_test.py` — 3D date picker test: five snap wheels, tap/scroll select, steppers with month-end clamp, typed date
 - `tests/sky_dashboard_test.py` — Sky Dashboard test: button, all sections, 9 cards, 9x9 matrix, summary text, close
