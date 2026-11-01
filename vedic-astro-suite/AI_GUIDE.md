@@ -185,7 +185,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-02 - 1759 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-02 - 1761 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -402,9 +402,9 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 81 files, 7640 lines, 457 KB
+**sky3d** - 81 files, 7706 lines, 463 KB
 ```
-index.html                                         498 lines   32 KB
+index.html                                         502 lines   31 KB
 js/01-astro-engine.js                              161 lines    9 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -457,7 +457,7 @@ js/49-time-machine.js                              189 lines   15 KB
 js/50-sky-dashboard.js                             295 lines   26 KB
 js/51-jump-from-rectification.js                    33 lines    2 KB
 js/52-gulika.js                                     53 lines    4 KB
-js/53-exact-aspects.js                             204 lines   12 KB
+js/53-exact-aspects.js                             210 lines   13 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -484,7 +484,7 @@ css/23-time-machine-polish.css                     126 lines   12 KB
 css/24-sky-dashboard.css                            92 lines    8 KB
 css/25-date-entry.css                                8 lines    0 KB
 css/25-solid-panels.css                             32 lines    4 KB
-css/26-exact-aspects.css                             9 lines    0 KB
+css/26-exact-aspects.css                            65 lines    6 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -553,3 +553,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Divisional chart guide for all 24 charts (D1 to D144 + RTN): birth-chart/js/114-varga-guide.js (`VGG.html/text`), css/53-varga-guide.css, shown as a collapsible block under every D-chart in js/58; rules tagged From the texts / Common practice; test tests/varga_guide_test.py. If calcVarga changes, update the "how this app divides it" lines.
 - Divisional chart guide made full (v2): per chart lords from BPHS ch.6, your-chart facts, 12 houses, 9 planets, 5 to 15 tagged rules, combos, states, cross-checks; D30 part-lords and D60 parts per planet; `VGG.html(key, chart)`; test updated.
 - Exact Aspects tab (3D, new): `js/53-exact-aspects.js` + `css/26-exact-aspects.css`. Aspect point = mover longitude + (offset-1)*30 must equal target longitude; targets = natal planets/Lagna when a profile is active, live-sky planets (moving) otherwise, or a custom degree; offsets from `ASPECT_OFFSETS` plus conjunction; shows exact moments (retro passes grouped), orb entry/exit and duration. Test: `node tests/exact_aspects_test.js` (31 checks). Dasha logic untouched.
+- Aspects tab redesign: numbered steps (1 moving planet, 2 lands on, 3 options), planet grid, 'must stand at' summary, 'next exact moment at a glance', collapsible per-aspect groups, result cards with orb bar. Engine unchanged.

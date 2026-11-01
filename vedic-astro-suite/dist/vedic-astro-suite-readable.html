@@ -2025,14 +2025,70 @@ body.dbx-open .viewport-actions,body.dbx-open .viewport-hud{visibility:hidden}
 @media(prefers-reduced-motion:reduce){.dbx *{animation:none!important;scroll-behavior:auto!important}}
 </style>
 <style>
-/* Exact Aspects tab */
-.ax-card .ax-win{display:block;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line,rgba(255,255,255,.14));line-height:1.55}
-.ax-passes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.ax-passes span{font-size:12px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.07);cursor:pointer}
-.ax-passes span:hover{background:rgba(255,255,255,.14)}
-.ax-live{background:rgba(52,199,89,.18)!important;color:#7be39a!important}
-.ax-check{display:flex;align-items:center;gap:8px;margin:10px 0;font-size:13px;opacity:.9}
-#axSrc{line-height:1.5;margin-bottom:8px}
+/* Exact Aspects tab: numbered steps, planet grid, summary card, compact result cards */
+#tab-aspexact{--axc:var(--gold,#F4C45C)}
+.ax-hero{display:flex;gap:12px;align-items:center;padding:12px 14px;margin-bottom:14px;border-radius:14px;background:linear-gradient(135deg,rgba(244,196,92,.14),rgba(0,240,213,.07));border:1px solid var(--line-bright,rgba(80,105,145,.6))}
+.ax-hero-ico{font-size:26px;color:var(--axc);line-height:1}
+.ax-hero b{display:block;font-size:15px}.ax-hero small{display:block;opacity:.75;font-size:12px;margin-top:2px}
+.ax-step{display:flex;align-items:baseline;gap:8px;margin:16px 0 8px}
+.ax-step b{font-size:13px;letter-spacing:.04em;text-transform:uppercase}.ax-step small{opacity:.6;font-size:12px}
+.ax-n{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--axc);color:#14110a;font-weight:700;font-size:12px;align-self:center}
+.ax-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.ax-pill{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 6px;min-height:40px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--line,rgba(58,74,107,.3));color:inherit;font-size:13px;cursor:pointer;transition:background .15s,border-color .15s,transform .1s}
+.ax-pill .g{font-size:16px;color:var(--pc);line-height:1}
+.ax-pill:hover{background:rgba(255,255,255,.09)}.ax-pill:active{transform:scale(.97)}
+.ax-pill.active{background:color-mix(in srgb,var(--pc) 20%,transparent);border-color:var(--pc);box-shadow:0 0 0 1px var(--pc) inset;font-weight:600}
+.ax-src{font-size:12px;line-height:1.5;opacity:.85;margin-bottom:8px}
+.ax-badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:700;margin-right:4px}
+.ax-badge.nat{background:rgba(244,196,92,.2);color:var(--gold,#F4C45C)}.ax-badge.live{background:rgba(0,240,213,.18);color:var(--cyan,#00F0D5)}
+.ax-custom{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.ax-summary{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--line-bright,rgba(80,105,145,.6))}
+.ax-summary.err{border-color:var(--flare,#FF6B4A);color:var(--flare,#FF6B4A)}
+.ax-sum-top{font-size:14px}.ax-arrow{opacity:.5;margin:0 4px}
+.ax-sum-hd{margin:10px 0 4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.6}
+.ax-sum-row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line,rgba(58,74,107,.3));font-size:13px}
+.ax-sum-row span{opacity:.75;white-space:nowrap}.ax-sum-row b{text-align:right;font-weight:600}
+.ax-sum-note{margin-top:6px;font-size:12px;opacity:.7}
+.ax-opts{display:flex;flex-direction:column;gap:10px}
+.ax-opt{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ax-opt label{font-size:13px}.ax-opt label i{display:block;font-style:normal;font-size:11px;opacity:.55}
+.ax-seg{display:inline-flex;padding:3px;border-radius:11px;background:rgba(255,255,255,.06);border:1px solid var(--line,rgba(58,74,107,.3))}
+.ax-seg button{background:none;border:0;color:inherit;padding:7px 12px;min-height:34px;border-radius:8px;font-size:13px;cursor:pointer;box-shadow:none}
+.ax-seg button.active{background:var(--axc);color:#14110a;font-weight:700}
+.ax-check{display:flex;align-items:center;gap:8px;font-size:13px;opacity:.9;cursor:pointer}
+.ax-go{margin-top:16px}
+.ax-results-head{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 8px;padding-top:12px;border-top:1px solid var(--line,rgba(58,74,107,.3))}
+.ax-results-head b{font-size:13px;letter-spacing:.04em;text-transform:uppercase}.ax-results-head span{font-size:12px;opacity:.6}
+.ax-glance{border-radius:14px;background:rgba(244,196,92,.08);border:1px solid rgba(244,196,92,.28);padding:10px 12px;margin-bottom:12px}
+.ax-g-h{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.7;margin-bottom:4px}
+.ax-g-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;padding:7px 0;border-top:1px solid rgba(255,255,255,.07);font-size:13px;cursor:pointer}
+.ax-g-row:first-of-type{border-top:0}.ax-g-row span{opacity:.8}.ax-g-row em{font-style:normal;opacity:.65;font-size:12px}.ax-g-row em.live{color:#7be39a;opacity:1;font-weight:700}
+.ax-group{margin-bottom:10px;border-radius:14px;border:1px solid var(--line,rgba(58,74,107,.3));background:rgba(255,255,255,.03);overflow:hidden}
+.ax-group>summary{display:flex;flex-direction:column;gap:2px;padding:11px 14px;cursor:pointer;list-style:none;font-size:14px}
+.ax-group>summary::-webkit-details-marker{display:none}
+.ax-group>summary::after{content:'▾';position:absolute;right:26px;opacity:.5}
+.ax-group{position:relative}.ax-group[open]>summary{border-bottom:1px solid var(--line,rgba(58,74,107,.3))}
+.ax-group>summary small{font-size:12px;opacity:.65}
+.ax-group .empty-feed{margin:10px}
+.ax-card{margin:10px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--line,rgba(58,74,107,.3));cursor:pointer;transition:border-color .15s,background .15s}
+.ax-card:hover{border-color:var(--axc);background:rgba(255,255,255,.08)}
+.ax-card.live{border-color:#7be39a;box-shadow:0 0 0 1px rgba(123,227,154,.4) inset}
+.ax-card-top{display:flex;justify-content:space-between;font-size:12px;opacity:.85}
+.ax-when{padding:2px 9px;border-radius:999px;background:rgba(255,255,255,.1)}.ax-when.live{background:rgba(52,199,89,.22);color:#7be39a;font-weight:700}
+.ax-exact{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:8px 0 2px}
+.ax-exact b{font-size:19px;letter-spacing:-.01em}.ax-exact span{font-size:15px;color:var(--axc);font-variant-numeric:tabular-nums}
+.ax-where{font-size:13px;opacity:.9;margin-bottom:10px}
+.ax-bar{margin:6px 0 6px}
+.ax-track{position:relative;height:8px;border-radius:999px;background:linear-gradient(90deg,rgba(255,255,255,.1),rgba(244,196,92,.35) 50%,rgba(255,255,255,.1))}
+.ax-ex{position:absolute;top:-3px;width:3px;height:14px;margin-left:-1.5px;border-radius:2px;background:var(--axc);box-shadow:0 0 6px var(--axc)}
+.ax-now{position:absolute;top:-2px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#7be39a;border:2px solid #0b1320}
+.ax-bar-l{display:flex;justify-content:space-between;gap:8px;margin-top:5px;font-size:11px;opacity:.65}
+.ax-dur{font-size:12px;opacity:.85}
+.ax-passes{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;align-items:center}
+.ax-passes small{width:100%;font-size:11px;opacity:.6}
+.ax-passes span{font-size:12px;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.08)}
+.ax-passes span:hover{background:rgba(255,255,255,.16)}
+@media (min-width:700px){.ax-grid{grid-template-columns:repeat(5,1fr)}}
 </style>
 <style>
 /* 3D Sky panels, tabs and popups: SOLID surfaces (nothing shows through), calm motion (colour changes only, no sliding/lifting/glow).
@@ -2613,30 +2669,34 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
       </div>
 
       <div class="panel-section" id="tab-aspexact">
-        <div class="tab-intro"><span class="ico">⚹</span><div><b>When an aspect hits the exact degree.</b> Pick a moving planet and a target. You get the exact date and time its aspect lands on the target's degree, when it enters and leaves the orb, and how long that lasts. Every planet uses its own aspects (Moon: 7th; Mars: 4, 7, 8; Jupiter, Rahu, Ketu: 5, 7, 9; Saturn: 3, 7, 10).</div></div>
-        <div class="panel-heading">Moving planet</div>
-        <div class="filter-row" id="axMovers"></div>
-        <div class="panel-heading">Target</div>
-        <div class="scan-range-note" id="axSrc"></div>
-        <div class="filter-row" id="axTargets"></div>
-        <div id="axCustom" style="display:none">
-          <div class="df-row2">
-            <div class="mini-field"><label for="axSign">Zodiac sign</label><select id="axSign"></select></div>
-            <div class="mini-field"><label for="axDeg">Degree · minutes · seconds</label><input type="text" id="axDeg" placeholder="18°00'00&quot;" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"></div>
-          </div>
+        <div class="ax-hero"><span class="ax-hero-ico">⚹</span><div><b>Exact aspect finder</b><small>Find the exact date and time a planet's aspect lands on a degree.</small></div></div>
+
+        <div class="ax-step"><span class="ax-n">1</span><b>Moving planet</b><small>the one that aspects</small></div>
+        <div class="ax-grid" id="axMovers"></div>
+
+        <div class="ax-step"><span class="ax-n">2</span><b>Lands on</b><small>the point it aspects</small></div>
+        <div class="ax-src" id="axSrc"></div>
+        <div class="ax-grid" id="axTargets"></div>
+        <div id="axCustom" class="ax-custom" style="display:none">
+          <div class="mini-field"><label for="axSign">Sign</label><select id="axSign"></select></div>
+          <div class="mini-field"><label for="axDeg">Degree · min · sec</label><input type="text" id="axDeg" placeholder="18°00'00&quot;" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"></div>
         </div>
-        <div class="df-preview" id="axPreview"></div>
-        <div class="df-row2">
-          <div class="mini-field"><label>Orb (how close counts)</label>
-            <div class="filter-row" id="axOrbs" style="margin-bottom:0"><button type="button" class="filter-chip" data-orb="0.25">0.25°</button><button type="button" class="filter-chip" data-orb="0.5">0.5°</button><button type="button" class="filter-chip active" data-orb="1">1°</button><button type="button" class="filter-chip" data-orb="3">3°</button></div></div>
-          <div class="mini-field"><label>Look</label>
-            <div class="filter-row" id="axDir" style="margin-bottom:0;flex-wrap:nowrap"><button type="button" class="filter-chip active" data-dir="1">Next 3</button><button type="button" class="filter-chip" data-dir="-1">Past 3</button></div></div>
+
+        <div class="ax-summary" id="axPreview"></div>
+
+        <div class="ax-step"><span class="ax-n">3</span><b>Options</b></div>
+        <div class="ax-opts">
+          <div class="ax-opt"><label>Orb <i>how close counts</i></label>
+            <div class="ax-seg" id="axOrbs"><button type="button" data-orb="0.25">0.25°</button><button type="button" data-orb="0.5">0.5°</button><button type="button" class="active" data-orb="1">1°</button><button type="button" data-orb="3">3°</button></div></div>
+          <div class="ax-opt"><label>Show</label>
+            <div class="ax-seg" id="axDir"><button type="button" class="active" data-dir="1">Next 3</button><button type="button" data-dir="-1">Past 3</button></div></div>
+          <label class="ax-check"><input type="checkbox" id="axConj" checked><span>Include conjunction (same degree)</span></label>
         </div>
-        <label class="ax-check"><input type="checkbox" id="axConj" checked> Also show the conjunction (same degree)</label>
-        <button type="button" class="btn-block" id="axGo">Find exact aspects</button>
-        <div class="panel-heading">Results</div>
-        <div class="scan-range-note" id="axNote">Sidereal (Lahiri) zodiac · times in your device timezone</div>
-        <div id="axResults"><div class="empty-feed">Choose a moving planet and a target, then tap <b>Find exact aspects</b>.</div></div>
+
+        <button type="button" class="btn-block ax-go" id="axGo">Find exact aspects</button>
+
+        <div class="ax-results-head"><b>Results</b><span id="axNote"></span></div>
+        <div id="axResults"><div class="empty-feed">Choose a planet and a target, then tap <b>Find exact aspects</b>.</div></div>
       </div>
 
       <div class="panel-section" id="tab-returns">
@@ -8476,85 +8536,91 @@ function targetInfo(){
 }
 
 /* ------------------------------ UI ------------------------------ */
-function chip(n, active, extra){
-  const col = PLANET_COLORS[n] || '#d4a24a';
-  return `<button type="button" class="filter-chip${active?' active':''}" data-p="${n}"><span class="df-chip-glyph" style="color:${active?'#021210':col}">${PLANET_GLYPHS[n]||extra||''}</span>${n==='__custom__'?'Custom':n}</button>`;
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+const ord = n => n===1 ? 'Conjunction' : n + ({1:'st',2:'nd',3:'rd'}[n] || 'th') + ' aspect';
+function pill(n, active, glyph, col){
+  return `<button type="button" class="ax-pill${active?' active':''}" data-p="${n}" style="--pc:${col||'#d4a24a'}"><span class="g">${glyph}</span><span class="n">${n==='__custom__'?'Custom':n}</span></button>`;
 }
+function offsets(){ const list = (ASPECT_OFFSETS[axMover] || [7]).slice(); return axConj ? [1].concat(list) : list; }
 function buildUI(){
   const p = profile();
-  $('axMovers').innerHTML = PLANET_LIST.map(n => chip(n, n===axMover)).join('');
-  const tl = PLANET_LIST.slice();
-  if (p) tl.push(LAGNA);
-  $('axTargets').innerHTML = tl.map(n => n===LAGNA ? chip(n, n===axTarget, '↑') : chip(n, n===axTarget)).join('') + chip(CUSTOM, axTarget===CUSTOM, '⌖');
+  $('axMovers').innerHTML = PLANET_LIST.map(n => pill(n, n===axMover, PLANET_GLYPHS[n], PLANET_COLORS[n])).join('');
+  const tl = PLANET_LIST.slice(); if (p) tl.push(LAGNA);
   if (axTarget !== CUSTOM && !tl.includes(axTarget)) axTarget = 'Mars';
+  $('axTargets').innerHTML = tl.map(n => pill(n, n===axTarget, n===LAGNA ? '↑' : PLANET_GLYPHS[n], PLANET_COLORS[n])).join('') + pill(CUSTOM, axTarget===CUSTOM, '⌖', '#d4a24a');
   $('axSrc').innerHTML = p
-    ? `Target = <b>${esc(p.name)}'s natal chart</b>, moving planet = <b>live sky</b>. Choose "Custom" for any degree.`
-    : `No natal profile active, so this works on the <b>live sky only</b>: the moving planet against the chosen planet, which also keeps moving. Save a profile in the Natal tab to test against your birth chart.`;
+    ? `<span class="ax-badge nat">✦ Natal</span> ${esc(p.name)}'s birth chart is the target. The moving planet is the live sky.`
+    : `<span class="ax-badge live">● Live sky</span> No birth profile is active, so both planets are the live sky. Save a profile in the Natal tab to use your birth chart.`;
   $('axCustom').style.display = axTarget === CUSTOM ? '' : 'none';
-  $('axMovers').querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.p === axMover));
-  $('axTargets').querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.p === axTarget));
   preview();
-}
-function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-function offsets(){
-  const list = (ASPECT_OFFSETS[axMover] || [7]).slice();
-  return axConj ? [1].concat(list) : list;
 }
 function preview(){
   const t = targetInfo(), el = $('axPreview');
-  if (t.err !== undefined){ el.textContent = t.err; el.classList.add('err'); return; }
-  el.classList.remove('err');
-  if (t.lon === undefined){ el.textContent = `Target: ${t.label}`; return; }
-  // where the moving planet must stand for each aspect
-  const ord = n => n===1?'Conjunction':n+({3:'rd',1:'st',2:'nd'}[n]||'th')+' aspect';
-  const lines = offsets().map(off => { const L = normDeg(t.lon - (off-1)*30); return `${ord(off)}: ${axMover} at ${U.sgn(U.inSign(L).sign)} ${U.inSign(L).text}`; });
-  el.innerHTML = `Target: <b>${esc(t.label)}</b><br>` + lines.map(esc).join('<br>');
+  el.classList.toggle('err', t.err !== undefined);
+  if (t.err !== undefined){ el.textContent = t.err; return; }
+  if (t.lon === undefined){
+    el.innerHTML = `<div class="ax-sum-top">${PLANET_GLYPHS[axMover]} <b>${axMover}</b> <span class="ax-arrow">→</span> <b>${esc(t.label)}</b></div><div class="ax-sum-note">The target moves too, so the exact positions are worked out for each date.</div>`;
+    return;
+  }
+  const rows = offsets().map(off => { const L = normDeg(t.lon - (off-1)*30), q = U.inSign(L);
+    return `<div class="ax-sum-row"><span>${ord(off)}</span><b>${esc(PLANET_GLYPHS[axMover])} ${axMover} at ${U.sgn(q.sign)} ${q.text}</b></div>`; }).join('');
+  el.innerHTML = `<div class="ax-sum-top">${PLANET_GLYPHS[axMover]} <b>${axMover}</b> <span class="ax-arrow">→</span> <b>${esc(t.label)}</b></div><div class="ax-sum-hd">${axMover} must stand at</div>${rows}`;
+}
+function bar(c, ex, now){
+  const span = c.end - c.start, pos = x => Math.max(0, Math.min(100, (x - c.start) / span * 100));
+  const nowMark = (now >= c.start && now <= c.end) ? `<i class="ax-now" style="left:${pos(now)}%" title="now"></i>` : '';
+  const marks = c.exact.map(e => `<i class="ax-ex" style="left:${pos(e.jd)}%"></i>`).join('');
+  return `<div class="ax-bar"><div class="ax-track">${marks}${nowMark}</div><div class="ax-bar-l"><span>${U.fmtDate(c.start)} · ${U.fmtClock(c.start)}</span><span>${U.fmtDate(c.end)} · ${U.fmtClock(c.end)}</span></div></div>`;
+}
+function card(c, i, off, t, now){
+  const ex = c.exact[0], active = c.start <= now && c.end >= now, isNode = (axMover==='Rahu'||axMover==='Ketu');
+  const L = t.lon !== undefined ? normDeg(t.lon - (off-1)*30) : normDeg(siderealLongitude(axMover, ex.jd)), pos = U.inSign(L);
+  const when = active ? 'Inside orb now' : (ex.jd > now ? 'in ' + U.fmtSpan(ex.jd - now) : U.fmtSpan(now - ex.jd) + ' ago');
+  const passes = c.exact.length > 1 ? `<div class="ax-passes"><small>${c.exact.length} exact passes (the planet turns around):</small>${c.exact.map((e,k) => `<span data-jd="${e.jd}">${U.fmtDate(e.jd)} · ${U.fmtClock(e.jd)}${isNode?'':(e.retro?' ℞':' →')}</span>`).join('')}</div>` : '';
+  return `<div class="ax-card${active?' live':''}" data-jd="${ex.jd}">
+    <div class="ax-card-top"><span class="ax-when${active?' live':''}">${when}</span><span class="ax-wd">${U.fmtWD(ex.jd)}</span></div>
+    <div class="ax-exact"><b>${U.fmtDate(ex.jd,true)}</b><span>${U.fmtClock(ex.jd,true)}</span></div>
+    <div class="ax-where">${PLANET_GLYPHS[axMover]} ${axMover} at <b>${U.sgn(pos.sign)} ${pos.text}</b>${isNode?'':(ex.retro?' · ℞ retrograde':' · direct')}</div>
+    ${bar(c, ex, now)}
+    <div class="ax-dur">Inside the ±${axOrb}° orb for <b>${dur(c)}</b></div>${passes}</div>`;
 }
 function dur(c){ return U.fmtSpan(c.end - c.start); }
-function card(c, i, off, t, now){
-  const ex = c.exact[0], active = c.start <= now && c.end >= now;
-  const L = t.lon !== undefined ? normDeg(t.lon - (off-1)*30) : normDeg(siderealLongitude(axMover, ex.jd));
-  const pos = U.inSign(L);
-  const motion = (axMover==='Rahu'||axMover==='Ketu') ? '' : (ex.retro ? ' · ℞ retrograde' : ' · direct');
-  const passes = c.exact.length > 1
-    ? `<div class="ax-passes">${c.exact.map((e,k) => `<span data-jd="${e.jd}">Pass ${k+1}: ${U.fmtDate(e.jd,true)} ${U.fmtClock(e.jd,true)}${(axMover==='Rahu'||axMover==='Ketu')?'':(e.retro?' ℞':'')}</span>`).join('')}</div>` : '';
-  const tag = active ? '<div class="transit-card-tag ax-live">● Inside the orb now</div>' : '';
-  const when = c.start > now ? 'in ' + U.fmtSpan(ex.jd - now) : (ex.jd < now ? U.fmtSpan(now - ex.jd) + ' ago' : 'in ' + U.fmtSpan(ex.jd - now));
-  return `<div class="transit-card ax-card" data-jd="${ex.jd}">
-    <div class="transit-card-top"><div class="transit-card-title">#${i+1} · ${U.fmtDate(ex.jd,true)}</div><div class="transit-card-date">${U.fmtClock(ex.jd,true)}</div></div>
-    <div class="transit-card-desc">${U.fmtWD(ex.jd)} · ${U.fmtUTC(ex.jd)} · ${when}<br>${PLANET_GLYPHS[axMover]} ${axMover} at <b>${U.sgn(pos.sign)} ${pos.text}</b>${motion}<br>
-      <span class="ax-win">Orb ±${axOrb}°: <b>${U.fmtDate(c.start)} ${U.fmtClock(c.start)}</b> → <b>${U.fmtDate(c.end)} ${U.fmtClock(c.end)}</b><br>Duration inside the orb: <b>${dur(c)}</b></span></div>${passes}${tag}</div>`;
-}
 async function run(){
   const res = $('axResults'), note = $('axNote'), t = targetInfo();
   if (t.err !== undefined){ res.innerHTML = `<div class="empty-feed">${esc(t.err)}</div>`; return; }
-  if (!t.live && axTarget !== CUSTOM && !t.natal && t.lon === undefined){ res.innerHTML = '<div class="empty-feed">Pick a target.</div>'; return; }
   if (t.live && axTarget === axMover){ res.innerHTML = '<div class="empty-feed">Pick a different target: a planet cannot aspect itself in the live sky.</div>'; return; }
   axTok.cancel = true; const tok = axTok = { cancel:false };
   const now = currentJD, dir = axDir, offs = offsets();
   $('axGo').disabled = true;
-  note.textContent = `${dir>0?'Upcoming from':'Previous before'} ${U.fmtDate(now)} · sidereal (Lahiri) · ${axMover} → ${t.label} · orb ±${axOrb}° · times in your device timezone`;
+  note.textContent = `${dir>0?'from':'before'} ${U.fmtDate(now)}`;
   res.innerHTML = '<div class="empty-feed"><span class="df-prog" id="axProg">Scanning…</span></div>';
   await U.nextTick();
-  let html = '';
+  const all = [];
   for (const off of offs){
     const wins = await findWindows({ mover:axMover, off, targetFn:t.fn, targetName:t.name, now, dir, count:3, orb:axOrb, tok,
-      onProg: jd => { const el = $('axProg'); if (el) el.textContent = `Scanning ${OFF_NAME[off]} · reached ${U.dateAt(jd,86400000).getFullYear()}`; } });
+      onProg: jd => { const el = $('axProg'); if (el) el.textContent = `Scanning ${ord(off).toLowerCase()} · reached ${U.dateAt(jd,86400000).getFullYear()}`; } });
     if (wins === null) return;
-    html += `<div class="panel-heading">${OFF_NAME[off]}</div>` + (wins.length ? wins.map((c,i) => card(c,i,off,t,now)).join('') : `<div class="empty-feed">Not found within ${MAX_YEARS} years.</div>`);
+    all.push({ off, wins });
   }
   if (tok.cancel) return;
   $('axGo').disabled = false;
-  res.innerHTML = html;
-  res.querySelectorAll('.ax-card').forEach(c => c.addEventListener('click', () => jumpToJD(parseFloat(c.dataset.jd))));
-  res.querySelectorAll('.ax-passes span').forEach(s => s.addEventListener('click', e => { e.stopPropagation(); jumpToJD(parseFloat(s.dataset.jd)); }));
+  const glance = all.map(a => { const c = a.wins[0]; if (!c) return `<div class="ax-g-row"><span>${ord(a.off)}</span><em>not found</em></div>`;
+    const act = c.start <= now && c.end >= now;
+    return `<div class="ax-g-row" data-jd="${c.exact[0].jd}"><span>${ord(a.off)}</span><b>${U.fmtDate(c.exact[0].jd)}</b><em class="${act?'live':''}">${act?'now':(c.exact[0].jd>now?'in '+U.fmtSpan(c.exact[0].jd-now):U.fmtSpan(now-c.exact[0].jd)+' ago')}</em></div>`; }).join('');
+  const groups = all.map((a, gi) => { const L0 = t.lon !== undefined ? U.inSign(normDeg(t.lon - (a.off-1)*30)) : null;
+    return `<details class="ax-group"${gi===0?' open':''}><summary><b>${ord(a.off)}</b>${L0 ? `<small>${axMover} at ${U.sgn(L0.sign)} ${L0.text}</small>` : ''}</summary>` +
+      (a.wins.length ? a.wins.map((c,i) => card(c,i,a.off,t,now)).join('') : `<div class="empty-feed">Not found within ${MAX_YEARS} years.</div>`) + '</details>'; }).join('');
+  res.innerHTML = `<div class="ax-glance"><div class="ax-g-h">Next exact moment, at a glance</div>${glance}</div>${groups}`;
+  res.querySelectorAll('[data-jd]').forEach(c => c.addEventListener('click', e => { const s = e.target.closest('.ax-passes span'); jumpToJD(parseFloat((s || c).dataset.jd)); }));
 }
-
+function seg(id, attr, setter){
+  $(id).addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; setter(b); $(id).querySelectorAll('button').forEach(x => x.classList.toggle('active', x===b)); });
+}
 function wireUI(){
   $('axMovers').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b){ axMover = b.dataset.p; buildUI(); } });
   $('axTargets').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b){ axTarget = b.dataset.p; buildUI(); } });
-  $('axDir').addEventListener('click', e => { const b = e.target.closest('[data-dir]'); if (!b) return; axDir = Number(b.dataset.dir); $('axDir').querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c===b)); });
-  $('axOrbs').addEventListener('click', e => { const b = e.target.closest('[data-orb]'); if (!b) return; axOrb = Number(b.dataset.orb); $('axOrbs').querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c===b)); });
+  seg('axDir', 'dir', b => { axDir = Number(b.dataset.dir); });
+  seg('axOrbs', 'orb', b => { axOrb = Number(b.dataset.orb); });
   $('axConj').addEventListener('change', e => { axConj = e.target.checked; preview(); });
   $('axDeg').addEventListener('input', preview); $('axSign').addEventListener('change', preview);
   $('axDeg').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('axDeg').blur(); run(); } });

@@ -329,7 +329,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/css/22-dasha-transit-triggers.css` — Triggers tab (dasha + transit) styles
 - `apps/sky3d/css/23-time-machine-polish.css` — Time Machine styles + 3D Sky visual polish (top bar, tabs, timeline dock, buttons)
 - `apps/sky3d/css/24-sky-dashboard.css` — Sky Dashboard page styles
-- `apps/sky3d/css/26-exact-aspects.css` — styles for the Aspects tab
+- `apps/sky3d/css/26-exact-aspects.css` — styles for the Aspects tab (numbered steps, planet grid, summary card, result cards with orb bar)
 - `apps/sky3d/css/25-solid-panels.css` — 3D Sky side panel, tabs, cards and popups: solid surfaces and calm motion (loaded last, overrides older polish layers)
 - `apps/sky3d/css/25-date-entry.css` — Day/Month/Year + AD/BC birth date fields
 

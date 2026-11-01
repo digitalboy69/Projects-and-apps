@@ -242,30 +242,34 @@
       </div>
 
       <div class="panel-section" id="tab-aspexact">
-        <div class="tab-intro"><span class="ico">⚹</span><div><b>When an aspect hits the exact degree.</b> Pick a moving planet and a target. You get the exact date and time its aspect lands on the target's degree, when it enters and leaves the orb, and how long that lasts. Every planet uses its own aspects (Moon: 7th; Mars: 4, 7, 8; Jupiter, Rahu, Ketu: 5, 7, 9; Saturn: 3, 7, 10).</div></div>
-        <div class="panel-heading">Moving planet</div>
-        <div class="filter-row" id="axMovers"></div>
-        <div class="panel-heading">Target</div>
-        <div class="scan-range-note" id="axSrc"></div>
-        <div class="filter-row" id="axTargets"></div>
-        <div id="axCustom" style="display:none">
-          <div class="df-row2">
-            <div class="mini-field"><label for="axSign">Zodiac sign</label><select id="axSign"></select></div>
-            <div class="mini-field"><label for="axDeg">Degree · minutes · seconds</label><input type="text" id="axDeg" placeholder="18°00'00&quot;" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"></div>
-          </div>
+        <div class="ax-hero"><span class="ax-hero-ico">⚹</span><div><b>Exact aspect finder</b><small>Find the exact date and time a planet's aspect lands on a degree.</small></div></div>
+
+        <div class="ax-step"><span class="ax-n">1</span><b>Moving planet</b><small>the one that aspects</small></div>
+        <div class="ax-grid" id="axMovers"></div>
+
+        <div class="ax-step"><span class="ax-n">2</span><b>Lands on</b><small>the point it aspects</small></div>
+        <div class="ax-src" id="axSrc"></div>
+        <div class="ax-grid" id="axTargets"></div>
+        <div id="axCustom" class="ax-custom" style="display:none">
+          <div class="mini-field"><label for="axSign">Sign</label><select id="axSign"></select></div>
+          <div class="mini-field"><label for="axDeg">Degree · min · sec</label><input type="text" id="axDeg" placeholder="18°00'00&quot;" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"></div>
         </div>
-        <div class="df-preview" id="axPreview"></div>
-        <div class="df-row2">
-          <div class="mini-field"><label>Orb (how close counts)</label>
-            <div class="filter-row" id="axOrbs" style="margin-bottom:0"><button type="button" class="filter-chip" data-orb="0.25">0.25°</button><button type="button" class="filter-chip" data-orb="0.5">0.5°</button><button type="button" class="filter-chip active" data-orb="1">1°</button><button type="button" class="filter-chip" data-orb="3">3°</button></div></div>
-          <div class="mini-field"><label>Look</label>
-            <div class="filter-row" id="axDir" style="margin-bottom:0;flex-wrap:nowrap"><button type="button" class="filter-chip active" data-dir="1">Next 3</button><button type="button" class="filter-chip" data-dir="-1">Past 3</button></div></div>
+
+        <div class="ax-summary" id="axPreview"></div>
+
+        <div class="ax-step"><span class="ax-n">3</span><b>Options</b></div>
+        <div class="ax-opts">
+          <div class="ax-opt"><label>Orb <i>how close counts</i></label>
+            <div class="ax-seg" id="axOrbs"><button type="button" data-orb="0.25">0.25°</button><button type="button" data-orb="0.5">0.5°</button><button type="button" class="active" data-orb="1">1°</button><button type="button" data-orb="3">3°</button></div></div>
+          <div class="ax-opt"><label>Show</label>
+            <div class="ax-seg" id="axDir"><button type="button" class="active" data-dir="1">Next 3</button><button type="button" data-dir="-1">Past 3</button></div></div>
+          <label class="ax-check"><input type="checkbox" id="axConj" checked><span>Include conjunction (same degree)</span></label>
         </div>
-        <label class="ax-check"><input type="checkbox" id="axConj" checked> Also show the conjunction (same degree)</label>
-        <button type="button" class="btn-block" id="axGo">Find exact aspects</button>
-        <div class="panel-heading">Results</div>
-        <div class="scan-range-note" id="axNote">Sidereal (Lahiri) zodiac · times in your device timezone</div>
-        <div id="axResults"><div class="empty-feed">Choose a moving planet and a target, then tap <b>Find exact aspects</b>.</div></div>
+
+        <button type="button" class="btn-block ax-go" id="axGo">Find exact aspects</button>
+
+        <div class="ax-results-head"><b>Results</b><span id="axNote"></span></div>
+        <div id="axResults"><div class="empty-feed">Choose a planet and a target, then tap <b>Find exact aspects</b>.</div></div>
       </div>
 
       <div class="panel-section" id="tab-returns">
