@@ -185,8 +185,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-01 - 1737 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
-_Generated 2026-11-02 - 1670 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-02 - 1759 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -403,14 +402,10 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 79 files, 7394 lines, 442 KB
+**sky3d** - 81 files, 7640 lines, 457 KB
 ```
-index.html                                         468 lines   29 KB
+index.html                                         498 lines   32 KB
 js/01-astro-engine.js                              161 lines    9 KB
-**sky3d** - 80 files, 7569 lines, 451 KB
-```
-index.html                                         497 lines   31 KB
-js/01-astro-engine.js                              157 lines    9 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
 js/04-sign-level-aspects.js                         22 lines    0 KB
