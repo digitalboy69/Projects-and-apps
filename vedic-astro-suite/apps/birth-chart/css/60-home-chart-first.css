@@ -1,0 +1,23 @@
+/* Home, chart first (js/25-home-and-tabs.js): screen 1 = your chart; screen 2 = all tools. Calm: no sliding, no heavy motion. */
+.hm[data-page="chart"] .hm-tp,.hm[data-page="chart"] .hm-seg,.hm[data-page="chart"] .hm-qs,.hm[data-page="chart"] .hm-sec,.hm[data-page="chart"] .hm-ask-sec{display:none!important}
+.hm[data-page="tools"] .hm-chart-only{display:none!important}
+.hm-dt{margin-top:2px;padding:3px 10px;border-radius:99px;border:1px solid rgba(212,175,55,.35);background:transparent;color:var(--gold-bright,#e6c76a);font:500 11.5px var(--font-sans);cursor:pointer}
+.hm-det{margin:6px 0 0!important;padding:7px 10px;border-radius:12px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.08);font-size:12.5px!important;color:var(--text-main)!important;line-height:1.6!important}
+.hm-det[hidden]{display:none}
+.hm-cs{display:flex;gap:6px;justify-content:center;margin:14px 0 8px}
+.hm-cs button{padding:6px 14px;border-radius:99px;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--text-muted);font:500 12px var(--font-sans);cursor:pointer}
+.hm-cs button.on{background:rgba(212,175,55,.18);border-color:var(--gold,#d4af37);color:var(--text-main)}
+.hm-svg{display:block;width:100%;max-width:380px;margin:0 auto;padding:10px;border-radius:24px;border:1px solid rgba(212,175,55,.3);background:radial-gradient(70% 70% at 50% 40%,rgba(212,175,55,.12),transparent 70%),rgba(8,10,16,.7);box-shadow:inset 0 0 40px rgba(212,175,55,.06),0 14px 40px rgba(0,0,0,.35);cursor:pointer}
+.hm-svg svg{display:block;width:100%;height:auto}
+.hm-svg-cap{margin:6px 0 0;text-align:center;font-size:11.5px;color:var(--text-muted)}
+.hm-cta{display:flex;align-items:center;gap:14px;width:100%;margin:6px 0 4px;padding:16px;border-radius:22px;border:1px solid rgba(212,175,55,.5);background:linear-gradient(135deg,rgba(212,175,55,.2),rgba(94,196,183,.12)),#0f121b;color:var(--text-main);text-align:left;cursor:pointer;font-family:var(--font-sans)}
+.hm-cta-i{flex:none;width:48px;height:48px;display:grid;place-items:center;border-radius:15px;font-size:24px;background:rgba(0,0,0,.3);border:1px solid rgba(212,175,55,.35)}
+.hm-cta-t{flex:1;min-width:0}.hm-cta-t b{display:block;font:700 17px var(--font-display,Georgia,serif);color:#f6efd9}.hm-cta-t small{display:block;margin-top:2px;font-size:12px;color:var(--text-muted);line-height:1.4}
+.hm-cta>i{font-style:normal;font-size:26px;color:var(--gold-bright,#e6c76a)}
+.hm-tp{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.hm-tp button{padding:8px 14px;border-radius:99px;border:1px solid rgba(212,175,55,.4);background:rgba(212,175,55,.1);color:var(--gold-bright,#e6c76a);font:600 13px var(--font-sans);cursor:pointer}
+.hm-tp b{font:700 20px var(--font-display,Georgia,serif);color:#f6efd9}.hm-tp span{margin-left:auto;padding:2px 11px;border-radius:99px;background:rgba(255,255,255,.07);font-size:12px;color:var(--text-muted)}
+/* screen 2: each group of tools sits on its own softly coloured panel */
+.hm[data-page="tools"] .hm-sec{padding:14px 12px 14px;margin:0 0 16px;border-radius:26px;border:1px solid color-mix(in srgb,var(--sc) 24%,rgba(255,255,255,.06));background:linear-gradient(165deg,color-mix(in srgb,var(--sc) 11%,#0f121b),rgba(15,18,27,.4) 55%)}
+.hm[data-page="tools"] .hm-sec .hm-h{margin:2px 4px 14px;font-size:13px;letter-spacing:.2em;color:#f6efd9}
+@media (max-width:360px){.hm-cta-t small{display:none}}

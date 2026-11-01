@@ -36,7 +36,7 @@ with sync_playwright() as p:
     ok('slots flagged when they overlap Rahu Kalam', pg.evaluate("""()=>{const jd=toJulianDay(2026,11,3,9,0,0)-5.5/24,x=TDY.compute(currentChartForModal,window.__vgProf,jd),rk=x.P.rahu;return x.slots.length>0&&x.slots.every(s=>s.rahu===(s.from<rk[1]&&s.to>rk[0]))&&x.slots.every(s=>['Amrit','Shubh','Labh'].includes(s.name))}"""))
     pg.evaluate("()=>document.querySelector('#panel-home [data-go=panel-today]').click()"); pg.wait_for_timeout(800)
     ok('Home card opens Today for You with content', pg.evaluate("()=>{const e=document.getElementById('panel-today');return e&&e.classList.contains('active')&&e.querySelectorAll('.tdy-g').length===9&&!!e.querySelector('.tdy-hero')}"))
-    pg.evaluate("()=>{const d=document.getElementById('tdyDate');d.value='2026-11-04';d.dispatchEvent(new Event('input',{bubbles:true}))}"); pg.wait_for_timeout(300)
+    pg.evaluate("()=>{document.getElementById('tdyTime').value='12:00';const d=document.getElementById('tdyDate');d.value='2026-11-04';d.dispatchEvent(new Event('input',{bubbles:true}))}"); pg.wait_for_timeout(300)
     t = pg.evaluate("()=>document.getElementById('tdyBody').innerText")
     ok('date change redraws for Wednesday 4 Nov', 'Wednesday' in t and '4 Nov 2026' in t, t[:80])
     pg.evaluate("()=>document.getElementById('tdyNow').click()"); pg.wait_for_timeout(300)
