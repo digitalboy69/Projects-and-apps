@@ -58,6 +58,16 @@ function hmChartSvg(ch,style){
   try{ const v=ch.vargas.D1; return style==='south'?buildSouthIndianSvg(v,null):buildNorthIndianSvg(v,null); }catch(e){ console.warn('home chart',e); return ''; }
   finally{ window.__vgC=prev; }
 }
+function hmBasics(ch,pr){
+  if(typeof AVK==='undefined') return '';
+  try{
+    const d=AVK.compute(ch,pr), by={}; d.rows.forEach(r=>by[r.k]=r.v);
+    const su=ch.planets.Sun, sg=SIGNS[su.sign];
+    const order=[['Rising sign (Lagna)','Lagna'],['Moon sign (Rashi)','Rashi'],['Birth star (Nakshatra)','Nakshatra'],['Star lord','Nakshatra lord'],['Tithi','Tithi'],['Yoga','Yoga'],['Karana','Karana'],['Weekday (Vara)','Vara'],['__sun','Sun sign'],['Gana','Gana'],['Nadi','Nadi'],['Yoni','Yoni'],['Name sound','Name sound']];
+    const cells=order.map(o=>{const v=o[0]==='__sun'?sg.symbol+' '+sg.name:by[o[0]]; return v?`<div class="hm-bs"><small>${o[1]}</small><b>${String(v).split('  (')[0]}</b></div>`:'';}).join('');
+    return `<section class="hm-chart-only hm-basics"><h3 class="hm-h">Birth basics<button type="button" class="hm-more" data-go="panel-avakahada">Full table ›</button></h3><div class="hm-bgrid">${cells}</div></section>`;
+  }catch(e){console.warn('home basics',e);return '';}
+}
 function buildHomePanel(name){
   window.__hmPage='chart';
   const secs=[...new Set(HOME_ITEMS.map(i=>i[4]))], PL=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
@@ -74,7 +84,8 @@ function buildHomePanel(name){
       <div class="hm-cs" role="group" aria-label="Chart style"><button type="button" data-hmst="north" class="${hmStyle==='north'?'on':''}">North Indian</button><button type="button" data-hmst="south" class="${hmStyle==='south'?'on':''}">South Indian</button></div>
       <button type="button" class="hm-svg" id="hmSvg" data-go="panel-vargas" aria-label="Open your chart and divisional charts">${hmChartSvg(ch,hmStyle)}</button>
       <div class="hm-svg-cap">Tap the chart for all 24 divisional charts</div>
-      <div class="hm-big">${big('Rising',asc,asc.sk)}${big('Moon',SIGNS[mo.sign],nk.name+' · pada '+nk.pada)}${big('Sun',SIGNS[su.sign],su.nakshatra?su.nakshatra.name:SIGNS[su.sign].sk)}</div></section>`;
+</section>`;
+    top+=hmBasics(ch,pr);
     if(act&&act.antardasha){const m=act.mahadasha,ad=act.antardasha;
       top+=`<button type="button" class="hm-now hm-chart-only" data-go="panel-dasha"><div class="hm-now-h"><span>⏳ Running now</span><em>Open timeline ›</em></div><div class="hm-now-t">${PLANET_GLYPHS[m.lord]} ${m.lord} <i>›</i> ${PLANET_GLYPHS[ad.lord]} ${ad.lord}</div>
         <div class="hm-pb"><label>${m.lord} Mahadasha<small>until ${formatDashaDate(m.endDate)}</small></label><i><u style="width:${pct(m.startDate,m.endDate)}%"></u></i></div>

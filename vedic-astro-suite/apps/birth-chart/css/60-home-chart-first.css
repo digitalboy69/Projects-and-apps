@@ -21,3 +21,10 @@
 .hm[data-page="tools"] .hm-sec{padding:14px 12px 14px;margin:0 0 16px;border-radius:26px;border:1px solid color-mix(in srgb,var(--sc) 24%,rgba(255,255,255,.06));background:linear-gradient(165deg,color-mix(in srgb,var(--sc) 11%,#0f121b),rgba(15,18,27,.4) 55%)}
 .hm[data-page="tools"] .hm-sec .hm-h{margin:2px 4px 14px;font-size:13px;letter-spacing:.2em;color:#f6efd9}
 @media (max-width:360px){.hm-cta-t small{display:none}}
+
+/* birth basics: the first things a student checks (lagna, rashi, nakshatra, tithi...) */
+.hm-basics .hm-h{align-items:center}.hm-more{margin-left:auto;padding:4px 10px;border-radius:99px;border:1px solid rgba(212,175,55,.35);background:transparent;color:var(--gold-bright,#e6c76a);font:500 11.5px var(--font-sans);letter-spacing:0;text-transform:none;cursor:pointer}
+.hm-bgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.hm-bs{padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.09);background:#10131c}
+.hm-bs small{display:block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-bright,#e6c76a)}.hm-bs b{display:block;margin-top:2px;font-size:14.5px;font-weight:600;color:var(--text-main);overflow-wrap:anywhere}
+@media(min-width:620px){.hm-bgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
