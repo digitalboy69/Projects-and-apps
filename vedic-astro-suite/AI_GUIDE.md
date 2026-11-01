@@ -59,6 +59,7 @@ You are working on the **Vedic Astro Suite**: a folder project made of a shell +
 | 3D sky table, planet picker | `sky3d/19-hud-render.js`, `sky3d/41-quick-planet-picker.js` | `buildSkyTableRows`, `renderSkyTable`, `initPlanetPicker` |
 | 3D popups for planets | `birth-chart/19-planets-panel.js`, `sky3d/29-planet-detail-content.js`, `sky3d/31-outer-planet-popup.js` | `openPlanetDetail` (Vedic planets, `PD` table), `openOuterPlanetDetail` |
 | Transits / meetings / returns / retro planner / degree finder (3D) | `sky3d/06-planet-detail-helpers.js` | sections "TRANSIT + CONJUNCTION SCANNING", "RETROGRADE", returns code; `findIngresses`, `stayEdges` |
+| Exact aspect degree: when a planet's aspect hits an exact degree (natal / live sky / custom), date-time + orb window (3D Aspects tab) | `sky3d/52-exact-aspects.js` (+ helpers `window.DFU` from `43-degree-finder-returns.js`) | `findWindows`, `makeF`, `buildUI`, `run`; test `node tests/exact_aspects_test.js` |
 | Ephemeris math (Sun, Moon, planets, ayanamsa) | `birth-chart/03-ephemeris-engine.js`, `sky3d/01-astro-engine.js` | `sunLongitude`, `moonLongitude`, `planetHeliocentric`, `planetGeocentricLongitude`, `lahiriAyanamsa`. The engines are duplicated in A and B — **change both** |
 | Notepad / notes / templates / client cards | `notepad/01-notepad.js` (+ `apps/notepad/css/01-notepad.css`) | functions `newNote`, `welcome`, key `vedicNotepad_v1` |
 | "Pick location", map, coordinates, Google link | `shell/js/locpicker.js` | `LocPicker.open`, `LocPicker.attach` (wired in each app next to place fields) |
@@ -184,7 +185,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-10-28 - 1648 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-02 - 1670 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -386,9 +387,9 @@ js/01-notepad.js                                   351 lines   71 KB
 css/01-notepad.css                                 191 lines   27 KB
 ```
 
-**sky3d** - 78 files, 7323 lines, 436 KB
+**sky3d** - 80 files, 7569 lines, 451 KB
 ```
-index.html                                         467 lines   28 KB
+index.html                                         497 lines   31 KB
 js/01-astro-engine.js                              157 lines    9 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -431,7 +432,7 @@ js/39-smoothness.js                                 51 lines    3 KB
 js/40-3d-astro-layers.js                           135 lines   10 KB
 js/41-quick-planet-picker.js                        47 lines    3 KB
 js/42-init.js                                       24 lines    0 KB
-js/43-degree-finder-returns.js                     211 lines   13 KB
+js/43-degree-finder-returns.js                     214 lines   13 KB
 js/44-retrograde-planner.js                         41 lines    7 KB
 js/45-vimshottari-dasha.js                          60 lines    2 KB
 js/46-dasha-transit-engine.js                      319 lines   21 KB
@@ -440,6 +441,7 @@ js/48-profile-bridge.js                             48 lines    2 KB
 js/49-time-machine.js                              189 lines   15 KB
 js/50-sky-dashboard.js                             292 lines   26 KB
 js/51-jump-from-rectification.js                    33 lines    2 KB
+js/52-exact-aspects.js                             204 lines   12 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -466,6 +468,7 @@ css/23-time-machine-polish.css                     126 lines   12 KB
 css/24-sky-dashboard.css                            92 lines    8 KB
 css/25-date-entry.css                                8 lines    0 KB
 css/25-solid-panels.css                             32 lines    4 KB
+css/26-exact-aspects.css                             9 lines    0 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -522,3 +525,4 @@ shared/quick-menu.js                               157 lines   12 KB
 - Aspect Explorer now uses the time selected in the app even with a profile loaded (`getExplorerContext` in sky3d/js/27; profile only gives the Lagna); test tests/explorer_time_test.py.
 - 3D panels made solid (no see-through tab bar), calm motion, gold accent: sky3d/css/25-solid-panels.css (loaded last).
 - Divisional chart guide for all 24 charts (D1 to D144 + RTN): birth-chart/js/114-varga-guide.js (`VGG.html/text`), css/53-varga-guide.css, shown as a collapsible block under every D-chart in js/58; rules tagged From the texts / Common practice; test tests/varga_guide_test.py. If calcVarga changes, update the "how this app divides it" lines.
+- Exact Aspects tab (3D, new): `js/52-exact-aspects.js` + `css/26-exact-aspects.css`. Aspect point = mover longitude + (offset-1)*30 must equal target longitude; targets = natal planets/Lagna when a profile is active, live-sky planets (moving) otherwise, or a custom degree; offsets from `ASPECT_OFFSETS` plus conjunction; shows exact moments (retro passes grouped), orb entry/exit and duration. Test: `node tests/exact_aspects_test.js` (31 checks). Dasha logic untouched.

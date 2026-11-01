@@ -287,6 +287,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/49-time-machine.js` — Date picker (five snapping wheels: day with weekday, month, year, hour, minute; quick steppers with hold-to-repeat; year scrub bar; typed dates; Now / Birth / Midnight) + draggable, zoomable timeline
 - `apps/sky3d/js/50-sky-dashboard.js` — Sky Dashboard (top-right ▦ button): full-screen page with panchang, highlights, planet cards, who aspects whom, trine/house matrix, sign + nakshatra exchanges, dispositor chains, signs, nakshatras, houses, balance, outer planets; reads the 3D date or the birth chart (`DBX`)
 - `apps/sky3d/js/51-jump-from-rectification.js` — receives the Rectification jump: switches to the Zodiac Wheel, jumps to the exact moment, pauses play, shows the Rising sign for the birth place (session only), toast
+- `apps/sky3d/js/52-exact-aspects.js` — Aspects tab: when a planet's aspect (Moon 7; Mars 4/7/8; Jupiter/Rahu/Ketu 5/7/9; Saturn 3/7/10; plus conjunction) lands on the exact degree of a natal planet/Lagna (if a profile is active), a live-sky planet, or a custom degree; exact moments, orb entry/exit and duration
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
 - `apps/sky3d/css/03-3d-viewport.css` — 3D viewport
@@ -311,6 +312,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/css/22-dasha-transit-triggers.css` — Triggers tab (dasha + transit) styles
 - `apps/sky3d/css/23-time-machine-polish.css` — Time Machine styles + 3D Sky visual polish (top bar, tabs, timeline dock, buttons)
 - `apps/sky3d/css/24-sky-dashboard.css` — Sky Dashboard page styles
+- `apps/sky3d/css/26-exact-aspects.css` — styles for the Aspects tab
 - `apps/sky3d/css/25-solid-panels.css` — 3D Sky side panel, tabs, cards and popups: solid surfaces and calm motion (loaded last, overrides older polish layers)
 - `apps/sky3d/css/25-date-entry.css` — Day/Month/Year + AD/BC birth date fields
 
@@ -385,6 +387,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/sky_dashboard_test.py` — Sky Dashboard test: button, all sections, 9 cards, 9x9 matrix, summary text, close
 - `tests/explorer_time_test.py` — Aspect Explorer follows the app time (not the birth time) when a profile is loaded
 - `tests/compare_lab_test.py` — Compare Lab test: opens from Divisional Charts, three-dot menu, up to 4 charts, follow a planet, table, notes, copy text
+- `tests/exact_aspects_test.js` — Exact Aspects engine test (Node, 31 checks): Rahu 5/7/9/conjunction on 18° Gemini, orb edges, 18.6-year repeat, retro passes, Moon, live-sky moving target, window running now
 - `tests/varga_guide_test.py` — Divisional chart guide test: one guide per chart, all sections, tagged rules, follows the chart picker
 - `tests/nakshatra_db_test.py` — Nakshatra layer: 972 unique placements, wording gates (no fatalistic/absolute words), pada->navamsa equals the app's D9 on 8 charts, Moon star = dasha start, on-screen check
 - `tests/manifest_test.py` — Manifestation layer: 1296 unique combinations, grammar/voice/wording gates, signature matches real chart data on 8 charts, on-screen blocks and report

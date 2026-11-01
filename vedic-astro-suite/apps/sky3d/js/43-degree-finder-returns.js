@@ -202,6 +202,9 @@ async function renderReturns(){
 }
 function wire(feed){ feed.querySelectorAll('.ret-row').forEach(r => r.addEventListener('click', () => jumpToJD(parseFloat(r.dataset.jd)))); }
 
+/* shared helpers for the Exact Aspects tab (js/52) */
+window.DFU = { fmtDate, fmtClock, fmtWD, fmtUTC, fmtSpan, inSign, sgn, parseDMS, dateAt, STEP, nextTick };
+
 buildDegree();
 document.querySelector('[data-tab="returns"]').addEventListener('click', renderReturns);
 document.querySelector('[data-tab="degree"]').addEventListener('click', () => { const cp = currentPos(dfPlanet); $('dfDeg').placeholder = `now ${cp.text}`; });

@@ -1,0 +1,8 @@
+/* Exact Aspects tab */
+.ax-card .ax-win{display:block;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line,rgba(255,255,255,.14));line-height:1.55}
+.ax-passes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ax-passes span{font-size:12px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.07);cursor:pointer}
+.ax-passes span:hover{background:rgba(255,255,255,.14)}
+.ax-live{background:rgba(52,199,89,.18)!important;color:#7be39a!important}
+.ax-check{display:flex;align-items:center;gap:8px;margin:10px 0;font-size:13px;opacity:.9}
+#axSrc{line-height:1.5;margin-bottom:8px}

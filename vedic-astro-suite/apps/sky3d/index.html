@@ -31,6 +31,7 @@
 <link rel="stylesheet" href="css/22-dasha-transit-triggers.css">
 <link rel="stylesheet" href="css/23-time-machine-polish.css">
 <link rel="stylesheet" href="css/24-sky-dashboard.css">
+<link rel="stylesheet" href="css/26-exact-aspects.css">
 <link rel="stylesheet" href="css/25-solid-panels.css">
 <link rel="stylesheet" href="css/25-date-entry.css">
 <link rel="stylesheet" href="../../shared/meta.css">
@@ -134,6 +135,7 @@
       <button class="panel-tab" data-tab="transits"><span class="ti">➳</span><span>Transits</span></button>
       <button class="panel-tab" data-tab="conjunctions"><span class="ti">☌</span><span>Meetings</span></button>
       <button class="panel-tab" data-tab="degree"><span class="ti">⌖</span><span>Degree</span></button>
+      <button class="panel-tab" data-tab="aspexact"><span class="ti">⚹</span><span>Aspects</span></button>
       <button class="panel-tab" data-tab="natal"><span class="ti">✦</span><span>Natal</span></button>
       <button class="panel-tab" data-tab="triggers"><span class="ti">⚡</span><span>Triggers</span></button>
       <button class="panel-tab" data-tab="returns"><span class="ti">↺</span><span>Returns</span></button>
@@ -237,6 +239,33 @@
         <div class="panel-heading">Results</div>
         <div class="scan-range-note" id="dfNote">Sidereal (Lahiri) zodiac · times in your device timezone</div>
         <div id="dfResults"><div class="empty-feed">Choose a planet, enter a degree, then tap <b>Find dates</b>.</div></div>
+      </div>
+
+      <div class="panel-section" id="tab-aspexact">
+        <div class="tab-intro"><span class="ico">⚹</span><div><b>When an aspect hits the exact degree.</b> Pick a moving planet and a target. You get the exact date and time its aspect lands on the target's degree, when it enters and leaves the orb, and how long that lasts. Every planet uses its own aspects (Moon: 7th; Mars: 4, 7, 8; Jupiter, Rahu, Ketu: 5, 7, 9; Saturn: 3, 7, 10).</div></div>
+        <div class="panel-heading">Moving planet</div>
+        <div class="filter-row" id="axMovers"></div>
+        <div class="panel-heading">Target</div>
+        <div class="scan-range-note" id="axSrc"></div>
+        <div class="filter-row" id="axTargets"></div>
+        <div id="axCustom" style="display:none">
+          <div class="df-row2">
+            <div class="mini-field"><label for="axSign">Zodiac sign</label><select id="axSign"></select></div>
+            <div class="mini-field"><label for="axDeg">Degree · minutes · seconds</label><input type="text" id="axDeg" placeholder="18°00'00&quot;" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"></div>
+          </div>
+        </div>
+        <div class="df-preview" id="axPreview"></div>
+        <div class="df-row2">
+          <div class="mini-field"><label>Orb (how close counts)</label>
+            <div class="filter-row" id="axOrbs" style="margin-bottom:0"><button type="button" class="filter-chip" data-orb="0.25">0.25°</button><button type="button" class="filter-chip" data-orb="0.5">0.5°</button><button type="button" class="filter-chip active" data-orb="1">1°</button><button type="button" class="filter-chip" data-orb="3">3°</button></div></div>
+          <div class="mini-field"><label>Look</label>
+            <div class="filter-row" id="axDir" style="margin-bottom:0;flex-wrap:nowrap"><button type="button" class="filter-chip active" data-dir="1">Next 3</button><button type="button" class="filter-chip" data-dir="-1">Past 3</button></div></div>
+        </div>
+        <label class="ax-check"><input type="checkbox" id="axConj" checked> Also show the conjunction (same degree)</label>
+        <button type="button" class="btn-block" id="axGo">Find exact aspects</button>
+        <div class="panel-heading">Results</div>
+        <div class="scan-range-note" id="axNote">Sidereal (Lahiri) zodiac · times in your device timezone</div>
+        <div id="axResults"><div class="empty-feed">Choose a moving planet and a target, then tap <b>Find exact aspects</b>.</div></div>
       </div>
 
       <div class="panel-section" id="tab-returns">
@@ -461,6 +490,7 @@
 <script src="js/49-time-machine.js"></script>
 <script src="js/50-sky-dashboard.js"></script>
 <script src="js/51-jump-from-rectification.js"></script>
+<script src="js/52-exact-aspects.js"></script>
 <script src="../../shared/export-addon.js"></script>
 <script src="../../shared/copy-toggle.js"></script><script src="../../shared/quick-menu.js"></script>
 </body>
