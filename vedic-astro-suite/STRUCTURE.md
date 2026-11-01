@@ -406,6 +406,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/kp_test.py` — KP: sub/sub-sub lord bisect over all 27 nakshatras, Placidus checks, significators, panel, KP ayanamsa button
 - `tests/notepad_test.py` — Notepad test: typing order, note links, templates from every view, side menu, Settings tab switches (copy buttons off by default), at 390 px and 1280 px
 - `tests/notepad_sidemenu_test.py` — Notepad side menu redesign: stats tiles, quick find, collapsible sections (saved), tag chips + show all, recent notes, solid drawer, at 1100 and 390 px
+- `tests/quick_menu_test.py` — Quick Menu: descriptions, collapsible sections, search by name or description, Organise (pin/group), Recent, Enter to open, 390 px
 - `tests/rising_navamsha_test.py` — 3D rising view Navamsha test: current Navamsha line, 12 signs x 9 Navamshas, order rule per sign type, boundary accuracy, tap and back
 - `tests/time_wheels_test.py` — 3D date picker test: five snap wheels, tap/scroll select, steppers with month-end clamp, typed date
 - `tests/sky_dashboard_test.py` — Sky Dashboard test: button, all sections, 9 cards, 9x9 matrix, summary text, close

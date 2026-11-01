@@ -2,7 +2,7 @@
    KP SYSTEM (Krishnamurti Paddhati): Placidus cusps, star lord / sub lord / sub-sub lord for every cusp and planet, planet and house significators,
    cusp sub-lord promise checks, ruling planets. Global: KP { placidus, lords, compute, html, text }, buildKpPanel(chart, profile).
    Sub-divisions follow Vimshottari proportions inside each nakshatra. Placidus is solved by the usual semi-arc iteration (fails above ~66 deg latitude).
-   Promise-check house sets are common KP-Reader practice and are labelled so. Uses the ayanamsa chosen in js/124 (KP ayanamsa is the usual match).
+   Promise-check house sets are common KP-Reader practice and are labelled so. Always uses the KP ayanamsa, whatever the main ayanamsa setting (js/124) is, so Dasha and the other charts never move.
    ============================================================================ */
 const KP = (function(){
   const SEQ = DASHA_SEQUENCE, YRS = DASHA_YEARS, NAKL = 360 / 27, g = PLANET_GLYPHS;
@@ -40,7 +40,7 @@ const KP = (function(){
     ['property', 'Property / home', 4, [4, 11, 12], [3, 10]], ['education', 'Higher education', 9, [4, 9, 11], [8, 12]], ['foreign', 'Foreign travel', 9, [3, 9, 12], [2, 4]]
   ];
   function compute(chart, profile, momentJd){
-    const jd = chart.julianDay, lat = Number(profile.lat), lon = Number(profile.lon), ay = chart.ayanamsa, tz = Number(profile.tz != null ? profile.tz : chart.tzOffsetHours);
+    const jd = chart.julianDay, lat = Number(profile.lat), lon = Number(profile.lon), delta = AYAN_MODES[ayanKey()].off - AYAN_MODES.kp.off, ay = chart.ayanamsa - delta, tz = Number(profile.tz != null ? profile.tz : chart.tzOffsetHours);
     const tc = placidus(jd, lat, lon); if (!tc) return { fail: 'KP cusps (Placidus) cannot be worked out beyond about 66° latitude.' };
     const cusps = tc.map(c => nm(c - ay)), cl = cusps.map(c => lords(c)), P = {};
     const owners = {}; for (let h = 1; h <= 12; h++){
@@ -49,7 +49,7 @@ const KP = (function(){
     }
     const occ = {}; for (let h = 1; h <= 12; h++) occ[h] = [];
     const ownedBy = {}; PLANET_LIST.forEach(n => ownedBy[n] = []); for (let h = 1; h <= 12; h++) owners[h].forEach(o => { if (ownedBy[o] && !ownedBy[o].includes(h)) ownedBy[o].push(h); });
-    PLANET_LIST.forEach(n => { const L = lords(chart.planets[n].longitude), h = inHouse(L.lon, cusps); P[n] = Object.assign(L, { house: h, retro: !!chart.planets[n].retrograde }); occ[h].push(n); });
+    PLANET_LIST.forEach(n => { const L = lords(chart.planets[n].longitude + delta), h = inHouse(L.lon, cusps); P[n] = Object.assign(L, { house: h, retro: !!chart.planets[n].retrograde }); occ[h].push(n); });
     PLANET_LIST.forEach(n => {
       const st = P[n].star, via = [].concat(P[st].house, ownedBy[st]), own = [].concat(P[n].house, ownedBy[n]);
       P[n].viaStar = [...new Set(via)].sort((a, b) => a - b); P[n].own = [...new Set(own)].sort((a, b) => a - b); P[n].signif = [...new Set(via.concat(own))].sort((a, b) => a - b);
@@ -64,11 +64,11 @@ const KP = (function(){
     let rp = null;
     try {
       const j = momentJd != null ? momentJd : (Date.now() / 86400000 + 2440587.5), cn = computeChart(jdToLocalParts(j, tz).dateStr, jdToLocalParts(j, tz).timeStr.slice(0, 5), lat, lon, tz);
-      const wd = (Math.floor(j + 0.5 + tz / 24) + 1) % 7, DAYL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'], la = lords(cn.ascendant.longitude), lm = lords(cn.planets.Moon.longitude);
+      const wd = (Math.floor(j + 0.5 + tz / 24) + 1) % 7, DAYL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'], la = lords(cn.ascendant.longitude + delta), lm = lords(cn.planets.Moon.longitude + delta);
       const items = [['Day lord', DAYL[wd]], ['Moon sign lord', lm.signLord], ['Moon star lord', lm.star], ['Lagna sign lord', la.signLord], ['Lagna star lord', la.star]];
       const cnt = {}; items.forEach(i => cnt[i[1]] = (cnt[i[1]] || 0) + 1); rp = { items, uniq: Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a]), cnt };
     } catch(e){ console.warn('kp ruling planets', e); }
-    return { cusps, cl, P, owners, occ, sig, promise, rp, ay: ayanName() };
+    return { cusps, cl, P, owners, occ, sig, promise, rp, ay: AYAN_MODES.kp.name };
   }
   const dg = lon => { const d = nm(lon) % 30, m = (d - Math.floor(d)) * 60; return Math.floor(d) + '°' + String(Math.floor(m)).padStart(2, '0') + '′'; };
   const L = n => g[n] + ' ' + n;
@@ -82,8 +82,7 @@ const KP = (function(){
   function html(chart, profile){
     let d; try { d = compute(chart, profile); } catch(e){ console.warn('kp', e); return '<div class="meta-err">Could not work out the KP table.</div>'; }
     if (d.fail) return '<div class="meta-err">' + d.fail + '</div>';
-    const kpOn = ayanKey() === 'kp';
-    const adv = '<div class="kp-ayn ' + (kpOn ? 'on' : '') + '">' + (kpOn ? '✓ KP ayanamsa is on, as KP astrologers use.' : 'You are using <b>' + d.ay + '</b> ayanamsa. KP is normally read with the KP ayanamsa, which can change a sub lord.') + (kpOn ? '' : ' <button type="button" id="kpAyn" class="chgp-btn">Use KP ayanamsa</button>') + '</div>';
+    const adv = '<div class="kp-ayn on">✓ Worked out with the <b>KP ayanamsa</b>, as KP astrologers use. This is separate from your main ayanamsa setting, so your Dasha and charts are not changed.</div>';
     const cr = d.cl.map((c, i) => '<tr><td>' + (i + 1) + '</td><td>' + SIGNS[c.sign].symbol + ' ' + dg(c.lon) + '</td><td>' + c.signLord + '</td><td>' + c.star + '</td><td><b>' + c.sub + '</b></td><td>' + c.subsub + '</td></tr>').join('');
     const pr = PLANET_LIST.map(n => { const p = d.P[n]; return '<tr><td>' + L(n) + (p.retro ? ' ℞' : '') + '</td><td>' + SIGNS[p.sign].symbol + ' ' + dg(p.lon) + '</td><td>' + ord(p.house) + '</td><td>' + p.star + '</td><td><b>' + p.sub + '</b></td><td class="kp-sg">' + p.signif.join(', ') + '</td></tr>'; }).join('');
     const hs = Array.from({ length: 12 }, (_, i) => i + 1).map(h => { const s = d.sig[h], f = a => a.length ? a.join(', ') : '—'; return '<tr><td>' + h + '</td><td>' + f(s.A) + '</td><td>' + f(s.B) + '</td><td>' + f(s.C) + '</td><td>' + f(s.D) + '</td></tr>'; }).join('');
@@ -99,9 +98,8 @@ const KP = (function(){
       + '<button type="button" class="chgp-btn" id="kpCopy"><span>📋</span> Copy KP table</button>';
   }
   document.addEventListener('click', e => {
-    const t = e.target.closest ? e.target.closest('#kpAyn,#kpCopy') : null; if (!t) return;
-    if (t.id === 'kpAyn' && window.setAyanamsa){ window.setAyanamsa('kp'); let n = 0; const w = setInterval(() => { n++; const e = document.getElementById('panel-kp'); if (n > 30 || (!e && document.getElementById('results') && document.getElementById('results').classList.contains('show'))){ clearInterval(w); try { switchAppTab('panel-kp'); } catch(x){} } }, 300); }
-    else if (t.id === 'kpCopy'){ const ch = window.currentChartForModal, pf = window.__vgProf; if (ch && pf) copyTextToClipboard(text(ch, pf), t, '<span>📋</span> Copy KP table'); }
+    const t = e.target.closest ? e.target.closest('#kpCopy') : null; if (!t) return;
+    const ch = window.currentChartForModal, pf = window.__vgProf; if (ch && pf) copyTextToClipboard(text(ch, pf), t, '<span>📋</span> Copy KP table');
   });
   window.buildKpPanel = function(chart, profile){ return '<div class="kpp"><div class="avk-intro">The KP system (Krishnamurti Paddhati) reads the chart through <b>star lords</b> and <b>sub lords</b>. Every degree of the zodiac has a sign lord, a star lord and a sub lord, and the sub lord of a house cusp decides if the matter is promised. For <b>' + escapeHtml(String(profile.name || 'you')) + '</b>.</div><div id="kpBody">' + html(chart, profile) + '</div></div>'; };
   return { placidus, lords, compute, html, text, REQ };
