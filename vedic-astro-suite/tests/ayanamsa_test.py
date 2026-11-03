@@ -28,14 +28,14 @@ with sync_playwright() as p:
     ok('Raman value at J2000 ~22.4108', abs(pg.evaluate("(j)=>lahiriAyanamsa(j)", jd) - 22.4108) < 0.01)
     pg.evaluate("()=>setAyanamsa('kp')"); pg.wait_for_function("()=>Math.abs(currentChartForModal.ayanamsa-%f)<0.2" % (L['a'] - 0.0968), timeout=20000)
     ok('KP value at J2000 ~23.7602', abs(pg.evaluate("(j)=>lahiriAyanamsa(j)", jd) - 23.7602) < 0.01)
-    ok('choice is saved', pg.evaluate("()=>localStorage.getItem('vax_ayanamsa')")=='kp')
+    ok('choice is saved', pg.evaluate("()=>sessionStorage.getItem('vax_ayanamsa')")=='kp')
     ok('report text names KP', 'KP' in pg.evaluate("()=>document.getElementById('results').innerText + ayanName()"))
     ok('9 grahas unchanged', pg.evaluate("()=>PLANET_LIST.length===9"))
     ok('no sideways scroll at 390', pg.evaluate("()=>document.documentElement.scrollWidth<=window.innerWidth+1"))
     # 3D engine uses the same saved choice
     pg2 = b.new_page(); pg2.on('pageerror', lambda e: errs.append('3d ' + str(e)))
     pg2.route('**/*', lambda r: r.continue_() if r.request.url.startswith(('http://127.0.0.1', 'data:', 'blob:', 'about:')) else r.abort())
-    pg2.goto(BASE + 'birth-chart/index.html'); pg2.evaluate("()=>localStorage.setItem('vax_ayanamsa','raman')")
+    pg2.goto(BASE + 'birth-chart/index.html'); pg2.evaluate("()=>sessionStorage.setItem('vax_ayanamsa','raman')")
     import re
     src = open(os.path.join(ROOT, 'apps/sky3d/js/01-astro-engine.js')).read()
     ok('3D engine has same offsets', "off:-1.4462" in src and "off:-0.0968" in src and 'AYAN_MODES[ayanKey()].off' in src)

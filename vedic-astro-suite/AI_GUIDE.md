@@ -185,16 +185,16 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-01 - 1763 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-04 - 1763 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 195 files, 30052 lines, 2422 KB
+**birth-chart** - 195 files, 30054 lines, 2422 KB
 ```
 index.html                                         619 lines   35 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
-js/03-ephemeris-engine.js                          284 lines   14 KB
+js/03-ephemeris-engine.js                          286 lines   14 KB
 js/04-transit-timing-engine.js                     247 lines   11 KB
 js/05-ascendant-nakshatra-vargas.js                211 lines   12 KB
 js/06-outer-planet-knowledge.js                     37 lines    5 KB
@@ -403,10 +403,10 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 82 files, 7774 lines, 468 KB
+**sky3d** - 82 files, 7776 lines, 469 KB
 ```
 index.html                                         503 lines   31 KB
-js/01-astro-engine.js                              161 lines    9 KB
+js/01-astro-engine.js                              163 lines   10 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
 js/04-sign-level-aspects.js                         22 lines    0 KB
@@ -559,3 +559,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Exact Aspects tab (3D, new): `js/53-exact-aspects.js` + `css/26-exact-aspects.css`. Aspect point = mover longitude + (offset-1)*30 must equal target longitude; targets = natal planets/Lagna when a profile is active, live-sky planets (moving) otherwise, or a custom degree; offsets from `ASPECT_OFFSETS` plus conjunction; shows exact moments (retro passes grouped), orb entry/exit and duration. Test: `node tests/exact_aspects_test.js` (31 checks). Dasha logic untouched.
 - Aspects tab redesign: numbered steps (1 moving planet, 2 lands on, 3 options), planet grid, 'must stand at' summary, 'next exact moment at a glance', collapsible per-aspect groups, result cards with orb bar. Engine unchanged.
 - 3D tabs UI unify: new last-loaded `css/27-panel-unify.css` (html[data-app] selectors) restyles tab-intro, panel-heading, filter-chip, btn-block, transit/ret cards, scan-range-note, mini-field, empty-feed for ALL tabs; no JS or logic changed.
+- Moon/Dasha shift fix: the ayanamsa choice (KP/Raman) was stored permanently in localStorage and silently shifted every chart and Dasha date on later visits. Now tab-only (sessionStorage), old saved value erased on load, fresh visit = Lahiri. Dasha and Moon engines unchanged (Swiss test: Moon within 21", 504 Dasha boundaries exact). Test: node tests/ayanamsa_reset_test.js.

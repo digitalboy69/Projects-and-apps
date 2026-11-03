@@ -8,7 +8,7 @@
   function note(){ const n = document.getElementById('aynNote'); if (n) n.textContent = ayanKey() === 'lahiri' ? 'Lahiri is used unless you change it. Changing it re-draws the chart.' : 'Using ' + ayanName() + ' ayanamsa. Charts everywhere in this app follow it (3D Sky after you reopen it).'; }
   note();
   sel.addEventListener('change', function(){
-    try { localStorage.setItem('vax_ayanamsa', sel.value); } catch(e){}
+    try { sessionStorage.setItem('vax_ayanamsa', sel.value); } catch(e){}
     note();
     const r = document.getElementById('results'), f = document.getElementById('birthForm');
     if (r && r.classList.contains('show') && f && window.__vgProf){ try { f.requestSubmit(); } catch(e){ console.warn('ayanamsa redraw', e); } }

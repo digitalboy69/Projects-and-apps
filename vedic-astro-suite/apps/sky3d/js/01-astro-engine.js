@@ -45,9 +45,11 @@ function jdToDate(jd){
     getUTCHours: () => jdToParts(jd).h, getUTCMinutes: () => jdToParts(jd).mi, getTime: () => Math.round((jd - 2440587.5) * 86400000), jd };
 }
 
-/* Ayanamsa choice: Lahiri (default), Raman, KP (Krishnamurti). Same precession as Lahiri, constant offset at J2000 (Swiss Ephemeris values: Lahiri 23.8570, Raman 22.4108, KP 23.7602). Saved in localStorage 'vax_ayanamsa'. */
+/* Ayanamsa choice: Lahiri (default), Raman, KP (Krishnamurti). Same precession as Lahiri, constant offset at J2000 (Swiss Ephemeris values: Lahiri 23.8570, Raman 22.4108, KP 23.7602). Kept for this browser tab only (sessionStorage 'vax_ayanamsa'). */
 const AYAN_MODES = { lahiri:{ name:'Lahiri', off:0 }, raman:{ name:'Raman', off:-1.4462 }, kp:{ name:'KP (Krishnamurti)', off:-0.0968 } };
-function ayanKey(){ try { const k = localStorage.getItem('vax_ayanamsa'); return AYAN_MODES[k] ? k : 'lahiri'; } catch(e){ return 'lahiri'; } }
+/* The choice lives only in this browser tab (sessionStorage). Any older permanent choice is erased, so a fresh visit is always Lahiri and Moon/Dasha are never shifted by a forgotten setting. */
+try { localStorage.removeItem('vax_ayanamsa'); } catch(e){}
+function ayanKey(){ try { const k = sessionStorage.getItem('vax_ayanamsa'); return AYAN_MODES[k] ? k : 'lahiri'; } catch(e){ return 'lahiri'; } }
 function ayanName(){ return AYAN_MODES[ayanKey()].name; }
 function lahiriAyanamsa(jd){
   const ayan1900 = 22+27/60+54.33/3600;
