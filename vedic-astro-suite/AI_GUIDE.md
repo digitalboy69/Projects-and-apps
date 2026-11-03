@@ -189,12 +189,12 @@ _Generated 2026-11-04 - 1763 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 195 files, 30054 lines, 2422 KB
+**birth-chart** - 195 files, 30056 lines, 2422 KB
 ```
 index.html                                         619 lines   35 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
-js/03-ephemeris-engine.js                          286 lines   14 KB
+js/03-ephemeris-engine.js                          288 lines   14 KB
 js/04-transit-timing-engine.js                     247 lines   11 KB
 js/05-ascendant-nakshatra-vargas.js                211 lines   12 KB
 js/06-outer-planet-knowledge.js                     37 lines    5 KB
@@ -560,3 +560,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Aspects tab redesign: numbered steps (1 moving planet, 2 lands on, 3 options), planet grid, 'must stand at' summary, 'next exact moment at a glance', collapsible per-aspect groups, result cards with orb bar. Engine unchanged.
 - 3D tabs UI unify: new last-loaded `css/27-panel-unify.css` (html[data-app] selectors) restyles tab-intro, panel-heading, filter-chip, btn-block, transit/ret cards, scan-range-note, mini-field, empty-feed for ALL tabs; no JS or logic changed.
 - Moon/Dasha shift fix: the ayanamsa choice (KP/Raman) was stored permanently in localStorage and silently shifted every chart and Dasha date on later visits. Now tab-only (sessionStorage), old saved value erased on load, fresh visit = Lahiri. Dasha and Moon engines unchanged (Swiss test: Moon within 21", 504 Dasha boundaries exact). Test: node tests/ayanamsa_reset_test.js.
+- Classic Moon restored as default: `EPH_DELTA_T = false` in js/03 (the calculation the app used before 27 Oct 2026; reproduces the user's reference Dasha dates to the minute, 4.7 days different from the delta-T version). Precise mode (true) matches Swiss Ephemeris; tests/ephemeris_vs_swiss_test.js forces precise mode. Test: node tests/classic_moon_test.js.

@@ -15220,10 +15220,12 @@ window.addEventListener('online', () => APP.toast('Back online ✓', 'success', 
 const DEG = Math.PI / 180, RAD = 180 / Math.PI, J2000 = 2451545.0;
 function normDeg(d){ d = d % 360; return d < 0 ? d + 360 : d; }
 
-/* ---- Delta-T: the Sun/Moon/planet series are written in dynamical time (TT) but birth times are Universal Time (UT).
-   TT = UT + deltaT. Ignoring it put the Moon 20-55 arcsec behind (Moon moves ~0.55 deg/hour), which slides every dasha date by
-   days. Model: Espenak & Meeus (NASA). The ascendant / sidereal time correctly stay in UT. Set EPH_DELTA_T = false to switch off. ---- */
-const EPH_DELTA_T = true;
+/* ---- Delta-T: the Sun/Moon/planet series are written in dynamical time (TT) but birth times are Universal Time (UT); TT = UT + deltaT (Espenak & Meeus).
+   CLASSIC mode (default, EPH_DELTA_T = false): the series is read at the birth moment as typed. This is the calculation the app always used before
+   27 Oct 2026 and it reproduces the user's reference Dasha dates to the minute (verified: 2007-11-11 02:23 IST Hyderabad, tests/classic_moon_test.js).
+   PRECISE mode (EPH_DELTA_T = true): adds delta-T (about 66 s today), which puts the Moon about 35 arcsec further on (matches the Swiss Ephemeris) and
+   moves Dasha dates by about 5 days. The ascendant / sidereal time stay in UT in both modes. ---- */
+const EPH_DELTA_T = false;
 function deltaTSeconds(jd){
   const y = 2000 + (jd - 2451545.0) / 365.25;
   let t, u;

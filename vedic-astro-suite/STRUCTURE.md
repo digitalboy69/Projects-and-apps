@@ -408,6 +408,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/prashna_test.py` — Prashna: Ithasala/Easarapha maths, topic houses, panel, styles, rebuild if missing
 - `tests/ayanamsa_test.py` — Ayanamsa choice: offsets at J2000, chart shifts by exact offset, saved choice, labels
 - `tests/ayanamsa_reset_test.js` — a forgotten permanent KP/Raman choice is erased and ignored on a fresh visit (Lahiri), tab-only choice still works (Node)
+- `tests/classic_moon_test.js` — Classic Moon (default, no delta-T): reference chart 2007-11-11 02:23 IST Hyderabad gives exactly the trusted Dasha dates (Maha to Prana, to the minute)
 - `tests/kp_test.py` — KP: sub/sub-sub lord bisect over all 27 nakshatras, Placidus checks, significators, panel, KP ayanamsa button
 - `tests/notepad_test.py` — Notepad test: typing order, note links, templates from every view, side menu, Settings tab switches (copy buttons off by default), at 390 px and 1280 px
 - `tests/notepad_sidemenu_test.py` — Notepad side menu redesign: stats tiles, quick find, collapsible sections (saved), tag chips + show all, recent notes, solid drawer, at 1100 and 390 px
