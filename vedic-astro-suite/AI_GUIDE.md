@@ -189,7 +189,7 @@ _Generated 2026-11-04 - 1780 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 197 files, 30251 lines, 2437 KB
+**birth-chart** - 197 files, 30274 lines, 2440 KB
 ```
 index.html                                         621 lines   35 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -229,7 +229,7 @@ js/122-today-for-you.js                             70 lines    8 KB
 js/123-prashna.js                                  133 lines   13 KB
 js/124-ayanamsa-choice.js                           29 lines    2 KB
 js/125-kp-system.js                                107 lines   11 KB
-js/126-dasha-reverse-finder.js                     167 lines   13 KB
+js/126-dasha-reverse-finder.js                     173 lines   14 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
@@ -387,7 +387,7 @@ css/57-prashna.css                                  22 lines    2 KB
 css/58-ayanamsa-choice.css                           7 lines    0 KB
 css/59-kp-system.css                                20 lines    1 KB
 css/60-home-chart-first.css                         31 lines    4 KB
-css/61-dasha-reverse.css                            23 lines    2 KB
+css/61-dasha-reverse.css                            40 lines    4 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -564,3 +564,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Moon/Dasha shift fix: the ayanamsa choice (KP/Raman) was stored permanently in localStorage and silently shifted every chart and Dasha date on later visits. Now tab-only (sessionStorage), old saved value erased on load, fresh visit = Lahiri. Dasha and Moon engines unchanged (Swiss test: Moon within 21", 504 Dasha boundaries exact). Test: node tests/ayanamsa_reset_test.js.
 - Classic Moon restored as default: `EPH_DELTA_T = false` in js/03 (the calculation the app used before 27 Oct 2026; reproduces the user's reference Dasha dates to the minute, 4.7 days different from the delta-T version). Precise mode (true) matches Swiss Ephemeris; tests/ephemeris_vs_swiss_test.js forces precise mode. Test: node tests/classic_moon_test.js.
 - Dasha Reverse tab (Rectify): js/126-dasha-reverse-finder.js + css/61-dasha-reverse.css; scans the birth day with an interpolated Moon and the existing Dasha engine, returns birth-time windows. Test: node tests/dasha_reverse_test.js.
+- Dasha Reverse UI polish: threaded level rows that light up when chosen, gradient result cards with a 24-hour position bar, self-building tab (no blank screen if the first build was missed).

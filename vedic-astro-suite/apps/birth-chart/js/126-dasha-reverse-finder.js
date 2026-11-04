@@ -88,7 +88,7 @@ function drevBuild(pane){
   if (document.getElementById('drevRoot')) return;
   const root = document.createElement('div'); root.id = 'drevRoot'; pane.appendChild(root);
   const opts = '<option value="">— not sure —</option>' + DREV_NAMES.map(n => `<option value="${n}">${DREV_GLYPH[n]} ${n}</option>`).join('');
-  const rows = DREV_LEVELS.map((n, i) => `<label class="drev-lv"><span class="drev-ln"><i>${i + 1}</i>${n}${i === 0 ? ' <em>required</em>' : ''}</span>
+  const rows = DREV_LEVELS.map((n, i) => `<label class="drev-lv" data-l="${i}" id="drevRow${i}"><span class="drev-ln"><i>${i + 1}</i>${n}${i === 0 ? ' <em>required</em>' : ''}</span>
       <select id="drevL${i}" ${i === 0 ? '' : ''}>${i === 0 ? opts.replace('<option value="">— not sure —</option>', '<option value="">Choose…</option>') : opts}</select></label>`).join('');
   root.innerHTML = `
   <div class="rs-pane-head"><span class="rs-ph-ico">🔁</span><div class="rs-ph-txt"><h3>Dasha Reverse</h3><p>Know the dasha at a moment but not the birth time? Pick the planets and get the birth time back.</p></div></div>
@@ -114,7 +114,8 @@ function drevBuild(pane){
     if (!q('drevEvDate').value){ const n = new Date(); q('drevEvDate').value = `${n.getFullYear()}-${drevPad(n.getMonth() + 1)}-${drevPad(n.getDate())}`; }
   };
   fill(); root._fill = fill;
-  q('drevClear').addEventListener('click', () => { for (let i = 1; i < 6; i++) q('drevL' + i).value = ''; });
+  for (let i = 0; i < 6; i++){ const sel = q('drevL' + i), row = q('drevRow' + i); sel.addEventListener('change', () => { row.dataset.p = sel.value; row.classList.toggle('on', !!sel.value); }); }
+  q('drevClear').addEventListener('click', () => { for (let i = 1; i < 6; i++){ q('drevL' + i).value = ''; q('drevRow' + i).classList.remove('on'); } });
   q('drevGo').addEventListener('click', () => drevRun(root));
   root.addEventListener('click', e => {
     const b = e.target.closest('[data-drev-use]'); if (!b) return;
@@ -125,7 +126,11 @@ function drevBuild(pane){
     try { rsToast('Birth time set to ' + t.value); } catch(e2){}
   });
 }
-function drevOnShow(){ const r = document.getElementById('drevRoot'); if (r && r._fill) r._fill(); }
+function drevOnShow(){
+  let r = document.getElementById('drevRoot');
+  if (!r){ const pn = document.querySelector('.rs-pane[data-rs-pane="drev"]'); if (pn){ try { drevBuild(pn); } catch(e){ console.error('Dasha Reverse', e); pn.insertAdjacentHTML('afterbegin', '<div class="drev-msg err">Dasha Reverse could not load. Please refresh the page.</div>'); } } r = document.getElementById('drevRoot'); }
+  if (r && r._fill) r._fill();
+}
 async function drevRun(root){
   const q = id => root.querySelector('#' + id), out = q('drevOut'), pl = drevPlace();
   const want = DREV_LEVELS.map((_, i) => q('drevL' + i).value || null);
@@ -159,6 +164,7 @@ async function drevRun(root){
     const width = w < 1 ? `${Math.round(w * 100) / 100} s` : w < 90 ? `${Math.round(w)} s` : w < 5400 ? `${Math.floor(w / 60)} min ${Math.round(w % 60)} s` : `${Math.floor(w / 3600)} h ${Math.round(w % 3600 / 60)} min`;
     return `<div class="drev-card"><div class="drev-c-top"><span class="drev-c-n">#${i + 1}</span><span class="drev-c-w">window ${drevEsc(width)}</span></div>
       <div class="drev-c-time"><b>${drevClock(r.start)}</b><i>→</i><b>${drevClock(r.end)}</b></div>
+      <div class="drev-day" title="Position in the 24-hour day"><i style="left:${(r.start / 864).toFixed(3)}%;width:max(3px,${((r.end - r.start) / 864).toFixed(3)}%)"></i><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
       <div class="drev-c-mid">Best single time: <b>${drevClock(r.mid)}</b></div>
       <div class="drev-c-moon">Moon at that time: ${r.moon.toFixed(4)}° · ${drevEsc(nk.name)} pada ${nk.pada} (${drevEsc(nk.lord)} dasha at birth)</div>
       <button type="button" class="drev-use" data-drev-use="${r.mid}">Use ${drevClock(r.mid).slice(0, 8)} as birth time</button></div>`;

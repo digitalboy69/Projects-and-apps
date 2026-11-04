@@ -481,10 +481,10 @@ drevClock	fn	apps/birth-chart/js/126-dasha-reverse-finder.js:85	birth-chart
 drevEsc	fn	apps/birth-chart/js/126-dasha-reverse-finder.js:83	birth-chart
 drevMatches	fn	apps/birth-chart/js/126-dasha-reverse-finder.js:25	birth-chart
 drevMoonTable	fn	apps/birth-chart/js/126-dasha-reverse-finder.js:31	birth-chart
-drevOnShow	fn	apps/birth-chart/js/126-dasha-reverse-finder.js:128	birth-chart
+drevOnShow	fn	apps/birth-chart/js/126-dasha-reverse-finder.js:129	birth-chart
 drevPad	fn	apps/birth-chart/js/126-dasha-reverse-finder.js:84	birth-chart
 drevPlace	fn	apps/birth-chart/js/126-dasha-reverse-finder.js:86	birth-chart
-drevRun	fn	apps/birth-chart/js/126-dasha-reverse-finder.js:129	birth-chart
+drevRun	fn	apps/birth-chart/js/126-dasha-reverse-finder.js:134	birth-chart
 drevSearch	fn	apps/birth-chart/js/126-dasha-reverse-finder.js:54	birth-chart
 drevStepFor	fn	apps/birth-chart/js/126-dasha-reverse-finder.js:44	birth-chart
 drishti	fn	apps/birth-chart/js/72-bhava-bala.js:10	birth-chart

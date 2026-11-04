@@ -1,22 +1,39 @@
 /* Dasha Reverse finder (Rectify tab) */
+#drevRoot{--g:#f6d775;--t:#4fd1c5}
 #drevRoot .drev-two{display:flex;gap:8px}#drevRoot .drev-two input{flex:1;min-width:0}
-#drevRoot .drev-note,#drevRoot .df-place,#drevRoot .drev-foot{font-size:12px;color:var(--rs-mut,#9aa);margin-top:8px;line-height:1.5}
-#drevRoot .drev-levels{display:grid;gap:8px}
-#drevRoot .drev-lv{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.03)}
-#drevRoot .drev-ln{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500}
-#drevRoot .drev-ln i{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgba(79,209,197,.18);color:#4fd1c5;font-style:normal;font-size:11px}
-#drevRoot .drev-ln em{font-style:normal;font-size:10px;color:#f6ad55;border:1px solid rgba(246,173,85,.4);border-radius:8px;padding:1px 6px}
-#drevRoot .drev-lv select{min-width:0;flex:0 1 150px;padding:8px;border-radius:10px}
-#drevRoot .drev-clear{margin-top:10px;background:none;border:0;color:#4fd1c5;font-size:12px;cursor:pointer;padding:4px 0}
-#drevRoot .drev-go{width:100%;margin:6px 0 14px;padding:14px;font-size:15px;border-radius:14px}
-#drevRoot .drev-msg{padding:14px;border-radius:14px;background:rgba(79,209,197,.08);font-size:13px;line-height:1.6}
-#drevRoot .drev-msg.err{background:rgba(245,101,101,.1);color:#fc8181}
-#drevRoot .drev-spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:#4fd1c5;border-radius:50%;animation:drevsp .8s linear infinite;vertical-align:-2px}
+#drevRoot .drev-note,#drevRoot .df-place,#drevRoot .drev-foot{font-size:12px;color:var(--rs-mut,#9aa);margin-top:8px;line-height:1.55}
+#drevRoot .df-card{border-radius:20px;background:linear-gradient(160deg,rgba(246,215,117,.06),rgba(255,255,255,.015));border:1px solid rgba(246,215,117,.16);box-shadow:0 10px 28px rgba(0,0,0,.22)}
+/* level rows: a vertical thread links the six levels */
+#drevRoot .drev-levels{display:grid;gap:10px;position:relative}
+#drevRoot .drev-levels:before{content:"";position:absolute;left:21px;top:20px;bottom:20px;width:2px;background:linear-gradient(var(--g),rgba(79,209,197,.15));border-radius:2px;opacity:.5}
+#drevRoot .drev-lv{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px 9px 8px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(0,0,0,.22);transition:border-color .2s,background .2s,box-shadow .2s}
+#drevRoot .drev-lv.on{border-color:rgba(246,215,117,.55);background:linear-gradient(120deg,rgba(246,215,117,.14),rgba(0,0,0,.22));box-shadow:0 0 0 1px rgba(246,215,117,.1) inset,0 8px 22px rgba(246,215,117,.08)}
+#drevRoot .drev-ln{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600}
+#drevRoot .drev-ln i{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#14181f;border:1px solid rgba(246,215,117,.45);color:var(--g);font-style:normal;font-size:12px;z-index:1}
+#drevRoot .drev-lv.on .drev-ln i{background:linear-gradient(135deg,#f6d775,#c9962f);color:#1a1405;border-color:transparent}
+#drevRoot .drev-ln em{font-style:normal;font-size:10px;letter-spacing:.04em;color:#f6ad55;border:1px solid rgba(246,173,85,.45);border-radius:9px;padding:1px 7px}
+#drevRoot .drev-lv select{min-width:0;flex:0 1 150px;padding:9px 8px;border-radius:12px;font-size:14px}
+#drevRoot .drev-clear{margin-top:12px;background:none;border:0;color:var(--t);font-size:12.5px;cursor:pointer;padding:4px 0}
+#drevRoot .drev-go{box-sizing:border-box;width:100%;margin:8px 0 18px;padding:16px;font-size:16px;font-weight:700;border-radius:18px;letter-spacing:.02em;box-shadow:0 14px 34px rgba(246,215,117,.22);transition:transform .15s,filter .2s}
+#drevRoot .drev-go:active{transform:scale(.985)}#drevRoot .drev-go:disabled{opacity:.6}
+#drevRoot .drev-out{padding:0 2px}
+#drevRoot .drev-msg{padding:16px;border-radius:16px;background:rgba(79,209,197,.08);border:1px solid rgba(79,209,197,.2);font-size:13px;line-height:1.6}
+#drevRoot .drev-msg.err{background:rgba(245,101,101,.1);border-color:rgba(245,101,101,.3);color:#fc8181}
+#drevRoot .drev-spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--t);border-radius:50%;animation:drevsp .8s linear infinite;vertical-align:-2px}
 @keyframes drevsp{to{transform:rotate(360deg)}}
-#drevRoot .drev-sum{font-size:13px;margin-bottom:8px}#drevRoot .drev-count{font-size:12px;color:#4fd1c5;margin:4px 0 10px}
-#drevRoot .drev-card{padding:14px;margin-bottom:10px;border-radius:16px;border:1px solid rgba(79,209,197,.28);background:linear-gradient(160deg,rgba(79,209,197,.08),rgba(255,255,255,.02))}
-#drevRoot .drev-c-top{display:flex;justify-content:space-between;font-size:12px;color:#9aa}
-#drevRoot .drev-c-time{display:flex;align-items:center;gap:10px;font-size:20px;margin:6px 0;flex-wrap:wrap}#drevRoot .drev-c-time i{opacity:.5;font-style:normal}
-#drevRoot .drev-c-mid{font-size:13px}#drevRoot .drev-c-moon{font-size:12px;color:#9aa;margin:6px 0 10px}
-#drevRoot .drev-use{width:100%;padding:10px;border-radius:12px;border:1px solid rgba(79,209,197,.5);background:rgba(79,209,197,.12);color:inherit;cursor:pointer;font-size:13px}
-#drevRoot .drev-out{padding:0 2px}#drevRoot .drev-sum,#drevRoot .drev-count{padding:0 4px}#drevRoot .drev-go{box-sizing:border-box}
+@keyframes drevin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#drevRoot .drev-sum{font-size:13px;margin:0 4px 8px;line-height:1.6}
+#drevRoot .drev-count{font-size:12px;color:var(--t);margin:2px 4px 12px;letter-spacing:.03em}
+#drevRoot .drev-card{padding:16px;margin-bottom:12px;border-radius:20px;border:1px solid rgba(246,215,117,.35);background:radial-gradient(120% 140% at 0% 0%,rgba(246,215,117,.14),rgba(79,209,197,.05) 55%,rgba(255,255,255,.015));box-shadow:0 14px 34px rgba(0,0,0,.28);animation:drevin .4s both}
+#drevRoot .drev-c-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#9aa}
+#drevRoot .drev-c-n{font-weight:700;color:var(--g)}
+#drevRoot .drev-c-w{padding:3px 10px;border-radius:99px;background:rgba(79,209,197,.12);color:var(--t)}
+#drevRoot .drev-c-time{display:flex;align-items:center;gap:10px;font-size:22px;margin:10px 0;flex-wrap:wrap;font-variant-numeric:tabular-nums;color:var(--g)}
+#drevRoot .drev-c-time i{opacity:.5;font-style:normal;color:#fff}
+#drevRoot .drev-day{position:relative;height:6px;border-radius:6px;background:rgba(255,255,255,.08);margin:14px 0 20px}
+#drevRoot .drev-day i{position:absolute;top:-3px;height:12px;border-radius:6px;background:linear-gradient(90deg,#f6d775,#4fd1c5);box-shadow:0 0 12px rgba(246,215,117,.6)}
+#drevRoot .drev-day span{position:absolute;top:12px;font-size:9px;color:#778;transform:translateX(-50%)}
+#drevRoot .drev-day span:nth-of-type(1){left:0;transform:none}#drevRoot .drev-day span:nth-of-type(2){left:25%}#drevRoot .drev-day span:nth-of-type(3){left:50%}#drevRoot .drev-day span:nth-of-type(4){left:75%}#drevRoot .drev-day span:nth-of-type(5){left:100%;transform:translateX(-100%)}
+#drevRoot .drev-c-mid{font-size:13.5px}
+#drevRoot .drev-c-moon{font-size:12px;color:#9aa;margin:6px 0 12px;line-height:1.5}
+#drevRoot .drev-use{width:100%;padding:12px;border-radius:14px;border:0;background:linear-gradient(120deg,#4fd1c5,#f6d775);color:#06110f;font-weight:700;cursor:pointer;font-size:13.5px;box-shadow:0 10px 24px rgba(79,209,197,.22)}
