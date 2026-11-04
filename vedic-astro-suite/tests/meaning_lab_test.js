@@ -1,0 +1,13 @@
+const fs=require('fs'),vm=require('vm'),path=require('path');
+const store={};const ctx={console,localStorage:{getItem:k=>store[k]||null,setItem:(k,v)=>{store[k]=v},removeItem(){}},document:{getElementById(){return null},addEventListener(){}},window:{},setTimeout};
+vm.createContext(ctx);const d=path.join(__dirname,'..','apps','birth-chart','js');
+for(const f of ['87-vedic-knowledge-db.js','128-meaning-lab.js'])vm.runInContext(fs.readFileSync(path.join(d,f),'utf8'),ctx,{filename:f});
+let fail=0;const ck=(n,c)=>{console.log(c?'ok  ':'FAIL',n);if(!c)fail++;};
+const h=vm.runInContext("ML.html(null)",ctx);
+ck('panel html builds',/Meaning Lab/.test(h)&&/mlType/.test(h));
+const base=vm.runInContext("(()=>{const D=VDB.data;return D.houses[6].short})()",ctx);
+ck('db has 7th house text',base.length>3);
+ck('lord-in-house link text from VDB',/7th lord/.test(vm.runInContext("VDB.lordInHouse(7,12)",ctx)));
+ck('planet-in-house text',vm.runInContext("VDB.planetInHouse('Rahu',7).text",ctx).length>20);
+ck('text() safe when empty',/MEANING LAB/.test(vm.runInContext("ML.text()",ctx)));
+process.exit(fail?1:0);
