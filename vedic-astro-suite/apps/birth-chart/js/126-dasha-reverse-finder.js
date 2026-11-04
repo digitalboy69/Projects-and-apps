@@ -117,6 +117,11 @@ function drevBuild(pane){
   for (let i = 0; i < 6; i++){ const sel = q('drevL' + i), row = q('drevRow' + i); sel.addEventListener('change', () => { row.dataset.p = sel.value; row.classList.toggle('on', !!sel.value); }); }
   q('drevClear').addEventListener('click', () => { for (let i = 1; i < 6; i++){ q('drevL' + i).value = ''; q('drevRow' + i).classList.remove('on'); } });
   q('drevGo').addEventListener('click', () => drevRun(root));
+  root.addEventListener('toggle', e => {
+    const d = e.target; if (!d.classList || !d.classList.contains('drev-more') || !d.open) return;
+    const host = d.querySelector('.drev-more-body'), pl = drevPlace(), sec = Math.round(parseFloat(d.dataset.mid));
+    tskyMount(host, () => ({ dateStr: q('drevDob').value, timeStr: `${drevPad(Math.floor(sec / 3600))}:${drevPad(Math.floor(sec % 3600 / 60))}:${drevPad(sec % 60)}`, lat: pl.lat, lon: pl.lon, tz: pl.tz }));
+  }, true);
   root.addEventListener('click', e => {
     const b = e.target.closest('[data-drev-use]'); if (!b) return;
     const t = document.getElementById('tobInput'); if (!t) return;
@@ -167,6 +172,7 @@ async function drevRun(root){
       <div class="drev-day" title="Position in the 24-hour day"><i style="left:${(r.start / 864).toFixed(3)}%;width:max(3px,${((r.end - r.start) / 864).toFixed(3)}%)"></i><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
       <div class="drev-c-mid">Best single time: <b>${drevClock(r.mid)}</b></div>
       <div class="drev-c-moon">Moon at that time: ${r.moon.toFixed(4)}° · ${drevEsc(nk.name)} pada ${nk.pada} (${drevEsc(nk.lord)} dasha at birth)</div>
+      <details class="drev-more" data-mid="${r.mid}"><summary>🔱 Dasha timeline + rising signs at this time</summary><div class="drev-more-body"></div></details>
       <button type="button" class="drev-use" data-drev-use="${r.mid}">Use ${drevClock(r.mid).slice(0, 8)} as birth time</button></div>`;
   }).join('') + `<div class="drev-foot">Searched ${drevClock(fromSec)} to ${drevClock(toSec)} in steps of ${res.step < 1 ? res.step.toFixed(2) : Math.round(res.step * 10) / 10} s. Moon, ayanamsha and Dasha follow your current setting (Lahiri unless changed).</div>`;
 }

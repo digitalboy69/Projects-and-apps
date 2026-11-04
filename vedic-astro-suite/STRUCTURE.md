@@ -179,6 +179,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/122-today-for-you.js` — Today for You (global TDY, panel-today, Home > Time & Cycles): Chandrabala, Tarabala, Gochara from the birth Moon, good Choghadiya slots vs Rahu Kalam, any date
 - `apps/birth-chart/js/123-prashna.js` — Prashna (horary) chart (global PRN, panel-prashna, Home > Time & Cycles): chart cast for a question moment, topic→house, lagna lord / matter lord strength, Ithasala/Easarapha (Tajika orbs), Moon checks, North/South chart, copy reading
 - `apps/birth-chart/js/124-ayanamsa-choice.js` — ayanamsa selector on the intake form (Lahiri default, Raman, KP); saves choice, re-draws chart. Engine offsets live in js/03 and sky3d js/01 (AYAN_MODES, ayanKey, ayanName)
+- `apps/birth-chart/js/127-time-sky-panel.js` — Time sky panel (Time Dial card + Dasha Reverse per-window): Dasha chain at birth/custom/today, rising sign + D9 boundaries in a 2-hour window
 - `apps/birth-chart/js/126-dasha-reverse-finder.js` — Dasha Reverse (Rectify tab `drev`): pick Maha..Deha planets active at a known moment, finds the birth-time windows of the birth day (interpolated Moon, engine reuse)
 - `apps/birth-chart/js/125-kp-system.js` — KP system (global KP, panel-kp, Home > Analysis): Placidus cusps, star/sub/sub-sub lords, planet and house significators, cusp sub-lord promise checks, ruling planets, KP-ayanamsa button
 - `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
@@ -250,6 +251,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/57-prashna.css` — styles for the Prashna chart panel
 - `apps/birth-chart/css/58-ayanamsa-choice.css` — styles for the ayanamsa selector
 - `apps/birth-chart/css/59-kp-system.css` — styles for the KP system panel
+- `apps/birth-chart/css/62-time-sky-panel.css` — styles for the time sky panel
 - `apps/birth-chart/css/61-dasha-reverse.css` — styles for the Dasha Reverse tab
 - `apps/birth-chart/css/60-home-chart-first.css` — Home in two screens: chart first (hero chart, details hidden), then All tools (data-page switch, tinted tool panels)
 
@@ -397,6 +399,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 
 ### tests/
 - `tests/dasha_reverse_test.js` — reverses the reference chart's Dasha chain, window must contain 02:23:00
+- `tests/time_sky_test.js` — Time sky panel: Dasha at 3 moments + rising/D9 segments (contiguous, 2 h, 6+ segments)
 - `tests/_helpers.py` — shared Playwright helpers (VAX_TARGET=hosted tests the folder version)
 - `tests/smoke.py` — main end-to-end smoke test
 - `tests/popular_charts_test.py` — Popular charts section: 10 groups x 10 people, lazy Wikipedia photos (wrong-person guard), detail sheet, casting a chart incl. old-timezone option, no JS errors

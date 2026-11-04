@@ -1,0 +1,19 @@
+/* Time sky panel: Dasha at three moments + rising-sign window */
+.tsky-card{margin-top:16px}
+.tsky-in{display:flex;gap:8px;margin-bottom:12px}.tsky-in label{flex:1;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#9aa;display:flex;flex-direction:column;gap:4px}
+.tsky h4{margin:14px 0 10px;font-size:14px}.tsky h4 small{font-weight:400;color:#9aa;font-size:11px;margin-left:6px}
+.tsky-cols{display:grid;gap:10px}
+@media(min-width:760px){.tsky-cols{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}}
+.tsky-col{padding:12px;border-radius:16px;border:1px solid rgba(246,215,117,.2);background:linear-gradient(160deg,rgba(246,215,117,.07),rgba(0,0,0,.2))}
+.tsky-col h5{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#f6d775}.tsky-when{font-size:11px;color:#9aa;margin:2px 0 8px}
+.tsky-lv{display:grid;grid-template-columns:78px 1fr;gap:0 8px;padding:5px 0;border-top:1px dashed rgba(255,255,255,.08);align-items:baseline}
+.tsky-l{font-size:10.5px;color:#9aa}.tsky-lv b{font-size:13px}.tsky-lv small{grid-column:2;font-size:10.5px;color:#9aa;font-variant-numeric:tabular-nums}
+.tsky-segs{display:grid;gap:6px}
+.tsky-seg{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(0,0,0,.2);font-variant-numeric:tabular-nums}
+.tsky-seg.d1chg{border-left:3px solid #4fd1c5}
+.tsky-seg.cur{border-color:rgba(246,215,117,.7);background:linear-gradient(120deg,rgba(246,215,117,.16),rgba(0,0,0,.2))}
+.tsky-t{font-size:13px;grid-column:1/-1;color:#f6d775}.tsky-s{font-size:13px}.tsky-n{font-size:12px;color:#9aa;text-align:right}.tsky-seg em{grid-column:1/-1;font-size:10px;color:#f6d775;font-style:normal;letter-spacing:.08em;text-transform:uppercase}
+.tsky-foot,.tsky-empty{font-size:11.5px;color:#9aa;margin-top:10px;line-height:1.5}
+#drevRoot .drev-more{margin:0 0 12px;border:1px dashed rgba(255,255,255,.18);border-radius:14px;padding:0 10px}
+#drevRoot .drev-more>summary{cursor:pointer;padding:11px 0;font-size:12.5px;color:#4fd1c5;list-style:none}
+#drevRoot .drev-more-body{padding-bottom:10px}

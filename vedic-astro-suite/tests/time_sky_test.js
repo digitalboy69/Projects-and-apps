@@ -1,0 +1,15 @@
+const fs=require('fs'),vm=require('vm'),path=require('path');
+const ctx={console,localStorage:{getItem(){return null},setItem(){},removeItem(){}},sessionStorage:{getItem(){return null},setItem(){},removeItem(){}},document:{getElementById(){return null}},window:{},setTimeout,clearTimeout,Date,Math};
+vm.createContext(ctx);const d=path.join(__dirname,'..','apps','birth-chart','js');
+for(const f of fs.readdirSync(d).filter(f=>/^(03-|04-|05-|10-|127-)/.test(f)).sort())vm.runInContext(fs.readFileSync(path.join(d,f),'utf8'),ctx,{filename:f});
+let fail=0;const ck=(n,c)=>{console.log(c?'ok  ':'FAIL',n);if(!c)fail++;};
+const html=vm.runInContext("tskyHtml({dateStr:'2007-11-11',timeStr:'02:23:00',lat:16.7747,lon:78.1315,tz:5.5},{date:'2026-11-04',time:'02:38:00'})",ctx);
+ck('three Dasha columns',(html.match(/class="tsky-col"/g)||[]).length===3);
+ck('birth Maha Saturn',/At birth time[\s\S]*?Maha<\/span><b>♄ Saturn/.test(html));
+ck('custom moment Mercury maha',/Your day[\s\S]*?Maha<\/span><b>☿ Mercury/.test(html));
+ck('Leo rising shown',/Leo<\/b> rising/.test(html));
+const segs=vm.runInContext("(()=>{const jd=toJulianDay(2007,11,11,2,23,0)-5.5/24;return tskySegments(jd-1/24,jd+1/24,16.7747,78.1315)})()",ctx);
+ck('segments contiguous',segs.every((s,i)=>i===0||Math.abs(s.a-segs[i-1].b)<1e-9));
+ck('D9 changes ~ every 13 min (>=6 segs in 2h)',segs.length>=6);
+ck('window covers 2h',Math.abs((segs[segs.length-1].b-segs[0].a)*24-2)<1e-6);
+console.log(segs.length,'segments');process.exit(fail?1:0);

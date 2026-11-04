@@ -90,6 +90,7 @@ function rsSetHands(){
 function rsRefresh(){
   const pill = document.getElementById('rsPill'); if (!pill) return;
   rsSetHands();
+  try { tskyDialRefresh(); } catch(e){}
   const p = currentProfileForExport, dEl = document.getElementById('rectDate');
   if (!p || !dEl || !dEl.value){ pill.innerHTML = `<span class="rs-pill-dim">Generate a chart first to begin ✨</span>`; return; }
   const ts = `${padHms(rectHms.h)}:${padHms(rectHms.m)}:${padHms(rectHms.s)}`;
