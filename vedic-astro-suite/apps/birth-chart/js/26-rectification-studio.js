@@ -12,6 +12,7 @@ const RS_TABS = [
   ['vt',    '🗺️', 'Varga Timeline', 2],
   ['tt',    '⏳', 'Transit Timer',  2],
   ['dasha', '🔱', 'Dasha Lens',     3],
+  ['drev',  '🔁', 'Dasha Reverse',  3],
   ['life',  '🌟', 'Life Events',    3]
 ];
 const RS_STEPS = [[1,'Set date & time'],[2,'Narrow it down'],[3,'Confirm with life']];
@@ -121,6 +122,7 @@ function rsShow(id, scroll){
   });
   if (id==='life') rsRenderEvents();
   if (id==='dasha' && typeof dlOnShow==='function') dlOnShow();
+  if (id==='drev' && typeof drevOnShow==='function') drevOnShow();
   if (id==='dates'){ try { dfPlaceNote(); } catch(e){} }
 }
 
@@ -203,6 +205,7 @@ function initRectStudio(){
   // Life
   rsBuildLife(pane('life'));
   try { rsBuildDasha(pane('dasha')); } catch(e){ console.error('Dasha Lens', e); }
+  try { drevBuild(pane('drev')); } catch(e){ console.error('Dasha Reverse', e); }
   // 'Show in the 3D wheel' next to the Full Chart button on the Time Dial
   try { const b3 = document.createElement('button'); b3.type = 'button'; b3.className = 'rect-3d-btn'; b3.dataset.jump3d = 'dial'; b3.innerHTML = '🌌 Show this time in the 3D wheel'; actRow.appendChild(b3); } catch(e){}
   try { dfBuild(pane('dates')); } catch(e){ console.error('Date Finder', e); }

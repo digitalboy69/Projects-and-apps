@@ -1,0 +1,22 @@
+/* Dasha Reverse finder (Rectify tab) */
+#drevRoot .drev-two{display:flex;gap:8px}#drevRoot .drev-two input{flex:1;min-width:0}
+#drevRoot .drev-note,#drevRoot .df-place,#drevRoot .drev-foot{font-size:12px;color:var(--rs-mut,#9aa);margin-top:8px;line-height:1.5}
+#drevRoot .drev-levels{display:grid;gap:8px}
+#drevRoot .drev-lv{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(255,255,255,.03)}
+#drevRoot .drev-ln{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500}
+#drevRoot .drev-ln i{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgba(79,209,197,.18);color:#4fd1c5;font-style:normal;font-size:11px}
+#drevRoot .drev-ln em{font-style:normal;font-size:10px;color:#f6ad55;border:1px solid rgba(246,173,85,.4);border-radius:8px;padding:1px 6px}
+#drevRoot .drev-lv select{min-width:0;flex:0 1 150px;padding:8px;border-radius:10px}
+#drevRoot .drev-clear{margin-top:10px;background:none;border:0;color:#4fd1c5;font-size:12px;cursor:pointer;padding:4px 0}
+#drevRoot .drev-go{width:100%;margin:6px 0 14px;padding:14px;font-size:15px;border-radius:14px}
+#drevRoot .drev-msg{padding:14px;border-radius:14px;background:rgba(79,209,197,.08);font-size:13px;line-height:1.6}
+#drevRoot .drev-msg.err{background:rgba(245,101,101,.1);color:#fc8181}
+#drevRoot .drev-spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:#4fd1c5;border-radius:50%;animation:drevsp .8s linear infinite;vertical-align:-2px}
+@keyframes drevsp{to{transform:rotate(360deg)}}
+#drevRoot .drev-sum{font-size:13px;margin-bottom:8px}#drevRoot .drev-count{font-size:12px;color:#4fd1c5;margin:4px 0 10px}
+#drevRoot .drev-card{padding:14px;margin-bottom:10px;border-radius:16px;border:1px solid rgba(79,209,197,.28);background:linear-gradient(160deg,rgba(79,209,197,.08),rgba(255,255,255,.02))}
+#drevRoot .drev-c-top{display:flex;justify-content:space-between;font-size:12px;color:#9aa}
+#drevRoot .drev-c-time{display:flex;align-items:center;gap:10px;font-size:20px;margin:6px 0;flex-wrap:wrap}#drevRoot .drev-c-time i{opacity:.5;font-style:normal}
+#drevRoot .drev-c-mid{font-size:13px}#drevRoot .drev-c-moon{font-size:12px;color:#9aa;margin:6px 0 10px}
+#drevRoot .drev-use{width:100%;padding:10px;border-radius:12px;border:1px solid rgba(79,209,197,.5);background:rgba(79,209,197,.12);color:inherit;cursor:pointer;font-size:13px}
+#drevRoot .drev-out{padding:0 2px}#drevRoot .drev-sum,#drevRoot .drev-count{padding:0 4px}#drevRoot .drev-go{box-sizing:border-box}

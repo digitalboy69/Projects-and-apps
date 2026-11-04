@@ -185,13 +185,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-04 - 1763 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-04 - 1780 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 195 files, 30056 lines, 2422 KB
+**birth-chart** - 197 files, 30251 lines, 2437 KB
 ```
-index.html                                         619 lines   35 KB
+index.html                                         621 lines   35 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -229,6 +229,7 @@ js/122-today-for-you.js                             70 lines    8 KB
 js/123-prashna.js                                  133 lines   13 KB
 js/124-ayanamsa-choice.js                           29 lines    2 KB
 js/125-kp-system.js                                107 lines   11 KB
+js/126-dasha-reverse-finder.js                     167 lines   13 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
@@ -242,7 +243,7 @@ js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
 js/25-home-and-tabs.js                             157 lines   16 KB
-js/26-rectification-studio.js                      246 lines   14 KB
+js/26-rectification-studio.js                      249 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
 js/29-date-finder-ui.js                            191 lines   18 KB
@@ -386,6 +387,7 @@ css/57-prashna.css                                  22 lines    2 KB
 css/58-ayanamsa-choice.css                           7 lines    0 KB
 css/59-kp-system.css                                20 lines    1 KB
 css/60-home-chart-first.css                         31 lines    4 KB
+css/61-dasha-reverse.css                            23 lines    2 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -561,3 +563,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - 3D tabs UI unify: new last-loaded `css/27-panel-unify.css` (html[data-app] selectors) restyles tab-intro, panel-heading, filter-chip, btn-block, transit/ret cards, scan-range-note, mini-field, empty-feed for ALL tabs; no JS or logic changed.
 - Moon/Dasha shift fix: the ayanamsa choice (KP/Raman) was stored permanently in localStorage and silently shifted every chart and Dasha date on later visits. Now tab-only (sessionStorage), old saved value erased on load, fresh visit = Lahiri. Dasha and Moon engines unchanged (Swiss test: Moon within 21", 504 Dasha boundaries exact). Test: node tests/ayanamsa_reset_test.js.
 - Classic Moon restored as default: `EPH_DELTA_T = false` in js/03 (the calculation the app used before 27 Oct 2026; reproduces the user's reference Dasha dates to the minute, 4.7 days different from the delta-T version). Precise mode (true) matches Swiss Ephemeris; tests/ephemeris_vs_swiss_test.js forces precise mode. Test: node tests/classic_moon_test.js.
+- Dasha Reverse tab (Rectify): js/126-dasha-reverse-finder.js + css/61-dasha-reverse.css; scans the birth day with an interpolated Moon and the existing Dasha engine, returns birth-time windows. Test: node tests/dasha_reverse_test.js.
