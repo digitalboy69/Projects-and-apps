@@ -185,7 +185,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-05 - 1820 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-06 - 1820 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -574,3 +574,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Time sky panel (js/127 + css/62): Time Dial card and each Dasha Reverse result show the full Dasha chain at birth/custom day/today and the rising sign + D9 boundaries for a 2-hour window. Test: node tests/time_sky_test.js.
 - Meaning Lab (js/128 + css/63, Home > Analysis + left quick menu via HOME_ITEMS): free mix of pieces with raw meanings from VDB, optional database links, own notes saved locally. Test: node tests/meaning_lab_test.js.
 - Degree houses (3D): js/54 + css/28. New Houses tab (SVG wheel, by-sign vs by-degree house per planet, Sripati/Equal systems, sky now or natal) and a 'Degree houses' 3D layer toggle (cusp lines, house numbers, H3→2 tags on shifted planets). Test: node tests/degree_houses_test.js.
+- Android app: mobile/ (Capacitor) + ../.github/workflows/android.yml build the APK and a live-update bundle on every push to main; the installed app works offline and updates itself when online. Releases: apk-latest (APK), ota-latest (updates).

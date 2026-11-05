@@ -431,6 +431,17 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/explorer_time_test.py` — Aspect Explorer follows the app time (not the birth time) when a profile is loaded
 - `tests/compare_lab_test.py` — Compare Lab test: opens from Divisional Charts, three-dot menu, up to 4 charts, follow a planet, table, notes, copy text
 - `tests/exact_aspects_test.js` — Exact Aspects engine test (Node, 31 checks): Rahu 5/7/9/conjunction on 18° Gemini, orb edges, 18.6-year repeat, retro passes, Moon, live-sky moving target, window running now
+- `mobile/README.md` — Android app (Capacitor): how it works, install link, signing
+- `mobile/package.json` — Capacitor + live-updater packages for the Android app
+- `mobile/capacitor.config.json` — app id, offline / live-update / splash settings
+- `mobile/src/native-bridge.js` — runs inside the APK: live updates from GitHub, back button, status bar
+- `mobile/scripts/prepare-web.js` — builds www (offline copy incl. three.js + fonts) and the live-update bundle
+- `mobile/scripts/patch-android.py` — adds release signing and version numbers to the generated Android project
+- `mobile/resources/icon-only.png` — app icon
+- `mobile/resources/icon-foreground.png` — adaptive icon foreground
+- `mobile/resources/icon-background.png` — adaptive icon background
+- `mobile/resources/splash.png` — splash screen
+- `mobile/resources/splash-dark.png` — splash screen (dark)
 - `tests/degree_houses_test.js` — Degree houses engine (Sripati / Equal): 12 houses cover 360°, Lagna madhya, shifted flag
 - `tests/varga_guide_test.py` — Divisional chart guide test: one guide per chart, all sections, tagged rules, follows the chart picker
 - `tests/nakshatra_db_test.py` — Nakshatra layer: 972 unique placements, wording gates (no fatalistic/absolute words), pada->navamsa equals the app's D9 on 8 charts, Moon star = dasha start, on-screen check

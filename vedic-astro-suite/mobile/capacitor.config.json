@@ -1,0 +1,13 @@
+{
+  "appId": "com.vedicastro.suite",
+  "appName": "Vedic Astro Suite",
+  "webDir": "www",
+  "server": { "androidScheme": "https" },
+  "android": { "allowMixedContent": false, "backgroundColor": "#0b0f1a" },
+  "plugins": {
+    "CapacitorHttp": { "enabled": true },
+    "CapacitorUpdater": { "autoUpdate": false, "resetWhenUpdate": true, "appReadyTimeout": 20000 },
+    "SplashScreen": { "launchShowDuration": 900, "launchAutoHide": true, "backgroundColor": "#0b0f1a", "showSpinner": false },
+    "StatusBar": { "style": "DARK", "backgroundColor": "#0b0f1a", "overlaysWebView": false }
+  }
+}

@@ -1,0 +1,112 @@
+name: Android app and live updates
+
+# Every push to main that touches the Vedic Astro Suite:
+#   1. builds the web app into a live-update bundle and publishes it (release "ota-latest"); installed apps download it on their own
+#   2. builds the native Android app (APK) with the whole web app inside (works fully offline) and publishes it (release "apk-latest")
+# Install link: https://github.com/<owner>/<repo>/releases/download/apk-latest/VedicAstroSuite.apk
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'vedic-astro-suite/**'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      OTA_BASE: https://github.com/${{ github.repository }}/releases/download/ota-latest
+      GH_TOKEN: ${{ github.token }}
+      KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || 'vedicastro' }}
+      KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD || 'vedicastro' }}
+      KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS || 'vedic' }}
+      VERSION_CODE: ${{ github.run_number }}
+    defaults:
+      run:
+        working-directory: vedic-astro-suite/mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install packages
+        run: npm install --no-audit --no-fund
+
+      - name: Build the offline web bundle
+        run: node scripts/prepare-web.js
+
+      - name: Remember the signing key between builds
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/signing
+          key: android-signing-key-v1
+
+      - name: Signing key
+        env:
+          HAVE_KS: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/signing"
+          KS="$RUNNER_TEMP/signing/release.keystore"
+          if [ -n "$HAVE_KS" ]; then
+            echo "$HAVE_KS" | base64 -d > "$KS"
+          elif [ ! -f "$KS" ]; then
+            keytool -genkeypair -keystore "$KS" -alias "$KEY_ALIAS" -keyalg RSA -keysize 2048 -validity 36500 \
+              -storepass "$KS_PASS" -keypass "$KEY_PASS" -dname "CN=Vedic Astro Suite, O=Vedic Astro, C=IN"
+          fi
+          echo "KS_FILE=$KS" >> "$GITHUB_ENV"
+
+      - name: Create the Android project
+        run: |
+          npx cap add android
+          npx capacitor-assets generate --android --iconBackgroundColor '#0b0f1a' --splashBackgroundColor '#0b0f1a'
+          python3 scripts/patch-android.py
+          npx cap sync android
+
+      - name: Build the APK
+        working-directory: vedic-astro-suite/mobile/android
+        env:
+          VERSION_NAME: 1.${{ github.run_number }}
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon --stacktrace
+          mkdir -p ../out
+          cp app/build/outputs/apk/release/app-release.apk ../out/VedicAstroSuite.apk
+          ls -la ../out
+
+      - name: Check the APK is signed
+        run: |
+          APKSIGNER=$(ls $ANDROID_HOME/build-tools/*/apksigner | tail -1)
+          $APKSIGNER verify --print-certs out/VedicAstroSuite.apk | head -3
+
+      - name: Publish the live-update bundle
+        run: |
+          gh release view ota-latest >/dev/null 2>&1 || gh release create ota-latest --prerelease --title "Live updates" --notes "Automatic. The installed app downloads bundle.zip when it is online." 
+          gh release upload ota-latest ota/bundle.zip --clobber
+          gh release upload ota-latest ota/latest.json --clobber
+
+      - name: Publish the APK
+        run: |
+          gh release view apk-latest >/dev/null 2>&1 || gh release create apk-latest --title "Android app" --notes "Download VedicAstroSuite.apk and install it."
+          gh release upload apk-latest out/VedicAstroSuite.apk --clobber
+          gh release edit apk-latest --notes "Latest Android app (build ${{ github.run_number }}, commit ${GITHUB_SHA::7}). Download VedicAstroSuite.apk and install it. It works offline and updates itself when online."
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VedicAstroSuite-apk
+          path: vedic-astro-suite/mobile/out/VedicAstroSuite.apk
