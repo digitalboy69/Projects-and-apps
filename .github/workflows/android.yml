@@ -6,7 +6,7 @@ name: Android app and live updates
 # Install link: https://github.com/<owner>/<repo>/releases/download/apk-latest/VedicAstroSuite.apk
 on:
   push:
-    branches: [main]
+    branches: [main, android-app]
     paths:
       - 'vedic-astro-suite/**'
       - '.github/workflows/android.yml'
