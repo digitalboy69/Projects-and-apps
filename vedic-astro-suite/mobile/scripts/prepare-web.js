@@ -6,7 +6,8 @@
    - zips www as ota/bundle.zip and writes ota/latest.json */
 const fs = require('fs'), path = require('path'), cp = require('child_process'), crypto = require('crypto');
 const SRC = path.resolve(__dirname, '..', '..'), OUT = path.resolve(__dirname, '..', 'www'), OTA_DIR = path.resolve(__dirname, '..', 'ota');
-const OTA_BASE = process.env.OTA_BASE || 'https://github.com/digitalboy69/projects-and-apps/releases/download/ota-latest';
+const OTA_BASE = process.env.OTA_BASE || 'https://github.com/digitalboy69/projects-and-apps/releases/download/build-0';   // where bundle.zip lives (this build's release)
+const OTA_LATEST = process.env.OTA_LATEST || 'https://github.com/digitalboy69/projects-and-apps/releases/latest/download';   // stable link to the newest latest.json
 const KEEP = ['index.html', 'apps', 'shared', 'shell', 'vendor', 'version.json'];
 const UA = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Mobile Safari/537.36';
 const rm = p => fs.rmSync(p, { recursive: true, force: true });
@@ -49,7 +50,7 @@ function walk(d, out = []){ fs.readdirSync(d).forEach(n => { const p = path.join
   console.log('fonts downloaded:', fontFiles);
 
   // native bridge
-  fs.writeFileSync(path.join(OUT, 'native-bridge.js'), fs.readFileSync(path.join(__dirname, '..', 'src', 'native-bridge.js'), 'utf8').replace('__OTA_BASE__', OTA_BASE));
+  fs.writeFileSync(path.join(OUT, 'native-bridge.js'), fs.readFileSync(path.join(__dirname, '..', 'src', 'native-bridge.js'), 'utf8').replace('__OTA_BASE__', OTA_LATEST));
   const idx = path.join(OUT, 'index.html'); let ih = fs.readFileSync(idx, 'utf8');
   if (!ih.includes('native-bridge.js')) ih = ih.replace('</head>', '<script src="native-bridge.js"></script></head>');
   fs.writeFileSync(idx, ih);

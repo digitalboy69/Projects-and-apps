@@ -1,9 +1,9 @@
 name: Android app and live updates
 
 # Every push to main that touches the Vedic Astro Suite:
-#   1. builds the web app into a live-update bundle and publishes it (release "ota-latest"); installed apps download it on their own
-#   2. builds the native Android app (APK) with the whole web app inside (works fully offline) and publishes it (release "apk-latest")
-# Install link: https://github.com/<owner>/<repo>/releases/download/apk-latest/VedicAstroSuite.apk
+#   1. builds the web app into a live-update bundle and publishes it (each build is a GitHub release); installed apps download it on their own
+#   2. builds the native Android app (APK) with the whole web app inside (works fully offline) and publishes it (same release)
+# Install link: https://github.com/<owner>/<repo>/releases/latest/download/VedicAstroSuite.apk
 on:
   push:
     branches: [main, android-app]
@@ -24,7 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      OTA_BASE: https://github.com/${{ github.repository }}/releases/download/ota-latest
+      OTA_LATEST: https://github.com/${{ github.repository }}/releases/latest/download
+      OTA_BASE: https://github.com/${{ github.repository }}/releases/download/build-${{ github.run_number }}
       GH_TOKEN: ${{ github.token }}
       KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD || 'vedicastro' }}
       KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD || 'vedicastro' }}
@@ -94,17 +95,17 @@ jobs:
           APKSIGNER=$(ls $ANDROID_HOME/build-tools/*/apksigner | tail -1)
           $APKSIGNER verify --print-certs out/VedicAstroSuite.apk | head -3
 
-      - name: Publish the live-update bundle
+      - name: Publish this build (APK + live-update bundle)
         run: |
-          gh release view ota-latest >/dev/null 2>&1 || gh release create ota-latest --prerelease --title "Live updates" --notes "Automatic. The installed app downloads bundle.zip when it is online." 
-          gh release upload ota-latest ota/bundle.zip --clobber
-          gh release upload ota-latest ota/latest.json --clobber
-
-      - name: Publish the APK
-        run: |
-          gh release view apk-latest >/dev/null 2>&1 || gh release create apk-latest --title "Android app" --notes "Download VedicAstroSuite.apk and install it."
-          gh release upload apk-latest out/VedicAstroSuite.apk --clobber
-          gh release edit apk-latest --notes "Latest Android app (build ${{ github.run_number }}, commit ${GITHUB_SHA::7}). Download VedicAstroSuite.apk and install it. It works offline and updates itself when online."
+          # Releases here are immutable, so every build is a new release and "releases/latest/download/..." always points at the newest.
+          gh release create "build-${{ github.run_number }}" out/VedicAstroSuite.apk ota/bundle.zip ota/latest.json \
+            --target "$GITHUB_SHA" --latest \
+            --title "Vedic Astro Suite build ${{ github.run_number }}" \
+            --notes "Android app and live-update bundle for commit ${GITHUB_SHA::7}. Install VedicAstroSuite.apk. The app works offline and downloads newer builds by itself when online."
+          # keep the newest 6 builds
+          gh release list --limit 100 --json tagName,createdAt --jq 'map(select(.tagName|startswith("build-"))) | sort_by(.createdAt) | reverse | .[6:] | .[].tagName' | while read t; do gh release delete "$t" --yes --cleanup-tag || true; done
+          gh release delete ota-latest --yes --cleanup-tag 2>/dev/null || true
+          gh release delete apk-latest --yes --cleanup-tag 2>/dev/null || true
 
       - uses: actions/upload-artifact@v4
         with:
