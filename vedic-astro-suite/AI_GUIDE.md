@@ -185,7 +185,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-04 - 1807 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-05 - 1820 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -409,9 +409,9 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 82 files, 7776 lines, 469 KB
+**sky3d** - 84 files, 7946 lines, 485 KB
 ```
-index.html                                         503 lines   31 KB
+index.html                                         509 lines   32 KB
 js/01-astro-engine.js                              163 lines   10 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -465,6 +465,7 @@ js/50-sky-dashboard.js                             295 lines   26 KB
 js/51-jump-from-rectification.js                    33 lines    2 KB
 js/52-gulika.js                                     53 lines    4 KB
 js/53-exact-aspects.js                             210 lines   13 KB
+js/54-degree-houses.js                             140 lines   12 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -493,6 +494,7 @@ css/25-date-entry.css                                8 lines    0 KB
 css/25-solid-panels.css                             32 lines    4 KB
 css/26-exact-aspects.css                            65 lines    6 KB
 css/27-panel-unify.css                              67 lines    5 KB
+css/28-degree-houses.css                            24 lines    3 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -571,3 +573,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Dasha Reverse UI polish: threaded level rows that light up when chosen, gradient result cards with a 24-hour position bar, self-building tab (no blank screen if the first build was missed).
 - Time sky panel (js/127 + css/62): Time Dial card and each Dasha Reverse result show the full Dasha chain at birth/custom day/today and the rising sign + D9 boundaries for a 2-hour window. Test: node tests/time_sky_test.js.
 - Meaning Lab (js/128 + css/63, Home > Analysis + left quick menu via HOME_ITEMS): free mix of pieces with raw meanings from VDB, optional database links, own notes saved locally. Test: node tests/meaning_lab_test.js.
+- Degree houses (3D): js/54 + css/28. New Houses tab (SVG wheel, by-sign vs by-degree house per planet, Sripati/Equal systems, sky now or natal) and a 'Degree houses' 3D layer toggle (cusp lines, house numbers, H3→2 tags on shifted planets). Test: node tests/degree_houses_test.js.

@@ -34,6 +34,7 @@
 <link rel="stylesheet" href="css/26-exact-aspects.css">
 <link rel="stylesheet" href="css/25-solid-panels.css">
 <link rel="stylesheet" href="css/27-panel-unify.css">
+<link rel="stylesheet" href="css/28-degree-houses.css">
 <link rel="stylesheet" href="css/25-date-entry.css">
 <link rel="stylesheet" href="../../shared/meta.css">
 <script src="../../shared/icons.js"></script>
@@ -136,6 +137,7 @@
       <button class="panel-tab" data-tab="transits"><span class="ti">➳</span><span>Transits</span></button>
       <button class="panel-tab" data-tab="conjunctions"><span class="ti">☌</span><span>Meetings</span></button>
       <button class="panel-tab" data-tab="degree"><span class="ti">⌖</span><span>Degree</span></button>
+      <button class="panel-tab" data-tab="degreehouses"><span class="ti">⌂</span><span>Houses</span></button>
       <button class="panel-tab" data-tab="aspexact"><span class="ti">⚹</span><span>Aspects</span></button>
       <button class="panel-tab" data-tab="natal"><span class="ti">✦</span><span>Natal</span></button>
       <button class="panel-tab" data-tab="triggers"><span class="ti">⚡</span><span>Triggers</span></button>
@@ -241,6 +243,8 @@
         <div class="scan-range-note" id="dfNote">Sidereal (Lahiri) zodiac · times in your device timezone</div>
         <div id="dfResults"><div class="empty-feed">Choose a planet, enter a degree, then tap <b>Find dates</b>.</div></div>
       </div>
+
+      <div class="panel-section" id="tab-degreehouses"></div>
 
       <div class="panel-section" id="tab-aspexact">
         <div class="ax-hero"><span class="ax-hero-ico">⚹</span><div><b>Exact aspect finder</b><small>Find the exact date and time a planet's aspect lands on a degree.</small></div></div>
@@ -365,6 +369,7 @@
         <div class="cam-mode-row" id="presetRow"><button class="pbtn" data-preset="top">Top</button><button class="pbtn" data-preset="tilt">Tilt</button><button class="pbtn" data-preset="side">Side</button></div>
         <button type="button" class="btn-secondary-block" id="lagnaViewBtn" style="margin:0 0 14px">Rotate wheel to Lagna</button>
         <div class="line-toggle-row"><div><div class="lt-label">Natal ghosts + transit arcs</div><div class="lt-sub">Your birth planets stay as rings; arcs show transit aspects to them</div></div><label class="switch"><input type="checkbox" id="L_natal" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Live Lagna pointer</div><div class="lt-sub">Rising sign line (ASC / DSC) for where you are now</div></div><label class="switch"><input type="checkbox" id="L_lagna" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Rising sign lines</div><div class="lt-sub">Gold lines where the current rising sign starts and ends (tap the Rising chip at the top to set your place)</div></div><label class="switch"><input type="checkbox" id="L_rise" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">House numbers</div><div class="lt-sub">Houses 1 to 12 counted from the Lagna, Lagna sign highlighted</div></div><label class="switch"><input type="checkbox" id="L_houses" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Planet condition marks</div><div class="lt-sub">▲ exalted · ▼ debilitated · ★ own sign · ☀ combust · ℞ retrograde</div></div><label class="switch"><input type="checkbox" id="L_cond" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Sade Sati zone</div><div class="lt-sub">Highlights the 3 signs around your natal Moon</div></div><label class="switch"><input type="checkbox" id="L_sade" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Rahu–Ketu axis</div><div class="lt-sub">Axis line; turns red in eclipse season</div></div><label class="switch"><input type="checkbox" id="L_axis" checked><span class="slider"></span></label></div><div class="line-toggle-row"><div><div class="lt-label">Gulika (Mandi) point</div><div class="lt-sub">Son of Saturn: the rising point at Saturn's part of the day or night, for your place and the time shown (and your birth, as a ring)</div></div><label class="switch"><input type="checkbox" id="L_gulika" checked><span class="slider"></span></label></div>
+        <div class="line-toggle-row"><div><div class="lt-label">Degree houses</div><div class="lt-sub">House lines from the exact rising degree; planets that change house are tagged (see the Houses tab)</div></div><label class="switch"><input type="checkbox" id="L_dhouses"><span class="slider"></span></label></div>
         <button type="button" class="btn-block" id="saveImgBtn">Save wheel as image</button>
         
       </div>
@@ -497,6 +502,7 @@
 <script src="js/51-jump-from-rectification.js"></script>
 <script src="js/52-gulika.js"></script>
 <script src="js/53-exact-aspects.js"></script>
+<script src="js/54-degree-houses.js"></script>
 <script src="../../shared/export-addon.js"></script>
 <script src="../../shared/copy-toggle.js"></script><script src="../../shared/quick-menu.js"></script>
 </body>
