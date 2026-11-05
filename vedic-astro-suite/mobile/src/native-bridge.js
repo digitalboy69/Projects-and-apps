@@ -7,7 +7,9 @@
   var C = window.Capacitor;
   if (!C || !C.isNativePlatform || !C.isNativePlatform()) return;
   window.__NATIVE_APP = true;
-  var OTA = '__OTA_BASE__', P = C.Plugins || {}, U = P.CapacitorUpdater, AP = P.App, SB = P.StatusBar;
+  var OTA = '__OTA_BASE__', P = C.Plugins || {};
+  function plug(n){ try { return (C.registerPlugin ? C.registerPlugin(n) : null) || P[n] || null; } catch(e){ return P[n] || null; } }
+  var U = plug('CapacitorUpdater'), AP = plug('App'), SB = plug('StatusBar');
   function ls(k, v){ try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch(e){} return null; }
   try { if (U) U.notifyAppReady(); } catch(e){}
   try { if (SB){ SB.setStyle({ style: 'DARK' }); SB.setBackgroundColor({ color: '#0b0f1a' }); } } catch(e){}
