@@ -15,8 +15,8 @@ signing = """    signingConfigs {
 if 'signingConfigs' not in s:
     s, n = re.subn(r'(\n\s*)buildTypes\s*\{\s*\n(\s*)release\s*\{', lambda m: '\n' + signing + m.group(1) + 'buildTypes {\n' + m.group(2) + 'release {\n' + m.group(2) + '    signingConfig signingConfigs.release', s, count=1)
     if n != 1: sys.exit('could not patch buildTypes.release')
-s, n1 = re.subn(r'versionCode\s+\d+', "versionCode (System.getenv('VERSION_CODE') ?: '1').toInteger()", s, count=1)
-s, n2 = re.subn(r'versionName\s+"[^"]*"', "versionName (System.getenv('VERSION_NAME') ?: '1.0')", s, count=1)
+s, n1 = re.subn(r'versionCode\s+\d+', "versionCode Integer.parseInt(System.getenv('VERSION_CODE') ?: '1')", s, count=1)
+s, n2 = re.subn(r'versionName\s+"[^"]*"', "versionName \"${System.getenv('VERSION_NAME') ?: '1.0'}\"", s, count=1)
 if not (n1 and n2): sys.exit('could not patch version fields')
 open(p, 'w').write(s)
 print('patched', p)
