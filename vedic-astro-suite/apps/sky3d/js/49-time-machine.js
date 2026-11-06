@@ -82,7 +82,7 @@
     else if (k === 'h') go(mk(y, m, d, idx, mi));
     else go(mk(y, m, d, h, idx));
   }
-  function place(k, idx, smooth){ const w = W[k]; w.idx = idx; mark(k, idx); w.el.scrollTo({ top: idx * IH, behavior: smooth ? 'smooth' : 'auto' }); }
+  function place(k, idx, smooth){ const w = W[k]; w.idx = idx; mark(k, idx); w.el.scrollTo({ top: idx * IH, behavior: smooth ? 'smooth' : 'auto' }); fx(w); }
   function scale(){
     Y_MIN = wide ? Y_ALL0 : 1800; Y_MAX = wide ? Y_ALL1 : 2200;
     const r = $('tmYear'), t = $('tmTicks'), w = $('tmWide'); if (!r) return;
@@ -90,6 +90,34 @@
     const ticks = wide ? [Y_ALL0, 0, 2500, 5000, 7500, Y_ALL1] : [1800, 1900, 2000, 2100, 2200];
     t.innerHTML = ticks.map(v => `<span>${yl(v)}</span>`).join('');
     w.textContent = wide ? '↔ Show 1800–2200 only' : '↔ All years (4713 BC – 9999)';
+  }
+  // ---- drum look + magnetic settle ----
+  // fx: items bend away from the centre line like a real drum (continuous with scroll position).
+  function fx(w){
+    const st = w.el.scrollTop, c = Math.round(st / IH), prev = w.fxEls || [], now = [];
+    for (let i = c - 4; i <= c + 4; i++){
+      if (i < 0 || i >= w.n) continue;
+      const it = w.sp ? w.sp.querySelector(`[data-i="${i}"]`) : w.el.children[i]; if (!it) continue;
+      const d = (i * IH - st) / IH, a = Math.abs(d);
+      it.style.transform = `perspective(260px) rotateX(${(-d * 24).toFixed(1)}deg) scale(${(1.1 - Math.min(a, 3) * 0.1).toFixed(3)})`;
+      it.style.opacity = Math.max(0.12, 1 - a * 0.26).toFixed(2); now.push(it);
+    }
+    prev.forEach(it => { if (now.indexOf(it) < 0){ it.style.transform = ''; it.style.opacity = ''; } });
+    w.fxEls = now;
+  }
+  // settle: when the wheel rests off-centre, a spring pulls the nearest number onto the band.
+  function settle(w){
+    if (w.down || w.anim) return;
+    const from = w.el.scrollTop, to = Math.max(0, Math.min(w.n - 1, Math.round(from / IH))) * IH, dist = to - from;
+    if (Math.abs(dist) < 0.5){ if (dist) w.el.scrollTop = to; fx(w); return; }
+    const t0 = performance.now(), dur = Math.min(420, 160 + Math.abs(dist) * 6);
+    w.anim = true;
+    const step = ts => {
+      const k = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - k, 3) + Math.sin(k * Math.PI) * 0.035 * (1 - k);   // ease-out with a tiny magnetic overshoot
+      w.el.scrollTop = from + dist * e;
+      if (k < 1 && !w.down) requestAnimationFrame(step); else { w.anim = false; w.el.scrollTop = to; fx(w); }
+    };
+    requestAnimationFrame(step);
   }
   function build(){
     ov = document.createElement('div'); ov.className = 'tm-ov'; ov.id = 'tmOv';
@@ -101,7 +129,7 @@
         <div class="tm-colon">:</div>
         ${KEYS.slice(3).map(k => `<div class="tm-wl" data-w="${k}" tabindex="0" role="listbox" aria-label="${{h:'Hour',mi:'Minute'}[k]}"></div>`).join('')}</div>
       <div class="tm-wlabs"><span>Day</span><span>Month</span><span>Year</span><span></span><span>Hour</span><span>Min</span></div>
-      <div class="tm-hint">Swipe a wheel and hold: it keeps spinning, faster the longer or further you hold</div>
+      <div class="tm-hint">Swipe and hold a wheel to keep it spinning</div>
       <div class="tm-st" data-u="d"><button data-u="y" data-n="-1">−1y</button><button data-u="mo" data-n="-1">−1mo</button><button data-n="-1">−1d</button><button data-n="1">+1d</button><button data-u="mo" data-n="1">+1mo</button><button data-u="y" data-n="1">+1y</button></div>
       <div class="tm-st tm-st4" data-u="y"><button data-n="-100">−100y</button><button data-n="-10">−10y</button><button data-n="10">+10y</button><button data-n="100">+100y</button></div>
       <div class="tm-st tm-st4" data-u="h"><button data-u="h" data-n="-1">−1h</button><button data-u="min" data-n="-15">−15m</button><button data-u="min" data-n="15">+15m</button><button data-u="h" data-n="1">+1h</button></div>
@@ -120,6 +148,8 @@
       const w = W[k];
       w.el.addEventListener('scroll', () => {
         w.last = Date.now();
+        if (!w.fxq){ w.fxq = requestAnimationFrame(() => { w.fxq = 0; fx(w); }); }
+        if (!w.anim){ clearTimeout(w.sT); w.sT = setTimeout(() => settle(w), 120); }
         const idx = Math.max(0, Math.min(w.n - 1, Math.round(w.el.scrollTop / IH)));
         if (idx === w.idx) return;
         w.idx = idx; mark(k, idx); if (navigator.vibrate) try{ navigator.vibrate(3); }catch(e){}
@@ -149,9 +179,9 @@
         el.scrollTop = Math.max(0, Math.min((w.n - 1) * IH, el.scrollTop + dir * v * IH * dt));
         w.last = Date.now();
       };
-      const down = y => { on = true; y0 = y1 = y; tStill = performance.now(); lastT = 0; if (!rafA) rafA = requestAnimationFrame(loop); };
+      const down = y => { on = true; w.down = true; w.anim = false; y0 = y1 = y; tStill = performance.now(); lastT = 0; if (!rafA) rafA = requestAnimationFrame(loop); };
       const move = y => { if (Math.abs(y - y1) > 5) tStill = performance.now(); y1 = y; };
-      const up = () => { on = false; stopAuto(); };
+      const up = () => { on = false; w.down = false; stopAuto(); clearTimeout(w.sT); w.sT = setTimeout(() => settle(w), 60); };
       el.addEventListener('touchstart', e => down(e.touches[0].clientY), { passive: true });
       el.addEventListener('touchmove', e => move(e.touches[0].clientY), { passive: true });
       ['touchend', 'touchcancel'].forEach(n => el.addEventListener(n, up, { passive: true }));
