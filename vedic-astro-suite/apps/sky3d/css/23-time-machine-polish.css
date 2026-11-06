@@ -147,3 +147,8 @@ body.tm-open .viewport-actions,body.tm-open .viewport-hud{visibility:hidden}
 .tm-wl{touch-action:pan-y;-webkit-user-select:none;user-select:none}
 .tm-it{transition:color .15s;transform-origin:50% 50%;backface-visibility:hidden}
 .tm-it.on{transform:none}
+/* wheels run on their own physics (JS): no native scroll, no snap */
+.tm-wl{overflow:hidden!important;padding:0!important;scroll-snap-type:none!important;touch-action:none!important;will-change:auto;cursor:grab;contain:layout paint}
+.tm-wl:active{cursor:grabbing}
+.tm-sp{position:absolute;left:0;right:0;top:0;will-change:transform}
+.tm-it{position:absolute!important;left:0;right:0;height:34px;scroll-snap-align:none}

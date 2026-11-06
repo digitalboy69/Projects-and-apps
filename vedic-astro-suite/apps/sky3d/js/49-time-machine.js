@@ -53,27 +53,78 @@
     if (mo < 0 || mo > 11 || d < 1 || d > dim(y, mo) || y < Y_ALL0 || y > Y_ALL1 || h > 23 || mi > 59 || (y === 1582 && mo === 9 && d >= 5 && d <= 14)) return null;
     return mk(y, mo, d, h, mi);
   }
-  // ---- UI: five snapping wheels (day, month, year, hour, minute) + quick steppers ----
+  // ---- UI: five wheels (day, month, year, hour, minute) with their own physics: drag, fling, auto-spin and a spring that always lands exactly on a number ----
   let ov;
-  const IH = 34, W = {};                                    // wheel item height; wheel state by key
+  const IH = 34, CEN = 85, W = {};                          // item height; centre line (px from wheel top); wheel state by key
   const KEYS = ['d','m','y','h','mi'];
-  const labels = {
-    m: () => MON.map(n => n), y: () => Array.from({length: Y_ALL1 - Y_ALL0 + 1}, (_, i) => yl(Y_ALL0 + i)),
-    h: () => Array.from({length: 24}, (_, i) => pad(i)), mi: () => Array.from({length: 60}, (_, i) => pad(i))
-  };
-  const VR = 30;                                            // virtual wheel (years): only the items near the centre exist in the DOM
+  const VR = 30;                                            // year wheel is virtual: only the items near the centre exist in the DOM
+  const clampW = (w, x) => Math.max(0, Math.min(w.n - 1, x));
   function vrender(w, c){
-    c = Math.max(0, Math.min(w.n - 1, c)); if (w.rc !== undefined && Math.abs(c - w.rc) < 12 && w.sp.children.length) return;
+    c = clampW(w, c); if (w.rc !== undefined && Math.abs(c - w.rc) < 12 && w.sp.children.length) return;
     w.rc = c; const a = Math.max(0, c - VR), b = Math.min(w.n - 1, c + VR); let h = '';
-    for (let i = a; i <= b; i++) h += `<div class="tm-it" data-i="${i}" style="position:absolute;left:0;right:0;top:${i * IH}px">${w.lab(i)}</div>`;
-    w.sp.innerHTML = h; const it = w.sp.querySelector(`[data-i="${w.idx}"]`); if (it) it.classList.add('on');
+    for (let i = a; i <= b; i++) h += `<div class="tm-it" data-i="${i}" style="top:${i * IH}px">${w.lab(i)}</div>`;
+    w.sp.innerHTML = h; w.fxEls = []; w.onEl = null;
   }
-  function fill(k, list, lab){
-    const w = W[k];
-    if (lab){ w.n = list; w.lab = lab; w.el.innerHTML = `<div class="tm-sp" style="position:relative;height:${list * IH}px"></div>`; w.sp = w.el.firstChild; w.rc = undefined; w.idx = -1; return; }
-    w.n = list.length; w.el.innerHTML = list.map((t, i) => `<div class="tm-it" data-i="${i}">${t}</div>`).join(''); w.idx = -1;
+  function fill(k, n, lab){
+    const w = W[k]; w.n = n; w.lab = lab; w.sp.style.height = n * IH + 'px'; w.virt = n > 200; w.rc = undefined; w.fxEls = []; w.onEl = null;
+    if (!w.virt){ let h = ''; for (let i = 0; i < n; i++) h += `<div class="tm-it" data-i="${i}" style="top:${i * IH}px">${lab(i)}</div>`; w.sp.innerHTML = h; }
+    w.pos = clampW(w, w.pos); w.idx = -1; render(w);
   }
-  function mark(k, idx){ const w = W[k]; if (w.sp) vrender(w, idx); const old = w.el.querySelector('.on'); if (old) old.classList.remove('on'); const it = w.el.querySelector(`[data-i="${idx}"]`); if (it) it.classList.add('on'); }
+  const itemAt = (w, i) => w.virt ? w.sp.querySelector(`[data-i="${i}"]`) : w.sp.children[i];
+  function render(w){                                       // draw the wheel at its float position: translate the track, bend the nearby items like a drum
+    const p = w.pos, idx = Math.round(p);
+    w.sp.style.transform = `translate3d(0,${(CEN - IH / 2 - p * IH).toFixed(2)}px,0)`;
+    if (w.virt) vrender(w, idx);
+    const now = [];
+    for (let i = idx - 4; i <= idx + 4; i++){
+      if (i < 0 || i >= w.n) continue; const it = itemAt(w, i); if (!it) continue;
+      const d = i - p, a = Math.abs(d);
+      it.style.transform = `perspective(260px) rotateX(${(-d * 24).toFixed(1)}deg) scale(${(1.1 - Math.min(a, 3) * 0.1).toFixed(3)})`;
+      it.style.opacity = Math.max(0.12, 1 - a * 0.26).toFixed(2); now.push(it);
+    }
+    (w.fxEls || []).forEach(it => { if (now.indexOf(it) < 0){ it.style.transform = ''; it.style.opacity = ''; } });
+    w.fxEls = now;
+    const on = itemAt(w, idx); if (w.onEl !== on){ if (w.onEl) w.onEl.classList.remove('on'); if (on) on.classList.add('on'); w.onEl = on; }
+    if (idx !== w.idx){
+      w.idx = idx;
+      if (w.user){ if (navigator.vibrate) try{ navigator.vibrate(3); }catch(e){} if (!w.t) w.t = setTimeout(() => { w.t = 0; pick(w.k, w.idx); }, 140); }   // live while spinning
+    }
+  }
+  const OM = { y: 6.5, d: 9, m: 9, h: 9, mi: 9 };            // spring stiffness (critically damped)
+  let loopOn = false, lastTs = 0;
+  function kick(){ if (!loopOn){ loopOn = true; lastTs = 0; requestAnimationFrame(tick); } }
+  function springTo(w, L, v0){ w.L = Math.round(clampW(w, L)); w.v = v0 || 0; w.mode = 'spring'; w.auto = false; w.sp.parentNode.classList.remove('run-up', 'run-dn'); kick(); }
+  function finish(w){ w.mode = 'idle'; render(w); if (w.user){ clearTimeout(w.t); w.t = 0; w.user = false; pick(w.k, w.idx); } }
+  function tick(ts){
+    const dt = Math.min(0.033, (ts - (lastTs || ts)) / 1000); lastTs = ts; let any = false;
+    KEYS.forEach(k => {
+      const w = W[k]; if (!w || w.mode === 'idle') return; any = true;
+      if (w.mode === 'drag'){                               // finger resting off-centre = auto-spin, faster the longer / further it is held
+        const off = w.y1 - w.yo, mag = Math.abs(off);
+        if (!w.auto && ts - w.still > 200 && mag > 22){ w.auto = true; w.tHold = ts; }
+        if (w.auto){
+          const dir = off < 0 ? 1 : -1, f = Math.min(1, (mag - 22) / 110), ramp = 1 + Math.min(3, (ts - w.tHold) / 900);
+          w.av = dir * Math.min(k === 'y' ? 70 : 16, (1.5 + 10 * f) * ramp * (k === 'y' ? 2.2 : 1));
+          w.pos = clampW(w, w.pos + w.av * dt); w.last = Date.now(); render(w);
+          const c = w.sp.parentNode; c.classList.toggle('run-up', dir === 1); c.classList.toggle('run-dn', dir === -1);
+        }
+      } else if (w.mode === 'spring'){
+        const om = OM[k], steps = Math.max(1, Math.ceil(dt / 0.008)), h = dt / steps; let x = w.pos, v = w.v;
+        for (let i = 0; i < steps; i++){ v += (-om * om * (x - w.L) - 2 * om * v) * h; x += v * h; }
+        if (x <= 0 || x >= w.n - 1){ x = clampW(w, x); v = 0; }
+        w.pos = x; w.v = v; w.last = Date.now();
+        if (Math.abs(x - w.L) < 0.002 && Math.abs(v) < 0.05){ w.pos = w.L; finish(w); } else render(w);
+      }
+    });
+    if (any) requestAnimationFrame(tick); else loopOn = false;
+  }
+  function place(k, idx){                                   // the scene changed from outside: bring this wheel to the new value
+    const w = W[k]; if (w.mode !== 'idle') return; w.user = false;
+    const d = Math.abs(idx - w.pos);
+    if (d < 0.01) return;
+    if (w.shown && d <= 6) springTo(w, idx, 0); else { w.pos = idx; render(w); }
+    w.shown = true;
+  }
   function pick(k, idx){                                    // a wheel was turned by the user
     const c = cur(), y = c.y, m = c.m, d = c.d, h = c.h, mi = c.mi;
     if (k === 'd') go(mk(y, m, idx + 1, h, mi));
@@ -82,7 +133,7 @@
     else if (k === 'h') go(mk(y, m, d, idx, mi));
     else go(mk(y, m, d, h, idx));
   }
-  function place(k, idx, smooth){ const w = W[k]; w.idx = idx; mark(k, idx); w.el.scrollTo({ top: idx * IH, behavior: smooth ? 'smooth' : 'auto' }); fx(w); }
+
   function scale(){
     Y_MIN = wide ? Y_ALL0 : 1800; Y_MAX = wide ? Y_ALL1 : 2200;
     const r = $('tmYear'), t = $('tmTicks'), w = $('tmWide'); if (!r) return;
@@ -90,34 +141,6 @@
     const ticks = wide ? [Y_ALL0, 0, 2500, 5000, 7500, Y_ALL1] : [1800, 1900, 2000, 2100, 2200];
     t.innerHTML = ticks.map(v => `<span>${yl(v)}</span>`).join('');
     w.textContent = wide ? '↔ Show 1800–2200 only' : '↔ All years (4713 BC – 9999)';
-  }
-  // ---- drum look + magnetic settle ----
-  // fx: items bend away from the centre line like a real drum (continuous with scroll position).
-  function fx(w){
-    const st = w.el.scrollTop, c = Math.round(st / IH), prev = w.fxEls || [], now = [];
-    for (let i = c - 4; i <= c + 4; i++){
-      if (i < 0 || i >= w.n) continue;
-      const it = w.sp ? w.sp.querySelector(`[data-i="${i}"]`) : w.el.children[i]; if (!it) continue;
-      const d = (i * IH - st) / IH, a = Math.abs(d);
-      it.style.transform = `perspective(260px) rotateX(${(-d * 24).toFixed(1)}deg) scale(${(1.1 - Math.min(a, 3) * 0.1).toFixed(3)})`;
-      it.style.opacity = Math.max(0.12, 1 - a * 0.26).toFixed(2); now.push(it);
-    }
-    prev.forEach(it => { if (now.indexOf(it) < 0){ it.style.transform = ''; it.style.opacity = ''; } });
-    w.fxEls = now;
-  }
-  // settle: when the wheel rests off-centre, a spring pulls the nearest number onto the band.
-  function settle(w){
-    if (w.down || w.anim) return;
-    const from = w.el.scrollTop, to = Math.max(0, Math.min(w.n - 1, Math.round(from / IH))) * IH, dist = to - from;
-    if (Math.abs(dist) < 0.5){ if (dist) w.el.scrollTop = to; fx(w); return; }
-    const t0 = performance.now(), dur = Math.min(420, 160 + Math.abs(dist) * 6);
-    w.anim = true;
-    const step = ts => {
-      const k = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - k, 3) + Math.sin(k * Math.PI) * 0.035 * (1 - k);   // ease-out with a tiny magnetic overshoot
-      w.el.scrollTop = from + dist * e;
-      if (k < 1 && !w.down) requestAnimationFrame(step); else { w.anim = false; w.el.scrollTop = to; fx(w); }
-    };
-    requestAnimationFrame(step);
   }
   function build(){
     ov = document.createElement('div'); ov.className = 'tm-ov'; ov.id = 'tmOv';
@@ -142,50 +165,42 @@
       <button type="button" class="tm-done" id="tmDone">Done</button>
     </div>`;
     document.body.appendChild(ov); scale();
-    KEYS.forEach(k => { W[k] = { el: ov.querySelector(`[data-w="${k}"]`), idx: -1, n: 0, last: 0, t: 0 }; });
-    fill('m', labels.m()); fill('y', Y_ALL1 - Y_ALL0 + 1, i => yl(Y_ALL0 + i)); fill('h', labels.h()); fill('mi', labels.mi());
     KEYS.forEach(k => {
-      const w = W[k];
-      w.el.addEventListener('scroll', () => {
-        w.last = Date.now();
-        if (!w.fxq){ w.fxq = requestAnimationFrame(() => { w.fxq = 0; fx(w); }); }
-        if (!w.anim){ clearTimeout(w.sT); w.sT = setTimeout(() => settle(w), 120); }
-        const idx = Math.max(0, Math.min(w.n - 1, Math.round(w.el.scrollTop / IH)));
-        if (idx === w.idx) return;
-        w.idx = idx; mark(k, idx); if (navigator.vibrate) try{ navigator.vibrate(3); }catch(e){}
-        if (!w.t) w.t = setTimeout(() => { w.t = 0; pick(k, w.idx); }, 90);   // live while spinning, final value when it stops
-      }, { passive: true });
-      w.el.addEventListener('click', e => { const it = e.target.closest('.tm-it'); if (it) w.el.scrollTo({ top: +it.dataset.i * IH, behavior: 'smooth' }); });
-      w.el.addEventListener('keydown', e => {
-        const dir = e.key === 'ArrowDown' ? 1 : e.key === 'ArrowUp' ? -1 : 0; if (!dir) return;
-        e.preventDefault(); e.stopPropagation(); w.el.scrollTo({ top: Math.max(0, Math.min(w.n - 1, w.idx + dir)) * IH, behavior: 'smooth' });
-      });
+      const el = ov.querySelector(`[data-w="${k}"]`), sp = document.createElement('div'); sp.className = 'tm-sp'; el.appendChild(sp);
+      W[k] = { k, el, sp, idx: -1, n: 0, pos: 0, mode: 'idle', user: false, t: 0, last: 0, v: 0, L: 0 };
     });
-    // swipe + hold = auto-spin: drag a wheel up or down and keep the finger there; it keeps running that way and speeds up the longer / further you hold
+    fill('m', 12, i => MON[i]); fill('y', Y_ALL1 - Y_ALL0 + 1, i => yl(Y_ALL0 + i)); fill('h', 24, i => pad(i)); fill('mi', 60, i => pad(i));
     KEYS.forEach(k => {
-      const w = W[k], el = w.el, MAXV = k === 'y' ? 70 : 16;               // max items per second
-      let on = false, y0 = 0, y1 = 0, tStill = 0, tHold = 0, lastT = 0, rafA = 0, dir = 0;
-      const stopAuto = () => { cancelAnimationFrame(rafA); rafA = 0; el.classList.remove('run-up', 'run-dn'); dir = 0; };
-      const loop = ts => {
-        rafA = requestAnimationFrame(loop);
-        const dt = Math.min(0.05, (ts - (lastT || ts)) / 1000); lastT = ts;
-        const off = y1 - y0, mag = Math.abs(off);
-        if (!on || mag < 22 || ts - tStill < 200){ if (dir){ dir = 0; el.classList.remove('run-up', 'run-dn'); } return; }   // wait until the finger rests
-        if (!dir) tHold = ts;
-        dir = off < 0 ? 1 : -1;                                                    // finger up -> values go up
-        el.classList.toggle('run-up', dir === 1); el.classList.toggle('run-dn', dir === -1);
-        const f = Math.min(1, (mag - 22) / 110), ramp = 1 + Math.min(3, (ts - tHold) / 900);
-        const v = Math.min(MAXV, (1.5 + 10 * f) * ramp * (k === 'y' ? 2.2 : 1));
-        el.scrollTop = Math.max(0, Math.min((w.n - 1) * IH, el.scrollTop + dir * v * IH * dt));
-        w.last = Date.now();
+      const w = W[k], el = w.el;
+      el.addEventListener('pointerdown', e => {
+        if (e.button) return; try{ el.setPointerCapture(e.pointerId); }catch(_){}
+        w.mode = 'drag'; w.user = true; w.auto = false; w.last = Date.now(); w.t0 = performance.now();
+        w.y0 = w.yo = w.y1 = w.yS = e.clientY; w.p0 = w.pos; w.still = performance.now(); w.moved = 0; w.smp = [[performance.now(), e.clientY]]; kick();
+      });
+      el.addEventListener('pointermove', e => {
+        if (w.mode !== 'drag') return; const y = e.clientY, now = performance.now();
+        if (Math.abs(y - w.yS) > 5){ w.yS = y; w.still = now; if (w.auto){ w.auto = false; w.p0 = w.pos; w.y0 = w.yo = y; el.classList.remove('run-up', 'run-dn'); } }
+        w.y1 = y; w.moved = Math.max(w.moved, Math.abs(y - w.yo));
+        if (!w.auto){ w.pos = clampW(w, w.p0 - (y - w.y0) / IH); w.last = Date.now(); render(w); }
+        w.smp.push([now, y]); while (w.smp.length > 2 && now - w.smp[0][0] > 110) w.smp.shift();
+      });
+      const up = e => {
+        if (w.mode !== 'drag') return; try{ el.releasePointerCapture(e.pointerId); }catch(_){}
+        const now = performance.now(); let v = 0;
+        if (w.auto) v = w.av || 0;
+        else if (w.smp.length > 1){ const a = w.smp[0], b = w.smp[w.smp.length - 1], dtm = (b[0] - a[0]) / 1000; if (dtm > 0.01 && now - b[0] < 90) v = -((b[1] - a[1]) / IH) / dtm; }
+        if (w.moved < 6 && now - w.t0 < 350 && e.type === 'pointerup'){   // a tap: roll the tapped number to the centre
+          const r = el.getBoundingClientRect(); springTo(w, Math.round(w.pos + (e.clientY - r.top - CEN) / IH), 0); return;
+        }
+        const cap = k === 'y' ? 90 : 24; v = Math.max(-cap, Math.min(cap, v * (k === 'y' && !w.auto ? 2.2 : 1))); if (Math.abs(v) < 1.5) v = 0;
+        springTo(w, w.pos + v / OM[k], v);                  // glide, then lock onto a number like a magnet
       };
-      const down = y => { on = true; w.down = true; w.anim = false; y0 = y1 = y; tStill = performance.now(); lastT = 0; if (!rafA) rafA = requestAnimationFrame(loop); };
-      const move = y => { if (Math.abs(y - y1) > 5) tStill = performance.now(); y1 = y; };
-      const up = () => { on = false; w.down = false; stopAuto(); clearTimeout(w.sT); w.sT = setTimeout(() => settle(w), 60); };
-      el.addEventListener('touchstart', e => down(e.touches[0].clientY), { passive: true });
-      el.addEventListener('touchmove', e => move(e.touches[0].clientY), { passive: true });
-      ['touchend', 'touchcancel'].forEach(n => el.addEventListener(n, up, { passive: true }));
-      el.addEventListener('mousedown', e => { if (e.button) return; down(e.clientY); const mm = ev => move(ev.clientY), mu = () => { up(); removeEventListener('mousemove', mm); removeEventListener('mouseup', mu); }; addEventListener('mousemove', mm); addEventListener('mouseup', mu); });
+      el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+      el.addEventListener('wheel', e => { e.preventDefault(); const base = w.mode === 'spring' ? w.L : Math.round(w.pos); w.user = true; springTo(w, base + (e.deltaY > 0 ? 1 : -1) * (Math.abs(e.deltaY) > 100 ? 2 : 1), 0); }, { passive: false });
+      el.addEventListener('keydown', e => {
+        const dir = e.key === 'ArrowDown' ? 1 : e.key === 'ArrowUp' ? -1 : 0; if (!dir) return;
+        e.preventDefault(); e.stopPropagation(); w.user = true; springTo(w, (w.mode === 'spring' ? w.L : Math.round(w.pos)) + dir, 0);
+      });
     });
     const close = () => { ov.classList.remove('show'); document.body.classList.remove('tm-open'); };
     ov.addEventListener('pointerdown', e => { if (e.target === ov) close(); });
@@ -220,12 +235,12 @@
     $('tmYear').value = Math.max(Y_MIN, Math.min(Y_MAX, y)); $('tmYv').textContent = yl(y);
     // day wheel depends on month length and shows the weekday
     const n = dim(y, m), firstWd = ((Math.floor(toJulianDay(y, m + 1, 1, 12, 0, 0) + 0.5) + 1) % 7 + 7) % 7;
-    if (W.d.n !== n || W.d.key !== y + '-' + m){ W.d.key = y + '-' + m; fill('d', Array.from({length: n}, (_, i) => `${i + 1}<small>${WD[(firstWd + i) % 7]}</small>`)); }
+    if (W.d.n !== n || W.d.key !== y + '-' + m){ W.d.key = y + '-' + m; fill('d', n, i => `${i + 1}<small>${WD[(firstWd + i) % 7]}</small>`); }
     const target = { d: d - 1, m, y: Math.max(0, Math.min(Y_ALL1 - Y_ALL0, y - Y_ALL0)), h: c.h, mi: c.mi };
-    KEYS.forEach(k => { const w = W[k]; if (now - w.last < 450 || w.t) return; if (w.idx !== target[k] || Math.abs(w.el.scrollTop - target[k] * IH) > 2) place(k, target[k], false); });
+    KEYS.forEach(k => { const w = W[k]; if (w.mode !== 'idle' || w.t || now - w.last < 450) return; place(k, target[k]); });
     $('tmBirth').hidden = !(typeof isValidProfile === 'function' && isValidProfile(activeNatalProfile));
   }
-  function open(){ if (!ov) build(); ov.classList.add('show'); document.body.classList.add('tm-open'); KEYS.forEach(k => { W[k].idx = -1; W[k].last = 0; }); paint(); requestAnimationFrame(paint); }
+  function open(){ if (!ov) build(); ov.classList.add('show'); document.body.classList.add('tm-open'); KEYS.forEach(k => { W[k].mode = 'idle'; W[k].shown = false; W[k].last = 0; }); paint(); requestAnimationFrame(paint); }
   window.openTimeMachine = open;
   // keep the dial in step with play / timeline drags while it is open
   setInterval(paint, 600);
