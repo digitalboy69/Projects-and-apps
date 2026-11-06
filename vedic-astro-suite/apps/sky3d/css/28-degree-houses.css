@@ -21,3 +21,22 @@
 .dh-cusps{margin-top:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:6px}.dh-cusps h4{grid-column:1/-1;margin:0;font-size:13px}
 .dh-cusps span{padding:7px 9px;border-radius:12px;background:rgba(255,255,255,.05);font-size:12px;font-variant-numeric:tabular-nums}.dh-cusps small{display:block;font-size:10px;opacity:.6}
 .planet-label .dhx{color:#F4C45C;font-weight:700}.planet-label.dh3{color:#5AD6C4}
+/* polish: glass summary, serif numerals, glowing wheel, smooth rows */
+#tab-degreehouses{--pf-serif:'Cormorant Garamond',serif}
+.dh-ctl select{appearance:none;-webkit-appearance:none;background:#0e121c url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235AD6C4' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 13px center;color:#eee;border:1px solid rgba(90,214,196,.28);padding:12px 38px 12px 14px;border-radius:14px}
+.dh-ctl select:focus{outline:0;border-color:#5AD6C4;box-shadow:0 0 0 3px rgba(90,214,196,.16)}
+.dh-seg{padding:5px;border-radius:16px;background:#0b0e17;border:1px solid rgba(255,255,255,.07)}.dh-seg button{border-radius:12px;transition:background .25s,box-shadow .25s,transform .15s}.dh-seg button:active{transform:scale(.97)}
+.dh-seg button.active{box-shadow:0 6px 16px rgba(90,214,196,.28)}
+.dh-sum{position:relative;border-radius:22px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05)}
+.dh-sum:before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,#5AD6C4,transparent)}
+.dh-sum b{font-family:var(--pf-serif);font-size:22px}
+.dh-chips i{border-radius:99px;box-shadow:0 0 14px rgba(244,196,92,.18)}
+.dh-wheel{padding:10px;border-radius:50%;background:radial-gradient(circle,rgba(90,214,196,.08),transparent 70%);filter:drop-shadow(0 10px 30px rgba(0,0,0,.5))}
+.dh-cusp.asc{filter:drop-shadow(0 0 4px #F4C45C)}.dh-pl.sh circle{filter:drop-shadow(0 0 6px #F4C45C)}
+.dh-hn{font-family:var(--pf-serif);font-size:15px}
+@keyframes dhrise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.dh-row{border-radius:16px;transition:transform .2s,border-color .2s;animation:dhrise .4s both}
+.dh-row:nth-child(n+2){animation-delay:.04s}.dh-row:nth-child(n+5){animation-delay:.08s}.dh-row:nth-child(n+9){animation-delay:.12s}
+.dh-row:hover{transform:translateX(3px);border-color:rgba(90,214,196,.4)}
+.dh-h{font-family:var(--pf-serif);font-size:19px}.dh-cusps span{border-radius:14px;border:1px solid rgba(255,255,255,.06)}
+@media(prefers-reduced-motion:reduce){.dh-row{animation:none}}

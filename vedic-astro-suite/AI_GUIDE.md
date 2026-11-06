@@ -189,9 +189,9 @@ _Generated 2026-11-06 - 1835 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 204 files, 30774 lines, 2486 KB
+**birth-chart** - 205 files, 30896 lines, 2499 KB
 ```
-index.html                                         628 lines   35 KB
+index.html                                         629 lines   36 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -395,6 +395,7 @@ css/62-time-sky-panel.css                           20 lines    2 KB
 css/63-meaning-lab.css                              21 lines    2 KB
 css/64-trigger-lab.css                              22 lines    3 KB
 css/65-profile-menu.css                             29 lines    3 KB
+css/66-feature-polish.css                          121 lines   12 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -412,7 +413,7 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 84 files, 7946 lines, 485 KB
+**sky3d** - 84 files, 7965 lines, 487 KB
 ```
 index.html                                         509 lines   32 KB
 js/01-astro-engine.js                              163 lines   10 KB
@@ -497,7 +498,7 @@ css/25-date-entry.css                                8 lines    0 KB
 css/25-solid-panels.css                             32 lines    4 KB
 css/26-exact-aspects.css                            65 lines    6 KB
 css/27-panel-unify.css                              67 lines    5 KB
-css/28-degree-houses.css                            24 lines    3 KB
+css/28-degree-houses.css                            43 lines    5 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -580,3 +581,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Android app: mobile/ (Capacitor) + ../.github/workflows/android.yml build the APK and a live-update bundle on every push to main; the installed app works offline and updates itself when online. Each build is a GitHub release (build-N) holding the APK, bundle.zip and latest.json; releases/latest/download/... is the stable link.
 - Trigger Lab (js/129 + css/64, Home > Analysis + quick menu): choose Single/Double Dasha-repeat pattern and transit rules (sign, lord's sign, aspect, nakshatra); scans the chart's Dasha timeline, lists windows and raw activated houses. Test: node tests/trigger_lab_test.js.
 - Profile menu redesign (js/63 renderProfileCards + css/65-profile-menu.css): register-style entries, labeled Share/Edit/Delete row, no sideways scroll, emoji-safe avatar.
+- Feature polish (css/66-feature-polish.css + sky3d css/28): Dasha Reverse, Time sky, Meaning Lab, Trigger Lab, Degree Houses share one refined look.
