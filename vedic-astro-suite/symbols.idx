@@ -53,7 +53,7 @@ applyFocus	fn	apps/birth-chart/js/115-compare-lab.js:167	birth-chart
 applyLineToggles	fn	apps/sky3d/js/14-line-visibility-toggles.js:15	sky3d
 applyOpts	fn	apps/notepad/js/01-notepad.js:68	notepad
 applyTheme	fn	apps/notepad/js/01-notepad.js:67	notepad
-applyZoom	fn	apps/sky3d/js/49-time-machine.js:224	sky3d
+applyZoom	fn	apps/sky3d/js/49-time-machine.js:251	sky3d
 AREA	const	apps/birth-chart/js/69-divisional-areas.js:3	birth-chart
 area	fn	apps/birth-chart/js/95-life-narratives.js:328	birth-chart
 area	fn	apps/birth-chart/js/99-area-deep.js:265	birth-chart
@@ -1075,7 +1075,7 @@ open	fn	apps/birth-chart/js/112-problem-finder-ui.js:68	birth-chart
 open	fn	apps/birth-chart/js/115-compare-lab.js:201	birth-chart
 open	fn	apps/birth-chart/js/116-planet-encyclopedia.js:336	birth-chart
 open	fn	apps/birth-chart/js/77-cloud-account.js:88	birth-chart
-open	fn	apps/sky3d/js/49-time-machine.js:171	sky3d
+open	fn	apps/sky3d/js/49-time-machine.js:198	sky3d
 open	fn	shell/js/locpicker.js:185	shell
 open	fn	shared/quick-menu.js:132	shared
 openAdmin	fn	apps/birth-chart/js/77-cloud-account.js:116	birth-chart
@@ -1135,7 +1135,7 @@ padaOrder	fn	apps/birth-chart/js/78-dasha-systems-core.js:88	birth-chart
 padHms	fn	apps/birth-chart/js/20-rectification-scan-tab.js:171	birth-chart
 pageCss	fn	apps/birth-chart/js/109-pdf-download.js:55	birth-chart
 paint	fn	apps/birth-chart/js/82-dasha-systems-ui.js:158	birth-chart
-paint	fn	apps/sky3d/js/49-time-machine.js:157	sky3d
+paint	fn	apps/sky3d/js/49-time-machine.js:184	sky3d
 paintAvatar	fn	apps/birth-chart/js/83-ui-overhaul.js:23	birth-chart
 paintHero	fn	apps/birth-chart/js/83-ui-overhaul.js:38	birth-chart
 pair	fn	apps/birth-chart/js/91-dasha-reading.js:206	birth-chart
@@ -1618,15 +1618,15 @@ SUB_FALLBACK	const	apps/birth-chart/js/93-pdf-report.js:238	birth-chart
 submit	fn	apps/birth-chart/js/77-cloud-account.js:90	birth-chart
 sunLongitude	fn	apps/birth-chart/js/03-ephemeris-engine.js:104	birth-chart
 sunLongitude	fn	apps/sky3d/js/01-astro-engine.js:63	sky3d
-svCur	fn	apps/sky3d/js/49-time-machine.js:215	sky3d
+svCur	fn	apps/sky3d/js/49-time-machine.js:242	sky3d
 svg	fn	shared/icons.js:130	shared
 svgFor	fn	apps/birth-chart/js/109-pdf-download.js:59	birth-chart
-svList	fn	apps/sky3d/js/49-time-machine.js:186	sky3d
-svOpen	fn	apps/sky3d/js/49-time-machine.js:191	sky3d
+svList	fn	apps/sky3d/js/49-time-machine.js:213	sky3d
+svOpen	fn	apps/sky3d/js/49-time-machine.js:218	sky3d
 switchAppTab	fn	apps/birth-chart/js/120-late-panels.js:19	birth-chart
 switchAppTab	fn	apps/birth-chart/js/25-home-and-tabs.js:130	birth-chart
 switchAppTab	fn	apps/birth-chart/js/65-error-boundaries.js:20	birth-chart
-sync	fn	apps/sky3d/js/49-time-machine.js:228	sky3d
+sync	fn	apps/sky3d/js/49-time-machine.js:255	sky3d
 syncExportCoordsStatus	fn	apps/birth-chart/js/44-export-modal.js:105	birth-chart
 syncHmsHiddenInput	fn	apps/birth-chart/js/20-rectification-scan-tab.js:173	birth-chart
 syncPickBtn	fn	apps/sky3d/js/41-quick-planet-picker.js:7	sky3d

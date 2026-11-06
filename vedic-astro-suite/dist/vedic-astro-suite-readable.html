@@ -1948,6 +1948,10 @@ body.tm-open .viewport-actions,body.tm-open .viewport-hud{visibility:hidden}
 .sv-go b{font:700 14px var(--font-ui);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sv-go span{font:500 12px var(--font-mono);color:var(--cyan)}
 .sv-ed,.sv-rm{border:1px solid var(--glass-border);background:rgba(255,255,255,.04);color:var(--text-dim);border-radius:12px;cursor:pointer;font-size:14px}.sv-rm:hover{color:#ff7a7a;border-color:#ff7a7a}.sv-ed:hover{color:#fff;border-color:#fff}
 .sv-empty{padding:18px 8px;text-align:center;color:var(--text-dim);font:500 13px/1.6 var(--font-ui)}
+/* swipe-and-hold spin cue */
+.tm-hint{margin:8px 2px 0;text-align:center;font:500 11.5px var(--font-ui);color:var(--text-dim)}
+.tm-wl.run-up .tm-it.on,.tm-wl.run-dn .tm-it.on{color:var(--cyan);text-shadow:0 0 14px rgba(0,240,213,.8)}
+.tm-wl{touch-action:pan-y;-webkit-user-select:none;user-select:none}
 </style>
 <style>
 /* Sky Dashboard (js/50-sky-dashboard.js): full-screen reading page. Calm: no motion beyond a fade. */
@@ -8092,6 +8096,7 @@ document.querySelector('[data-tab="triggers"]').addEventListener('click', ()=> s
         <div class="tm-colon">:</div>
         ${KEYS.slice(3).map(k => `<div class="tm-wl" data-w="${k}" tabindex="0" role="listbox" aria-label="${{h:'Hour',mi:'Minute'}[k]}"></div>`).join('')}</div>
       <div class="tm-wlabs"><span>Day</span><span>Month</span><span>Year</span><span></span><span>Hour</span><span>Min</span></div>
+      <div class="tm-hint">Swipe a wheel and hold: it keeps spinning, faster the longer or further you hold</div>
       <div class="tm-st" data-u="d"><button data-u="y" data-n="-1">−1y</button><button data-u="mo" data-n="-1">−1mo</button><button data-n="-1">−1d</button><button data-n="1">+1d</button><button data-u="mo" data-n="1">+1mo</button><button data-u="y" data-n="1">+1y</button></div>
       <div class="tm-st tm-st4" data-u="y"><button data-n="-100">−100y</button><button data-n="-10">−10y</button><button data-n="10">+10y</button><button data-n="100">+100y</button></div>
       <div class="tm-st tm-st4" data-u="h"><button data-u="h" data-n="-1">−1h</button><button data-u="min" data-n="-15">−15m</button><button data-u="min" data-n="15">+15m</button><button data-u="h" data-n="1">+1h</button></div>
@@ -8120,6 +8125,32 @@ document.querySelector('[data-tab="triggers"]').addEventListener('click', ()=> s
         const dir = e.key === 'ArrowDown' ? 1 : e.key === 'ArrowUp' ? -1 : 0; if (!dir) return;
         e.preventDefault(); e.stopPropagation(); w.el.scrollTo({ top: Math.max(0, Math.min(w.n - 1, w.idx + dir)) * IH, behavior: 'smooth' });
       });
+    });
+    // swipe + hold = auto-spin: drag a wheel up or down and keep the finger there; it keeps running that way and speeds up the longer / further you hold
+    KEYS.forEach(k => {
+      const w = W[k], el = w.el, MAXV = k === 'y' ? 70 : 16;               // max items per second
+      let on = false, y0 = 0, y1 = 0, tStill = 0, tHold = 0, lastT = 0, rafA = 0, dir = 0;
+      const stopAuto = () => { cancelAnimationFrame(rafA); rafA = 0; el.classList.remove('run-up', 'run-dn'); dir = 0; };
+      const loop = ts => {
+        rafA = requestAnimationFrame(loop);
+        const dt = Math.min(0.05, (ts - (lastT || ts)) / 1000); lastT = ts;
+        const off = y1 - y0, mag = Math.abs(off);
+        if (!on || mag < 22 || ts - tStill < 200){ if (dir){ dir = 0; el.classList.remove('run-up', 'run-dn'); } return; }   // wait until the finger rests
+        if (!dir) tHold = ts;
+        dir = off < 0 ? 1 : -1;                                                    // finger up -> values go up
+        el.classList.toggle('run-up', dir === 1); el.classList.toggle('run-dn', dir === -1);
+        const f = Math.min(1, (mag - 22) / 110), ramp = 1 + Math.min(3, (ts - tHold) / 900);
+        const v = Math.min(MAXV, (1.5 + 10 * f) * ramp * (k === 'y' ? 2.2 : 1));
+        el.scrollTop = Math.max(0, Math.min((w.n - 1) * IH, el.scrollTop + dir * v * IH * dt));
+        w.last = Date.now();
+      };
+      const down = y => { on = true; y0 = y1 = y; tStill = performance.now(); lastT = 0; if (!rafA) rafA = requestAnimationFrame(loop); };
+      const move = y => { if (Math.abs(y - y1) > 5) tStill = performance.now(); y1 = y; };
+      const up = () => { on = false; stopAuto(); };
+      el.addEventListener('touchstart', e => down(e.touches[0].clientY), { passive: true });
+      el.addEventListener('touchmove', e => move(e.touches[0].clientY), { passive: true });
+      ['touchend', 'touchcancel'].forEach(n => el.addEventListener(n, up, { passive: true }));
+      el.addEventListener('mousedown', e => { if (e.button) return; down(e.clientY); const mm = ev => move(ev.clientY), mu = () => { up(); removeEventListener('mousemove', mm); removeEventListener('mouseup', mu); }; addEventListener('mousemove', mm); addEventListener('mouseup', mu); });
     });
     const close = () => { ov.classList.remove('show'); document.body.classList.remove('tm-open'); };
     ov.addEventListener('pointerdown', e => { if (e.target === ov) close(); });

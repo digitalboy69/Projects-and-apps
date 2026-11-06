@@ -141,3 +141,7 @@ body.tm-open .viewport-actions,body.tm-open .viewport-hud{visibility:hidden}
 .sv-go b{font:700 14px var(--font-ui);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sv-go span{font:500 12px var(--font-mono);color:var(--cyan)}
 .sv-ed,.sv-rm{border:1px solid var(--glass-border);background:rgba(255,255,255,.04);color:var(--text-dim);border-radius:12px;cursor:pointer;font-size:14px}.sv-rm:hover{color:#ff7a7a;border-color:#ff7a7a}.sv-ed:hover{color:#fff;border-color:#fff}
 .sv-empty{padding:18px 8px;text-align:center;color:var(--text-dim);font:500 13px/1.6 var(--font-ui)}
+/* swipe-and-hold spin cue */
+.tm-hint{margin:8px 2px 0;text-align:center;font:500 11.5px var(--font-ui);color:var(--text-dim)}
+.tm-wl.run-up .tm-it.on,.tm-wl.run-dn .tm-it.on{color:var(--cyan);text-shadow:0 0 14px rgba(0,240,213,.8)}
+.tm-wl{touch-action:pan-y;-webkit-user-select:none;user-select:none}
