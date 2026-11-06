@@ -4,7 +4,6 @@
   const $ = id => document.getElementById(id);
   const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  let Y_MIN = 1800, Y_MAX = 2200, wide = false;
   const Y_ALL0 = -4712, Y_ALL1 = 9999, pad = n => String(n).padStart(2,'0');
   // Dates are plain {y,m,d,h,mi} (y astronomical, m 0-11): exact for BC and the Julian calendar, which a JS Date cannot do.
   const isG = (y,m,d) => y > 1582 || (y === 1582 && (m > 9 || (m === 9 && d >= 15)));
@@ -28,12 +27,6 @@
     pend = d; if (raf) return;
     raf = requestAnimationFrame(() => { raf = 0; if (pend){ fastJump(toJD(pend)); pend = null; paint(); } });
   }
-  function add(unit, n){
-    const d = cur(), y = d.y, m = d.m, day = d.d, h = d.h, mi = d.mi;
-    if (unit === 'y'){ const ny = y + n; return mk(ny, m, Math.min(day, dim(ny, m)), h, mi); }
-    if (unit === 'mo'){ const t = m + n, ny = y + Math.floor(t/12), nm = ((t % 12) + 12) % 12; return mk(ny, nm, Math.min(day, dim(ny, nm)), h, mi); }
-    const dd = { w:7, d:1, h:1/24, min:1/1440 }[unit] * n; return fromJD(currentJD + dd);
-  }
   // ---- smart typed date ----
   function parse(t){
     t = t.trim().replace(/,/g,' ').replace(/\s+/g,' '); if (!t) return null;
@@ -53,194 +46,47 @@
     if (mo < 0 || mo > 11 || d < 1 || d > dim(y, mo) || y < Y_ALL0 || y > Y_ALL1 || h > 23 || mi > 59 || (y === 1582 && mo === 9 && d >= 5 && d <= 14)) return null;
     return mk(y, mo, d, h, mi);
   }
-  // ---- UI: five wheels (day, month, year, hour, minute) with their own physics: drag, fling, auto-spin and a spring that always lands exactly on a number ----
+  // ---- UI: a plain, clear picker: date + time fields, a typed-date box, quick buttons, saved moments ----
   let ov;
-  const IH = 34, CEN = 85, W = {};                          // item height; centre line (px from wheel top); wheel state by key
-  const KEYS = ['d','m','y','h','mi'];
-  const VR = 30;                                            // year wheel is virtual: only the items near the centre exist in the DOM
-  const clampW = (w, x) => Math.max(0, Math.min(w.n - 1, x));
-  function vrender(w, c){
-    c = clampW(w, c); if (w.rc !== undefined && Math.abs(c - w.rc) < 12 && w.sp.children.length) return;
-    w.rc = c; const a = Math.max(0, c - VR), b = Math.min(w.n - 1, c + VR); let h = '';
-    for (let i = a; i <= b; i++) h += `<div class="tm-it" data-i="${i}" style="top:${i * IH}px">${w.lab(i)}</div>`;
-    w.sp.innerHTML = h; w.fxEls = []; w.onEl = null;
-  }
-  function fill(k, n, lab){
-    const w = W[k]; w.n = n; w.lab = lab; w.sp.style.height = n * IH + 'px'; w.virt = n > 200; w.rc = undefined; w.fxEls = []; w.onEl = null;
-    if (!w.virt){ let h = ''; for (let i = 0; i < n; i++) h += `<div class="tm-it" data-i="${i}" style="top:${i * IH}px">${lab(i)}</div>`; w.sp.innerHTML = h; }
-    w.pos = clampW(w, w.pos); w.idx = -1; render(w);
-  }
-  const itemAt = (w, i) => w.virt ? w.sp.querySelector(`[data-i="${i}"]`) : w.sp.children[i];
-  function render(w){                                       // draw the wheel at its float position: translate the track, bend the nearby items like a drum
-    const p = w.pos, idx = Math.round(p);
-    w.sp.style.transform = `translate3d(0,${(CEN - IH / 2 - p * IH).toFixed(2)}px,0)`;
-    if (w.virt) vrender(w, idx);
-    const now = [];
-    for (let i = idx - 4; i <= idx + 4; i++){
-      if (i < 0 || i >= w.n) continue; const it = itemAt(w, i); if (!it) continue;
-      const d = i - p, a = Math.abs(d);
-      it.style.transform = `perspective(260px) rotateX(${(-d * 24).toFixed(1)}deg) scale(${(1.1 - Math.min(a, 3) * 0.1).toFixed(3)})`;
-      it.style.opacity = Math.max(0.12, 1 - a * 0.26).toFixed(2); now.push(it);
-    }
-    (w.fxEls || []).forEach(it => { if (now.indexOf(it) < 0){ it.style.transform = ''; it.style.opacity = ''; } });
-    w.fxEls = now;
-    const on = itemAt(w, idx); if (w.onEl !== on){ if (w.onEl) w.onEl.classList.remove('on'); if (on) on.classList.add('on'); w.onEl = on; }
-    if (idx !== w.idx){
-      w.idx = idx;
-      if (w.user){ if (navigator.vibrate) try{ navigator.vibrate(3); }catch(e){} if (!w.t) w.t = setTimeout(() => { w.t = 0; pick(w.k, w.idx); }, 140); }   // live while spinning
-    }
-  }
-  const OM = { y: 6.5, d: 9, m: 9, h: 9, mi: 9 };            // spring stiffness (critically damped)
-  let loopOn = false, lastTs = 0;
-  function kick(){ if (!loopOn){ loopOn = true; lastTs = 0; requestAnimationFrame(tick); } }
-  function springTo(w, L, v0){ w.L = Math.round(clampW(w, L)); w.v = v0 || 0; w.mode = 'spring'; w.auto = false; w.sp.parentNode.classList.remove('run-up', 'run-dn'); kick(); }
-  function finish(w){ w.mode = 'idle'; render(w); if (w.user){ clearTimeout(w.t); w.t = 0; w.user = false; pick(w.k, w.idx); } }
-  function tick(ts){
-    const dt = Math.min(0.033, (ts - (lastTs || ts)) / 1000); lastTs = ts; let any = false;
-    KEYS.forEach(k => {
-      const w = W[k]; if (!w || w.mode === 'idle') return; any = true;
-      if (w.mode === 'drag'){                               // finger resting off-centre = auto-spin, faster the longer / further it is held
-        const off = w.y1 - w.yo, mag = Math.abs(off);
-        if (!w.auto && ts - w.still > 200 && mag > 22){ w.auto = true; w.tHold = ts; }
-        if (w.auto){
-          const dir = off < 0 ? 1 : -1, f = Math.min(1, (mag - 22) / 110), ramp = 1 + Math.min(3, (ts - w.tHold) / 900);
-          w.av = dir * Math.min(k === 'y' ? 70 : 16, (1.5 + 10 * f) * ramp * (k === 'y' ? 2.2 : 1));
-          w.pos = clampW(w, w.pos + w.av * dt); w.last = Date.now(); render(w);
-          const c = w.sp.parentNode; c.classList.toggle('run-up', dir === 1); c.classList.toggle('run-dn', dir === -1);
-        }
-      } else if (w.mode === 'spring'){
-        const om = OM[k], steps = Math.max(1, Math.ceil(dt / 0.008)), h = dt / steps; let x = w.pos, v = w.v;
-        for (let i = 0; i < steps; i++){ v += (-om * om * (x - w.L) - 2 * om * v) * h; x += v * h; }
-        if (x <= 0 || x >= w.n - 1){ x = clampW(w, x); v = 0; }
-        w.pos = x; w.v = v; w.last = Date.now();
-        if (Math.abs(x - w.L) < 0.002 && Math.abs(v) < 0.05){ w.pos = w.L; finish(w); } else render(w);
-      }
-    });
-    if (any) requestAnimationFrame(tick); else loopOn = false;
-  }
-  function place(k, idx){                                   // the scene changed from outside: bring this wheel to the new value
-    const w = W[k]; if (w.mode !== 'idle') return; w.user = false;
-    const d = Math.abs(idx - w.pos);
-    if (d < 0.01) return;
-    if (w.shown && d <= 6) springTo(w, idx, 0); else { w.pos = idx; render(w); }
-    w.shown = true;
-  }
-  function pick(k, idx){                                    // a wheel was turned by the user
-    const c = cur(), y = c.y, m = c.m, d = c.d, h = c.h, mi = c.mi;
-    if (k === 'd') go(mk(y, m, idx + 1, h, mi));
-    else if (k === 'm') go(mk(y, idx, Math.min(d, dim(y, idx)), h, mi));
-    else if (k === 'y'){ const ny = Y_ALL0 + idx; go(mk(ny, m, Math.min(d, dim(ny, m)), h, mi)); }
-    else if (k === 'h') go(mk(y, m, d, idx, mi));
-    else go(mk(y, m, d, h, idx));
-  }
-
-  function scale(){
-    Y_MIN = wide ? Y_ALL0 : 1800; Y_MAX = wide ? Y_ALL1 : 2200;
-    const r = $('tmYear'), t = $('tmTicks'), w = $('tmWide'); if (!r) return;
-    r.min = Y_MIN; r.max = Y_MAX;
-    const ticks = wide ? [Y_ALL0, 0, 2500, 5000, 7500, Y_ALL1] : [1800, 1900, 2000, 2100, 2200];
-    t.innerHTML = ticks.map(v => `<span>${yl(v)}</span>`).join('');
-    w.textContent = wide ? '↔ Show 1800–2200 only' : '↔ All years (4713 BC – 9999)';
-  }
+  const dv = c => `${String(Math.abs(c.y)).padStart(4, '0')}-${pad(c.m + 1)}-${pad(c.d)}`;
   function build(){
     ov = document.createElement('div'); ov.className = 'tm-ov'; ov.id = 'tmOv';
     ov.innerHTML = `<div class="tm-card" role="dialog" aria-modal="true" aria-label="Pick date and time">
       <div class="tm-top"><b>Pick date &amp; time</b><button type="button" class="tm-x" id="tmX" aria-label="Close">✕</button></div>
       <div class="tm-big"><div class="tm-date" id="tmDate"></div><div class="tm-sub" id="tmSub"></div></div>
-      <div class="tm-wheels"><div class="tm-band"></div>
-        ${KEYS.slice(0, 3).map(k => `<div class="tm-wl" data-w="${k}" tabindex="0" role="listbox" aria-label="${{d:'Day',m:'Month',y:'Year'}[k]}"></div>`).join('')}
-        <div class="tm-colon">:</div>
-        ${KEYS.slice(3).map(k => `<div class="tm-wl" data-w="${k}" tabindex="0" role="listbox" aria-label="${{h:'Hour',mi:'Minute'}[k]}"></div>`).join('')}</div>
-      <div class="tm-wlabs"><span>Day</span><span>Month</span><span>Year</span><span></span><span>Hour</span><span>Min</span></div>
-      <div class="tm-hint">Swipe and hold a wheel to keep it spinning</div>
-      <div class="tm-st" data-u="d"><button data-u="y" data-n="-1">−1y</button><button data-u="mo" data-n="-1">−1mo</button><button data-n="-1">−1d</button><button data-n="1">+1d</button><button data-u="mo" data-n="1">+1mo</button><button data-u="y" data-n="1">+1y</button></div>
-      <div class="tm-st tm-st4" data-u="y"><button data-n="-100">−100y</button><button data-n="-10">−10y</button><button data-n="10">+10y</button><button data-n="100">+100y</button></div>
-      <div class="tm-st tm-st4" data-u="h"><button data-u="h" data-n="-1">−1h</button><button data-u="min" data-n="-15">−15m</button><button data-u="min" data-n="15">+15m</button><button data-u="h" data-n="1">+1h</button></div>
-      <div class="tm-lab">Year scrub <em id="tmYv"></em></div>
-      <input type="range" id="tmYear" min="${Y_MIN}" max="${Y_MAX}" step="1" aria-label="Year">
-      <div class="tm-ticks" id="tmTicks"></div>
-      <button type="button" class="tm-wide" id="tmWide"></button>
-      <div class="tm-q"><button type="button" class="now" id="tmNow">Now</button><button type="button" class="birth" id="tmBirth" hidden>✦ Birth moment</button><button type="button" class="sv" id="tmSave">★ Save moment</button><button type="button" class="svl" id="tmSaved">Saved <em id="tmSvN">0</em></button><button type="button" id="tmY0">1 Jan this year</button><button type="button" id="tmMid">Midnight</button></div>
-      <form class="tm-type" id="tmForm"><input id="tmIn" type="text" inputmode="text" autocomplete="off" placeholder="Or type: 15 Aug 1998 10:30, 1850, 14 Mar 500 BC"><button class="tm-go" type="submit">Go</button></form>
+      <div class="tm-fields">
+        <label><span>Date</span><input type="date" id="tmD" min="0001-01-01" max="9999-12-31"></label>
+        <label><span>Time</span><input type="time" id="tmT"></label>
+      </div>
+      <form class="tm-type" id="tmForm"><input id="tmIn" type="text" inputmode="text" autocomplete="off" aria-label="Type a date" placeholder="Type: 15 Aug 1998 10:30"><button class="tm-go" type="submit">Go</button></form>
+      <div class="tm-q"><button type="button" class="now" id="tmNow">Now</button><button type="button" id="tmMid">Midnight</button><button type="button" class="birth" id="tmBirth" hidden>✦ Birth moment</button><button type="button" class="sv" id="tmSave">★ Save moment</button><button type="button" class="svl" id="tmSaved">Saved <em id="tmSvN">0</em></button></div>
       <button type="button" class="tm-done" id="tmDone">Done</button>
     </div>`;
-    document.body.appendChild(ov); scale();
-    KEYS.forEach(k => {
-      const el = ov.querySelector(`[data-w="${k}"]`), sp = document.createElement('div'); sp.className = 'tm-sp'; el.appendChild(sp);
-      W[k] = { k, el, sp, idx: -1, n: 0, pos: 0, mode: 'idle', user: false, t: 0, last: 0, v: 0, L: 0 };
-    });
-    fill('m', 12, i => MON[i]); fill('y', Y_ALL1 - Y_ALL0 + 1, i => yl(Y_ALL0 + i)); fill('h', 24, i => pad(i)); fill('mi', 60, i => pad(i));
-    KEYS.forEach(k => {
-      const w = W[k], el = w.el;
-      el.addEventListener('pointerdown', e => {
-        if (e.button) return; try{ el.setPointerCapture(e.pointerId); }catch(_){}
-        w.mode = 'drag'; w.user = true; w.auto = false; w.last = Date.now(); w.t0 = performance.now();
-        w.y0 = w.yo = w.y1 = w.yS = e.clientY; w.p0 = w.pos; w.still = performance.now(); w.moved = 0; w.smp = [[performance.now(), e.clientY]]; kick();
-      });
-      el.addEventListener('pointermove', e => {
-        if (w.mode !== 'drag') return; const y = e.clientY, now = performance.now();
-        if (Math.abs(y - w.yS) > 5){ w.yS = y; w.still = now; if (w.auto){ w.auto = false; w.p0 = w.pos; w.y0 = w.yo = y; el.classList.remove('run-up', 'run-dn'); } }
-        w.y1 = y; w.moved = Math.max(w.moved, Math.abs(y - w.yo));
-        if (!w.auto){ w.pos = clampW(w, w.p0 - (y - w.y0) / IH); w.last = Date.now(); render(w); }
-        w.smp.push([now, y]); while (w.smp.length > 2 && now - w.smp[0][0] > 110) w.smp.shift();
-      });
-      const up = e => {
-        if (w.mode !== 'drag') return; try{ el.releasePointerCapture(e.pointerId); }catch(_){}
-        const now = performance.now(); let v = 0;
-        if (w.auto) v = w.av || 0;
-        else if (w.smp.length > 1){ const a = w.smp[0], b = w.smp[w.smp.length - 1], dtm = (b[0] - a[0]) / 1000; if (dtm > 0.01 && now - b[0] < 90) v = -((b[1] - a[1]) / IH) / dtm; }
-        if (w.moved < 6 && now - w.t0 < 350 && e.type === 'pointerup'){   // a tap: roll the tapped number to the centre
-          const r = el.getBoundingClientRect(); springTo(w, Math.round(w.pos + (e.clientY - r.top - CEN) / IH), 0); return;
-        }
-        const cap = k === 'y' ? 90 : 24; v = Math.max(-cap, Math.min(cap, v * (k === 'y' && !w.auto ? 2.2 : 1))); if (Math.abs(v) < 1.5) v = 0;
-        springTo(w, w.pos + v / OM[k], v);                  // glide, then lock onto a number like a magnet
-      };
-      el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
-      el.addEventListener('wheel', e => { e.preventDefault(); const base = w.mode === 'spring' ? w.L : Math.round(w.pos); w.user = true; springTo(w, base + (e.deltaY > 0 ? 1 : -1) * (Math.abs(e.deltaY) > 100 ? 2 : 1), 0); }, { passive: false });
-      el.addEventListener('keydown', e => {
-        const dir = e.key === 'ArrowDown' ? 1 : e.key === 'ArrowUp' ? -1 : 0; if (!dir) return;
-        e.preventDefault(); e.stopPropagation(); w.user = true; springTo(w, (w.mode === 'spring' ? w.L : Math.round(w.pos)) + dir, 0);
-      });
-    });
+    document.body.appendChild(ov);
     const close = () => { ov.classList.remove('show'); document.body.classList.remove('tm-open'); };
     ov.addEventListener('pointerdown', e => { if (e.target === ov) close(); });
     $('tmX').addEventListener('click', close); $('tmDone').addEventListener('click', close);
-    $('tmYear').addEventListener('input', e => { const c = cur(), y = +e.target.value; go(mk(y, c.m, Math.min(c.d, dim(y, c.m)), c.h, c.mi)); $('tmYv').textContent = yl(y); });
-    $('tmWide').addEventListener('click', () => { wide = !wide; scale(); paint(); });
+    const fromFields = () => {
+      const dd = $('tmD').value.match(/^(\d{4})-(\d{2})-(\d{2})$/), tt = $('tmT').value.match(/^(\d{2}):(\d{2})/); if (!dd) return;
+      go(mk(+dd[1], +dd[2] - 1, +dd[3], tt ? +tt[1] : cur().h, tt ? +tt[2] : cur().mi));
+    };
+    $('tmD').addEventListener('change', fromFields); $('tmT').addEventListener('change', fromFields);
     $('tmForm').addEventListener('submit', e => { e.preventDefault(); const d = parse($('tmIn').value); $('tmIn').classList.toggle('bad', !d); if (d){ go(d); $('tmIn').value = ''; $('tmIn').blur(); } });
-    $('tmNow').addEventListener('click', () => { const n = new Date(); jumpToJD(toJulianDay(n.getUTCFullYear(), n.getUTCMonth() + 1, n.getUTCDate(), n.getUTCHours(), n.getUTCMinutes(), 0)); paint(); });
-    $('tmY0').addEventListener('click', () => { const c = cur(); go(mk(c.y, 0, 1, 0, 0)); });
+    $('tmNow').addEventListener('click', () => { const n = new Date(); jumpToJD(toJulianDay(n.getUTCFullYear(), n.getUTCMonth() + 1, n.getUTCDate(), n.getUTCHours(), n.getUTCMinutes(), 0)); paint(true); });
     $('tmMid').addEventListener('click', () => { const c = cur(); go(mk(c.y, c.m, c.d, 0, 0)); });
-    $('tmBirth').addEventListener('click', () => { const p = activeNatalProfile; if (!p) return; const [y,m,d] = parseDob(p.dob), [h,mi] = p.tob.split(':').map(Number); jumpToJD(toJulianDay(y,m,d,h,mi,0) - p.tz/24); paint(); });
-    // hold-to-repeat steppers
-    ov.querySelectorAll('.tm-st').forEach(box => {
-      let t1, t2;
-      const step = b => go(add(b.dataset.u || box.dataset.u, +b.dataset.n));
-      const stop = () => { clearTimeout(t1); clearInterval(t2); };
-      box.addEventListener('pointerdown', e => { const b = e.target.closest('button'); if (!b) return; e.preventDefault(); step(b); t1 = setTimeout(() => { t2 = setInterval(() => step(b), 70); }, 380); });
-      ['pointerup','pointerleave','pointercancel'].forEach(ev => box.addEventListener(ev, stop));
-    });
-    document.addEventListener('keydown', e => {
-      if (!ov.classList.contains('show')) return;
-      if (e.key === 'Escape') close();
-      else if (!/^(INPUT|TEXTAREA)$/.test((e.target||{}).tagName) && !(e.target.classList && e.target.classList.contains('tm-wl')) && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')){ e.preventDefault(); go(add(e.shiftKey ? 'mo' : 'd', e.key === 'ArrowLeft' ? -1 : 1)); }
-    });
+    $('tmBirth').addEventListener('click', () => { const p = activeNatalProfile; if (!p) return; const [y,m,d] = parseDob(p.dob), [h,mi] = p.tob.split(':').map(Number); jumpToJD(toJulianDay(y,m,d,h,mi,0) - p.tz/24); paint(true); });
+    document.addEventListener('keydown', e => { if (ov.classList.contains('show') && e.key === 'Escape') close(); });
   }
-  function paint(){
+  function paint(force){
     if (!ov || !ov.classList.contains('show')) return;
-    const c = cur(), y = c.y, m = c.m, d = c.d, now = Date.now();
-    if ((y < 1800 || y > 2200) && !wide){ wide = true; scale(); }
+    const c = cur(), y = c.y, m = c.m, d = c.d, ae = document.activeElement;
     $('tmDate').textContent = `${pad(d)} ${MON[m]} ${yl(y)}`;
     $('tmSub').textContent = `${WD[c.wd]} · ${pad(c.h)}:${pad(c.mi)} local · JD ${currentJD.toFixed(2)}${isG(y, m, d) ? '' : ' · Julian calendar'}`;
-    $('tmYear').value = Math.max(Y_MIN, Math.min(Y_MAX, y)); $('tmYv').textContent = yl(y);
-    // day wheel depends on month length and shows the weekday
-    const n = dim(y, m), firstWd = ((Math.floor(toJulianDay(y, m + 1, 1, 12, 0, 0) + 0.5) + 1) % 7 + 7) % 7;
-    if (W.d.n !== n || W.d.key !== y + '-' + m){ W.d.key = y + '-' + m; fill('d', n, i => `${i + 1}<small>${WD[(firstWd + i) % 7]}</small>`); }
-    const target = { d: d - 1, m, y: Math.max(0, Math.min(Y_ALL1 - Y_ALL0, y - Y_ALL0)), h: c.h, mi: c.mi };
-    KEYS.forEach(k => { const w = W[k]; if (w.mode !== 'idle' || w.t || now - w.last < 450) return; place(k, target[k]); });
+    if (force || ae !== $('tmD')) $('tmD').value = (y >= 1 && y <= 9999) ? dv(c) : '';     // years outside 1-9999 (BC) are typed in the box below
+    if (force || ae !== $('tmT')) $('tmT').value = `${pad(c.h)}:${pad(c.mi)}`;
     $('tmBirth').hidden = !(typeof isValidProfile === 'function' && isValidProfile(activeNatalProfile));
   }
-  function open(){ if (!ov) build(); ov.classList.add('show'); document.body.classList.add('tm-open'); KEYS.forEach(k => { W[k].mode = 'idle'; W[k].shown = false; W[k].last = 0; }); paint(); requestAnimationFrame(paint); }
+  function open(){ if (!ov) build(); ov.classList.add('show'); document.body.classList.add('tm-open'); paint(true); }
   window.openTimeMachine = open;
   // keep the dial in step with play / timeline drags while it is open
   setInterval(paint, 600);
