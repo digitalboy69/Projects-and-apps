@@ -15,16 +15,24 @@
   const cur = () => { const c = jdToDate(currentJD); return { y: c.getFullYear(), m: c.getMonth(), d: c.getDate(), h: c.getHours(), mi: c.getMinutes(), wd: c.getDay() }; };
   const yl = y => yearLabel(y);
   const fromJD = jd => { const c = jdToDate(jd); return { y: c.getFullYear(), m: c.getMonth(), d: c.getDate(), h: c.getHours(), mi: c.getMinutes() }; };
+  // Light jump while the user is scrubbing: move the scene + HUD at once, run the heavy feeds/timeline refresh once when they pause.
+  let fullT = 0;
+  function fastJump(jd){
+    currentJD = jd;
+    if (jd < timelineWindowStart || jd > timelineWindowEnd){ timelineWindowStart = jd - 30; timelineWindowEnd = jd + 365; }
+    const snap = updateSceneForJD(jd); renderHUD(snap); renderSkyTable(snap); renderTimelineLight();
+    clearTimeout(fullT); fullT = setTimeout(() => { fullT = 0; refreshAll(); }, 240);
+  }
   let raf = 0, pend = null;
   function go(d){                                           // throttled: one jump per animation frame
     pend = d; if (raf) return;
-    raf = requestAnimationFrame(() => { raf = 0; if (pend){ jumpToJD(toJD(pend)); pend = null; paint(); } });
+    raf = requestAnimationFrame(() => { raf = 0; if (pend){ fastJump(toJD(pend)); pend = null; paint(); } });
   }
   function add(unit, n){
     const d = cur(), y = d.y, m = d.m, day = d.d, h = d.h, mi = d.mi;
     if (unit === 'y'){ const ny = y + n; return mk(ny, m, Math.min(day, dim(ny, m)), h, mi); }
     if (unit === 'mo'){ const t = m + n, ny = y + Math.floor(t/12), nm = ((t % 12) + 12) % 12; return mk(ny, nm, Math.min(day, dim(ny, nm)), h, mi); }
-    const dd = { w:7, d:1, h:1/24 }[unit] * n; return fromJD(currentJD + dd);
+    const dd = { w:7, d:1, h:1/24, min:1/1440 }[unit] * n; return fromJD(currentJD + dd);
   }
   // ---- smart typed date ----
   function parse(t){
@@ -53,8 +61,19 @@
     m: () => MON.map(n => n), y: () => Array.from({length: Y_ALL1 - Y_ALL0 + 1}, (_, i) => yl(Y_ALL0 + i)),
     h: () => Array.from({length: 24}, (_, i) => pad(i)), mi: () => Array.from({length: 60}, (_, i) => pad(i))
   };
-  function fill(k, list){ const w = W[k]; w.n = list.length; w.el.innerHTML = list.map((t, i) => `<div class="tm-it" data-i="${i}">${t}</div>`).join(''); w.idx = -1; }
-  function mark(k, idx){ const w = W[k], old = w.el.querySelector('.on'); if (old) old.classList.remove('on'); const it = w.el.children[idx]; if (it) it.classList.add('on'); }
+  const VR = 30;                                            // virtual wheel (years): only the items near the centre exist in the DOM
+  function vrender(w, c){
+    c = Math.max(0, Math.min(w.n - 1, c)); if (w.rc !== undefined && Math.abs(c - w.rc) < 12 && w.sp.children.length) return;
+    w.rc = c; const a = Math.max(0, c - VR), b = Math.min(w.n - 1, c + VR); let h = '';
+    for (let i = a; i <= b; i++) h += `<div class="tm-it" data-i="${i}" style="position:absolute;left:0;right:0;top:${i * IH}px">${w.lab(i)}</div>`;
+    w.sp.innerHTML = h; const it = w.sp.querySelector(`[data-i="${w.idx}"]`); if (it) it.classList.add('on');
+  }
+  function fill(k, list, lab){
+    const w = W[k];
+    if (lab){ w.n = list; w.lab = lab; w.el.innerHTML = `<div class="tm-sp" style="position:relative;height:${list * IH}px"></div>`; w.sp = w.el.firstChild; w.rc = undefined; w.idx = -1; return; }
+    w.n = list.length; w.el.innerHTML = list.map((t, i) => `<div class="tm-it" data-i="${i}">${t}</div>`).join(''); w.idx = -1;
+  }
+  function mark(k, idx){ const w = W[k]; if (w.sp) vrender(w, idx); const old = w.el.querySelector('.on'); if (old) old.classList.remove('on'); const it = w.el.querySelector(`[data-i="${idx}"]`); if (it) it.classList.add('on'); }
   function pick(k, idx){                                    // a wheel was turned by the user
     const c = cur(), y = c.y, m = c.m, d = c.d, h = c.h, mi = c.mi;
     if (k === 'd') go(mk(y, m, idx + 1, h, mi));
@@ -84,23 +103,25 @@
       <div class="tm-wlabs"><span>Day</span><span>Month</span><span>Year</span><span></span><span>Hour</span><span>Min</span></div>
       <div class="tm-st" data-u="d"><button data-u="y" data-n="-1">−1y</button><button data-u="mo" data-n="-1">−1mo</button><button data-n="-1">−1d</button><button data-n="1">+1d</button><button data-u="mo" data-n="1">+1mo</button><button data-u="y" data-n="1">+1y</button></div>
       <div class="tm-st tm-st4" data-u="y"><button data-n="-100">−100y</button><button data-n="-10">−10y</button><button data-n="10">+10y</button><button data-n="100">+100y</button></div>
+      <div class="tm-st tm-st4" data-u="h"><button data-u="h" data-n="-1">−1h</button><button data-u="min" data-n="-15">−15m</button><button data-u="min" data-n="15">+15m</button><button data-u="h" data-n="1">+1h</button></div>
       <div class="tm-lab">Year scrub <em id="tmYv"></em></div>
       <input type="range" id="tmYear" min="${Y_MIN}" max="${Y_MAX}" step="1" aria-label="Year">
       <div class="tm-ticks" id="tmTicks"></div>
       <button type="button" class="tm-wide" id="tmWide"></button>
       <div class="tm-q"><button type="button" class="now" id="tmNow">Now</button><button type="button" class="birth" id="tmBirth" hidden>✦ Birth moment</button><button type="button" id="tmY0">1 Jan this year</button><button type="button" id="tmMid">Midnight</button></div>
       <form class="tm-type" id="tmForm"><input id="tmIn" type="text" inputmode="text" autocomplete="off" placeholder="Or type: 15 Aug 1998 10:30, 1850, 14 Mar 500 BC"><button class="tm-go" type="submit">Go</button></form>
+      <button type="button" class="tm-done" id="tmDone">Done</button>
     </div>`;
     document.body.appendChild(ov); scale();
     KEYS.forEach(k => { W[k] = { el: ov.querySelector(`[data-w="${k}"]`), idx: -1, n: 0, last: 0, t: 0 }; });
-    fill('m', labels.m()); fill('y', labels.y()); fill('h', labels.h()); fill('mi', labels.mi());
+    fill('m', labels.m()); fill('y', Y_ALL1 - Y_ALL0 + 1, i => yl(Y_ALL0 + i)); fill('h', labels.h()); fill('mi', labels.mi());
     KEYS.forEach(k => {
       const w = W[k];
       w.el.addEventListener('scroll', () => {
         w.last = Date.now();
         const idx = Math.max(0, Math.min(w.n - 1, Math.round(w.el.scrollTop / IH)));
         if (idx === w.idx) return;
-        w.idx = idx; mark(k, idx);
+        w.idx = idx; mark(k, idx); if (navigator.vibrate) try{ navigator.vibrate(3); }catch(e){}
         if (!w.t) w.t = setTimeout(() => { w.t = 0; pick(k, w.idx); }, 90);   // live while spinning, final value when it stops
       }, { passive: true });
       w.el.addEventListener('click', e => { const it = e.target.closest('.tm-it'); if (it) w.el.scrollTo({ top: +it.dataset.i * IH, behavior: 'smooth' }); });
@@ -111,7 +132,7 @@
     });
     const close = () => { ov.classList.remove('show'); document.body.classList.remove('tm-open'); };
     ov.addEventListener('pointerdown', e => { if (e.target === ov) close(); });
-    $('tmX').addEventListener('click', close);
+    $('tmX').addEventListener('click', close); $('tmDone').addEventListener('click', close);
     $('tmYear').addEventListener('input', e => { const c = cur(), y = +e.target.value; go(mk(y, c.m, Math.min(c.d, dim(y, c.m)), c.h, c.mi)); $('tmYv').textContent = yl(y); });
     $('tmWide').addEventListener('click', () => { wide = !wide; scale(); paint(); });
     $('tmForm').addEventListener('submit', e => { e.preventDefault(); const d = parse($('tmIn').value); $('tmIn').classList.toggle('bad', !d); if (d){ go(d); $('tmIn').value = ''; $('tmIn').blur(); } });
@@ -177,7 +198,8 @@
     zb.addEventListener('click', e => { const b = e.target.closest('[data-z]'); if (b) applyZoom(b.dataset.z); });
     const ends = document.createElement('div'); ends.className = 'tl-ends'; ends.innerHTML = '<span id="tlEndL"></span><span id="tlEndR"></span>'; wrap.after(ends);
     let drag = false;
-    const at = e => { const r = track.getBoundingClientRect(), f = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); jumpToJD(timelineWindowStart + f * (timelineWindowEnd - timelineWindowStart)); };
+    const at = e => { const r = track.getBoundingClientRect(), f = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); pendTr = timelineWindowStart + f * (timelineWindowEnd - timelineWindowStart); if (!rafT) rafT = requestAnimationFrame(() => { rafT = 0; fastJump(pendTr); }); };
+    let rafT = 0, pendTr = 0;
     track.addEventListener('pointerdown', e => { drag = true; track.setPointerCapture(e.pointerId); at(e); });
     track.addEventListener('pointermove', e => { if (drag) at(e); });
     ['pointerup','pointercancel'].forEach(ev => track.addEventListener(ev, () => { drag = false; }));

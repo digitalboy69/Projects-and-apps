@@ -185,7 +185,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-06 - 1835 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-06 - 1837 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -413,7 +413,7 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 84 files, 7965 lines, 487 KB
+**sky3d** - 84 files, 7991 lines, 490 KB
 ```
 index.html                                         509 lines   32 KB
 js/01-astro-engine.js                              163 lines   10 KB
@@ -464,7 +464,7 @@ js/45-vimshottari-dasha.js                          60 lines    2 KB
 js/46-dasha-transit-engine.js                      319 lines   21 KB
 js/47-dasha-transit-ui.js                          145 lines   10 KB
 js/48-profile-bridge.js                             48 lines    2 KB
-js/49-time-machine.js                              189 lines   15 KB
+js/49-time-machine.js                              211 lines   17 KB
 js/50-sky-dashboard.js                             295 lines   26 KB
 js/51-jump-from-rectification.js                    33 lines    2 KB
 js/52-gulika.js                                     53 lines    4 KB
@@ -492,7 +492,7 @@ css/19-retrograde-planner.css                       35 lines    4 KB
 css/20-hud-ascendant-rising.css                     56 lines    4 KB
 css/21-premium-polish.css                           32 lines    3 KB
 css/22-dasha-transit-triggers.css                   31 lines    3 KB
-css/23-time-machine-polish.css                     126 lines   12 KB
+css/23-time-machine-polish.css                     130 lines   13 KB
 css/24-sky-dashboard.css                            92 lines    8 KB
 css/25-date-entry.css                                8 lines    0 KB
 css/25-solid-panels.css                             32 lines    4 KB
@@ -582,3 +582,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Trigger Lab (js/129 + css/64, Home > Analysis + quick menu): choose Single/Double Dasha-repeat pattern and transit rules (sign, lord's sign, aspect, nakshatra); scans the chart's Dasha timeline, lists windows and raw activated houses. Test: node tests/trigger_lab_test.js.
 - Profile menu redesign (js/63 renderProfileCards + css/65-profile-menu.css): register-style entries, labeled Share/Edit/Delete row, no sideways scroll, emoji-safe avatar.
 - Feature polish (css/66-feature-polish.css + sky3d css/28): Dasha Reverse, Time sky, Meaning Lab, Trigger Lab, Degree Houses share one refined look.
+- Time machine (sky3d js/49): light fastJump while scrubbing (full refresh on pause), virtual year wheel (≈190 DOM items vs 14.9k), no layout-thrash transitions, ±1h/±15m steppers, Done button, haptic tick.

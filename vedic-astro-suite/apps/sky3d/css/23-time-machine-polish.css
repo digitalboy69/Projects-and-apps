@@ -113,9 +113,9 @@
 .tm-band{position:absolute;left:6px;right:6px;top:68px;height:34px;border-radius:13px;background:linear-gradient(135deg,rgba(0,240,213,.20),rgba(123,110,246,.26));border:1px solid rgba(0,240,213,.42);box-shadow:0 0 22px rgba(0,240,213,.16);pointer-events:none}
 .tm-wl{height:170px;overflow-y:auto;scroll-snap-type:y mandatory;padding:68px 0;scrollbar-width:none;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;outline:none;position:relative;z-index:1;-webkit-mask-image:linear-gradient(transparent,#000 32%,#000 68%,transparent);mask-image:linear-gradient(transparent,#000 32%,#000 68%,transparent)}
 .tm-wl::-webkit-scrollbar{display:none}
-.tm-it{height:34px;line-height:34px;text-align:center;scroll-snap-align:center;scroll-snap-stop:always;font:600 16px var(--font-mono);color:var(--text-dim);cursor:pointer;user-select:none;-webkit-user-select:none;white-space:nowrap;transition:color .12s,font-size .12s}
+.tm-it{height:34px;line-height:34px;text-align:center;scroll-snap-align:center;scroll-snap-stop:always;font:600 16px var(--font-mono);color:var(--text-dim);cursor:pointer;user-select:none;-webkit-user-select:none;white-space:nowrap;transition:color .12s,transform .12s;will-change:transform}
 .tm-it small{font:600 9.5px var(--font-ui);margin-left:3px;opacity:.7;letter-spacing:.04em}
-.tm-it.on{color:#fff;font-size:18px;font-weight:700}
+.tm-it.on{color:#fff;transform:scale(1.125);font-weight:700}
 .tm-colon{display:grid;place-items:center;font:700 20px var(--font-mono);color:var(--cyan);position:relative;z-index:1;padding-bottom:3px}
 .tm-wlabs{display:grid;grid-template-columns:1fr 1.3fr 1.4fr .35fr 1fr 1fr;gap:2px;margin:6px 0 0;text-align:center;font:700 9.5px var(--font-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--text-faint)}
 .tm-st{grid-template-columns:repeat(6,1fr)}.tm-st.tm-st4{grid-template-columns:repeat(4,1fr)}
@@ -123,3 +123,7 @@
 .tm-q{margin-top:12px}
 .tm-type{margin:14px 0 0}
 body.tm-open .viewport-actions,body.tm-open .viewport-hud{visibility:hidden}
+
+.tm-wl{contain:layout paint;will-change:scroll-position}
+.tm-done{display:block;width:100%;margin-top:12px;padding:15px;border:0;border-radius:16px;font:700 15px var(--font-ui);color:#06121a;background:linear-gradient(135deg,#00f0d5,#7b6ef6);box-shadow:0 10px 26px rgba(0,240,213,.22);cursor:pointer;-webkit-tap-highlight-color:transparent}.tm-done:active{transform:scale(.98)}
+.tm-card{max-height:92vh;overflow-y:auto;overscroll-behavior:contain}
