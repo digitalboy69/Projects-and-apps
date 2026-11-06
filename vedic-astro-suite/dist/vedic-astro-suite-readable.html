@@ -14676,6 +14676,36 @@ body.cl-open{overflow:hidden}
 .tl-pl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0;font-size:12.5px}.tl-pl b{margin-right:4px}.tl-pl i{font-style:normal;padding:3px 9px;border-radius:99px;background:rgba(255,255,255,.07)}.tl-pl i.lord{background:rgba(239,111,154,.16);color:#f2a1bd}
 .tl-act{margin-top:10px;font-size:12px;color:#9aa;display:flex;gap:5px;flex-wrap:wrap;align-items:center}.tl-act i{font-style:normal;min-width:24px;text-align:center;padding:3px 7px;border-radius:9px;background:linear-gradient(135deg,#f6d775,#c9962f);color:#1a1405;font-weight:700}
 </style>
+<style>
+/* Profile menu: every profile is a register entry that fits the screen width (no sideways swiping) */
+#mainMenuModal .menu-modal-box,#mainMenuModal .vx-sheet,#mainMenuModal .menu-section,#mainMenuModal .menu-actions{min-width:0;max-width:100%;box-sizing:border-box}
+#mainMenuModal .vx-sheet{overflow-x:hidden}
+#mainMenuModal .prof-cards{grid-template-columns:minmax(0,1fr);gap:10px;max-height:min(46vh,380px);overflow-x:hidden;overflow-y:auto;padding:2px 2px 4px;overscroll-behavior:contain}
+#mainMenuModal .prof-card{display:block;position:relative;padding:12px 12px 8px 16px;border-radius:16px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.03);box-shadow:none;overflow:hidden;min-width:0}
+#mainMenuModal .prof-card:before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:rgba(255,255,255,.14)}
+#mainMenuModal .prof-card.active{background:linear-gradient(120deg,rgba(212,175,55,.17),rgba(94,196,183,.05));border-color:rgba(212,175,55,.55);box-shadow:none}
+#mainMenuModal .prof-card.active:before{background:var(--gold-bright,#f2cf66)}
+#mainMenuModal .prof-top{display:flex;align-items:flex-start;gap:12px;min-width:0}
+#mainMenuModal .prof-av{width:44px;height:44px;font-size:19px}
+#mainMenuModal .prof-info{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;min-width:0;flex:1}
+#mainMenuModal .prof-info b{display:block;flex:1 1 auto;min-width:0;font:700 19px/1.2 var(--font-serif);letter-spacing:.01em;overflow-wrap:anywhere}
+#mainMenuModal .prof-badge{flex:none;font:600 11px var(--font-sans);letter-spacing:.02em;text-transform:none;padding:3px 9px}
+#mainMenuModal .prof-info small{flex:1 0 100%;display:block;white-space:normal;overflow:visible;text-overflow:clip;font:13px/1.45 var(--font-sans);color:var(--text-muted);margin:2px 0 0}
+#mainMenuModal .prof-place{display:flex;align-items:center;gap:5px}
+#mainMenuModal .prof-place svg{width:13px;height:13px;flex:none;stroke:var(--gold-dim,#b99a3e);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#mainMenuModal .prof-acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:10px -12px 0 -4px;border-top:1px solid rgba(255,255,255,.08)}
+#mainMenuModal .prof-acts button{display:flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:0 6px;border:0;border-radius:0;background:none;opacity:1;font:500 13px var(--font-sans);color:var(--text-main);cursor:pointer}
+#mainMenuModal .prof-acts button+button{border-left:1px solid rgba(255,255,255,.08)}
+#mainMenuModal .prof-acts button svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#mainMenuModal .prof-acts button:hover,#mainMenuModal .prof-acts button:focus-visible{background:rgba(212,175,55,.12);color:var(--gold-bright,#f2cf66);outline:none}
+#mainMenuModal .prof-acts .prof-del{color:#e58a8a}
+#mainMenuModal .prof-acts .prof-del:hover,#mainMenuModal .prof-acts .prof-del:focus-visible{background:rgba(201,80,80,.16);color:#ff9d9d}
+#mainMenuModal .menu-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+#mainMenuModal .menu-actions>*:first-child{grid-column:1/-1}
+#mainMenuModal .menu-action-btn,#mainMenuModal .menu-actions>*{min-width:0}
+#mainMenuModal #contactDevBtn{grid-column:1/-1}
+@media (max-width:380px){#mainMenuModal .prof-acts button span{font-size:12px}}
+</style>
 
 
 
@@ -23816,16 +23846,22 @@ function renderProfileCards(){
   document.getElementById('profCount').textContent = profiles.length ? `(${profiles.length})` : '';
   if(!profiles.length){ box.innerHTML='<div class="prof-empty">No saved profiles yet.<br>Create your first chart with “Create New Profile” below.</div>'; return; }
   const cols=['#D4AF37','#5EC4B7','#8A6FB8','#E0A64A','#6B7FA3','#C95050','#5B8A9E'];
+  const ic={share:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4m0 0L8 8m4-4 4 4M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>',
+    edit:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3zM14 7l3 3"/></svg>',
+    del:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12M10 11v5M14 11v5"/></svg>',
+    pin:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10zM12 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>'};
   box.innerHTML=profiles.map((p,i)=>{
-    const col=cols[[...(p.name||'?')].reduce((a,c)=>a+c.charCodeAt(0),0)%cols.length];
-    const place=(p.place||'').split(',')[0];
-    return `<div class="prof-card ${String(i)===cur?'active':''}" data-prof="${i}">
-      <span class="prof-av" style="background:${col}">${escapeHtml((p.name||'?').trim().charAt(0).toUpperCase())}</span>
-      <span class="prof-info"><b>${escapeHtml(p.name||'Unnamed')}${String(i)===cur?'<span class="prof-badge">Active</span>':''}</b>
-      <small>${formatDateHuman(p.dob)} · ${p.tob||''}${place?' · '+escapeHtml(place):''}</small></span>
-      <button type="button" class="prof-share" data-prof-share="${i}" title="Share chart link / QR" aria-label="Share chart">📤</button>
-      <button type="button" class="prof-edit" data-prof-edit="${i}" title="Edit birth date &amp; time" aria-label="Edit birth date and time">✏️</button>
-      <button type="button" class="prof-del" data-prof-del="${i}" title="Delete profile" aria-label="Delete profile">🗑️</button>
+    const nm=(p.name||'?').trim()||'?', col=cols[[...nm].reduce((a,c)=>a+c.charCodeAt(0),0)%cols.length];
+    const place=(p.place||'').split(',')[0].trim(), on=String(i)===cur;
+    return `<div class="prof-card ${on?'active':''}" data-prof="${i}">
+      <div class="prof-top"><span class="prof-av" style="background:${col}">${escapeHtml(Array.from(nm)[0].toUpperCase())}</span>
+      <span class="prof-info"><b>${escapeHtml(p.name||'Unnamed')}</b>${on?'<span class="prof-badge">Active</span>':''}
+      <small>${formatDateHuman(p.dob)}, ${p.tob||''}</small>${place?`<small class="prof-place">${ic.pin}${escapeHtml(place)}</small>`:''}</span></div>
+      <div class="prof-acts">
+        <button type="button" class="prof-share" data-prof-share="${i}" aria-label="Share chart of ${escapeHtml(nm)}">${ic.share}<span>Share</span></button>
+        <button type="button" class="prof-edit" data-prof-edit="${i}" aria-label="Edit birth date and time of ${escapeHtml(nm)}">${ic.edit}<span>Edit</span></button>
+        <button type="button" class="prof-del" data-prof-del="${i}" aria-label="Delete ${escapeHtml(nm)}">${ic.del}<span>Delete</span></button>
+      </div>
     </div>`;
   }).join('');
 }

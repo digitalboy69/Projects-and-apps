@@ -253,6 +253,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/57-prashna.css` — styles for the Prashna chart panel
 - `apps/birth-chart/css/58-ayanamsa-choice.css` — styles for the ayanamsa selector
 - `apps/birth-chart/css/59-kp-system.css` — styles for the KP system panel
+- `apps/birth-chart/css/65-profile-menu.css` — Profile menu redesign: profile register entries that fit the screen, labeled Share/Edit/Delete row
 - `apps/birth-chart/css/64-trigger-lab.css` — styles for the Trigger Lab
 - `apps/birth-chart/css/63-meaning-lab.css` — styles for the Meaning Lab
 - `apps/birth-chart/css/62-time-sky-panel.css` — styles for the time sky panel

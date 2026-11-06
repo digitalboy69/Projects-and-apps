@@ -189,9 +189,9 @@ _Generated 2026-11-06 - 1835 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 203 files, 30738 lines, 2483 KB
+**birth-chart** - 204 files, 30774 lines, 2486 KB
 ```
-index.html                                         627 lines   35 KB
+index.html                                         628 lines   35 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -283,7 +283,7 @@ js/59-live-transit-form.js                         150 lines    7 KB
 js/60-interactive-varga-svg.js                     163 lines    7 KB
 js/61-varga-chart-svg.js                            71 lines   13 KB
 js/62-clipboard-download-helpers.js                121 lines    4 KB
-js/63-profile-cards.js                              32 lines    2 KB
+js/63-profile-cards.js                              38 lines    2 KB
 js/64-edit-saved-profile.js                         32 lines    2 KB
 js/65-error-boundaries.js                           32 lines    1 KB
 js/66-modal-accessibility.js                        23 lines    1 KB
@@ -394,6 +394,7 @@ css/61-dasha-reverse.css                            40 lines    4 KB
 css/62-time-sky-panel.css                           20 lines    2 KB
 css/63-meaning-lab.css                              21 lines    2 KB
 css/64-trigger-lab.css                              22 lines    3 KB
+css/65-profile-menu.css                             29 lines    3 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -578,3 +579,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Degree houses (3D): js/54 + css/28. New Houses tab (SVG wheel, by-sign vs by-degree house per planet, Sripati/Equal systems, sky now or natal) and a 'Degree houses' 3D layer toggle (cusp lines, house numbers, H3→2 tags on shifted planets). Test: node tests/degree_houses_test.js.
 - Android app: mobile/ (Capacitor) + ../.github/workflows/android.yml build the APK and a live-update bundle on every push to main; the installed app works offline and updates itself when online. Each build is a GitHub release (build-N) holding the APK, bundle.zip and latest.json; releases/latest/download/... is the stable link.
 - Trigger Lab (js/129 + css/64, Home > Analysis + quick menu): choose Single/Double Dasha-repeat pattern and transit rules (sign, lord's sign, aspect, nakshatra); scans the chart's Dasha timeline, lists windows and raw activated houses. Test: node tests/trigger_lab_test.js.
+- Profile menu redesign (js/63 renderProfileCards + css/65-profile-menu.css): register-style entries, labeled Share/Edit/Delete row, no sideways scroll, emoji-safe avatar.
