@@ -26,3 +26,4 @@
 #mainMenuModal .menu-action-btn,#mainMenuModal .menu-actions>*{min-width:0}
 #mainMenuModal #contactDevBtn{grid-column:1/-1}
 @media (max-width:380px){#mainMenuModal .prof-acts button span{font-size:12px}}
+#mainMenuModal .vu-tile{grid-column:1/-1;flex-direction:row;justify-content:center;align-items:center;gap:10px;min-height:0;padding:14px 16px;color:#f6d775;border:1px solid rgba(246,215,117,.35);font-weight:700}

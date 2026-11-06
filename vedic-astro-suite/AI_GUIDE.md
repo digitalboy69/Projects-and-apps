@@ -189,7 +189,7 @@ _Generated 2026-11-06 - 1833 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 205 files, 30896 lines, 2499 KB
+**birth-chart** - 205 files, 30897 lines, 2499 KB
 ```
 index.html                                         629 lines   36 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -394,7 +394,7 @@ css/61-dasha-reverse.css                            40 lines    4 KB
 css/62-time-sky-panel.css                           20 lines    2 KB
 css/63-meaning-lab.css                              21 lines    2 KB
 css/64-trigger-lab.css                              22 lines    3 KB
-css/65-profile-menu.css                             29 lines    3 KB
+css/65-profile-menu.css                             30 lines    3 KB
 css/66-feature-polish.css                          121 lines   12 KB
 ```
 
@@ -588,3 +588,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Time machine wheels (sky3d js/49): drum 3D look (fx), magnetic spring settle onto the centre band (settle), no stop-at-every-item snap.
 - Time machine wheels REWRITTEN (sky3d js/49): no native scroll/snap; own physics (pointer drag, fling, auto-spin hold, critically damped spring that always lands on an integer, drum fx via render(), virtual year wheel, throttled live pick 140ms).
 - Time machine (sky3d js/49) simplified: plain date + time fields, typed-date box (BC/Julian ok), Now/Midnight/Birth, saved moments popup, Done. Wheels/steppers/slider removed.
+- APK-only 'Update app' (mobile/src/native-bridge.js): sheet with Update now (download newest published bundle + restart) and Build latest then update (workflow_dispatch with a token kept on the phone, polls run, then updates). Tile in birth-chart profile menu, floating button on launcher. Injected into app pages only by mobile/scripts/prepare-web.js, never on the live site.
