@@ -20,6 +20,7 @@ const HOME_ITEMS=[
  ['panel-lifeevents','🌟','Life-Event Checker','Confirm the time with real events','Fix Birth Time','rectify'],
  ['panel-today','🌅','Today for You','Your day from your own Moon: Chandrabala, Tarabala, planets & good slots','Time & Cycles','home'],
  ['panel-prashna','🔮','Prashna Chart','Cast a chart for the moment you ask a question and read the signs','Time & Cycles','home'],
+ ['panel-triggerlab','⚡','Trigger Lab','Pick the Dasha pattern and your transit rules; see when they meet and which houses they activate','Analysis','home'],
  ['panel-meaninglab','🧩','Meaning Lab','Mix any planets, houses, signs and lords; read each raw meaning side by side and write your own','Analysis','home'],
  ['panel-kp','🧭','KP System','Cusps, star and sub lords, significators, event promise, ruling planets','Analysis','home'],
  ['panel-choghadiya','🕰️','Choghadiya','Good and bad time slots for the day and night','Time & Cycles','home'],

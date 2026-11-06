@@ -185,13 +185,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-06 - 1820 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-06 - 1835 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 201 files, 30544 lines, 2463 KB
+**birth-chart** - 203 files, 30738 lines, 2483 KB
 ```
-index.html                                         625 lines   35 KB
+index.html                                         627 lines   35 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -223,7 +223,7 @@ js/117-gulika.js                                    34 lines    3 KB
 js/118-choghadiya.js                                65 lines    6 KB
 js/119-avakahada.js                                 58 lines    6 KB
 js/12-yoga-detection.js                            117 lines    4 KB
-js/120-late-panels.js                               39 lines    2 KB
+js/120-late-panels.js                               39 lines    3 KB
 js/121-dosha.js                                     65 lines    7 KB
 js/122-today-for-you.js                             70 lines    8 KB
 js/123-prashna.js                                  133 lines   13 KB
@@ -232,6 +232,7 @@ js/125-kp-system.js                                107 lines   11 KB
 js/126-dasha-reverse-finder.js                     179 lines   15 KB
 js/127-time-sky-panel.js                            83 lines    7 KB
 js/128-meaning-lab.js                              134 lines   11 KB
+js/129-trigger-lab.js                              169 lines   15 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
@@ -244,7 +245,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             158 lines   16 KB
+js/25-home-and-tabs.js                             159 lines   17 KB
 js/26-rectification-studio.js                      250 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -392,6 +393,7 @@ css/60-home-chart-first.css                         31 lines    4 KB
 css/61-dasha-reverse.css                            40 lines    4 KB
 css/62-time-sky-panel.css                           20 lines    2 KB
 css/63-meaning-lab.css                              21 lines    2 KB
+css/64-trigger-lab.css                              22 lines    3 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -575,3 +577,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Meaning Lab (js/128 + css/63, Home > Analysis + left quick menu via HOME_ITEMS): free mix of pieces with raw meanings from VDB, optional database links, own notes saved locally. Test: node tests/meaning_lab_test.js.
 - Degree houses (3D): js/54 + css/28. New Houses tab (SVG wheel, by-sign vs by-degree house per planet, Sripati/Equal systems, sky now or natal) and a 'Degree houses' 3D layer toggle (cusp lines, house numbers, H3→2 tags on shifted planets). Test: node tests/degree_houses_test.js.
 - Android app: mobile/ (Capacitor) + ../.github/workflows/android.yml build the APK and a live-update bundle on every push to main; the installed app works offline and updates itself when online. Each build is a GitHub release (build-N) holding the APK, bundle.zip and latest.json; releases/latest/download/... is the stable link.
+- Trigger Lab (js/129 + css/64, Home > Analysis + quick menu): choose Single/Double Dasha-repeat pattern and transit rules (sign, lord's sign, aspect, nakshatra); scans the chart's Dasha timeline, lists windows and raw activated houses. Test: node tests/trigger_lab_test.js.
