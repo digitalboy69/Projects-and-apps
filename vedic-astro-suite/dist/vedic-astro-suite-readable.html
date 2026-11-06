@@ -1934,6 +1934,20 @@ body.tm-open .viewport-actions,body.tm-open .viewport-hud{visibility:hidden}
 .tm-wl{contain:layout paint;will-change:scroll-position}
 .tm-done{display:block;width:100%;margin-top:12px;padding:15px;border:0;border-radius:16px;font:700 15px var(--font-ui);color:#06121a;background:linear-gradient(135deg,#00f0d5,#7b6ef6);box-shadow:0 10px 26px rgba(0,240,213,.22);cursor:pointer;-webkit-tap-highlight-color:transparent}.tm-done:active{transform:scale(.98)}
 .tm-card{max-height:92vh;overflow-y:auto;overscroll-behavior:contain}
+/* saved moments popup */
+.tm-q button.sv{border-color:rgba(255,200,90,.5);color:#ffd98a;background:rgba(255,200,90,.08)}.tm-q button.svl em{font-style:normal;margin-left:4px;padding:1px 7px;border-radius:99px;background:rgba(0,240,213,.16);color:var(--cyan);font-size:11px}
+.sv-ov{position:fixed;inset:0;z-index:700;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(2,5,12,.55);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.sv-ov.show{display:flex;animation:tmFade .18s both}
+.sv-card{width:100%;max-width:400px;max-height:80vh;display:flex;flex-direction:column;padding:16px;border-radius:22px;background:linear-gradient(180deg,#131c32,#0b101d);border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 60px rgba(0,0,0,.55)}
+.sv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.sv-top b{font:700 16px var(--font-ui);color:#fff}
+.sv-add{display:flex;gap:8px}.sv-name{flex:1;min-width:0;padding:12px 14px;border-radius:14px;border:1px solid var(--glass-border);background:rgba(255,255,255,.05);color:#fff;font:500 14px var(--font-ui)}.sv-name:focus{outline:0;border-color:var(--cyan)}
+.sv-cur{margin:8px 2px 12px;font:500 12px var(--font-mono);color:var(--text-dim)}
+.sv-list{overflow-y:auto;overscroll-behavior:contain;display:grid;gap:8px}
+.sv-it{display:grid;grid-template-columns:1fr 38px 38px;gap:6px;align-items:stretch}
+.sv-go{text-align:left;padding:11px 14px;border-radius:14px;border:1px solid var(--glass-border);background:rgba(255,255,255,.04);color:#fff;cursor:pointer;display:grid;gap:2px;min-width:0;transition:border-color .15s,background .15s}.sv-go:hover,.sv-go:active{border-color:var(--cyan);background:rgba(0,240,213,.1)}
+.sv-go b{font:700 14px var(--font-ui);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sv-go span{font:500 12px var(--font-mono);color:var(--cyan)}
+.sv-ed,.sv-rm{border:1px solid var(--glass-border);background:rgba(255,255,255,.04);color:var(--text-dim);border-radius:12px;cursor:pointer;font-size:14px}.sv-rm:hover{color:#ff7a7a;border-color:#ff7a7a}.sv-ed:hover{color:#fff;border-color:#fff}
+.sv-empty{padding:18px 8px;text-align:center;color:var(--text-dim);font:500 13px/1.6 var(--font-ui)}
 </style>
 <style>
 /* Sky Dashboard (js/50-sky-dashboard.js): full-screen reading page. Calm: no motion beyond a fade. */
@@ -8085,7 +8099,7 @@ document.querySelector('[data-tab="triggers"]').addEventListener('click', ()=> s
       <input type="range" id="tmYear" min="${Y_MIN}" max="${Y_MAX}" step="1" aria-label="Year">
       <div class="tm-ticks" id="tmTicks"></div>
       <button type="button" class="tm-wide" id="tmWide"></button>
-      <div class="tm-q"><button type="button" class="now" id="tmNow">Now</button><button type="button" class="birth" id="tmBirth" hidden>✦ Birth moment</button><button type="button" id="tmY0">1 Jan this year</button><button type="button" id="tmMid">Midnight</button></div>
+      <div class="tm-q"><button type="button" class="now" id="tmNow">Now</button><button type="button" class="birth" id="tmBirth" hidden>✦ Birth moment</button><button type="button" class="sv" id="tmSave">★ Save moment</button><button type="button" class="svl" id="tmSaved">Saved <em id="tmSvN">0</em></button><button type="button" id="tmY0">1 Jan this year</button><button type="button" id="tmMid">Midnight</button></div>
       <form class="tm-type" id="tmForm"><input id="tmIn" type="text" inputmode="text" autocomplete="off" placeholder="Or type: 15 Aug 1998 10:30, 1850, 14 Mar 500 BC"><button class="tm-go" type="submit">Go</button></form>
       <button type="button" class="tm-done" id="tmDone">Done</button>
     </div>`;
@@ -8154,6 +8168,46 @@ document.querySelector('[data-tab="triggers"]').addEventListener('click', ()=> s
     if (e.target.closest('#tlJumpToggle')){ e.preventDefault(); e.stopImmediatePropagation(); open(); }
     else if (e.target.closest('.hud-datetime')) open();
   }, true);
+  // ---- saved moments: a small popup on top of the picker; each entry keeps the exact date AND time ----
+  const SV_KEY = 'vedic3d_saved_moments_v1'; let sv = [], svEl;
+  try { sv = JSON.parse(localStorage.getItem(SV_KEY) || '[]'); if (!Array.isArray(sv)) sv = []; } catch (e) { sv = []; }
+  const svStore = () => { try { localStorage.setItem(SV_KEY, JSON.stringify(sv)); } catch (e) {} const n = $('tmSvN'); if (n) n.textContent = sv.length; };
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const fmt = jd => { const p = fromJD(jd); return `${pad(p.d)} ${MON[p.m]} ${yl(p.y)} · ${pad(p.h)}:${pad(p.mi)}`; };
+  function svList(){
+    const box = svEl.querySelector('.sv-list');
+    box.innerHTML = sv.length ? sv.map((m, i) => `<div class="sv-it" data-i="${i}"><button type="button" class="sv-go"><b>${esc(m.name)}</b><span>${fmt(m.jd)}</span></button><button type="button" class="sv-ed" aria-label="Rename">✎</button><button type="button" class="sv-rm" aria-label="Delete">✕</button></div>`).join('')
+      : '<div class="sv-empty">Nothing saved yet. Set a date and time, then tap “Save moment”.</div>';
+  }
+  function svOpen(focusName){
+    if (!svEl){
+      svEl = document.createElement('div'); svEl.className = 'sv-ov';
+      svEl.innerHTML = `<div class="sv-card" role="dialog" aria-label="Saved moments"><div class="sv-top"><b>Saved moments</b><button type="button" class="tm-x sv-x" aria-label="Close">✕</button></div>
+        <form class="sv-add"><input class="sv-name" type="text" maxlength="40" autocomplete="off" aria-label="Name"><button class="tm-go" type="submit">Save</button></form>
+        <div class="sv-cur"></div><div class="sv-list"></div></div>`;
+      document.body.appendChild(svEl);
+      const closeSv = () => svEl.classList.remove('show');
+      svEl.addEventListener('pointerdown', e => { if (e.target === svEl) closeSv(); });
+      svEl.querySelector('.sv-x').addEventListener('click', closeSv);
+      svEl.querySelector('.sv-add').addEventListener('submit', e => {
+        e.preventDefault(); const inp = svEl.querySelector('.sv-name');
+        sv.unshift({ id: Date.now(), name: inp.value.trim() || fmt(currentJD), jd: currentJD }); svStore(); svList(); inp.value = ''; svCur();
+      });
+      svEl.querySelector('.sv-list').addEventListener('click', e => {
+        const row = e.target.closest('.sv-it'); if (!row) return; const m = sv[+row.dataset.i]; if (!m) return;
+        if (e.target.closest('.sv-rm')){ sv.splice(+row.dataset.i, 1); svStore(); svList(); }
+        else if (e.target.closest('.sv-ed')){ const nn = prompt('Rename', m.name); if (nn && nn.trim()){ m.name = nn.trim().slice(0, 40); svStore(); svList(); } }
+        else { fastJump(m.jd); refreshAll(); paint(); closeSv(); }
+      });
+    }
+    svCur(); svList(); svEl.classList.add('show');
+    if (focusName) setTimeout(() => svEl.querySelector('.sv-name').focus(), 60);
+  }
+  function svCur(){ svEl.querySelector('.sv-cur').textContent = 'Now showing: ' + fmt(currentJD); svEl.querySelector('.sv-name').placeholder = fmt(currentJD); }
+  document.addEventListener('click', e => {
+    if (e.target.closest('#tmSave')) svOpen(true); else if (e.target.closest('#tmSaved')) svOpen(false);
+  });
+  setTimeout(svStore, 0);
   // ---- timeline: drag to scrub, zoom ranges, end dates ----
   const track = $('tlTrack'), wrap = track && track.parentNode, ctl = document.querySelector('.timeline-controls');
   const ZOOM = { '1M':[-10,20], '1Y':[-30,365], '10Y':[-365,3287], '100Y':[-3652,32870] };

@@ -108,7 +108,7 @@
       <input type="range" id="tmYear" min="${Y_MIN}" max="${Y_MAX}" step="1" aria-label="Year">
       <div class="tm-ticks" id="tmTicks"></div>
       <button type="button" class="tm-wide" id="tmWide"></button>
-      <div class="tm-q"><button type="button" class="now" id="tmNow">Now</button><button type="button" class="birth" id="tmBirth" hidden>✦ Birth moment</button><button type="button" id="tmY0">1 Jan this year</button><button type="button" id="tmMid">Midnight</button></div>
+      <div class="tm-q"><button type="button" class="now" id="tmNow">Now</button><button type="button" class="birth" id="tmBirth" hidden>✦ Birth moment</button><button type="button" class="sv" id="tmSave">★ Save moment</button><button type="button" class="svl" id="tmSaved">Saved <em id="tmSvN">0</em></button><button type="button" id="tmY0">1 Jan this year</button><button type="button" id="tmMid">Midnight</button></div>
       <form class="tm-type" id="tmForm"><input id="tmIn" type="text" inputmode="text" autocomplete="off" placeholder="Or type: 15 Aug 1998 10:30, 1850, 14 Mar 500 BC"><button class="tm-go" type="submit">Go</button></form>
       <button type="button" class="tm-done" id="tmDone">Done</button>
     </div>`;
@@ -177,6 +177,46 @@
     if (e.target.closest('#tlJumpToggle')){ e.preventDefault(); e.stopImmediatePropagation(); open(); }
     else if (e.target.closest('.hud-datetime')) open();
   }, true);
+  // ---- saved moments: a small popup on top of the picker; each entry keeps the exact date AND time ----
+  const SV_KEY = 'vedic3d_saved_moments_v1'; let sv = [], svEl;
+  try { sv = JSON.parse(localStorage.getItem(SV_KEY) || '[]'); if (!Array.isArray(sv)) sv = []; } catch (e) { sv = []; }
+  const svStore = () => { try { localStorage.setItem(SV_KEY, JSON.stringify(sv)); } catch (e) {} const n = $('tmSvN'); if (n) n.textContent = sv.length; };
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const fmt = jd => { const p = fromJD(jd); return `${pad(p.d)} ${MON[p.m]} ${yl(p.y)} · ${pad(p.h)}:${pad(p.mi)}`; };
+  function svList(){
+    const box = svEl.querySelector('.sv-list');
+    box.innerHTML = sv.length ? sv.map((m, i) => `<div class="sv-it" data-i="${i}"><button type="button" class="sv-go"><b>${esc(m.name)}</b><span>${fmt(m.jd)}</span></button><button type="button" class="sv-ed" aria-label="Rename">✎</button><button type="button" class="sv-rm" aria-label="Delete">✕</button></div>`).join('')
+      : '<div class="sv-empty">Nothing saved yet. Set a date and time, then tap “Save moment”.</div>';
+  }
+  function svOpen(focusName){
+    if (!svEl){
+      svEl = document.createElement('div'); svEl.className = 'sv-ov';
+      svEl.innerHTML = `<div class="sv-card" role="dialog" aria-label="Saved moments"><div class="sv-top"><b>Saved moments</b><button type="button" class="tm-x sv-x" aria-label="Close">✕</button></div>
+        <form class="sv-add"><input class="sv-name" type="text" maxlength="40" autocomplete="off" aria-label="Name"><button class="tm-go" type="submit">Save</button></form>
+        <div class="sv-cur"></div><div class="sv-list"></div></div>`;
+      document.body.appendChild(svEl);
+      const closeSv = () => svEl.classList.remove('show');
+      svEl.addEventListener('pointerdown', e => { if (e.target === svEl) closeSv(); });
+      svEl.querySelector('.sv-x').addEventListener('click', closeSv);
+      svEl.querySelector('.sv-add').addEventListener('submit', e => {
+        e.preventDefault(); const inp = svEl.querySelector('.sv-name');
+        sv.unshift({ id: Date.now(), name: inp.value.trim() || fmt(currentJD), jd: currentJD }); svStore(); svList(); inp.value = ''; svCur();
+      });
+      svEl.querySelector('.sv-list').addEventListener('click', e => {
+        const row = e.target.closest('.sv-it'); if (!row) return; const m = sv[+row.dataset.i]; if (!m) return;
+        if (e.target.closest('.sv-rm')){ sv.splice(+row.dataset.i, 1); svStore(); svList(); }
+        else if (e.target.closest('.sv-ed')){ const nn = prompt('Rename', m.name); if (nn && nn.trim()){ m.name = nn.trim().slice(0, 40); svStore(); svList(); } }
+        else { fastJump(m.jd); refreshAll(); paint(); closeSv(); }
+      });
+    }
+    svCur(); svList(); svEl.classList.add('show');
+    if (focusName) setTimeout(() => svEl.querySelector('.sv-name').focus(), 60);
+  }
+  function svCur(){ svEl.querySelector('.sv-cur').textContent = 'Now showing: ' + fmt(currentJD); svEl.querySelector('.sv-name').placeholder = fmt(currentJD); }
+  document.addEventListener('click', e => {
+    if (e.target.closest('#tmSave')) svOpen(true); else if (e.target.closest('#tmSaved')) svOpen(false);
+  });
+  setTimeout(svStore, 0);
   // ---- timeline: drag to scrub, zoom ranges, end dates ----
   const track = $('tlTrack'), wrap = track && track.parentNode, ctl = document.querySelector('.timeline-controls');
   const ZOOM = { '1M':[-10,20], '1Y':[-30,365], '10Y':[-365,3287], '100Y':[-3652,32870] };
