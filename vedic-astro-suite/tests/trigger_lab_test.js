@@ -6,6 +6,7 @@ let fail=0;const ck=(n,c)=>{console.log(c?'ok  ':'FAIL',n);if(!c)fail++;};
 vm.runInContext("var ch=computeChart('2007-11-11','02:23',16.7747,78.1315,5.5)",ctx);
 const from=Date.UTC(2026,10,3),to=Date.UTC(2027,1,3);ctx.from=from;ctx.to=to;
 const per=vm.runInContext("TL.periods(ch.dashaData.mahadashas,from,to)",ctx);
+ck('six-level leaves cover the range contiguously',per.length>900&&per.every((p,i)=>p.lords.length===6&&(i===0||Math.abs(p.start-per[i-1].end)<50)));
 ck('reference moment chain starts Mercury,Mercury,Sun,Rahu',(()=>{const t=Date.UTC(2026,10,3,21,8);const p=per.find(x=>x.start<=t&&t<x.end);return p&&p.lords.slice(0,4).join()==='Mercury,Mercury,Sun,Rahu'})());
 const M=(l,m)=>JSON.stringify(vm.runInContext("TL.match("+JSON.stringify(l)+",'"+m+"')",ctx));
 ck('single: one repeater pairs with every other planet',M(['Mercury','Mercury','Sun','Rahu','Venus','Moon'],'single')===JSON.stringify([['Mercury','Sun'],['Mercury','Rahu'],['Mercury','Venus'],['Mercury','Moon']]));
