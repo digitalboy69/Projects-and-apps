@@ -151,6 +151,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Dasha layer (S3): `js/91-dasha-reading.js` (`VDA`) = timeline of every Mahadasha (theme/feelsLike per planet + arena + ruled houses + VMF lines + tone from functional nature/dignity/house + self-check), Antardashas via the app's `calculateAntardashas`, `upcoming(chart,5)`, `current(chart)`, `pair(md,ad)`. Deep reading tab: Life timeline cards + next-5-years rows; Now tab: running MD+AD (old generic VDB dasha text superseded); report: LIFE TIMELINE. Charts older than the 120-year cycle have no running period (handled). Test `tests/dasha_reading_test.py`.
 - AI session system: start every session with `docs/AI_START_HERE.md` (session loop, `tools/ai/session.sh start|check|test|ship`, token hygiene, lessons). The four reading databases (js/87, 89, 90, 91) are GENERATED from `tools/reading_gen/*.py`: edit the tables there and run `regen.sh`, never the JS. `.gitattributes` auto-merges STRUCTURE.md/AI_GUIDE.md (union) and dist/symbols.idx (ours, then build.py).
 - Navigation plan: see `docs/APP_NAVIGATION_PLAN.md` (audit: 32 tools / 26 panels, Home = 4 screens, 17 tools with no bottom tab; target hubs Start / Chart / Time / Strength / Tools, one `TOOLS` registry, 9 sessions N1-N9). Nothing built yet; read AI_START_HERE first.
+- Astro features plan: `docs/ASTRO_FEATURES_PLAN.md` (steps A0-A14: avasthas, Vimshopaka, upagrahas, Ashtakavarga extras, synastry, Muhurta, remedies...). Work on branch `feature/astro-roadmap`, first unchecked step, tick it, log it; never push main/Root without the owner's word.
 - Open ideas: Kama saham (needs verifiable formula), PDF client report, remedies, karma, karmarel, link Fate Meter/Sahams into Chart Reading, outer planets in matchmaking/transit-timing tabs.
 - Vimshottari now has 6 levels (Deha added: js/10 `dehaDasha`/`allDehaDashas`, js/36 DX_LEVELS, js/37, js/38, js/43, js/93). Ephemeris uses delta-T (js/03 `deltaTSeconds`, switch `EPH_DELTA_T`). Verified against Swiss Ephemeris: `node tests/ephemeris_vs_swiss_test.js`. Known: Lahiri here follows the official ICRC value (23 15 00.658 on 21 Mar 1956), about 15" above the Swiss Ephemeris Lahiri.
 - Dasha Lens (studio tab, js/99-dasha-lens.js, css/44) + 3D jump (js/99-jump-3d-bridge.js -> apps/sky3d/js/51-jump-from-rectification.js via localStorage 'vax_jump_3d' + the shell's 'vedic-open-3d'). Test: `node tests/dasha_lens_test.js`.
@@ -189,7 +190,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-07 - 1868 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-08 - 1868 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
