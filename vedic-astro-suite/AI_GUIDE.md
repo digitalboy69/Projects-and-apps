@@ -189,13 +189,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-07 - 1897 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-08 - 1909 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 210 files, 31966 lines, 2621 KB
+**birth-chart** - 212 files, 32236 lines, 2654 KB
 ```
-index.html                                         634 lines   36 KB
+index.html                                         636 lines   36 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -240,7 +240,9 @@ js/129-trigger-lab.js                              194 lines   17 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/130-astro-atlas-data.js                         136 lines   20 KB
 js/130-chakra-explorer.js                          441 lines   44 KB
-js/131-astro-atlas.js                              184 lines   24 KB
+js/131-astro-atlas.js                              185 lines   24 KB
+js/132-astro-atlas-more.js                         145 lines   20 KB
+js/133-astro-atlas-more.js                          92 lines    8 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/16-rectification-engine.js                       36 lines    2 KB
@@ -403,7 +405,7 @@ css/63-meaning-lab.css                              21 lines    2 KB
 css/64-trigger-lab.css                              27 lines    4 KB
 css/65-profile-menu.css                             30 lines    3 KB
 css/66-feature-polish.css                          121 lines   12 KB
-css/67-astro-atlas.css                             130 lines   18 KB
+css/67-astro-atlas.css                             160 lines   23 KB
 css/67-chakra-explorer.css                         141 lines   13 KB
 ```
 
@@ -600,3 +602,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - APK-only 'Update app' (mobile/src/native-bridge.js): sheet with Update now (download newest published bundle + restart) and Build latest then update (workflow_dispatch with a token kept on the phone, polls run, then updates). Tile in birth-chart profile menu, floating button on launcher. Injected into app pages only by mobile/scripts/prepare-web.js, never on the live site.
 - Trigger Lab reworked (js/129): six Dasha levels (Maha to Deha); Single = one planet repeats anywhere, Double = two planets repeat anywhere; planets found automatically (no picking), every pair checked; Dasha periods and transit rules intersected; time-sliced scanAsync with progress; tests/trigger_lab_test.js updated (15 checks).
 - Astro Atlas panel (panel-atlas; birth-chart js/130 data + js/131 UI + css/67): 9 tabs (Week wheel/horas, Planets, Signs, Body/Kala Purusha, Houses, Stars, Time, Rules, Charts); pure reference, no chart needed; test with a seeded profile at 390px.
+- Astro Atlas grew to 15 tabs: js/132 (data ATLAS_MORE) + js/133 (Yogas, Remedies, Placements, Match, Muhurta, Learn) hook in through window.ATL_UI.

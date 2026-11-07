@@ -180,6 +180,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/122-today-for-you.js` — Today for You (global TDY, panel-today, Home > Time & Cycles): Chandrabala, Tarabala, Gochara from the birth Moon, good Choghadiya slots vs Rahu Kalam, any date
 - `apps/birth-chart/js/123-prashna.js` — Prashna (horary) chart (global PRN, panel-prashna, Home > Time & Cycles): chart cast for a question moment, topic→house, lagna lord / matter lord strength, Ithasala/Easarapha (Tajika orbs), Moon checks, North/South chart, copy reading
 - `apps/birth-chart/js/124-ayanamsa-choice.js` — ayanamsa selector on the intake form (Lahiri default, Raman, KP); saves choice, re-draws chart. Engine offsets live in js/03 and sky3d js/01 (AYAN_MODES, ayanKey, ayanName)
+- `apps/birth-chart/js/133-astro-atlas-more.js` — Astro Atlas extra tabs: Yogas, Remedies, Placements, Match, Muhurta, Learn (adds itself via window.ATL_UI)
+- `apps/birth-chart/js/132-astro-atlas-more.js` — Astro Atlas extra data (global ATLAS_MORE: yogas, remedies, planet in house, ashtakoota, muhurta, glossary)
 - `apps/birth-chart/js/131-astro-atlas.js` — Astro Atlas panel UI (panel-atlas): Week, Planets, Signs, Body, Houses, Stars, Time, Rules, Charts
 - `apps/birth-chart/js/130-astro-atlas-data.js` — Astro Atlas reference data (global ATLAS)
 - `apps/birth-chart/js/129-trigger-lab.js` — Trigger Lab (Home > Analysis + left quick menu): Single/Double Dasha-repeat pattern + sign / lord's-sign / aspect / nakshatra transit rules, raw activated houses

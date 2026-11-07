@@ -153,6 +153,7 @@ const ATL = (function(){
 
   /* ---------- shell ---------- */
   const BODY = { week:weekHtml, planets:planetsHtml, signs:signsHtml, body:bodyTab, houses:housesHtml, stars:starsHtml, time:timeHtml, rules:rulesHtml, charts:chartsHtml };
+  window.ATL_UI = { A, S, TABS, BODY, esc, col, gl, pill, kv, sec, upd: (id, fn) => upd(id, fn), paint: () => paint() };
   function wheelCenter(){ const d = A.DAYS[S.day], a = document.getElementById('atWm1'), b = document.getElementById('atWm2'); if (a){ a.textContent = d.en; b.textContent = gl(d.lord) + ' ' + d.lord; } }
   function paint(){
     const host = document.getElementById('atBody'); if (!host) return;
