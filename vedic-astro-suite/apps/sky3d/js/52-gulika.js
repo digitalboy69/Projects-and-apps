@@ -48,5 +48,5 @@ const GK = (function(){
     if (!p) return null; const j = computeNatalAscendant(p).jd; let v = null;
     try { v = at(j, p.lat, p.lon, p.tz); } catch(e){ console.warn('gulika natal', e); } return v;
   }
-  return { at, live, natal };
+  return { at, live, natal, riseSet };
 })();

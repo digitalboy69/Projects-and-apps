@@ -325,6 +325,10 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/52-gulika.js` — Gulika (Mandi) for 3D Sky (global GK): same method as the Birth Chart; marker on the zodiac ring, natal ring, dashboard card
 - `apps/sky3d/js/53-exact-aspects.js` — Aspects tab: when a planet's aspect (Moon 7; Mars 4/7/8; Jupiter/Rahu/Ketu 5/7/9; Saturn 3/7/10; plus conjunction) lands on the exact degree of a natal planet/Lagna (if a profile is active), a live-sky planet, or a custom degree; exact moments, orb entry/exit and duration
 - `apps/sky3d/js/54-degree-houses.js` — Houses tab + 3D layer: degree-based houses from the exact rising degree (Sripati / Equal), wheel, planets that change house, 3D house lines and tags
+- `apps/sky3d/js/55-live-shadbala-engine.js` — copy of the Birth Chart Shadbala engine (SHB_ENGINE), kept identical by tests/sky3d_shadbala_test.js
+- `apps/sky3d/js/56-live-shadbala.js` — live Shadbala for the 7 planets at the 3D time and viewer place; adds the Shadbala block and badge to the planet window (Strength tab)
+- `apps/sky3d/css/29-live-shadbala.css` — styles for the live Shadbala block (shb- prefix); planet-window tabs wrap instead of scrolling
+- `tests/sky3d_shadbala_test.js` — engine parity with the Birth Chart plus live adapter checks
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
 - `apps/sky3d/css/03-3d-viewport.css` — 3D viewport

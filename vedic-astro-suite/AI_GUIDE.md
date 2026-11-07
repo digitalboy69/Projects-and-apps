@@ -189,7 +189,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-08 - 1909 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-08 - 1967 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -424,9 +424,9 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 84 files, 7980 lines, 489 KB
+**sky3d** - 87 files, 8446 lines, 520 KB
 ```
-index.html                                         509 lines   32 KB
+index.html                                         512 lines   32 KB
 js/01-astro-engine.js                              163 lines   10 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -481,6 +481,8 @@ js/51-jump-from-rectification.js                    33 lines    2 KB
 js/52-gulika.js                                     53 lines    4 KB
 js/53-exact-aspects.js                             210 lines   13 KB
 js/54-degree-houses.js                             140 lines   12 KB
+js/55-live-shadbala-engine.js                      330 lines   16 KB
+js/56-live-shadbala.js                             101 lines   10 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -510,6 +512,7 @@ css/25-solid-panels.css                             32 lines    4 KB
 css/26-exact-aspects.css                            65 lines    6 KB
 css/27-panel-unify.css                              67 lines    5 KB
 css/28-degree-houses.css                            43 lines    5 KB
+css/29-live-shadbala.css                            32 lines    5 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -603,3 +606,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Trigger Lab reworked (js/129): six Dasha levels (Maha to Deha); Single = one planet repeats anywhere, Double = two planets repeat anywhere; planets found automatically (no picking), every pair checked; Dasha periods and transit rules intersected; time-sliced scanAsync with progress; tests/trigger_lab_test.js updated (15 checks).
 - Astro Atlas panel (panel-atlas; birth-chart js/130 data + js/131 UI + css/67): 9 tabs (Week wheel/horas, Planets, Signs, Body/Kala Purusha, Houses, Stars, Time, Rules, Charts); pure reference, no chart needed; test with a seeded profile at 390px.
 - Astro Atlas grew to 15 tabs: js/132 (data ATLAS_MORE) + js/133 (Yogas, Remedies, Placements, Match, Muhurta, Learn) hook in through window.ATL_UI.
+- 3D planet window: live Shadbala (Strength tab + badge) via sky3d js/55 (engine copy) + js/56 (adapter/UI) + css/29; uses getLiveLoc(); test tests/sky3d_shadbala_test.js.

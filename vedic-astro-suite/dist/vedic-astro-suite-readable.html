@@ -2271,6 +2271,39 @@ html[data-app] .btn-secondary-block:hover{border-color:var(--u-gold);background:
 @media(prefers-reduced-motion:reduce){.dh-row{animation:none}}
 </style>
 <style>
+/* Live Shadbala block in the planet window (Strength tab). Colours follow the planet through --pc. */
+.pdx-tabs{flex-wrap:wrap;overflow:visible}                       /* all tabs visible, no sideways swipe */
+.shb{margin:0 0 6px}.shb-hd{display:flex;align-items:center;justify-content:space-between;gap:10px}.shb-hd .pdx-h{margin:2px 0 10px}
+.shb-live{display:inline-flex;align-items:center;gap:6px;font:600 11px var(--font-mono);letter-spacing:.08em;color:#6EE7B7;margin-bottom:8px}
+.shb-live i{width:7px;height:7px;border-radius:50%;background:#6EE7B7;box-shadow:0 0 0 0 rgba(110,231,183,.6);animation:shbPulse 1.8s infinite}.shb-live.off{color:var(--text-dim);letter-spacing:0}
+@keyframes shbPulse{70%{box-shadow:0 0 0 8px rgba(110,231,183,0)}100%{box-shadow:0 0 0 0 rgba(110,231,183,0)}}
+.shb-hero{display:grid;grid-template-columns:132px 1fr;gap:16px;align-items:center;padding:16px;border-radius:24px;border:1px solid var(--pca);background:radial-gradient(120% 120% at 0% 0%,var(--pca),rgba(10,15,26,.9) 65%)}
+.shb-ringw{position:relative;width:132px;height:132px}.shb-ring{width:100%;height:100%;display:block;filter:drop-shadow(0 0 14px var(--pca))}
+.shb-trk{fill:none;stroke:rgba(255,255,255,.09);stroke-width:10}.shb-arc{fill:none;stroke-width:10;stroke-linecap:round;stroke-dashoffset:var(--full);transition:stroke-dashoffset 1.3s cubic-bezier(.2,.8,.2,1) .15s}
+.pdx-root.go .shb-arc{stroke-dashoffset:var(--off)}.shb-tick{fill:#fff;opacity:.7}
+.shb-mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center}.shb-mid b{font:700 28px/1 var(--font-mono);color:#fff}.shb-mid small{font-size:11px;color:var(--text-dim);margin-top:3px}
+.shb-verdict{display:inline-block;padding:5px 13px;border-radius:99px;font-weight:700;font-size:13px;border:1px solid}.shb-verdict.good{color:#6EE7B7;border-color:rgba(110,231,183,.5);background:rgba(110,231,183,.1)}.shb-verdict.bad{color:#FFB36B;border-color:rgba(255,179,107,.5);background:rgba(255,179,107,.1)}
+.shb-pct{margin:9px 0 8px;font-size:14px;color:var(--text)}.shb-meta{display:flex;flex-wrap:wrap;gap:6px}.shb-meta span{font-size:11.5px;padding:4px 9px;border-radius:99px;background:rgba(255,255,255,.07);color:var(--text-dim)}
+.shb-six{display:grid;gap:8px;margin-top:14px}.shb-row{display:grid;grid-template-columns:minmax(120px,1.2fr) 1fr 46px;gap:10px;align-items:center;padding:10px 12px;border-radius:15px;background:linear-gradient(150deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08)}
+.shb-n b{display:block;font-size:14px}.shb-n small{display:block;font-size:11px;line-height:1.3;color:var(--text-dim);margin-top:1px}
+.shb-bar{height:9px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}.shb-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--pc),#fff8);transition:width 1s cubic-bezier(.2,.8,.2,1) .2s}.shb-bar i.neg{background:linear-gradient(90deg,#FF6B4A,#FFB36B)}
+.pdx-root.go .shb-bar i{width:var(--w)}.shb-v{font:700 14px var(--font-mono);text-align:right}
+.shb-dets{display:grid;gap:8px;margin-top:10px}.shb-det{border-radius:15px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);overflow:hidden}
+.shb-det summary{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-weight:600;font-size:13.5px;cursor:pointer;list-style:none}.shb-det summary::-webkit-details-marker{display:none}
+.shb-det summary:after{content:"+";margin-left:10px;color:var(--text-dim);font-size:18px;line-height:1}.shb-det[open] summary:after{content:"\2212"}.shb-det summary b{margin-left:auto;font-family:var(--font-mono)}
+.shb-dr{display:flex;justify-content:space-between;padding:8px 14px;border-top:1px solid rgba(255,255,255,.06);font-size:12.5px;color:var(--text-dim)}.shb-dr b{color:var(--text);font-family:var(--font-mono)}
+.shb-prs{display:grid;gap:6px}.shb-pr{display:grid;grid-template-columns:24px 1fr 42px;gap:10px;align-items:center;padding:8px 12px;border-radius:13px;background:rgba(255,255,255,.03);border:1px solid transparent;color:var(--text);text-align:left}
+.shb-pr.me{border-color:var(--c);background:rgba(255,255,255,.07)}.shb-pr span{font-size:18px;color:var(--c)}.shb-pr i{position:relative;height:8px;border-radius:99px;background:rgba(255,255,255,.08)}
+.shb-pr u{position:absolute;left:0;top:0;bottom:0;width:var(--w);border-radius:99px;background:var(--c)}.shb-pr em{position:absolute;top:-3px;bottom:-3px;width:2px;background:#fff;opacity:.55}.shb-pr b{font:700 12.5px var(--font-mono);text-align:right}
+.shb-foot{display:grid;gap:6px;margin-top:14px;font-size:12px;color:var(--text-dim)}.shb-foot b{color:var(--text)}
+.shb-chg{margin-left:6px;padding:4px 10px;border-radius:99px;font:600 11.5px system-ui;color:var(--pc);border:1px solid var(--pc);background:transparent}
+.shb-note{margin:12px 2px 0;font-size:11.5px;line-height:1.55;color:var(--text-faint)}
+.shb-badge{cursor:pointer;font-family:inherit}
+@media(max-width:380px){.shb-hero{grid-template-columns:1fr;justify-items:center;text-align:center}.shb-meta{justify-content:center}.shb-row{grid-template-columns:1fr 46px}.shb-bar{grid-column:1/-1;order:3}}
+@media(prefers-reduced-motion:reduce){.shb-arc,.shb-bar i{transition:none}.shb-live i{animation:none}}
+.shb-live{white-space:nowrap}.shb-hd .pdx-h{white-space:nowrap}
+</style>
+<style>
 /* Day / Month / Year + AD/BC birth date fields (js/37) */
 .dob-row{display:grid;grid-template-columns:1fr 1.3fr 1.5fr .9fr;gap:6px}
 .dob-row input,.dob-row select{min-width:0;width:100%}
@@ -8556,7 +8589,7 @@ const GK = (function(){
     if (!p) return null; const j = computeNatalAscendant(p).jd; let v = null;
     try { v = at(j, p.lat, p.lon, p.tz); } catch(e){ console.warn('gulika natal', e); } return v;
   }
-  return { at, live, natal };
+  return { at, live, natal, riseSet };
 })();
 <\/script>
 <script>
@@ -8909,6 +8942,439 @@ if (tb) tb.addEventListener('click', () => { buildTab(); render(); });
 const lt = $('L_dhouses'); if (lt) lt.addEventListener('change', () => { update3D(true); if (typeof markDirty === 'function') markDirty(); });
 document.addEventListener('click', e => { if (e.target.closest && e.target.closest('#natalCardWrap')) setTimeout(render, 50); });
 buildTab();
+})();
+<\/script>
+<script>
+/* ============================================================================
+   LIVE SHADBALA for the 3D app: the six-fold planetary strength of the 7 planets (Sun to Saturn) at the 3D time and the viewer's place.
+   The engine below is a verbatim copy of apps/birth-chart/js/14-shadbala-engine.js (kept inside one function so no name clashes); change both together.
+   tests/sky3d_shadbala_test.js feeds both copies the same input and checks the answers are identical.
+   Small helpers the engine needs (varga signs, dignity status, exaltation) are copied from the Birth Chart too.
+   API: SHB_ENGINE.computeShadbala(...) (same arguments as the Birth Chart). The live adapter and the planet-window block are in js/56-live-shadbala.js.
+   ============================================================================ */
+const SHB_ENGINE = (function(){
+  const getDegInSign = lon => normDeg(lon) % 30;
+  function obliquityOfEcliptic(jd){ const T = (jd-J2000)/36525.0; return 23.439291 - 0.0130042*T - 0.00000016*T*T + 0.000000504*T*T*T; }
+  function angDiffLocal(a,b){ let d = normDeg(a-b); if (d>180) d -= 360; return Math.abs(d); }
+  const EXALTATION = { Sun:{sign:0,deg:10}, Moon:{sign:1,deg:3}, Mars:{sign:9,deg:28}, Mercury:{sign:5,deg:15}, Jupiter:{sign:3,deg:5}, Venus:{sign:11,deg:27}, Saturn:{sign:6,deg:20}, Rahu:{sign:1,deg:null}, Ketu:{sign:7,deg:null} };
+  const getDebilitation = name => ({ sign:(EXALTATION[name].sign+6)%12, deg:EXALTATION[name].deg });
+  const MOOLATRIKONA = { Sun:{sign:4,from:0,to:20}, Moon:{sign:1,from:3,to:30}, Mars:{sign:0,from:0,to:12}, Mercury:{sign:5,from:15,to:20}, Jupiter:{sign:8,from:0,to:10}, Venus:{sign:6,from:0,to:15}, Saturn:{sign:10,from:0,to:20} };
+  const OWN_SIGNS = { Sun:[4], Moon:[3], Mars:[0,7], Mercury:[2,5], Jupiter:[8,11], Venus:[1,6], Saturn:[9,10], Rahu:[], Ketu:[] };
+  const NATURAL_RELATIONS = {
+    Sun:{friends:["Moon","Mars","Jupiter"],enemies:["Venus","Saturn"],neutrals:["Mercury"]}, Moon:{friends:["Sun","Mercury"],enemies:[],neutrals:["Mars","Jupiter","Venus","Saturn"]},
+    Mars:{friends:["Sun","Moon","Jupiter"],enemies:["Mercury"],neutrals:["Venus","Saturn"]}, Mercury:{friends:["Sun","Venus"],enemies:["Moon"],neutrals:["Mars","Jupiter","Saturn"]},
+    Jupiter:{friends:["Sun","Moon","Mars"],enemies:["Mercury","Venus"],neutrals:["Saturn"]}, Venus:{friends:["Mercury","Saturn"],enemies:["Sun","Moon"],neutrals:["Mars","Jupiter"]},
+    Saturn:{friends:["Mercury","Venus"],enemies:["Sun","Moon","Mars"],neutrals:["Jupiter"]} };
+  function getDignity(name, signIdx, degInSign){
+    const ex = EXALTATION[name], deb = getDebilitation(name);
+    if (signIdx===ex.sign) return { status:"Exalted" };
+    if (signIdx===deb.sign) return { status:"Debilitated" };
+    const mt = MOOLATRIKONA[name];
+    if (mt && signIdx===mt.sign && degInSign>=mt.from && degInSign<=mt.to) return { status:"Moolatrikona" };
+    if ((OWN_SIGNS[name] && OWN_SIGNS[name].includes(signIdx)) || SIGNS[signIdx].lord===name) return { status:"OwnSign" };
+    const rel = NATURAL_RELATIONS[name], lord = SIGNS[signIdx].lord;
+    if (rel){ if (rel.friends.includes(lord)) return { status:"Friend" }; if (rel.enemies.includes(lord)) return { status:"Enemy" }; }
+    return { status:"Neutral" };
+  }
+  function calcVarga(varga, lon){
+    const signIdx = getSignIndex(lon), degInSign = getDegInSign(lon), odd = signIdx % 2 === 0;
+    switch(varga){
+      case "D1": return signIdx;
+      case "D2": { if (odd) return degInSign<15 ? 4 : 3; return degInSign<15 ? 3 : 4; }
+      case "D3": { const part = Math.floor(degInSign/10); if (part===0) return signIdx; if (part===1) return (signIdx+4)%12; return (signIdx+8)%12; }
+      case "D7": { const part = Math.floor(degInSign/(30/7)); const base = odd?signIdx:(signIdx+6)%12; return (base+part)%12; }
+      case "D9": { const part = Math.floor(degInSign/(30/9)), m = signIdx % 3; const start = m===0 ? signIdx : m===1 ? (signIdx+8)%12 : (signIdx+4)%12; return (start+part)%12; }
+      case "D12": { const part = Math.floor(degInSign/2.5); return (signIdx+part)%12; }
+      case "D30": {
+        if (odd){ if (degInSign<5) return 0; if (degInSign<10) return 10; if (degInSign<18) return 8; if (degInSign<25) return 2; return 6; }
+        if (degInSign<5) return 1; if (degInSign<12) return 5; if (degInSign<20) return 11; if (degInSign<25) return 9; return 7;
+      }
+    }
+    return signIdx;
+  }
+  /* ---- verbatim engine ---- */
+
+const BALA_PLANETS = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"];
+const NAISARGIKA_BALA = { Sun: 60, Moon: 51.43, Venus: 42.86, Jupiter: 34.29, Mercury: 25.71, Mars: 17.14, Saturn: 8.57 };
+function getNaisargikaBala(name){ return NAISARGIKA_BALA[name]; }
+const DIG_BALA_HOME_HOUSE = { Sun:10, Mars:10, Moon:4, Venus:4, Mercury:1, Jupiter:1, Saturn:7 };
+function getDigBala(name, house){
+  const homeHouse = DIG_BALA_HOME_HOUSE[name];
+  let dist = Math.abs(house - homeHouse);
+  if (dist > 6) dist = 12 - dist;
+  return Math.max(0, 60 * (1 - dist/6));
+}
+function getUcchaBala(exaltSignIdx, exaltDeg, planetSignIdx, planetDegInSign){
+  const exaltAbsLon = exaltSignIdx*30 + exaltDeg;
+  const planetAbsLon = planetSignIdx*30 + planetDegInSign;
+  const debilAbsLon = normDeg(exaltAbsLon + 180);
+  let distFromDebil = normDeg(planetAbsLon - debilAbsLon);
+  if (distFromDebil > 180) distFromDebil = 360 - distFromDebil;
+  return (distFromDebil/180) * 60;
+}
+const ODD_SIGN_STRONG = ["Sun","Mars","Jupiter"];
+const EVEN_SIGN_STRONG = ["Moon","Venus"];
+function isOddSign(signIdx){ return signIdx % 2 === 0; }
+function getOjaYugmaBala(name, rashiSignIdx, navamsaSignIdx){
+  if (name==="Mercury" || name==="Saturn") return 30;
+  let bala = 0;
+  const rashiOdd = isOddSign(rashiSignIdx);
+  const navamsaOdd = isOddSign(navamsaSignIdx);
+  if (ODD_SIGN_STRONG.includes(name)){ bala += rashiOdd ? 15 : 0; bala += navamsaOdd ? 15 : 0; } 
+  else if (EVEN_SIGN_STRONG.includes(name)){ bala += !rashiOdd ? 15 : 0; bala += !navamsaOdd ? 15 : 0; }
+  return bala;
+}
+function getKendradiBala(house){
+  const kendra = [1,4,7,10];
+  const panapara = [2,5,8,11];
+  if (kendra.includes(house)) return 60;
+  if (panapara.includes(house)) return 30;
+  return 15;
+}
+const MALE_PLANETS = ["Sun","Mars","Jupiter"];
+const FEMALE_PLANETS = ["Moon","Venus"];
+const NEUTER_PLANETS = ["Mercury","Saturn"];
+function getDrekkanaBala(name, degInSign){
+  const drekkanaIdx = Math.floor(degInSign/10);
+  if (drekkanaIdx===0 && MALE_PLANETS.includes(name)) return 15;
+  if (drekkanaIdx===1 && FEMALE_PLANETS.includes(name)) return 15;
+  if (drekkanaIdx===2 && NEUTER_PLANETS.includes(name)) return 15;
+  return 0;
+}
+const VARGA_DIGNITY_POINTS = { Moolatrikona: 45, OwnSign: 30, GreatFriend: 22.5, Friend: 15, Neutral: 7.5, Enemy: 3.75, GreatEnemy: 1.875 };
+const SAPTAVARGA_KEYS = ["D1","D2","D3","D7","D9","D12","D30"];
+function dignityStatusToVargaPoints(status){
+  switch(status){
+    case "Exalted": return VARGA_DIGNITY_POINTS.Moolatrikona;
+    case "Moolatrikona": return VARGA_DIGNITY_POINTS.Moolatrikona;
+    case "OwnSign": return VARGA_DIGNITY_POINTS.OwnSign;
+    case "Friend": return VARGA_DIGNITY_POINTS.Friend;
+    case "Neutral": return VARGA_DIGNITY_POINTS.Neutral;
+    case "Enemy": return VARGA_DIGNITY_POINTS.Enemy;
+    case "Debilitated": return VARGA_DIGNITY_POINTS.GreatEnemy;
+    default: return VARGA_DIGNITY_POINTS.Neutral;
+  }
+}
+function getSaptavargajaBala(vargaDignityStatuses){
+  return vargaDignityStatuses.reduce((sum, status) => sum + dignityStatusToVargaPoints(status), 0);
+}
+function getNathonnataBala(name, hoursFromLocalMidnight){
+  if (name === "Mercury") return 60;
+  const DIURNAL = ["Sun","Jupiter","Venus"];
+  let peakHour = DIURNAL.includes(name) ? 12 : 0;
+  let dist = Math.abs(hoursFromLocalMidnight - peakHour);
+  if (dist > 12) dist = 24 - dist;
+  return 60 * (1 - dist/12);
+}
+function getPakshaBala(name, moonLon, sunLon){
+  let sep = normDeg(moonLon - sunLon);
+  const BENEFICS = ["Moon","Mercury","Jupiter","Venus"];
+  const MALEFICS = ["Sun","Mars","Saturn"];
+  let benefStrength = sep/180 * 60;
+  if (sep > 180) benefStrength = (360-sep)/180 * 60;
+  if (BENEFICS.includes(name)) return benefStrength;
+  if (MALEFICS.includes(name)) return 60 - benefStrength;
+  return 30;
+}
+function getTribhagaBala(name, hourFraction, isDaytime){
+  const third = Math.floor(Math.min(0.9999, hourFraction)*3);
+  if (isDaytime){
+    if (third===0 && name==="Mercury") return 60;
+    if (third===1 && name==="Sun") return 60;
+    if (third===2 && name==="Saturn") return 60;
+  } else {
+    if (third===0 && name==="Moon") return 60;
+    if (third===1 && name==="Venus") return 60;
+    if (third===2 && name==="Mars") return 60;
+  }
+  if (name==="Jupiter") return 60;
+  return 0;
+}
+function getVarshaMasaDinaHoraBala(name, yearLordName, monthLordName, dayLordName, horaLordName){
+  let bala = 0;
+  if (name === yearLordName) bala += 15;
+  if (name === monthLordName) bala += 30;
+  if (name === dayLordName) bala += 45;
+  if (name === horaLordName) bala += 60;
+  return bala;
+}
+
+const KALI_EPOCH_JDN = 588465;
+const WEEKDAY_LORD_BY_INDEX = ["Sun","Moon","Mars","Mercury","Jupiter","Venus","Saturn"];
+function getAhargana(julianDayNumber){ return Math.floor(julianDayNumber) - KALI_EPOCH_JDN; }
+function getWeekdayLordFromAhargana(ahargana){
+  const idx = ((ahargana + 4) % 7 + 7) % 7;
+  return { index: idx, lord: WEEKDAY_LORD_BY_INDEX[idx] };
+}
+function getDinaLord(julianDayNumber){ return getWeekdayLordFromAhargana(getAhargana(julianDayNumber)).lord; }
+function getVarshaLord(yearStartJDN){ return getWeekdayLordFromAhargana(getAhargana(yearStartJDN)).lord; }
+function getMasaLord(monthStartJDN){ return getWeekdayLordFromAhargana(getAhargana(monthStartJDN)).lord; }
+const CHALDEAN_SEQUENCE = ["Sun","Venus","Mercury","Moon","Saturn","Jupiter","Mars"];
+function getHoraLord(weekdayIndex, jdAtBirth, sunriseJD, sunsetJD, nextSunriseJD){
+  const dayLord = WEEKDAY_LORD_BY_INDEX[weekdayIndex];
+  const startSeqIdx = CHALDEAN_SEQUENCE.indexOf(dayLord);
+  let horaIndex;
+  if (jdAtBirth >= sunriseJD && jdAtBirth < sunsetJD){
+    const horaLength = (sunsetJD - sunriseJD) / 12;
+    horaIndex = Math.floor((jdAtBirth - sunriseJD) / horaLength);
+  } else {
+    const horaLength = (nextSunriseJD - sunsetJD) / 12;
+    const nightOffset = jdAtBirth >= sunsetJD ? (jdAtBirth - sunsetJD) : (jdAtBirth + 1 - sunsetJD);
+    horaIndex = 12 + Math.floor(Math.max(0,nightOffset) / horaLength);
+  }
+  return CHALDEAN_SEQUENCE[(startSeqIdx + horaIndex) % 7];
+}
+function getAyanaBala(name, declinationDeg, isNorthern){
+  if (name === "Mercury") return 60;
+  const NORTHERN_STRONG = ["Sun","Mars","Jupiter","Venus"];
+  const obliquity = 23.4333;
+  const prefersNorthern = NORTHERN_STRONG.includes(name);
+  const aligned = (isNorthern && prefersNorthern) || (!isNorthern && !prefersNorthern);
+  const magnitude = Math.min(Math.abs(declinationDeg), obliquity);
+  const bala = aligned ? 30 + (magnitude/obliquity)*30 : 30 - (magnitude/obliquity)*30;
+  return Math.max(0, Math.min(60, bala));
+}
+function getDeclinationDeg(tropicalLongitudeDeg, obliquityDeg){
+  const DEG2RAD = Math.PI/180, RAD2DEG = 180/Math.PI;
+  const sinDecl = Math.sin(obliquityDeg*DEG2RAD) * Math.sin(tropicalLongitudeDeg*DEG2RAD);
+  return Math.asin(sinDecl) * RAD2DEG;
+}
+function getKalaBala(components){
+  const { nathonnata, paksha, tribhaga, vmdh, ayana, yuddha } = components;
+  return nathonnata + paksha + tribhaga + vmdh + ayana + (yuddha||0);
+}
+const MEAN_DAILY_MOTION = { Mars:0.524, Mercury:1.383, Jupiter:0.0831, Venus:1.2, Saturn:0.0334 };
+function getChestaBala(name, actualSpeed, sunAyanaBala, moonPakshaBala){
+  if (name === "Sun") return sunAyanaBala;
+  if (name === "Moon") return Math.min(60, moonPakshaBala * 2 / 2);
+  const mean = MEAN_DAILY_MOTION[name];
+  if (actualSpeed < 0){
+    const ratio = Math.min(2, Math.abs(actualSpeed)/mean);
+    return Math.min(60, 30 + ratio*15);
+  } else {
+    const ratio = Math.min(1, actualSpeed/mean);
+    return Math.max(0, 30 - ratio*30) + (actualSpeed < mean*0.3 ? 15 : 0);
+  }
+}
+const NATURAL_BENEFICS = ["Jupiter","Venus","Mercury","Moon"];
+const NATURAL_MALEFICS = ["Sun","Mars","Saturn","Rahu","Ketu"];
+function getDrikBalaContribution(aspectingPlanet, orbDegrees, maxOrb){
+  const strength = Math.max(0, 30 * (1 - orbDegrees/maxOrb));
+  const isBenefic = NATURAL_BENEFICS.includes(aspectingPlanet);
+  return isBenefic ? strength : -strength;
+}
+const REQUIRED_RUPAS = { Sun:6.5, Moon:6, Mars:5, Mercury:7, Jupiter:6.5, Venus:5.5, Saturn:5 };
+
+function findSunSignEntryBefore(beforeJD, targetSignIdx){
+  let jd = beforeJD;
+  let prevSign = getSignIndex(normDeg(sunLongitude(jd) - lahiriAyanamsa(jd)));
+  for (let i=0; i<400; i++){
+    const testJD = beforeJD - i;
+    const sign = getSignIndex(normDeg(sunLongitude(testJD) - lahiriAyanamsa(testJD)));
+    const prevTestSign = getSignIndex(normDeg(sunLongitude(testJD-1) - lahiriAyanamsa(testJD-1)));
+    if (sign === targetSignIdx && prevTestSign !== targetSignIdx){
+      let lo = testJD-1, hi = testJD;
+      for (let iter=0; iter<30; iter++){
+        const mid = (lo+hi)/2;
+        const midSign = getSignIndex(normDeg(sunLongitude(mid) - lahiriAyanamsa(mid)));
+        if (midSign === targetSignIdx) hi = mid; else lo = mid;
+      }
+      return hi;
+    }
+  }
+  return beforeJD - 30;
+}
+
+function computeShadbala(siderealLongitudes, planets, ascSignIdx, jd, localJD, hourOfDayLocal, isDaytimeNow, sunriseJD, sunsetJD, nextSunriseJD, weekdayIndex){
+  const results = {};
+  const sunLon = siderealLongitudes.Sun;
+  const moonLon = siderealLongitudes.Moon;
+  const obliquity = obliquityOfEcliptic(jd);
+
+  function ayanaBalaFor(name){
+    const tropicalLon = normDeg(siderealLongitudes[name] + lahiriAyanamsa(jd));
+    const decl = getDeclinationDeg(tropicalLon, obliquity);
+    return getAyanaBala(name, decl, decl >= 0);
+  }
+  const sunAyana = ayanaBalaFor("Sun");
+  const moonPaksha = getPakshaBala("Moon", moonLon, sunLon);
+
+  const jdn = Math.floor(localJD + 0.5);
+  const dinaLord = getDinaLord(jdn);
+  const horaLord = getHoraLord(weekdayIndex, jd, sunriseJD, sunsetJD, nextSunriseJD);
+  const yearStartJD = findSunSignEntryBefore(jd, 0);
+  const currentSunSign = getSignIndex(sunLon);
+  const monthStartJD = findSunSignEntryBefore(jd, currentSunSign);
+  const varshaLord = getVarshaLord(Math.floor(yearStartJD+0.5));
+  const masaLord = getMasaLord(Math.floor(monthStartJD+0.5));
+
+  BALA_PLANETS.forEach(name=>{
+    const p = planets[name];
+    const signIdx = p.sign;
+    const degInSign = p.degInSign;
+    const house = p.house;
+
+    const ex = EXALTATION[name];
+    const uchcha = getUcchaBala(ex.sign, ex.deg, signIdx, degInSign);
+    const vargaDignityStatuses = SAPTAVARGA_KEYS.map(vk=>{
+      const vSign = calcVarga(vk, siderealLongitudes[name]);
+      return getDignity(name, vSign, 15).status;
+    });
+    const saptavargaja = getSaptavargajaBala(vargaDignityStatuses);
+    const navamsaSign = calcVarga("D9", siderealLongitudes[name]);
+    const ojaYugma = getOjaYugmaBala(name, signIdx, navamsaSign);
+    const kendradi = getKendradiBala(house);
+    const drekkana = getDrekkanaBala(name, degInSign);
+    const sthanaBala = uchcha + saptavargaja + ojaYugma + kendradi + drekkana;
+
+    const digBala = getDigBala(name, house);
+
+    const nathonnata = getNathonnataBala(name, hourOfDayLocal);
+    const paksha = getPakshaBala(name, moonLon, sunLon);
+    const hourFraction = isDaytimeNow
+      ? (jd - sunriseJD) / (sunsetJD - sunriseJD)
+      : (jd >= sunsetJD ? (jd - sunsetJD) : (jd + 1 - sunsetJD)) / (nextSunriseJD - sunsetJD);
+    const tribhaga = getTribhagaBala(name, Math.max(0,Math.min(0.999,hourFraction)), isDaytimeNow);
+    const vmdh = getVarshaMasaDinaHoraBala(name, varshaLord, masaLord, dinaLord, horaLord);
+    const ayana = ayanaBalaFor(name);
+    const kalaBala = getKalaBala({ nathonnata, paksha, tribhaga, vmdh, ayana, yuddha:0 });
+
+    const chestaBala = getChestaBala(name, p.speed, sunAyana, moonPaksha);
+    const naisargikaBala = getNaisargikaBala(name);
+
+    let drikBala = 0;
+    BALA_PLANETS.forEach(other=>{
+      if (other===name) return;
+      const sep = angDiffLocal(siderealLongitudes[other], siderealLongitudes[name]);
+      const aspectAngles = [0,60,90,120,180];
+      let minDist = 180;
+      aspectAngles.forEach(a=>{ minDist = Math.min(minDist, Math.abs(sep-a)); });
+      if (minDist <= 15){
+        drikBala += getDrikBalaContribution(other, minDist, 15);
+      }
+    });
+
+    const totalVirupas = sthanaBala + digBala + kalaBala + chestaBala + naisargikaBala + drikBala;
+    const totalRupas = totalVirupas / 60;
+    const requiredRupas = REQUIRED_RUPAS[name];
+
+    results[name] = {
+      sthanaBala: { total: sthanaBala, uchcha, saptavargaja, ojaYugma, kendradi, drekkana },
+      digBala,
+      kalaBala: { total: kalaBala, nathonnata, paksha, tribhaga, vmdh, ayana },
+      chestaBala, naisargikaBala, drikBala,
+      totalVirupas, totalRupas, requiredRupas,
+      isStrong: totalRupas >= requiredRupas,
+      percentOfRequired: (totalRupas/requiredRupas)*100
+    };
+  });
+
+  return { planets: results, dinaLord, horaLord, varshaLord, masaLord };
+}
+
+  return { computeShadbala, REQUIRED_RUPAS, BALA_PLANETS, calcVarga, getDignity };
+})();
+<\/script>
+<script>
+/* ============================================================================
+   LIVE SHADBALA (planet window, Strength tab): six-fold strength of the 7 planets (Sun to Saturn) at the 3D time and the viewer's place.
+   Engine: js/55-live-shadbala-engine.js (a copy of the Birth Chart engine). Place: getLiveLoc() (js/17), the same place used for the Rising sign.
+   Adds a Shadbala block at the top of the Strength tab and a strength badge under the planet name, by wrapping openPlanetDetail (js/29).
+   API: SHB.live(jd) -> {planets, rank, dinaLord, horaLord, place, approx, jd} | null ; SHB.html(name, jd) ; SHB.badge(name, jd).
+   ============================================================================ */
+const SHB = (function(){
+  const E = SHB_ENGINE, PL = E.BALA_PLANETS, esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+  const browserTz = jd => -new Date((jd - 2440587.5) * 86400000).getTimezoneOffset() / 60;
+  const solarDay = (jd, lon, lat) => {            // sunrise and sunset of the solar-local day that holds jd (same rule as the Birth Chart)
+    const tzs = lon / 15, d = new Date((jd + tzs / 24 - 2440587.5) * 86400000);
+    const rs = GK.riseSet(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate(), lat, lon, tzs);
+    return rs.rise != null && rs.set != null ? { sunriseJD: rs.rise, sunsetJD: rs.set } : null;
+  };
+  const speedOf = (name, jd) => { let d = siderealLongitude(name, jd + 0.5) - siderealLongitude(name, jd - 0.5); if (d > 180) d -= 360; if (d < -180) d += 360; return d; };
+  function compute(jd, lat, lon, tz){
+    const t0 = solarDay(jd, lon, lat), t1 = solarDay(jd + 1, lon, lat); if (!t0 || !t1) return null;
+    const sid = {}, planets = {}, asc = getSignIndex(siderealAscendant(jd, lat, lon));
+    PL.forEach(n => { sid[n] = siderealLongitude(n, jd); });
+    PL.forEach(n => { const s = getSignIndex(sid[n]); planets[n] = { sign:s, degInSign:normDeg(sid[n]) % 30, house:((s - asc + 12) % 12) + 1, speed:speedOf(n, jd) }; });
+    const day = jd >= t0.sunriseJD && jd < t0.sunsetJD, hour = (((jd + 0.5) % 1) * 24 + tz + 24) % 24, wd = (Math.floor(jd + 0.5 + tz / 24) + 1) % 7;
+    const r = E.computeShadbala(sid, planets, asc, jd, jd + tz / 24, hour, day, t0.sunriseJD, t0.sunsetJD, t1.sunriseJD, wd);
+    const rank = PL.slice().sort((a, b) => r.planets[b].percentOfRequired - r.planets[a].percentOfRequired);
+    return { planets:r.planets, rank, dinaLord:r.dinaLord, horaLord:r.horaLord, asc, isDay:day, house:Object.fromEntries(PL.map(n => [n, planets[n].house])) };
+  }
+  let memo = null;
+  function live(jd){
+    const L = getLiveLoc(), k = [Math.round(jd * 1440), L.lat, L.lon].join('|');
+    if (memo && memo.k === k) return memo.v;
+    let v = null; try { v = compute(jd, L.lat, L.lon, browserTz(jd)); } catch(e){ console.warn('shadbala', e); }
+    if (v){ v.place = L.label; v.approx = !!L.approx; v.jd = jd; }
+    memo = { k, v }; return v;
+  }
+  const r2 = x => (x / 60).toFixed(2), r1 = x => (x / 60).toFixed(1), sg = x => (x >= 0 ? '+' : '') + (x / 60).toFixed(2);
+  const SIX = [['sthana','Sthana','Place: sign, dignity and house', s => s.sthanaBala.total], ['dig','Dig','Direction: where it stands in the chart', s => s.digBala], ['kala','Kala','Time: day or night, phase, hour and season', s => s.kalaBala.total],
+    ['chesta','Cheshta','Motion: speed and retrograde', s => s.chestaBala], ['nais','Naisargika','Natural strength, fixed for each planet', s => s.naisargikaBala], ['drik','Drik','Aspects it receives', s => s.drikBala]];
+  const DETAIL = [['Sthana bala', s => [['Uchcha (exaltation)', s.sthanaBala.uchcha], ['Saptavargaja (7 charts)', s.sthanaBala.saptavargaja], ['Oja-yugma (odd or even)', s.sthanaBala.ojaYugma], ['Kendradi (angles)', s.sthanaBala.kendradi], ['Drekkana', s.sthanaBala.drekkana]]],
+    ['Kala bala', s => [['Natonnata (day or night)', s.kalaBala.nathonnata], ['Paksha (Moon phase)', s.kalaBala.paksha], ['Tribhaga (third of day)', s.kalaBala.tribhaga], ['Year, month, day, hour lord', s.kalaBala.vmdh], ['Ayana (declination)', s.kalaBala.ayana]]]];
+  function ring(pct, ok){
+    const R = 54, C = 2 * Math.PI * R, f = Math.min(1, pct / 100), off = C * (1 - f), mk = C * 0;
+    return `<svg class="shb-ring" viewBox="0 0 132 132" aria-hidden="true"><defs><linearGradient id="shbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${ok ? '#6EE7B7' : '#FFB36B'}"/><stop offset="1" stop-color="${ok ? '#38BDF8' : '#FF6B4A'}"/></linearGradient></defs>
+      <circle cx="66" cy="66" r="${R}" class="shb-trk"/><circle cx="66" cy="66" r="${R}" class="shb-arc" stroke="url(#shbg)" stroke-dasharray="${C.toFixed(1)}" style="--full:${C.toFixed(1)};--off:${off.toFixed(1)}" transform="rotate(-90 66 66)"/>
+      <circle cx="66" cy="12" r="3.2" class="shb-tick"/></svg>`;
+  }
+  function badge(name, jd){
+    const v = live(jd); if (!v || !v.planets[name]) return '';
+    const s = v.planets[name];
+    return `<button type="button" class="pdx-badge shb-badge ${s.isStrong ? 'good' : 'bad'}" onclick="shbGoto(this)" title="Open Shadbala">⚖ ${s.totalRupas.toFixed(2)} / ${s.requiredRupas} rupas</button>`;
+  }
+  function html(name, jd){
+    const v = live(jd), head = (live2 = '') => `<div class="shb-hd"><div class="pdx-h">Shadbala · strength</div>${live2}</div>`;
+    if (!PL.includes(name)) return `<section class="shb" id="shbBox">${head()}<div class="pdx-card"><div class="v">Shadbala is for the seven planets, Sun to Saturn</div><div class="s">${name} has no Shadbala in the classical texts. See its sign, motion and dignity below.</div></div></section>`;
+    if (!v) return `<section class="shb" id="shbBox">${head()}<div class="pdx-card"><div class="v">Not available here</div><div class="s">Shadbala needs sunrise and sunset. The Sun does not rise or set on this day at ${esc(getLiveLoc().label)}. Change the place or the date.</div></div></section>`;
+    const s = v.planets[name], pct = Math.round(s.percentOfRequired), pos = v.rank.indexOf(name) + 1, ok = s.isStrong;
+    const nowMs = Date.now() / 86400000 + 2440587.5, isNow = Math.abs(jd - nowMs) < 0.003;
+    const maxOf = f => Math.max(1, ...PL.map(n => Math.abs(f(v.planets[n]))));
+    const six = SIX.map((c, i) => { const val = c[3](s), w = Math.min(100, Math.abs(val) / maxOf(c[3]) * 100);
+      return `<div class="shb-row pdx-in" style="--i:${i + 1}"><div class="shb-n"><b>${c[1]}</b><small>${c[2]}</small></div><div class="shb-bar"><i class="${val < 0 ? 'neg' : ''}" style="--w:${w.toFixed(0)}%"></i></div><div class="shb-v">${c[0] === 'drik' ? sg(val) : r2(val)}</div></div>`; }).join('');
+    const det = DETAIL.map(d => `<details class="shb-det"><summary>${d[0]}<b>${r2(d[0].startsWith('Sthana') ? s.sthanaBala.total : s.kalaBala.total)}</b></summary>${d[1](s).map(x => `<div class="shb-dr"><span>${x[0]}</span><b>${(x[1] / 60).toFixed(2)}</b></div>`).join('')}</details>`).join('');
+    const bars = v.rank.map(n => { const p = v.planets[n], q = p.percentOfRequired;
+      return `<button type="button" class="shb-pr ${n === name ? 'me' : ''}" style="--c:${PLANET_COLORS[n]};--w:${Math.min(100, q / 1.6).toFixed(0)}%" onclick="openPlanetDetail('${n}',${jd});setTimeout(()=>pdxTab(document.querySelectorAll('.pdx-tab')[1],'st'),0)"><span>${PLANET_GLYPHS[n]}</span><i><u></u><em style="left:${(100 / 1.6).toFixed(1)}%"></em></i><b>${Math.round(q)}%</b></button>`; }).join('');
+    const loc = getLiveLoc();
+    return `<section class="shb" id="shbBox" data-k="${[Math.round(jd * 1440), loc.lat, loc.lon].join('|')}">
+      ${head(isNow ? '<span class="shb-live"><i></i>Live now</span>' : `<span class="shb-live off">${esc(formatFullDate(jd))}</span>`)}
+      <div class="shb-hero pdx-in"><div class="shb-ringw">${ring(pct, ok)}<div class="shb-mid"><b>${s.totalRupas.toFixed(2)}</b><small>of ${s.requiredRupas} rupas</small></div></div>
+        <div class="shb-info"><span class="shb-verdict ${ok ? 'good' : 'bad'}">${ok ? 'Strong' : 'Needs support'}</span><div class="shb-pct">${pct}% of the strength it needs</div>
+          <div class="shb-meta"><span>#${pos} of 7 now</span><span>House ${v.house[name]}</span><span>${v.isDay ? 'Daytime' : 'Night-time'}</span></div></div></div>
+      <div class="shb-six">${six}</div>
+      <div class="shb-dets">${det}</div>
+      <div class="pdx-h" style="margin-top:18px">All seven right now</div><div class="shb-prs">${bars}</div>
+      <div class="shb-foot"><span>Hora lord <b>${v.horaLord}</b> · Day lord <b>${v.dinaLord}</b></span>
+        <span>For <b>${v.approx ? 'a place estimated from your time zone' : esc(v.place)}</b> <button type="button" class="shb-chg" onclick="askLiveLoc()">Change place</button></span></div>
+      <p class="shb-note">Rupas are the classical unit (60 virupas). A planet is counted strong when it reaches its minimum: Sun 6.5, Moon 6, Mars 5, Mercury 7, Jupiter 6.5, Venus 5.5, Saturn 5. Dig and Kendradi use the rising sign at this place and time, so they change with both. Ishta and Kashta bala are not shown.</p></section>`;
+  }
+  return { live, compute, html, badge };
+})();
+
+/* ---- planet window hook ---- */
+(function(){
+  if (typeof openPlanetDetail !== 'function') return;
+  const base = openPlanetDetail; let timer = null;
+  function put(name, jd){
+    const root = document.querySelector('#planetDetailContent .pdx-root'); if (!root) return;
+    const pane = root.querySelector('.pdx-pane[data-pane="st"]'), old = document.getElementById('shbBox');
+    if (old) old.remove(); const old2 = root.querySelector('.shb-badge'); if (old2) old2.remove();
+    if (pane) pane.insertAdjacentHTML('afterbegin', SHB.html(name, jd));
+    const bd = root.querySelector('.pdx-badges'); if (bd && ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'].includes(name)) bd.insertAdjacentHTML('beforeend', SHB.badge(name, jd));
+  }
+  window.openPlanetDetail = function(name, jd){
+    base.apply(this, arguments); if (jd == null) jd = currentJD;
+    try { put(name, jd); } catch(e){ console.warn('shadbala block', e); return; }
+    clearInterval(timer);                            // follow a change of place (Change place button) while the window is open
+    timer = setInterval(() => {
+      const ov = document.getElementById('planetDetailOverlay'), box = document.getElementById('shbBox');
+      if (!ov || !ov.classList.contains('show') || !box){ clearInterval(timer); return; }
+      const L = getLiveLoc(); if (box.dataset.k !== [Math.round(jd * 1440), L.lat, L.lon].join('|')){ try { put(name, jd); } catch(e){} }
+    }, 600);
+  };
+  window.shbGoto = function(btn){ const root = btn.closest('.pdx-root'); const tab = root && root.querySelectorAll('.pdx-tab')[1]; if (tab) pdxTab(tab, 'st'); const m = btn.closest('.pdmodal'); const b = document.getElementById('shbBox'); if (m && b) setTimeout(() => m.scrollTo({ top:b.offsetTop - 60, behavior:'smooth' }), 60); };
 })();
 <\/script>
 <script>
