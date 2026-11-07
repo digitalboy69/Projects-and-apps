@@ -14868,6 +14868,137 @@ body.cl-open{overflow:hidden}
 #drevRoot .df-card h4 small{font-family:inherit;font-size:11.5px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--pf-teal);background:rgba(90,214,196,.1);border:1px solid rgba(90,214,196,.25);padding:2px 10px;border-radius:99px}
 #drevRoot .drev-two input{padding:12px 8px;font-size:13px;letter-spacing:-.01em}
 </style>
+  <style>
+/* Astro Atlas: a lit star-chart reference. Ink background, brass hairlines, serif headings, one accent colour per planet. */
+.atlas{--gold:#f2cf6b;--gold2:#c9962f;--ink:#0b0f1c;--glass:rgba(20,25,42,.78);--line:rgba(242,207,107,.2);--mut:#9aa3b5;--tx:#eee8dc;--serif:var(--font-serif,'Cormorant Garamond',Georgia,serif);
+  color:var(--tx);padding-bottom:24px}
+.atlas *{box-sizing:border-box;min-width:0}
+.atlas button{font-family:inherit;color:inherit;-webkit-tap-highlight-color:transparent;cursor:pointer}
+.at-top{display:flex;gap:14px;justify-content:space-between;align-items:flex-start;margin:4px 2px 16px}
+.at-top h2{margin:0;font:700 34px/1.05 var(--serif);letter-spacing:.01em;color:var(--gold)}
+.at-top p{margin:6px 0 0;font-size:13.5px;line-height:1.55;color:var(--mut);max-width:30em}
+.at-now{flex:none;display:flex;align-items:center;gap:9px;padding:9px 13px 9px 10px;border-radius:18px;border:1px solid color-mix(in srgb,var(--ac) 55%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--ac) 20%,transparent),rgba(14,18,30,.8));box-shadow:0 0 24px color-mix(in srgb,var(--ac) 25%,transparent)}
+.at-now b{font:400 30px/1 var(--serif);color:var(--ac)}.at-now span{display:grid;font:700 13px/1.2 system-ui}.at-now small{font-weight:500;font-size:11px;color:var(--mut)}
+/* tabs: a 3x3 grid so nothing needs sideways swiping */
+.at-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.at-tab{display:grid;justify-items:center;gap:3px;padding:11px 4px 10px;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);transition:transform .15s,border-color .2s,background .25s,box-shadow .25s}
+.at-tab b{font:400 24px/1 var(--serif);color:var(--gold)}.at-tab span{font:600 12.5px system-ui;color:#d7dbe6}
+.at-tab:active{transform:scale(.96)}
+.at-tab.on{border-color:var(--gold);background:linear-gradient(160deg,rgba(242,207,107,.22),rgba(242,207,107,.04));box-shadow:0 10px 26px rgba(242,207,107,.16)}
+.at-tab.on span{color:#fff}
+.at-pane{animation:atIn .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes atIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.at-swap{animation:atSw .3s ease both}@keyframes atSw{from{opacity:.2;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* sections */
+.at-sec{position:relative;margin:16px 0 0;padding:18px 16px 16px;border-radius:24px;border:1px solid var(--line);background:linear-gradient(165deg,rgba(242,207,107,.06),rgba(12,16,28,.82) 45%),var(--glass);box-shadow:0 16px 36px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.04)}
+.at-sec:before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.6}
+.at-sec h4{margin:0 0 12px;font:700 22px/1.2 var(--serif);color:#f6ecd0}
+.at-sec h4 small{display:block;margin-top:3px;font:500 12px/1.4 system-ui;color:var(--mut);letter-spacing:0}
+.at-h5{margin:14px 0 8px;font:700 15px var(--serif);color:var(--gold)}
+.at-note{margin:12px 2px 0;font-size:12.5px;line-height:1.6;color:var(--mut)}.at-note.c{text-align:center;max-width:30em;margin-inline:auto}
+.at-note .f{color:#58c98a}.at-note .e{color:#e5584b}
+.at-lead{margin:0 0 12px;font:italic 500 17px/1.5 var(--serif);color:#e8dfc6}
+/* detail card with accent spine */
+.at-card{position:relative;margin-top:16px;padding:18px 16px 16px 20px;border-radius:24px;overflow:hidden;border:1px solid color-mix(in srgb,var(--ac) 40%,transparent);background:radial-gradient(120% 90% at 0% 0%,color-mix(in srgb,var(--ac) 16%,transparent),rgba(12,16,28,.9) 62%);box-shadow:0 18px 40px rgba(0,0,0,.34)}
+.at-card:before{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 4px 4px 0;background:var(--ac);box-shadow:0 0 16px var(--ac)}
+.at-hd{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.at-hd h3{margin:0;font:700 28px/1.1 var(--serif);color:#fff}.at-hd p{margin:3px 0 0;font-size:13px;color:var(--mut)}
+.at-big{flex:none;width:64px;height:64px;display:grid;place-items:center;border-radius:50%;font:400 38px/1 var(--serif);color:var(--ac);background:radial-gradient(circle,color-mix(in srgb,var(--ac) 22%,transparent),rgba(8,10,18,.8));border:1px solid color-mix(in srgb,var(--ac) 60%,transparent);box-shadow:0 0 26px color-mix(in srgb,var(--ac) 30%,transparent)}
+.at-big.n{font:700 30px/1 var(--serif)}
+.at-today{font:600 11px system-ui;font-style:normal;color:#1a1405;background:var(--gold);border-radius:99px;padding:2px 9px;vertical-align:middle}
+.at-kv{margin:0;display:grid;gap:0}
+.at-kv>div{display:grid;grid-template-columns:104px 1fr;gap:10px;padding:9px 0;border-top:1px solid rgba(255,255,255,.07)}
+.at-kv.c2{grid-template-columns:1fr 1fr;column-gap:16px}.at-kv.c2>div{grid-template-columns:1fr;gap:2px}
+.at-kv dt{font:600 11.5px system-ui;color:var(--mut);letter-spacing:.02em}.at-kv dd{margin:0;font-size:14.5px;line-height:1.5;color:#f0ead9}
+.at-pills,.at-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.at-pill{font:600 12px system-ui;font-style:normal;padding:5px 11px;border-radius:99px;color:var(--gold);border:1px solid var(--line);background:rgba(242,207,107,.07)}
+/* pick tiles */
+.at-grid{display:grid;gap:8px}.at-grid.g3{grid-template-columns:repeat(3,1fr)}.at-grid.g4{grid-template-columns:repeat(4,1fr)}
+.at-tile{display:grid;justify-items:center;gap:2px;padding:11px 4px;border-radius:18px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);transition:transform .15s,border-color .2s,background .2s,box-shadow .25s}
+.at-tile b{font:400 30px/1 var(--serif);color:var(--ac)}.at-tile span{font:600 12px system-ui;color:#d7dbe6}
+.at-tile.sm b{font-size:26px}.at-tile.sm span{font-size:11px}
+.at-tile:active{transform:scale(.95)}
+.at-tile.on{border-color:var(--ac);background:linear-gradient(160deg,color-mix(in srgb,var(--ac) 28%,transparent),rgba(255,255,255,.02));box-shadow:0 0 22px color-mix(in srgb,var(--ac) 30%,transparent)}
+.at-tile.on span{color:#fff}
+/* week wheel */
+.at-hero2{margin-top:2px;padding:14px 8px 12px;border-radius:26px;border:1px solid var(--line);background:radial-gradient(90% 80% at 50% 38%,rgba(242,207,107,.1),rgba(10,13,24,.9))}
+.at-wheel{display:block;width:min(100%,340px);margin:0 auto;overflow:visible}
+.at-wheel .ring{fill:none;stroke:rgba(242,207,107,.22);stroke-dasharray:2 5}.at-wheel .ring2{fill:none;stroke:rgba(255,255,255,.06)}
+.at-wheel .star{fill:none;stroke:var(--gold);stroke-width:1.4;stroke-linejoin:round;opacity:.75;stroke-dasharray:1;stroke-dashoffset:1;animation:atDraw 2.2s .15s cubic-bezier(.4,.1,.2,1) forwards;filter:drop-shadow(0 0 4px rgba(242,207,107,.6))}
+@keyframes atDraw{to{stroke-dashoffset:0}}
+.at-wn{cursor:pointer}.at-wn circle{fill:#0d1220;stroke:var(--ac);stroke-width:1.6;transition:fill .25s,filter .25s}
+.at-wn .g{font:400 27px var(--serif);fill:var(--ac);text-anchor:middle}.at-wn .d{font:600 11px system-ui;fill:#aab2c4;text-anchor:middle}
+.at-wn.on circle{fill:color-mix(in srgb,var(--ac) 30%,#0d1220);filter:drop-shadow(0 0 10px var(--ac))}.at-wn.on .d{fill:#fff}
+.at-wheel .mid{font:700 22px var(--serif);fill:#fff;text-anchor:middle}.at-wheel .mid2{font:600 13px system-ui;fill:var(--gold);text-anchor:middle}
+.at-horas{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.at-hora{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:7px;padding:7px 8px;border-radius:13px;border:1px solid rgba(255,255,255,.07);border-left:3px solid var(--ac);background:rgba(255,255,255,.03)}
+.at-hora b{grid-row:span 2;align-self:center;font:400 22px var(--serif);color:var(--ac)}.at-hora span{font:600 12px system-ui}.at-hora em{font:500 10px system-ui;font-style:normal;color:var(--mut)}
+/* dignity */
+.at-dig{display:grid;grid-template-columns:1fr 1fr;gap:8px}.at-dig div{padding:10px 12px;border-radius:16px;border:1px solid color-mix(in srgb,var(--ac) 40%,transparent);background:color-mix(in srgb,var(--ac) 9%,rgba(10,13,24,.7))}
+.at-dig small{display:block;font:600 11px system-ui;color:var(--ac);margin-bottom:3px}.at-dig b{font:600 15px/1.35 system-ui;color:#f3eddc}
+/* body */
+.at-body{display:block;width:min(100%,360px);margin:0 auto}
+.at-body .o{fill:#10182c;stroke:rgba(242,207,107,.75);stroke-width:3;stroke-linejoin:round}.at-body .f{fill:#10182c}
+.at-bm{cursor:pointer}.at-bm line{stroke:rgba(242,207,107,.3);stroke-dasharray:2 3}.at-bm circle{fill:#0d1220;stroke:var(--ac);stroke-width:1.6;transition:fill .2s,filter .2s}
+.at-bm .g{font:400 17px var(--serif);fill:var(--ac);text-anchor:middle}.at-bm .l{font:600 12px system-ui;fill:#aab2c4}
+.at-bm.on circle{fill:color-mix(in srgb,var(--ac) 35%,#0d1220);filter:drop-shadow(0 0 9px var(--ac))}.at-bm.on .l{fill:#fff}
+.at-pbs{display:grid;gap:7px}.at-pb{display:grid;grid-template-columns:26px 74px 1fr;align-items:center;gap:8px;padding:9px 11px;border-radius:14px;border:1px solid rgba(255,255,255,.07);border-left:3px solid var(--ac);background:rgba(255,255,255,.03)}
+.at-pb b{font:400 22px var(--serif);color:var(--ac)}.at-pb span{font:700 13px system-ui}.at-pb em{font:500 12.5px/1.4 system-ui;font-style:normal;color:#cfd5e3}
+/* signs matrix */
+.at-mat{width:100%;border-collapse:separate;border-spacing:6px}.at-mat th{font:600 11.5px system-ui;color:var(--mut);text-align:center}
+.at-mat td button{width:100%;display:grid;justify-items:center;gap:1px;padding:8px 2px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035)}
+.at-mat td button{font:400 22px var(--serif);color:var(--ac)}.at-mat td button span{font:600 10.5px system-ui;color:#cfd5e3}
+/* house chart */
+.at-hchart{display:block;width:min(100%,330px);margin:0 auto;overflow:visible}
+.at-hchart .fr{fill:none;stroke:rgba(242,207,107,.7);stroke-width:1.6}.at-hchart .ln line,.at-hchart .ln polygon{fill:none;stroke:rgba(242,207,107,.5);stroke-width:1.2;pointer-events:none}
+.at-hc{cursor:pointer}.at-hc polygon{fill:rgba(255,255,255,.03);stroke:none;transition:fill .25s}.at-hc:hover polygon{fill:rgba(242,207,107,.12)}
+.at-hc .n{font:700 22px var(--serif);fill:#e9e1c8;text-anchor:middle;pointer-events:none}.at-hc .k{font:700 10px system-ui;letter-spacing:.1em;fill:var(--mut);text-anchor:middle;pointer-events:none}
+.at-hc.on polygon{fill:rgba(242,207,107,.3);filter:drop-shadow(0 0 8px rgba(242,207,107,.5))}.at-hc.on .n{fill:#fff}
+.at-aims{display:grid;grid-template-columns:1fr 1fr;gap:8px}.at-aim{padding:12px;border-radius:16px;border:1px solid color-mix(in srgb,var(--ac) 45%,transparent);background:color-mix(in srgb,var(--ac) 9%,rgba(10,13,24,.7));display:grid;gap:3px}
+.at-aim b{font:700 18px var(--serif);color:var(--ac)}.at-aim small{font-size:11.5px;color:var(--mut)}.at-aim span,.at-kind span{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+.at-aim i,.at-kind i{font:700 12px system-ui;font-style:normal;width:26px;height:26px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);cursor:pointer}
+.at-kind{padding:11px 0;border-top:1px solid rgba(255,255,255,.07)}.at-kind b{font:700 17px var(--serif);color:var(--gold)}.at-kind b small{margin-left:8px;font:500 11.5px system-ui;color:var(--mut)}.at-kind p{margin:6px 0 0;font-size:13px;line-height:1.55;color:#c8cfdd}
+/* nakshatras */
+.at-nrows{display:grid;gap:8px}.at-nrow{display:grid;grid-template-columns:62px repeat(3,1fr);gap:6px;align-items:stretch}
+.at-nrow>b{display:grid;place-items:center;align-content:center;font:400 24px/1 var(--serif);color:var(--ac);border-radius:14px;background:color-mix(in srgb,var(--ac) 12%,rgba(10,13,24,.7));border:1px solid color-mix(in srgb,var(--ac) 40%,transparent)}.at-nrow>b small{font:600 9.5px system-ui;color:#cfd5e3;margin-top:2px}
+.at-ntile{position:relative;padding:14px 4px 8px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);font:600 11px/1.25 system-ui;color:#e6e9f1;text-align:center;transition:transform .15s,border-color .2s,background .2s}
+.at-ntile em{position:absolute;top:4px;left:7px;font:700 9.5px system-ui;font-style:normal;color:var(--mut)}
+.at-ntile:active{transform:scale(.96)}.at-ntile.on{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 25%,rgba(10,13,24,.7));color:#fff;box-shadow:0 0 18px color-mix(in srgb,var(--ac) 30%,transparent)}
+.at-padas{display:grid;gap:6px;margin-top:12px}.at-padas div{display:grid;grid-template-columns:62px 1fr;gap:8px;padding:8px 11px;border-radius:13px;background:rgba(255,255,255,.04)}.at-padas b{font:700 12px system-ui;color:var(--ac)}.at-padas span{font-size:12.5px;color:#d7dbe6}
+/* time */
+.at-donutw{display:grid;grid-template-columns:minmax(150px,210px) 1fr;gap:12px;align-items:center}
+.at-donut{width:100%;display:block}.at-donut .arc{fill:none;stroke-width:22;stroke-linecap:butt;opacity:.92}.at-donut .al{font:400 15px var(--serif);fill:#0b0f1c;text-anchor:middle;pointer-events:none}
+.at-donut .c1{font:700 38px var(--serif);fill:var(--gold);text-anchor:middle}.at-donut .c2{font:600 12px system-ui;fill:var(--mut);text-anchor:middle}
+.at-dleg{display:grid;gap:5px}.at-dleg span{display:grid;grid-template-columns:20px 1fr auto;gap:6px;align-items:center;font:600 12.5px system-ui;padding:4px 8px;border-radius:10px;border-left:3px solid var(--ac);background:rgba(255,255,255,.03)}.at-dleg b{font:400 17px var(--serif);color:var(--ac)}.at-dleg em{font-style:normal;color:var(--mut)}
+.at-lvl{display:grid;gap:7px}.at-lvl div{position:relative;display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.035)}
+.at-lvl i{position:absolute;left:0;bottom:0;height:3px;width:var(--w);background:linear-gradient(90deg,var(--gold),transparent)}
+.at-lvl b{font:700 18px var(--serif);color:var(--gold)}.at-lvl span{font:700 14px system-ui}.at-lvl em{font:600 13px system-ui;font-style:normal;color:#5ad6c4}
+.at-tts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.at-tt{position:relative;display:grid;gap:1px;padding:9px 8px 7px;border-radius:13px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035)}
+.at-tt em{position:absolute;top:5px;right:8px;font:700 10px system-ui;font-style:normal;color:var(--mut)}.at-tt b{font:700 14px var(--serif);color:#f3eddc;padding-right:14px}.at-tt span{font:500 11.5px system-ui;color:var(--gold)}.at-tt small{font:500 10px system-ui;color:var(--mut)}
+.at-chips i{font:600 12px system-ui;font-style:normal;padding:6px 11px;border-radius:99px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#e2e5ee}
+.at-chips i em{font:700 10px system-ui;font-style:normal;color:var(--mut);margin-right:6px}.at-chips i.bad{border-color:rgba(229,88,75,.55);background:rgba(229,88,75,.1);color:#ffb4ab}
+.at-seas{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.at-seas div{display:grid;gap:1px;padding:10px;border-radius:15px;border:1px solid color-mix(in srgb,var(--ac) 40%,transparent);background:color-mix(in srgb,var(--ac) 8%,rgba(10,13,24,.7))}
+.at-seas b{font:700 16px var(--serif);color:var(--ac)}.at-seas span{font:600 12px system-ui}.at-seas em{font:500 11px system-ui;font-style:normal;color:var(--mut)}.at-seas small{font:600 10.5px system-ui;color:#cfd5e3}
+/* rules */
+.at-fr{width:100%;border-collapse:separate;border-spacing:3px;table-layout:fixed}.at-fr th{font:400 20px var(--serif);color:var(--ac);text-align:center;padding:2px 0}
+.at-fr td{height:38px;text-align:center;border-radius:10px;font-size:14px;background:rgba(255,255,255,.035)}
+.at-fr td.F{background:rgba(88,201,138,.2);color:#7ee3ad}.at-fr td.E{background:rgba(229,88,75,.2);color:#ff9a8f}.at-fr td.N{color:var(--mut)}.at-fr td.me{background:rgba(242,207,107,.08);color:var(--gold)}
+.at-drs{display:grid;gap:7px}.at-dr{display:grid;grid-template-columns:58px repeat(4,1fr);gap:5px;align-items:stretch;padding:7px;border-radius:15px;border-left:3px solid var(--ac);background:rgba(255,255,255,.035)}
+.at-dr b{display:grid;place-items:center;align-content:center;font:400 22px/1 var(--serif);color:var(--ac)}.at-dr b small{font:600 9px system-ui;color:#cfd5e3;margin-top:2px}
+.at-dr span{display:grid;align-content:center;gap:2px;padding:5px 3px;border-radius:10px;text-align:center;font:600 11.5px/1.2 system-ui}.at-dr span small{font:600 8.5px system-ui;color:var(--mut)}
+.at-dr .ex{background:rgba(88,201,138,.14);color:#9aebc0}.at-dr .ow{background:rgba(242,207,107,.12);color:#f6dd8a}.at-dr .mt{background:rgba(127,147,201,.14);color:#b8c6f0}.at-dr .de{background:rgba(229,88,75,.14);color:#ffb0a7}
+.at-asps{display:grid;gap:6px}.at-asp{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:13px;background:rgba(255,255,255,.035)}.at-asp b{font:700 14px var(--serif)}.at-asp span{font:600 13px system-ui;color:var(--gold);text-align:right}
+.at-comp{display:grid;grid-template-columns:1fr 1fr;gap:8px}.at-comp div{display:grid;gap:2px;padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.035)}.at-comp b{font:700 16px var(--serif);color:var(--gold)}.at-comp span{font:700 13px system-ui}.at-comp em{font:500 12.5px system-ui;font-style:normal;color:#cfd5e3}
+.at-dik{display:grid;grid-template-columns:1fr 1fr;gap:7px}.at-dik div{display:grid;gap:1px;padding:10px 12px;border-radius:14px;border-left:3px solid var(--ac);background:rgba(255,255,255,.035)}.at-dik b{font:700 14px system-ui}.at-dik span{font:500 12px system-ui;color:var(--mut)}.at-dik em{font:600 12.5px system-ui;font-style:normal;color:var(--ac)}
+.at-grp{display:grid;grid-template-columns:68px 1fr;gap:10px;align-items:center;padding:9px 0;border-top:1px solid rgba(255,255,255,.07)}.at-grp>b{font:700 16px var(--serif);color:var(--gold)}.at-grp span{display:flex;gap:6px;flex-wrap:wrap}.at-grp i{font:600 12px system-ui;font-style:normal;padding:4px 10px;border-radius:99px;border:1px solid color-mix(in srgb,var(--ac) 50%,transparent);color:var(--ac);background:color-mix(in srgb,var(--ac) 10%,transparent)}
+.at-vg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.at-vg div{display:grid;gap:2px;padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035)}
+.at-vg b{font:700 26px/1 var(--serif);color:var(--gold)}.at-vg span{font:700 13px system-ui}.at-vg em{font:500 12px/1.4 system-ui;font-style:normal;color:#c8cfdd}
+@media(max-width:360px){.at-top{flex-direction:column}.at-hd h3{font-size:24px}.at-kv>div{grid-template-columns:90px 1fr}.at-donutw{grid-template-columns:1fr}.at-dr{grid-template-columns:48px repeat(4,1fr)}}
+@media(prefers-reduced-motion:reduce){.at-pane,.at-swap{animation:none}.at-wheel .star{animation:none;stroke-dashoffset:0}}
+.at-mat{table-layout:fixed;border-spacing:5px}.at-mat th:first-child{width:46px}.at-mat tbody th{font-size:10.5px;letter-spacing:0;text-transform:none}
+.at-mat td button span{font-size:9.5px;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.at-dleg span em,.at-dleg span{white-space:nowrap}.at-tt b{font-size:13px;overflow-wrap:anywhere}
+</style>
 <style>
 /* Chakra Explorer (js/130): Sarvatobhadra, Kota and Shoola charts. Class-scoped (chx-) only; never bare i/b/span because the icon layer adds .vxi spans.
    Motion rules of this app: transform and opacity only, no backdrop-filter, nothing looping, off for reduced motion. */
@@ -18965,6 +19096,7 @@ const HOME_ITEMS=[
  ['panel-tithi','🪔','Tithi Pravesh','Your yearly lunar-birthday chart','Time & Cycles','home'],
  ['panel-transits','♄','Transits & Sade Sati','Saturn, Jupiter & node ingress dates','Time & Cycles','home'],
  ['panel-transit','⟲','Live Sky','Today\'s planets vs your chart','Time & Cycles','home'],
+ ['panel-atlas','🧭','Astro Atlas','The basics in one place: day lords, signs, body parts, houses, 27 nakshatras, tithi, dasha, friends and rules','Analysis','home'],
  ['panel-planetency','📚','Planet Encyclopedia','Every planet in full: nature, aspects, exalted & debilitated, friends & foes','Analysis','home'],
  ['panel-numerology','🔢','Numerology','Name number & birth-date numbers with meanings','Analysis','home'],
  ['panel-dosha','🧿','Dosha Check','Manglik, Kaal Sarp, Pitru, Gand Mool & more: the reason and what softens it','Analysis','home'],
@@ -51567,7 +51699,7 @@ window.buildAvakahadaPanel = function(chart, profile){ try { return AVK.html(cha
   }
   /* registrations */
   const reg = (id, name) => registerLatePanel(id, (c, p) => (window[name] ? window[name](c, p) : ''));
-  reg('panel-triggerlab', 'buildTriggerLabPanel'); reg('panel-meaninglab', 'buildMeaningLabPanel'); reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel'); reg('panel-today', 'buildTodayPanel'); reg('panel-prashna', 'buildPrashnaPanel'); reg('panel-kp', 'buildKpPanel'); reg('panel-chakra', 'buildChakraExplorerPanel');
+  reg('panel-triggerlab', 'buildTriggerLabPanel'); reg('panel-meaninglab', 'buildMeaningLabPanel'); reg('panel-atlas', 'buildAtlasPanel'); reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel'); reg('panel-today', 'buildTodayPanel'); reg('panel-prashna', 'buildPrashnaPanel'); reg('panel-kp', 'buildKpPanel'); reg('panel-chakra', 'buildChakraExplorerPanel');
 })();
 <\/script>
 <script>
@@ -52572,6 +52704,328 @@ const TLUI = (function(){
   };
   return { run };
 })();
+<\/script>
+<script>
+/* ============================================================================
+   ASTRO ATLAS DATA: the classical reference facts (Parashara tradition), as plain data. No UI here.
+   Used by js/131-astro-atlas.js. Where schools differ the entry says so.
+   ============================================================================ */
+const ATLAS = (function(){
+  const T = s => s + '︎';                                    // force text (not emoji) glyphs
+  const PL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+  const GL = { Sun:T('☉'), Moon:T('☽'), Mars:T('♂'), Mercury:T('☿'), Jupiter:T('♃'), Venus:T('♀'), Saturn:T('♄'), Rahu:T('☊'), Ketu:T('☋') };
+  const COL = { Sun:'#f2a93b', Moon:'#cfd8e8', Mars:'#e5584b', Mercury:'#58c98a', Jupiter:'#f2cf6b', Venus:'#f08fbd', Saturn:'#7f93c9', Rahu:'#9b82d6', Ketu:'#c98a5e' };
+  const SG = ['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'].map(T);
+
+  /* ---- week: day order is the Chaldean order taken every third step ---- */
+  const CHALDEAN = ['Saturn','Jupiter','Mars','Sun','Venus','Mercury','Moon'];            // slowest to fastest
+  const DAYS = [
+    { en:'Sunday',    sa:'Ravivara',    lord:'Sun',     deity:'Surya',                 good:'Leadership, authority, government matters, health and vitality',   avoid:'Starting quarrels with seniors' },
+    { en:'Monday',    sa:'Somavara',    lord:'Moon',    deity:'Shiva and Parvati',     good:'Travel, public dealings, caring work, liquids and farming',        avoid:'Big decisions made on mood' },
+    { en:'Tuesday',   sa:'Mangalavara', lord:'Mars',    deity:'Hanuman, Kartikeya',    good:'Courage, property, machines, sport and competition',               avoid:'Arguments and haste' },
+    { en:'Wednesday', sa:'Budhavara',   lord:'Mercury', deity:'Vishnu',                good:'Study, writing, trade, contracts and communication',               avoid:'Signing without reading' },
+    { en:'Thursday',  sa:'Guruvara',    lord:'Jupiter', deity:'Brihaspati, Dakshinamurthy', good:'Teaching, learning, ceremonies, advice, finance and children', avoid:'Cutting the elders short' },
+    { en:'Friday',    sa:'Shukravara',  lord:'Venus',   deity:'Lakshmi, Devi',         good:'Love, arts, beauty, vehicles, luxury and partnership',              avoid:'Overspending' },
+    { en:'Saturday',  sa:'Shanivara',   lord:'Saturn',  deity:'Shani, Hanuman',        good:'Hard work, long-term plans, service, discipline and iron or oil trades', avoid:'Rushing new risky ventures' }
+  ];
+  const RAHU_KALA = ['4:30 to 6:00 pm','7:30 to 9:00 am','3:00 to 4:30 pm','12:00 to 1:30 pm','1:30 to 3:00 pm','10:30 am to 12:00','9:00 to 10:30 am'];   // Sun..Sat, for a 6 am to 6 pm day
+
+  /* ---- planets ---- */
+  const P = {
+    Sun:     { sa:'Surya',   gender:'Male',   nature:'Mild malefic', guna:'Sattva', dosha:'Pitta',         tattva:'Fire',   dir:'East',      color:'Copper red',   gem:'Ruby',           metal:'Gold, copper', taste:'Pungent',      season:'Grishma (summer)',      deity:'Shiva, Agni', mantra:'Om Suryaya Namah',     body:'Heart, bones, head, right eye',     karaka:'Soul, father, authority, government', exalt:['Aries',10],     debil:['Libra',10],      mt:['Leo','0 to 20'],        own:['Leo'],                  years:6,  speed:'About 1 degree a day',      period:'1 month in a sign' },
+    Moon:    { sa:'Chandra', gender:'Female', nature:'Benefic when waxing', guna:'Sattva', dosha:'Vata and Kapha', tattva:'Water',  dir:'North-west',color:'White',        gem:'Pearl',          metal:'Silver',       taste:'Salty',        season:'Varsha (rains)',        deity:'Parvati, Gauri', mantra:'Om Chandraya Namah', body:'Blood and fluids, mind, left eye, breasts', karaka:'Mind, mother, emotions, public',  exalt:['Taurus',3],     debil:['Scorpio',3],     mt:['Taurus','4 to 30'],     own:['Cancer'],               years:10, speed:'About 13 degrees a day',    period:'2.25 days in a sign' },
+    Mars:    { sa:'Mangala', gender:'Male',   nature:'Malefic',      guna:'Tamas',  dosha:'Pitta',         tattva:'Fire',   dir:'South',     color:'Red',          gem:'Red coral',      metal:'Copper',       taste:'Bitter',       season:'Grishma (summer)',      deity:'Hanuman, Kartikeya', mantra:'Om Angarakaya Namah', body:'Muscles, bone marrow, blood, bile', karaka:'Courage, siblings, land, energy',  exalt:['Capricorn',28], debil:['Cancer',28],     mt:['Aries','0 to 12'],      own:['Aries','Scorpio'],      years:7,  speed:'About half a degree a day', period:'About 45 days in a sign' },
+    Mercury: { sa:'Budha',   gender:'Neutral',nature:'Benefic with benefics', guna:'Rajas', dosha:'All three (Tridosha)', tattva:'Earth', dir:'North', color:'Green',    gem:'Emerald',        metal:'Bronze, brass',taste:'Mixed',        season:'Sharad (autumn)',       deity:'Vishnu',      mantra:'Om Budhaya Namah',    body:'Skin, nerves, speech, hands',       karaka:'Intellect, speech, trade, learning',exalt:['Virgo',15],     debil:['Pisces',15],     mt:['Virgo','16 to 20'],     own:['Gemini','Virgo'],       years:17, speed:'About 1 degree a day',      period:'About 1 month in a sign' },
+    Jupiter: { sa:'Guru',    gender:'Male',   nature:'Greatest benefic', guna:'Sattva', dosha:'Kapha',     tattva:'Ether',  dir:'North-east',color:'Yellow',       gem:'Yellow sapphire',metal:'Gold',         taste:'Sweet',        season:'Hemanta (pre-winter)',  deity:'Brihaspati, Dakshinamurthy', mantra:'Om Gurave Namah', body:'Fat, liver, thighs, hips',    karaka:'Wisdom, children, wealth, teacher', exalt:['Cancer',5],     debil:['Capricorn',5],   mt:['Sagittarius','0 to 10'],own:['Sagittarius','Pisces'], years:16, speed:'About 5 minutes a day',     period:'About 1 year in a sign' },
+    Venus:   { sa:'Shukra',  gender:'Female', nature:'Benefic',      guna:'Rajas',  dosha:'Kapha and Vata',tattva:'Water',  dir:'South-east',color:'White, pink',  gem:'Diamond',        metal:'Silver, platinum', taste:'Sour',     season:'Vasanta (spring)',      deity:'Lakshmi',     mantra:'Om Shukraya Namah',   body:'Reproductive system, face, kidneys',karaka:'Spouse, love, arts, luxury, vehicles',exalt:['Pisces',27],    debil:['Virgo',27],      mt:['Libra','0 to 15'],      own:['Taurus','Libra'],       years:20, speed:'About 1 degree a day',      period:'About 1 month in a sign' },
+    Saturn:  { sa:'Shani',   gender:'Neutral',nature:'Malefic',      guna:'Tamas',  dosha:'Vata',          tattva:'Air',    dir:'West',      color:'Black, dark blue', gem:'Blue sapphire', metal:'Iron',      taste:'Astringent',   season:'Shishira (winter)',     deity:'Shani, Hanuman', mantra:'Om Shanaishcharaya Namah', body:'Nerves, bones, knees, legs, teeth', karaka:'Karma, discipline, delay, long life',exalt:['Libra',20],     debil:['Aries',20],      mt:['Aquarius','0 to 20'],   own:['Capricorn','Aquarius'], years:19, speed:'About 2 minutes a day',     period:'About 2.5 years in a sign' },
+    Rahu:    { sa:'Rahu',    gender:'Neutral',nature:'Malefic',      guna:'Tamas',  dosha:'Vata',          tattva:'Air',    dir:'South-west',color:'Smoky, dark',  gem:'Hessonite (gomed)', metal:'Lead, mixed', taste:'Sour',      season:'None of its own',       deity:'Durga',       mantra:'Om Rahave Namah',     body:'Skin, poison, nervous disorders',   karaka:'Foreign things, illusion, technology, obsession', exalt:['Taurus or Gemini (schools differ)',0], debil:['Scorpio or Sagittarius (schools differ)',0], mt:['Gemini (some schools)',''], own:['Aquarius (some schools)'], years:18, speed:'Moves backward, 3 minutes a day', period:'About 18 months in a sign' },
+    Ketu:    { sa:'Ketu',    gender:'Neutral',nature:'Malefic',      guna:'Tamas',  dosha:'Pitta',         tattva:'Fire',   dir:'No fixed direction', color:'Grey, mixed', gem:"Cat's eye",  metal:'Mixed metals', taste:'Pungent',      season:'None of its own',       deity:'Ganesha',     mantra:'Om Ketave Namah',     body:'Nerves, wounds, hidden ailments',   karaka:'Detachment, past-life skill, moksha',exalt:['Scorpio or Sagittarius (schools differ)',0], debil:['Taurus or Gemini (schools differ)',0], mt:['Sagittarius (some schools)',''], own:['Scorpio (some schools)'], years:7,  speed:'Moves backward, 3 minutes a day', period:'About 18 months in a sign' }
+  };
+
+  /* ---- signs ---- */
+  const ELEM = ['Fire','Earth','Air','Water'], QUAL = ['Movable (Chara)','Fixed (Sthira)','Dual (Dwiswabhava)'];
+  const SIGN_NAMES = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const SIGN_SA = ['Mesha','Vrishabha','Mithuna','Karka','Simha','Kanya','Tula','Vrischika','Dhanu','Makara','Kumbha','Meena'];
+  const SIGN_SYM = ['Ram','Bull','Twins','Crab','Lion','Maiden','Scales','Scorpion','Archer','Sea-goat','Water-bearer','Two fish'];
+  const SIGN_LORD = ['Mars','Venus','Mercury','Moon','Sun','Mercury','Venus','Mars','Jupiter','Saturn','Saturn','Jupiter'];
+  const SIGN_DIR = ['East','South','West','North','East','South','West','North','East','South','West','North'];
+  const SIGN_BODY = ['Head and brain','Face, neck, throat','Shoulders, arms, lungs','Chest, breasts, stomach','Heart, upper back, spine','Intestines, digestion','Kidneys, lower back, skin','Reproductive organs','Hips and thighs','Knees, joints, bones','Calves, ankles, circulation','Feet'];
+  const SIGN_RISE = ['Back first (Prishthodaya)','Back first (Prishthodaya)','Head first (Shirshodaya)','Back first (Prishthodaya)','Head first (Shirshodaya)','Head first (Shirshodaya)','Head first (Shirshodaya)','Head first (Shirshodaya)','Back first (Prishthodaya)','Back first (Prishthodaya)','Head first (Shirshodaya)','Both (Ubhayodaya)'];
+  const SIGN_TRAIT = ['Pioneering, direct, quick to start','Steady, sensual, values security','Curious, talkative, adaptable','Nurturing, emotional, protective','Proud, warm, wants to lead','Careful, analytical, service-minded','Balanced, fair, relationship-minded','Intense, private, transformative','Hopeful, philosophical, freedom-loving','Disciplined, ambitious, patient','Independent, humane, unconventional','Dreamy, compassionate, spiritual'];
+  const SIGNS = SIGN_NAMES.map((n, i) => ({ i, name:n, sa:SIGN_SA[i], glyph:SG[i], symbol:SIGN_SYM[i], lord:SIGN_LORD[i], element:ELEM[i % 4], quality:QUAL[i % 3], gender:i % 2 ? 'Female (even)' : 'Male (odd)', dir:SIGN_DIR[i], body:SIGN_BODY[i], rise:SIGN_RISE[i], trait:SIGN_TRAIT[i] }));
+
+  /* ---- houses ---- */
+  const HOUSES = [
+    { n:1,  sa:'Tanu',    name:'Self',                  sig:'Body, looks, health, character, how you begin',            karaka:'Sun',      body:'Head' },
+    { n:2,  sa:'Dhana',   name:'Wealth and family',     sig:'Money, speech, food, face, family you were born into',     karaka:'Jupiter',  body:'Face, mouth' },
+    { n:3,  sa:'Sahaja',  name:'Courage and siblings',  sig:'Younger siblings, effort, skills, short travel, hobbies',   karaka:'Mars',     body:'Arms, shoulders' },
+    { n:4,  sa:'Sukha',   name:'Home and peace',        sig:'Mother, home, land, vehicles, inner peace, early education', karaka:'Moon',     body:'Chest, heart' },
+    { n:5,  sa:'Putra',   name:'Creativity and children', sig:'Children, intelligence, romance, past merit, mantra',      karaka:'Jupiter',  body:'Stomach' },
+    { n:6,  sa:'Ari',     name:'Enemies and service',   sig:'Debts, disease, enemies, daily work, service, pets',        karaka:'Mars',     body:'Waist, intestines' },
+    { n:7,  sa:'Kalatra', name:'Partnership',           sig:'Spouse, business partners, open enemies, travel abroad',    karaka:'Venus',    body:'Lower abdomen' },
+    { n:8,  sa:'Ayu',     name:'Change and the hidden', sig:'Longevity, sudden events, inheritance, secrets, research',  karaka:'Saturn',   body:'Genitals' },
+    { n:9,  sa:'Dharma',  name:'Luck and dharma',       sig:'Father, teacher, fortune, long journeys, belief, higher study', karaka:'Jupiter', body:'Thighs' },
+    { n:10, sa:'Karma',   name:'Career and status',     sig:'Profession, public image, authority, action in the world',  karaka:'Sun, Mercury, Jupiter, Saturn', body:'Knees' },
+    { n:11, sa:'Labha',   name:'Gains and friends',     sig:'Income, elder siblings, networks, fulfilled desires',       karaka:'Jupiter',  body:'Calves' },
+    { n:12, sa:'Vyaya',   name:'Loss and release',      sig:'Expenses, foreign lands, sleep, isolation, moksha, hospitals', karaka:'Saturn',body:'Feet' }
+  ];
+  const HOUSE_KINDS = [
+    { name:'Kendra',   sa:'Angles',            h:[1,4,7,10], note:'Pillars of the chart. Planets here act with force.' },
+    { name:'Trikona',  sa:'Trines',            h:[1,5,9],    note:'Luck and merit. The most auspicious houses.' },
+    { name:'Dusthana', sa:'Difficult',         h:[6,8,12],   note:'Struggle, loss and transformation.' },
+    { name:'Upachaya', sa:'Growing',           h:[3,6,10,11],note:'Results improve with time; tough planets do well here.' },
+    { name:'Maraka',   sa:'Death-inflicting',  h:[2,7],      note:'Linked with the end of a Dasha cycle of life. Read with care.' },
+    { name:'Panaphara',sa:'Succeedent',        h:[2,5,8,11], note:'Houses that follow the angles and hold resources.' },
+    { name:'Apoklima', sa:'Cadent',            h:[3,6,9,12], note:'Houses that fall away from the angles.' }
+  ];
+  const AIMS = [
+    { name:'Dharma', sa:'Purpose',  h:[1,5,9],  color:'#f2cf6b' }, { name:'Artha', sa:'Wealth', h:[2,6,10], color:'#58c98a' },
+    { name:'Kama',   sa:'Desire',   h:[3,7,11], color:'#f08fbd' }, { name:'Moksha', sa:'Release', h:[4,8,12], color:'#7f93c9' }
+  ];
+
+  /* ---- 27 nakshatras ---- */
+  const NAK = [
+    ['Ashwini','Ketu','Ashwini Kumaras','Horse head','Deva','Horse','Light (Kshipra)'], ['Bharani','Venus','Yama','Yoni','Manushya','Elephant','Fierce (Ugra)'], ['Krittika','Sun','Agni','Razor, flame','Rakshasa','Sheep','Mixed (Mishra)'],
+    ['Rohini','Moon','Brahma (Prajapati)','Chariot','Manushya','Serpent','Fixed (Dhruva)'], ['Mrigashira','Mars','Soma','Deer head','Deva','Serpent','Soft (Mridu)'], ['Ardra','Rahu','Rudra','Teardrop','Manushya','Dog','Sharp (Tikshna)'],
+    ['Punarvasu','Jupiter','Aditi','Bow and quiver','Deva','Cat','Movable (Chara)'], ['Pushya','Saturn','Brihaspati','Flower, udder','Deva','Sheep','Light (Kshipra)'], ['Ashlesha','Mercury','Nagas','Coiled serpent','Rakshasa','Cat','Sharp (Tikshna)'],
+    ['Magha','Ketu','Pitris','Throne','Rakshasa','Rat','Fierce (Ugra)'], ['Purva Phalguni','Venus','Bhaga','Front of a bed','Manushya','Rat','Fierce (Ugra)'], ['Uttara Phalguni','Sun','Aryaman','Back of a bed','Manushya','Cow','Fixed (Dhruva)'],
+    ['Hasta','Moon','Savitar','Hand','Deva','Buffalo','Light (Kshipra)'], ['Chitra','Mars','Tvashtar','Bright jewel','Rakshasa','Tiger','Soft (Mridu)'], ['Swati','Rahu','Vayu','Young shoot','Deva','Buffalo','Movable (Chara)'],
+    ['Vishakha','Jupiter','Indra and Agni','Archway','Rakshasa','Tiger','Mixed (Mishra)'], ['Anuradha','Saturn','Mitra','Lotus','Deva','Deer','Soft (Mridu)'], ['Jyeshtha','Mercury','Indra','Earring, umbrella','Rakshasa','Deer','Sharp (Tikshna)'],
+    ['Mula','Ketu','Nirriti','Bunch of roots','Rakshasa','Dog','Sharp (Tikshna)'], ['Purva Ashadha','Venus','Apas (Waters)','Winnowing fan','Manushya','Monkey','Fierce (Ugra)'], ['Uttara Ashadha','Sun','Vishvadevas','Elephant tusk','Manushya','Mongoose','Fixed (Dhruva)'],
+    ['Shravana','Moon','Vishnu','Ear','Deva','Monkey','Movable (Chara)'], ['Dhanishta','Mars','Vasus','Drum','Rakshasa','Lion','Movable (Chara)'], ['Shatabhisha','Rahu','Varuna','Empty circle','Rakshasa','Horse','Movable (Chara)'],
+    ['Purva Bhadrapada','Jupiter','Aja Ekapada','Front of a cot, sword','Manushya','Lion','Fierce (Ugra)'], ['Uttara Bhadrapada','Saturn','Ahir Budhnya','Back of a cot','Manushya','Cow','Fixed (Dhruva)'], ['Revati','Mercury','Pushan','Fish, drum','Deva','Elephant','Soft (Mridu)']
+  ].map((a, i) => ({ i, name:a[0], lord:a[1], deity:a[2], symbol:a[3], gana:a[4], animal:a[5], nature:a[6], from:i * 360 / 27, sign:Math.floor(i * 360 / 27 / 30) }));
+
+  /* ---- time ---- */
+  const TITHI = [['Pratipada','Agni'],['Dwitiya','Brahma'],['Tritiya','Gauri'],['Chaturthi','Ganesha'],['Panchami','Naga'],['Shashthi','Kartikeya'],['Saptami','Surya'],['Ashtami','Shiva'],['Navami','Durga'],['Dashami','Yama'],['Ekadashi','Vishvadevas'],['Dwadashi','Vishnu'],['Trayodashi','Kamadeva'],['Chaturdashi','Shiva'],['Purnima','Chandra']];
+  const TITHI_KIND = ['Nanda (joy)','Bhadra (good)','Jaya (victory)','Rikta (empty)','Purna (full)'];       // tithi 1,6,11 = Nanda ... cycles through five
+  const YOGA = ['Vishkambha','Priti','Ayushman','Saubhagya','Shobhana','Atiganda','Sukarma','Dhriti','Shula','Ganda','Vriddhi','Dhruva','Vyaghata','Harshana','Vajra','Siddhi','Vyatipata','Variyana','Parigha','Shiva','Siddha','Sadhya','Shubha','Shukla','Brahma','Indra','Vaidhriti'];
+  const YOGA_BAD = ['Vishkambha','Atiganda','Shula','Ganda','Vyaghata','Vajra','Vyatipata','Parigha','Vaidhriti'];
+  const KARANA = { moving:['Bava','Balava','Kaulava','Taitila','Gara','Vanija','Vishti (Bhadra)'], fixed:['Shakuni','Chatushpada','Naga','Kimstughna'] };
+  const SEASONS = [
+    { n:'Vasanta', en:'Spring',      months:'Mar to May', lord:'Venus' }, { n:'Grishma', en:'Summer',      months:'May to Jul', lord:'Sun and Mars' },
+    { n:'Varsha',  en:'Rains',       months:'Jul to Sep', lord:'Moon' },  { n:'Sharad',  en:'Autumn',      months:'Sep to Nov', lord:'Mercury' },
+    { n:'Hemanta', en:'Pre-winter',  months:'Nov to Jan', lord:'Jupiter' },{ n:'Shishira',en:'Winter',      months:'Jan to Mar', lord:'Saturn' }
+  ];
+  const DASHA_ORDER = ['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury'];
+  const DASHA_YEARS = { Ketu:7, Venus:20, Sun:6, Moon:10, Mars:7, Rahu:18, Jupiter:16, Saturn:19, Mercury:17 };
+  const DASHA_LEVELS = ['Mahadasha','Antardasha','Pratyantardasha','Sookshma','Prana','Deha'];
+
+  /* ---- rules ---- */
+  // natural friendship (Naisargika): F friend, N neutral, E enemy. Row planet looks at column planet.
+  const FRIEND = {
+    Sun:    { Moon:'F', Mars:'F', Mercury:'N', Jupiter:'F', Venus:'E', Saturn:'E' },
+    Moon:   { Sun:'F', Mars:'N', Mercury:'F', Jupiter:'N', Venus:'N', Saturn:'N' },
+    Mars:   { Sun:'F', Moon:'F', Mercury:'E', Jupiter:'F', Venus:'N', Saturn:'N' },
+    Mercury:{ Sun:'F', Moon:'E', Mars:'N', Jupiter:'N', Venus:'F', Saturn:'N' },
+    Jupiter:{ Sun:'F', Moon:'F', Mars:'F', Mercury:'E', Venus:'E', Saturn:'N' },
+    Venus:  { Sun:'E', Moon:'E', Mars:'N', Mercury:'F', Jupiter:'N', Saturn:'F' },
+    Saturn: { Sun:'E', Moon:'E', Mars:'E', Mercury:'F', Jupiter:'N', Venus:'F' }
+  };
+  const NODE_FRIEND = { friends:['Mercury','Venus','Saturn'], neutral:['Jupiter'], enemies:['Sun','Moon','Mars'] };
+  const ASPECTS = [ ['Sun','7th'], ['Moon','7th'], ['Mercury','7th'], ['Venus','7th'], ['Mars','4th, 7th, 8th'], ['Jupiter','5th, 7th, 9th'], ['Saturn','3rd, 7th, 10th'], ['Rahu and Ketu','5th, 7th, 9th (most teachers)'] ];
+  const DIKBALA = [ { house:1, dir:'East',  planets:['Jupiter','Mercury'] }, { house:10, dir:'South', planets:['Sun','Mars'] }, { house:7, dir:'West', planets:['Saturn'] }, { house:4, dir:'North', planets:['Moon','Venus'] } ];
+  const DIKPALA = [ ['East','Indra','Sun'], ['South-east','Agni','Venus'], ['South','Yama','Mars'], ['South-west','Nirriti','Rahu'], ['West','Varuna','Saturn'], ['North-west','Vayu','Moon'], ['North','Kubera','Mercury'], ['North-east','Ishana','Jupiter'] ];
+  const GUNAS = { Sattva:['Sun','Moon','Jupiter'], Rajas:['Mercury','Venus'], Tamas:['Mars','Saturn','Rahu','Ketu'] };
+  const DOSHAS = { Vata:['Saturn','Rahu','Mercury'], Pitta:['Sun','Mars','Ketu'], Kapha:['Jupiter','Moon','Venus'] };
+  const TATTVAS = { Fire:['Sun','Mars'], Earth:['Mercury'], Air:['Saturn','Rahu'], Water:['Moon','Venus'], Ether:['Jupiter'] };
+
+  /* ---- divisional charts ---- */
+  const VARGAS = [
+    ['D1','Rashi','The body and whole life'], ['D2','Hora','Wealth'], ['D3','Drekkana','Siblings and courage'], ['D4','Chaturthamsa','Home, property, fortune'],
+    ['D7','Saptamsa','Children'], ['D9','Navamsa','Spouse, dharma, inner strength of planets'], ['D10','Dashamsa','Career and public life'], ['D12','Dwadashamsa','Parents'],
+    ['D16','Shodashamsa','Vehicles and comforts'], ['D20','Vimshamsa','Worship and spiritual practice'], ['D24','Chaturvimshamsa','Education and learning'], ['D27','Bhamsa','Strengths and weaknesses'],
+    ['D30','Trimshamsa','Troubles and misfortune'], ['D40','Khavedamsa','Maternal line, good and bad effects'], ['D45','Akshavedamsa','Paternal line, character'], ['D60','Shashtiamsa','Past-life karma, fine detail']
+  ];
+  return { PL, GL, COL, SG, CHALDEAN, DAYS, RAHU_KALA, P, SIGNS, ELEM, HOUSES, HOUSE_KINDS, AIMS, NAK, TITHI, TITHI_KIND, YOGA, YOGA_BAD, KARANA, SEASONS, DASHA_ORDER, DASHA_YEARS, DASHA_LEVELS, FRIEND, NODE_FRIEND, ASPECTS, DIKBALA, DIKPALA, GUNAS, DOSHAS, TATTVAS, VARGAS };
+})();
+window.ATLAS = ATLAS;
+<\/script>
+<script>
+/* ============================================================================
+   ASTRO ATLAS (Home > Analysis, left quick menu): the basics of Vedic astrology as one beautiful reference.
+   Tabs: Week (day lords, hora) · Planets · Signs · Body (Kala Purusha) · Houses · Stars (27 nakshatras) · Time (tithi, yoga, karana, dasha) · Rules (friends, dignity, aspects, directions) · Charts (vargas).
+   Data lives in js/130-astro-atlas-data.js (global ATLAS). Panel registered as 'panel-atlas' -> window.buildAtlasPanel. Pure reference: needs no chart.
+   ============================================================================ */
+const ATL = (function(){
+  const A = ATLAS, esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+  const S = { tab:'week', day:new Date().getDay(), planet:'Sun', sign:0, house:1, nak:0, body:0 };
+  const TABS = [['week','☉','Week','Day lords and horas'],['planets','♃','Planets','Nine planets'],['signs','♈\uFE0E','Signs','12 rashis'],['body','☤','Body','Kala Purusha'],['houses','⌂','Houses','12 bhavas'],['stars','✶','Stars','27 nakshatras'],['time','◷','Time','Tithi, yoga, dasha'],['rules','⚖','Rules','Friends, dignity, aspects'],['charts','◫','Charts','Divisional charts']];
+  const col = p => A.COL[p] || '#f2cf6b', gl = p => A.GL[p] || '', pill = (t, c) => `<i class="at-pill"${c ? ` style="--ac:${c}"` : ''}>${esc(t)}</i>`;
+  const kv = (rows, cols) => `<dl class="at-kv${cols ? ' c' + cols : ''}">${rows.filter(r => r && r[1] !== '' && r[1] != null).map(r => `<div><dt>${esc(r[0])}</dt><dd>${r[2] ? r[1] : esc(r[1])}</dd></div>`).join('')}</dl>`;
+  const sec = (h, sub, body, cls) => `<section class="at-sec${cls ? ' ' + cls : ''}"><h4>${h}${sub ? `<small>${sub}</small>` : ''}</h4>${body}</section>`;
+  const ordn = n => n + ((n % 100 >= 11 && n % 100 <= 13) ? 'th' : ({ 1:'st', 2:'nd', 3:'rd' }[n % 10] || 'th'));
+
+  /* ---------- WEEK ---------- */
+  function wheelSvg(){
+    const R = 108, cx = 150, cy = 150, pos = {};
+    A.CHALDEAN.forEach((p, i) => { const a = (-90 + i * 360 / 7) * Math.PI / 180; pos[p] = [cx + R * Math.cos(a), cy + R * Math.sin(a)]; });
+    const order = A.DAYS.map(d => d.lord), path = order.concat(order[0]).map((p, i) => (i ? 'L' : 'M') + pos[p][0].toFixed(1) + ' ' + pos[p][1].toFixed(1)).join(' ');
+    const nodes = A.DAYS.map((d, i) => { const [x, y] = pos[d.lord];
+      return `<g class="at-wn${S.day === i ? ' on' : ''}" data-day="${i}" style="--ac:${col(d.lord)}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><circle r="25"/><text class="g" y="7">${gl(d.lord)}</text><text class="d" y="42">${d.en.slice(0, 3)}</text></g>`; }).join('');
+    return `<svg class="at-wheel" viewBox="0 0 300 300" role="img" aria-label="Weekday wheel"><circle cx="150" cy="150" r="108" class="ring"/><circle cx="150" cy="150" r="80" class="ring2"/><path d="${path}" class="star" pathLength="1"/>${nodes}<text x="150" y="146" class="mid" id="atWm1"></text><text x="150" y="168" class="mid2" id="atWm2"></text></svg>`;
+  }
+  function dayHtml(){
+    const d = A.DAYS[S.day], p = A.P[d.lord], i0 = A.CHALDEAN.indexOf(d.lord), today = new Date().getDay() === S.day;
+    const horas = Array.from({ length:24 }, (_, k) => { const l = A.CHALDEAN[(i0 + k) % 7], h = (6 + k) % 24, e = (h + 1) % 24;
+      return `<div class="at-hora" style="--ac:${col(l)}"><b>${gl(l)}</b><span>${l}</span><em>${String(h).padStart(2, '0')}:00 to ${String(e).padStart(2, '0')}:00</em></div>`; }).join('');
+    return `<div class="at-card" style="--ac:${col(d.lord)}"><div class="at-hd"><span class="at-big">${gl(d.lord)}</span><div><h3>${d.en}${today ? ' <em class="at-today">today</em>' : ''}</h3><p>${d.sa} · ruled by ${d.lord}</p></div></div>
+      ${kv([['Deity', d.deity], ['Favoured for', d.good], ['Take care with', d.avoid], ['Rahu Kala', A.RAHU_KALA[S.day]], ['Colour', p.color], ['Gem and metal', p.gem + ', ' + p.metal]])}</div>
+      ${sec('Horas of ' + d.en, 'the first hora belongs to the day lord at sunrise; the lords then follow the slow-to-fast order', `<div class="at-horas">${horas}</div><p class="at-note">Hours are counted from sunrise, shown here as 06:00. Real hora length changes with the sunrise and sunset of your place.</p>`)}`;
+  }
+  function weekHtml(){
+    return `<div class="at-hero2">${wheelSvg()}<p class="at-note c">Planets stand in their order of speed, slowest first. Join each day to the next and a seven-pointed star appears: every day lord sits three places after the last.</p></div><div id="atDay">${dayHtml()}</div>`;
+  }
+
+  /* ---------- PLANETS ---------- */
+  function planetHtml(){
+    const p = A.P[S.planet], c = col(S.planet), dayIx = A.DAYS.findIndex(d => d.lord === S.planet);
+    const sg = n => { const i = A.SIGNS.findIndex(s => s.name === n); return i < 0 ? n : A.SIGNS[i].glyph + ' ' + n; };
+    const dg = a => a[1] ? `${sg(a[0])} at ${a[1]}°` : a[0];
+    return `<div class="at-card" style="--ac:${c}"><div class="at-hd"><span class="at-big">${gl(S.planet)}</span><div><h3>${S.planet}</h3><p>${p.sa} · ${p.nature}</p></div></div>
+      ${kv([['Day', dayIx >= 0 ? A.DAYS[dayIx].en : 'No weekday (has its own Kala each day)'], ['Direction', p.dir], ['Element', p.tattva], ['Guna', p.guna], ['Dosha', p.dosha], ['Gender', p.gender], ['Colour', p.color], ['Gem', p.gem], ['Metal', p.metal], ['Taste', p.taste], ['Season', p.season], ['Deity', p.deity], ['Mantra', p.mantra], ['Dasha years', p.years + ' of 120'], ['Speed', p.speed], ['In a sign', p.period]], 2)}</div>
+      ${sec('Signifies', '', kv([['Karaka', p.karaka], ['Body', p.body]]))}
+      ${sec('Dignity', '', `<div class="at-dig">${[['Exalted', dg(p.exalt), '#58c98a'], ['Own sign', p.own.map(sg).join(', '), '#f2cf6b'], ['Moolatrikona', p.mt[1] ? sg(p.mt[0]) + ' ' + p.mt[1] + '°' : p.mt[0], '#7f93c9'], ['Debilitated', dg(p.debil), '#e5584b']].map(x => `<div style="--ac:${x[2]}"><small>${x[0]}</small><b>${x[1]}</b></div>`).join('')}</div>`)}`;
+  }
+  function planetsHtml(){
+    return `<div class="at-grid g3" id="atPick">${A.PL.map(p => `<button type="button" class="at-tile${S.planet === p ? ' on' : ''}" data-planet="${p}" style="--ac:${col(p)}"><b>${gl(p)}</b><span>${p}</span></button>`).join('')}</div><div id="atPlanet">${planetHtml()}</div>`;
+  }
+
+  /* ---------- SIGNS ---------- */
+  function signHtml(){
+    const s = A.SIGNS[S.sign], c = col(s.lord), ex = A.PL.filter(p => A.P[p].exalt[0] === s.name), de = A.PL.filter(p => A.P[p].debil[0] === s.name);
+    return `<div class="at-card" style="--ac:${c}"><div class="at-hd"><span class="at-big">${s.glyph}</span><div><h3>${s.name}</h3><p>${s.sa} · the ${s.symbol}</p></div></div><p class="at-lead">${s.trait}.</p>
+      ${kv([['Lord', gl(s.lord) + ' ' + s.lord, 1], ['Element', s.element], ['Quality', s.quality], ['Gender', s.gender], ['Direction', s.dir], ['Body part', s.body], ['Rises', s.rise], ['Exalted here', ex.length ? ex.map(p => gl(p) + ' ' + p).join(', ') : 'None of the seven', 1], ['Debilitated here', de.length ? de.map(p => gl(p) + ' ' + p).join(', ') : 'None of the seven', 1]], 2)}</div>`;
+  }
+  function signsHtml(){
+    const mat = `<table class="at-mat"><thead><tr><th></th>${A.SIGNS.slice(0, 3).map((_, i) => `<th>${['Movable', 'Fixed', 'Dual'][i]}</th>`).join('')}</tr></thead><tbody>${A.ELEM.map((e, r) => `<tr><th>${e}</th>${[0, 1, 2].map(q => { const i = r + 4 * q; return `<td><button type="button" data-sign="${i}" style="--ac:${col(A.SIGNS[i].lord)}">${A.SIGNS[i].glyph}<span>${A.SIGNS[i].name}</span></button></td>`; }).join('')}</tr>`).join('')}</tbody></table>`;
+    return `<div class="at-grid g4" id="atPick">${A.SIGNS.map(s => `<button type="button" class="at-tile sm${S.sign === s.i ? ' on' : ''}" data-sign="${s.i}" style="--ac:${col(s.lord)}"><b>${s.glyph}</b><span>${s.name}</span></button>`).join('')}</div><div id="atSign">${signHtml()}</div>
+      ${sec('Elements and qualities', 'every sign is one element and one quality', mat)}`;
+  }
+
+  /* ---------- BODY (Kala Purusha) ---------- */
+  const BY = [34, 72, 112, 148, 184, 222, 258, 296, 352, 420, 482, 540];
+  function bodySvg(){
+    const half = '<path d="M84 112 L64 120 L52 178 L44 248 L58 252 L72 182 L88 146Z"/><path d="M92 258 L119 264 L117 402 L110 534 L84 534 L94 410Z"/><ellipse cx="96" cy="541" rx="17" ry="8"/>';
+    const marks = A.SIGNS.map((s, i) => `<g class="at-bm${S.body === i ? ' on' : ''}" data-body="${i}" style="--ac:${col(s.lord)}"><line x1="134" y1="${BY[i]}" x2="206" y2="${BY[i]}"/><circle cx="120" cy="${BY[i]}" r="14"/><text class="g" x="120" y="${BY[i] + 6}">${s.glyph}</text><text class="l" x="212" y="${BY[i] + 4}">${s.body.split(',')[0]}</text></g>`).join('');
+    return `<svg class="at-body" viewBox="0 0 350 575" role="img" aria-label="Kala Purusha, the zodiac as a body"><defs><g id="atBd"><ellipse cx="120" cy="52" rx="26" ry="32"/><rect x="108" y="78" width="24" height="26"/><path d="M84 110 C96 100 144 100 156 110 C154 160 152 210 150 262 L90 262 C88 210 86 160 84 110Z"/>${half}<g transform="translate(240 0) scale(-1 1)">${half}</g></g></defs><use href="#atBd" class="o"/><use href="#atBd" class="f"/>${marks}</svg>`;
+  }
+  function bodyHtml(){
+    const s = A.SIGNS[S.body];
+    return `<div class="at-card" style="--ac:${col(s.lord)}"><div class="at-hd"><span class="at-big">${s.glyph}</span><div><h3>${s.name}: ${s.body}</h3><p>Ruled by ${gl(s.lord)} ${s.lord} · house ${s.i + 1} of the natural zodiac</p></div></div>
+      <p class="at-lead">In the natural zodiac the first house is the head and each following house moves down the body. The sign sitting on a house shows which part of you that house speaks for.</p></div>`;
+  }
+  function bodyTab(){
+    const pb = A.PL.map(p => `<div class="at-pb" style="--ac:${col(p)}"><b>${gl(p)}</b><span>${p}</span><em>${A.P[p].body}</em></div>`).join('');
+    return `<div class="at-hero2">${bodySvg()}</div><div id="atBodyD">${bodyHtml()}</div>${sec('Planets and the body', 'what each planet traditionally rules', `<div class="at-pbs">${pb}</div>`)}<p class="at-note">Traditional symbolism for study. It is not a medical tool.</p>`;
+  }
+
+  /* ---------- HOUSES ---------- */
+  function houseSvg(){
+    const P = { A:[0,0], B:[300,0], C:[300,300], D:[0,300], T:[150,0], R:[300,150], M:[150,300], L:[0,150], O:[150,150], a:[75,75], b:[225,75], c:[225,225], d:[75,225] };
+    const H = { 1:'a T b O', 2:'A T a', 3:'A L a', 4:'a L d O', 5:'D L d', 6:'D M d', 7:'d M c O', 8:'C M c', 9:'C R c', 10:'c R b O', 11:'B R b', 12:'B T b' };
+    const cells = Object.keys(H).map(n => { const v = H[n].split(' ').map(k => P[k]), cx = v.reduce((s, q) => s + q[0], 0) / v.length, cy = v.reduce((s, q) => s + q[1], 0) / v.length, k = A.HOUSE_KINDS;
+      const big = v.length === 4, kinds = [[1,4,7,10].includes(+n) ? 'K' : '', [1,5,9].includes(+n) ? 'T' : '', [6,8,12].includes(+n) ? 'D' : ''].join('');
+      return `<g class="at-hc${S.house === +n ? ' on' : ''}" data-house="${n}"><polygon points="${v.map(q => q.join(',')).join(' ')}"/><text class="n" x="${cx}" y="${cy + 7}">${n}</text>${kinds ? `<text class="k" x="${cx}" y="${cy + 24}">${kinds}</text>` : ''}</g>`; }).join('');
+    return `<svg class="at-hchart" viewBox="-4 -4 308 308" role="img" aria-label="North Indian chart with 12 houses"><rect x="0" y="0" width="300" height="300" class="fr"/>${cells}<g class="ln"><line x1="0" y1="0" x2="300" y2="300"/><line x1="300" y1="0" x2="0" y2="300"/><polygon points="150,0 300,150 150,300 0,150"/></g></svg>`;
+  }
+  function houseHtml(){
+    const h = A.HOUSES[S.house - 1], kinds = A.HOUSE_KINDS.filter(k => k.h.includes(h.n)), aim = A.AIMS.find(a => a.h.includes(h.n)), sg = A.SIGNS[h.n - 1];
+    return `<div class="at-card" style="--ac:${aim.color}"><div class="at-hd"><span class="at-big n">${h.n}</span><div><h3>${h.name}</h3><p>${h.sa} bhava · ${ordn(h.n)} house</p></div></div><p class="at-lead">${h.sig}.</p>
+      ${kv([['Natural sign', sg.glyph + ' ' + sg.name + ' (lord ' + gl(sg.lord) + ' ' + sg.lord + ')', 1], ['Karaka', h.karaka], ['Body', h.body], ['Life aim', aim.name + ' (' + aim.sa + ')']], 2)}
+      <div class="at-pills">${kinds.map(k => pill(k.name + ' · ' + k.sa)).join('')}</div></div>`;
+  }
+  function housesHtml(){
+    const kinds = A.HOUSE_KINDS.map(k => `<div class="at-kind"><b>${k.name}<small>${k.sa}</small></b><span>${k.h.map(n => `<i data-house="${n}">${n}</i>`).join('')}</span><p>${k.note}</p></div>`).join('');
+    const aims = A.AIMS.map(a => `<div class="at-aim" style="--ac:${a.color}"><b>${a.name}</b><small>${a.sa}</small><span>${a.h.map(n => `<i data-house="${n}">${n}</i>`).join('')}</span></div>`).join('');
+    return `<div class="at-hero2">${houseSvg()}<p class="at-note c">North Indian layout: house 1 is always the top diamond and the houses run anticlockwise. K = angle (Kendra), T = trine (Trikona), D = difficult (Dusthana).</p></div><div id="atHouse">${houseHtml()}</div>${sec('Four aims of life', 'Purusharthas', `<div class="at-aims">${aims}</div>`)}${sec('Kinds of house', 'tap a number to open that house', kinds)}`;
+  }
+
+  /* ---------- STARS ---------- */
+  function nakHtml(){
+    const n = A.NAK[S.nak], c = col(n.lord), padas = [0, 1, 2, 3].map(k => { const lon = n.from + k * 10 / 3, sg = Math.floor(lon / 30), nv = (n.i * 4 + k) % 12;
+      return `<div><b>Pada ${k + 1}</b><span>${A.SIGNS[sg].glyph} ${Math.floor(lon % 30)}°${String(Math.round((lon % 30 % 1) * 60)).padStart(2, '0')}′ · navamsa ${A.SIGNS[nv].glyph} ${A.SIGNS[nv].name}</span></div>`; }).join('');
+    const d0 = n.from % 30, dm = (x) => Math.floor(x) + '°' + String(Math.round((x % 1) * 60)).padStart(2, '0') + '′';
+    return `<div class="at-card" style="--ac:${c}"><div class="at-hd"><span class="at-big n">${n.i + 1}</span><div><h3>${n.name}</h3><p>${gl(n.lord)} ${n.lord} nakshatra · ${A.DASHA_YEARS[n.lord]} year Dasha</p></div></div>
+      ${kv([['Span', `${dm(d0)} to ${dm(d0 + 13.3333)} ${A.SIGNS[n.sign].name}${d0 + 13.3333 > 30 ? ' and beyond' : ''}`], ['Deity', n.deity], ['Symbol', n.symbol], ['Gana', n.gana], ['Animal (yoni)', n.animal], ['Nature', n.nature]], 2)}
+      <div class="at-padas">${padas}</div></div>`;
+  }
+  function starsHtml(){
+    const rows = A.DASHA_ORDER.map(l => `<div class="at-nrow" style="--ac:${col(l)}"><b>${gl(l)}<small>${l}</small></b>${A.NAK.filter(n => n.lord === l).map(n => `<button type="button" class="at-ntile${S.nak === n.i ? ' on' : ''}" data-nak="${n.i}"><em>${n.i + 1}</em>${n.name}</button>`).join('')}</div>`).join('');
+    return `<div id="atNak">${nakHtml()}</div>${sec('All 27 by ruling planet', 'the Dasha order repeats three times', `<div class="at-nrows" id="atPick">${rows}</div>`)}`;
+  }
+
+  /* ---------- TIME ---------- */
+  function donut(){
+    let a0 = -90; const r = 84, cx = 110, cy = 110, tot = 120, arcs = A.DASHA_ORDER.map(p => { const sw = A.DASHA_YEARS[p] / tot * 360, a1 = a0 + sw, x0 = cx + r * Math.cos(a0 * Math.PI / 180), y0 = cy + r * Math.sin(a0 * Math.PI / 180), x1 = cx + r * Math.cos(a1 * Math.PI / 180), y1 = cy + r * Math.sin(a1 * Math.PI / 180), m = (a0 + a1) / 2, tx = cx + (r + 0) * Math.cos(m * Math.PI / 180), ty = cy + r * Math.sin(m * Math.PI / 180); a0 = a1;
+      return `<path d="M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${sw > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}" stroke="${col(p)}" class="arc"><title>${p} ${A.DASHA_YEARS[p]} years</title></path><text x="${tx.toFixed(1)}" y="${(ty + 5).toFixed(1)}" class="al">${gl(p)}</text>`; }).join('');
+    return `<svg class="at-donut" viewBox="0 0 220 220" role="img" aria-label="The 120 year Vimshottari cycle">${arcs}<text x="110" y="108" class="c1">120</text><text x="110" y="130" class="c2">years</text></svg>`;
+  }
+  function timeHtml(){
+    const T = A.TITHI, tit = (half) => T.map((t, i) => { const n = i + 1, last = i === 14, nm = last ? (half === 'S' ? 'Purnima' : 'Amavasya') : t[0], dt = last ? (half === 'S' ? 'Chandra' : 'Pitris') : t[1];
+      return `<div class="at-tt"><em>${half === 'S' ? n : n + 15}</em><b>${nm}</b><span>${dt}</span><small>${A.TITHI_KIND[i % 5].split(' ')[0]}</small></div>`; }).join('');
+    const avg = (() => { const mdDays = 120 / 9 * 365.25; let d = mdDays; return A.DASHA_LEVELS.map((n, i) => { const out = [n, d]; d /= 9; return out; }); })();
+    const fmt = d => d >= 365 ? (d / 365.25).toFixed(1) + ' years' : d >= 60 ? (d / 30.44).toFixed(1) + ' months' : d >= 2 ? d.toFixed(1) + ' days' : (d * 24).toFixed(1) + ' hours';
+    return sec('The 120 year Dasha cycle', 'Vimshottari', `<div class="at-donutw">${donut()}<div class="at-dleg">${A.DASHA_ORDER.map(p => `<span style="--ac:${col(p)}"><b>${gl(p)}</b>${p}<em>${A.DASHA_YEARS[p]}</em></span>`).join('')}</div></div><p class="at-note">The order never changes: Ketu, Venus, Sun, Moon, Mars, Rahu, Jupiter, Saturn, Mercury. Your birth Moon nakshatra decides where in the cycle you start.</p>`)
+      + sec('How long each level lasts', 'on average', `<div class="at-lvl">${avg.map((a, i) => `<div style="--w:${Math.max(8, 100 - i * 15)}%"><b>${i + 1}</b><span>${a[0]}</span><em>${fmt(a[1])}</em><i></i></div>`).join('')}</div>`)
+      + sec('Tithi', 'the 30 lunar days: 15 bright, 15 dark', `<h5 class="at-h5">Shukla paksha (waxing)</h5><div class="at-tts">${tit('S')}</div><h5 class="at-h5">Krishna paksha (waning)</h5><div class="at-tts">${tit('K')}</div><p class="at-note">Kinds repeat in fives: Nanda (joy), Bhadra (good), Jaya (victory), Rikta (empty, avoid starting things), Purna (full).</p>`)
+      + sec('Nitya yoga', '27 Sun plus Moon combinations', `<div class="at-chips">${A.YOGA.map((y, i) => `<i class="${A.YOGA_BAD.includes(y) ? 'bad' : ''}"><em>${i + 1}</em>${y}</i>`).join('')}</div><p class="at-note">Red marks the traditionally difficult yogas.</p>`)
+      + sec('Karana', 'half a tithi each', `<h5 class="at-h5">Moving, 7 (repeat eight times)</h5><div class="at-chips">${A.KARANA.moving.map(k => `<i class="${k.startsWith('Vishti') ? 'bad' : ''}">${k}</i>`).join('')}</div><h5 class="at-h5">Fixed, 4 (once a month)</h5><div class="at-chips">${A.KARANA.fixed.map(k => `<i>${k}</i>`).join('')}</div>`)
+      + sec('Six seasons', 'Ritu', `<div class="at-seas">${A.SEASONS.map(s => `<div style="--ac:${col(s.lord.split(' ')[0])}"><b>${s.n}</b><span>${s.en}</span><em>${s.months}</em><small>${s.lord}</small></div>`).join('')}</div>`);
+  }
+
+  /* ---------- RULES ---------- */
+  function rulesHtml(){
+    const P7 = A.PL.slice(0, 7), cell = (a, b) => a === b ? '<td class="me">·</td>' : `<td class="${A.FRIEND[a][b]}"><b>${A.FRIEND[a][b] === 'F' ? '♥' : A.FRIEND[a][b] === 'E' ? '✕' : '○'}</b></td>`;
+    const mat = `<table class="at-fr"><thead><tr><th></th>${P7.map(p => `<th style="--ac:${col(p)}">${gl(p)}</th>`).join('')}</tr></thead><tbody>${P7.map(a => `<tr><th style="--ac:${col(a)}">${gl(a)}</th>${P7.map(b => cell(a, b)).join('')}</tr>`).join('')}</tbody></table>`;
+    const asp = A.ASPECTS.map(a => `<div class="at-asp"><b>${a[0]}</b><span>${a[1]}</span></div>`).join('');
+    const dig = A.PL.slice(0, 7).map(p => { const q = A.P[p], g = n => { const s = A.SIGNS.find(x => x.name === n); return s ? s.glyph : n; };
+      return `<div class="at-dr" style="--ac:${col(p)}"><b>${gl(p)}<small>${p}</small></b><span class="ex"><small>Exalted</small>${g(q.exalt[0])} ${q.exalt[1]}°</span><span class="ow"><small>Own</small>${q.own.map(g).join(' ')}</span><span class="mt"><small>Moolatrikona</small>${g(q.mt[0])} ${q.mt[1]}°</span><span class="de"><small>Debilitated</small>${g(q.debil[0])} ${q.debil[1]}°</span></div>`; }).join('');
+    const group = (o) => Object.keys(o).map(k => `<div class="at-grp"><b>${k}</b><span>${o[k].map(p => `<i style="--ac:${col(p)}">${gl(p)} ${p}</i>`).join('')}</span></div>`).join('');
+    return sec('Natural friendships', 'read across: the planet on the left feels this way about the planet on top', mat + `<p class="at-note"><b class="f">♥</b> friend · <b>○</b> neutral · <b class="e">✕</b> enemy. Rahu and Ketu: friends Mercury, Venus, Saturn; Jupiter neutral; enemies Sun, Moon, Mars.</p>`)
+      + sec('Dignity', 'where each planet is strongest and weakest', `<div class="at-drs">${dig}</div><p class="at-note">Rahu and Ketu are left out because the schools disagree on their signs.</p>`)
+      + sec('Aspects (drishti)', 'Vedic planets look at whole houses counted from where they stand', `<div class="at-asps">${asp}</div>`)
+      + sec('Directional strength', 'Dik bala', `<div class="at-comp">${A.DIKBALA.map(d => `<div class="d${d.house}"><b>House ${d.house}</b><span>${d.dir}</span><em>${d.planets.map(p => gl(p) + ' ' + p).join(' · ')}</em></div>`).join('')}</div>`)
+      + sec('Eight directions', 'Dikpalas', `<div class="at-dik">${A.DIKPALA.map(d => `<div style="--ac:${col(d[2])}"><b>${d[0]}</b><span>${d[1]}</span><em>${gl(d[2])} ${d[2]}</em></div>`).join('')}</div>`)
+      + sec('Three gunas', '', group(A.GUNAS)) + sec('Three doshas', 'Ayurvedic humours', group(A.DOSHAS)) + sec('Five elements', 'Tattvas', group(A.TATTVAS));
+  }
+
+  /* ---------- CHARTS ---------- */
+  function chartsHtml(){
+    return sec('Divisional charts', 'Vargas: each one zooms into one part of life', `<div class="at-vg">${A.VARGAS.map(v => `<div><b>${v[0]}</b><span>${v[1]}</span><em>${v[2]}</em></div>`).join('')}</div><p class="at-note">The Divisional Charts tab of this app draws these for your birth chart. D9 (Navamsa) is the most used after the main chart.</p>`);
+  }
+
+  /* ---------- shell ---------- */
+  const BODY = { week:weekHtml, planets:planetsHtml, signs:signsHtml, body:bodyTab, houses:housesHtml, stars:starsHtml, time:timeHtml, rules:rulesHtml, charts:chartsHtml };
+  function wheelCenter(){ const d = A.DAYS[S.day], a = document.getElementById('atWm1'), b = document.getElementById('atWm2'); if (a){ a.textContent = d.en; b.textContent = gl(d.lord) + ' ' + d.lord; } }
+  function paint(){
+    const host = document.getElementById('atBody'); if (!host) return;
+    host.innerHTML = `<div class="at-pane" data-pane="${S.tab}">${BODY[S.tab]()}</div>`;
+    document.querySelectorAll('#atlas .at-tab').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
+    if (S.tab === 'week') wheelCenter();
+  }
+  function html(){
+    const d = A.DAYS[new Date().getDay()];
+    return `<div class="atlas" id="atlas"><header class="at-top"><div><h2>Astro Atlas</h2><p>The basics of Vedic astrology in one place: day lords, signs, houses, nakshatras, time and rules.</p></div><div class="at-now" style="--ac:${col(d.lord)}"><b>${gl(d.lord)}</b><span>${d.en}<small>${d.lord}'s day</small></span></div></header>
+      <nav class="at-tabs" aria-label="Atlas sections">${TABS.map(t => `<button type="button" class="at-tab${S.tab === t[0] ? ' on' : ''}" data-tab="${t[0]}"><b>${t[1]}</b><span>${t[2]}</span></button>`).join('')}</nav><div id="atBody"></div></div>`;
+  }
+  const upd = (id, fn) => { const e = document.getElementById(id); if (e){ e.innerHTML = fn(); e.classList.remove('at-swap'); void e.offsetWidth; e.classList.add('at-swap'); } };
+  document.addEventListener('click', e => {
+    const t = e.target.closest ? e.target.closest('#atlas [data-tab],#atlas [data-day],#atlas [data-planet],#atlas [data-sign],#atlas [data-body],#atlas [data-house],#atlas [data-nak]') : null; if (!t) return;
+    const D = t.dataset;
+    if (D.tab){ S.tab = D.tab; paint(); const n = document.getElementById('atlas'); if (n && n.scrollIntoView) n.scrollIntoView({ block:'start', behavior:'smooth' }); return; }
+    if (D.day != null){ S.day = +D.day; document.querySelectorAll('#atlas .at-wn').forEach(g => g.classList.toggle('on', +g.dataset.day === S.day)); upd('atDay', dayHtml); wheelCenter(); return; }
+    if (D.planet){ S.planet = D.planet; document.querySelectorAll('#atlas [data-planet]').forEach(b => b.classList.toggle('on', b.dataset.planet === S.planet)); upd('atPlanet', planetHtml); return; }
+    if (D.sign != null){ S.sign = +D.sign; document.querySelectorAll('#atlas .at-tile[data-sign]').forEach(b => b.classList.toggle('on', +b.dataset.sign === S.sign)); upd('atSign', signHtml); return; }
+    if (D.body != null){ S.body = +D.body; document.querySelectorAll('#atlas .at-bm').forEach(g => g.classList.toggle('on', +g.dataset.body === S.body)); upd('atBodyD', bodyHtml); return; }
+    if (D.house != null){ S.house = +D.house; document.querySelectorAll('#atlas .at-hc').forEach(g => g.classList.toggle('on', +g.dataset.house === S.house)); upd('atHouse', houseHtml); const h = document.getElementById('atHouse'); if (h && h.getBoundingClientRect().top < 0 && h.scrollIntoView) h.scrollIntoView({ block:'center', behavior:'smooth' }); return; }
+    if (D.nak != null){ S.nak = +D.nak; document.querySelectorAll('#atlas .at-ntile').forEach(b => b.classList.toggle('on', +b.dataset.nak === S.nak)); upd('atNak', nakHtml); const h = document.getElementById('atNak'); if (h && h.getBoundingClientRect().top < 0 && h.scrollIntoView) h.scrollIntoView({ block:'start', behavior:'smooth' }); }
+  });
+  window.buildAtlasPanel = function(){ setTimeout(paint, 0); return html(); };
+  return { S, html, paint };
+})();
+window.ATL = ATL;
 <\/script>
 <script>
 /* ============================================================================

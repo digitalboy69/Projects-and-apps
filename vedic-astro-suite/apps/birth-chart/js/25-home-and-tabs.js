@@ -34,6 +34,7 @@ const HOME_ITEMS=[
  ['panel-tithi','🪔','Tithi Pravesh','Your yearly lunar-birthday chart','Time & Cycles','home'],
  ['panel-transits','♄','Transits & Sade Sati','Saturn, Jupiter & node ingress dates','Time & Cycles','home'],
  ['panel-transit','⟲','Live Sky','Today\'s planets vs your chart','Time & Cycles','home'],
+ ['panel-atlas','🧭','Astro Atlas','The basics in one place: day lords, signs, body parts, houses, 27 nakshatras, tithi, dasha, friends and rules','Analysis','home'],
  ['panel-planetency','📚','Planet Encyclopedia','Every planet in full: nature, aspects, exalted & debilitated, friends & foes','Analysis','home'],
  ['panel-numerology','🔢','Numerology','Name number & birth-date numbers with meanings','Analysis','home'],
  ['panel-dosha','🧿','Dosha Check','Manglik, Kaal Sarp, Pitru, Gand Mool & more: the reason and what softens it','Analysis','home'],

@@ -180,6 +180,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/122-today-for-you.js` — Today for You (global TDY, panel-today, Home > Time & Cycles): Chandrabala, Tarabala, Gochara from the birth Moon, good Choghadiya slots vs Rahu Kalam, any date
 - `apps/birth-chart/js/123-prashna.js` — Prashna (horary) chart (global PRN, panel-prashna, Home > Time & Cycles): chart cast for a question moment, topic→house, lagna lord / matter lord strength, Ithasala/Easarapha (Tajika orbs), Moon checks, North/South chart, copy reading
 - `apps/birth-chart/js/124-ayanamsa-choice.js` — ayanamsa selector on the intake form (Lahiri default, Raman, KP); saves choice, re-draws chart. Engine offsets live in js/03 and sky3d js/01 (AYAN_MODES, ayanKey, ayanName)
+- `apps/birth-chart/js/131-astro-atlas.js` — Astro Atlas panel UI (panel-atlas): Week, Planets, Signs, Body, Houses, Stars, Time, Rules, Charts
+- `apps/birth-chart/js/130-astro-atlas-data.js` — Astro Atlas reference data (global ATLAS)
 - `apps/birth-chart/js/129-trigger-lab.js` — Trigger Lab (Home > Analysis + left quick menu): Single/Double Dasha-repeat pattern + sign / lord's-sign / aspect / nakshatra transit rules, raw activated houses
 - `apps/birth-chart/js/128-meaning-lab.js` — Meaning Lab (Home > Analysis + left quick menu): free mix of planet/house/sign/lord/nakshatra/dasha pieces, raw meanings from VDB, optional database links, own notes saved locally
 - `apps/birth-chart/js/127-time-sky-panel.js` — Time sky panel (Time Dial card + Dasha Reverse per-window): Dasha chain at birth/custom/today, rising sign + D9 boundaries in a 2-hour window
@@ -256,6 +258,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/58-ayanamsa-choice.css` — styles for the ayanamsa selector
 - `apps/birth-chart/css/59-kp-system.css` — styles for the KP system panel
 - `apps/birth-chart/css/67-chakra-explorer.css` — styles for the Chakra Explorer (chx- prefix)
+- `apps/birth-chart/css/67-astro-atlas.css` — Astro Atlas look (tabs, week wheel, body figure, house chart, nakshatra groups)
 - `apps/birth-chart/css/66-feature-polish.css` — shared refined look for Dasha Reverse, Time sky, Meaning Lab, Trigger Lab (fields, panels, chains, reveal)
 - `apps/birth-chart/css/65-profile-menu.css` — Profile menu redesign: profile register entries that fit the screen, labeled Share/Edit/Delete row
 - `apps/birth-chart/css/64-trigger-lab.css` — styles for the Trigger Lab
