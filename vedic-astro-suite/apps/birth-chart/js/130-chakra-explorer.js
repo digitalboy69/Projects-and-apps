@@ -223,7 +223,7 @@ const CHX = (function(){
     let cells = '', txt = '', latta = '', lines = '', marks = '';
     for (let r = 0; r < 9; r++) for (let c = 0; c < 9; c++){
       const g = GRID[r][c], x = c * S, y = r * S, key = r + ',' + c, h = hl[key], cx = x + S / 2;
-      cells += `<rect class="chx-c ${g.t}${h ? ' ' + h : ''}" x="${x}" y="${y}" width="${S}" height="${S}"/>`;
+      cells += `<rect class="chx-c ${g.t}${h ? ' ' + h : ''}" x="${x + 0.6}" y="${y + 0.6}" width="${S - 1.2}" height="${S - 1.2}" rx="3"${h ? ` style="fill:url(#${h === 'naam' ? 'chxTeal' : 'chxGoldA'})"` : ''}/>`;
       const tc = 'chx-tx' + (h ? ' hl' : '');
       if (g.t === 'k') txt += `<text class="${tc} nk" x="${cx}" y="${y + 12}" font-size="8.4">${esc(NK[g.n])}</text>`;
       else if (g.t === 'v' || g.t === 'c') txt += `<text class="${tc}" x="${cx}" y="${y + 23}" font-size="14">${g.d}</text><text class="${tc} sm" x="${cx}" y="${y + 34}" font-size="6.8">${esc(g.r)}</text>`;
@@ -238,20 +238,21 @@ const CHX = (function(){
       const x1 = rw.cell[1] * S + S / 2, y1 = rw.cell[0] * S + S / 2, x2 = L.end[1] * S + S / 2, y2 = L.end[0] * S + S / 2;
       lines += `<line class="chx-ray ${rw.p.benefic ? 'b' : 'm'} ${L.k}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" marker-end="url(#${rw.p.benefic ? 'chxArG' : 'chxArR'})"/>`;
     }));
-    const defs = '<defs><marker id="chxArG" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 4L0 8z" fill="#5fd08a"/></marker><marker id="chxArR" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 4L0 8z" fill="#e0725a"/></marker></defs>';
-    return `<svg class="chx-svg" viewBox="0 0 360 360" role="img" aria-label="Sarvatobhadra Chakra, 9 by 9 grid">${defs}${cells}${lines}${latta}${txt}${marks}</svg>`;
+    const defs = '<defs><linearGradient id="chxGoldA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7d57a"/><stop offset="1" stop-color="#d49a2a"/></linearGradient><linearGradient id="chxTeal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fe0d2"/><stop offset="1" stop-color="#3ca597"/></linearGradient><marker id="chxArG" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 4L0 8z" fill="#5fd08a"/></marker><marker id="chxArR" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 4L0 8z" fill="#e0725a"/></marker></defs>';
+    return `<svg class="chx-svg" viewBox="-6 -6 372 372" role="img" aria-label="Sarvatobhadra Chakra, 9 by 9 grid">${defs}<rect class="chx-frame" x="-3" y="-3" width="366" height="366" rx="10"/>${cells}${lines}${latta}${txt}${marks}</svg>`;
   }
   function kotaSVG(D){
     const K = D.kota, J = D.nat.j28, ZC = { Bahya:'#e0725a', Prakaara:'#5fd08a', Madhya:'#6f9be8', Stambha:'#b9b3c9' };
     const byN = {}; K.rows.forEach(r => { (byN[r.n] = byN[r.n] || []).push(r); });
     let out = '';
-    [190, 148, 106, 64].forEach((h, i) => { out += `<rect class="chx-kz" x="${200 - h}" y="${200 - h}" width="${h * 2}" height="${h * 2}" rx="6" stroke="${ZC[['Bahya','Prakaara','Madhya','Stambha'][i]]}"/>`; });
+    out += '<defs><linearGradient id="chxGoldK" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7d57a"/><stop offset="1" stop-color="#d49a2a"/></linearGradient></defs>';
+    [190, 148, 106, 64].forEach((h, i) => { const zc = ZC[['Bahya','Prakaara','Madhya','Stambha'][i]]; out += `<rect class="chx-kz" x="${200 - h}" y="${200 - h}" width="${h * 2}" height="${h * 2}" rx="8" stroke="${zc}" fill="${zc}" fill-opacity="0.07"/>`; });
     [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(d => { out += `<line class="chx-kg" x1="${200 + d[0] * 170}" y1="${200 + d[1] * 170}" x2="${200 + d[0] * 44}" y2="${200 + d[1] * 44}"/>`; });
     [[0,-1],[1,0],[0,1],[-1,0]].forEach(d => { out += `<line class="chx-kg ex" x1="${200 + d[0] * 44}" y1="${200 + d[1] * 44}" x2="${200 + d[0] * 170}" y2="${200 + d[1] * 170}"/>`; });
     [['Bahya',105,18],['Prakaara',135,60],['Madhya',157,102],['Stambha',200,203]].forEach(z => { out += `<text class="chx-kl" x="${z[1]}" y="${z[2]}" font-size="7.5" text-anchor="middle" fill="${ZC[z[0]]}">${z[0]}</text>`; });
     for (let n = 1; n <= 28; n++){
       const q = kotaPos(n), i = kotaInfo(n), idx = (J + n - 1) % 28, ps = (byN[n] || []).map(r => r.p);
-      out += `<g><rect class="chx-kb${n === 1 ? ' hot' : ''}" x="${q[0] - 20}" y="${q[1] - 13}" width="40" height="26" rx="5" stroke="${ZC[i.zone]}"/><text class="chx-kn" x="${q[0] - 17}" y="${q[1] - 5}" font-size="6.2">${n}</text><text class="chx-kt${n === 1 ? ' hot' : ''}" x="${q[0]}" y="${q[1] - 2}" font-size="8.2">${esc(NK[idx])}</text>`;
+      out += `<g><rect class="chx-kb${n === 1 ? ' hot' : ''}" x="${q[0] - 20}" y="${q[1] - 13}" width="40" height="26" rx="6" stroke="${ZC[i.zone]}"${n === 1 ? ' style="fill:url(#chxGoldK)"' : ''}/><text class="chx-kn" x="${q[0] - 17}" y="${q[1] - 5}" font-size="6.2">${n}</text><text class="chx-kt${n === 1 ? ' hot' : ''}" x="${q[0]}" y="${q[1] - 2}" font-size="8.2">${esc(NK[idx])}</text>`;
       if (ps.length) out += row(ps, q[0], q[1] + 7, 5, 11, p => { const r = K.by[p.name]; return r.way === 'IN' ? 'in' : r.way === 'OUT' ? 'out' : 'st'; });
       out += '</g>';
     }
@@ -260,13 +261,14 @@ const CHX = (function(){
   function shoolaSVG(D, o){
     const Sh = D.shoola, at = {}; Sh.rows.forEach(r => { (at[r.n] = at[r.n] || []).push(r.p); });
     const tx = [70, 180, 290], ty = 52;
-    let out = `<path class="chx-sh" d="M${tx[0]} ${ty + 24}V118H${tx[2]}V${ty + 24}M180 ${ty + 24}V118M180 118V212"/>`;
+    let out = '<defs><linearGradient id="chxShaft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9d3e6"/><stop offset="1" stop-color="#8f88a6"/></linearGradient><linearGradient id="chxGoldS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7d57a"/><stop offset="1" stop-color="#d49a2a"/></linearGradient></defs>';
+    out += `<path class="chx-sh" stroke="url(#chxShaft)" d="M${tx[0]} ${ty + 24}V118H${tx[2]}V${ty + 24}M180 ${ty + 24}V118M180 118V212"/>`;
     Sh.tips.forEach((t, i) => {
       const hot = (at[t.n] || []).some(p => !p.benefic);
       out += `<g><circle class="chx-sc${hot ? ' hot' : ''}" cx="${tx[i]}" cy="${ty}" r="25"/><text class="chx-stx" x="${tx[i]}" y="${ty - 1}" font-size="9">${esc(t.name)}</text><text class="chx-stx sm" x="${tx[i]}" y="${ty + 11}" font-size="7.5">${ord(t.n)}</text></g>`;
       out += row(at[t.n] || [], tx[i], ty - 38, 6, 13);
     });
-    out += `<g><circle class="chx-sc base" cx="180" cy="240" r="28"/><text class="chx-stx base" x="180" y="238" font-size="9.5">${esc(Sh.baseName)}</text><text class="chx-stx base sm" x="180" y="251" font-size="7.5">${o.shoola === 'sun' ? "Sun's star" : 'Janma'}</text></g>`;
+    out += `<g><circle class="chx-sc base" cx="180" cy="240" r="28" style="fill:url(#chxGoldS)"/><text class="chx-stx base" x="180" y="238" font-size="9.5">${esc(Sh.baseName)}</text><text class="chx-stx base sm" x="180" y="251" font-size="7.5">${o.shoola === 'sun' ? "Sun's star" : 'Janma'}</text></g>`;
     out += row(at[1] || [], 238, 240, 6.5, 14);
     return `<svg class="chx-svg shoola" viewBox="0 0 360 285" role="img" aria-label="Shoola Chakra, the trident of nakshatras">${out}</svg>`;
   }
@@ -298,7 +300,7 @@ const CHX = (function(){
     return `<div class="chx-card">${sbcSVG(D, o)}
       <div class="chx-leg"><span><i class="sw nat"></i>Your point</span><span><i class="sw rb"></i>Benefic ray</span><span><i class="sw rm"></i>Malefic ray</span><span><i class="sw lt"></i>Latta kick</span></div></div>
       <div class="chx-sec2"><h5>What touches your points <span>by vedha ray</span></h5>${hits}</div>
-      <div class="chx-sec2"><h5>Planets and their rays</h5>${rowsH}</div>${lat}`;
+      <div class="chx-sec2 cols"><h5>Planets and their rays</h5>${rowsH}</div>${lat}`;
   }
   function kotaHTML(D){
     const K = D.kota, nat = D.nat, Z = { Bahya:'outer wall', Prakaara:'the wall', Madhya:'inner court', Stambha:'central pillar' };
@@ -339,13 +341,13 @@ const CHX = (function(){
     o = o || ST;
     let D; try { D = compute(chart, profile, jd, o); } catch(e){ console.warn('chakra explorer', e); return '<div class="meta-err">Could not work out this moment.</div>'; }
     const nat = D.nat;
-    return `<div class="chx-sec"><h4>1. Sarvatobhadra Chakra</h4><p class="chx-sub">The 9x9 grid of 28 nakshatras, 12 rashis, letters, tithis and weekdays. Your five pillars are lit in gold. Each planet sends rays across the grid, and any ray that lands on a gold point is listed below.</p>
+    return `<section class="chx-sec" id="chxSbc"><h4>Sarvatobhadra Chakra</h4><p class="chx-sub">The 9x9 grid of 28 nakshatras, 12 rashis, letters, tithis and weekdays. Your five pillars are lit in gold. Each planet sends rays across the grid, and any ray that lands on a gold point is listed below.</p>
       <label class="chx-tg"><input type="checkbox" id="chxVara"${o.vara ? ' checked' : ''}> Show weekdays (Vaara) in the centre instead of tithi groups</label>
       <label class="chx-tg"><input type="checkbox" id="chxRays"${o.rays ? ' checked' : ''}> Show vedha rays</label><label class="chx-tg"><input type="checkbox" id="chxLatta"${o.latta ? ' checked' : ''}> Show Latta kicks</label>
       <div class="chx-hd">Planets <small>tap to show or hide · * = retrograde</small></div>${chips(D, o)}
-      ${sbcHTML(D, o)}</div>
-      <div class="chx-sec"><h4>2. Kota Chakra</h4><p class="chx-sub">A four-walled fort of 28 nakshatras counted from your Janma Nakshatra: the outer wall (Bahya), the Prakaara, the Madhya court and the central pillar (Stambha). A planet on its way in is IN, on its way out is OUT, on the pillar it is STALL. Retrograde planets, and Rahu and Ketu, reverse in and out.</p>${kotaHTML(D)}</div>
-      <div class="chx-sec"><h4>3. Shoola (Trishula) Chakra</h4><p class="chx-sub">The trident of the nakshatras. The 1st sits at the handle and the three spear-points fall on the 9th, 15th and 21st nakshatras, the sensitive points a malefic transit is said to pierce.</p>${shoolaHTML(D, o)}</div>${howHTML()}`;
+      ${sbcHTML(D, o)}</section>
+      <section class="chx-sec" id="chxKota"><h4>Kota Chakra</h4><p class="chx-sub">A four-walled fort of 28 nakshatras counted from your Janma Nakshatra: the outer wall (Bahya), the Prakaara, the Madhya court and the central pillar (Stambha). A planet on its way in is IN, on its way out is OUT, on the pillar it is STALL. Retrograde planets, and Rahu and Ketu, reverse in and out.</p>${kotaHTML(D)}</section>
+      <section class="chx-sec" id="chxShoola"><h4>Shoola (Trishula) Chakra</h4><p class="chx-sub">The trident of the nakshatras. The 1st sits at the handle and the three spear-points fall on the 9th, 15th and 21st nakshatras, the sensitive points a malefic transit is said to pierce.</p>${shoolaHTML(D, o)}</section>${howHTML()}`;
   }
   function text(chart, profile, jd){
     try {
@@ -355,6 +357,20 @@ const CHX = (function(){
   }
 
   /* ---------- panel, state and events ---------- */
+  let OBS = null;
+  const REDUCED = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  function fmtMoment(jd, tz){
+    try { const p = jdToParts(jd + tz / 24); return `${WD[new Date(Date.UTC(p.y, p.m - 1, p.d)).getUTCDay()]} ${p.d} ${MON[p.m - 1]} ${p.y} \u00b7 ${String(p.h).padStart(2, '0')}:${String(p.mi).padStart(2, '0')}`; } catch(e){ return ''; }
+  }
+  function watch(){
+    try {
+      if (OBS) OBS.disconnect();
+      if (!('IntersectionObserver' in window)) return;
+      OBS = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) document.querySelectorAll('.chx-tabs button').forEach(b => b.classList.toggle('on', b.getAttribute('data-t') === en.target.id)); }), { rootMargin: '-30% 0px -60% 0px' });
+      ['chxSbc','chxKota','chxShoola'].forEach(id => { const e = document.getElementById(id); if (e) OBS.observe(e); });
+    } catch(e){}
+  }
   const ST = { jd: null, vara: false, rays: true, latta: false, hide: {}, naam: '', paala: '', shoola: 'janma', chart: null };
   const nowJD = () => Date.now() / 86400000 + 2440587.5;
   function ctx(){ const pf = window.__vgProf, ch = (typeof currentChartForModal !== 'undefined') ? currentChartForModal : null; return (pf && ch) ? { pf, ch } : null; }
@@ -366,7 +382,10 @@ const CHX = (function(){
     const tile = (k, v) => `<div class="chx-tile"><small>${k}</small><b>${esc(v)}</b></div>`;
     const naam = `<option value="">none</option>` + LETLIST.map(l => `<option value="${l.key}"${ST.naam === l.key ? ' selected' : ''}>${l.dev} (${l.rom})</option>`).join('');
     const stp = (u, label) => `<div class="chx-st"><small>${label}</small><span><button type="button" data-chx="step" data-u="${u}" data-d="-1" aria-label="${label} back">&minus;</button><button type="button" data-chx="step" data-u="${u}" data-d="1" aria-label="${label} forward">+</button></span></div>`;
-    return `<div class="chx"><div class="avk-intro">Three classical transit charts on one page, read against your own chart (<b>${esc(profile.name || 'you')}</b>). It opens on today's sky. Use the time controls to move the transit forward or back.</div>
+    return `<div class="chx"><header class="chx-hero"><svg class="chx-emb" viewBox="0 0 100 100" aria-hidden="true"><g class="r r0" style="--i:0"><rect x="5" y="5" width="90" height="90" rx="11"/></g><g class="r r1" style="--i:1"><rect x="19" y="19" width="62" height="62" rx="8"/></g><g class="r r2" style="--i:2"><rect x="31" y="31" width="38" height="38" rx="6"/></g><g class="r r3" style="--i:3"><rect x="42" y="42" width="16" height="16" rx="3"/></g><g class="r" style="--i:4"><path class="sp" d="M5 5L42 42M95 5L58 42M5 95L42 58M95 95L58 58M50 5V42M50 58V95M5 50H42M58 50H95"/><path class="dm" d="M50 46L54 50L50 54L46 50z"/></g></svg>
+        <div><h3>Chakra Explorer</h3><p>Three classical transit charts, read against your own chart. See what today's planets touch in the birth star, tithi and name of <b>${esc(profile.name || 'you')}</b>, or move to any other moment.</p></div></header>
+      <nav class="chx-jump" aria-label="Charts and moment"><div class="chx-tabs"><button type="button" class="on" data-chx="go" data-t="chxSbc">Sarvatobhadra</button><button type="button" data-chx="go" data-t="chxKota">Kota</button><button type="button" data-chx="go" data-t="chxShoola">Shoola</button></div>
+        <div class="chx-when"><button type="button" data-chx="jstep" data-d="-1" aria-label="Previous day">&lsaquo;</button><button type="button" class="chx-wt" id="chxWhen" data-chx="jtime" aria-label="Change date and time"></button><button type="button" data-chx="jstep" data-d="1" aria-label="Next day">&rsaquo;</button></div></nav>
       <div class="chx-ctl"><div class="chgp-in"><label>Date <input type="date" id="chxDate"></label><label>Time <input type="time" id="chxTime"></label><button type="button" id="chxNow" class="chgp-btn">Now</button></div>
         <div class="chx-steps">${stp('min','Minute')}${stp('hour','Hour')}${stp('day','Day')}${stp('month','Month')}${stp('year','Year')}</div>
         <div class="chx-hd">Your natal pillars</div><div class="chx-tiles">${tile('Nakshatra', nat.jName)}${tile('Pada', 'Charan ' + nat.pada)}${tile('Rashi', nat.signName)}${tile('Tithi', nat.tithiName)}${tile('Vaara', nat.varaName)}</div>
@@ -382,6 +401,8 @@ const CHX = (function(){
     const b = document.getElementById('chxBody'); if (!b) return; const c = ctx(); if (!c) return;
     if (ST.jd == null) ST.jd = nowJD();
     b.innerHTML = html(c.ch, c.pf, ST.jd, ST);
+    const w = document.getElementById('chxWhen'); if (w) w.textContent = fmtMoment(ST.jd, tzOf(c.pf, c.ch));
+    watch();
   }
   function readInputs(){
     const c = ctx(); if (!c) return; const d = document.getElementById('chxDate'), t = document.getElementById('chxTime'); if (!d || !d.value) return;
@@ -409,6 +430,9 @@ const CHX = (function(){
     if (k === 'pl'){ const p = el.getAttribute('data-p'); ST.hide[p] = !ST.hide[p]; draw(); }
     else if (k === 'step') step(el.getAttribute('data-u'), Number(el.getAttribute('data-d')));
     else if (k === 'sb'){ ST.shoola = el.getAttribute('data-v'); draw(); }
+    else if (k === 'go'){ const t = document.getElementById(el.getAttribute('data-t')); if (t){ t.scrollIntoView({ behavior: REDUCED() ? 'auto' : 'smooth', block: 'start' }); document.querySelectorAll('.chx-tabs button').forEach(b => b.classList.toggle('on', b === el)); } }
+    else if (k === 'jstep') step('day', Number(el.getAttribute('data-d')));
+    else if (k === 'jtime'){ const t = document.querySelector('#panel-chakra .chx-ctl'); if (t) t.scrollIntoView({ behavior: REDUCED() ? 'auto' : 'smooth', block: 'start' }); }
   });
   window.buildChakraExplorerPanel = function(chart, profile){ const h = panel(chart, profile || {}); setTimeout(() => { syncInputs(); draw(); }, 0); return h; };
   if (typeof registerLatePanel === 'function') registerLatePanel('panel-chakra', window.buildChakraExplorerPanel);
