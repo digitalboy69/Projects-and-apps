@@ -50,6 +50,7 @@ You are working on the **Vedic Astro Suite**: a folder project made of a shell +
 | Nakshatra facets / any planet-in-nakshatra-pada text, birth star, rising nakshatra | `birth-chart/89-vedic-nakshatra-db.js` | `VNK_DATA` (edit facets), `VNK.placement/lagna/moon/forChart/each/find` |
 | "In real life" scenes / self-check questions / rising profile / signature at a glance | `birth-chart/90-reading-manifest.js` | `VMF_DATA` (behave, arena, manner, rising), `VMF.placement/lagna/lagnaArc/signature` |
 | What a Mahadasha/Antardasha feels like, life timeline, next 5 years | `birth-chart/91-dasha-reading.js` | `VDA_DATA` (planet theme/feelsLike/helps/watch/lens, houseRel), `VDA.timeline/antardashas/upcoming/current/pair` |
+| Chakra Explorer: Sarvatobhadra / Kota / Shoola charts, vedha, Latta | `birth-chart/130-chakra-explorer.js` (+ `css/67-chakra-explorer.css`) | `CHX.compute`, `CHX.html`, `rays`, `kotaInfo`, `GRID`, `LATTA`; panel `panel-chakra` (late panel, Home tile in `25`) |
 | Planet popup (Birth Chart) | `birth-chart/19-planets-panel.js`, `sky3d/29-planet-detail-content.js` | `openPlanetDetail`, `openOuterDetail`, `buildPlanetsPanel` |
 | Uranus/Neptune/Pluto | `birth-chart/05-ascendant-nakshatra-vargas.js`, `sky3d/02-planetary-dignity.js`, `birth-chart/06-outer-planet-knowledge.js`, `sky3d/30-outer-planet-knowledge.js` | `OUTER_LIST`, `OUTER_INFO`, `outerAspectsTo`, `planetGeocentricLongitude` (elements in `PLANET_ELEMENTS`), A: `openOuterPlanetDetail`, B: `openOuterDetail`, `chOuter`. They are **not** in `PLANET_LIST` on purpose (no Vedic aspects/yogas/dasha). |
 | Export / Copy for AI / JSON | `birth-chart/43-full-report-text.js`, `shared/export-addon.js`, `birth-chart/44-export-modal.js` | `buildFullReportText`, `openExportModal`, add-on `window.VAX` |
@@ -173,6 +174,8 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Date entry S27 (3D app): `apps/sky3d/js/01` has the same `toJulianDay` (Julian before 1582-10-15), `parseDob`, `formatDobStr`, `dobHuman`; `js/37` builds the hidden `#natalDob` from `#ndDay/#ndMon/#ndYear/#ndEra` (`ndCheck`, `ndSet`). Time Machine (`js/49`) works on plain {y,m,d,h,mi} parts; `jdToDate` in the 3D engine now returns a Date-like object (BC and Julian exact), `jdToParts`, `yearLabel`, `localOffsetMin` live in `js/01`. No ΔT correction in the 3D engine; never `split("-")` a dob.
 - Updater fix: `shell/js/updater.js` no longer reloads the page by itself after a new build (that made the app load twice); it downloads quietly and shows the new build on the next open or when you return to a tab with no chart open.
 - Performance rule for the polish layers (css/48-50): animate only transform and opacity, no backdrop-filter, no mask-image, no looping box-shadow or text-shadow animation, no scroll-timeline on lists; use `contain:layout paint` on repeated cards.
+- Chakra Explorer (new Home > Time & Cycles tile `panel-chakra`): `js/130-chakra-explorer.js` (CHX) + `css/67`. Sarvatobhadra 9x9 (layout checked cell by cell against a reference chart), vedha rays by motion (Sun/Moon/nodes cast all three), 5 natal pillars, Latta, Kota fort (zones verified vs the published lists), Shoola 9/15/21. Open points, say so in any summary: Kota Paala default is the navamsa lord = unverified (selector overrides it); 'fast planet' = 1.2 x mean speed is this page's own rule; one consonant cell read as Ba. Test: `node tests/chakra_explorer_test.js`.
+
 
 ---
 
@@ -185,13 +188,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-06 - 1833 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-07 - 1866 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 205 files, 30897 lines, 2499 KB
+**birth-chart** - 207 files, 31401 lines, 2548 KB
 ```
-index.html                                         629 lines   36 KB
+index.html                                         631 lines   36 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -234,6 +237,7 @@ js/127-time-sky-panel.js                            83 lines    7 KB
 js/128-meaning-lab.js                              134 lines   11 KB
 js/129-trigger-lab.js                              169 lines   15 KB
 js/13-chara-karakas.js                              24 lines    1 KB
+js/130-chakra-explorer.js                          417 lines   40 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/16-rectification-engine.js                       36 lines    2 KB
@@ -245,7 +249,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             159 lines   17 KB
+js/25-home-and-tabs.js                             160 lines   17 KB
 js/26-rectification-studio.js                      250 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -396,6 +400,7 @@ css/63-meaning-lab.css                              21 lines    2 KB
 css/64-trigger-lab.css                              22 lines    3 KB
 css/65-profile-menu.css                             30 lines    3 KB
 css/66-feature-polish.css                          121 lines   12 KB
+css/67-chakra-explorer.css                          84 lines    9 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB

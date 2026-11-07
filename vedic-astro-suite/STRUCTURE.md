@@ -23,6 +23,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 | Date Finder | birth-chart | `js/27-…`, `js/28-…`, `js/29-…` |
 | Rectification | birth-chart | `js/16-…`, `js/20-…`, `js/26-…` |
 | Chart reading, Fate Meter, Sahams, Life Activation, Tithi Pravesh | birth-chart | `js/70-…` to `js/75-…` |
+| Chakra Explorer (Sarvatobhadra, Kota, Shoola) | birth-chart | `js/130-chakra-explorer.js`, `css/67-chakra-explorer.css`, tile in `js/25-…`, registered in `js/120-…` |
 | Export / share / cloud | birth-chart + shared | `js/43-…`, `js/44-…`, `js/76-…`, `js/77-…`, `shared/export-addon.js` |
 | 3D scene, planets, camera | sky3d | `js/08-…` to `js/15-…`, `js/40-…` |
 | Solar System view | sky3d | `js/12-solar-system-view.js` |
@@ -184,6 +185,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/127-time-sky-panel.js` — Time sky panel (Time Dial card + Dasha Reverse per-window): Dasha chain at birth/custom/today, rising sign + D9 boundaries in a 2-hour window
 - `apps/birth-chart/js/126-dasha-reverse-finder.js` — Dasha Reverse (Rectify tab `drev`): pick Maha..Deha planets active at a known moment, finds the birth-time windows of the birth day (interpolated Moon, engine reuse)
 - `apps/birth-chart/js/125-kp-system.js` — KP system (global KP, panel-kp, Home > Analysis): Placidus cusps, star/sub/sub-sub lords, planet and house significators, cusp sub-lord promise checks, ruling planets, KP-ayanamsa button
+- `apps/birth-chart/js/130-chakra-explorer.js` — Chakra Explorer (global CHX, panel-chakra, Home > Time & Cycles): Sarvatobhadra Chakra (9x9 grid, vedha rays by planet motion, five natal pillars + optional Naam Akshara, Latta kicks), Kota Chakra (28-nakshatra fort, IN/OUT/STALL, Kota Swami/Paala) and Shoola/Trishula Chakra (9th/15th/21st points); opens on today's sky with minute-to-year time controls; registered through registerLatePanel
 - `apps/birth-chart/js/94-life-areas.js` — Life-area engine (global LAE), GENERATED: 9 areas (career, money, marriage, children, health, learning, foreign, home, inner life) scored 0-100 from house strength, lords, significators, divisional chart, yogas and dasha; calibrated on 12 charts; each score lists its reasons
 - `apps/birth-chart/js/95-life-narratives.js` — Life-area narratives (global LAN), GENERATED: a 450-700 word personal reading for each of the 9 life areas, composed from the engine facts (stance by band, house-lord arena, strengths, care points, yoga modifiers, timing, practices, self-check questions)
 - `apps/birth-chart/js/96-varga-reading.js` — Divisional chart readings (global VGR), GENERATED: D9, D10, D7, D4, D24, D20 each with rising sign, the houses that matter, planet-by-planet text, strength summary, vargottama and a score; positions come from the app's own varga engine
@@ -253,6 +255,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/57-prashna.css` — styles for the Prashna chart panel
 - `apps/birth-chart/css/58-ayanamsa-choice.css` — styles for the ayanamsa selector
 - `apps/birth-chart/css/59-kp-system.css` — styles for the KP system panel
+- `apps/birth-chart/css/67-chakra-explorer.css` — styles for the Chakra Explorer (chx- prefix)
 - `apps/birth-chart/css/66-feature-polish.css` — shared refined look for Dasha Reverse, Time sky, Meaning Lab, Trigger Lab (fields, panels, chains, reveal)
 - `apps/birth-chart/css/65-profile-menu.css` — Profile menu redesign: profile register entries that fit the screen, labeled Share/Edit/Delete row
 - `apps/birth-chart/css/64-trigger-lab.css` — styles for the Trigger Lab
@@ -406,6 +409,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tools/ai/session.sh` — AI session helper: start / check / test / ship (commit, rebase on moved main, check, push branch, fast-forward main; token only via GH_TOKEN env)
 
 ### tests/
+- `tests/chakra_explorer_browser_test.py` — Chakra Explorer in the real app: Home tile, three drawings, date and step controls, every toggle, Kota Paala override, phone width, rebuild if missing (CHX_SHOTS=dir saves screenshots)
+- `tests/chakra_explorer_test.js` — Chakra Explorer: 81-cell grid, 28 wall cells, ray geometry, Kota zones vs the published lists, Latta examples, Shoola tips, retrograde IN/OUT flip, full render on 60 random moments
 - `tests/dasha_reverse_test.js` — reverses the reference chart's Dasha chain, window must contain 02:23:00
 - `tests/time_sky_test.js` — Time sky panel: Dasha at 3 moments + rising/D9 segments (contiguous, 2 h, 6+ segments)
 - `tests/trigger_lab_test.js` — Trigger Lab engine: periods contiguous, pattern + rule hold at every found window, aspect/nakshatra rules

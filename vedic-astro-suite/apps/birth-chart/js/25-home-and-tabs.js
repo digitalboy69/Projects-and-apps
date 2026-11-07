@@ -23,6 +23,7 @@ const HOME_ITEMS=[
  ['panel-triggerlab','⚡','Trigger Lab','Pick the Dasha pattern and your transit rules; see when they meet and which houses they activate','Analysis','home'],
  ['panel-meaninglab','🧩','Meaning Lab','Mix any planets, houses, signs and lords; read each raw meaning side by side and write your own','Analysis','home'],
  ['panel-kp','🧭','KP System','Cusps, star and sub lords, significators, event promise, ruling planets','Analysis','home'],
+ ['panel-chakra','🔱','Chakra Explorer','Sarvatobhadra, Kota and Shoola charts: what today\'s planets touch in your chart','Time & Cycles','home'],
  ['panel-choghadiya','🕰️','Choghadiya','Good and bad time slots for the day and night','Time & Cycles','home'],
  ['panel-panchanga','🌙','Panchanga','Tithi, nakshatra, yoga, karana & day timings','Time & Cycles','home'],
  ['panel-vbday','🎂','Vedic Birthday','Tithi, Nakshatra & solar birthday for any year','Time & Cycles','home'],
