@@ -194,6 +194,11 @@ _Generated 2026-11-07 - 1868 symbols in `symbols.idx` (paths are real files now:
 ### File map (lines / KB) - file names say what is inside
 
 **birth-chart** - 207 files, 31482 lines, 2556 KB
+_Generated 2026-11-07 - 1837 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+
+### File map (lines / KB) - file names say what is inside
+
+**birth-chart** - 205 files, 30927 lines, 2502 KB
 ```
 index.html                                         631 lines   36 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -236,7 +241,7 @@ js/125-kp-system.js                                107 lines   11 KB
 js/126-dasha-reverse-finder.js                     179 lines   15 KB
 js/127-time-sky-panel.js                            83 lines    7 KB
 js/128-meaning-lab.js                              134 lines   11 KB
-js/129-trigger-lab.js                              169 lines   15 KB
+js/129-trigger-lab.js                              194 lines   17 KB
 js/13-chara-karakas.js                              24 lines    1 KB
 js/130-chakra-explorer.js                          441 lines   44 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
@@ -398,7 +403,7 @@ css/60-home-chart-first.css                         31 lines    4 KB
 css/61-dasha-reverse.css                            40 lines    4 KB
 css/62-time-sky-panel.css                           20 lines    2 KB
 css/63-meaning-lab.css                              21 lines    2 KB
-css/64-trigger-lab.css                              22 lines    3 KB
+css/64-trigger-lab.css                              27 lines    4 KB
 css/65-profile-menu.css                             30 lines    3 KB
 css/66-feature-polish.css                          121 lines   12 KB
 css/67-chakra-explorer.css                         141 lines   13 KB
@@ -595,3 +600,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Time machine wheels REWRITTEN (sky3d js/49): no native scroll/snap; own physics (pointer drag, fling, auto-spin hold, critically damped spring that always lands on an integer, drum fx via render(), virtual year wheel, throttled live pick 140ms).
 - Time machine (sky3d js/49) simplified: plain date + time fields, typed-date box (BC/Julian ok), Now/Midnight/Birth, saved moments popup, Done. Wheels/steppers/slider removed.
 - APK-only 'Update app' (mobile/src/native-bridge.js): sheet with Update now (download newest published bundle + restart) and Build latest then update (workflow_dispatch with a token kept on the phone, polls run, then updates). Tile in birth-chart profile menu, floating button on launcher. Injected into app pages only by mobile/scripts/prepare-web.js, never on the live site.
+- Trigger Lab reworked (js/129): six Dasha levels (Maha to Deha); Single = one planet repeats anywhere, Double = two planets repeat anywhere; planets found automatically (no picking), every pair checked; Dasha periods and transit rules intersected; time-sliced scanAsync with progress; tests/trigger_lab_test.js updated (15 checks).
