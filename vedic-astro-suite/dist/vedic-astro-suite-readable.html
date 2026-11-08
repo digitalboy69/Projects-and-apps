@@ -15745,6 +15745,45 @@ body.cl-open{overflow:hidden}
 .sdg-note p b{color:var(--tx)}
 .sdg summary:focus-visible{outline:2px solid var(--g);outline-offset:2px}
 </style>
+<style>
+/* Sudarshana Chakra (js/138). Class-scoped (sdc-) only; never bare i/b/span. Gradient fill is set inline in the SVG (class fill rules beat attributes). */
+.sdc{--g:#e6b94f;--ok:#5fd08a;--bad:#e0725a;--mid:#e6b94f;--line:rgba(255,255,255,.09);--mut:var(--text-muted,#9f9a8f);padding-bottom:12px}
+.sdc-hero h3{margin:0 0 6px;font:600 27px/1.1 var(--font-serif,serif);color:var(--tx)}
+.sdc-hero p{margin:0 0 12px;font-size:13.5px;line-height:1.6;color:var(--mut)}
+.sdc-hero p b{color:var(--tx)}
+.sdc-pick{display:grid;grid-template-columns:44px 1fr 44px auto;gap:8px;align-items:center;margin-bottom:10px}
+.sdc-pick button{height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--tx);font:600 18px var(--font-sans);cursor:pointer}
+.sdc-pick button.sdc-now{padding:0 14px;font-size:13px;color:var(--g)}
+.sdc-pick label{display:flex;align-items:center;justify-content:center;gap:10px;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:12.5px;color:var(--mut)}
+.sdc-pick input{width:64px;height:34px;border-radius:9px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--tx);font:600 16px var(--font-sans);text-align:center}
+.sdc-svg{display:block;width:100%;max-width:420px;margin:0 auto}
+.sdc-cell{fill:rgba(255,255,255,.035);stroke:rgba(255,255,255,.14);stroke-width:1}
+.sdc-hn{font:600 9px var(--font-sans);fill:rgba(255,255,255,.55)}
+.sdc-hn.on{fill:#17130a}
+.sdc-pl{font:600 15px var(--font-sans);fill:#f3ecd8;stroke:none}
+.sdc-pl.on{fill:#17130a;font-weight:700}
+.sdc-core{fill:rgba(0,0,0,.35);stroke:rgba(230,185,79,.5);stroke-width:1.2}
+.sdc-cy{font:500 10px var(--font-sans);fill:var(--mut);letter-spacing:.08em;text-transform:uppercase}
+.sdc-cn{font:600 22px var(--font-serif,serif);fill:var(--g)}
+.sdc-sum{margin:10px 0;font-size:13.5px;line-height:1.55;color:var(--mut)}
+.sdc-sum b{color:var(--tx)}
+.sdc-rows{display:grid;gap:8px}
+.sdc-r{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);padding:10px 12px}
+.sdc-rh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sdc-rn{font:600 15px var(--font-serif,serif);color:var(--tx)}
+.sdc-lean{padding:3px 10px;border-radius:99px;font:600 11.5px var(--font-sans);border:1px solid currentColor}
+.sdc-lean.benefic{color:var(--ok);background:rgba(95,208,138,.1)}.sdc-lean.malefic{color:var(--bad);background:rgba(224,114,90,.1)}.sdc-lean.mixed{color:var(--mid);background:rgba(230,185,79,.1)}.sdc-lean.empty{color:var(--mut)}
+.sdc-rs{font-size:12px;color:var(--mut);margin:4px 0 6px}
+.sdc-rp{display:flex;flex-wrap:wrap;gap:6px}
+.sdc-pc{padding:3px 9px;border-radius:99px;font-size:12.5px;border:1px solid var(--line);color:var(--tx)}
+.sdc-pc.good{border-color:rgba(95,208,138,.5);background:rgba(95,208,138,.08)}.sdc-pc.bad{border-color:rgba(224,114,90,.5);background:rgba(224,114,90,.08)}
+.sdc-none{font-size:12.5px;color:var(--mut)}
+.sdc-warn{margin:10px 0 0;padding:10px 12px;border-radius:12px;border:1px solid rgba(230,185,79,.3);font-size:12.5px;line-height:1.55;color:var(--mut)}
+.sdc-note{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.03)}
+.sdc-note summary{cursor:pointer;font:600 13.5px var(--font-sans);color:var(--g)}
+.sdc-note p{font-size:12.5px;line-height:1.6;color:var(--mut);margin:8px 0 0}
+.sdc button:focus-visible,.sdc input:focus-visible,.sdc summary:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+</style>
 
 
 
@@ -19692,6 +19731,7 @@ const HOME_ITEMS=[
  ['panel-vimshopaka','⚖️','Vimshopaka Bala','Strength out of 20 for each planet from its divisional charts','Analysis','home'],
  ['panel-upagrahas','🌑','Upagrahas','Dhuma, Vyatipata, Parivesha, Indrachapa, Upaketu and Gulika: where each shadow point falls','Analysis','home'],
  ['panel-sensitive','✨','Sensitive Degrees','Gandanta, Mrityu Bhaga and Pushkara: which of your planets sit on a marked degree','Analysis','home'],
+ ['panel-sudarshana','☸️','Sudarshana Chakra','Lagna, Moon and Sun views together: what each year of life lights up','Time & Cycles','home'],
  ['panel-kp','🧭','KP System','Cusps, star and sub lords, significators, event promise, ruling planets','Analysis','home'],
  ['panel-chakra','🔱','Chakra Explorer','Sarvatobhadra, Kota and Shoola charts: what today\'s planets touch in your chart','Time & Cycles','home'],
  ['panel-choghadiya','🕰️','Choghadiya','Good and bad time slots for the day and night','Time & Cycles','home'],
@@ -52307,7 +52347,7 @@ window.buildAvakahadaPanel = function(chart, profile){ try { return AVK.html(cha
   }
   /* registrations */
   const reg = (id, name) => registerLatePanel(id, (c, p) => (window[name] ? window[name](c, p) : ''));
-  reg('panel-triggerlab', 'buildTriggerLabPanel'); reg('panel-meaninglab', 'buildMeaningLabPanel'); reg('panel-atlas', 'buildAtlasPanel'); reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel'); reg('panel-today', 'buildTodayPanel'); reg('panel-prashna', 'buildPrashnaPanel'); reg('panel-kp', 'buildKpPanel'); reg('panel-chakra', 'buildChakraExplorerPanel'); reg('panel-avasthas', 'buildAvasthasPanel'); reg('panel-vimshopaka', 'buildVimshopakaPanel'); reg('panel-upagrahas', 'buildUpagrahasPanel'); reg('panel-sensitive', 'buildSensitiveDegreesPanel');
+  reg('panel-triggerlab', 'buildTriggerLabPanel'); reg('panel-meaninglab', 'buildMeaningLabPanel'); reg('panel-atlas', 'buildAtlasPanel'); reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel'); reg('panel-today', 'buildTodayPanel'); reg('panel-prashna', 'buildPrashnaPanel'); reg('panel-kp', 'buildKpPanel'); reg('panel-chakra', 'buildChakraExplorerPanel'); reg('panel-avasthas', 'buildAvasthasPanel'); reg('panel-vimshopaka', 'buildVimshopakaPanel'); reg('panel-upagrahas', 'buildUpagrahasPanel'); reg('panel-sensitive', 'buildSensitiveDegreesPanel'); reg('panel-sudarshana', 'buildSudarshanaPanel');
 })();
 <\/script>
 <script>
@@ -54686,6 +54726,115 @@ const SDG = (() => {
   window.buildSensitiveDegreesPanel = function (chart, profile) { return html(chart, profile || {}); };
   if (typeof registerLatePanel === 'function') registerLatePanel('panel-sensitive', window.buildSensitiveDegreesPanel);
   return { compute, check, html, text, MB, MOON, PNAV, PBJP, PBCP, POINTS, mbDegrees };
+})();
+<\/script>
+<script>
+/* Sudarshana Chakra (js/138): three rings of 12 houses counted from the Lagna (inner), the Moon (middle) and the Sun (outer), with the planets in each,
+   and the house each ring points to in a chosen year of life.
+   Sources: BPHS ch.74 (enjoylearningsanskrit.com/scriptures/parashara/chapter-74: three circles, inner Lagna, middle Moon, outer Sun; a house prospers with its lord and benefics and declines with malefics),
+   sushmajee.com/astrology/dashaa/dashaa-sudarshan.htm and vedic-astrology-wiki.blogspot.com (one house per year, 12-year cycle), panchangbodh.com/sudarshana-chakra-calculator (house 1 = years 1, 13, 25...).
+   Year of life = completed years + 1: the first year (birth to first birthday) is the 1st house, the 13th year the 1st again. The texts do not state this anchor in words (BPHS ch.74 does not); the calculator page does by example. Months/days are not shown (sources do not agree on the start).
+   Nature of a planet in the tally: natural malefics Sun, Mars, Saturn, Rahu, Ketu; natural benefics Jupiter, Venus, Mercury, Moon; a malefic Mars or Saturn in its own or exaltation sign counts as benefic and a benefic in its debilitation or an enemy sign counts as adverse (BPHS ch.74 and the wiki page). The BPHS "Sun is good in the 1st house" line is not applied.
+   Applies as a view only: if Lagna, Moon and Sun fall in the same house of the chart the texts say to read from the Lagna alone; the page says so.
+   FACTS ONLY otherwise: no scoring beyond counting benefic and malefic influences. Tendencies, not events. Classes sdc- prefixed; fills via inline style (class rules beat fill attributes). */
+const SDC = (() => {
+  const GR = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
+  const MALEFIC = ['Sun', 'Mars', 'Saturn', 'Rahu', 'Ketu'];
+  const REFS = [['Lagna', 'inner ring: the body and the chart as a whole'], ['Moon', 'middle ring: the mind'], ['Sun', 'outer ring: the self']];
+  const houseFrom = (refSign, sign) => ((sign - refSign + 12) % 12) + 1;
+  const yearHouse = y => ((y - 1) % 12 + 12) % 12 + 1;
+  function nature(chart, name) {
+    const st = chart.planets[name].dignity.status;
+    if (MALEFIC.includes(name)) return ((name === 'Mars' || name === 'Saturn') && (st === 'Exalted' || st === 'OwnSign' || st === 'Moolatrikona')) ? 'good' : 'bad';
+    return (st === 'Debilitated' || st === 'Enemy') ? 'bad' : 'good';
+  }
+  function ringData(chart, ref, hse) {
+    const rs = ref === 'Lagna' ? chart.ascendant.sign : chart.planets[ref].sign;
+    const inHouse = {}; for (let h = 1; h <= 12; h++) inHouse[h] = [];
+    GR.forEach(n => inHouse[houseFrom(rs, chart.planets[n].sign)].push(n));
+    const sign = (rs + hse - 1) % 12, lord = SIGNS[sign].lord, lordHouse = houseFrom(rs, chart.planets[lord].sign);
+    const planets = inHouse[hse].map(n => ({ name: n, tone: nature(chart, n) }));
+    const good = planets.filter(p => p.tone === 'good').length, bad = planets.length - good;
+    const lean = !planets.length ? 'empty' : good > bad ? 'benefic' : bad > good ? 'malefic' : 'mixed';
+    return { ref, refSign: rs, houseSigns: Array.from({ length: 12 }, (_, i) => (rs + i) % 12), inHouse, house: hse, sign, signName: SIGNS[sign].name, lord, lordHouse, planets, good, bad, lean };
+  }
+  function currentYear(chart, nowJD) {
+    const now = nowJD !== undefined ? nowJD : Date.now() / 86400000 + 2440587.5;
+    return Math.max(1, Math.floor((now - chart.julianDay) / 365.2425) + 1);
+  }
+  function compute(chart, year) {
+    year = year || currentYear(chart);
+    const hse = yearHouse(year), rings = REFS.map(r => ringData(chart, r[0], hse));
+    const same = chart.planets.Moon.sign === chart.ascendant.sign || chart.planets.Sun.sign === chart.ascendant.sign || chart.planets.Sun.sign === chart.planets.Moon.sign;
+    const leans = rings.map(r => r.lean), agree = leans.every(l => l === leans[0] && l !== 'empty');
+    return { year, house: hse, rings, sameHouseNote: same, agree, lean: leans };
+  }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const G = n => (typeof PLANET_GLYPHS !== 'undefined' && PLANET_GLYPHS[n]) || n.slice(0, 2);
+  function svg(D) {
+    const cx = 180, cy = 180, band = [[46, 86], [88, 128], [130, 170]], pt = (r, a) => [cx + r * Math.cos(a), cy - r * Math.sin(a)];
+    const ang = h => Math.PI / 2 + (h - 1) * Math.PI / 6; /* house 1 starts at the top and runs anticlockwise */
+    let o = `<svg class="sdc-svg" viewBox="0 0 360 360" role="img" aria-label="Sudarshana Chakra, year ${D.year}"><defs><linearGradient id="sdcGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1cf7d"/><stop offset="1" stop-color="#b98a2c"/></linearGradient></defs>`;
+    D.rings.forEach((R, ri) => {
+      const [r0, r1] = band[ri];
+      for (let h = 1; h <= 12; h++) {
+        const a0 = ang(h), a1 = a0 + Math.PI / 6, p = [pt(r1, a0), pt(r1, a1), pt(r0, a1), pt(r0, a0)];
+        const on = h === D.house;
+        o += `<path d="M${p[0][0].toFixed(1)} ${p[0][1].toFixed(1)}A${r1} ${r1} 0 0 0 ${p[1][0].toFixed(1)} ${p[1][1].toFixed(1)}L${p[2][0].toFixed(1)} ${p[2][1].toFixed(1)}A${r0} ${r0} 0 0 1 ${p[3][0].toFixed(1)} ${p[3][1].toFixed(1)}Z" class="sdc-cell${on ? ' on' : ''}" ${on ? 'style="fill:url(#sdcGold)"' : ''}/>`;
+        const am = a0 + Math.PI / 12, rm = (r0 + r1) / 2, np = R.inHouse[h].length;
+        const hn = pt(r0 + 7, am); o += `<text x="${hn[0].toFixed(1)}" y="${(hn[1] + 3).toFixed(1)}" class="sdc-hn${on ? ' on' : ''}" text-anchor="middle">${h}</text>`;
+        R.inHouse[h].forEach((n, k) => {
+          const rows = np > 3 ? 2 : 1, row = rows === 2 ? k % 2 : 0, col = rows === 2 ? Math.floor(k / 2) : k, inRow = rows === 2 ? Math.ceil((np - row) / 2) : np;
+          const rr = rm + (rows === 2 ? (row ? 8 : -2) : 4) + 3, da = (col - (inRow - 1) / 2) * (ri === 0 ? 0.2 : ri === 1 ? 0.14 : 0.11), q = pt(rr, am + da * (ri === 0 ? 1 : 1.0));
+          o += `<text x="${q[0].toFixed(1)}" y="${(q[1] + 4).toFixed(1)}" class="sdc-pl${on ? ' on' : ''}" text-anchor="middle">${G(n)}</text>`;
+        });
+      }
+    });
+    o += `<circle cx="180" cy="180" r="42" class="sdc-core"/><text x="180" y="176" text-anchor="middle" class="sdc-cy">Year</text><text x="180" y="198" text-anchor="middle" class="sdc-cn">${D.year}</text></svg>`;
+    return o;
+  }
+  const LEAN = { benefic: 'leans benefic', malefic: 'leans malefic', mixed: 'mixed', empty: 'no planets here' };
+  function body(chart, year) {
+    const D = compute(chart, year);
+    return `${svg(D)}
+      <div class="sdc-sum"><b>Year ${D.year}</b> of life points to the <b>${D.house}${['st', 'nd', 'rd'][D.house - 1] || 'th'} house</b> in each ring. ${D.agree ? 'All three rings lean the same way here, so the view tends to be firm.' : 'The rings do not all lean the same way, so read it as mixed.'}</div>
+      <div class="sdc-rows">${D.rings.map((R, i) => `<div class="sdc-r"><div class="sdc-rh"><span class="sdc-rn">${REFS[i][0]}</span><span class="sdc-lean ${R.lean}">${LEAN[R.lean]}</span></div>
+        <div class="sdc-rs">${esc(R.signName)} from ${REFS[i][0] === 'Lagna' ? 'the Lagna' : 'the ' + REFS[i][0]}, lord ${R.lord} in its ring house ${R.lordHouse}</div>
+        <div class="sdc-rp">${R.planets.length ? R.planets.map(p => `<span class="sdc-pc ${p.tone}">${G(p.name)} ${p.name}</span>`).join('') : '<span class="sdc-none">empty: judged by its lord and aspects</span>'}</div></div>`).join('')}</div>
+      ${D.sameHouseNote ? '<p class="sdc-warn">Two of Lagna, Moon and Sun share a house in your chart. The old texts say that when this happens the Lagna view is the one to use.</p>' : ''}`;
+  }
+  let ST = { year: 0 };
+  function html(chart, profile) {
+    const y = ST.year || currentYear(chart);
+    return `<div class="sdc"><div class="sdc-hero"><h3>Sudarshana Chakra</h3><p>Three views of one chart at once: houses counted from the <b>Lagna</b> (body), the <b>Moon</b> (mind) and the <b>Sun</b> (self). Each year of life lights one house in all three. Pick a year to see what sits there.</p></div>
+      <div class="sdc-pick"><button type="button" data-sdc="step" data-d="-1" aria-label="Previous year">−</button><label>Year of life <input id="sdcYear" type="number" min="1" max="120" value="${y}" inputmode="numeric"></label><button type="button" data-sdc="step" data-d="1" aria-label="Next year">+</button><button type="button" class="sdc-now" data-sdc="now">Now</button></div>
+      <div id="sdcBody">${body(chart, y)}</div>
+      <details class="sdc-note"><summary>How to read this</summary>
+        <p>Following Brihat Parashara Hora Shastra chapter 74, the chart is read three times: from the Lagna, from the Moon and from the Sun. The first year of life lights the 1st house, the second year the 2nd, and so on, repeating every 12 years (year 13 is the 1st again).</p>
+        <p>A house tends to do well when its lord and benefic planets are with it, and to struggle under malefic planets. A malefic Mars or Saturn in its own or exalted sign counts as benefic here; a benefic in its fall or an enemy's sign counts as adverse. This page only counts these influences and does not score the year.</p>
+        <p>The texts disagree on small points, such as month steps, so months are not shown. Use it as a theme for the year next to the Vimshottari Dasha and transits. It describes tendencies, not events.</p></details></div>`;
+  }
+  function text(chart, year) {
+    const D = compute(chart, year);
+    return `Sudarshana Chakra, year ${D.year} (house ${D.house}): ` + D.rings.map(r => `${r.ref}: ${r.planets.map(p => p.name).join(', ') || 'empty'} (${r.lean})`).join('; ');
+  }
+  function bind() {
+    document.addEventListener('click', e => {
+      const b = e.target.closest && e.target.closest('[data-sdc]'); if (!b) return;
+      const root = b.closest('.sdc'), inp = root && root.querySelector('#sdcYear'), chart = typeof currentChartForModal !== 'undefined' ? currentChartForModal : null; if (!inp || !chart) return;
+      let y = parseInt(inp.value, 10) || currentYear(chart);
+      if (b.dataset.sdc === 'step') y += parseInt(b.dataset.d, 10); else y = currentYear(chart);
+      y = Math.min(120, Math.max(1, y)); inp.value = y; ST.year = y; root.querySelector('#sdcBody').innerHTML = body(chart, y);
+    });
+    document.addEventListener('change', e => {
+      if (e.target.id !== 'sdcYear') return; const chart = typeof currentChartForModal !== 'undefined' ? currentChartForModal : null; if (!chart) return;
+      const y = Math.min(120, Math.max(1, parseInt(e.target.value, 10) || 1)); e.target.value = y; ST.year = y; e.target.closest('.sdc').querySelector('#sdcBody').innerHTML = body(chart, y);
+    });
+  }
+  if (typeof document !== 'undefined' && document.addEventListener) bind();
+  window.buildSudarshanaPanel = function (chart, profile) { ST.year = 0; return html(chart, profile || {}); };
+  if (typeof registerLatePanel === 'function') registerLatePanel('panel-sudarshana', window.buildSudarshanaPanel);
+  return { compute, html, text, yearHouse, houseFrom, nature, currentYear, ringData, REFS, GR, state: ST };
 })();
 <\/script>
 <script>

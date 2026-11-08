@@ -190,13 +190,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-08 - 1998 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-08 - 2009 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 220 files, 32719 lines, 2689 KB
+**birth-chart** - 222 files, 32868 lines, 2702 KB
 ```
-index.html                                         644 lines   36 KB
+index.html                                         646 lines   36 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -248,6 +248,7 @@ js/134-avasthas.js                                 148 lines    9 KB
 js/135-vimshopaka.js                                87 lines    7 KB
 js/136-upagrahas.js                                 48 lines    4 KB
 js/137-sensitive-degrees.js                         84 lines    8 KB
+js/138-sudarshana.js                               108 lines   10 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/16-rectification-engine.js                       36 lines    2 KB
@@ -259,7 +260,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             165 lines   18 KB
+js/25-home-and-tabs.js                             166 lines   18 KB
 js/26-rectification-studio.js                      250 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -416,6 +417,7 @@ css/68-avasthas.css                                 28 lines    2 KB
 css/69-vimshopaka.css                               31 lines    2 KB
 css/70-upagrahas.css                                20 lines    1 KB
 css/71-sensitive-degrees.css                        25 lines    1 KB
+css/72-sudarshana.css                               38 lines    3 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -620,3 +622,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Vimshopaka Bala added: js/135-vimshopaka.js (`VIM`) + css/69 + Home tile in Analysis; four weight sets (each sums to 20), points own 20 / adhi-mitra 18 / mitra 15 / sama 10 / shatru 7 / adhi-shatru 5, bands from BPHS ch.7; reuses `AVS.compound`. Plan step A2. Screenshots caught a wrapped '/20' and a cut-off table; always look at them.
 - Upagrahas added: js/136-upagrahas.js (`UPA`) + css/70 + Home tile in Analysis; the 5 Sun-based points (formula chain agrees in two sources) plus the existing Gulika; positions only, no effects claimed (sources disagree). chart.upagraha is not changed. Plan step A3.
 - Sensitive Degrees added: js/137-sensitive-degrees.js (`SDG`) + css/71 + Home tile in Analysis; Gandanta (3d20 window + 0d48 core), Mrityu Bhaga (table verified across 3 published tables; Moon has two traditions; Lagna row less settled), Pushkara Navamsa, Pushkara Bhaga (two sets, both shown). Existing Gand Mool stays in Dosha Check. Plan step A4.
+- Sudarshana Chakra added: js/138-sudarshana.js (`SDC`) + css/72 + Home tile in Time & Cycles; three rings (Lagna inner, Moon middle, Sun outer per BPHS ch.74), year of life = house (1st year = 1st house, repeats every 12), planets per ring with benefic/malefic counts, year picker. Facts only, no scoring; months not shown. Plan step A5. Screenshot caught near-invisible planet glyphs (fix: explicit fill).

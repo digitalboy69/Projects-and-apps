@@ -50,7 +50,7 @@ Legend: effort S (a session or less), M (1 to 2 sessions), L (3+). `[x]` done, `
 - [x] **A2 Vimshopaka bala**: Shadvarga, Saptavarga, Dashavarga, Shodasavarga scores per planet, panel `panel-vimshopaka`. DONE Session 1: js/135, css/69, 2 tests. (M)
 - [x] **A3 Upagrahas**: Dhuma, Vyatipata, Parivesha, Indrachapa, Upaketu + existing Gulika, sign / degree / nakshatra / house, panel `panel-upagrahas`. DONE Session 1: js/136, css/70, 2 tests (chart.upagraha left unchanged on purpose). (S)
 - [x] **A4 Sensitive degrees**: Gandanta, Pushkara navamsa / bhaga, Mrityu bhaga check for every planet and the Lagna, panel `panel-sensitive`. DONE Session 1: js/137, css/71, 2 tests. (M, needs source tables)
-- [ ] **A5 Sudarshana Chakra**: three rings (Lagna, Moon, Sun), planets in each, the running year's house, drawing + simple tally. (M)
+- [x] **A5 Sudarshana Chakra**: three rings (Lagna, Moon, Sun), planets in each, the running year's house, drawing + simple tally. DONE Session 1: js/138, css/72, 2 tests. (M)
 - [ ] **A6 Argala and Virodhargala**: per house, who intervenes and who obstructs. (S)
 - [ ] **A7 Bhavat Bhavam and Bhava arudhas**: "house from the house" table, and all 12 arudha padas if `17-` does not already give them. (S)
 - [ ] **A8 Ashtakavarga extras**: Prastara tables, Trikona and Ekadhipatya Sodhana, Shodhya pindas, Kakshya, transit Ashtakavarga for today. (L)
@@ -173,9 +173,9 @@ Each step has the same fields: **Goal**, **Why astrologers use it**, **Known rul
 - **Goal**: draw three concentric 12-house rings, counted from the Lagna, the Moon and the Sun, with planets placed in each; show the house that the current year of age points to in each ring.
 - **Known rule (VERIFY)**: the first year of life is the 1st house of every ring, the second year the 2nd house, and so on, cycling every 12 years. A planet's results are judged from each of the three references and compared.
 - **Source needed**: one classical or reputable description of how the three readings are combined. If there is no agreed scoring, show **facts only** (planet-by-house in each ring, benefic/malefic counts by natural nature) and say so.
-- **Files**: `js/138-sudarshana.js` (`SDC`), `css/70-sudarshana.css`, tests (ring geometry: 36 slots, each planet appears exactly 3 times; year-to-house cycle for ages 0 to 100).
+- **Files**: `js/138-sudarshana.js` (`SDC`), `css/72-sudarshana.css`, tests (ring geometry: 36 slots, each planet appears exactly 3 times; year-to-house cycle for ages 0 to 100).
 - **Screen**: one SVG, three rings (use the Chakra Explorer's frame/gradient look), planet chips, age picker (default = today's age), a small table "house in Lagna / Moon / Sun ring".
-- **Notes**:
+- **Notes (Session 1, DONE)**: Sources: BPHS ch.74 translation at enjoylearningsanskrit.com (three circles: inner Lagna, middle Moon, outer Sun, verses 4-6; a house prospers with its lord and benefics, declines with malefics; the line about Mars/Saturn exalted and the Lagna-only rule when two of the three share a house), sushmajee.com and vedic-astrology-wiki.blogspot.com (one house per year, 12-year repeat), panchangbodh.com (house 1 = years 1, 13, 25...). The year anchor ("first year of life = 1st house") is NOT stated in BPHS ch.74 itself; it comes from the calculator page and the 12-year repeat; page says so. Judging = a plain count of benefic/malefic influences with the dignity exceptions above; no scoring invented. "Sun is benefic in the 1st house" (BPHS v.8) is not applied (ambiguous for rings other than the Lagna ring). Months/days not built (sources do not state which house a month starts at). Planets are the nine grahas, nodes counted malefic. NOT verified: BPHS Sanskrit; Mercury treated as benefic always (BPHS makes it depend on company).
 
 ### A6 Argala and Virodhargala (S)
 - **Known rule (VERIFY: Jaimini Sutras / BPHS)**: for a house, planets in its 2nd, 4th and 11th cause argala (the 5th as a secondary place in some texts); the obstructing places are the 12th, 10th and 3rd (the 9th for the 5th-house argala). Argala stands if the planets in the obstructing houses are fewer than those causing it. Nodes and exceptions: read the source.
@@ -252,6 +252,7 @@ Lal Kitab, Panchapakshi, Nadi amsa / Nadi astrology, full Tajika Varshaphal (Mun
 - Session 1 (2026-11-08): A1 pushed live to main/Root by owner's go-ahead. A2 Vimshopaka done (engine 9 checks incl. hand-worked scores and 2240 planet-set scores, browser 8/8, screenshots viewed). Not verified: clean-edition Dashavarga weights; exalted/debilitated scoring second source.
 - Session 1 (2026-11-08): A2 pushed live. A3 Upagrahas done (engine 6 checks incl. hand-worked and 1000-Sun invariants, browser 6/6, screenshot viewed). Not verified: verse text.
 - Session 1 (2026-11-08): A3 pushed live. A4 Sensitive Degrees done (engine 15 checks incl. cross-source table equality, browser 6/6, screenshot viewed). Bugs caught while testing were test mistakes (wrong junction/sign), not engine faults. Not verified: verse text, Lagna row.
+- Session 1 (2026-11-08): A4 pushed live. A5 Sudarshana done (engine 9 checks, browser 10/10, screenshots viewed; fixed dim glyphs; removed an `||true` tautology from my own browser test before commit). Not verified: BPHS Sanskrit, Mercury's conditional nature.
 
 ## 8. Owner decisions pending
 - Merge `feature/chakra-explorer` / `feature/astro-roadmap` to `main` and `Root` (the owner decides when).

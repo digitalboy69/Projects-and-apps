@@ -26,6 +26,7 @@ const HOME_ITEMS=[
  ['panel-vimshopaka','⚖️','Vimshopaka Bala','Strength out of 20 for each planet from its divisional charts','Analysis','home'],
  ['panel-upagrahas','🌑','Upagrahas','Dhuma, Vyatipata, Parivesha, Indrachapa, Upaketu and Gulika: where each shadow point falls','Analysis','home'],
  ['panel-sensitive','✨','Sensitive Degrees','Gandanta, Mrityu Bhaga and Pushkara: which of your planets sit on a marked degree','Analysis','home'],
+ ['panel-sudarshana','☸️','Sudarshana Chakra','Lagna, Moon and Sun views together: what each year of life lights up','Time & Cycles','home'],
  ['panel-kp','🧭','KP System','Cusps, star and sub lords, significators, event promise, ruling planets','Analysis','home'],
  ['panel-chakra','🔱','Chakra Explorer','Sarvatobhadra, Kota and Shoola charts: what today\'s planets touch in your chart','Time & Cycles','home'],
  ['panel-choghadiya','🕰️','Choghadiya','Good and bad time slots for the day and night','Time & Cycles','home'],
