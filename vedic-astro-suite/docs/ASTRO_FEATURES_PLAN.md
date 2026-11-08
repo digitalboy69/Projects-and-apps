@@ -47,7 +47,7 @@ Legend: effort S (a session or less), M (1 to 2 sessions), L (3+). `[x]` done, `
 
 - [x] **A0 Plan and wiring**: this file, STRUCTURE.md row, `session.sh start` shows it, branch `feature/astro-roadmap` pushed. (S, done in Session 0)
 - [x] **A1 Planetary avasthas**: Baladi, Jagradadi, Deeptadi for the 7 grahas (Lajjitadi and nodes left out, see Notes), panel `panel-avasthas`. DONE Session 1: js/134, css/68, 2 tests. (M)
-- [ ] **A2 Vimshopaka bala**: Shadvarga, Saptavarga, Dashavarga, Shodasavarga scores per planet, panel `panel-vimshopaka`. (M)
+- [x] **A2 Vimshopaka bala**: Shadvarga, Saptavarga, Dashavarga, Shodasavarga scores per planet, panel `panel-vimshopaka`. DONE Session 1: js/135, css/69, 2 tests. (M)
 - [ ] **A3 Upagrahas**: Dhuma, Vyatipata, Parivesha, Indrachapa, Upaketu (+ Gulika and Mandi as already known), sign / degree / nakshatra / house, in `chart.upagraha` and a panel. (S)
 - [ ] **A4 Sensitive degrees**: Gandanta, Pushkara navamsa / bhaga, Mrityu bhaga check for every planet and the Lagna, panel `panel-sensitive`. (M, needs source tables)
 - [ ] **A5 Sudarshana Chakra**: three rings (Lagna, Moon, Sun), planets in each, the running year's house, drawing + simple tally. (M)
@@ -150,7 +150,7 @@ Each step has the same fields: **Goal**, **Why astrologers use it**, **Known rul
 - **API**: `VIM.compute(chart, set)` -> per planet `{total, rows:[{varga, sign, relation, weight, points}]}`.
 - **Tests**: weights of each set add to 20; an all-own-sign planet scores 20; compound relation symmetric cases hand-checked; varga signs equal `chart.vargas` values.
 - **Done when**: 3.4 passes and a worked example is in the test comments.
-- **Notes**:
+- **Notes (Session 1, DONE)**: Sources: BPHS ch.7 slokas 17-27 in the Santhanam translation (archive.org BPHSEnglish; scan is garbled for the Sapta/Dasa lists) and saravali.github.io/astrology/vargas.html. Confirmed by both: Shadvarga 6,2,4,5,2,1; relation points own 20 / adhi-mitra 18 / mitra 15 / sama 10 / shatru 7 / adhi-shatru 5; bands (sloka 26-27) <5 / 5-10 / 10-15 / >15. Saptavarga: BPHS scan reads 5,2,3,2.5,4.5,2,1 (D1,D2,D3,D7,D9,D12,D30); the saravali table has the D7..D30 column shifted (1, 2.5, 4.5, 2), so the BPHS reading was used (both add to 20). Dashavarga from saravali (3, then 1.5 x8, D60 5; BPHS scan confirms D60 = 5 only). Shodashavarga: BPHS "D1 3.5, D2/D3/D30 1, D9 3, D16 2, D60 4, the other nine 0.5" = 20; the saravali table lists D30 as 0.5 and sums to 19.5, so BPHS was used. Single-source choices (flagged on the page): exalted and moolatrikona count as own (20) and debilitated as 0 (saravali only). Compound friendship from D1 positions applied in all vargas (`AVS.compound`). NOT verified: Dashavarga weights in a clean BPHS edition; the exalted/debilitated scoring in a second source. Bug found only by screenshots: '/20' wrapped and the Pts column was cut off at 390px (fixed).
 
 ### A3 Upagrahas (S)
 - **Goal**: compute the five Sun-based upagrahas and list them with Gulika and Mandi.
@@ -249,6 +249,7 @@ Lal Kitab, Panchapakshi, Nadi amsa / Nadi astrology, full Tajika Varshaphal (Mun
 - Session 0 (2026-11-08): gap audit, this plan, A0 done. Nothing built. Chakra Explorer (js/130, css/67) exists on `feature/chakra-explorer`; known open points from it: Kota Paala letter table (default is the navamsa lord, unverified), fast-planet threshold is a rule of thumb, one consonant cell read as Ba.
 
 - Session 1 (2026-11-08): rebased on main (owner added Astro Atlas js/130-133), plan file numbers shifted to js/134+. A1 Planet States done and tested (engine 11 checks over 840 planet states, browser 7/7, screenshots viewed). Not verified: Vikala second source, Pramudita mapping.
+- Session 1 (2026-11-08): A1 pushed live to main/Root by owner's go-ahead. A2 Vimshopaka done (engine 9 checks incl. hand-worked scores and 2240 planet-set scores, browser 8/8, screenshots viewed). Not verified: clean-edition Dashavarga weights; exalted/debilitated scoring second source.
 
 ## 8. Owner decisions pending
 - Merge `feature/chakra-explorer` / `feature/astro-roadmap` to `main` and `Root` (the owner decides when).

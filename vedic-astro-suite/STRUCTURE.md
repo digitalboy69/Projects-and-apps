@@ -507,6 +507,10 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/68-avasthas.css` — styles for Planet States (`avs-` prefix)
 - `tests/avasthas_test.js` — node test for js/134 (Baladi edges, compound friendship, Jagradadi/Deeptadi vs app dignity over 120 charts)
 - `tests/avasthas_browser_test.py` — Playwright test of the Planet States panel at 390px (`AVS_SHOTS=dir` for screenshots)
+- `apps/birth-chart/js/135-vimshopaka.js` — Vimshopaka Bala (global `VIM`): 0-20 strength per graha from Shad/Sapta/Dasha/Shodasha-varga (BPHS ch.7), panel-vimshopaka, `VIM.compute/html/text`
+- `apps/birth-chart/css/69-vimshopaka.css` — styles for Vimshopaka Bala (`vim-` prefix)
+- `tests/vimshopaka_test.js` — node test for js/135 (weights add to 20, hand-worked scores, 80 real charts x 4 sets)
+- `tests/vimshopaka_browser_test.py` — Playwright test of the Vimshopaka panel at 390px (`VIM_SHOTS=dir`)
 - `docs/ASTRO_FEATURES_PLAN.md` — Handoff plan for the astrologer tools the app still lacks (avasthas, Vimshopaka, upagrahas, sensitive degrees, Sudarshana, Argala, Ashtakavarga extras, Gochara vedha, synastry, Muhurta, Panchang calendar, remedies): ordered checklist A0-A14, source rules, per-step detail, session log. A new chat starts here
 - `docs/YEAR_TIMELINE_RESEARCH.md` — Research + plan for the "Year Timeline Pack" (date-range, AI-ready data file: timeline, transits, dasha changes, planet role map); sources, file layout, reuse map, build order
 - `docs/SUPABASE.md` — Supabase cloud-sync notes

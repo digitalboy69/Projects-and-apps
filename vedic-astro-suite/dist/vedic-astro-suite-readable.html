@@ -15637,6 +15637,67 @@ body.cl-open{overflow:hidden}
 @media(max-width:420px){.chx-hero{grid-template-columns:68px 1fr;gap:12px}.chx-emb{width:68px;height:68px}.chx-hero h3{font-size:25px}.chx-steps{gap:4px}.chx-ctl{padding:13px}}
 @media(prefers-reduced-motion:reduce){.chx *,.chx-svg{animation:none!important;transition:none!important}}
 </style>
+<style>
+/* Planet States (js/134). Class-scoped (avs-) only; never bare i/b/span (icon layer adds .vxi spans). No animation needed. */
+.avs{--g:#e6b94f;--ok:#5fd08a;--mid:#e6b94f;--low:#e0725a;--line:rgba(255,255,255,.09);--mut:var(--text-muted,#9f9a8f);padding-bottom:12px}
+.avs-hero h3{margin:0 0 6px;font:600 27px/1.1 var(--font-serif,serif);color:var(--tx)}
+.avs-hero p{margin:0 0 14px;font-size:13.5px;line-height:1.6;color:var(--mut)}
+.avs-hero p b{color:var(--tx);font-weight:600}
+.avs-cards{display:grid;gap:10px}
+.avs-card{border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035);padding:12px 12px 6px}
+.avs-card header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.avs-card h4{margin:0;font:600 17px var(--font-serif,serif);color:var(--tx)}
+.avs-card header small{color:var(--mut);font-size:12px}
+.avs-gl{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:18px;color:var(--g);background:rgba(230,185,79,.12)}
+.avs-row{display:grid;grid-template-columns:62px 82px 1fr;gap:8px;align-items:start;padding:8px 0;border-top:1px solid var(--line)}
+.avs-k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding-top:5px}
+.avs-chip{justify-self:start;padding:4px 10px;border-radius:999px;font:600 12px var(--font-sans);border:1px solid currentColor;line-height:1.2}
+.avs-chip.ok{color:var(--ok);background:rgba(95,208,138,.1)}
+.avs-chip.mid{color:var(--mid);background:rgba(230,185,79,.1)}
+.avs-chip.low{color:var(--low);background:rgba(224,114,90,.1)}
+.avs-t{font-size:13px;line-height:1.45;color:var(--tx)}
+.avs-t em{display:block;font-style:normal;font-size:11.5px;color:var(--mut);margin-top:2px}
+.avs-t .avs-also{color:var(--low)}
+.avs-t .avs-also b{font-weight:600}
+.avs-note{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.03)}
+.avs-note summary{cursor:pointer;font:600 13.5px var(--font-sans);color:var(--g)}
+.avs-note p{font-size:12.5px;line-height:1.6;color:var(--mut);margin:8px 0 0}
+.avs-note p b{color:var(--tx)}
+.avs button:focus-visible,.avs summary:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+@media(max-width:420px){.avs-row{grid-template-columns:1fr auto;}.avs-k{grid-column:1}.avs-chip{grid-column:2;grid-row:1}.avs-t{grid-column:1/-1}}
+</style>
+<style>
+/* Vimshopaka Bala (js/135). Class-scoped (vim-) only; never bare i/b/span. Fill width eases with transform-free width only on tap; no loops. */
+.vim{--g:#e6b94f;--ok:#5fd08a;--mid:#e6b94f;--low:#e0725a;--line:rgba(255,255,255,.09);--mut:var(--text-muted,#9f9a8f);padding-bottom:12px}
+.vim-hero h3{margin:0 0 6px;font:600 27px/1.1 var(--font-serif,serif);color:var(--tx)}
+.vim-hero p{margin:0 0 12px;font-size:13.5px;line-height:1.6;color:var(--mut)}
+.vim-hero p b{color:var(--tx)}
+.vim-seg{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;padding:3px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
+.vim-seg button{padding:9px 4px;border:0;border-radius:10px;background:transparent;color:var(--mut);font:600 13px var(--font-sans);cursor:pointer}
+.vim-seg button.on{background:rgba(230,185,79,.17);color:var(--g)}
+.vim-set{margin:8px 2px 10px;font-size:12px;color:var(--mut)}
+.vim-pl{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);margin-bottom:8px;padding:4px 12px 8px}
+.vim-pl.on{border-color:rgba(230,185,79,.35)}
+.vim-bar{display:grid;grid-template-columns:68px 1fr 64px;gap:10px;align-items:center;width:100%;min-height:44px;background:none;border:0;color:var(--tx);cursor:pointer;font:inherit;text-align:left;padding:0}
+.vim-n{font:600 14px var(--font-sans)}
+.vim-track{display:block;height:9px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.vim-fill{display:block;height:100%;border-radius:99px}
+.vim-fill.ok{background:var(--ok)}.vim-fill.mid{background:var(--mid)}.vim-fill.low{background:var(--low)}
+.vim-v{font:600 15px var(--font-sans);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.vim-v small{color:var(--mut);font-weight:400;font-size:11px}
+.vim-band{font-size:12px;color:var(--mut);margin:-2px 0 2px 80px}
+.vim-tbl{margin-top:6px}
+.vim-tbl table{width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed}
+.vim-tbl th:nth-child(1){width:30%}.vim-tbl th:nth-child(2){width:26%}.vim-tbl th:nth-child(3){width:26%}.vim-tbl th:nth-child(4){width:18%;text-align:right}.vim-tbl td:nth-child(4){text-align:right}
+.vim-tbl th{text-align:left;color:var(--mut);font-weight:500;font-size:11px;padding:4px 6px;border-bottom:1px solid var(--line)}
+.vim-tbl td{padding:6px;border-bottom:1px solid var(--line);color:var(--tx);line-height:1.3;overflow-wrap:normal;font-size:12px}
+.vim-tbl td b{font-weight:600}.vim-tbl .vim-vn{display:block;font-size:10.5px;overflow-wrap:anywhere}
+.vim-tbl td small{color:var(--mut)}
+.vim-note{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.03)}
+.vim-note summary{cursor:pointer;font:600 13.5px var(--font-sans);color:var(--g)}
+.vim-note p{font-size:12.5px;line-height:1.6;color:var(--mut);margin:8px 0 0}
+.vim button:focus-visible,.vim summary:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+</style>
 
 
 
@@ -19580,6 +19641,8 @@ const HOME_ITEMS=[
  ['panel-prashna','🔮','Prashna Chart','Cast a chart for the moment you ask a question and read the signs','Time & Cycles','home'],
  ['panel-triggerlab','⚡','Trigger Lab','Pick the Dasha pattern and your transit rules; see when they meet and which houses they activate','Analysis','home'],
  ['panel-meaninglab','🧩','Meaning Lab','Mix any planets, houses, signs and lords; read each raw meaning side by side and write your own','Analysis','home'],
+ ['panel-avasthas','🌓','Planet States','Avasthas: each planet\'s age, alertness and mood, and how freely it can give results','Analysis','home'],
+ ['panel-vimshopaka','⚖️','Vimshopaka Bala','Strength out of 20 for each planet from its divisional charts','Analysis','home'],
  ['panel-kp','🧭','KP System','Cusps, star and sub lords, significators, event promise, ruling planets','Analysis','home'],
  ['panel-chakra','🔱','Chakra Explorer','Sarvatobhadra, Kota and Shoola charts: what today\'s planets touch in your chart','Time & Cycles','home'],
  ['panel-choghadiya','🕰️','Choghadiya','Good and bad time slots for the day and night','Time & Cycles','home'],
@@ -52195,7 +52258,7 @@ window.buildAvakahadaPanel = function(chart, profile){ try { return AVK.html(cha
   }
   /* registrations */
   const reg = (id, name) => registerLatePanel(id, (c, p) => (window[name] ? window[name](c, p) : ''));
-  reg('panel-triggerlab', 'buildTriggerLabPanel'); reg('panel-meaninglab', 'buildMeaningLabPanel'); reg('panel-atlas', 'buildAtlasPanel'); reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel'); reg('panel-today', 'buildTodayPanel'); reg('panel-prashna', 'buildPrashnaPanel'); reg('panel-kp', 'buildKpPanel'); reg('panel-chakra', 'buildChakraExplorerPanel');
+  reg('panel-triggerlab', 'buildTriggerLabPanel'); reg('panel-meaninglab', 'buildMeaningLabPanel'); reg('panel-atlas', 'buildAtlasPanel'); reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel'); reg('panel-today', 'buildTodayPanel'); reg('panel-prashna', 'buildPrashnaPanel'); reg('panel-kp', 'buildKpPanel'); reg('panel-chakra', 'buildChakraExplorerPanel'); reg('panel-avasthas', 'buildAvasthasPanel'); reg('panel-vimshopaka', 'buildVimshopakaPanel');
 })();
 <\/script>
 <script>
@@ -54203,6 +54266,243 @@ const CHX = (function(){
   window.buildChakraExplorerPanel = function(chart, profile){ const h = panel(chart, profile || {}); setTimeout(() => { syncInputs(); draw(); }, 0); return h; };
   if (typeof registerLatePanel === 'function') registerLatePanel('panel-chakra', window.buildChakraExplorerPanel);
   return { compute, html, text, rays, grid: GRID, pos: POS, kotaInfo, kotaPos, nak28, natal, sky, state: ST, letters: LETLIST, tg: TG };
+})();
+<\/script>
+<script>
+/* Planetary Avasthas (js/134): the "state" of each of the seven grahas, three classical lists, from BPHS ch. 45.
+   Baladi   (age, from the degree in the sign): Bala, Kumara, Yuva, Vriddha, Mrita (odd signs run forward, even signs backward).
+   Jagradadi (alertness, from sign dignity): Jagrat (own or exalted sign), Swapna (friend or neutral sign), Sushupti (enemy or debilitated sign).
+   Deeptadi  (mood, from sign dignity and friendship): Deepta, Swastha, Pramudita, Shanta, Deena, Khala; plus Kopa (combust) and Vikala (with a malefic) as extra notes.
+   Sources: BPHS ch.45 (barbarapijan.com/bpa/Amsha/avasta_BPHS_ch45_Avasta.htm), Wikipedia "Avastha (Hindu astrology)". Rahu and Ketu are left out: the texts give these lists for the seven grahas.
+   Lajjitadi (6 states) is NOT built: the two sources word its conditions differently.
+   This app's own choices, said on the page: friendship is the compound (natural + temporary) one; "Pramudita" = great friend's sign; Vikala uses the BPHS "company of a malefic" reading
+   (Sun, Mars, Saturn, Rahu, Ketu in the same sign); a debilitated planet takes its Deeptadi state from the sign lord's friendship because the list has no debilitation state.
+   Uses SIGNS (js/05), NATURAL_RELATIONS / getDignity (js/07). Tendencies only, never fate. Classes are avs- prefixed. */
+const AVS = (() => {
+  const GRAHA = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
+  const MALEFIC = ['Sun', 'Mars', 'Saturn', 'Rahu', 'Ketu'];
+  const BALADI = [
+    { id: 'Bala', pct: 25, line: 'young, about a quarter of its results' },
+    { id: 'Kumara', pct: 50, line: 'growing, about half of its results' },
+    { id: 'Yuva', pct: 100, line: 'in its prime, its full results' },
+    { id: 'Vriddha', pct: 10, line: 'old, only a little of its results' },
+    { id: 'Mrita', pct: 0, line: 'spent, hardly any results of its own' }
+  ];
+  const JAG = {
+    Jagrat: { pct: 100, line: 'awake: gives its results fully' },
+    Swapna: { pct: 50, line: 'dreaming: gives its results in part' },
+    Sushupti: { pct: 0, line: 'asleep: gives little unless helped' }
+  };
+  const DEEP = {
+    Deepta: 'bright, in its exaltation sign',
+    Swastha: 'comfortable, in its own sign',
+    Pramudita: 'delighted, in a great friend\'s sign',
+    Shanta: 'peaceful, in a friend\'s sign',
+    Deena: 'plain, in a neutral sign',
+    Khala: 'strained, in an enemy\'s sign'
+  };
+  const sgn = (l) => Math.floor(((l % 360) + 360) % 360 / 30);
+
+  /* Baladi from degree in the sign (0-30). Odd signs (Aries = index 0 is odd) run Bala to Mrita, even signs the other way. */
+  function baladi(signIdx, deg) {
+    const k = Math.min(4, Math.floor(deg / 6));
+    const idx = signIdx % 2 === 0 ? k : 4 - k;
+    return { state: BALADI[idx].id, pct: BALADI[idx].pct, line: BALADI[idx].line, why: `${deg.toFixed(1)}° in ${SIGNS[signIdx].name}, an ${signIdx % 2 === 0 ? 'odd' : 'even'} sign` };
+  }
+
+  /* Compound (panchadha) relation of planet a toward planet b, with a in sign sa and b in sign sb.
+     natural friend/neutral/enemy, temporary friend when b is 2,3,4,10,11 or 12 signs from a, otherwise temporary enemy. */
+  function natural(a, b) {
+    const r = NATURAL_RELATIONS[a];
+    return r.friends.includes(b) ? 'F' : r.enemies.includes(b) ? 'E' : 'N';
+  }
+  function compound(a, b, sa, sb) {
+    const d = ((sb - sa + 12) % 12) + 1;
+    const t = [2, 3, 4, 10, 11, 12].includes(d) ? 'F' : 'E';
+    const n = natural(a, b);
+    if (n === 'F') return t === 'F' ? 'AdhiMitra' : 'Sama';
+    if (n === 'N') return t === 'F' ? 'Mitra' : 'Shatru';
+    return t === 'F' ? 'Sama' : 'AdhiShatru';
+  }
+  const REL_TXT = { AdhiMitra: 'great friend', Mitra: 'friend', Sama: 'neutral', Shatru: 'enemy', AdhiShatru: 'great enemy' };
+
+  function jagradadi(p) {
+    const s = p.dignity.status;
+    if (s === 'Exalted') return { state: 'Jagrat', why: 'exalted sign' };
+    if (s === 'Moolatrikona' || s === 'OwnSign') return { state: 'Jagrat', why: 'own sign' };
+    if (s === 'Debilitated') return { state: 'Sushupti', why: 'debilitated sign' };
+    if (s === 'Enemy') return { state: 'Sushupti', why: 'sign of a natural enemy' };
+    return { state: 'Swapna', why: s === 'Friend' ? 'sign of a natural friend' : 'sign of a natural neutral' };
+  }
+
+  function deeptadi(chart, name) {
+    const p = chart.planets[name], s = p.dignity.status;
+    let state, why;
+    if (s === 'Exalted') { state = 'Deepta'; why = 'exaltation sign'; }
+    else if (s === 'Moolatrikona' || s === 'OwnSign') { state = 'Swastha'; why = 'own sign'; }
+    else {
+      const lord = SIGNS[p.sign].lord, lp = chart.planets[lord];
+      const rel = compound(name, lord, p.sign, lp.sign);
+      if (rel === 'AdhiMitra') { state = 'Pramudita'; why = `sign of ${lord}, a great friend (natural and temporary friend)`; }
+      else if (rel === 'Mitra') { state = 'Shanta'; why = `sign of ${lord}, a friend`; }
+      else if (rel === 'Sama') { state = 'Deena'; why = `sign of ${lord}, neutral by the compound reckoning`; }
+      else { state = 'Khala'; why = `sign of ${lord}, ${REL_TXT[rel]} by the compound reckoning`; }
+      if (s === 'Debilitated') why += ' (debilitated; the list has no debilitation state, so the sign lord decides)';
+    }
+    const also = [];
+    if (p.combustion && p.combustion.combust) also.push({ state: 'Kopa', why: 'combust, too close to the Sun' });
+    const mates = MALEFIC.filter(m => m !== name && chart.planets[m] && chart.planets[m].sign === p.sign);
+    if (mates.length) also.push({ state: 'Vikala', why: 'in the company of ' + mates.join(', ') });
+    return { state, text: DEEP[state], why, also };
+  }
+
+  function compute(chart) {
+    const planets = {};
+    GRAHA.forEach(name => {
+      const p = chart.planets[name];
+      const j = jagradadi(p);
+      planets[name] = {
+        sign: SIGNS[p.sign].name,
+        baladi: baladi(p.sign, p.degInSign),
+        jagradadi: Object.assign({}, j, { pct: JAG[j.state].pct, line: JAG[j.state].line }),
+        deeptadi: deeptadi(chart, name)
+      };
+    });
+    const n = f => GRAHA.filter(f).length;
+    return {
+      planets,
+      sum: {
+        awake: n(g => planets[g].jagradadi.state === 'Jagrat'),
+        asleep: n(g => planets[g].jagradadi.state === 'Sushupti'),
+        yuva: n(g => planets[g].baladi.state === 'Yuva'),
+        weakAge: n(g => ['Vriddha', 'Mrita'].includes(planets[g].baladi.state)),
+        total: GRAHA.length
+      }
+    };
+  }
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const chipC = { Jagrat: 'ok', Yuva: 'ok', Kumara: 'mid', Bala: 'mid', Swapna: 'mid', Vriddha: 'low', Mrita: 'low', Sushupti: 'low' };
+  function html(chart, profile) {
+    const D = compute(chart), s = D.sum;
+    const cards = GRAHA.map(name => {
+      const p = D.planets[name], g = (typeof PLANET_GLYPHS !== 'undefined' && PLANET_GLYPHS[name]) || '';
+      const dc = ['Deepta', 'Swastha', 'Pramudita'].includes(p.deeptadi.state) ? 'ok' : p.deeptadi.state === 'Khala' ? 'low' : 'mid';
+      return `<article class="avs-card">
+        <header><span class="avs-gl">${g}</span><div><h4>${name}</h4><small>${esc(p.sign)}</small></div></header>
+        <div class="avs-row"><span class="avs-k">Age</span><span class="avs-chip ${chipC[p.baladi.state]}">${p.baladi.state}</span><span class="avs-t">${esc(p.baladi.line)}<em>${esc(p.baladi.why)}</em></span></div>
+        <div class="avs-row"><span class="avs-k">Alertness</span><span class="avs-chip ${chipC[p.jagradadi.state]}">${p.jagradadi.state}</span><span class="avs-t">${esc(p.jagradadi.line)}<em>${esc(p.jagradadi.why)}</em></span></div>
+        <div class="avs-row"><span class="avs-k">Mood</span><span class="avs-chip ${dc}">${p.deeptadi.state}</span><span class="avs-t">${esc(p.deeptadi.text)}<em>${esc(p.deeptadi.why)}</em>${p.deeptadi.also.map(a => `<em class="avs-also"><b>${a.state}</b> ${esc(a.why)}</em>`).join('')}</span></div>
+      </article>`;
+    }).join('');
+    return `<div class="avs">
+      <div class="avs-hero"><h3>Planet States</h3><p>Avasthas describe how freely each planet can give its results: its <b>age</b>, how <b>awake</b> it is and its <b>mood</b>. In your chart <b>${s.awake} of ${s.total}</b> planets are awake (own or exalted sign), <b>${s.yuva}</b> are in their prime age and <b>${s.weakAge}</b> are old or spent by degree.</p></div>
+      <div class="avs-cards">${cards}</div>
+      <details class="avs-note"><summary>How these are worked out</summary>
+        <p><b>Age</b> comes from the degree in the sign, in five slices of 6 degrees. Odd signs (Aries, Gemini, Leo, Libra, Sagittarius, Aquarius) run Bala, Kumara, Yuva, Vriddha, Mrita; even signs run the other way.</p>
+        <p><b>Alertness</b> comes from the sign: own or exalted is awake (Jagrat), a friend's or neutral sign is dreaming (Swapna), an enemy's or debilitated sign is asleep (Sushupti).</p>
+        <p><b>Mood</b> comes from the sign and the sign lord's friendship. Kopa (combust) and Vikala (sharing the sign with Sun, Mars, Saturn, Rahu or Ketu) are shown as extra notes.</p>
+        <p>This follows Brihat Parashara Hora Shastra, chapter 45. Friendship here is the compound one (natural plus temporary), a choice this app makes where texts differ. Rahu and Ketu are not given states in these lists. Lajjitadi states are not shown because teachers word their conditions differently.</p>
+        <p>A state is one clue. It tends to show how easily a planet delivers; read it with the sign, house, aspects and the running Dasha.</p>
+      </details></div>`;
+  }
+
+  function text(chart) {
+    const D = compute(chart);
+    return GRAHA.map(n => { const p = D.planets[n]; return `${n}: ${p.baladi.state}, ${p.jagradadi.state}, ${p.deeptadi.state}${p.deeptadi.also.length ? ' (' + p.deeptadi.also.map(a => a.state).join(', ') + ')' : ''}`; }).join('\n');
+  }
+
+  window.buildAvasthasPanel = function (chart, profile) { return html(chart, profile || {}); };
+  if (typeof registerLatePanel === 'function') registerLatePanel('panel-avasthas', window.buildAvasthasPanel);
+  return { compute, html, text, baladi, compound, natural, GRAHA };
+})();
+<\/script>
+<script>
+/* Vimshopaka Bala (js/135): a planet's strength out of 20 from its sign in a set of divisional charts. BPHS ch.7 slokas 17-27 (Santhanam translation).
+   Four sets (each weight list adds to 20): Shadvarga, Saptavarga, Dashavarga, Shodashavarga. Points per sign: own 20, adhi-mitra 18, mitra 15, sama 10, shatru 7, adhi-shatru 5 (BPHS sloka 25),
+   scaled by the chart's weight. Relation = compound (natural + temporary) friendship of the planet toward the sign lord, taken from the BIRTH chart (D1) positions of both, then applied in every varga.
+   Bands (BPHS sloka 26-27): under 5 no good results, 5-10 some, 10-15 middling, over 15 wholly favourable.
+   Sources: BPHS translation (archive.org BPHSEnglish, ch.7), saravali.github.io/astrology/vargas.html (weights). The BPHS scan is garbled for the Sapta/Dasa lists: Saptavarga was taken as 5,2,3,2.5,4.5,2,1 (adds to 20; the saravali page has its column shifted) and Dashavarga as saravali gives (adds to 20).
+   Single-source choices, said on the page: exalted and moolatrikona signs count as own (20) and debilitated signs as 0 (saravali); the Shodashavarga list is rebuilt from BPHS "the rest nine halves" (the saravali table sums to 19.5).
+   Seven grahas only. Uses AVS.compound (js/134), chart.vargas[key].planetVargaSign (js/15), getDignity (js/07). Tendencies only. Classes vim- prefixed. */
+const VIM = (() => {
+  const GRAHA = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
+  const SETS = {
+    Shadvarga: { label: 'Shadvarga (6 charts)', w: { D1: 6, D2: 2, D3: 4, D9: 5, D12: 2, D30: 1 } },
+    Saptavarga: { label: 'Saptavarga (7 charts)', w: { D1: 5, D2: 2, D3: 3, D7: 2.5, D9: 4.5, D12: 2, D30: 1 } },
+    Dashavarga: { label: 'Dashavarga (10 charts)', w: { D1: 3, D2: 1.5, D3: 1.5, D7: 1.5, D9: 1.5, D10: 1.5, D12: 1.5, D16: 1.5, D30: 1.5, D60: 5 } },
+    Shodashavarga: { label: 'Shodashavarga (16 charts)', w: { D1: 3.5, D2: 1, D3: 1, D4: 0.5, D7: 0.5, D9: 3, D10: 0.5, D12: 0.5, D16: 2, D20: 0.5, D24: 0.5, D27: 0.5, D30: 1, D40: 0.5, D45: 0.5, D60: 4 } }
+  };
+  const PTS = { Own: 20, AdhiMitra: 18, Mitra: 15, Sama: 10, Shatru: 7, AdhiShatru: 5, Debilitated: 0 };
+  const REL = { Own: 'own sign', AdhiMitra: 'great friend', Mitra: 'friend', Sama: 'neutral', Shatru: 'enemy', AdhiShatru: 'great enemy', Debilitated: 'debilitated' };
+  const BANDS = [[15, 'wholly favourable'], [10, 'middling'], [5, 'some good results'], [0, 'little help']];
+  const band = t => (BANDS.find(b => t > b[0]) || BANDS[BANDS.length - 1])[1];
+
+  /* relation of a planet placed in varga sign s: Own / exalted / MT = own; debilitated = 0; else compound relation to the sign lord (D1 positions) */
+  function relIn(chart, name, s, key) {
+    if (OWN_SIGNS[name].includes(s)) return 'Own';
+    const ex = EXALTATION[name]; if (s === ex.sign) return 'Own';
+    if (s === getDebilitation(name).sign) return 'Debilitated';
+    const lord = SIGNS[s].lord, lp = chart.planets[lord], pp = chart.planets[name];
+    return AVS.compound(name, lord, pp.sign, lp.sign);
+  }
+
+  function compute(chart, setName) {
+    const set = SETS[setName || 'Shadvarga'], out = {};
+    GRAHA.forEach(name => {
+      let total = 0; const rows = [];
+      Object.keys(set.w).forEach(key => {
+        const s = chart.vargas[key].planetVargaSign[name], r = relIn(chart, name, s, key);
+        const pts = set.w[key] * PTS[r] / 20; total += pts;
+        rows.push({ varga: key, vname: VARGAS[key].name, sign: SIGNS[s].name, rel: r, relText: REL[r], weight: set.w[key], points: pts });
+      });
+      out[name] = { total, band: band(total), rows };
+    });
+    return { set: setName || 'Shadvarga', label: set.label, planets: out };
+  }
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const f1 = n => (Math.round(n * 100) / 100).toString();
+  let ST = { set: 'Shadvarga', open: '' };
+  function body(chart) {
+    const D = compute(chart, ST.set);
+    return GRAHA.map(name => {
+      const p = D.planets[name], pct = Math.min(100, p.total / 20 * 100), cl = p.total > 15 ? 'ok' : p.total > 10 ? 'mid' : 'low', on = ST.open === name;
+      return `<div class="vim-pl${on ? ' on' : ''}"><button type="button" class="vim-bar" data-vim="open" data-p="${name}" aria-expanded="${on}">
+        <span class="vim-n">${name}</span><span class="vim-track"><span class="vim-fill ${cl}" style="width:${pct.toFixed(1)}%"></span></span><span class="vim-v">${f1(p.total)}<small>/20</small></span></button>
+        <div class="vim-band">${esc(p.band)}</div>
+        ${on ? `<div class="vim-tbl"><table><thead><tr><th>Chart</th><th>Sign</th><th>Relation</th><th>Pts</th></tr></thead><tbody>${p.rows.map(r => `<tr><td><b>${r.varga}</b><small class="vim-vn">${esc(r.vname)}</small></td><td>${esc(r.sign)}</td><td>${esc(r.relText)}</td><td>${f1(r.points)}<small> /${f1(r.weight)}</small></td></tr>`).join('')}</tbody></table></div>` : ''}</div>`;
+    }).join('');
+  }
+  function html(chart, profile) {
+    return `<div class="vim"><div class="vim-hero"><h3>Vimshopaka Bala</h3><p>A strength score out of <b>20</b> for each planet, built from how it sits in the divisional charts. Higher tends to mean its promise holds up better. Tap a planet to see every chart.</p></div>
+      <div class="vim-seg" role="tablist">${Object.keys(SETS).map(k => `<button type="button" role="tab" class="${ST.set === k ? 'on' : ''}" data-vim="set" data-s="${k}">${k}</button>`).join('')}</div>
+      <div class="vim-set">${esc(SETS[ST.set].label)}</div>
+      <div id="vimBody">${body(chart)}</div>
+      <details class="vim-note"><summary>How this is worked out</summary>
+        <p>Each divisional chart has a weight; the weights of a set add to 20. A planet earns a share of that weight by the sign it occupies there: own sign all of it, a great friend's sign 90%, a friend's 75%, a neutral's 50%, an enemy's 35%, a great enemy's 25%.</p>
+        <p>Friendship is the compound kind (natural plus temporary), taken from the birth chart and applied in every divisional chart. Exalted and moolatrikona signs count as own and debilitated signs as zero, which one source states; the plain BPHS text lists only the six relations.</p>
+        <p>Bands follow Brihat Parashara Hora Shastra chapter 7: under 5 little help, 5 to 10 some good results, 10 to 15 middling, over 15 wholly favourable. The Saptavarga and Dashavarga weights are checked by their sum (20) because the old text is damaged. Rahu and Ketu are not scored.</p>
+        <p>This is one clue. Read it with the sign, house and Dasha.</p></details></div>`;
+  }
+  function text(chart, setName) {
+    const D = compute(chart, setName || 'Shadvarga');
+    return D.label + '\n' + GRAHA.map(n => `${n}: ${f1(D.planets[n].total)}/20 (${D.planets[n].band})`).join('\n');
+  }
+  function bind() {
+    document.addEventListener('click', e => {
+      const b = e.target.closest && e.target.closest('[data-vim]'); if (!b) return;
+      const root = b.closest('.vim'); if (!root) return;
+      const chart = typeof currentChartForModal !== 'undefined' ? currentChartForModal : null; if (!chart) return;
+      if (b.dataset.vim === 'set') { ST.set = b.dataset.s; root.querySelectorAll('.vim-seg button').forEach(x => x.classList.toggle('on', x.dataset.s === ST.set)); root.querySelector('.vim-set').textContent = SETS[ST.set].label; }
+      else ST.open = ST.open === b.dataset.p ? '' : b.dataset.p;
+      root.querySelector('#vimBody').innerHTML = body(chart);
+    });
+  }
+  if (typeof document !== 'undefined' && document.addEventListener) bind();
+  window.buildVimshopakaPanel = function (chart, profile) { return html(chart, profile || {}); };
+  if (typeof registerLatePanel === 'function') registerLatePanel('panel-vimshopaka', window.buildVimshopakaPanel);
+  return { compute, html, text, SETS, PTS, relIn, band, state: ST, GRAHA };
 })();
 <\/script>
 <script>

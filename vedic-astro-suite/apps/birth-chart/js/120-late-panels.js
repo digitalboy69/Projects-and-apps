@@ -34,5 +34,5 @@
   }
   /* registrations */
   const reg = (id, name) => registerLatePanel(id, (c, p) => (window[name] ? window[name](c, p) : ''));
-  reg('panel-triggerlab', 'buildTriggerLabPanel'); reg('panel-meaninglab', 'buildMeaningLabPanel'); reg('panel-atlas', 'buildAtlasPanel'); reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel'); reg('panel-today', 'buildTodayPanel'); reg('panel-prashna', 'buildPrashnaPanel'); reg('panel-kp', 'buildKpPanel'); reg('panel-chakra', 'buildChakraExplorerPanel'); reg('panel-avasthas', 'buildAvasthasPanel');
+  reg('panel-triggerlab', 'buildTriggerLabPanel'); reg('panel-meaninglab', 'buildMeaningLabPanel'); reg('panel-atlas', 'buildAtlasPanel'); reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel'); reg('panel-today', 'buildTodayPanel'); reg('panel-prashna', 'buildPrashnaPanel'); reg('panel-kp', 'buildKpPanel'); reg('panel-chakra', 'buildChakraExplorerPanel'); reg('panel-avasthas', 'buildAvasthasPanel'); reg('panel-vimshopaka', 'buildVimshopakaPanel');
 })();
