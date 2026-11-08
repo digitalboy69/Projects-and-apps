@@ -52,7 +52,7 @@ Legend: effort S (a session or less), M (1 to 2 sessions), L (3+). `[x]` done, `
 - [x] **A4 Sensitive degrees**: Gandanta, Pushkara navamsa / bhaga, Mrityu bhaga check for every planet and the Lagna, panel `panel-sensitive`. DONE Session 1: js/137, css/71, 2 tests. (M, needs source tables)
 - [x] **A5 Sudarshana Chakra**: three rings (Lagna, Moon, Sun), planets in each, the running year's house, drawing + simple tally. DONE Session 1: js/138, css/72, 2 tests. (M)
 - [x] **A6 Argala and Virodhargala**: per house, who intervenes and who obstructs. DONE Session 1: js/139, css/73, 2 tests. (S)
-- [ ] **A7 Bhavat Bhavam and Bhava arudhas**: "house from the house" table, and all 12 arudha padas if `17-` does not already give them. (S)
+- [x] **A7 Bhavat Bhavam and Bhava arudhas**: "house from the house" table and all 12 arudha padas (A7 added; js/17 had 11). DONE Session 1: js/140, css/74, 2 tests. (S)
 - [ ] **A8 Ashtakavarga extras**: Prastara tables, Trikona and Ekadhipatya Sodhana, Shodhya pindas, Kakshya, transit Ashtakavarga for today. (L)
 - [ ] **A9 Gochara vedha**: classical vedha pairs added to Today for You and Live Sky. (S, needs source table)
 - [ ] **A10 Synastry**: pick two saved profiles; planets in the other's houses, inter-chart aspects, Moon relations. (M)
@@ -189,7 +189,7 @@ Each step has the same fields: **Goal**, **Why astrologers use it**, **Known rul
 - **Known rule**: Bhavat Bhavam = the house counted from a house by the same number (the 7th from the 7th is the 1st); used to read the "second meaning" of a house.
 - **Source needed**: one text for the use, one for the arudha rule if missing (the usual rule: count the lord's distance; exceptions when the result lands in the same or 7th house, then take the 10th from it).
 - **Files**: `js/140-bhavat-bhavam.js` and a table inside an existing panel or a small new panel.
-- **Notes**:
+- **Notes (Session 1, DONE)**: Re-check found js/17 `calcAllArudhaPadas` already returns 11 padas (AL, A2-A6, A8-A11, UL which is A12); A7 Dara Pada was missing and is computed in js/140 with the same `calcArudhaPadaSign` (its BPHS correction rule was already documented in js/17); js/17 left untouched (its label "UL = Gauna Pada / A7" is a naming slip: UL is A12, noted here, not edited). Bhavat Bhavam: panchangbodh.com (all 12 pairs) and astrosight.ai (ten pairs) agree. astrosight cautions that the primary house stays the authority and that chaining further is unreliable, so one step only. House theme words are plain reminders, not source claims. NOT verified: classical verse for Bhavat Bhavam (astrosight cites Saravali and BPHS without verses); A7 special exceptions beyond the general rule.
 
 ### A8 Ashtakavarga extras (L)
 - **Goal**: Prastara tables, Sodhana (reduction), Shodhya pindas, Kakshya, transit Ashtakavarga.
@@ -254,6 +254,7 @@ Lal Kitab, Panchapakshi, Nadi amsa / Nadi astrology, full Tajika Varshaphal (Mun
 - Session 1 (2026-11-08): A3 pushed live. A4 Sensitive Degrees done (engine 15 checks incl. cross-source table equality, browser 6/6, screenshot viewed). Bugs caught while testing were test mistakes (wrong junction/sign), not engine faults. Not verified: verse text, Lagna row.
 - Session 1 (2026-11-08): A4 pushed live. A5 Sudarshana done (engine 9 checks, browser 10/10, screenshots viewed; fixed dim glyphs; removed an `||true` tautology from my own browser test before commit). Not verified: BPHS Sanskrit, Mercury's conditional nature.
 - Session 1 (2026-11-08): A5 pushed live. A6 Argala done (engine 13 checks incl. hand-worked houses, browser 10/10, screenshots viewed). Not verified: Sanskrit sutras; equal-count rule differs by teacher.
+- Session 1 (2026-11-08): A6 pushed live. A7 House from the House + A7 pada done (engine 11 checks, browser 8/8, screenshots viewed). js/17 label slip noted, not edited.
 
 ## 8. Owner decisions pending
 - Merge `feature/chakra-explorer` / `feature/astro-roadmap` to `main` and `Root` (the owner decides when).

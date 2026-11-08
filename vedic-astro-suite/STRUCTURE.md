@@ -527,6 +527,10 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/73-argala.css` — styles for Argala (`arg-` prefix)
 - `tests/argala_test.js` — node test for js/139 (pair mapping, count rule, Ketu, 3-malefic row, 60 real charts)
 - `tests/argala_browser_test.py` — Playwright test of the Argala panel at 390px (`ARG_SHOTS=dir`)
+- `apps/birth-chart/js/140-bhavat-bhavam.js` — Bhavat Bhavam (Nth from the Nth house) and all twelve Arudha Padas incl. the missing A7 Dara Pada (global `BBH`), panel-bhavat
+- `apps/birth-chart/css/74-bhavat-bhavam.css` — styles for House from the House (`bbh-` prefix)
+- `tests/bhavat_bhavam_test.js` — node test for js/140 (pairs vs two sources, arudha rule hand-worked, 60 real charts)
+- `tests/bhavat_bhavam_browser_test.py` — Playwright test of the House from the House panel at 390px (`BBH_SHOTS=dir`)
 - `docs/ASTRO_FEATURES_PLAN.md` — Handoff plan for the astrologer tools the app still lacks (avasthas, Vimshopaka, upagrahas, sensitive degrees, Sudarshana, Argala, Ashtakavarga extras, Gochara vedha, synastry, Muhurta, Panchang calendar, remedies): ordered checklist A0-A14, source rules, per-step detail, session log. A new chat starts here
 - `docs/YEAR_TIMELINE_RESEARCH.md` — Research + plan for the "Year Timeline Pack" (date-range, AI-ready data file: timeline, transits, dasha changes, planet role map); sources, file layout, reuse map, build order
 - `docs/SUPABASE.md` — Supabase cloud-sync notes

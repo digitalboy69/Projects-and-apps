@@ -15810,6 +15810,28 @@ body.cl-open{overflow:hidden}
 .arg-note p{font-size:12.5px;line-height:1.6;color:var(--mut);margin:8px 0 0}
 .arg button:focus-visible,.arg summary:focus-visible{outline:2px solid var(--g);outline-offset:2px}
 </style>
+<style>
+/* Bhavat Bhavam and Arudha Padas (js/140). Class-scoped (bbh-) only; never bare i/b/span. */
+.bbh{--g:#e6b94f;--line:rgba(255,255,255,.09);--mut:var(--text-muted,#9f9a8f);padding-bottom:12px}
+.bbh-hero h3{margin:14px 0 6px;font:600 25px/1.1 var(--font-serif,serif);color:var(--tx)}
+.bbh-hero:first-child h3{margin-top:0}
+.bbh-hero p{margin:0 0 12px;font-size:13.5px;line-height:1.6;color:var(--mut)}
+.bbh-hero p b{color:var(--tx)}
+.bbh-list{display:grid;gap:8px;margin-bottom:6px}
+.bbh-card{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);padding:10px 12px}
+.bbh-card header{display:flex;align-items:center;gap:8px}
+.bbh-n{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:600 13px var(--font-sans);color:var(--g);background:rgba(230,185,79,.12)}
+.bbh-n.d{background:rgba(230,185,79,.3);color:#17130a}
+.bbh-ar{color:var(--mut);font-size:13px}
+.bbh-t{min-width:0;margin-left:2px}
+.bbh-t b{display:block;font:600 14px var(--font-sans);color:var(--tx)}
+.bbh-t small{display:block;font-size:11.5px;color:var(--mut);margin-top:1px}
+.bbh-b{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:12.5px;color:var(--mut)}
+.bbh-note{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.03)}
+.bbh-note summary{cursor:pointer;font:600 13.5px var(--font-sans);color:var(--g)}
+.bbh-note p{font-size:12.5px;line-height:1.6;color:var(--mut);margin:8px 0 0}
+.bbh summary:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+</style>
 
 
 
@@ -19759,6 +19781,7 @@ const HOME_ITEMS=[
  ['panel-sensitive','✨','Sensitive Degrees','Gandanta, Mrityu Bhaga and Pushkara: which of your planets sit on a marked degree','Analysis','home'],
  ['panel-sudarshana','☸️','Sudarshana Chakra','Lagna, Moon and Sun views together: what each year of life lights up','Time & Cycles','home'],
  ['panel-argala','🧲','Argala','Which planets press on each house and which obstruct them (Jaimini)','Analysis','home'],
+ ['panel-bhavat','🪞','House from the House','Bhavat Bhavam and all twelve Arudha Padas: a second reading of each house','Analysis','home'],
  ['panel-kp','🧭','KP System','Cusps, star and sub lords, significators, event promise, ruling planets','Analysis','home'],
  ['panel-chakra','🔱','Chakra Explorer','Sarvatobhadra, Kota and Shoola charts: what today\'s planets touch in your chart','Time & Cycles','home'],
  ['panel-choghadiya','🕰️','Choghadiya','Good and bad time slots for the day and night','Time & Cycles','home'],
@@ -52374,7 +52397,7 @@ window.buildAvakahadaPanel = function(chart, profile){ try { return AVK.html(cha
   }
   /* registrations */
   const reg = (id, name) => registerLatePanel(id, (c, p) => (window[name] ? window[name](c, p) : ''));
-  reg('panel-triggerlab', 'buildTriggerLabPanel'); reg('panel-meaninglab', 'buildMeaningLabPanel'); reg('panel-atlas', 'buildAtlasPanel'); reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel'); reg('panel-today', 'buildTodayPanel'); reg('panel-prashna', 'buildPrashnaPanel'); reg('panel-kp', 'buildKpPanel'); reg('panel-chakra', 'buildChakraExplorerPanel'); reg('panel-avasthas', 'buildAvasthasPanel'); reg('panel-vimshopaka', 'buildVimshopakaPanel'); reg('panel-upagrahas', 'buildUpagrahasPanel'); reg('panel-sensitive', 'buildSensitiveDegreesPanel'); reg('panel-sudarshana', 'buildSudarshanaPanel'); reg('panel-argala', 'buildArgalaPanel');
+  reg('panel-triggerlab', 'buildTriggerLabPanel'); reg('panel-meaninglab', 'buildMeaningLabPanel'); reg('panel-atlas', 'buildAtlasPanel'); reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel'); reg('panel-today', 'buildTodayPanel'); reg('panel-prashna', 'buildPrashnaPanel'); reg('panel-kp', 'buildKpPanel'); reg('panel-chakra', 'buildChakraExplorerPanel'); reg('panel-avasthas', 'buildAvasthasPanel'); reg('panel-vimshopaka', 'buildVimshopakaPanel'); reg('panel-upagrahas', 'buildUpagrahasPanel'); reg('panel-sensitive', 'buildSensitiveDegreesPanel'); reg('panel-sudarshana', 'buildSudarshanaPanel'); reg('panel-argala', 'buildArgalaPanel'); reg('panel-bhavat', 'buildBhavatBhavamPanel');
 })();
 <\/script>
 <script>
@@ -54942,6 +54965,52 @@ const ARG = (() => {
   window.buildArgalaPanel = function (chart, profile) { ST.open = 1; return html(chart, profile || {}); };
   if (typeof registerLatePanel === 'function') registerLatePanel('panel-argala', window.buildArgalaPanel);
   return { compute, html, text, nth, PAIRS, GR, state: ST };
+})();
+<\/script>
+<script>
+/* Bhavat Bhavam and Arudha Padas (js/140).
+   Bhavat Bhavam = the house counted from a house by the same number: the Nth house from house N (7th from the 7th is the 1st; 2nd from the 2nd is the 3rd...).
+   Sources: panchangbodh.com/bhavat-bhavam-calculator (all 12 pairs) and astrosight.ai/predictions/bhavat-bhavam-principle-explained (the rule and ten of the pairs): they agree everywhere both give a pair.
+   Pairs: 1>1, 2>3, 3>5, 4>7, 5>9, 6>11, 7>1, 8>3, 9>5, 10>7, 11>9, 12>11. astrosight stresses the base house stays the authority; the second house supplements it, and chaining twice is shaky: this page shows one step only.
+   Arudha padas: the app already computes eleven (AL = A1, A2..A6, A8..A11, UL = A12) in js/17 (calcAllArudhaPadas, BPHS rule with the 7th/same-house correction). A7 (Dara Pada) was missing: it is added here by the same function calcArudhaPadaSign.
+   House themes are plain one-word reminders, not source claims. Tendencies only. Uses calcArudhaPadaSign/calcAllArudhaPadas (js/17), SIGNS, chart.planets[].house. Classes bbh- prefixed. */
+const BBH = (() => {
+  const GR = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
+  const THEME = ['self and body', 'wealth and family', 'effort and siblings', 'home and mother', 'children and learning', 'service and obstacles', 'partnership', 'change and depth', 'fortune and dharma', 'work and standing', 'gains and networks', 'rest, loss and release'];
+  const ORD = n => n + (['st', 'nd', 'rd'][n - 1] || 'th');
+  const derived = n => ((2 * (n - 1)) % 12) + 1; /* Nth from the Nth house */
+  const PADA_NAMES = { AL: 'Arudha Lagna (A1)', A2: 'Dhana Pada (A2)', A3: 'Bhatru Pada (A3)', A4: 'Matru Pada (A4)', A5: 'Mantra Pada (A5)', A6: 'Roga Pada (A6)', A7: 'Dara Pada (A7)', A8: 'Mrityu Pada (A8)', A9: 'Pitri Pada (A9)', A10: 'Rajya Pada (A10)', A11: 'Labha Pada (A11)', UL: 'Upapada Lagna (A12)' };
+  const PADA_ORDER = ['AL', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10', 'A11', 'UL'];
+  function compute(chart) {
+    const asc = chart.ascendant.sign, at = {}; for (let h = 1; h <= 12; h++) at[h] = [];
+    GR.forEach(n => at[chart.planets[n].house].push(n));
+    const rows = []; for (let h = 1; h <= 12; h++) {
+      const d = derived(h), sg = (asc + d - 1) % 12, lord = SIGNS[sg].lord;
+      rows.push({ house: h, derived: d, sign: sg, signName: SIGNS[sg].name, lord, lordHouse: chart.planets[lord].house, planets: at[d].slice(), theme: THEME[h - 1], dTheme: THEME[d - 1] });
+    }
+    const ar = calcAllArudhaPadas(chart, asc); ar.A7 = calcArudhaPadaSign((asc + 6) % 12, asc, chart.planets);
+    const padas = PADA_ORDER.map(k => ({ key: k, name: PADA_NAMES[k], sign: ar[k], signName: SIGNS[ar[k]].name, house: ((ar[k] - asc + 12) % 12) + 1, planets: GR.filter(n => chart.planets[n].sign === ar[k]) }));
+    return { rows, padas };
+  }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const G = n => (typeof PLANET_GLYPHS !== 'undefined' && PLANET_GLYPHS[n]) || '';
+  const pl = a => a.length ? a.map(n => `${G(n)} ${n}`).join(', ') : 'empty';
+  function html(chart, profile) {
+    const D = compute(chart);
+    return `<div class="bbh"><div class="bbh-hero"><h3>House from the House</h3><p><b>Bhavat Bhavam</b> reads a house a second time: the Nth house counted from the Nth house. The 7th from the 7th is the 1st, so a partner is also read through the self. It supplements the main reading and does not replace it.</p></div>
+      <div class="bbh-list">${D.rows.map(r => `<article class="bbh-card"><header><span class="bbh-n">${r.house}</span><span class="bbh-ar">→</span><span class="bbh-n d">${r.derived}</span><div class="bbh-t"><b>${ORD(r.house)} from the ${ORD(r.house)} is the ${ORD(r.derived)}</b><small>${esc(r.theme)} read through ${esc(r.dTheme)}</small></div></header>
+        <div class="bbh-b"><span>${esc(r.signName)}, lord ${r.lord} in house ${r.lordHouse}</span><span>${esc(pl(r.planets))}</span></div></article>`).join('')}</div>
+      <div class="bbh-hero"><h3>Arudha Padas</h3><p>The <b>arudha</b> of a house is the image it projects, how it looks from outside. Here are all twelve, with the house each falls in from your Lagna.</p></div>
+      <div class="bbh-list">${D.padas.map(p => `<article class="bbh-card"><header><span class="bbh-n">${p.key === 'UL' ? '12' : p.key === 'AL' ? '1' : p.key.slice(1)}</span><div class="bbh-t"><b>${esc(p.name)}</b><small>${esc(p.signName)} · house ${p.house}</small></div></header><div class="bbh-b"><span>${esc(pl(p.planets))}</span></div></article>`).join('')}</div>
+      <details class="bbh-note"><summary>How these are worked out</summary>
+        <p>Bhavat Bhavam counts the same number of houses from a house as its own number: 2nd from the 2nd is the 3rd, 4th from the 4th is the 7th, 7th from the 7th is the 1st. Two published sources give the same pairs. The main house stays the authority; the second house adds colour. Only one step is shown because chaining further gets unreliable.</p>
+        <p>An arudha pada is found by counting from a house to its lord, then the same number again from the lord. If that lands in the house itself or in its 7th, the 10th from it is taken instead. The twelve padas are A1 (Arudha Lagna) to A12 (Upapada).</p>
+        <p>These are tendencies and shown for those who read them with the chart.</p></details></div>`;
+  }
+  function text(chart) { const D = compute(chart); return D.rows.map(r => `${ORD(r.house)} from ${ORD(r.house)} = ${ORD(r.derived)} (${r.signName})`).join('\n') + '\n' + D.padas.map(p => `${p.name}: ${p.signName} (house ${p.house})`).join('\n'); }
+  window.buildBhavatBhavamPanel = function (chart, profile) { return html(chart, profile || {}); };
+  if (typeof registerLatePanel === 'function') registerLatePanel('panel-bhavat', window.buildBhavatBhavamPanel);
+  return { compute, html, text, derived, GR, PADA_ORDER };
 })();
 <\/script>
 <script>

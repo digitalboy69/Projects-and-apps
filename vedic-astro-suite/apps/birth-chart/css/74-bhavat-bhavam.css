@@ -1,0 +1,20 @@
+/* Bhavat Bhavam and Arudha Padas (js/140). Class-scoped (bbh-) only; never bare i/b/span. */
+.bbh{--g:#e6b94f;--line:rgba(255,255,255,.09);--mut:var(--text-muted,#9f9a8f);padding-bottom:12px}
+.bbh-hero h3{margin:14px 0 6px;font:600 25px/1.1 var(--font-serif,serif);color:var(--tx)}
+.bbh-hero:first-child h3{margin-top:0}
+.bbh-hero p{margin:0 0 12px;font-size:13.5px;line-height:1.6;color:var(--mut)}
+.bbh-hero p b{color:var(--tx)}
+.bbh-list{display:grid;gap:8px;margin-bottom:6px}
+.bbh-card{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);padding:10px 12px}
+.bbh-card header{display:flex;align-items:center;gap:8px}
+.bbh-n{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:600 13px var(--font-sans);color:var(--g);background:rgba(230,185,79,.12)}
+.bbh-n.d{background:rgba(230,185,79,.3);color:#17130a}
+.bbh-ar{color:var(--mut);font-size:13px}
+.bbh-t{min-width:0;margin-left:2px}
+.bbh-t b{display:block;font:600 14px var(--font-sans);color:var(--tx)}
+.bbh-t small{display:block;font-size:11.5px;color:var(--mut);margin-top:1px}
+.bbh-b{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:6px;font-size:12.5px;color:var(--mut)}
+.bbh-note{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.03)}
+.bbh-note summary{cursor:pointer;font:600 13.5px var(--font-sans);color:var(--g)}
+.bbh-note p{font-size:12.5px;line-height:1.6;color:var(--mut);margin:8px 0 0}
+.bbh summary:focus-visible{outline:2px solid var(--g);outline-offset:2px}
