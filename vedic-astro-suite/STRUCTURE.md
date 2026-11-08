@@ -515,6 +515,10 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/70-upagrahas.css` — styles for Upagrahas (`upa-` prefix)
 - `tests/upagrahas_test.js` — node test for js/136 (hand-worked values, 180-degree invariants over 1000 Suns, 60 real charts)
 - `tests/upagrahas_browser_test.py` — Playwright test of the Upagrahas panel at 390px (`UPA_SHOTS=dir`)
+- `apps/birth-chart/js/137-sensitive-degrees.js` — Sensitive Degrees (global `SDG`): Gandanta, Mrityu Bhaga (Jataka Parijata table, Moon in two traditions), Pushkara Navamsa and Pushkara Bhaga for 9 grahas + Lagna, panel-sensitive
+- `apps/birth-chart/css/71-sensitive-degrees.css` — styles for Sensitive Degrees (`sdg-` prefix)
+- `tests/sensitive_degrees_test.js` — node test for js/137 (tables vs two independently typed source tables, window edges, 80 real charts)
+- `tests/sensitive_degrees_browser_test.py` — Playwright test of the Sensitive Degrees panel at 390px (`SDG_SHOTS=dir`)
 - `docs/ASTRO_FEATURES_PLAN.md` — Handoff plan for the astrologer tools the app still lacks (avasthas, Vimshopaka, upagrahas, sensitive degrees, Sudarshana, Argala, Ashtakavarga extras, Gochara vedha, synastry, Muhurta, Panchang calendar, remedies): ordered checklist A0-A14, source rules, per-step detail, session log. A new chat starts here
 - `docs/YEAR_TIMELINE_RESEARCH.md` — Research + plan for the "Year Timeline Pack" (date-range, AI-ready data file: timeline, transits, dasha changes, planet role map); sources, file layout, reuse map, build order
 - `docs/SUPABASE.md` — Supabase cloud-sync notes
