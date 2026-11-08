@@ -1,0 +1,19 @@
+/* Upagrahas (js/136). Class-scoped (upa-) only; never bare i/b/span. */
+.upa{--g:#e6b94f;--line:rgba(255,255,255,.09);--mut:var(--text-muted,#9f9a8f);padding-bottom:12px}
+.upa-hero h3{margin:0 0 6px;font:600 27px/1.1 var(--font-serif,serif);color:var(--tx)}
+.upa-hero p{margin:0 0 14px;font-size:13.5px;line-height:1.6;color:var(--mut)}
+.upa-hero p b{color:var(--tx)}
+.upa-list{display:grid;gap:10px}
+.upa-card{border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035);padding:12px}
+.upa-card header{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.upa-card h4{margin:0;font:600 17px var(--font-serif,serif);color:var(--tx)}
+.upa-card header small{color:var(--mut);font-size:12px}
+.upa-h{margin-left:auto;padding:3px 10px;border-radius:99px;border:1px solid rgba(230,185,79,.4);color:var(--g);font:600 12px var(--font-sans);background:rgba(230,185,79,.1)}
+.upa-pos{margin-top:8px;font-size:15px;color:var(--tx)}
+.upa-pos b{font-weight:600}
+.upa-nk{font-size:13px;color:var(--tx);margin-top:2px}
+.upa-how{font-size:11.5px;color:var(--mut);margin-top:6px}
+.upa-note{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.03)}
+.upa-note summary{cursor:pointer;font:600 13.5px var(--font-sans);color:var(--g)}
+.upa-note p{font-size:12.5px;line-height:1.6;color:var(--mut);margin:8px 0 0}
+.upa summary:focus-visible{outline:2px solid var(--g);outline-offset:2px}

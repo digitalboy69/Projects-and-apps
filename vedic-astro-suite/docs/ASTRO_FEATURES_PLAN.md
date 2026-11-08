@@ -16,7 +16,7 @@ Setup, in this order:
 2. `cd vedic-astro-suite`, read `AI_GUIDE.md` sections 0 to 5 and `STRUCTURE.md` once (the repo rules), then this file.
 3. `sh tools/ai/session.sh start` prints the next unchecked line of this plan (it is in the loop). Work on the FIRST unchecked step of section 2.
 4. Build and test (section 3), tick the box, add a log line (section 7), commit, push the **branch only**.
-5. **Do not push to `main` or `Root` unless the owner says so in that chat.** The owner merges (a pull request, or tells you to fast-forward). Say what is not on main yet.
+5. **Standing owner instruction (2026-11-08): after each finished step, rebase on `main`, run all tests, then push it live (`git push origin HEAD:main` and `HEAD:Root`) and the branch, and start the next step.** Never force-push `main`/`Root`; stop and report if a push is rejected.
 6. Do not use `session.sh ship` for this plan: it is hard-coded to `feature/full-reading`. Use plain `git add -A && git commit && git push origin feature/astro-roadmap`.
 
 Branch note: `feature/astro-roadmap` starts from the Chakra Explorer commits (`feature/chakra-explorer`), which are not on `main` yet.
@@ -48,7 +48,7 @@ Legend: effort S (a session or less), M (1 to 2 sessions), L (3+). `[x]` done, `
 - [x] **A0 Plan and wiring**: this file, STRUCTURE.md row, `session.sh start` shows it, branch `feature/astro-roadmap` pushed. (S, done in Session 0)
 - [x] **A1 Planetary avasthas**: Baladi, Jagradadi, Deeptadi for the 7 grahas (Lajjitadi and nodes left out, see Notes), panel `panel-avasthas`. DONE Session 1: js/134, css/68, 2 tests. (M)
 - [x] **A2 Vimshopaka bala**: Shadvarga, Saptavarga, Dashavarga, Shodasavarga scores per planet, panel `panel-vimshopaka`. DONE Session 1: js/135, css/69, 2 tests. (M)
-- [ ] **A3 Upagrahas**: Dhuma, Vyatipata, Parivesha, Indrachapa, Upaketu (+ Gulika and Mandi as already known), sign / degree / nakshatra / house, in `chart.upagraha` and a panel. (S)
+- [x] **A3 Upagrahas**: Dhuma, Vyatipata, Parivesha, Indrachapa, Upaketu + existing Gulika, sign / degree / nakshatra / house, panel `panel-upagrahas`. DONE Session 1: js/136, css/70, 2 tests (chart.upagraha left unchanged on purpose). (S)
 - [ ] **A4 Sensitive degrees**: Gandanta, Pushkara navamsa / bhaga, Mrityu bhaga check for every planet and the Lagna, panel `panel-sensitive`. (M, needs source tables)
 - [ ] **A5 Sudarshana Chakra**: three rings (Lagna, Moon, Sun), planets in each, the running year's house, drawing + simple tally. (M)
 - [ ] **A6 Argala and Virodhargala**: per house, who intervenes and who obstructs. (S)
@@ -159,7 +159,7 @@ Each step has the same fields: **Goal**, **Why astrologers use it**, **Known rul
 - **Files**: `js/136-upagrahas.js` (`UPA`), extend `chart.upagraha` without changing existing keys; panel row or a small panel; `css` reuse `avk-` grid or a tiny new file.
 - **Screen**: table: name, sign, degree, nakshatra pada, house; one plain line each on what it is ("a shadow point derived from the Sun"). Never claim effects without a source.
 - **Tests**: all five from a known Sun longitude (hand-worked); Indrachapa/Parivesha relations hold for 1000 random longitudes; `chart.upagraha.Gulika` untouched.
-- **Notes**:
+- **Notes (Session 1, DONE)**: Sources: en.wikipedia.org/wiki/Upagraha and dekhopanchang.com/upagraha give the identical chain (Dhuma = Sun + 133d20; Vyatipata = 360 - Dhuma; Parivesha = Vyatipata + 180; Indrachapa = 360 - Parivesha; Upaketu = Indrachapa + 16d40). Effects are NOT shown: dekhopanchang calls Upaketu malefic in one place and mixed in another, and effect lists differ between teachers. Mandi is not listed apart from Gulika (existing js/117 stance). chart.upagraha was not extended (the panel computes on open); do that only if a later step needs the points in vargas. Bug found by test: float rounding in the longitude wrap changed Gulika's value by 1e-14, fixed by wrapping only when outside 0..360. NOT verified: BPHS verse text itself (chain taken from the two pages that cite it).
 
 ### A4 Sensitive degrees (M, needs source tables)
 - **Goal**: flag planets and the Lagna that sit in Gandanta, Pushkara navamsa / Pushkara bhaga, or Mrityu bhaga.
@@ -250,6 +250,7 @@ Lal Kitab, Panchapakshi, Nadi amsa / Nadi astrology, full Tajika Varshaphal (Mun
 
 - Session 1 (2026-11-08): rebased on main (owner added Astro Atlas js/130-133), plan file numbers shifted to js/134+. A1 Planet States done and tested (engine 11 checks over 840 planet states, browser 7/7, screenshots viewed). Not verified: Vikala second source, Pramudita mapping.
 - Session 1 (2026-11-08): A1 pushed live to main/Root by owner's go-ahead. A2 Vimshopaka done (engine 9 checks incl. hand-worked scores and 2240 planet-set scores, browser 8/8, screenshots viewed). Not verified: clean-edition Dashavarga weights; exalted/debilitated scoring second source.
+- Session 1 (2026-11-08): A2 pushed live. A3 Upagrahas done (engine 6 checks incl. hand-worked and 1000-Sun invariants, browser 6/6, screenshot viewed). Not verified: verse text.
 
 ## 8. Owner decisions pending
 - Merge `feature/chakra-explorer` / `feature/astro-roadmap` to `main` and `Root` (the owner decides when).

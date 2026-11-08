@@ -24,6 +24,7 @@ const HOME_ITEMS=[
  ['panel-meaninglab','🧩','Meaning Lab','Mix any planets, houses, signs and lords; read each raw meaning side by side and write your own','Analysis','home'],
  ['panel-avasthas','🌓','Planet States','Avasthas: each planet\'s age, alertness and mood, and how freely it can give results','Analysis','home'],
  ['panel-vimshopaka','⚖️','Vimshopaka Bala','Strength out of 20 for each planet from its divisional charts','Analysis','home'],
+ ['panel-upagrahas','🌑','Upagrahas','Dhuma, Vyatipata, Parivesha, Indrachapa, Upaketu and Gulika: where each shadow point falls','Analysis','home'],
  ['panel-kp','🧭','KP System','Cusps, star and sub lords, significators, event promise, ruling planets','Analysis','home'],
  ['panel-chakra','🔱','Chakra Explorer','Sarvatobhadra, Kota and Shoola charts: what today\'s planets touch in your chart','Time & Cycles','home'],
  ['panel-choghadiya','🕰️','Choghadiya','Good and bad time slots for the day and night','Time & Cycles','home'],
