@@ -1,0 +1,27 @@
+/* Planet States (js/134). Class-scoped (avs-) only; never bare i/b/span (icon layer adds .vxi spans). No animation needed. */
+.avs{--g:#e6b94f;--ok:#5fd08a;--mid:#e6b94f;--low:#e0725a;--line:rgba(255,255,255,.09);--mut:var(--text-muted,#9f9a8f);padding-bottom:12px}
+.avs-hero h3{margin:0 0 6px;font:600 27px/1.1 var(--font-serif,serif);color:var(--tx)}
+.avs-hero p{margin:0 0 14px;font-size:13.5px;line-height:1.6;color:var(--mut)}
+.avs-hero p b{color:var(--tx);font-weight:600}
+.avs-cards{display:grid;gap:10px}
+.avs-card{border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.035);padding:12px 12px 6px}
+.avs-card header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.avs-card h4{margin:0;font:600 17px var(--font-serif,serif);color:var(--tx)}
+.avs-card header small{color:var(--mut);font-size:12px}
+.avs-gl{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:18px;color:var(--g);background:rgba(230,185,79,.12)}
+.avs-row{display:grid;grid-template-columns:62px 82px 1fr;gap:8px;align-items:start;padding:8px 0;border-top:1px solid var(--line)}
+.avs-k{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding-top:5px}
+.avs-chip{justify-self:start;padding:4px 10px;border-radius:999px;font:600 12px var(--font-sans);border:1px solid currentColor;line-height:1.2}
+.avs-chip.ok{color:var(--ok);background:rgba(95,208,138,.1)}
+.avs-chip.mid{color:var(--mid);background:rgba(230,185,79,.1)}
+.avs-chip.low{color:var(--low);background:rgba(224,114,90,.1)}
+.avs-t{font-size:13px;line-height:1.45;color:var(--tx)}
+.avs-t em{display:block;font-style:normal;font-size:11.5px;color:var(--mut);margin-top:2px}
+.avs-t .avs-also{color:var(--low)}
+.avs-t .avs-also b{font-weight:600}
+.avs-note{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.03)}
+.avs-note summary{cursor:pointer;font:600 13.5px var(--font-sans);color:var(--g)}
+.avs-note p{font-size:12.5px;line-height:1.6;color:var(--mut);margin:8px 0 0}
+.avs-note p b{color:var(--tx)}
+.avs button:focus-visible,.avs summary:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+@media(max-width:420px){.avs-row{grid-template-columns:1fr auto;}.avs-k{grid-column:1}.avs-chip{grid-column:2;grid-row:1}.avs-t{grid-column:1/-1}}

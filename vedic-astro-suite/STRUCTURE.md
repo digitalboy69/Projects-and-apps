@@ -503,6 +503,10 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `docs/RELEASE_CHECKLIST.md` — owner's checklist for selling the PDF reading: review, brand, disclaimers, delivery, licences, quality gates, AI-writer decision
 - `docs/AI_START_HERE.md` — The repeatable AI session system: start prompt, session loop (session.sh start/check/test/ship), token hygiene, where things are, layer rules, lessons learned. READ FIRST in every new chat
 - `docs/APP_NAVIGATION_PLAN.md` — Plan to make every tool fast to reach: measured audit (32 tools, Home = 4 screens, 17 tools without a bottom tab), target hubs Start/Chart/Time/Strength/Tools with a place for every tool, 9 sessions N1-N9, acceptance tests, decisions. Read with AI_START_HERE
+- `apps/birth-chart/js/134-avasthas.js` — Planet States (avasthas, global `AVS`): Baladi / Jagradadi / Deeptadi for the seven grahas from BPHS ch.45, panel-avasthas, `AVS.compute/html/text`
+- `apps/birth-chart/css/68-avasthas.css` — styles for Planet States (`avs-` prefix)
+- `tests/avasthas_test.js` — node test for js/134 (Baladi edges, compound friendship, Jagradadi/Deeptadi vs app dignity over 120 charts)
+- `tests/avasthas_browser_test.py` — Playwright test of the Planet States panel at 390px (`AVS_SHOTS=dir` for screenshots)
 - `docs/ASTRO_FEATURES_PLAN.md` — Handoff plan for the astrologer tools the app still lacks (avasthas, Vimshopaka, upagrahas, sensitive degrees, Sudarshana, Argala, Ashtakavarga extras, Gochara vedha, synastry, Muhurta, Panchang calendar, remedies): ordered checklist A0-A14, source rules, per-step detail, session log. A new chat starts here
 - `docs/YEAR_TIMELINE_RESEARCH.md` — Research + plan for the "Year Timeline Pack" (date-range, AI-ready data file: timeline, transits, dasha changes, planet role map); sources, file layout, reuse map, build order
 - `docs/SUPABASE.md` — Supabase cloud-sync notes
