@@ -532,8 +532,10 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/bhavat_bhavam_test.js` — node test for js/140 (pairs vs two sources, arudha rule hand-worked, 60 real charts)
 - `tests/bhavat_bhavam_browser_test.py` — Playwright test of the House from the House panel at 390px (`BBH_SHOTS=dir`)
 - `apps/birth-chart/js/141-ashtakavarga-extras.js` — Ashtakavarga Workings (global `ASX`): Prastara, Sodhana + pindas, Kakshya and Transit tabs (A8a-d); panel-asx
+- `apps/birth-chart/js/142-gochara-vedha.js` — Gochara vedha pair tables and check (global `GVD`); used by Today for You to mark a favourable planet as held back
 - `apps/birth-chart/css/75-ashtakavarga-extras.css` — styles for Ashtakavarga Workings (`asx-` prefix)
 - `tests/ashtakavarga_extras_test.js` — node test for js/141 (Prastara column sums equal the app BAV over 100 charts, classic totals, SAV 337)
+- `tests/gochara_vedha_test.js` — node test for js/142 (pair tables vs the published house sets, exceptions both ways, nodes ignored)
 - `tests/ashtakavarga_extras_browser_test.py` — Playwright test of the Ashtakavarga Workings panel at 390px (`ASX_SHOTS=dir`)
 - `docs/ASTRO_FEATURES_PLAN.md` — Handoff plan for the astrologer tools the app still lacks (avasthas, Vimshopaka, upagrahas, sensitive degrees, Sudarshana, Argala, Ashtakavarga extras, Gochara vedha, synastry, Muhurta, Panchang calendar, remedies): ordered checklist A0-A14, source rules, per-step detail, session log. A new chat starts here
 - `docs/YEAR_TIMELINE_RESEARCH.md` — Research + plan for the "Year Timeline Pack" (date-range, AI-ready data file: timeline, transits, dasha changes, planet role map); sources, file layout, reuse map, build order

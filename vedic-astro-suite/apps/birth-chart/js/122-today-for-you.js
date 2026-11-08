@@ -24,6 +24,7 @@ const TDY = (function(){
     const cb = (tMoonSign - moon.sign + 12) % 12 + 1, cbGood = CB_GOOD.includes(cb);
     let c = (tNak - bNak + 27) % 27 + 1, tr = c % 9 === 0 ? 9 : c % 9, tGood = !TARA_BAD.includes(tr);
     const goch = Object.keys(GOCH).map(n => { const l = getSiderealLongitudeAt(n, jd), s = getSignIndex(l), h = (s - moon.sign + 12) % 12 + 1; return { n, sign: s, deg: getDegInSign(l), house: h, good: GOCH[n].includes(h) }; });
+    if (typeof GVD !== 'undefined') { const hs = {}; goch.forEach(x => hs[x.n] = x.house); const vc = GVD.check(hs); goch.forEach(x => { x.blockedBy = (vc[x.n] && vc[x.n].blockedBy) || []; x.vedhaHouse = vc[x.n] ? vc[x.n].vedhaHouse : null; }); }
     const tone = (cbGood && tGood) ? 'Supportive' : (cbGood || tGood) ? 'Mixed' : 'Go gently';
     const toneTxt = { Supportive:'Both your Moon checks are good today, a fair day to start or decide things.', Mixed:'One of your two Moon checks is good and one is not. Choose the quiet, routine tasks for the weaker part.', 'Go gently':'Both Moon checks are not at their best today. Keep to routine, and keep big starts for another day.' }[tone];
     let slots = [], ps = null; try { ps = CHG.parts(P); } catch(e){}
@@ -34,7 +35,7 @@ const TDY = (function(){
     let d; try { d = compute(chart, profile, jd); } catch(e){ console.warn('today for you', e); return '<div class="meta-err">Could not work out this moment.</div>'; }
     const P = d.P, ref = P.vara.date, c = { tz: d.tz }, sg = i => SIGNS[i], g = PLANET_GLYPHS;
     const big = (k, t, sub, good) => `<div class="tdy-b ${good ? 'good' : 'bad'}"><small>${k}</small><b>${t}</b><span>${sub}</span><em>${good ? 'Good' : 'Not at its best'}</em></div>`;
-    const gr = d.goch.map(x => `<div class="tdy-g ${x.good ? 'good' : 'bad'}"><span class="tdy-gl">${g[x.n]}</span><div><b>${x.n}</b> <span>${sg(x.sign).symbol} ${sg(x.sign).name}</span><span class="tdy-gh">${ord(x.house)} from your Moon</span></div><em>${x.good ? '✓' : '–'}</em></div>`).join('');
+    const gr = d.goch.map(x => `<div class="tdy-g ${x.good ? 'good' : 'bad'}"><span class="tdy-gl">${g[x.n]}</span><div><b>${x.n}</b> <span>${sg(x.sign).symbol} ${sg(x.sign).name}</span><span class="tdy-gh">${ord(x.house)} from your Moon</span>${x.good && x.blockedBy && x.blockedBy.length ? `<span class="tdy-gv">held back: ${x.blockedBy.join(' and ')} in the ${ord(x.vedhaHouse)} (vedha)</span>` : ''}</div><em>${x.good ? '✓' : '–'}</em></div>`).join('');
     const sl = d.slots.length ? d.slots.map(s => `<div class="tdy-s${s.rahu ? ' rk' : ''}"><b>${s.name}</b><span>${nvTime(s.from, d.tz, ref)} – ${nvTime(s.to, d.tz, ref)}</span><em>${s.rahu ? 'overlaps Rahu Kalam' : 'clear'}</em></div>`).join('') : '<div class="pl-empty">Slots are not available for this place and date.</div>';
     return `<div class="tdy-hero ${d.tone === 'Supportive' ? 'good' : d.tone === 'Mixed' ? 'mid' : 'bad'}"><small>Your day · ${P.vara.name}, ${nvDate(jd, d.tz)}</small><b>${d.tone}</b><p>${d.toneTxt}</p>
         <span class="tdy-fine">This one-line tone counts only the two Moon checks below. It is a planning aid, not a prediction.</span></div>
@@ -42,7 +43,7 @@ const TDY = (function(){
         ${big('Tarabala', d.trName, d.trTxt, d.tGood)}</div>
       <div class="pn-sec"><h5>Today's Panchanga <span>for your birth place</span></h5><div class="tdy-pc"><span><small>Tithi</small><b>${P.tithi.paksha} ${P.tithi.name}</b></span><span><small>Star</small><b>${P.nakshatra.name}</b></span><span><small>Yoga</small><b>${P.yoga.name}</b></span><span><small>Rahu Kalam</small><b>${P.rahu ? nvTime(P.rahu[0], d.tz, ref) + ' – ' + nvTime(P.rahu[1], d.tz, ref) : '—'}</b></span></div></div>
       <div class="pn-sec"><h5>Planets of the day, from your Moon <span>${d.nGood} of 9 favourable</span></h5>${gr}
-        <p class="pn-note">Gochara: the houses the tradition calls favourable for each planet, counted from your birth Moon sign. Common practice; Rahu and Ketu lists differ by school.</p></div>
+        <p class="pn-note">Gochara: the houses the tradition calls favourable for each planet, counted from your birth Moon sign. Common practice; Rahu and Ketu lists differ by school.${d.goch.some(x => x.good && x.blockedBy && x.blockedBy.length) ? ' Vedha: a favourable planet tends to be held back when another planet sits in its paired obstruction house (Sun and Saturn, and Moon and Mercury, do not hold each other back; Rahu and Ketu are left out). Tables differ slightly between teachers.' : ''}</p></div>
       <div class="pn-sec"><h5>Good time slots <span>Amrit · Shubh · Labh</span></h5>${sl}<p class="pn-note">Slots that overlap Rahu Kalam are best avoided for new starts. See Choghadiya for all slots.</p></div>`;
   }
   function panel(chart, profile){

@@ -32,6 +32,33 @@ with sync_playwright() as p:
         exp = 'Supportive' if (r['cbGood'] and r['tGood']) else 'Mixed' if (r['cbGood'] or r['tGood']) else 'Go gently'
         if r['tone'] != exp: bad.append(('tone', d, r['tone'], exp))
     ok('Chandrabala, Tarabala, Gochara and tone are right for 10 days', not bad, bad[:3])
+    PR = {'Sun':{3:9,6:12,10:4,11:5},'Moon':{1:5,3:9,6:12,7:2,10:4,11:8},'Mars':{3:12,6:9,11:5},'Mercury':{2:5,4:3,6:9,8:1,10:8,11:12},'Jupiter':{2:12,5:4,7:3,9:10,11:8},
+          'Venus':{1:8,2:7,3:1,4:10,5:9,8:5,9:11,11:6,12:3},'Saturn':{3:12,6:9,11:5}}
+    EX = [{'Sun','Saturn'},{'Moon','Mercury'}]
+    vbad = []; seen = 0; clean_ok = True; shot_day = None
+    for d in range(1, 31):
+        r = pg.evaluate("""(d)=>{const x=TDY.compute(currentChartForModal,window.__vgProf,toJulianDay(2026,11,d,9,0,0)-5.5/24);
+          return {g:x.goch.map(g=>[g.n,g.house,g.good,g.blockedBy||[]]),html:TDY.html(currentChartForModal,window.__vgProf,toJulianDay(2026,11,d,9,0,0)-5.5/24)}}""", d)
+        hs = {n: h for n, h, g, bl in r['g']}
+        any_b = False
+        for n, h, g, bl in r['g']:
+            if n not in PR: 
+                if bl: vbad.append(('node', d, n))
+                continue
+            exp = [o for o in PR if o != n and h in PR[n] and hs[o] == PR[n][h] and {n, o} not in EX]
+            if sorted(bl) != sorted(exp): vbad.append((d, n, h, bl, exp))
+            if bl and not g: vbad.append(('blocked but not good', d, n))
+            any_b = any_b or bool(bl)
+        if any_b: seen += 1; shot_day = shot_day or d
+        if ('tdy-gv' in r['html']) != any_b or ('Vedha:' in r['html']) != any_b: vbad.append(('html', d))
+    ok('vedha marks match an independent copy of the table for 30 days; html shows them only when one applies', not vbad, vbad[:3])
+    ok('at least one day in the month has a vedha, and one has none (both paths exercised)', 0 < seen < 30, seen)
+    if os.environ.get('GV_SHOTS') and shot_day:
+        os.makedirs(os.environ['GV_SHOTS'], exist_ok=True)
+        pg.evaluate("()=>document.querySelector('#panel-home [data-go=panel-today]').click()"); pg.wait_for_timeout(600)
+        pg.evaluate("(d)=>{document.getElementById('tdyTime').value='09:00';const e=document.getElementById('tdyDate');e.value='2026-11-'+String(d).padStart(2,'0');e.dispatchEvent(new Event('input',{bubbles:true}))}", shot_day); pg.wait_for_timeout(400)
+        pg.evaluate("()=>{const e=document.querySelector('.tdy-gv');if(e)e.scrollIntoView({block:'center'})}"); pg.wait_for_timeout(300)
+        pg.screenshot(path=os.path.join(os.environ['GV_SHOTS'], 'gv1.png'))
     ok('9 planets in the gochara list', pg.evaluate("()=>TDY.compute(currentChartForModal,window.__vgProf,toJulianDay(2026,11,3,9,0,0)-5.5/24).goch.length")==9)
     ok('slots flagged when they overlap Rahu Kalam', pg.evaluate("""()=>{const jd=toJulianDay(2026,11,3,9,0,0)-5.5/24,x=TDY.compute(currentChartForModal,window.__vgProf,jd),rk=x.P.rahu;return x.slots.length>0&&x.slots.every(s=>s.rahu===(s.from<rk[1]&&s.to>rk[0]))&&x.slots.every(s=>['Amrit','Shubh','Labh'].includes(s.name))}"""))
     pg.evaluate("()=>document.querySelector('#panel-home [data-go=panel-today]').click()"); pg.wait_for_timeout(800)

@@ -14984,6 +14984,7 @@ body.cl-open{overflow:hidden}
 .tdy-g em{font-style:normal;font-size:18px;text-align:center}.tdy-g.good em{color:#5fd08a}.tdy-g.bad em{color:#6b7390}.tdy-g.good{border-left:3px solid #5fd08a}.tdy-g.bad{border-left:3px solid #3a3f52}
 .tdy-s{display:grid;grid-template-columns:70px 1fr auto;gap:8px;align-items:center;margin:0 0 5px;padding:8px 11px;border-radius:11px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);border-left:3px solid #5fd08a}
 .tdy-s.rk{border-left-color:#e0925a}.tdy-s b{font-size:14px;color:#5fd08a}.tdy-s.rk b{color:#e0925a}.tdy-s span{font:12px var(--font-mono);color:var(--text-muted,#9f9a8f)}.tdy-s em{font:600 10.5px var(--font-sans);font-style:normal;text-transform:uppercase;color:#5fd08a}.tdy-s.rk em{color:#e0925a}
+.tdy-g .tdy-gv{display:block;margin-top:2px;font-size:11.5px;color:#e0a95a}
 </style>
 <style>
 /* Prashna chart (js/123-prashna.js). Calm: no motion. Phone first. */
@@ -52554,6 +52555,7 @@ const TDY = (function(){
     const cb = (tMoonSign - moon.sign + 12) % 12 + 1, cbGood = CB_GOOD.includes(cb);
     let c = (tNak - bNak + 27) % 27 + 1, tr = c % 9 === 0 ? 9 : c % 9, tGood = !TARA_BAD.includes(tr);
     const goch = Object.keys(GOCH).map(n => { const l = getSiderealLongitudeAt(n, jd), s = getSignIndex(l), h = (s - moon.sign + 12) % 12 + 1; return { n, sign: s, deg: getDegInSign(l), house: h, good: GOCH[n].includes(h) }; });
+    if (typeof GVD !== 'undefined') { const hs = {}; goch.forEach(x => hs[x.n] = x.house); const vc = GVD.check(hs); goch.forEach(x => { x.blockedBy = (vc[x.n] && vc[x.n].blockedBy) || []; x.vedhaHouse = vc[x.n] ? vc[x.n].vedhaHouse : null; }); }
     const tone = (cbGood && tGood) ? 'Supportive' : (cbGood || tGood) ? 'Mixed' : 'Go gently';
     const toneTxt = { Supportive:'Both your Moon checks are good today, a fair day to start or decide things.', Mixed:'One of your two Moon checks is good and one is not. Choose the quiet, routine tasks for the weaker part.', 'Go gently':'Both Moon checks are not at their best today. Keep to routine, and keep big starts for another day.' }[tone];
     let slots = [], ps = null; try { ps = CHG.parts(P); } catch(e){}
@@ -52564,7 +52566,7 @@ const TDY = (function(){
     let d; try { d = compute(chart, profile, jd); } catch(e){ console.warn('today for you', e); return '<div class="meta-err">Could not work out this moment.</div>'; }
     const P = d.P, ref = P.vara.date, c = { tz: d.tz }, sg = i => SIGNS[i], g = PLANET_GLYPHS;
     const big = (k, t, sub, good) => `<div class="tdy-b ${good ? 'good' : 'bad'}"><small>${k}</small><b>${t}</b><span>${sub}</span><em>${good ? 'Good' : 'Not at its best'}</em></div>`;
-    const gr = d.goch.map(x => `<div class="tdy-g ${x.good ? 'good' : 'bad'}"><span class="tdy-gl">${g[x.n]}</span><div><b>${x.n}</b> <span>${sg(x.sign).symbol} ${sg(x.sign).name}</span><span class="tdy-gh">${ord(x.house)} from your Moon</span></div><em>${x.good ? '✓' : '–'}</em></div>`).join('');
+    const gr = d.goch.map(x => `<div class="tdy-g ${x.good ? 'good' : 'bad'}"><span class="tdy-gl">${g[x.n]}</span><div><b>${x.n}</b> <span>${sg(x.sign).symbol} ${sg(x.sign).name}</span><span class="tdy-gh">${ord(x.house)} from your Moon</span>${x.good && x.blockedBy && x.blockedBy.length ? `<span class="tdy-gv">held back: ${x.blockedBy.join(' and ')} in the ${ord(x.vedhaHouse)} (vedha)</span>` : ''}</div><em>${x.good ? '✓' : '–'}</em></div>`).join('');
     const sl = d.slots.length ? d.slots.map(s => `<div class="tdy-s${s.rahu ? ' rk' : ''}"><b>${s.name}</b><span>${nvTime(s.from, d.tz, ref)} – ${nvTime(s.to, d.tz, ref)}</span><em>${s.rahu ? 'overlaps Rahu Kalam' : 'clear'}</em></div>`).join('') : '<div class="pl-empty">Slots are not available for this place and date.</div>';
     return `<div class="tdy-hero ${d.tone === 'Supportive' ? 'good' : d.tone === 'Mixed' ? 'mid' : 'bad'}"><small>Your day · ${P.vara.name}, ${nvDate(jd, d.tz)}</small><b>${d.tone}</b><p>${d.toneTxt}</p>
         <span class="tdy-fine">This one-line tone counts only the two Moon checks below. It is a planning aid, not a prediction.</span></div>
@@ -52572,7 +52574,7 @@ const TDY = (function(){
         ${big('Tarabala', d.trName, d.trTxt, d.tGood)}</div>
       <div class="pn-sec"><h5>Today's Panchanga <span>for your birth place</span></h5><div class="tdy-pc"><span><small>Tithi</small><b>${P.tithi.paksha} ${P.tithi.name}</b></span><span><small>Star</small><b>${P.nakshatra.name}</b></span><span><small>Yoga</small><b>${P.yoga.name}</b></span><span><small>Rahu Kalam</small><b>${P.rahu ? nvTime(P.rahu[0], d.tz, ref) + ' – ' + nvTime(P.rahu[1], d.tz, ref) : '—'}</b></span></div></div>
       <div class="pn-sec"><h5>Planets of the day, from your Moon <span>${d.nGood} of 9 favourable</span></h5>${gr}
-        <p class="pn-note">Gochara: the houses the tradition calls favourable for each planet, counted from your birth Moon sign. Common practice; Rahu and Ketu lists differ by school.</p></div>
+        <p class="pn-note">Gochara: the houses the tradition calls favourable for each planet, counted from your birth Moon sign. Common practice; Rahu and Ketu lists differ by school.${d.goch.some(x => x.good && x.blockedBy && x.blockedBy.length) ? ' Vedha: a favourable planet tends to be held back when another planet sits in its paired obstruction house (Sun and Saturn, and Moon and Mercury, do not hold each other back; Rahu and Ketu are left out). Tables differ slightly between teachers.' : ''}</p></div>
       <div class="pn-sec"><h5>Good time slots <span>Amrit · Shubh · Labh</span></h5>${sl}<p class="pn-note">Slots that overlap Rahu Kalam are best avoided for new starts. See Choghadiya for all slots.</p></div>`;
   }
   function panel(chart, profile){
@@ -55218,6 +55220,55 @@ const ASX = (() => {
   window.buildAshtakavargaExtrasPanel = function (chart, profile) { ST.tab = 'pras'; ST.planet = 'Sun'; ST.jd = nowJD(); return html(chart, profile || {}); };
   if (typeof registerLatePanel === 'function') registerLatePanel('panel-asx', window.buildAshtakavargaExtrasPanel);
   return { prastara, sodhana, transitAt, kakshyaAt, KAK, bavBand, savBand, trikona, ekadhipatya, positions, html, text, AB, TABS, TRINES, DUAL, RASI_M, GRAHA_M, state: ST };
+})();
+<\/script>
+<script>
+/* Gochara Vedha (js/142): a transit planet in a favourable house from the birth Moon is said to be OBSTRUCTED when another planet sits in that house's paired vedha house.
+   Pairs (favourable house -> vedha house, houses counted from the birth Moon sign), from four published tables:
+     ashtakvargajyoti.wordpress.com (all pairs), vedastro.org Hindu Predictive Astrology ch.34 (all pairs), astrogurukul.com and webastrologers.com (the same house sets, in lists),
+     jagannathhora.com/gochara (Saturn and Jupiter pairs).
+   They agree except: Mercury's 10th. Three sources pair it with 8 (ashtakvargajyoti, astrogurukul, webastrologers); vedastro prints 7. This app uses 8 and says so on the page.
+   Also: astrogurukul lists 7 vedha points for Venus's 8 favourable houses (it drops 12 and its pair, 12->3, which the two pair tables give); the app uses the nine full pairs.
+   Exceptions in every source: the Sun and Saturn do not obstruct each other; the Moon and Mercury do not obstruct each other.
+   Rahu and Ketu are left out (jagannathhora: the nodes are generally outside the vedha scheme), neither as the transiting planet nor as the blocker.
+   NOT verified: a classical verse (Phaladeepika / Brihat Samhita); the "reverse vedha" idea that webastrologers mentions, which is not built.
+   Tendency wording only: "obstructed" means the good result tends to be held back, not that anything bad is promised. Classes gv- prefixed. Reused by TDY (js/122). */
+const GVD = (() => {
+  const PAIRS = {
+    Sun:     { 3: 9, 6: 12, 10: 4, 11: 5 },
+    Moon:    { 1: 5, 3: 9, 6: 12, 7: 2, 10: 4, 11: 8 },
+    Mars:    { 3: 12, 6: 9, 11: 5 },
+    Mercury: { 2: 5, 4: 3, 6: 9, 8: 1, 10: 8, 11: 12 },
+    Jupiter: { 2: 12, 5: 4, 7: 3, 9: 10, 11: 8 },
+    Venus:   { 1: 8, 2: 7, 3: 1, 4: 10, 5: 9, 8: 5, 9: 11, 11: 6, 12: 3 },
+    Saturn:  { 3: 12, 6: 9, 11: 5 }
+  };
+  const EXEMPT = [['Sun', 'Saturn'], ['Moon', 'Mercury']];
+  const exempt = (a, b) => EXEMPT.some(p => (p[0] === a && p[1] === b) || (p[0] === b && p[1] === a));
+  const ord = n => n + ((n % 100 >= 11 && n % 100 <= 13) ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th'));
+
+  /* houses: { Sun: 3, Moon: 5, ... } house from the birth Moon (1-12). Returns, for each of the seven planets that has a pair table:
+     { house, favourable, vedhaHouse, blockedBy:[planet,...] } */
+  function check(houses) {
+    const out = {};
+    Object.keys(PAIRS).forEach(n => {
+      const h = houses[n];
+      if (h == null) return;
+      const v = PAIRS[n][h];
+      const fav = v != null;
+      const by = fav ? Object.keys(PAIRS).filter(o => o !== n && houses[o] === v && !exempt(n, o)) : [];
+      out[n] = { house: h, favourable: fav, vedhaHouse: fav ? v : null, blockedBy: by };
+    });
+    return out;
+  }
+  function note(n, r) {
+    return r.blockedBy.length ? `${r.blockedBy.join(' and ')} in the ${ord(r.vedhaHouse)} holds back ${n}'s good ${ord(r.house)}` : '';
+  }
+  function text(houses) {
+    const c = check(houses), b = Object.keys(c).filter(n => c[n].blockedBy.length);
+    return b.length ? 'Vedha: ' + b.map(n => note(n, c[n])).join('; ') : 'Vedha: none of the favourable transits is held back.';
+  }
+  return { PAIRS, EXEMPT, check, note, text, exempt, ord };
 })();
 <\/script>
 <script>

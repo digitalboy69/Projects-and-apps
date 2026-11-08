@@ -54,7 +54,7 @@ Legend: effort S (a session or less), M (1 to 2 sessions), L (3+). `[x]` done, `
 - [x] **A6 Argala and Virodhargala**: per house, who intervenes and who obstructs. DONE Session 1: js/139, css/73, 2 tests. (S)
 - [x] **A7 Bhavat Bhavam and Bhava arudhas**: "house from the house" table and all 12 arudha padas (A7 added; js/17 had 11). DONE Session 1: js/140, css/74, 2 tests. (S)
 - [x] **A8 Ashtakavarga extras**: A8a Prastara, A8b Sodhana + pindas, A8c Kakshya, A8d transit view all DONE (js/141, css/75, panel-asx). (L)
-- [ ] **A9 Gochara vedha**: classical vedha pairs added to Today for You and Live Sky. (S, needs source table)
+- [x] **A9 Gochara vedha**: pair tables + Today for You hook DONE (js/142; Live Sky not changed, see Notes). (S)
 - [ ] **A10 Synastry**: pick two saved profiles; planets in the other's houses, inter-chart aspects, Moon relations. (M)
 - [ ] **A11 Muhurta finder**: search a date range for an event type using sourced rule sets. (L: A11a sources and decisions, A11b engine, A11c UI)
 - [ ] **A12 Monthly Panchang calendar**: month grid with tithi, nakshatra, sankranti, ekadashi, purnima/amavasya, festivals, eclipses. (L)
@@ -206,7 +206,7 @@ Each step has the same fields: **Goal**, **Why astrologers use it**, **Known rul
 - **Source needed**: **the vedha pairs per planet (favourable house and its obstructing house) from Phaladeepika or Brihat Samhita and a second source; also the exceptions (for example no vedha between certain pairs such as Sun and Saturn, Moon and Mercury).** Do not write them from memory.
 - **Files**: `js/142-gochara-vedha.js` (`GVD`), then a small hook in `122-today-for-you.js` and `59-live-transit-form.js` (read both before editing; keep their output unchanged when no vedha applies).
 - **Tests**: every pair table row symmetric where the source says so; no change to existing Today-for-You output for charts with no vedha.
-- **Notes**:
+- **Notes (Session 1, DONE)**: js/142 `GVD` with the 7 planets' pairs. Sources: ashtakvargajyoti.wordpress.com and vedastro.org (Hindu Predictive Astrology ch.34) give every pair; astrogurukul.com and webastrologers.com give the same house sets; jagannathhora.com/gochara confirms Saturn and Jupiter. DISAGREEMENT: Mercury 10th pairs with 8 in three sources, 7 in vedastro; app uses 8, page says tables differ. Venus: astrogurukul drops the 12th (7 vedha for 8 favourable); the nine full pairs used. Exceptions Sun-Saturn and Moon-Mercury in all sources. Nodes left out (jagannathhora). Hook: TDY (js/122) adds blockedBy and a 'held back' line only when a vedha applies; output otherwise unchanged (test: 30 days vs an independent table copy, both paths seen). DECISION: Live Sky (js/59) counts houses from the Lagna, but vedha is counted from the Moon, so it was not changed; a Moon-based Live Sky view would be a new feature. NOT verified: classical verse (Phaladeepika / Brihat Samhita); 'reverse vedha' (webastrologers) not built.
 
 ### A10 Synastry (M)
 - **Goal**: choose two saved profiles and show how they sit on each other.
@@ -258,6 +258,7 @@ Lal Kitab, Panchapakshi, Nadi amsa / Nadi astrology, full Tajika Varshaphal (Mun
 - Session 1 (2026-11-08): A7 pushed live. A8a Prastara done (engine 5 checks over 100 charts, browser 9/9, screenshot viewed). A8b-d pending.
 - Session 1 (2026-11-09): A8a pushed live. A8b Sodhana + pindas done (23 engine checks incl. hand-worked reductions and the astrobix worked example, browser 16/16, screenshots viewed). Not verified: BPHS verses.
 - Session 1 (2026-11-09): A8c Kakshya + A8d Transit done (engine tests, browser 13/13, screenshots viewed); A8 ticked, pushed live. Next: A9.
+- Session 1 (2026-11-09): A9 Gochara vedha done (node 30 checks, today_for_you_test 12/12 incl. 30-day independent check, screenshot viewed); pushed live. Next: A10.
 
 ## 8. Owner decisions pending
 - Merge `feature/chakra-explorer` / `feature/astro-roadmap` to `main` and `Root` (the owner decides when).
