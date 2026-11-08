@@ -39,10 +39,26 @@ with sync_playwright() as p:
     if SHOTS:
         os.makedirs(SHOTS, exist_ok=True); pg.evaluate("()=>document.querySelector('#panel-asx .asx-tabs').scrollIntoView()"); pg.wait_for_timeout(300); pg.screenshot(path=os.path.join(SHOTS, 'x2.png'))
         pg.evaluate("()=>document.querySelector('#panel-asx .asx-pin').scrollIntoView()"); pg.wait_for_timeout(300); pg.screenshot(path=os.path.join(SHOTS, 'x3.png'))
+    pg.evaluate("()=>document.querySelector('#panel-asx [data-asx=tab][data-t=kak]').click()"); pg.wait_for_timeout(200)
+    ok('Kakshya tab: strip of 8 parts, one current', pg.evaluate("()=>document.querySelectorAll('#panel-asx .asx-strip > div').length===8&&document.querySelectorAll('#panel-asx .asx-strip > div.cur').length===1"))
+    ok('strip dots equal the planet bindus in that sign', pg.evaluate("()=>{const p=document.querySelector('#panel-asx .asx-chips button.on').dataset.p;const T=ASX.transitAt(currentChartForModal,ASX.state.jd).find(t=>t.name===p);return document.querySelectorAll('#panel-asx .asx-strip > div.gave').length===T.bav}"))
+    d0 = pg.evaluate("()=>document.getElementById('asxDate').value")
+    pg.evaluate("()=>document.querySelector('#panel-asx [data-asx=day][data-d=\"1\"]').click()"); pg.wait_for_timeout(200)
+    d1 = pg.evaluate("()=>document.getElementById('asxDate').value")
+    ok('next-day button moves the date', d0 != d1, d0 + ' -> ' + d1)
+    pg.evaluate("()=>{const i=document.getElementById('asxDate');i.value='2026-03-01';i.dispatchEvent(new Event('change',{bubbles:true}))}"); pg.wait_for_timeout(200)
+    ok('typing a date recalculates (engine jd = that date)', pg.evaluate("()=>document.getElementById('asxDate').value==='2026-03-01'&&Math.abs(ASX.state.jd-(Date.UTC(2026,2,1,12)/86400000+2440587.5))<1e-6"))
+    pg.evaluate("()=>document.querySelector('#panel-asx [data-asx=tab][data-t=trn]').click()"); pg.wait_for_timeout(200)
+    ok('Transit tab: seven planet rows matching the engine', pg.evaluate("()=>{const T=ASX.transitAt(currentChartForModal,ASX.state.jd);const r=document.querySelectorAll('#panel-asx .asx-x tbody tr');return r.length===7&&T.every((t,i)=>r[i].textContent.indexOf(ASX.AB[t.sign])>=0&&+r[i].querySelectorAll('td')[3].textContent===t.bav&&+r[i].querySelectorAll('td')[4].textContent===t.sav)}"))
+    ok('Transit table fits the phone', pg.evaluate("()=>{const w=document.querySelector('#panel-asx .asx-wrap');return w.scrollWidth<=w.clientWidth+1&&document.documentElement.scrollWidth<=window.innerWidth+1}"))
+    if SHOTS:
+        pg.evaluate("()=>document.querySelector('#panel-asx .asx-tabs').scrollIntoView()"); pg.wait_for_timeout(300); pg.screenshot(path=os.path.join(SHOTS, 'x4.png'))
+        pg.evaluate("()=>document.querySelector('#panel-asx [data-asx=tab][data-t=kak]').click()"); pg.wait_for_timeout(200); pg.evaluate("()=>document.querySelector('#panel-asx .asx-tabs').scrollIntoView()"); pg.wait_for_timeout(300); pg.screenshot(path=os.path.join(SHOTS, 'x5.png'))
     ok('no undefined/NaN, no sideways scroll', pg.evaluate("()=>!/undefined|NaN|\\[object/.test(document.getElementById('panel-asx').textContent)&&document.documentElement.scrollWidth<=window.innerWidth+1"))
     ok('no page errors', not errs, '; '.join(errs)[:200])
     if SHOTS:
         os.makedirs(SHOTS, exist_ok=True)
+        pg.evaluate("()=>document.querySelector('#panel-asx [data-asx=tab][data-t=pras]').click()"); pg.wait_for_timeout(200)
         pg.evaluate("()=>window.scrollTo(0,0)"); pg.wait_for_timeout(300); pg.screenshot(path=os.path.join(SHOTS, 'x0.png')); pg.evaluate("()=>document.querySelector('#panel-asx .asx-wrap').scrollIntoView()"); pg.wait_for_timeout(300); pg.screenshot(path=os.path.join(SHOTS, 'x1.png'))
     b.close()
 bad = [r for r in res if not r[1]]

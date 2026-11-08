@@ -531,7 +531,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/74-bhavat-bhavam.css` — styles for House from the House (`bbh-` prefix)
 - `tests/bhavat_bhavam_test.js` — node test for js/140 (pairs vs two sources, arudha rule hand-worked, 60 real charts)
 - `tests/bhavat_bhavam_browser_test.py` — Playwright test of the House from the House panel at 390px (`BBH_SHOTS=dir`)
-- `apps/birth-chart/js/141-ashtakavarga-extras.js` — Ashtakavarga Workings (global `ASX`): Prastara tables per planet (A8a); later Sodhana, Kakshya, transit view; panel-asx
+- `apps/birth-chart/js/141-ashtakavarga-extras.js` — Ashtakavarga Workings (global `ASX`): Prastara, Sodhana + pindas, Kakshya and Transit tabs (A8a-d); panel-asx
 - `apps/birth-chart/css/75-ashtakavarga-extras.css` — styles for Ashtakavarga Workings (`asx-` prefix)
 - `tests/ashtakavarga_extras_test.js` — node test for js/141 (Prastara column sums equal the app BAV over 100 charts, classic totals, SAV 337)
 - `tests/ashtakavarga_extras_browser_test.py` — Playwright test of the Ashtakavarga Workings panel at 390px (`ASX_SHOTS=dir`)

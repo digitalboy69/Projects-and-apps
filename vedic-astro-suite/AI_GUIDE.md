@@ -190,11 +190,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-09 - 2035 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-09 - 2041 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 228 files, 33193 lines, 2732 KB
+**birth-chart** - 228 files, 33251 lines, 2739 KB
 ```
 index.html                                         652 lines   37 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -252,7 +252,7 @@ js/138-sudarshana.js                               108 lines   10 KB
 js/139-argala.js                                    79 lines    7 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
 js/140-bhavat-bhavam.js                             45 lines    5 KB
-js/141-ashtakavarga-extras.js                      103 lines   11 KB
+js/141-ashtakavarga-extras.js                      145 lines   16 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/16-rectification-engine.js                       36 lines    2 KB
 js/17-special-lagnas.js                            404 lines   23 KB
@@ -423,7 +423,7 @@ css/71-sensitive-degrees.css                        25 lines    1 KB
 css/72-sudarshana.css                               38 lines    3 KB
 css/73-argala.css                                   25 lines    2 KB
 css/74-bhavat-bhavam.css                            21 lines    1 KB
-css/75-ashtakavarga-extras.css                      43 lines    3 KB
+css/75-ashtakavarga-extras.css                      59 lines    5 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -632,4 +632,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Argala added: js/139-argala.js (`ARG`) + css/73 + Home tile in Analysis; pairs 2/12, 4/10, 11/3 (+ special 5/9), obstruction wins only with more planets, equal = contested, Ketu house reversed, 3+ malefics in the 3rd extra row (single-teacher rules flagged on the page). One source (dekhopanchang) has the pairs swapped: ignore it. Plan step A6.
 - House from the House added: js/140-bhavat-bhavam.js (`BBH`) + css/74 + Home tile in Analysis; Bhavat Bhavam pairs (two sources agree) and all 12 arudha padas: js/17 already had 11 (UL is A12), A7 Dara Pada added through the same `calcArudhaPadaSign`. Plan step A7.
 - Ashtakavarga Workings started (plan A8a): js/141-ashtakavarga-extras.js (`ASX`) + css/75 + Home tile in Analysis; Prastara table per planet built from CONTRIBUTION_TABLE; column sums equal chart.ashtakavarga.bavTables (100 charts), totals 48/49/39/54/56/52/39, SAV 337. Sodhana, Kakshya, transit view still to do (A8b-d).
-- Ashtakavarga Workings: Sodhana tab added (plan A8b): Trikona then Ekadhipatya reduction (Mehta/Rao rules), Rasi/Graha/Shodhya Pinda with the published multipliers, all in js/141 `ASX.sodhana`; hand-worked cases and the astrobix example are in tests/ashtakavarga_extras_test.js. Kakshya and transit view still to do.
+- Ashtakavarga Workings: Sodhana tab added (plan A8b): Trikona then Ekadhipatya reduction (Mehta/Rao rules), Rasi/Graha/Shodhya Pinda with the published multipliers, all in js/141 `ASX.sodhana`; hand-worked cases and the astrobix example are in tests/ashtakavarga_extras_test.js. Kakshya and Transit tabs added (plan A8c/A8d, plan A8 complete): 8 parts of 3deg45' ruled Saturn..Lagna, ruler's bindu from the planet's own Prastara, transit table for any date; tests in tests/ashtakavarga_extras_*.

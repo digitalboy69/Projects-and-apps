@@ -67,4 +67,29 @@ for(let i=0;i<100;i++){
     if(['Sun','Moon'].includes(p)&&S.ekadhipatya.join()!==S.trikona.join())bad++; }
   const H=run('ASX.html(_c,{})'); if(/undefined|NaN|\[object/.test(H))bad++; }
 ok(bad===0,'100 charts x 7 planets: reduction never raises a figure, each trine ends with a zero, Sun/Moon skip pairs, pindas add up');
+
+
+/* ---- A8c/A8d Kakshya and Transit ---- */
+ok(run('ASX.KAK.join()')==='Saturn,Jupiter,Mars,Sun,Venus,Mercury,Moon,Lagna','kakshya order Saturn, Jupiter, Mars, Sun, Venus, Mercury, Moon, Lagna');
+ctx._c=run("computeChart('1990-03-12','06:40',28.61,77.21,5.5)");
+const jdT=run("toJulianDay(2026,11,9,6,30,0)-5.5/24"); ctx._jd=jdT;
+const TR2=run('ASX.transitAt(_c,_jd)');
+ok(TR2.length===7&&TR2.every(t=>Math.abs(t.lon-run(`getSiderealLongitudeAt('${t.name}',_jd)`))<1e-9),'transit longitudes equal getSiderealLongitudeAt');
+ok(TR2.every(t=>t.sign===Math.floor(t.lon/30)&&Math.abs(t.deg-(t.lon-30*t.sign))<1e-9&&t.kIdx===Math.min(7,Math.floor(t.deg/3.75))&&t.lord===run('ASX.KAK')[t.kIdx]),'sign, degree, kakshya index and ruler follow the longitude (3d45 parts)');
+ok(TR2.every(t=>t.bav===_c_bav(t)&&t.sav===ctx._c.ashtakavarga.sav[t.sign]&&t.house===((t.sign-ctx._c.ascendant.sign+12)%12)+1),'bindus, sign total and house come from the chart');
+function _c_bav(t){return ctx._c.ashtakavarga.bavTables[t.name][t.sign];}
+ok(TR2.every(t=>t.strip.length===8&&t.strip.filter(Boolean).length===run(`ASX.prastara(_c,'${t.name}')`).totals[t.sign]&&t.strip.filter(Boolean).length===t.bav),'dots in the strip add up to the planet\'s bindus in that sign');
+ok(TR2.every(t=>t.gave===t.strip[t.kIdx]),'"ruler gave a bindu" = the dot of the current part');
+/* kakshya edges */
+const KA=d=>JSON.parse(run(`JSON.stringify(ASX.kakshyaAt(${d}))`));
+ok(KA(0).idx===0&&KA(0).lord==='Saturn'&&KA(3.7499).idx===0&&KA(3.75).idx===1&&KA(3.75).lord==='Jupiter'&&KA(7.5).lord==='Mars'&&KA(11.25).lord==='Sun'&&KA(15).lord==='Venus'&&KA(18.75).lord==='Mercury'&&KA(22.5).lord==='Moon'&&KA(26.25).lord==='Lagna'&&KA(29.9999).idx===7,'kakshya parts at the exact edges 0, 3d45, 7d30, 11d15, 15, 18d45, 22d30, 26d15 and 30 (last)');
+ok(run("ASX.bavBand(5)")==='good'&&run("ASX.bavBand(4)")==='mid'&&run("ASX.bavBand(3)")==='low'&&run("ASX.savBand(31)")==='good'&&run("ASX.savBand(30)")==='mid'&&run("ASX.savBand(25)")==='mid'&&run("ASX.savBand(24)")==='low','working bands: own 5/4/3 and sign total 30/25 edges');
+bad=0;
+for(let i=0;i<40;i++){
+  const d=new Date(Date.UTC(1940+(i*7)%80,(i*5)%12,1+(i*11)%28)).toISOString().slice(0,10);
+  ctx._c=run(`computeChart('${d}','${String(i%24).padStart(2,'0')}:${String((i*13)%60).padStart(2,'0')}',${10+(i%40)},${70+(i%30)},5.5)`);
+  for(let k=0;k<6;k++){ ctx._jd=2451545+(i*977+k*1531)%9000;
+    const R=run('ASX.transitAt(_c,_jd)'); R.forEach(t=>{ if(!(t.deg>=0&&t.deg<30)||t.strip.filter(Boolean).length!==t.bav||t.gave!==t.strip[t.kIdx])bad++; });
+    ST_=run("(()=>{ASX.state.tab='trn';ASX.state.jd=_jd;return ASX.html(_c,{});})()"); if(/undefined|NaN|\[object/.test(ST_))bad++; } }
+ok(bad===0,'40 charts x 6 dates: transit rows consistent (degree in 0..30, strip sums to bindus, gave = current part dot), render clean');
 process.exit(fail?1:0);
