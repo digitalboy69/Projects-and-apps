@@ -190,13 +190,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-08 - 2022 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-08 - 2031 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 226 files, 33044 lines, 2718 KB
+**birth-chart** - 228 files, 33129 lines, 2725 KB
 ```
-index.html                                         650 lines   37 KB
+index.html                                         652 lines   37 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -252,6 +252,7 @@ js/138-sudarshana.js                               108 lines   10 KB
 js/139-argala.js                                    79 lines    7 KB
 js/14-shadbala-engine.js                           279 lines   12 KB
 js/140-bhavat-bhavam.js                             45 lines    5 KB
+js/141-ashtakavarga-extras.js                       56 lines    5 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/16-rectification-engine.js                       36 lines    2 KB
 js/17-special-lagnas.js                            404 lines   23 KB
@@ -262,7 +263,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             168 lines   18 KB
+js/25-home-and-tabs.js                             169 lines   18 KB
 js/26-rectification-studio.js                      250 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -422,6 +423,7 @@ css/71-sensitive-degrees.css                        25 lines    1 KB
 css/72-sudarshana.css                               38 lines    3 KB
 css/73-argala.css                                   25 lines    2 KB
 css/74-bhavat-bhavam.css                            21 lines    1 KB
+css/75-ashtakavarga-extras.css                      26 lines    2 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -629,3 +631,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Sudarshana Chakra added: js/138-sudarshana.js (`SDC`) + css/72 + Home tile in Time & Cycles; three rings (Lagna inner, Moon middle, Sun outer per BPHS ch.74), year of life = house (1st year = 1st house, repeats every 12), planets per ring with benefic/malefic counts, year picker. Facts only, no scoring; months not shown. Plan step A5. Screenshot caught near-invisible planet glyphs (fix: explicit fill).
 - Argala added: js/139-argala.js (`ARG`) + css/73 + Home tile in Analysis; pairs 2/12, 4/10, 11/3 (+ special 5/9), obstruction wins only with more planets, equal = contested, Ketu house reversed, 3+ malefics in the 3rd extra row (single-teacher rules flagged on the page). One source (dekhopanchang) has the pairs swapped: ignore it. Plan step A6.
 - House from the House added: js/140-bhavat-bhavam.js (`BBH`) + css/74 + Home tile in Analysis; Bhavat Bhavam pairs (two sources agree) and all 12 arudha padas: js/17 already had 11 (UL is A12), A7 Dara Pada added through the same `calcArudhaPadaSign`. Plan step A7.
+- Ashtakavarga Workings started (plan A8a): js/141-ashtakavarga-extras.js (`ASX`) + css/75 + Home tile in Analysis; Prastara table per planet built from CONTRIBUTION_TABLE; column sums equal chart.ashtakavarga.bavTables (100 charts), totals 48/49/39/54/56/52/39, SAV 337. Sodhana, Kakshya, transit view still to do (A8b-d).

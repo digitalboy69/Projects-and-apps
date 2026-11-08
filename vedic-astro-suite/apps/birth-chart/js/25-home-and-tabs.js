@@ -29,6 +29,7 @@ const HOME_ITEMS=[
  ['panel-sudarshana','☸️','Sudarshana Chakra','Lagna, Moon and Sun views together: what each year of life lights up','Time & Cycles','home'],
  ['panel-argala','🧲','Argala','Which planets press on each house and which obstruct them (Jaimini)','Analysis','home'],
  ['panel-bhavat','🪞','House from the House','Bhavat Bhavam and all twelve Arudha Padas: a second reading of each house','Analysis','home'],
+ ['panel-asx','🧮','Ashtakavarga Workings','Prastara tables and the working behind the Ashtakavarga numbers','Analysis','home'],
  ['panel-kp','🧭','KP System','Cusps, star and sub lords, significators, event promise, ruling planets','Analysis','home'],
  ['panel-chakra','🔱','Chakra Explorer','Sarvatobhadra, Kota and Shoola charts: what today\'s planets touch in your chart','Time & Cycles','home'],
  ['panel-choghadiya','🕰️','Choghadiya','Good and bad time slots for the day and night','Time & Cycles','home'],

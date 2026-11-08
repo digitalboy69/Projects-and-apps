@@ -1,0 +1,25 @@
+/* Ashtakavarga extras (js/141). Class-scoped (asx-) only; never bare i/b/span. */
+.asx{--g:#e6b94f;--ok:#5fd08a;--bad:#e0725a;--line:rgba(255,255,255,.09);--mut:var(--text-muted,#9f9a8f);padding-bottom:12px}
+.asx-hero h3{margin:0 0 6px;font:600 27px/1.1 var(--font-serif,serif);color:var(--tx)}
+.asx-hero p{margin:0 0 12px;font-size:13.5px;line-height:1.6;color:var(--mut)}
+.asx-tabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;padding:3px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.04);margin-bottom:10px}
+.asx-tabs button{padding:9px 4px;border:0;border-radius:10px;background:transparent;color:var(--mut);font:600 13px var(--font-sans);cursor:pointer}
+.asx-tabs button.on{background:rgba(230,185,79,.17);color:var(--g)}
+.asx-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px;-webkit-overflow-scrolling:touch}
+.asx-chips button{flex:none;min-height:38px;padding:0 12px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--tx);font:500 13px var(--font-sans);cursor:pointer}
+.asx-chips button.on{border-color:rgba(230,185,79,.6);background:rgba(230,185,79,.15);color:var(--g)}
+.asx-wrap{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03);padding:6px 4px}
+.asx-t{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11px;text-align:center}
+.asx-t th{font-weight:500;color:var(--mut);padding:5px 0}
+.asx-t th.me{color:var(--g)}.asx-t th.lg{text-decoration:underline}
+.asx-t td{padding:5px 0;color:rgba(255,255,255,.28);font-size:13px;line-height:1}
+.asx-t td.on{color:var(--ok)}
+.asx-t .asx-rl{width:52px;text-align:left;padding-left:6px;color:var(--tx);font-size:11.5px}
+.asx-t .asx-rl small{display:block;font-size:9.5px;color:var(--mut);font-weight:400}
+.asx-t .asx-rt{width:26px;color:var(--g);font-weight:600}
+.asx-t tr.asx-tot td,.asx-t tr.asx-tot th{border-top:1px solid var(--line);color:var(--tx);font-weight:600;font-size:12px}
+.asx-cap{font-size:12px;line-height:1.55;color:var(--mut);margin:8px 2px 0}
+.asx-note{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.03)}
+.asx-note summary{cursor:pointer;font:600 13.5px var(--font-sans);color:var(--g)}
+.asx-note p{font-size:12.5px;line-height:1.6;color:var(--mut);margin:8px 0 0}
+.asx button:focus-visible,.asx summary:focus-visible{outline:2px solid var(--g);outline-offset:2px}
