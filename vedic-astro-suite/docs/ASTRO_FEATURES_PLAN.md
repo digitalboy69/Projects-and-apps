@@ -51,7 +51,7 @@ Legend: effort S (a session or less), M (1 to 2 sessions), L (3+). `[x]` done, `
 - [x] **A3 Upagrahas**: Dhuma, Vyatipata, Parivesha, Indrachapa, Upaketu + existing Gulika, sign / degree / nakshatra / house, panel `panel-upagrahas`. DONE Session 1: js/136, css/70, 2 tests (chart.upagraha left unchanged on purpose). (S)
 - [x] **A4 Sensitive degrees**: Gandanta, Pushkara navamsa / bhaga, Mrityu bhaga check for every planet and the Lagna, panel `panel-sensitive`. DONE Session 1: js/137, css/71, 2 tests. (M, needs source tables)
 - [x] **A5 Sudarshana Chakra**: three rings (Lagna, Moon, Sun), planets in each, the running year's house, drawing + simple tally. DONE Session 1: js/138, css/72, 2 tests. (M)
-- [ ] **A6 Argala and Virodhargala**: per house, who intervenes and who obstructs. (S)
+- [x] **A6 Argala and Virodhargala**: per house, who intervenes and who obstructs. DONE Session 1: js/139, css/73, 2 tests. (S)
 - [ ] **A7 Bhavat Bhavam and Bhava arudhas**: "house from the house" table, and all 12 arudha padas if `17-` does not already give them. (S)
 - [ ] **A8 Ashtakavarga extras**: Prastara tables, Trikona and Ekadhipatya Sodhana, Shodhya pindas, Kakshya, transit Ashtakavarga for today. (L)
 - [ ] **A9 Gochara vedha**: classical vedha pairs added to Today for You and Live Sky. (S, needs source table)
@@ -182,7 +182,7 @@ Each step has the same fields: **Goal**, **Why astrologers use it**, **Known rul
 - **Source needed**: two texts; record the exact exceptions (Ketu, count rules, benefic/malefic argala).
 - **Files**: `js/139-argala.js` (`ARG`), small panel under Analysis, tests with hand-worked houses.
 - **Screen**: 12 rows (house, who causes argala, who obstructs, net result in plain words). Optional: tap a house to highlight on the chart.
-- **Notes**:
+- **Notes (Session 1, DONE)**: Sources compared: sutramritam.blogspot.com (quotes the sutra: 10th, 12th, 3rd obstruct "respectively"), panchangbodh.com/argala-calculator (cites Upadesa Sutras 1.1.10-14), slideshare "Jaimini Astrology - Argala" (B.V. Raman: 2/4/11 argala, 12/10/3 obstruct, plus 5th and 9th) and dekhopanchang.com. They agree on 2nd-12th, 4th-10th, 11th-3rd. dekhopanchang prints 2nd/3rd and 11th/12th (swapped) - treated as its error. 5th/9th pair: Raman and dekhopanchang -> shown as "special", outside the "of 3" count. Count rule: obstruction wins only with MORE planets (dekhopanchang, sutramritam); equal count: dekhopanchang says argala holds, sutramritam says compare strength -> shown as "contested". Ketu house reversed: sutramritam and slideshare agree. 3+ malefics in 3rd: sutramritam only (slideshare says malefics in the 3rd cause argala with no neutralising agency) -> shown as its own extra row, flagged. Some teachers count only benefics for the 5th/9th (sutramritam): not applied. Rahu counted like any planet (sources leave it open). Upagrahas and sign-level (empty house) argala not shown. NOT verified: Sanskrit sutras, strength comparison beyond count.
 
 ### A7 Bhavat Bhavam and Bhava arudhas (S)
 - **First**: grep `17-special-lagnas.js` for arudha pada code. The app lists "arudha padas"; if all twelve (A1 to A12) already exist, only build Bhavat Bhavam and link to the existing arudhas.
@@ -253,6 +253,7 @@ Lal Kitab, Panchapakshi, Nadi amsa / Nadi astrology, full Tajika Varshaphal (Mun
 - Session 1 (2026-11-08): A2 pushed live. A3 Upagrahas done (engine 6 checks incl. hand-worked and 1000-Sun invariants, browser 6/6, screenshot viewed). Not verified: verse text.
 - Session 1 (2026-11-08): A3 pushed live. A4 Sensitive Degrees done (engine 15 checks incl. cross-source table equality, browser 6/6, screenshot viewed). Bugs caught while testing were test mistakes (wrong junction/sign), not engine faults. Not verified: verse text, Lagna row.
 - Session 1 (2026-11-08): A4 pushed live. A5 Sudarshana done (engine 9 checks, browser 10/10, screenshots viewed; fixed dim glyphs; removed an `||true` tautology from my own browser test before commit). Not verified: BPHS Sanskrit, Mercury's conditional nature.
+- Session 1 (2026-11-08): A5 pushed live. A6 Argala done (engine 13 checks incl. hand-worked houses, browser 10/10, screenshots viewed). Not verified: Sanskrit sutras; equal-count rule differs by teacher.
 
 ## 8. Owner decisions pending
 - Merge `feature/chakra-explorer` / `feature/astro-roadmap` to `main` and `Root` (the owner decides when).

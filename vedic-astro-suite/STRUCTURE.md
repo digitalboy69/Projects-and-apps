@@ -523,6 +523,10 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/72-sudarshana.css` — styles for Sudarshana Chakra (`sdc-` prefix)
 - `tests/sudarshana_test.js` — node test for js/138 (year cycle, ring geometry, nature rules, 60 charts x 6 years)
 - `tests/sudarshana_browser_test.py` — Playwright test of the Sudarshana panel at 390px (`SDC_SHOTS=dir`)
+- `apps/birth-chart/js/139-argala.js` — Argala and Virodhargala (global `ARG`): for each house who intervenes (2nd/4th/11th, special 5th) and who obstructs (12th/10th/3rd, 9th), count rule, Ketu reversal, panel-argala
+- `apps/birth-chart/css/73-argala.css` — styles for Argala (`arg-` prefix)
+- `tests/argala_test.js` — node test for js/139 (pair mapping, count rule, Ketu, 3-malefic row, 60 real charts)
+- `tests/argala_browser_test.py` — Playwright test of the Argala panel at 390px (`ARG_SHOTS=dir`)
 - `docs/ASTRO_FEATURES_PLAN.md` — Handoff plan for the astrologer tools the app still lacks (avasthas, Vimshopaka, upagrahas, sensitive degrees, Sudarshana, Argala, Ashtakavarga extras, Gochara vedha, synastry, Muhurta, Panchang calendar, remedies): ordered checklist A0-A14, source rules, per-step detail, session log. A new chat starts here
 - `docs/YEAR_TIMELINE_RESEARCH.md` — Research + plan for the "Year Timeline Pack" (date-range, AI-ready data file: timeline, transits, dasha changes, planet role map); sources, file layout, reuse map, build order
 - `docs/SUPABASE.md` — Supabase cloud-sync notes
