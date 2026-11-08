@@ -53,7 +53,7 @@ Legend: effort S (a session or less), M (1 to 2 sessions), L (3+). `[x]` done, `
 - [x] **A5 Sudarshana Chakra**: three rings (Lagna, Moon, Sun), planets in each, the running year's house, drawing + simple tally. DONE Session 1: js/138, css/72, 2 tests. (M)
 - [x] **A6 Argala and Virodhargala**: per house, who intervenes and who obstructs. DONE Session 1: js/139, css/73, 2 tests. (S)
 - [x] **A7 Bhavat Bhavam and Bhava arudhas**: "house from the house" table and all 12 arudha padas (A7 added; js/17 had 11). DONE Session 1: js/140, css/74, 2 tests. (S)
-- [~] **A8 Ashtakavarga extras**: A8a Prastara DONE; next A8b Sodhana + pindas, A8c Kakshya, A8d transit view (js/141, css/75, panel-asx). (L)
+- [~] **A8 Ashtakavarga extras**: A8a Prastara DONE, A8b Sodhana + pindas DONE; next A8c Kakshya, A8d transit view (js/141, css/75, panel-asx). (L)
 - [ ] **A9 Gochara vedha**: classical vedha pairs added to Today for You and Live Sky. (S, needs source table)
 - [ ] **A10 Synastry**: pick two saved profiles; planets in the other's houses, inter-chart aspects, Moon relations. (M)
 - [ ] **A11 Muhurta finder**: search a date range for an event type using sourced rule sets. (L: A11a sources and decisions, A11b engine, A11c UI)
@@ -199,7 +199,7 @@ Each step has the same fields: **Goal**, **Why astrologers use it**, **Known rul
 - **Transit Ashtakavarga**: for today's sky, each planet's bindus in the sign it transits (BAV of that planet), the SAV of the sign, and the kakshya bindu. Link to the Fate Meter inputs but do not change its numbers.
 - **Files**: `js/141-ashtakavarga-extras.js` (`AVX2`, avoid the existing `av-`/`avx-`/`avr-` class prefixes: use `asx-`), css, tests (A8a: Prastara sums equal BAV for 100 charts; Sodhana: totals never rise and match a hand-worked chart from the source).
 - **Split into sub-steps; tick each in Notes**: A8a Prastara, A8b Sodhana + pindas, A8c Kakshya, A8d transit view.
-- **Notes (Session 1)**: A8a DONE (Prastara): js/141 `ASX.prastara`, tab "Prastara" in panel-asx. No new data: built from CONTRIBUTION_TABLE; tests prove column sums equal chart.ashtakavarga.bavTables for 100 charts and the classic totals 48/49/39/54/56/52/39, SAV 337 (these totals are the textbook values; they also validate the app's table). A8b, A8c, A8d: not started; add each as a tab in js/141 (the TABS array) and tick here.
+- **Notes (Session 1)**: A8a DONE (Prastara): js/141 `ASX.prastara`, tab "Prastara" in panel-asx. No new data: built from CONTRIBUTION_TABLE; tests prove column sums equal chart.ashtakavarga.bavTables for 100 charts and the classic totals 48/49/39/54/56/52/39, SAV 337 (these totals are the textbook values; they also validate the app's table). A8b DONE (Sodhana + pindas, tab "Sodhana"): rules from M.S. Mehta and K.N. Rao "Ashtakvarga: concept and application" (archive.org copy; full Trikona and Ekadhipatya rules incl. the four occupancy cases, multipliers, pinda formulas), cross-checked with vedalumina.com/deep-dive/shodhya-pinda (multipliers, pair occupancy cases; it leaves Trikona arithmetic and pairs unstated) and astrobix.com/learn/398 (multipliers; worked example 243 + 106 = 349 reproduced in the test, its own "246" is a typo). Trikona then Ekadhipatya (order fixed by Mehta). Occupancy = the seven planets only (nodes, Lagna excluded, per Mehta). Graha Pinda uses reduced bindus. Mehta notes other books differ on details; page says so. NOT verified: BPHS verses; whether Graha Pinda should use raw or reduced bindus in other schools (vedalumina is unclear). A8c, A8d: not started; add each as a tab in js/141 (the TABS array) and tick here.
 
 ### A9 Gochara vedha (S, needs source table)
 - **Goal**: in Today for You and Live Sky, mark a favourable Gochara house as "obstructed" when the vedha house holds another planet.
@@ -256,6 +256,7 @@ Lal Kitab, Panchapakshi, Nadi amsa / Nadi astrology, full Tajika Varshaphal (Mun
 - Session 1 (2026-11-08): A5 pushed live. A6 Argala done (engine 13 checks incl. hand-worked houses, browser 10/10, screenshots viewed). Not verified: Sanskrit sutras; equal-count rule differs by teacher.
 - Session 1 (2026-11-08): A6 pushed live. A7 House from the House + A7 pada done (engine 11 checks, browser 8/8, screenshots viewed). js/17 label slip noted, not edited.
 - Session 1 (2026-11-08): A7 pushed live. A8a Prastara done (engine 5 checks over 100 charts, browser 9/9, screenshot viewed). A8b-d pending.
+- Session 1 (2026-11-09): A8a pushed live. A8b Sodhana + pindas done (23 engine checks incl. hand-worked reductions and the astrobix worked example, browser 16/16, screenshots viewed). Not verified: BPHS verses.
 
 ## 8. Owner decisions pending
 - Merge `feature/chakra-explorer` / `feature/astro-roadmap` to `main` and `Root` (the owner decides when).

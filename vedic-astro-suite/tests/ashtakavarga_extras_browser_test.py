@@ -28,6 +28,17 @@ with sync_playwright() as p:
     ok('switching to Jupiter shows its table (total 56)', pg.evaluate("()=>{const r=[...document.querySelectorAll('#panel-asx .asx-t tr.asx-tot td')].map(e=>+e.textContent);const b=currentChartForModal.ashtakavarga.bavTables.Jupiter;return b.every((v,i)=>v===r[i])&&r[12]===56&&document.querySelector('#panel-asx .asx-chips button.on').dataset.p==='Jupiter'}"))
     ok('dots equal bindu count (dots in the Jupiter table = 56)', pg.evaluate("()=>document.querySelectorAll('#panel-asx .asx-t td.on').length===56"))
     ok('table fits the phone without scrolling inside', pg.evaluate("()=>{const w=document.querySelector('#panel-asx .asx-wrap');return w.scrollWidth<=w.clientWidth+1}"))
+    pg.evaluate("()=>document.querySelector('#panel-asx [data-asx=tab][data-t=sod]').click()"); pg.wait_for_timeout(200)
+    ok('Sodhana tab shows 4 rows (start, trines, pairs, x sign)', pg.evaluate("()=>document.querySelectorAll('#panel-asx .asx-s tbody tr').length===4&&document.querySelector('#panel-asx .asx-tabs button.on').dataset.t==='sod'"))
+    ok('Start row equals the app BAV for the chosen planet', pg.evaluate("()=>{const p=document.querySelector('#panel-asx .asx-chips button.on').dataset.p;const r=[...document.querySelectorAll('#panel-asx .asx-s tbody tr')[0].querySelectorAll('td')].slice(0,12).map(e=>+e.textContent);return currentChartForModal.ashtakavarga.bavTables[p].every((v,i)=>v===r[i])}"))
+    ok('pinda boxes match the engine', pg.evaluate("()=>{const p=document.querySelector('#panel-asx .asx-chips button.on').dataset.p;const S=ASX.sodhana(currentChartForModal,p);const b=[...document.querySelectorAll('#panel-asx .asx-pin b')].map(e=>+e.textContent);return b[0]===S.rasiPinda&&b[1]===S.grahaPinda&&b[2]===S.shodhya&&S.shodhya===S.rasiPinda+S.grahaPinda}"))
+    pg.evaluate("()=>document.querySelector('#panel-asx [data-asx=planet][data-p=Mars]').click()"); pg.wait_for_timeout(200)
+    ok('switching planet keeps the Sodhana tab and recalculates', pg.evaluate("()=>{const S=ASX.sodhana(currentChartForModal,'Mars');return document.querySelectorAll('#panel-asx .asx-s').length===1&&+document.querySelectorAll('#panel-asx .asx-pin b')[2].textContent===S.shodhya}"))
+    ok('seven planets listed in the all-planets box', pg.evaluate("()=>document.querySelectorAll('#panel-asx .asx-all div').length===7"))
+    ok('no sideways scroll in Sodhana', pg.evaluate("()=>{const w=document.querySelector('#panel-asx .asx-wrap');return w.scrollWidth<=w.clientWidth+1&&document.documentElement.scrollWidth<=window.innerWidth+1}"))
+    if SHOTS:
+        os.makedirs(SHOTS, exist_ok=True); pg.evaluate("()=>document.querySelector('#panel-asx .asx-tabs').scrollIntoView()"); pg.wait_for_timeout(300); pg.screenshot(path=os.path.join(SHOTS, 'x2.png'))
+        pg.evaluate("()=>document.querySelector('#panel-asx .asx-pin').scrollIntoView()"); pg.wait_for_timeout(300); pg.screenshot(path=os.path.join(SHOTS, 'x3.png'))
     ok('no undefined/NaN, no sideways scroll', pg.evaluate("()=>!/undefined|NaN|\\[object/.test(document.getElementById('panel-asx').textContent)&&document.documentElement.scrollWidth<=window.innerWidth+1"))
     ok('no page errors', not errs, '; '.join(errs)[:200])
     if SHOTS:
