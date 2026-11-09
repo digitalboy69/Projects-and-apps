@@ -55,7 +55,7 @@ Legend: effort S (a session or less), M (1 to 2 sessions), L (3+). `[x]` done, `
 - [x] **A7 Bhavat Bhavam and Bhava arudhas**: "house from the house" table and all 12 arudha padas (A7 added; js/17 had 11). DONE Session 1: js/140, css/74, 2 tests. (S)
 - [x] **A8 Ashtakavarga extras**: A8a Prastara, A8b Sodhana + pindas, A8c Kakshya, A8d transit view all DONE (js/141, css/75, panel-asx). (L)
 - [x] **A9 Gochara vedha**: pair tables + Today for You hook DONE (js/142; Live Sky not changed, see Notes). (S)
-- [ ] **A10 Synastry**: pick two saved profiles; planets in the other's houses, inter-chart aspects, Moon relations. (M)
+- [x] **A10 Synastry**: DONE (js/143, css/76, panel-synastry). (M)
 - [ ] **A11 Muhurta finder**: search a date range for an event type using sourced rule sets. (L: A11a sources and decisions, A11b engine, A11c UI)
 - [ ] **A12 Monthly Panchang calendar**: month grid with tithi, nakshatra, sankranti, ekadashi, purnima/amavasya, festivals, eclipses. (L)
 - [ ] **A13 Remedies**: planet by planet traditional remedies, gentle wording, linked to weak planets from A1 and Shadbala. (M, needs owner sign-off on tone)
@@ -214,7 +214,7 @@ Each step has the same fields: **Goal**, **Why astrologers use it**, **Known rul
 - **Known rule**: this is mostly factual placement. Anything interpretive (for example "7th lord in the 1st") needs a source line or stays out. Use tendency wording.
 - **Files**: `js/143-synastry.js` (`SYN`), css, tests (A over B then B over A is consistent, swapping the two profiles gives the mirrored table).
 - **Screen**: profile pickers (from the saved profile list), two tables, a summary of 3 to 5 strongest links with their reason.
-- **Notes**:
+- **Notes (Session 1, DONE)**: factual placement only. Whole-sign houses; aspect rule is the app's own (js/09); Rahu/Ketu only in house tables. No new astrology table, so no source needed beyond the app's existing rules. The strongest-links ranking (Moon 3; Sun/Venus/Mars/Lagna lord 2; others 1; +2 conjunct or mutual aspect, +1 one-way) is THIS APP'S OWN choice, said on the page, not a classical rule. Ashtakoota shown in both orders because kmMatch is not symmetric (Varna, Vashya, Tara). Pickers: the chart on screen plus profiles saved in the app. Tests: swapping gives mirrored tables, contacts and equal scores over 60 pairs; hand-worked houses, aspects and scores; browser 15/15.
 
 ### A11 Muhurta finder (L)
 Split into three tickable sub-steps.
@@ -259,6 +259,7 @@ Lal Kitab, Panchapakshi, Nadi amsa / Nadi astrology, full Tajika Varshaphal (Mun
 - Session 1 (2026-11-09): A8a pushed live. A8b Sodhana + pindas done (23 engine checks incl. hand-worked reductions and the astrobix worked example, browser 16/16, screenshots viewed). Not verified: BPHS verses.
 - Session 1 (2026-11-09): A8c Kakshya + A8d Transit done (engine tests, browser 13/13, screenshots viewed); A8 ticked, pushed live. Next: A9.
 - Session 1 (2026-11-09): A9 Gochara vedha done (node 30 checks, today_for_you_test 12/12 incl. 30-day independent check, screenshot viewed); pushed live. Next: A10.
+- Session 1 (2026-11-09): A10 Synastry done (node all passed, browser 15/15, screenshots viewed); pushed live. Next: A11 (A11a needs owner decisions).
 
 ## 8. Owner decisions pending
 - Merge `feature/chakra-explorer` / `feature/astro-roadmap` to `main` and `Root` (the owner decides when).
