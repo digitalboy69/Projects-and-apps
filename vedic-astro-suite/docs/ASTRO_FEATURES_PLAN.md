@@ -57,7 +57,7 @@ Legend: effort S (a session or less), M (1 to 2 sessions), L (3+). `[x]` done, `
 - [x] **A9 Gochara vedha**: pair tables + Today for You hook DONE (js/142; Live Sky not changed, see Notes). (S)
 - [x] **A10 Synastry**: DONE (js/143, css/76, panel-synastry). (M)
 - [ ] **A11 Muhurta finder**: search a date range for an event type using sourced rule sets. (L: A11a sources and decisions, A11b engine, A11c UI)
-- [ ] **A12 Monthly Panchang calendar**: month grid with tithi, nakshatra, sankranti, ekadashi, purnima/amavasya, festivals, eclipses. (L)
+- [x] **A12 Monthly Panchang calendar**: DONE (js/146, css/77, panel-pcal; nationwide festival set, Amanta/Purnimanta, place = birth place). (L)
 - [ ] **A13 Remedies**: planet by planet traditional remedies, gentle wording, linked to weak planets from A1 and Shadbala. (M, needs owner sign-off on tone)
 - [ ] **A14 Wrap-up**: Home tiles reviewed, search index entries, export/report text, AI_GUIDE router rows, one smoke run of everything, merge request text for the owner. (S)
 
@@ -229,7 +229,7 @@ Split into three tickable sub-steps.
 - **Reuse**: `panchangaAt` for every day (check speed: 30 calls per month must stay fast; compute lazily per visible week if needed), `DF_FEST` for festival rules (read `27-date-finder-core.js` first), the eclipse test from the Date Finder (solar and lunar, from Moon latitude at new/full moon). **Festival and eclipse dates must match an authoritative published panchang for 3 known months; record the comparison in Notes.**
 - **Settings**: place (birth place or any), Amanta/Purnimanta, regional festival set (start with the nationwide ones).
 - **Files**: `js/146-panchang-calendar.js` (`PCAL`), `css/71-panchang-calendar.css`, tests (all 12 months of a year produce no empty day, tithi sequence continuous across days, eclipse list matches NASA dates for the test year).
-- **Notes**:
+- **Notes (Session 1, DONE)**: Files are js/146 and css/77 (css/71 in the plan text was already taken). Reuses Date Finder: DF_FEST rules via dfInfo, dfEclipses, dfSyz/dfMonths; one month = about 110 days of sunrises (about 30 ms), cached. COMPARISON with drikpanchang.com/calendars/hindu/hinducalendar.html?year=2026 (New Delhi) over Jan, Feb, Mar, Apr, May, Jul, Sep, Oct, Nov 2026: MATCH Makar Sankranti 14 Jan, Vasant Panchami 23 Jan, Maha Shivaratri 15 Feb, Ugadi 19 Mar, Ram Navami 26 Mar (Smarta), Akshaya Tritiya 19 Apr, Buddha Purnima 1 May, Guru Purnima 29 Jul, Janmashtami 4 Sep, Ganesh Chaturthi 14 Sep, Navaratri 11 Oct, Dussehra 20 Oct (page also lists 21 Oct), Karwa Chauth 29 Oct, Dhanteras 6 Nov, Diwali 8 Nov, Govardhan 10 Nov, Bhai Dooj 11 Nov, Dev Uthani Ekadashi 20 Nov. KNOWN DIFFERENCES (kept, flagged on the page and asserted in the test): Holika Dahan 2 Mar here vs 3 Mar; Holi 3 Mar vs 4 Mar; Raksha Bandhan 27 Aug vs 28 Aug (drik applies Bhadra); Dussehra/Maha Navami and Onam can show on two days. FIX MADE: the Date Finder rule found nothing for Ugadi, Akshaya Tritiya and Dev Uthani Ekadashi in 2026 (tithi starts after one sunrise and ends before the next); the calendar now shows the day the tithi begins when the Date Finder gives no day within two days, with the month taken at the middle of the tithi (this avoided false hits on Sep 11 and Dec 8). Date Finder itself unchanged. ECLIPSES: NASA (eclipse.gsfc.nasa.gov/OH/OH2026.html) annular solar 17 Feb, total lunar 3 Mar, total solar 12 Aug, partial lunar 28 Aug; the calendar flags exactly these four in 2026 and nothing else (it says 'somewhere on Earth'). Sankranti: day the Sun enters a sign, after sunset counts next day (Date Finder rule), so a night-time entry shows on the next date; all 12 in 2026. Only one year (2026) was compared with a published panchang; other years rely on the same engine. NOT verified: other regional festival sets; Smarta/Vaishnava Ekadashi splits (drik lists a Gauna Ekadashi on 21 Nov).
 
 ### A13 Remedies (M, owner sign-off on tone)
 - **Goal**: for each planet, the traditional remedies listed in the texts, shown gently, and linked to the planets the chart finds weak.
@@ -260,6 +260,7 @@ Lal Kitab, Panchapakshi, Nadi amsa / Nadi astrology, full Tajika Varshaphal (Mun
 - Session 1 (2026-11-09): A8c Kakshya + A8d Transit done (engine tests, browser 13/13, screenshots viewed); A8 ticked, pushed live. Next: A9.
 - Session 1 (2026-11-09): A9 Gochara vedha done (node 30 checks, today_for_you_test 12/12 incl. 30-day independent check, screenshot viewed); pushed live. Next: A10.
 - Session 1 (2026-11-09): A10 Synastry done (node all passed, browser 15/15, screenshots viewed); pushed live. Next: A11 (A11a needs owner decisions).
+- Session 1 (2026-11-09): A12 Panchang Calendar done (node all passed incl. 12 sankrantis and 4 NASA eclipses, browser 17/17, screenshots viewed); pushed live. A11 and A13 wait for owner decisions; next: A14 wrap-up check.
 
 ## 8. Owner decisions pending
 - Merge `feature/chakra-explorer` / `feature/astro-roadmap` to `main` and `Root` (the owner decides when).

@@ -127,6 +127,7 @@ bind	fn	apps/birth-chart/js/138-sudarshana.js:90	birth-chart
 bind	fn	apps/birth-chart/js/139-argala.js:67	birth-chart
 bind	fn	apps/birth-chart/js/141-ashtakavarga-extras.js:125	birth-chart
 bind	fn	apps/birth-chart/js/143-synastry.js:119	birth-chart
+bind	fn	apps/birth-chart/js/146-panchang-calendar.js:146	birth-chart
 bindDate	fn	apps/birth-chart/js/141-ashtakavarga-extras.js:133	birth-chart
 bisect	fn	apps/birth-chart/js/90-year-timeline-engine.js:42	birth-chart
 bisect	fn	apps/sky3d/js/46-dasha-transit-engine.js:255	sky3d
@@ -140,6 +141,7 @@ body	fn	apps/birth-chart/js/138-sudarshana.js:66	birth-chart
 body	fn	apps/birth-chart/js/139-argala.js:52	birth-chart
 body	fn	apps/birth-chart/js/141-ashtakavarga-extras.js:113	birth-chart
 body	fn	apps/birth-chart/js/143-synastry.js:95	birth-chart
+body	fn	apps/birth-chart/js/146-panchang-calendar.js:124	birth-chart
 bodyEvents	fn	apps/birth-chart/js/90-year-timeline-engine.js:73	birth-chart
 bodyHtml	fn	apps/birth-chart/js/131-astro-atlas.js:69	birth-chart
 bodySvg	fn	apps/birth-chart/js/131-astro-atlas.js:64	birth-chart
@@ -187,6 +189,7 @@ buildBhavaPanel	fn	apps/birth-chart/js/50-bhava-chalit-panel.js:2	birth-chart
 buildBhavatBhavamPanel	fn	apps/birth-chart/js/140-bhavat-bhavam.js:41	birth-chart
 buildChakraExplorerPanel	fn	apps/birth-chart/js/130-chakra-explorer.js:437	birth-chart
 buildChoghadiyaPanel	fn	apps/birth-chart/js/118-choghadiya.js:61	birth-chart
+buildCtx	fn	apps/birth-chart/js/146-panchang-calendar.js:14	birth-chart
 buildDashaLevelChips	fn	apps/birth-chart/js/38-dasha-navigator.js:137	birth-chart
 buildDashaSection	fn	apps/birth-chart/js/38-dasha-navigator.js:46	birth-chart
 buildDashaSystemsPanel	fn	apps/birth-chart/js/82-dasha-systems-ui.js:164	birth-chart
@@ -197,7 +200,7 @@ buildExportVargaChips	fn	apps/birth-chart/js/44-export-modal.js:17	birth-chart
 buildFatePanel	fn	apps/birth-chart/js/75-fate-meter.js:72	birth-chart
 buildFullReportText	fn	apps/birth-chart/js/43-full-report-text.js:11	birth-chart
 buildFullReportText	fn	shared/export-addon.js:256	shared
-buildHomePanel	fn	apps/birth-chart/js/25-home-and-tabs.js:84	birth-chart
+buildHomePanel	fn	apps/birth-chart/js/25-home-and-tabs.js:85	birth-chart
 buildInteractiveVargaSvg	fn	apps/birth-chart/js/60-interactive-varga-svg.js:2	birth-chart
 buildKpPanel	fn	apps/birth-chart/js/125-kp-system.js:104	birth-chart
 buildLagnaSummaryHtml	fn	apps/birth-chart/js/58-render-results.js:555	birth-chart
@@ -207,6 +210,7 @@ buildNorthIndianSvg	fn	apps/birth-chart/js/61-varga-chart-svg.js:19	birth-chart
 buildNumerologyPanel	fn	apps/birth-chart/js/56-numerology-ui.js:3	birth-chart
 buildOverviewPanel	fn	apps/birth-chart/js/57-my-chart-overview.js:8	birth-chart
 buildPanchangaPanel	fn	apps/birth-chart/js/48-panchanga-panel.js:21	birth-chart
+buildPanchangCalendarPanel	fn	apps/birth-chart/js/146-panchang-calendar.js:165	birth-chart
 buildPlanetEncyPanel	fn	apps/birth-chart/js/116-planet-encyclopedia.js:349	birth-chart
 buildPlanetsPanel	fn	apps/birth-chart/js/19-planets-panel.js:19	birth-chart
 buildPrashnaPanel	fn	apps/birth-chart/js/123-prashna.js:130	birth-chart
@@ -440,6 +444,7 @@ deltaT	fn	apps/birth-chart/js/03-ephemeris-engine.js:59	birth-chart
 deltaTSeconds	fn	apps/birth-chart/js/03-ephemeris-engine.js:13	birth-chart
 designModal	fn	shared/export-addon.js:380	shared
 detail	fn	apps/birth-chart/js/139-argala.js:48	birth-chart
+detail	fn	apps/birth-chart/js/146-panchang-calendar.js:109	birth-chart
 detect	fn	apps/birth-chart/js/92-yoga-engine.js:1201	birth-chart
 detectGajaKesariYoga	fn	apps/birth-chart/js/12-yoga-detection.js:25	birth-chart
 detectNeechaBhanga	fn	apps/birth-chart/js/12-yoga-detection.js:93	birth-chart
@@ -654,6 +659,7 @@ explorePlanetAspects	fn	apps/sky3d/js/05-aspect-resolver.js:6	sky3d
 exploreSignAspects	fn	apps/sky3d/js/05-aspect-resolver.js:31	sky3d
 exportFlash	fn	apps/birth-chart/js/44-export-modal.js:173	birth-chart
 fallbackCopy	fn	shared/export-addon.js:58	shared
+fallbackHit	fn	apps/birth-chart/js/146-panchang-calendar.js:49	birth-chart
 fastJump	fn	apps/sky3d/js/49-time-machine.js:19	sky3d
 FEMALE_PLANETS	const	apps/birth-chart/js/14-shadbala-engine.js:40	birth-chart
 FEMALE_PLANETS	const	apps/sky3d/js/55-live-shadbala-engine.js:88	sky3d
@@ -809,6 +815,7 @@ go	fn	apps/sky3d/js/49-time-machine.js:26	sky3d
 go	fn	shared/quick-menu.js:45	shared
 goTab	fn	shared/quick-menu.js:40	shared
 greenwichSiderealTime	fn	apps/birth-chart/js/05-ascendant-nakshatra-vargas.js:2	birth-chart
+grid	fn	apps/birth-chart/js/146-panchang-calendar.js:102	birth-chart
 groupHtml	fn	apps/birth-chart/js/82-dasha-systems-ui.js:100	birth-chart
 GROUPS	const	apps/birth-chart/js/82-dasha-systems-ui.js:7	birth-chart
 groups	fn	apps/birth-chart/js/93-pdf-report.js:164	birth-chart
@@ -834,12 +841,12 @@ hideLoader	fn	shell/js/shell.js:29	shell
 histModal	fn	apps/notepad/js/01-notepad.js:208	notepad
 hitEvents	fn	apps/birth-chart/js/90-year-timeline-engine.js:93	birth-chart
 hl	fn	apps/notepad/js/01-notepad.js:34	notepad
-hmBasics	fn	apps/birth-chart/js/25-home-and-tabs.js:74	birth-chart
-hmChartSvg	fn	apps/birth-chart/js/25-home-and-tabs.js:69	birth-chart
+hmBasics	fn	apps/birth-chart/js/25-home-and-tabs.js:75	birth-chart
+hmChartSvg	fn	apps/birth-chart/js/25-home-and-tabs.js:70	birth-chart
 HNW_DATA	const	apps/birth-chart/js/100-house-now.js:8	birth-chart
 HOME_ITEMS	const	apps/birth-chart/js/25-home-and-tabs.js:6	birth-chart
-HOME_SEC_COL	const	apps/birth-chart/js/25-home-and-tabs.js:60	birth-chart
-homeAskHtml	fn	apps/birth-chart/js/25-home-and-tabs.js:61	birth-chart
+HOME_SEC_COL	const	apps/birth-chart/js/25-home-and-tabs.js:61	birth-chart
+homeAskHtml	fn	apps/birth-chart/js/25-home-and-tabs.js:62	birth-chart
 homeHtml	fn	apps/birth-chart/js/82-dasha-systems-ui.js:145	birth-chart
 homeHTML	fn	apps/notepad/js/01-notepad.js:120	notepad
 hook	fn	apps/birth-chart/js/104-reading-style.js:11	birth-chart
@@ -877,6 +884,7 @@ html	fn	apps/birth-chart/js/139-argala.js:58	birth-chart
 html	fn	apps/birth-chart/js/140-bhavat-bhavam.js:28	birth-chart
 html	fn	apps/birth-chart/js/141-ashtakavarga-extras.js:114	birth-chart
 html	fn	apps/birth-chart/js/143-synastry.js:102	birth-chart
+html	fn	apps/birth-chart/js/146-panchang-calendar.js:130	birth-chart
 html	fn	apps/birth-chart/js/74-sahams.js:36	birth-chart
 html	fn	apps/sky3d/js/56-live-shadbala.js:50	sky3d
 ICO	const	apps/birth-chart/js/82-dasha-systems-ui.js:29	birth-chart
@@ -1017,6 +1025,7 @@ leDefs	fn	apps/birth-chart/js/98-life-event-engine.js:189	birth-chart
 leFind	fn	apps/birth-chart/js/98-life-event-engine.js:187	birth-chart
 leFmt	fn	apps/birth-chart/js/98-life-event-engine.js:186	birth-chart
 legacyCopyFallback	fn	apps/birth-chart/js/62-clipboard-download-helpers.js:18	birth-chart
+legend	fn	apps/birth-chart/js/146-panchang-calendar.js:123	birth-chart
 leGrade	fn	apps/birth-chart/js/98-life-event-engine.js:362	birth-chart
 leHay	fn	apps/birth-chart/js/98-life-event-engine.js:199	birth-chart
 leLinks	fn	apps/birth-chart/js/98-life-event-engine.js:44	birth-chart
@@ -1076,6 +1085,7 @@ mandookaOrder	fn	apps/birth-chart/js/81-dasha-systems-ayur-special.js:70	birth-c
 mandookaYears	fn	apps/birth-chart/js/81-dasha-systems-ayur-special.js:74	birth-chart
 Map2	fn	shell/js/locpicker.js:31	shell
 markDirty	fn	apps/sky3d/js/07-position-snapshot.js:25	sky3d
+marks	fn	apps/birth-chart/js/146-panchang-calendar.js:92	birth-chart
 match	fn	apps/birth-chart/js/129-trigger-lab.js:37	birth-chart
 matches	fn	apps/notepad/js/01-notepad.js:61	notepad
 matchTab	fn	apps/birth-chart/js/133-astro-atlas-more.js:45	birth-chart
@@ -1102,6 +1112,7 @@ MON	const	apps/birth-chart/js/101-house-now-ui.js:11	birth-chart
 MON	const	apps/birth-chart/js/82-dasha-systems-ui.js:27	birth-chart
 MON	const	apps/birth-chart/js/86-popular-charts.js:12	birth-chart
 MON	const	apps/birth-chart/js/93-pdf-report.js:18	birth-chart
+month	fn	apps/birth-chart/js/146-panchang-calendar.js:64	birth-chart
 months	fn	apps/birth-chart/js/73-tithi-pravesh.js:14	birth-chart
 MONTHS	const	apps/sky3d/js/16-app-state.js:19	sky3d
 MOOLATRIKONA	const	apps/birth-chart/js/07-planetary-dignity.js:19	birth-chart
@@ -1312,7 +1323,7 @@ panel-bhavabala	id	apps/birth-chart/js/58-render-results.js:235	birth-chart
 panel-dasha	id	apps/birth-chart/js/58-render-results.js:20	birth-chart
 panel-dashasys	id	apps/birth-chart/js/58-render-results.js:232	birth-chart
 panel-fate	id	apps/birth-chart/js/58-render-results.js:231	birth-chart
-panel-home	id	apps/birth-chart/js/25-home-and-tabs.js:90	birth-chart
+panel-home	id	apps/birth-chart/js/25-home-and-tabs.js:91	birth-chart
 panel-lagnas	id	apps/birth-chart/js/58-render-results.js:334	birth-chart
 panel-match	id	apps/birth-chart/js/58-render-results.js:257	birth-chart
 panel-numerology	id	apps/birth-chart/js/58-render-results.js:265	birth-chart
@@ -1345,6 +1356,7 @@ parts	fn	apps/birth-chart/js/118-choghadiya.js:22	birth-chart
 PARTS	const	apps/birth-chart/js/93-pdf-report.js:24	birth-chart
 PC_CATS	const	apps/birth-chart/js/85-popular-charts-data.js:10	birth-chart
 PC_PEOPLE	const	apps/birth-chart/js/85-popular-charts-data.js:14	birth-chart
+PCAL	const	apps/birth-chart/js/146-panchang-calendar.js:10	birth-chart
 PCOL	const	apps/birth-chart/js/60-interactive-varga-svg.js:151	birth-chart
 pdBlock	fn	apps/birth-chart/js/19-planets-panel.js:89	birth-chart
 pdf	fn	apps/birth-chart/js/106-shadbala-ui.js:28	birth-chart
@@ -1370,6 +1382,7 @@ pill	fn	apps/sky3d/js/53-exact-aspects.js:112	sky3d
 pitru	fn	apps/birth-chart/js/121-dosha.js:17	birth-chart
 PL7	const	apps/birth-chart/js/75-fate-meter.js:4	birth-chart
 PL9	const	apps/birth-chart/js/74-sahams.js:33	birth-chart
+place	fn	apps/birth-chart/js/146-panchang-calendar.js:87	birth-chart
 place	fn	apps/birth-chart/js/90-year-timeline-engine.js:56	birth-chart
 place	fn	apps/sky3d/js/54-degree-houses.js:46	sky3d
 place	fn	shell/js/shell.js:116	shell
@@ -1625,6 +1638,7 @@ runVargaTimeline	fn	apps/birth-chart/js/23-varga-timeline-tab.js:40	birth-chart
 safe	fn	apps/birth-chart/js/02-app-meta-layer.js:43	birth-chart
 SAFE_BUILDERS	const	apps/birth-chart/js/65-error-boundaries.js:2	birth-chart
 safeJSON	fn	shared/export-addon.js:197	shared
+sankrantiAt	fn	apps/birth-chart/js/146-panchang-calendar.js:35	birth-chart
 SAPTAVARGA_KEYS	const	apps/birth-chart/js/14-shadbala-engine.js:50	birth-chart
 SAPTAVARGA_KEYS	const	apps/sky3d/js/55-live-shadbala-engine.js:98	sky3d
 save	fn	apps/birth-chart/js/115-compare-lab.js:20	birth-chart
@@ -1817,7 +1831,7 @@ svgFor	fn	apps/birth-chart/js/109-pdf-download.js:59	birth-chart
 svList	fn	apps/sky3d/js/49-time-machine.js:104	sky3d
 svOpen	fn	apps/sky3d/js/49-time-machine.js:109	sky3d
 switchAppTab	fn	apps/birth-chart/js/120-late-panels.js:19	birth-chart
-switchAppTab	fn	apps/birth-chart/js/25-home-and-tabs.js:141	birth-chart
+switchAppTab	fn	apps/birth-chart/js/25-home-and-tabs.js:142	birth-chart
 switchAppTab	fn	apps/birth-chart/js/65-error-boundaries.js:20	birth-chart
 SYN	const	apps/birth-chart/js/143-synastry.js:10	birth-chart
 sync	fn	apps/sky3d/js/49-time-machine.js:146	sky3d
@@ -1880,6 +1894,7 @@ text	fn	apps/birth-chart/js/140-bhavat-bhavam.js:40	birth-chart
 text	fn	apps/birth-chart/js/141-ashtakavarga-extras.js:124	birth-chart
 text	fn	apps/birth-chart/js/142-gochara-vedha.js:42	birth-chart
 text	fn	apps/birth-chart/js/143-synastry.js:115	birth-chart
+text	fn	apps/birth-chart/js/146-panchang-calendar.js:142	birth-chart
 tile	fn	apps/birth-chart/js/82-dasha-systems-ui.js:52	birth-chart
 timeHtml	fn	apps/birth-chart/js/131-astro-atlas.js:120	birth-chart
 timeline	fn	apps/birth-chart/js/91-dasha-reading.js:243	birth-chart

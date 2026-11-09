@@ -535,10 +535,14 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/142-gochara-vedha.js` — Gochara vedha pair tables and check (global `GVD`); used by Today for You to mark a favourable planet as held back
 - `apps/birth-chart/js/143-synastry.js` — Synastry (global `SYN`): two charts side by side, planets in each other's houses, contacts, Moon relation, Lagna lords, Ashtakoota both orders; panel-synastry
 - `apps/birth-chart/css/76-synastry.css` — styles for Synastry (`syn-` prefix)
+- `apps/birth-chart/js/146-panchang-calendar.js` — Panchang Calendar (global `PCAL`): month grid of tithi, nakshatra, Ekadashi, Purnima, Amavasya, Sankranti, festivals and eclipses, built on the Date Finder engine (js/27-28); panel-pcal
+- `apps/birth-chart/css/77-panchang-calendar.css` — styles for the Panchang Calendar (`pcal-` prefix)
 - `apps/birth-chart/css/75-ashtakavarga-extras.css` — styles for Ashtakavarga Workings (`asx-` prefix)
 - `tests/ashtakavarga_extras_test.js` — node test for js/141 (Prastara column sums equal the app BAV over 100 charts, classic totals, SAV 337)
 - `tests/synastry_test.js` — node test for js/143 (hand-worked houses, aspects and scores; 60 chart pairs give mirrored tables and contacts when swapped)
 - `tests/synastry_browser_test.py` — Synastry panel at phone width: Home card, pickers, swap, tables, no sideways scroll
+- `tests/panchang_calendar_test.js` — node test for js/146 (2026 festivals vs drikpanchang New Delhi, eclipses vs NASA, 24 months continuous, counts, Purnimanta)
+- `tests/panchang_calendar_browser_test.py` — Panchang Calendar at phone width: grid, navigation, day detail, Purnimanta, open Panchanga for a day
 - `tests/gochara_vedha_test.js` — node test for js/142 (pair tables vs the published house sets, exceptions both ways, nodes ignored)
 - `tests/ashtakavarga_extras_browser_test.py` — Playwright test of the Ashtakavarga Workings panel at 390px (`ASX_SHOTS=dir`)
 - `docs/ASTRO_FEATURES_PLAN.md` — Handoff plan for the astrologer tools the app still lacks (avasthas, Vimshopaka, upagrahas, sensitive degrees, Sudarshana, Argala, Ashtakavarga extras, Gochara vedha, synastry, Muhurta, Panchang calendar, remedies): ordered checklist A0-A14, source rules, per-step detail, session log. A new chat starts here

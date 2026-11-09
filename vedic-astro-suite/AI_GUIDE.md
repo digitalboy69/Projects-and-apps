@@ -190,13 +190,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-09 - 2060 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-09 - 2075 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 231 files, 33469 lines, 2757 KB
+**birth-chart** - 233 files, 33678 lines, 2775 KB
 ```
-index.html                                         655 lines   37 KB
+index.html                                         657 lines   37 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -255,6 +255,7 @@ js/140-bhavat-bhavam.js                             45 lines    5 KB
 js/141-ashtakavarga-extras.js                      145 lines   16 KB
 js/142-gochara-vedha.js                             48 lines    3 KB
 js/143-synastry.js                                 135 lines   12 KB
+js/146-panchang-calendar.js                        169 lines   15 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/16-rectification-engine.js                       36 lines    2 KB
 js/17-special-lagnas.js                            404 lines   23 KB
@@ -265,7 +266,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             170 lines   18 KB
+js/25-home-and-tabs.js                             171 lines   18 KB
 js/26-rectification-studio.js                      250 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -427,6 +428,7 @@ css/73-argala.css                                   25 lines    2 KB
 css/74-bhavat-bhavam.css                            21 lines    1 KB
 css/75-ashtakavarga-extras.css                      59 lines    5 KB
 css/76-synastry.css                                 29 lines    2 KB
+css/77-panchang-calendar.css                        37 lines    3 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -638,3 +640,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Ashtakavarga Workings: Sodhana tab added (plan A8b): Trikona then Ekadhipatya reduction (Mehta/Rao rules), Rasi/Graha/Shodhya Pinda with the published multipliers, all in js/141 `ASX.sodhana`; hand-worked cases and the astrobix example are in tests/ashtakavarga_extras_test.js. Kakshya and Transit tabs added (plan A8c/A8d, plan A8 complete): 8 parts of 3deg45' ruled Saturn..Lagna, ruler's bindu from the planet's own Prastara, transit table for any date; tests in tests/ashtakavarga_extras_*.
 - Gochara vedha (plan A9): js/142-gochara-vedha.js (`GVD`) pair tables for 7 planets (4 sources; Mercury 10th uses 8, vedastro prints 7), Sun-Saturn and Moon-Mercury exempt, nodes left out; Today for You (js/122) shows a "held back" note only when a vedha applies; tests/gochara_vedha_test.js + today_for_you_test.py (30-day independent check). Live Sky (js/59) counts from the Lagna, not the Moon, so it was not changed.
 - Synastry (plan A10): js/143-synastry.js (`SYN`) + css/76 + Home tile in Analysis; planets of each chart in the other's whole-sign houses, contacts (conjunct / aspect by the app's js/09 rule), Moon relation, Lagna lords, Ashtakoota in both orders; top-5 ranking is the app's own count, said on the page; tests/synastry_test.js (60 pairs mirrored) + tests/synastry_browser_test.py.
+- Panchang Calendar (plan A12): js/146-panchang-calendar.js (`PCAL`) + css/77 + Home tile in Time & Cycles; reuses Date Finder (js/27-28: DF_FEST, dfInfo, dfEclipses) per month; adds a "day the tithi begins" fallback when a festival tithi never falls at sunrise (Ugadi, Akshaya Tritiya, Dev Uthani 2026); Holika/Holi/Rakhi/Dussehra/Onam flagged as Bhadra/Pradosh-sensitive; tests/panchang_calendar_test.js + browser test. js/144-145 and css/76... numbers stay reserved: js/144-145 for A11 (Muhurta), css/77 is this.
