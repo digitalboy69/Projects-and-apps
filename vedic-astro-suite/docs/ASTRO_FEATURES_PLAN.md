@@ -59,7 +59,7 @@ Legend: effort S (a session or less), M (1 to 2 sessions), L (3+). `[x]` done, `
 - [ ] **A11 Muhurta finder**: search a date range for an event type using sourced rule sets. (L: A11a sources and decisions, A11b engine, A11c UI)
 - [x] **A12 Monthly Panchang calendar**: DONE (js/146, css/77, panel-pcal; nationwide festival set, Amanta/Purnimanta, place = birth place). (L)
 - [ ] **A13 Remedies**: planet by planet traditional remedies, gentle wording, linked to weak planets from A1 and Shadbala. (M, needs owner sign-off on tone)
-- [ ] **A14 Wrap-up**: Home tiles reviewed, search index entries, export/report text, AI_GUIDE router rows, one smoke run of everything, merge request text for the owner. (S)
+- [~] **A14 Wrap-up**: Home tiles checked, search wording, README line DONE; waits on A11 and A13 for the final pass. (S)
 
 ## 3. Rules for EVERY step (read once, then they apply to all)
 
@@ -260,6 +260,7 @@ Lal Kitab, Panchapakshi, Nadi amsa / Nadi astrology, full Tajika Varshaphal (Mun
 - Session 1 (2026-11-09): A8c Kakshya + A8d Transit done (engine tests, browser 13/13, screenshots viewed); A8 ticked, pushed live. Next: A9.
 - Session 1 (2026-11-09): A9 Gochara vedha done (node 30 checks, today_for_you_test 12/12 incl. 30-day independent check, screenshot viewed); pushed live. Next: A10.
 - Session 1 (2026-11-09): A10 Synastry done (node all passed, browser 15/15, screenshots viewed); pushed live. Next: A11 (A11a needs owner decisions).
+- Session 1 (2026-11-09): A14 partial: Home tile descriptions use plain searchable words (Smart Search indexes HOME_ITEMS title, description and section automatically, js/31), README gets one line listing the new tools. Remaining for A14 after A11/A13: final tile review and the PR text.
 - Session 1 (2026-11-09): A12 Panchang Calendar done (node all passed incl. 12 sankrantis and 4 NASA eclipses, browser 17/17, screenshots viewed); pushed live. A11 and A13 wait for owner decisions; next: A14 wrap-up check.
 
 ## 8. Owner decisions pending
