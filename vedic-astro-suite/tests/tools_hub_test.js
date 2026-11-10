@@ -45,7 +45,12 @@ run("THB.remember('panel-export');THB.remember('panel-contact');THB.remember('pa
 ok(run("THB.recent().join()")==='panel-dasha,panel-today','Export, Contact and unknown ids are not remembered');
 for(const id of ['panel-reading','panel-yogas','panel-kp','panel-atlas','panel-numerology']) run(`THB.remember('${id}')`);
 ok(run('THB.recent().length')===4,'at most four recents shown');
+/* quick access: the four owner-chosen cards */
+ok(run("THB.QUICK.map(q=>q[0]).join()")==='panel-vargas,panel-dasha,panel-reading,panel-ashtakavarga','quick access cards: Divisional Charts, Vimshottari Dasha, Reading, Ashtakavarga (in that order)');
+ok(run("THB.QUICK.every(q=>HOME_ITEMS.some(i=>i[0]===q[0]))"),'every quick card points to a real tool');
+{ const h=run('THB.html()'); const iR=h.indexOf('Recently used'), iQ=h.indexOf('Quick access'), iG=h.indexOf('Read my chart<em>'); ok(iR>=0&&iR<iQ&&iQ<iG,'order: Recently used, then Quick access, then the groups'); ok((h.match(/class="th-q4"/g)||[]).length===4,'four quick cards'); }
+run("THB.state.cat='fix'"); ok(!/Quick access/.test(run('THB.html()')),'quick cards hide when a group chip is chosen'); run("THB.state.cat='all'");
 /* html */
 const H=run('THB.html()'); ok(!/undefined|NaN|\[object/.test(H),'page html has no undefined/NaN');
-ok((H.match(/class="th-r"/g)||[]).length===ids.length+4,'html has one row per tool plus the four recents');
+ok((H.match(/class="th-r"/g)||[]).length===ids.length+4,'html has one row per tool plus the four recents (quick cards are separate)');
 console.log(fail?fail+' FAILED':'ALL PASSED'); process.exit(fail?1:0);

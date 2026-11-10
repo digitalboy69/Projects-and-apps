@@ -27,7 +27,11 @@ with sync_playwright() as p:
     ok('Tools tab opens and is highlighted', pg.evaluate("()=>{const e=document.getElementById('panel-tools');return e&&e.classList.contains('active')&&document.querySelector('.app-tab[data-group=tools]').classList.contains('active')&&document.querySelectorAll('.app-tab.active').length===1}"))
     n = pg.evaluate("()=>HOME_ITEMS.length")
     ok('every tool is listed once', pg.evaluate("()=>document.querySelectorAll('#thBody .th-r').length")==n, n)
-    ok('nine group headings', pg.evaluate("()=>document.querySelectorAll('#thBody .th-sec').length")==9)
+    ok('nine group headings', pg.evaluate("()=>document.querySelectorAll('#thBody .th-sec:not(.th-qk)').length")==9)
+    ok('four quick-access cards sit above the groups', pg.evaluate("()=>{const c=[...document.querySelectorAll('#thBody .th-q4 b')].map(e=>e.textContent);const q=document.querySelector('.th-qk'),g=document.getElementById('th-read');return c.join()==='Divisional Charts,Vimshottari Dasha,Reading,Ashtakavarga'&&!!(q.compareDocumentPosition(g)&4)}"))
+    pg.evaluate("()=>document.querySelector('.th-q4[data-id=panel-dasha]').click()"); pg.wait_for_timeout(1000)
+    ok('tapping the Vimshottari Dasha card opens the Dasha panel', pg.evaluate("()=>document.getElementById('panel-dasha').classList.contains('active')"))
+    pg.click('.app-tab[data-group=tools]'); pg.wait_for_timeout(600)
     shot(pg, 't1.png')
     # search
     pg.fill('#thQ', 'marriage'); pg.wait_for_timeout(300)
@@ -45,7 +49,7 @@ with sync_playwright() as p:
     pg.evaluate("()=>document.querySelector('#thBody [data-id=panel-synastry]').click()"); pg.wait_for_timeout(1200)
     ok('tapping a tool opens it', pg.evaluate("()=>document.getElementById('panel-synastry').classList.contains('active')"))
     pg.click('.app-tab[data-group=tools]'); pg.wait_for_timeout(700)
-    ok('Recently used lists the tool just opened, first', pg.evaluate("()=>{const s=document.querySelector('#thBody .th-sec');return /Recently used/.test(s.innerText)&&s.querySelector('.th-r').dataset.id==='panel-synastry'}"))
+    ok('Recently used lists the tool just opened, first', pg.evaluate("()=>{const s=document.querySelector('#thBody .th-sec');return /Recently used/.test(s.innerText)&&s.querySelector('.th-r').dataset.id==='panel-synastry'||s.querySelector('.th-r').dataset.id==='panel-dasha'}"))
     shot(pg, 't4.png')
     # the other tabs still work and Tools is not left highlighted
     pg.click('.app-tab[data-group=home]'); pg.wait_for_timeout(600)

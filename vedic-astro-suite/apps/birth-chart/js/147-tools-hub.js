@@ -31,6 +31,8 @@ const THB = (() => {
     'panel-numerology': 'name number lucky', 'panel-atlas': 'basics beginner learn glossary', 'panel-shadbala': 'planet power strength', 'panel-ashtakavarga': 'bindu points sarvashtakavarga',
     'panel-asx': 'prastara sodhana kakshya reduction transit points', 'panel-export': 'download pdf copy share save report', 'panel-contact': 'bug feedback help support'
   };
+  /* four big shortcuts under Recently used (owner's choice): [panel id, label, one line] */
+  const QUICK = [['panel-vargas', 'Divisional Charts', 'D1 to D144 chart viewer'], ['panel-dasha', 'Vimshottari Dasha', 'Life-period timeline'], ['panel-reading', 'Reading', 'Plain-language chart reading'], ['panel-ashtakavarga', 'Ashtakavarga', 'Point-strength system']];
   const KEY = 'vax_tools_recent';
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const item = id => (typeof HOME_ITEMS !== 'undefined' ? HOME_ITEMS : []).find(i => i[0] === id);
@@ -67,6 +69,10 @@ const THB = (() => {
     const G = groups().filter(g => ST.cat === 'all' || g.id === ST.cat);
     let h = '';
     if (ST.cat === 'all') { const r = recent(); if (r.length) h += `<section class="th-sec" style="--c:#D4AF37"><h3><i></i>Recently used<em>${r.length}</em></h3><div class="th-list">${r.map(id => row(item(id), groups().find(g => g.items.some(i => i[0] === id)) || { col: '#D4AF37', title: '' }, false)).join('')}</div></section>`; }
+    if (ST.cat === 'all') {
+      const q = QUICK.map(x => ({ x, i: item(x[0]) })).filter(o => o.i);
+      if (q.length) h += `<section class="th-sec th-qk" style="--c:#D4AF37"><h3><i></i>Quick access<em>${q.length}</em></h3><div class="th-qg">${q.map(o => `<button type="button" class="th-q4" data-th="go" data-id="${o.x[0]}"><span class="th-i">${o.i[1]}</span><b>${esc(o.x[1])}</b><small>${esc(o.x[2])}</small></button>`).join('')}</div></section>`;
+    }
     h += G.map(g => `<section class="th-sec" id="th-${g.id}" style="--c:${g.col}"><h3><i></i>${esc(g.title)}<em>${g.items.length}</em></h3><p class="th-use">${esc(g.use)}</p><div class="th-list">${g.items.map(i => row(i, g, false)).join('')}</div></section>`).join('');
     return h;
   }
@@ -106,5 +112,5 @@ const THB = (() => {
   }
   window.buildToolsPanel = function () { ST.q = ''; ST.cat = 'all'; return html(); };
   if (typeof registerLatePanel === 'function') registerLatePanel('panel-tools', window.buildToolsPanel);
-  return { CATS, WORDS, groups, search, recent, remember, html, state: ST };
+  return { CATS, QUICK, WORDS, groups, search, recent, remember, html, state: ST };
 })();

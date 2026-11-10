@@ -2,6 +2,18 @@
 
 You are working on the **Vedic Astro Suite**: a folder project made of a shell + 4 apps (each app = its own folder with `index.html`, `css/`, `js/`). Single-file builds are generated into `dist/`. The owner is a student on free plans with tiny usage limits and several accounts. **Every token matters.** Follow this file exactly; it tells you where things are so you do not have to explore.
 
+## 0a. OWNER'S WORKING METHOD: do exactly like this (set by the owner, 2026-11-10)
+Every AI or person who works on this project follows this loop. It is how all the astro-roadmap features were built.
+1. **Plan first, in a file.** Big work gets a structured step-by-step plan in `docs/` (see `docs/ASTRO_FEATURES_PLAN.md`: checklist, rules, step details, Notes, log). A new chat resumes from the plan; the first unchecked box is the next step. Tick the box when the step is done and add a Notes line and a log line.
+2. **Rebase before every step:** `git fetch origin main && git rebase origin/main` (the owner works in this project a lot). Check free file numbers with `ls` before adding `js/NNN-` or `css/NN-` files; never renumber.
+3. **Research, then build.** No astrology table from memory. Verify in at least two independent sources, record the URLs in the plan Notes, and say on the page where teachers differ. Tendency wording only, never fate or fear words.
+4. **Definition of done for each step:** engine in its own js file; a Node `vm` test for the engine; a Playwright browser test at phone width (390 and 360, no sideways scroll, no page errors) with screenshots that you LOOK at; `python3 build.py`; `python3 tests/syntax_check.py`; `python3 tools/check_structure.py`; run the neighbour tests (dosha_late_panels_test.py, home_chart_first_test.py, kp_test.py, today_for_you_test.py and every earlier new test). Fix bugs the tests or screenshots show, in the code, not by weakening the test.
+5. **Wire every new tool in three places:** a `HOME_ITEMS` row (js/25), a `reg(...)` line (js/120-late-panels.js), and a group in the Tools tab (`THB.CATS` in js/147-tools-hub.js; a tool left out lands in "More tools", but put it in the right group). Update `STRUCTURE.md` and add a line to section 7 of this file.
+6. **Push live after each finished step** (backend and logic steps): commit with the attribution lines, rebase on `origin/main`, push `HEAD:main`, `HEAD:Root` and the working branch, then start the next step. Never force-push `main` or `Root`; if a push is rejected, stop and tell the owner. Verify with `git ls-remote origin main Root <branch>`.
+7. **Visible UI changes: show first, push after approval.** When the owner asks for a new screen or a redesign, build it, run the tests, send phone screenshots, commit locally and WAIT for the owner to say push. Do not push until then.
+8. **Decisions that belong to the owner** (which events, which tone, which school rule) are listed in the plan's "Owner decisions pending". Do the work that does not depend on them, park the rest, and say so plainly.
+9. **Keep replies short:** what changed, what could not be verified, what the owner must decide. Say when you start and when a step is live.
+
 ## 0. The 13 rules (token savers)
 1. **Never read the built HTML files** (`dist/*.html`, 1.8–2.5 MB). They are build outputs. Never `cat` or `Read` them.
 2. **Read only the range you need.** Source files are small topic files (20–750 lines). Find the symbol with `grep -P "^name\t" symbols.idx` (gives the real `file:line`), then `Read` with `offset` and `limit` (40–120 lines).
@@ -194,7 +206,7 @@ _Generated 2026-11-10 - 2085 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 235 files, 33822 lines, 2788 KB
+**birth-chart** - 235 files, 33833 lines, 2789 KB
 ```
 index.html                                         660 lines   37 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -256,7 +268,7 @@ js/141-ashtakavarga-extras.js                      145 lines   16 KB
 js/142-gochara-vedha.js                             48 lines    3 KB
 js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
-js/147-tools-hub.js                                111 lines   10 KB
+js/147-tools-hub.js                                117 lines   11 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/16-rectification-engine.js                       36 lines    2 KB
 js/17-special-lagnas.js                            404 lines   23 KB
@@ -430,7 +442,7 @@ css/74-bhavat-bhavam.css                            21 lines    1 KB
 css/75-ashtakavarga-extras.css                      59 lines    5 KB
 css/76-synastry.css                                 29 lines    2 KB
 css/77-panchang-calendar.css                        37 lines    3 KB
-css/78-tools-hub.css                                30 lines    3 KB
+css/78-tools-hub.css                                35 lines    3 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -643,3 +655,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Gochara vedha (plan A9): js/142-gochara-vedha.js (`GVD`) pair tables for 7 planets (4 sources; Mercury 10th uses 8, vedastro prints 7), Sun-Saturn and Moon-Mercury exempt, nodes left out; Today for You (js/122) shows a "held back" note only when a vedha applies; tests/gochara_vedha_test.js + today_for_you_test.py (30-day independent check). Live Sky (js/59) counts from the Lagna, not the Moon, so it was not changed.
 - Synastry (plan A10): js/143-synastry.js (`SYN`) + css/76 + Home tile in Analysis; planets of each chart in the other's whole-sign houses, contacts (conjunct / aspect by the app's js/09 rule), Moon relation, Lagna lords, Ashtakoota in both orders; top-5 ranking is the app's own count, said on the page; tests/synastry_test.js (60 pairs mirrored) + tests/synastry_browser_test.py.
 - Panchang Calendar (plan A12): js/146-panchang-calendar.js (`PCAL`) + css/77 + Home tile in Time & Cycles; reuses Date Finder (js/27-28: DF_FEST, dfInfo, dfEclipses) per month; adds a "day the tithi begins" fallback when a festival tithi never falls at sunrise (Ugadi, Akshaya Tritiya, Dev Uthani 2026); Holika/Holi/Rakhi/Dussehra/Onam flagged as Bhadra/Pradosh-sensitive; tests/panchang_calendar_test.js + browser test. js/144-145 and css/76... numbers stay reserved: js/144-145 for A11 (Muhurta), css/77 is this.
+- Tools tab (owner request): js/147-tools-hub.js (`THB`) + css/78 + sixth bottom-bar tab; every HOME_ITEMS tool in 9 groups by use, live search with everyday words, group chips, Recently used, and four Quick access cards (Divisional Charts, Vimshottari Dasha, Reading, Ashtakavarga). Owner's working method added as section 0a above.

@@ -17,6 +17,7 @@ Setup, in this order:
 3. `sh tools/ai/session.sh start` prints the next unchecked line of this plan (it is in the loop). Work on the FIRST unchecked step of section 2.
 4. Build and test (section 3), tick the box, add a log line (section 7), commit, push the **branch only**.
 5. **Standing owner instruction (2026-11-08): after each finished step, rebase on `main`, run all tests, then push it live (`git push origin HEAD:main` and `HEAD:Root`) and the branch, and start the next step.** Never force-push `main`/`Root`; stop and report if a push is rejected.
+5b. The full method for any new AI or person is in `AI_GUIDE.md` section 0a (owner's instruction, 2026-11-10). UI changes: screenshots first, push after the owner approves.
 6. Do not use `session.sh ship` for this plan: it is hard-coded to `feature/full-reading`. Use plain `git add -A && git commit && git push origin feature/astro-roadmap`.
 
 Branch note: `feature/astro-roadmap` starts from the Chakra Explorer commits (`feature/chakra-explorer`), which are not on `main` yet.
