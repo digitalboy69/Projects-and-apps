@@ -1,5 +1,6 @@
 
 function openExportModal(){
+  if (typeof window.openExportBuilder === 'function'){ window.openExportBuilder(); return; }   // the Export tab (js/148) replaces this pop-up
   if (!currentChartForModal || !currentProfileForExport){
     alert('Please generate a chart first before exporting a report.');
     return;

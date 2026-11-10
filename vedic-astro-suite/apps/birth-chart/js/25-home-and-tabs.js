@@ -140,7 +140,7 @@ new MutationObserver(()=>{
   if(!on){document.body.classList.remove('on-sub');const h=document.querySelector('.brand-text h1');if(h&&h.dataset.orig)h.textContent=h.dataset.orig;}
 }).observe(document.getElementById('results'),{attributes:true,attributeFilter:['class']});
 function switchAppTab(panelId){
-  if (panelId==='panel-export'){ openExportModal(); return; }
+  if (panelId==='panel-export' && typeof window.openExportBuilder!=='function'){ openExportModal(); return; }
   if (panelId==='panel-contact'){ document.getElementById('contactModal').classList.add('show'); return; }
   document.querySelectorAll('.app-panel').forEach(p=> p.classList.remove('active'));
   document.querySelectorAll('.app-tab').forEach(t=> t.classList.remove('active'));

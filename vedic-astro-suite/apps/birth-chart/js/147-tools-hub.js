@@ -47,7 +47,7 @@ const THB = (() => {
   }
   function recent() { try { return JSON.parse(localStorage.getItem(KEY) || '[]').filter(item).slice(0, 4); } catch (e) { return []; } }
   function remember(id) {
-    if (!item(id) || id === 'panel-export' || id === 'panel-contact') return;
+    if (window.__thbQuiet || !item(id) || id === 'panel-export' || id === 'panel-contact') return;
     try { const r = [id].concat(JSON.parse(localStorage.getItem(KEY) || '[]').filter(x => x !== id)).slice(0, 8); localStorage.setItem(KEY, JSON.stringify(r)); } catch (e) { /* no storage: fine */ }
   }
   /* search: every word typed must appear somewhere in title, description, group or everyday words */
