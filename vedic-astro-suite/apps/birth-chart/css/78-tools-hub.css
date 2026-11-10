@@ -1,0 +1,29 @@
+/* Tools hub (js/147), th- prefix. Six bottom-bar tabs must fit a 360px phone. */
+.app-tabbar-inner .app-tab{min-width:0;flex:1 1 0;padding:8px 2px}
+.th{padding:0 2px 28px}
+.th-hero h3{margin:0 0 4px;font-size:22px;color:var(--gold,#d4af37)}
+.th-hero p{margin:0 0 12px;font-size:13.5px;line-height:1.5;color:var(--text-dim,#a9afc4)}
+.th-sb{position:sticky;top:0;z-index:5;padding:6px 0 8px;background:linear-gradient(#0b0d14 70%,rgba(11,13,20,0))}
+.th-q{width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border-radius:14px;border:1px solid rgba(212,175,55,.35);background:#10131c url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat 12px center/18px;color:var(--text-main,#e8e6df);font:inherit;font-size:14.5px}
+.th-q:focus{outline:2px solid rgba(212,175,55,.6);outline-offset:1px}
+.th-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.th-chips::-webkit-scrollbar{display:none}
+.th-chips button{flex:0 0 auto;padding:8px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:#10131c;color:var(--text-dim,#a9afc4);font:inherit;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.th-chips button.on{background:rgba(212,175,55,.16);border-color:var(--gold,#d4af37);color:var(--gold-bright,#f0d27a)}
+.th-sec{margin:0 0 20px}
+.th-sec h3{display:flex;align-items:center;gap:8px;margin:0 0 2px;font-size:15.5px}
+.th-sec h3 i{width:4px;height:16px;border-radius:2px;background:var(--c)}
+.th-sec h3 em{margin-left:auto;font-style:normal;font-size:11.5px;color:var(--text-dim,#a9afc4);font-weight:400}
+.th-use{margin:0 0 8px 12px;font-size:12.5px;color:var(--text-dim,#a9afc4);line-height:1.4}
+.th-list{display:flex;flex-direction:column;gap:6px}
+.th-r{display:grid;grid-template-columns:36px 1fr 16px;gap:11px;align-items:center;width:100%;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.08);border-left:3px solid var(--c);background:#10131c;color:var(--text-main,#e8e6df);text-align:left;font:inherit;cursor:pointer;transition:transform .15s,background .15s}
+.th-r:active{transform:scale(.98);background:#151a26}
+.th-i{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.05);font-size:18px}
+.th-t{min-width:0}
+.th-t b{display:block;font-size:14px;font-weight:600;line-height:1.3}
+.th-t small{display:block;margin-top:2px;font-size:12px;line-height:1.4;color:var(--text-dim,#a9afc4);overflow-wrap:anywhere}
+.th-t em{display:inline-block;margin-top:4px;font-style:normal;font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid var(--c);color:var(--c)}
+.th-ch{font-style:normal;font-size:20px;color:var(--text-dim,#a9afc4)}
+.th-cnt{font-size:12px;color:var(--text-dim,#a9afc4);margin:0 0 8px}
+.th-res{display:flex;flex-direction:column;gap:6px}
+.th-empty{padding:26px 8px;text-align:center}.th-empty b{display:block;margin-bottom:6px}.th-empty span{font-size:13px;color:var(--text-dim,#a9afc4)}
