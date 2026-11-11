@@ -14,7 +14,7 @@ function initPlanetPicker(){
     const sel = document.getElementById('focusPlanetSelect'); if (sel) sel.value = focusedPlanetKey;
     autoRotate = false; updateLegend(); markDirty(); syncPickBtn(); close();
   }
-  function wheel(){ setCamMode('orbit'); orbitDist = SOL.view==='solar' ? (SOL.scale==='real'?120:62) : 26; markDirty(); syncPickBtn(); close(); }
+  function wheel(){ setCamMode('orbit'); orbitDist = SOL.view==='solar' ? (SOL.scale==='real'?120:62) : wheelFitDist(); markDirty(); syncPickBtn(); close(); }
   function render(){
     const snap = snapshotPositions(currentJD);
     const solar = SOL.view==='solar', names = solar ? ["Sun"].concat(SOL_BODIES) : ALL_BODIES;

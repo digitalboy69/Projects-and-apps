@@ -203,7 +203,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-11 - 2139 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-12 - 2145 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -466,16 +466,16 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 91 files, 8672 lines, 538 KB
+**sky3d** - 92 files, 8757 lines, 545 KB
 ```
-index.html                                         518 lines   33 KB
+index.html                                         519 lines   33 KB
 js/01-astro-engine.js                              163 lines   10 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
 js/04-sign-level-aspects.js                         22 lines    0 KB
 js/05-aspect-resolver.js                            58 lines    2 KB
 js/06-planet-detail-helpers.js                     154 lines    6 KB
-js/07-position-snapshot.js                          27 lines    1 KB
+js/07-position-snapshot.js                          40 lines    2 KB
 js/08-scene-setup-and-camera.js                    399 lines   16 KB
 js/09-free-fly-joystick.js                          60 lines    2 KB
 js/10-procedural-textures.js                       315 lines   13 KB
@@ -483,7 +483,7 @@ js/11-planet-visuals.js                            253 lines   14 KB
 js/12-solar-system-view.js                         194 lines   12 KB
 js/13-camera-mode-control.js                        50 lines    2 KB
 js/14-line-visibility-toggles.js                    68 lines    2 KB
-js/15-planet-labels.js                              58 lines    2 KB
+js/15-planet-labels.js                              75 lines    4 KB
 js/16-app-state.js                                  35 lines    1 KB
 js/17-render-sky-table.js                           23 lines    1 KB
 js/18-rising-sign-timeline.js                      109 lines    8 KB
@@ -527,6 +527,7 @@ js/55-live-shadbala-engine.js                      330 lines   16 KB
 js/56-live-shadbala.js                             101 lines   10 KB
 js/57-profile-from-moment.js                        78 lines    6 KB
 js/58-ui-all-tabs.js                                44 lines    3 KB
+js/59-wheel-frame.js                                54 lines    4 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -670,3 +671,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Feature Guide (js/149 data + js/150 screen + css/80, panel-guide): searchable card index with what/when/steps/key words/tip for every tool. NEW TOOL RULE: add its entry to FG_DATA.e in js/149 (tests/feature_guide_test.js fails until you do).
 - 3D Sky: Reverse play (◀ beside ▶; `playDir` in js/16, tick js/34, buttons js/36) and Make a profile from a moment (js/57 + css/30; 👤 in timeline bar and on Saved moments, js/49). Test needs no CDN: tests/sky3d_profile_moment_browser_test.py stubs Three.js. Both are listed in the Feature Guide (`FG_DATA.sky3d`).
 - 3D Sky interface refresh (phone): css/31-ui-refresh.css (loaded last, wins over older layers; use `html body` selectors) + js/58-ui-all-tabs.js. Timeline bar is a 12-column grid (3 short rows); 'All' grid for the 15 tabs. The Three.js wheel itself was NOT changed (cannot be rendered in the sandbox).
+- 3D wheel on phones: js/07 `wheelFitDist()`/`wheelFitPhi()` (zoom from screen shape + free band, replaces the old fixed 26), js/59 band + view offset, js/15 planet labels now avoid overlapping each other. To SEE the real wheel in the sandbox, clone the three.js r128 tag with `git clone --depth 1 --branch r128 --filter=blob:none --no-checkout https://github.com/mrdoob/three.js.git` then `git checkout r128 -- build/three.min.js`, serve it for the CDN URL in Playwright, and launch Chromium with `--use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader`.

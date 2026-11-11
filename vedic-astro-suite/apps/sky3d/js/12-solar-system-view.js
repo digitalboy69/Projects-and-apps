@@ -129,7 +129,7 @@ function setSceneView(v){
   document.getElementById('solScale').style.display = solar ? 'flex' : 'none';
   document.getElementById('solPresets').style.display = solar ? 'flex' : 'none';
   if (solar){ if (camMode==='focus') setCamMode('orbit'); orbitDist = SOL.scale==='real' ? 120 : 62; solUpdate(currentJD); }
-  else { orbitDist = 26; }
+  else { orbitDist = wheelFitDist(); }
   if (!solar){ camera.near = 0.1; camera.updateProjectionMatrix(); }
   populateFocusPlanetSelect(); updateLegend(); markDirty();
   if (typeof syncPickBtn === 'function') syncPickBtn();

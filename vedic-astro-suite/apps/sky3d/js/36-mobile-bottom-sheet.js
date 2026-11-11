@@ -93,6 +93,6 @@ document.getElementById('nowBtn').addEventListener('click', ()=>{
 });
 
 document.getElementById('resetViewBtn').addEventListener('click', ()=>{
-  orbitAngleTheta=0.55; orbitAnglePhi=1.15; orbitDist = SOL.view==='solar' ? (SOL.scale==='real'?120:62) : 26; autoRotate=true; markDirty();
+  orbitAngleTheta=0.55; orbitAnglePhi=wheelFitPhi(); orbitDist = SOL.view==='solar' ? (SOL.scale==='real'?120:62) : wheelFitDist(); autoRotate=true; markDirty();
 });
 

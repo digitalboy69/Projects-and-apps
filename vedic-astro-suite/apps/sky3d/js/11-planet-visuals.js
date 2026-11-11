@@ -242,7 +242,7 @@ function renderLoop(ts){
 
 function setViewMode(){
   zodiacRingGroup.visible = true;
-  orbitDist = 26;
+  orbitDist = wheelFitDist();
   populateFocusPlanetSelect();
   updateLineToggleVisibility();
   updateLegend();
