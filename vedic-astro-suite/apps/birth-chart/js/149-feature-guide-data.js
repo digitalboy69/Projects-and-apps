@@ -11,6 +11,11 @@ const FG_DATA = {
     ['💞', 'Match', 'Kundali Matching: compare two charts with the 36-point Ashtakoota system.'],
     ['📤', 'Export', 'Choose exactly what goes into a file or a copied report, then download or copy it.']
   ],
+  /* features of the other apps in the suite (no tile in this app); shown under the six tabs */
+  sky3d: [
+    ['◀', 'Reverse play (3D Sky)', 'Beside ▶ in the timeline bar. Tap ◀ and time runs backward at the chosen speed (1d/s to 1y/s). Tap ▶ while it runs backward to turn time around, tap the running button to pause.'],
+    ['👤', 'Make a profile from a moment (3D Sky)', 'Tap 👤 in the timeline bar to turn the moment showing now (even while time is running), or 👤 on any Saved moment, into a natal profile. Date and time are the ones shown; the place is your "Where are you now?" place.']
+  ],
   e: {
     'panel-reading': { what: 'A plain-language reading of your whole chart, written automatically from classical rules (house lords, dignity, aspects, Ashtakavarga and Dasha). It is split into ten short parts.',
       when: 'You want the big picture first, in words, before opening any technical page.',

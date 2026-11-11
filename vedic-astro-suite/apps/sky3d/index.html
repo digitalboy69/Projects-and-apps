@@ -36,6 +36,7 @@
 <link rel="stylesheet" href="css/27-panel-unify.css">
 <link rel="stylesheet" href="css/28-degree-houses.css">
 <link rel="stylesheet" href="css/29-live-shadbala.css">
+<link rel="stylesheet" href="css/30-profile-from-moment.css">
 <link rel="stylesheet" href="css/25-date-entry.css">
 <link rel="stylesheet" href="../../shared/meta.css">
 <script src="../../shared/icons.js"></script>
@@ -399,7 +400,8 @@
   <div class="timeline" id="timelineDock">
     <div class="timeline-controls">
       <button class="tl-btn" id="tlStepBack" title="Step back 1 day">«</button>
-      <button class="tl-btn play" id="tlPlayPause" title="Play/Pause">▶</button>
+      <button class="tl-btn play rev" id="tlPlayRev" title="Play backward in time" aria-label="Play backward in time">◀</button>
+      <button class="tl-btn play" id="tlPlayPause" title="Play forward in time" aria-label="Play forward in time">▶</button>
       <button class="tl-btn" id="tlStepFwd" title="Step forward 1 day">»</button>
       <div class="tl-speed" id="tlSpeed">
         <button class="speed-chip" data-speed="1">1d/s</button>
@@ -407,6 +409,7 @@
         <button class="speed-chip" data-speed="30">1mo/s</button>
         <button class="speed-chip" data-speed="365">1y/s</button>
       </div>
+      <button class="tl-btn" id="tlMkProfile" title="Make a profile from this moment" aria-label="Make a profile from this moment">👤</button>
       <button class="tl-btn tl-jump-toggle" id="tlJumpToggle" title="Jump to date" aria-label="Jump to date" aria-expanded="false">📅</button>
       <div class="tl-jump">
         <input type="datetime-local" id="jumpDateInput">
@@ -506,6 +509,7 @@
 <script src="js/54-degree-houses.js"></script>
 <script src="js/55-live-shadbala-engine.js"></script>
 <script src="js/56-live-shadbala.js"></script>
+<script src="js/57-profile-from-moment.js"></script>
 <script src="../../shared/export-addon.js"></script>
 <script src="../../shared/copy-toggle.js"></script><script src="../../shared/quick-menu.js"></script>
 </body>

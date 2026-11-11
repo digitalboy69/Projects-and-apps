@@ -103,7 +103,7 @@
   const fmt = jd => { const p = fromJD(jd); return `${pad(p.d)} ${MON[p.m]} ${yl(p.y)} · ${pad(p.h)}:${pad(p.mi)}`; };
   function svList(){
     const box = svEl.querySelector('.sv-list');
-    box.innerHTML = sv.length ? sv.map((m, i) => `<div class="sv-it" data-i="${i}"><button type="button" class="sv-go"><b>${esc(m.name)}</b><span>${fmt(m.jd)}</span></button><button type="button" class="sv-ed" aria-label="Rename">✎</button><button type="button" class="sv-rm" aria-label="Delete">✕</button></div>`).join('')
+    box.innerHTML = sv.length ? sv.map((m, i) => `<div class="sv-it" data-i="${i}"><button type="button" class="sv-go"><b>${esc(m.name)}</b><span>${fmt(m.jd)}</span></button><button type="button" class="sv-mp" aria-label="Make a profile from this moment" title="Make a profile">👤</button><button type="button" class="sv-ed" aria-label="Rename">✎</button><button type="button" class="sv-rm" aria-label="Delete">✕</button></div>`).join('')
       : '<div class="sv-empty">Nothing saved yet. Set a date and time, then tap “Save moment”.</div>';
   }
   function svOpen(focusName){
@@ -134,6 +134,7 @@
   document.addEventListener('click', e => {
     if (e.target.closest('#tmSave')) svOpen(true); else if (e.target.closest('#tmSaved')) svOpen(false);
   });
+  window.tmSavedMoments = () => sv;   // read by js/57 (Make a profile from a saved moment)
   setTimeout(svStore, 0);
   // ---- timeline: drag to scrub, zoom ranges, end dates ----
   const track = $('tlTrack'), wrap = track && track.parentNode, ctl = document.querySelector('.timeline-controls');

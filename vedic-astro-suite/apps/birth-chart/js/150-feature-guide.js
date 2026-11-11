@@ -42,6 +42,7 @@ const FG = (() => {
     if (s) return s.length ? `<div class="fg-cnt">${s.length} ${s.length === 1 ? 'tool' : 'tools'} found</div>${s.map(x => card(x.i, x.g)).join('')}` : `<div class="fg-empty"><b>Nothing matches "${esc(ST.q)}"</b><span>Try one plain word, like marriage, time, strength or today.</span></div>`;
     let h = '';
     if (ST.cat === 'all') h += `<section class="fg-sec fg-tabs"><h3><i></i>The six tabs at the bottom</h3><div class="fg-tg">${FG_DATA.tabs.map(t => `<div class="fg-tab"><span>${t[0]}</span><b>${esc(t[1])}</b><small>${esc(t[2])}</small></div>`).join('')}</div></section>`;
+    if (ST.cat === 'all' && FG_DATA.sky3d) h += `<section class="fg-sec fg-tabs"><h3><i></i>Also in 3D Sky</h3><div class="fg-tg fg-one">${FG_DATA.sky3d.map(t => `<div class="fg-tab"><span>${t[0]}</span><b>${esc(t[1])}</b><small>${esc(t[2])}</small></div>`).join('')}</div></section>`;
     groups().filter(g => ST.cat === 'all' || g.id === ST.cat).forEach(g => { h += `<section class="fg-sec" style="--c:${g.col}"><h3><i></i>${esc(g.title)}<em>${g.items.length}</em></h3><p class="fg-use">${esc(g.use)}</p>${g.items.map(i => card(i, g)).join('')}</section>`; });
     return h;
   }

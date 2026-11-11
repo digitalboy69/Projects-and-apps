@@ -21,7 +21,7 @@
     done = j.ts;
     const step = fn => { try { fn(); } catch(e){ console.error('jump from rectification', e); } };   // one failing step must not hide the others
     step(()=>{ const wb = document.querySelector('#viewSwitch [data-v="wheel"]'); if (wb && !wb.classList.contains('active')) wb.click(); });
-    step(()=>{ if (isPlaying){ const pb = document.getElementById('tlPlayPause'); if (pb) pb.click(); else isPlaying = false; } });
+    step(()=>{ if (isPlaying){ if (window.pausePlayback) window.pausePlayback(); else isPlaying = false; } });
     step(()=>{ if (isFinite(j.lat) && isFinite(j.lon)) liveLocMem = { lat:+j.lat, lon:+j.lon, label:(j.place ? String(j.place).split(',')[0] : 'birth place') }; });   // session only, not saved
     step(()=> jumpToJD(j.jd));
     step(()=> toast('🌌 ' + (j.label || 'Rectification') + ' · ' + j.local + (j.place ? ' · ' + String(j.place).split(',')[0] : '')));

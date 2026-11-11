@@ -1943,10 +1943,10 @@ body.tm-open .viewport-actions,body.tm-open .viewport-hud{visibility:hidden}
 .sv-add{display:flex;gap:8px}.sv-name{flex:1;min-width:0;padding:12px 14px;border-radius:14px;border:1px solid var(--glass-border);background:rgba(255,255,255,.05);color:#fff;font:500 14px var(--font-ui)}.sv-name:focus{outline:0;border-color:var(--cyan)}
 .sv-cur{margin:8px 2px 12px;font:500 12px var(--font-mono);color:var(--text-dim)}
 .sv-list{overflow-y:auto;overscroll-behavior:contain;display:grid;gap:8px}
-.sv-it{display:grid;grid-template-columns:1fr 38px 38px;gap:6px;align-items:stretch}
+.sv-it{display:grid;grid-template-columns:1fr 38px 38px 38px;gap:6px;align-items:stretch}
 .sv-go{text-align:left;padding:11px 14px;border-radius:14px;border:1px solid var(--glass-border);background:rgba(255,255,255,.04);color:#fff;cursor:pointer;display:grid;gap:2px;min-width:0;transition:border-color .15s,background .15s}.sv-go:hover,.sv-go:active{border-color:var(--cyan);background:rgba(0,240,213,.1)}
 .sv-go b{font:700 14px var(--font-ui);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.sv-go span{font:500 12px var(--font-mono);color:var(--cyan)}
-.sv-ed,.sv-rm{border:1px solid var(--glass-border);background:rgba(255,255,255,.04);color:var(--text-dim);border-radius:12px;cursor:pointer;font-size:14px}.sv-rm:hover{color:#ff7a7a;border-color:#ff7a7a}.sv-ed:hover{color:#fff;border-color:#fff}
+.sv-mp,.sv-ed,.sv-rm{border:1px solid var(--glass-border);background:rgba(255,255,255,.04);color:var(--text-dim);border-radius:12px;cursor:pointer;font-size:14px}.sv-rm:hover{color:#ff7a7a;border-color:#ff7a7a}.sv-ed:hover{color:#fff;border-color:#fff}
 .sv-empty{padding:18px 8px;text-align:center;color:var(--text-dim);font:500 13px/1.6 var(--font-ui)}
 /* swipe-and-hold spin cue */
 .tm-hint{margin:8px 2px 0;text-align:center;font:500 11.5px var(--font-ui);color:var(--text-dim)}
@@ -2302,6 +2302,29 @@ html[data-app] .btn-secondary-block:hover{border-color:var(--u-gold);background:
 @media(max-width:380px){.shb-hero{grid-template-columns:1fr;justify-items:center;text-align:center}.shb-meta{justify-content:center}.shb-row{grid-template-columns:1fr 46px}.shb-bar{grid-column:1/-1;order:3}}
 @media(prefers-reduced-motion:reduce){.shb-arc,.shb-bar i{transition:none}.shb-live i{animation:none}}
 .shb-live{white-space:nowrap}.shb-hd .pdx-h{white-space:nowrap}
+</style>
+<style>
+/* Make a profile from a moment (js/57), pm- prefix */
+.pm-ov{position:fixed;inset:0;z-index:2600;display:none;align-items:flex-end;justify-content:center;background:rgba(3,6,14,.62);backdrop-filter:blur(4px)}
+.pm-ov.show{display:flex}
+.pm-card{width:min(440px,100%);box-sizing:border-box;padding:16px 16px 20px;border-radius:22px 22px 0 0;border:1px solid var(--glass-border,rgba(255,255,255,.14));background:#0d1220;color:var(--text,#e8ecf8);animation:pmUp .22s ease-out}
+@keyframes pmUp{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.pm-top{display:flex;align-items:center;justify-content:space-between;font-size:16px}
+.pm-x{border:0;background:rgba(255,255,255,.06);color:inherit;width:34px;height:34px;border-radius:50%;cursor:pointer}
+.pm-lead{margin:4px 0 12px;font-size:13px;color:var(--text-dim,#a9b3cc)}
+.pm-lab{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim,#a9b3cc);margin-bottom:4px}
+.pm-name{width:100%;box-sizing:border-box;padding:11px 12px;border-radius:12px;border:1px solid var(--glass-border,rgba(255,255,255,.18));background:rgba(255,255,255,.05);color:inherit;font:inherit;font-size:15px}
+.pm-rows{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.pm-rows div{padding:9px 11px;border-radius:12px;background:rgba(255,255,255,.04);min-width:0}
+.pm-rows span{display:block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim,#a9b3cc)}
+.pm-rows b{display:block;margin-top:2px;font-size:13.5px;overflow-wrap:anywhere}.pm-rows i{font-style:normal;color:#ffb74d;font-weight:400}
+.pm-warn{margin:0 0 10px;padding:9px 11px;border-radius:12px;background:rgba(255,183,77,.1);border:1px solid rgba(255,183,77,.4);font-size:12.5px;line-height:1.45}
+.pm-btns{display:grid;grid-template-columns:1fr 1.4fr;gap:8px}
+.pm-btns button{padding:13px;border-radius:14px;border:1px solid var(--glass-border,rgba(255,255,255,.18));background:rgba(255,255,255,.05);color:inherit;font:inherit;font-size:14px;cursor:pointer}
+.pm-btns .pm-go{border:0;font-weight:700;background:linear-gradient(135deg,#00F0D5,#7B6EF6);color:#021210}
+.pm-btns .pm-go:disabled{opacity:.4;cursor:not-allowed}
+.tl-btn.rev.running{box-shadow:0 0 0 2px var(--cyan,#00F0D5)}
+@media (prefers-reduced-motion:reduce){.pm-card{animation:none}}
 </style>
 <style>
 /* Day / Month / Year + AD/BC birth date fields (js/37) */
@@ -3003,7 +3026,8 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
   <div class="timeline" id="timelineDock">
     <div class="timeline-controls">
       <button class="tl-btn" id="tlStepBack" title="Step back 1 day">«</button>
-      <button class="tl-btn play" id="tlPlayPause" title="Play/Pause">▶</button>
+      <button class="tl-btn play rev" id="tlPlayRev" title="Play backward in time" aria-label="Play backward in time">◀</button>
+      <button class="tl-btn play" id="tlPlayPause" title="Play forward in time" aria-label="Play forward in time">▶</button>
       <button class="tl-btn" id="tlStepFwd" title="Step forward 1 day">»</button>
       <div class="tl-speed" id="tlSpeed">
         <button class="speed-chip" data-speed="1">1d/s</button>
@@ -3011,6 +3035,7 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
         <button class="speed-chip" data-speed="30">1mo/s</button>
         <button class="speed-chip" data-speed="365">1y/s</button>
       </div>
+      <button class="tl-btn" id="tlMkProfile" title="Make a profile from this moment" aria-label="Make a profile from this moment">👤</button>
       <button class="tl-btn tl-jump-toggle" id="tlJumpToggle" title="Jump to date" aria-label="Jump to date" aria-expanded="false">📅</button>
       <div class="tl-jump">
         <input type="datetime-local" id="jumpDateInput">
@@ -4984,6 +5009,7 @@ function updatePlanetLabels(){
 let currentJD = toJulianDay(new Date().getUTCFullYear(), new Date().getUTCMonth()+1, new Date().getUTCDate(), new Date().getUTCHours(), new Date().getUTCMinutes(), 0);
 let isPlaying = false;
 let playSpeedDaysPerSec = 7;
+let playDir = 1;   // 1 = time runs forward, -1 = time runs backward (Reverse play button, js/36)
 let lastFrameTime = null;
 let timelineWindowStart, timelineWindowEnd; // JD bounds shown on scrubber
 let activeNatalProfile = null; // {name,dob,tob,lat,lon,tz}
@@ -6550,8 +6576,8 @@ function animationTick(ts){
     if (lastFrameTime===null) lastFrameTime = ts;
     const dt = (ts-lastFrameTime)/1000;
     lastFrameTime = ts;
-    currentJD += dt*playSpeedDaysPerSec;
-    if (currentJD > timelineWindowEnd){ timelineWindowStart=currentJD-30; timelineWindowEnd=currentJD+365; }
+    currentJD += dt*playSpeedDaysPerSec*playDir;
+    if (currentJD > timelineWindowEnd || currentJD < timelineWindowStart){ timelineWindowStart=currentJD-(playDir<0?365:30); timelineWindowEnd=currentJD+(playDir<0?30:365); }
     const snap = updateSceneForJD(currentJD);
     // Throttle DOM-heavy UI updates to ~12fps during playback — the 3D motion stays smooth
     // (driven by renderLoop separately) while text/table updates, which nobody can read at 60fps
@@ -6667,11 +6693,20 @@ document.querySelectorAll('.panel-tab').forEach(tab=>{
 })();
 
 
-document.getElementById('tlPlayPause').addEventListener('click', (e)=>{
-  isPlaying = !isPlaying;
-  e.currentTarget.textContent = isPlaying ? "❚❚" : "▶";
-  autoRotate = false;
-});
+/* Play forward (▶) and play backward (◀). Tapping the button that is running pauses; tapping the other one turns time around. */
+function syncPlayButtons(){
+  const f = document.getElementById('tlPlayPause'), r = document.getElementById('tlPlayRev');
+  if (f){ f.textContent = (isPlaying && playDir > 0) ? "❚❚" : "▶"; f.setAttribute('aria-pressed', String(isPlaying && playDir > 0)); }
+  if (r){ r.textContent = (isPlaying && playDir < 0) ? "❚❚" : "◀"; r.setAttribute('aria-pressed', String(isPlaying && playDir < 0)); r.classList.toggle('running', isPlaying && playDir < 0); }
+}
+function setPlay(dir){
+  if (isPlaying && playDir === dir) isPlaying = false;
+  else { isPlaying = true; playDir = dir; lastFrameTime = null; }
+  autoRotate = false; syncPlayButtons();
+}
+window.pausePlayback = function(){ isPlaying = false; syncPlayButtons(); };
+document.getElementById('tlPlayPause').addEventListener('click', ()=> setPlay(1));
+const _rv = document.getElementById('tlPlayRev'); if (_rv) _rv.addEventListener('click', ()=> setPlay(-1));
 document.getElementById('tlStepBack').addEventListener('click', ()=>{ jumpToJD(currentJD-1); });
 document.getElementById('tlStepFwd').addEventListener('click', ()=>{ jumpToJD(currentJD+1); });
 document.querySelectorAll('.speed-chip').forEach(chip=>{
@@ -8144,7 +8179,7 @@ document.querySelector('[data-tab="triggers"]').addEventListener('click', ()=> s
   const fmt = jd => { const p = fromJD(jd); return `${pad(p.d)} ${MON[p.m]} ${yl(p.y)} · ${pad(p.h)}:${pad(p.mi)}`; };
   function svList(){
     const box = svEl.querySelector('.sv-list');
-    box.innerHTML = sv.length ? sv.map((m, i) => `<div class="sv-it" data-i="${i}"><button type="button" class="sv-go"><b>${esc(m.name)}</b><span>${fmt(m.jd)}</span></button><button type="button" class="sv-ed" aria-label="Rename">✎</button><button type="button" class="sv-rm" aria-label="Delete">✕</button></div>`).join('')
+    box.innerHTML = sv.length ? sv.map((m, i) => `<div class="sv-it" data-i="${i}"><button type="button" class="sv-go"><b>${esc(m.name)}</b><span>${fmt(m.jd)}</span></button><button type="button" class="sv-mp" aria-label="Make a profile from this moment" title="Make a profile">👤</button><button type="button" class="sv-ed" aria-label="Rename">✎</button><button type="button" class="sv-rm" aria-label="Delete">✕</button></div>`).join('')
       : '<div class="sv-empty">Nothing saved yet. Set a date and time, then tap “Save moment”.</div>';
   }
   function svOpen(focusName){
@@ -8175,6 +8210,7 @@ document.querySelector('[data-tab="triggers"]').addEventListener('click', ()=> s
   document.addEventListener('click', e => {
     if (e.target.closest('#tmSave')) svOpen(true); else if (e.target.closest('#tmSaved')) svOpen(false);
   });
+  window.tmSavedMoments = () => sv;   // read by js/57 (Make a profile from a saved moment)
   setTimeout(svStore, 0);
   // ---- timeline: drag to scrub, zoom ranges, end dates ----
   const track = $('tlTrack'), wrap = track && track.parentNode, ctl = document.querySelector('.timeline-controls');
@@ -8528,7 +8564,7 @@ const DBX = (function(){
     done = j.ts;
     const step = fn => { try { fn(); } catch(e){ console.error('jump from rectification', e); } };   // one failing step must not hide the others
     step(()=>{ const wb = document.querySelector('#viewSwitch [data-v="wheel"]'); if (wb && !wb.classList.contains('active')) wb.click(); });
-    step(()=>{ if (isPlaying){ const pb = document.getElementById('tlPlayPause'); if (pb) pb.click(); else isPlaying = false; } });
+    step(()=>{ if (isPlaying){ if (window.pausePlayback) window.pausePlayback(); else isPlaying = false; } });
     step(()=>{ if (isFinite(j.lat) && isFinite(j.lon)) liveLocMem = { lat:+j.lat, lon:+j.lon, label:(j.place ? String(j.place).split(',')[0] : 'birth place') }; });   // session only, not saved
     step(()=> jumpToJD(j.jd));
     step(()=> toast('🌌 ' + (j.label || 'Rectification') + ' · ' + j.local + (j.place ? ' · ' + String(j.place).split(',')[0] : '')));
@@ -9375,6 +9411,85 @@ const SHB = (function(){
     }, 600);
   };
   window.shbGoto = function(btn){ const root = btn.closest('.pdx-root'); const tab = root && root.querySelectorAll('.pdx-tab')[1]; if (tab) pdxTab(tab, 'st'); const m = btn.closest('.pdmodal'); const b = document.getElementById('shbBox'); if (m && b) setTimeout(() => m.scrollTo({ top:b.offsetTop - 60, behavior:'smooth' }), 60); };
+})();
+<\/script>
+<script>
+/* ============================================================================
+   MAKE A PROFILE FROM A MOMENT (3D Sky): turn the moment on screen, or any Saved moment, into a natal profile in one step.
+   Entry points: the 👤 button in the timeline bar (takes the moment showing at the instant of the tap, even while time is running)
+   and the 👤 button on each row of Saved moments (js/49, via window.tmSavedMoments).
+   Date and time are the ones the 3D app shows (your device clock zone), the timezone is that zone's offset at that moment, and the place is
+   "Where are you now?" (getLiveLoc, js/17). With only a time-zone estimate of the place the Create button stays off until you set a place,
+   because the Rising sign would be wrong. The profile is saved with the same functions as the Natal form (loadNatalProfiles / saveNatalProfiles),
+   so it appears in the profile list and is activated. Classes pm- prefixed. Test: tests/sky3d_profile_moment_test.js
+   ============================================================================ */
+(function(){
+  'use strict';
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], p2 = n => String(n).padStart(2, '0');
+  const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+  /* pure part: everything a profile needs from a Julian Day and a place */
+  window.pmDraft = function(jd, name){
+    const c = jdToDate(jd), y = c.getFullYear(), m = c.getMonth() + 1, d = c.getDate(), hh = c.getHours(), mi = c.getMinutes();
+    const L = getLiveLoc(), tz = localOffsetMin(jd) / 60;
+    const label = p2(d) + ' ' + MON[m - 1] + ' ' + yearLabel(y) + ' · ' + p2(hh) + ':' + p2(mi);
+    return { jd, label, approx: !!L.approx, placeLabel: L.label, tz,
+      profile: { name: (name || '').trim() || ('Moment ' + label), dob: formatDobStr(y, m, d), tob: p2(hh) + ':' + p2(mi), tz, lat: L.lat, lon: L.lon, place: L.label, savedAt: Date.now() } };
+  };
+  window.pmCreate = function(draft){
+    if (!draft || draft.approx) return null;
+    const list = loadNatalProfiles(); list.push(draft.profile); saveNatalProfiles(list);
+    refreshProfileSelect(); const sel = document.getElementById('profileSelect'); if (sel) sel.value = String(list.length - 1);
+    activeNatalProfile = draft.profile; renderNatalTab(); return draft.profile;
+  };
+  let ov = null, cur = null, watch = 0;
+  function toast(t){
+    let el = document.getElementById('pmToast');
+    if (!el){ el = document.createElement('div'); el.id = 'pmToast';
+      el.style.cssText = 'position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:99999;max-width:92vw;padding:10px 18px;border-radius:99px;background:rgba(18,20,29,.96);border:1px solid #00F0D5;color:#bffcf4;font:500 13px/1.4 system-ui,sans-serif;transition:opacity .3s;pointer-events:none';
+      document.body.appendChild(el); }
+    el.textContent = t; el.style.opacity = '1'; clearTimeout(el._t); el._t = setTimeout(() => { el.style.opacity = '0'; }, 3600);
+  }
+  function paint(){
+    const nm = ov.querySelector('.pm-name').value, dr = pmDraft(cur.jd, nm || ''); const keep = nm;
+    ov.querySelector('.pm-name').placeholder = 'Moment ' + dr.label;
+    ov.querySelector('.pm-rows').innerHTML = `<div><span>Date</span><b>${esc(dr.label.split(' · ')[0])}</b></div><div><span>Time</span><b>${esc(dr.label.split(' · ')[1])}</b></div>
+      <div><span>Timezone</span><b>UTC${dr.tz >= 0 ? '+' : '−'}${Math.abs(dr.tz)}</b></div><div><span>Place</span><b>${esc(dr.placeLabel)}${dr.approx ? ' <i>(a guess)</i>' : ''}</b></div>`;
+    ov.querySelector('.pm-warn').hidden = !dr.approx;
+    ov.querySelector('.pm-go').disabled = dr.approx; ov.querySelector('.pm-place').textContent = dr.approx ? 'Set place' : 'Change place';
+    cur.draft = dr; if (keep === '') ov.querySelector('.pm-name').value = '';
+  }
+  function close(){ if (ov) ov.classList.remove('show'); clearInterval(watch); }
+  function open(jd){
+    cur = { jd };
+    if (!ov){
+      ov = document.createElement('div'); ov.className = 'pm-ov';
+      ov.innerHTML = `<div class="pm-card" role="dialog" aria-label="Make a profile from this moment"><div class="pm-top"><b>👤 Make a profile</b><button type="button" class="pm-x" aria-label="Close">✕</button></div>
+        <p class="pm-lead">A new natal profile from this exact moment.</p>
+        <label class="pm-lab" for="pmName">Name</label><input id="pmName" class="pm-name" type="text" maxlength="40" autocomplete="off">
+        <div class="pm-rows"></div><p class="pm-warn" hidden>Your place is only a time-zone guess, so the Rising sign would be off. Set your place first.</p>
+        <div class="pm-btns"><button type="button" class="pm-place">Change place</button><button type="button" class="pm-go">Create profile</button></div></div>`;
+      document.body.appendChild(ov);
+      ov.addEventListener('pointerdown', e => { if (e.target === ov) close(); });
+      ov.querySelector('.pm-x').addEventListener('click', close);
+      ov.querySelector('.pm-name').addEventListener('input', paint);
+      ov.querySelector('.pm-place').addEventListener('click', () => { if (typeof askLiveLoc === 'function') askLiveLoc(); });
+      ov.querySelector('.pm-go').addEventListener('click', () => {
+        const pr = pmCreate(cur.draft); if (!pr) return; close();
+        const tab = document.querySelector('[data-tab="natal"]'); if (tab) tab.click();
+        toast('✦ Profile “' + pr.name + '” created and opened');
+      });
+    }
+    ov.querySelector('.pm-name').value = ''; paint(); ov.classList.add('show');
+    let last = JSON.stringify(getLiveLoc()); clearInterval(watch);
+    watch = setInterval(() => { const n = JSON.stringify(getLiveLoc()); if (n !== last){ last = n; paint(); } }, 500);   // the place picker answers later
+  }
+  window.pmOpen = open;
+  document.addEventListener('click', e => {
+    if (e.target.closest('#tlMkProfile')){ open(currentJD); return; }
+    const b = e.target.closest('.sv-mp'); if (!b) return;
+    const row = b.closest('.sv-it'), m = window.tmSavedMoments && window.tmSavedMoments()[+row.dataset.i]; if (!m) return;
+    e.stopPropagation(); open(m.jd);
+  }, true);
 })();
 <\/script>
 <script>
@@ -16089,6 +16204,7 @@ body.cl-open{overflow:hidden}
 .fg-see{display:flex;flex-wrap:wrap;gap:6px}.fg-chip{padding:7px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:#0b0d14;color:inherit;font:inherit;font-size:12.5px;cursor:pointer}
 .fg-go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:16px 0 0;padding:13px;border:0;border-radius:14px;background:linear-gradient(90deg,#d4af37,#f0d27a);color:#0b0d14;font:inherit;font-size:14.5px;font-weight:700;cursor:pointer}.fg-go:active{transform:scale(.98)}
 .fg-tg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.fg-one{grid-template-columns:1fr}
 .fg-tab{padding:11px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#10131c}.fg-tab span{font-size:20px}.fg-tab b{display:block;margin:4px 0 2px;font-size:13.5px}.fg-tab small{display:block;font-size:11.5px;line-height:1.4;color:var(--text-dim,#a9afc4)}
 .fg-empty{padding:26px 8px;text-align:center}.fg-empty b{display:block;margin-bottom:6px}.fg-empty span{font-size:13px;color:var(--text-dim,#a9afc4)}
 @media (prefers-reduced-motion:reduce){.fg-glow,.fg-body{animation:none}}
@@ -56175,6 +56291,11 @@ const FG_DATA = {
     ['💞', 'Match', 'Kundali Matching: compare two charts with the 36-point Ashtakoota system.'],
     ['📤', 'Export', 'Choose exactly what goes into a file or a copied report, then download or copy it.']
   ],
+  /* features of the other apps in the suite (no tile in this app); shown under the six tabs */
+  sky3d: [
+    ['◀', 'Reverse play (3D Sky)', 'Beside ▶ in the timeline bar. Tap ◀ and time runs backward at the chosen speed (1d/s to 1y/s). Tap ▶ while it runs backward to turn time around, tap the running button to pause.'],
+    ['👤', 'Make a profile from a moment (3D Sky)', 'Tap 👤 in the timeline bar to turn the moment showing now (even while time is running), or 👤 on any Saved moment, into a natal profile. Date and time are the ones shown; the place is your "Where are you now?" place.']
+  ],
   e: {
     'panel-reading': { what: 'A plain-language reading of your whole chart, written automatically from classical rules (house lords, dignity, aspects, Ashtakavarga and Dasha). It is split into ten short parts.',
       when: 'You want the big picture first, in words, before opening any technical page.',
@@ -56499,6 +56620,7 @@ const FG = (() => {
     if (s) return s.length ? `<div class="fg-cnt">${s.length} ${s.length === 1 ? 'tool' : 'tools'} found</div>${s.map(x => card(x.i, x.g)).join('')}` : `<div class="fg-empty"><b>Nothing matches "${esc(ST.q)}"</b><span>Try one plain word, like marriage, time, strength or today.</span></div>`;
     let h = '';
     if (ST.cat === 'all') h += `<section class="fg-sec fg-tabs"><h3><i></i>The six tabs at the bottom</h3><div class="fg-tg">${FG_DATA.tabs.map(t => `<div class="fg-tab"><span>${t[0]}</span><b>${esc(t[1])}</b><small>${esc(t[2])}</small></div>`).join('')}</div></section>`;
+    if (ST.cat === 'all' && FG_DATA.sky3d) h += `<section class="fg-sec fg-tabs"><h3><i></i>Also in 3D Sky</h3><div class="fg-tg fg-one">${FG_DATA.sky3d.map(t => `<div class="fg-tab"><span>${t[0]}</span><b>${esc(t[1])}</b><small>${esc(t[2])}</small></div>`).join('')}</div></section>`;
     groups().filter(g => ST.cat === 'all' || g.id === ST.cat).forEach(g => { h += `<section class="fg-sec" style="--c:${g.col}"><h3><i></i>${esc(g.title)}<em>${g.items.length}</em></h3><p class="fg-use">${esc(g.use)}</p>${g.items.map(i => card(i, g)).join('')}</section>`; });
     return h;
   }

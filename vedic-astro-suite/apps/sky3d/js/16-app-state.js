@@ -4,6 +4,7 @@
 let currentJD = toJulianDay(new Date().getUTCFullYear(), new Date().getUTCMonth()+1, new Date().getUTCDate(), new Date().getUTCHours(), new Date().getUTCMinutes(), 0);
 let isPlaying = false;
 let playSpeedDaysPerSec = 7;
+let playDir = 1;   // 1 = time runs forward, -1 = time runs backward (Reverse play button, js/36)
 let lastFrameTime = null;
 let timelineWindowStart, timelineWindowEnd; // JD bounds shown on scrubber
 let activeNatalProfile = null; // {name,dob,tob,lat,lon,tz}

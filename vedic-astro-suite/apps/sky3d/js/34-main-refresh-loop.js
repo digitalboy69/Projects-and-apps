@@ -18,8 +18,8 @@ function animationTick(ts){
     if (lastFrameTime===null) lastFrameTime = ts;
     const dt = (ts-lastFrameTime)/1000;
     lastFrameTime = ts;
-    currentJD += dt*playSpeedDaysPerSec;
-    if (currentJD > timelineWindowEnd){ timelineWindowStart=currentJD-30; timelineWindowEnd=currentJD+365; }
+    currentJD += dt*playSpeedDaysPerSec*playDir;
+    if (currentJD > timelineWindowEnd || currentJD < timelineWindowStart){ timelineWindowStart=currentJD-(playDir<0?365:30); timelineWindowEnd=currentJD+(playDir<0?30:365); }
     const snap = updateSceneForJD(currentJD);
     // Throttle DOM-heavy UI updates to ~12fps during playback — the 3D motion stays smooth
     // (driven by renderLoop separately) while text/table updates, which nobody can read at 60fps

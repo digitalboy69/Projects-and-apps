@@ -54,11 +54,20 @@
 })();
 
 
-document.getElementById('tlPlayPause').addEventListener('click', (e)=>{
-  isPlaying = !isPlaying;
-  e.currentTarget.textContent = isPlaying ? "❚❚" : "▶";
-  autoRotate = false;
-});
+/* Play forward (▶) and play backward (◀). Tapping the button that is running pauses; tapping the other one turns time around. */
+function syncPlayButtons(){
+  const f = document.getElementById('tlPlayPause'), r = document.getElementById('tlPlayRev');
+  if (f){ f.textContent = (isPlaying && playDir > 0) ? "❚❚" : "▶"; f.setAttribute('aria-pressed', String(isPlaying && playDir > 0)); }
+  if (r){ r.textContent = (isPlaying && playDir < 0) ? "❚❚" : "◀"; r.setAttribute('aria-pressed', String(isPlaying && playDir < 0)); r.classList.toggle('running', isPlaying && playDir < 0); }
+}
+function setPlay(dir){
+  if (isPlaying && playDir === dir) isPlaying = false;
+  else { isPlaying = true; playDir = dir; lastFrameTime = null; }
+  autoRotate = false; syncPlayButtons();
+}
+window.pausePlayback = function(){ isPlaying = false; syncPlayButtons(); };
+document.getElementById('tlPlayPause').addEventListener('click', ()=> setPlay(1));
+const _rv = document.getElementById('tlPlayRev'); if (_rv) _rv.addEventListener('click', ()=> setPlay(-1));
 document.getElementById('tlStepBack').addEventListener('click', ()=>{ jumpToJD(currentJD-1); });
 document.getElementById('tlStepFwd').addEventListener('click', ()=>{ jumpToJD(currentJD+1); });
 document.querySelectorAll('.speed-chip').forEach(chip=>{

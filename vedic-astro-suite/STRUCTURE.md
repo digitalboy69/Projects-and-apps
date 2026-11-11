@@ -328,6 +328,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/55-live-shadbala-engine.js` — copy of the Birth Chart Shadbala engine (SHB_ENGINE), kept identical by tests/sky3d_shadbala_test.js
 - `apps/sky3d/js/56-live-shadbala.js` — live Shadbala for the 7 planets at the 3D time and viewer place; adds the Shadbala block and badge to the planet window (Strength tab)
 - `apps/sky3d/css/29-live-shadbala.css` — styles for the live Shadbala block (shb- prefix); planet-window tabs wrap instead of scrolling
+- `apps/sky3d/js/57-profile-from-moment.js` — Make a profile from a moment: 👤 in the timeline bar (moment on screen, even while running) and on each Saved moment; pmDraft/pmCreate; uses the live place, blocks a time-zone guess
+- `apps/sky3d/css/30-profile-from-moment.css` — popup styles (`pm-` prefix) and the running glow on the Reverse button
 - `tests/sky3d_shadbala_test.js` — engine parity with the Birth Chart plus live adapter checks
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
@@ -482,6 +484,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/problem_finder_test.py` — Problem finder: every fact in every reason vs the chart over 12 charts x all areas x all problems, wording, click-through, Home tile
 - `tests/date_entry_test.py` — Julian Day and calendar maths, parseDob, deltaT, typed old/BC dates through the form and every tab
 - `tests/sky3d_date_test.py` — 3D app BC/Julian date maths and Day/Month/Year checks (node, no browser)
+- `tests/sky3d_profile_moment_browser_test.py` — 3D Sky at phone width (Three.js stubbed): Reverse play both ways and pause, Make a profile from the current moment and from a saved moment
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/life_narratives_test.py` — Life-area narratives: 12 charts x 9 areas (length, structure, wording, consistency with scores), variation, sensitivity, Deep reading + report + PDF wiring
 - `tests/varga_reading_test.py` — Divisional chart readings: 12 charts x 6 vargas cross-checked with the app's own varga data and VDB's D9 vargottama, variation, one-fact sensitivity, Deep reading + report + PDF wiring
