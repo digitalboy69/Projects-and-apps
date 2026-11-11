@@ -180,6 +180,7 @@ build	fn	apps/sky3d/js/45-vimshottari-dasha.js:29	sky3d
 build	fn	apps/sky3d/js/49-time-machine.js:52	sky3d
 build	fn	apps/sky3d/js/50-sky-dashboard.js:189	sky3d
 build	fn	apps/sky3d/js/58-ui-all-tabs.js:19	sky3d
+build	fn	apps/sky3d/js/60-wheel-beauty.js:30	sky3d
 build	fn	shell/js/locpicker.js:129	shell
 build	fn	shared/quick-menu.js:136	shared
 buildActivationPanel	fn	apps/birth-chart/js/71-life-activation.js:42	birth-chart
@@ -1878,6 +1879,7 @@ stickPointerUp	fn	apps/sky3d/js/09-free-fly-joystick.js:26	sky3d
 stopCam	fn	apps/birth-chart/js/76-share-link-qr.js:41	birth-chart
 STORAGE_KEY	const	apps/birth-chart/js/18-ui-location-profiles.js:105	birth-chart
 strength	fn	apps/birth-chart/js/123-prashna.js:31	birth-chart
+strip	fn	apps/sky3d/js/60-wheel-beauty.js:23	sky3d
 stronger	fn	apps/birth-chart/js/78-dasha-systems-core.js:68	birth-chart
 strongerPlanet	fn	apps/birth-chart/js/78-dasha-systems-core.js:38	birth-chart
 sub	fn	apps/sky3d/js/45-vimshottari-dasha.js:15	sky3d
@@ -1935,6 +1937,7 @@ tasksAll	fn	apps/notepad/js/01-notepad.js:69	notepad
 tasksHTML	fn	apps/notepad/js/01-notepad.js:154	notepad
 TCSS	const	shell/js/locpicker.js:127	shell
 TDY	const	apps/birth-chart/js/122-today-for-you.js:13	birth-chart
+tex	fn	apps/sky3d/js/60-wheel-beauty.js:14	sky3d
 text	fn	apps/birth-chart/js/102-planet-states.js:367	birth-chart
 text	fn	apps/birth-chart/js/106-shadbala-ui.js:34	birth-chart
 text	fn	apps/birth-chart/js/108-ashtakavarga-ui.js:42	birth-chart
@@ -2110,6 +2113,7 @@ WESTERN_ASPECTS	const	apps/birth-chart/js/09-aspect-events.js:62	birth-chart
 wheel	fn	apps/birth-chart/js/71-life-activation.js:23	birth-chart
 wheel	fn	apps/sky3d/js/41-quick-planet-picker.js:17	sky3d
 wheel	fn	apps/sky3d/js/50-sky-dashboard.js:45	sky3d
+wheelBeautyTick	fn	apps/sky3d/js/60-wheel-beauty.js:67	sky3d
 wheelCenter	fn	apps/birth-chart/js/131-astro-atlas.js:157	birth-chart
 wheelFitDist	fn	apps/sky3d/js/07-position-snapshot.js:21	sky3d
 wheelFitPhi	fn	apps/sky3d/js/07-position-snapshot.js:31	sky3d

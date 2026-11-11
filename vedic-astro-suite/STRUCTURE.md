@@ -333,6 +333,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/58-ui-all-tabs.js` — "All" button in the tab strip: grid of every tab (one tap to open), keeps the active tab in view
 - `apps/sky3d/css/31-ui-refresh.css` — phone interface refresh loaded last: slim timeline grid, compact top card, hidden logo mark, compact tab strip, All-tabs grid (`ui-` prefix)
 - `apps/sky3d/js/59-wheel-frame.js` — wheel framing on phones: finds the free band between the cards and the timeline bar, shifts the picture into it (camera view offset) and re-fits the zoom; `wheelBand()`, `wheelFrameUpdate()`
+- `apps/sky3d/js/60-wheel-beauty.js` — Zodiac Wheel beauty pass: soft Sun glow (replaces hard shells), degree scale on the sign ring, golden aura and inner plate, Earth/Moon lift, gentle Sun breathing and gem twinkle; off with localStorage vax3d_beauty='0'
 - `tests/sky3d_shadbala_test.js` — engine parity with the Birth Chart plus live adapter checks
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
