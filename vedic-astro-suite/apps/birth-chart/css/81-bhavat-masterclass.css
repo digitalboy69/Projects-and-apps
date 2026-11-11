@@ -1,0 +1,70 @@
+/* Bhavat Bhavam Masterclass (js/152). Class-scoped (bmc-) only; never bare i/b/span. */
+.bmc{--g:#e6b94f;--line:rgba(255,255,255,.09);--mut:var(--text-muted,#9f9a8f);padding-bottom:14px}
+.bmc-tabs{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px;margin:0 0 12px;border:1px solid var(--line);border-radius:14px;background:rgba(20,18,14,.92);backdrop-filter:blur(8px)}
+.bmc-tabs button{border:0;border-radius:10px;background:transparent;color:var(--mut);font:600 13px var(--font-sans);padding:9px 2px;min-height:40px;cursor:pointer}
+.bmc-tabs button.on{background:rgba(230,185,79,.16);color:var(--g)}
+.bmc-tabs button:focus-visible,.bmc summary:focus-visible,.bmc select:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.bmc section[hidden]{display:none}
+.bmc-hero h3{margin:6px 0 6px;font:600 24px/1.15 var(--font-serif,serif);color:var(--tx)}
+.bmc-hero p{margin:0 0 12px;font-size:13.5px;line-height:1.6;color:var(--mut)}
+.bmc-hero p b{color:var(--tx)}
+.bmc-list{display:grid;gap:8px;margin-bottom:8px}
+.bmc-h{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035)}
+.bmc-h>summary{list-style:none;display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer}
+.bmc-h>summary::-webkit-details-marker{display:none}
+.bmc-h[open]>summary{border-bottom:1px solid var(--line)}
+.bmc-n{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:600 13px var(--font-sans);color:var(--g);background:rgba(230,185,79,.12)}
+.bmc-n.d{background:rgba(230,185,79,.3);color:#17130a}
+.bmc-ar{flex:none;color:var(--mut);font-size:13px}
+.bmc-st{min-width:0;flex:1}
+.bmc-st b{display:block;font:600 14px var(--font-sans);color:var(--tx)}
+.bmc-st small{display:block;font-size:11.5px;color:var(--mut);margin-top:2px}
+.bmc-live{flex:none;font:700 10px var(--font-sans);letter-spacing:.06em;text-transform:uppercase;color:#17130a;background:var(--g);border-radius:999px;padding:3px 7px}
+.bmc-body{padding:10px 12px 12px;font-size:13px;line-height:1.55;color:var(--mut)}
+.bmc-body p{margin:0 0 9px}
+.bmc-body h5,.bmc-sum h5{margin:0 0 6px;font:600 13px var(--font-sans);color:var(--tx)}
+.bmc-formula{font-size:12px;color:var(--mut);background:rgba(255,255,255,.04);border-radius:10px;padding:8px 10px;margin-bottom:10px}
+.bmc-layer{margin-bottom:10px;padding:10px;border:1px solid var(--line);border-radius:12px}
+.bmc-f{font-size:12.5px;line-height:1.6;color:var(--mut)}
+.bmc-f b{color:var(--tx)}
+.bmc-chip{display:inline-block;font:600 11px var(--font-sans);border-radius:999px;padding:2px 8px;margin-left:4px;border:1px solid var(--line);color:var(--tx);white-space:nowrap}
+.bmc-chip i{font-style:normal;opacity:.7}
+.bmc-chip.g2{background:rgba(94,196,183,.22)}.bmc-chip.g1{background:rgba(94,196,183,.1)}.bmc-chip.m{background:rgba(255,255,255,.05)}.bmc-chip.r1{background:rgba(217,108,155,.12)}.bmc-chip.r2{background:rgba(217,108,155,.26)}
+.bmc-parts{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}
+.bmc-parts li{display:flex;gap:8px;font-size:12px;align-items:baseline}
+.bmc-parts li i{flex:none;width:22px;font-style:normal;font-weight:600;text-align:right}
+.bmc-parts li.p i{color:#5ec4b7}.bmc-parts li.n i{color:#d96c9b}.bmc-parts li.z i{color:var(--mut)}
+.bmc-parts li b{color:var(--tx);font-weight:600}
+.bmc-rel,.bmc-tm,.bmc-kar,.bmc-pair{margin-top:8px;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.04);font-size:12.5px}
+.bmc-rel b,.bmc-tm b,.bmc-kar b,.bmc-pair b{display:block;color:var(--tx);margin-bottom:2px}
+.bmc-rel.reinforced{border-left:3px solid #5ec4b7}.bmc-rel.care{border-left:3px solid #d96c9b}.bmc-rel.effort,.bmc-rel.help,.bmc-rel.mixed,.bmc-rel.same{border-left:3px solid var(--g)}
+.bmc-sum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.bmc-sum>div{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.035)}
+.bmc-sum ol{margin:0;padding-left:18px;font-size:13px;color:var(--tx)}
+.bmc-sum li small{display:block;color:var(--mut);font-size:11px}
+.bmc-fine{font-size:12px;line-height:1.55;color:var(--mut);margin:10px 0 0}
+.bmc-fine a,.bmc-body a{color:var(--g)}
+.bmc-tag{display:inline-block;font:600 10px var(--font-sans);letter-spacing:.03em;border-radius:999px;padding:1px 7px;border:1px solid var(--line);vertical-align:middle}
+.bmc-tag.tS{color:#5ec4b7}.bmc-tag.tM{color:#8a6fb8}.bmc-tag.tC{color:var(--g)}
+.bmc-ctl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.bmc-ctl:has(:only-child){grid-template-columns:1fr}
+.bmc-sel{display:grid;gap:4px;font-size:11.5px;color:var(--mut)}
+.bmc-sel select{min-height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--tx);font:500 14px var(--font-sans);padding:0 10px}
+.bmc-cell{border:1px solid var(--line);border-radius:14px;padding:12px;background:rgba(255,255,255,.035);margin-bottom:14px}
+.bmc-big{font:600 17px/1.3 var(--font-serif,serif);color:var(--tx);margin-bottom:6px}
+.bmc-big em{font-style:normal;color:var(--g)}
+.bmc-ph,.bmc-nt,.bmc-wk{font-size:12.5px;line-height:1.55;color:var(--mut);margin:8px 0 0}
+.bmc-wk{font-size:11.5px}
+.bmc-hats{list-style:none;margin:0 0 6px;padding:0;display:grid;gap:6px}
+.bmc-hats li{display:flex;gap:10px;border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:rgba(255,255,255,.03);font-size:12.5px;line-height:1.5;color:var(--mut)}
+.bmc-hats li b{color:var(--tx)}
+.bmc-hn{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 12px var(--font-sans);color:var(--g);background:rgba(230,185,79,.12)}
+.bmc-ex{margin:0;padding-left:18px;font-size:12.5px;line-height:1.55}
+.bmc-ex li{margin-bottom:6px}.bmc-ex b{color:var(--tx)}
+.bmc-code{font:500 13px/1.6 ui-monospace,Menlo,monospace;color:var(--tx);background:rgba(255,255,255,.05);border-radius:10px;padding:9px 10px;overflow-wrap:anywhere}
+.bmc-pairs{display:grid;gap:8px;margin-bottom:10px}
+.bmc-pr{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.5}
+.bmc-pr b{color:var(--tx)}
+.bmc-rule{margin-bottom:10px;font-size:12.5px;line-height:1.55}.bmc-rule b{color:var(--tx)}
+.bmc-steps{margin:0 0 8px;padding-left:20px;font-size:12.5px;line-height:1.6}.bmc-steps li{margin-bottom:5px}
+@media (max-width:359px){.bmc-sum,.bmc-ctl{grid-template-columns:1fr}}

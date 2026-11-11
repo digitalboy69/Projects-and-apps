@@ -539,6 +539,11 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/74-bhavat-bhavam.css` — styles for House from the House (`bbh-` prefix)
 - `tests/bhavat_bhavam_test.js` — node test for js/140 (pairs vs two sources, arudha rule hand-worked, 60 real charts)
 - `tests/bhavat_bhavam_browser_test.py` — Playwright test of the House from the House panel at 390px (`BBH_SHOTS=dir`)
+- `apps/birth-chart/js/151-bhavat-masterclass-data.js` — Bhavat Bhavam Masterclass teaching data (global `BMD`): 12 pairs, sourced X-from-Y examples, reading recipes by question, rules tagged S/M/C, where teachers differ, steps, mistakes, source URLs
+- `apps/birth-chart/js/152-bhavat-masterclass.js` — Bhavat Bhavam Masterclass engine and panel (global `BMC`): derived-house formula, any house from any house, twelve hats, Support score per house, agreement of the two layers, dasha timing check; panel-bhavatclass (tabs My chart, Explorer, Recipes, Learn)
+- `apps/birth-chart/css/81-bhavat-masterclass.css` — styles for the Masterclass (`bmc-` prefix)
+- `tests/bhavat_masterclass_test.js` — node test for js/151-152 (formulas vs sources, inverse of all 144 counts, scoring rules, dasha, 60 real charts)
+- `tests/bhavat_masterclass_browser_test.py` — Playwright test of the Masterclass at 390 and 360px (`BMC_SHOTS=dir`)
 - `apps/birth-chart/js/141-ashtakavarga-extras.js` — Ashtakavarga Workings (global `ASX`): Prastara, Sodhana + pindas, Kakshya and Transit tabs (A8a-d); panel-asx
 - `apps/birth-chart/js/142-gochara-vedha.js` — Gochara vedha pair tables and check (global `GVD`); used by Today for You to mark a favourable planet as held back
 - `apps/birth-chart/js/143-synastry.js` — Synastry (global `SYN`): two charts side by side, planets in each other's houses, contacts, Moon relation, Lagna lords, Ashtakoota both orders; panel-synastry

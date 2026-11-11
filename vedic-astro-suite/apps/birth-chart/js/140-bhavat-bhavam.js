@@ -27,7 +27,7 @@ const BBH = (() => {
   const pl = a => a.length ? a.map(n => `${G(n)} ${n}`).join(', ') : 'empty';
   function html(chart, profile) {
     const D = compute(chart);
-    return `<div class="bbh"><div class="bbh-hero"><h3>House from the House</h3><p><b>Bhavat Bhavam</b> reads a house a second time: the Nth house counted from the Nth house. The 7th from the 7th is the 1st, so a partner is also read through the self. It supplements the main reading and does not replace it.</p></div>
+    return `<div class="bbh"><div class="bbh-hero"><h3>House from the House</h3><p><b>Bhavat Bhavam</b> reads a house a second time: the Nth house counted from the Nth house. The 7th from the 7th is the 1st, so a partner is also read through the self. It supplements the main reading and does not replace it.</p><p><button type="button" class="bbh-go" onclick="switchAppTab('panel-bhavatclass')">Open the full Masterclass →</button></p></div>
       <div class="bbh-list">${D.rows.map(r => `<article class="bbh-card"><header><span class="bbh-n">${r.house}</span><span class="bbh-ar">→</span><span class="bbh-n d">${r.derived}</span><div class="bbh-t"><b>${ORD(r.house)} from the ${ORD(r.house)} is the ${ORD(r.derived)}</b><small>${esc(r.theme)} read through ${esc(r.dTheme)}</small></div></header>
         <div class="bbh-b"><span>${esc(r.signName)}, lord ${r.lord} in house ${r.lordHouse}</span><span>${esc(pl(r.planets))}</span></div></article>`).join('')}</div>
       <div class="bbh-hero"><h3>Arudha Padas</h3><p>The <b>arudha</b> of a house is the image it projects, how it looks from outside. Here are all twelve, with the house each falls in from your Lagna.</p></div>

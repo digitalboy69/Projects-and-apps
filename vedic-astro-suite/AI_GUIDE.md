@@ -199,17 +199,17 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - D-chart borders were missing in the app because every chart reused the same gradient ids (`ng`, `sg`, `wg`); a hidden copy (My Chart overview) earlier in the page made browsers drop all gold strokes. `chUniq` in birth-chart/js/61-varga-chart-svg.js now gives each chart unique ids.
 - Divisional Charts page tidied (step 1 of the layout clean-up): shorter title, compact controls card (picker, style, one options row), compact chart head so the chart shows on the first screen (css/27 end block, text in js/58 and js/84).
 - Compare Lab (experiment, 🧪 button on Divisional Charts): full-screen canvas, three-dot menu adds up to 4 charts (D1 vs D9, any vs any), per-chart style, tap a planet to follow it across charts, planet-by-chart table, plain-language notes, copy as text (hidden while the app's Copy-buttons setting is off). js/115-compare-lab.js (CMPLAB), css/54-compare-lab.css, test tests/compare_lab_test.py; planet badges in js/61 now carry class ch-pl + data-p.
-
+- Bhavat Bhavam Masterclass (new Home > Analysis tile `panel-bhavatclass`, 2026-11-12): `js/151-bhavat-masterclass-data.js` (BMD, rules tagged S/M/C with source ids) + `js/152-bhavat-masterclass.js` (BMC) + `css/81`. Tabs: My chart (12 pairs, Support score, agreement, dasha timing), Explorer (any house from any house, 12 hats), Recipes, Learn. Sources PB/AS/BP/VJ; no classical verse verified (said on the page). Test: `node tests/bhavat_masterclass_test.js`. Old `panel-bhavat` links to it.
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-12 - 2149 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-12 - 2169 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 240 files, 34566 lines, 2862 KB
+**birth-chart** - 243 files, 34927 lines, 2901 KB
 ```
-index.html                                         665 lines   38 KB
+index.html                                         668 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -271,9 +271,11 @@ js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
 js/147-tools-hub.js                                117 lines   11 KB
 js/148-export-builder.js                           260 lines   25 KB
-js/149-feature-guide-data.js                       298 lines   29 KB
+js/149-feature-guide-data.js                       303 lines   30 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
+js/151-bhavat-masterclass-data.js                   99 lines   12 KB
+js/152-bhavat-masterclass.js                       181 lines   19 KB
 js/16-rectification-engine.js                       36 lines    2 KB
 js/17-special-lagnas.js                            404 lines   23 KB
 js/18-ui-location-profiles.js                      124 lines    5 KB
@@ -283,7 +285,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             172 lines   18 KB
+js/25-home-and-tabs.js                             173 lines   19 KB
 js/26-rectification-studio.js                      250 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -442,13 +444,14 @@ css/70-upagrahas.css                                20 lines    1 KB
 css/71-sensitive-degrees.css                        25 lines    1 KB
 css/72-sudarshana.css                               38 lines    3 KB
 css/73-argala.css                                   25 lines    2 KB
-css/74-bhavat-bhavam.css                            21 lines    1 KB
+css/74-bhavat-bhavam.css                            22 lines    1 KB
 css/75-ashtakavarga-extras.css                      59 lines    5 KB
 css/76-synastry.css                                 29 lines    2 KB
 css/77-panchang-calendar.css                        37 lines    3 KB
 css/78-tools-hub.css                                35 lines    3 KB
 css/79-export-builder.css                           49 lines    5 KB
 css/80-feature-guide.css                            46 lines    5 KB
+css/81-bhavat-masterclass.css                       71 lines    6 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
