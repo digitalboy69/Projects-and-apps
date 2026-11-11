@@ -13,7 +13,7 @@ const THB = (() => {
     ['deeper', 'Combinations & deeper study', 'Look for yogas, doshas and a second opinion on a house', '#4F8FBF', ['panel-yogas', 'panel-dosha', 'panel-argala', 'panel-bhavat', 'panel-kp', 'panel-sahams', 'panel-relationships', 'panel-triggerlab', 'panel-meaninglab']],
     ['people', 'People & compatibility', 'Compare my chart with someone else', '#D96C9B', ['panel-match', 'panel-synastry']],
     ['fix', 'Fix the birth time or date', 'Correct an uncertain birth time or find a forgotten birth date', '#E0A64A', ['panel-rectification', 'panel-lifeevents', 'panel-sandhi', 'panel-vargatimeline', 'panel-transittimer', 'panel-datefinder']],
-    ['learn', 'Learn & look things up', 'Learn the basics or look up a planet, sign or number', '#7FB77E', ['panel-atlas', 'panel-planetency', 'panel-numerology']],
+    ['learn', 'Learn & look things up', 'Learn the basics or look up a planet, sign or number', '#7FB77E', ['panel-guide', 'panel-atlas', 'panel-planetency', 'panel-numerology']],
     ['share', 'Export & help', 'Save, share or ask the developer', '#C95050', ['panel-export', 'panel-contact']]
   ];
   /* everyday words people type; added to the search text only */
@@ -29,7 +29,7 @@ const THB = (() => {
     'panel-dosha': 'manglik kaal sarp pitru gand mool remedy problem', 'panel-yogas': 'raj yoga dhana combination',
     'panel-rectification': 'birth time wrong unsure correct fix', 'panel-datefinder': 'forgotten birth date festival family remembers',
     'panel-numerology': 'name number lucky', 'panel-atlas': 'basics beginner learn glossary', 'panel-shadbala': 'planet power strength', 'panel-ashtakavarga': 'bindu points sarvashtakavarga',
-    'panel-asx': 'prastara sodhana kakshya reduction transit points', 'panel-export': 'download pdf copy share save report', 'panel-contact': 'bug feedback help support'
+    'panel-asx': 'prastara sodhana kakshya reduction transit points', 'panel-export': 'download pdf copy share save report', 'panel-contact': 'bug feedback help support', 'panel-guide': 'help how to use manual index what does explain instructions learn'
   };
   /* four big shortcuts under Recently used (owner's choice): [panel id, label, one line] */
   const QUICK = [['panel-vargas', 'Divisional Charts', 'D1 to D144 chart viewer'], ['panel-dasha', 'Vimshottari Dasha', 'Life-period timeline'], ['panel-reading', 'Reading', 'Plain-language chart reading'], ['panel-ashtakavarga', 'Ashtakavarga', 'Point-strength system']];

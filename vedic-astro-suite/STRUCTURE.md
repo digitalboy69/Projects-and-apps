@@ -541,6 +541,9 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/78-tools-hub.css` — styles for the Tools hub (`th-` prefix) and the six-tab bottom bar
 - `apps/birth-chart/js/148-export-builder.js` — Export builder (global `EXB`): the Export tab as a structured screen (presets, output type, split into parts, grouped sections with sizes, live totals, Copy / Download); replaces the old pop-up; panel-export
 - `apps/birth-chart/css/79-export-builder.css` — styles for the Export builder (`exb-` prefix)
+- `apps/birth-chart/js/149-feature-guide-data.js` — Feature Guide data (`FG_DATA`): what / when / steps / key words / tip for every tool and the six tabs
+- `apps/birth-chart/js/150-feature-guide.js` — Feature Guide screen (`FG`): searchable accordion cards, group chips, Open-this-tool buttons; panel-guide
+- `apps/birth-chart/css/80-feature-guide.css` — styles for the Feature Guide (`fg-` prefix)
 - `apps/birth-chart/css/75-ashtakavarga-extras.css` — styles for Ashtakavarga Workings (`asx-` prefix)
 - `tests/ashtakavarga_extras_test.js` — node test for js/141 (Prastara column sums equal the app BAV over 100 charts, classic totals, SAV 337)
 - `tests/synastry_test.js` — node test for js/143 (hand-worked houses, aspects and scores; 60 chart pairs give mirrored tables and contacts when swapped)
@@ -550,6 +553,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/tools_hub_test.js` — node test for js/147 (every tool listed exactly once, groups, search words, recents)
 - `tests/tools_hub_browser_test.py` — Tools tab at phone width: bar fits, search, chips, open a tool, recents
 - `tests/export_builder_browser_test.py` — Export tab at phone width: presets, group All/None, divisional chart picks, remembered selection, txt/json download, split into parts, sky-right-now place, quiet opening of unopened tool pages
+- `tests/feature_guide_test.js` — node test: every tool has a full guide entry, links valid, no fear words, search finds plain words
+- `tests/feature_guide_browser_test.py` — Feature Guide at 390 and 360px: cards, one open at a time, search, group chips, Open button, listed in Tools tab
 - `tests/gochara_vedha_test.js` — node test for js/142 (pair tables vs the published house sets, exceptions both ways, nodes ignored)
 - `tests/ashtakavarga_extras_browser_test.py` — Playwright test of the Ashtakavarga Workings panel at 390px (`ASX_SHOTS=dir`)
 - `docs/ASTRO_FEATURES_PLAN.md` — Handoff plan for the astrologer tools the app still lacks (avasthas, Vimshopaka, upagrahas, sensitive degrees, Sudarshana, Argala, Ashtakavarga extras, Gochara vedha, synastry, Muhurta, Panchang calendar, remedies): ordered checklist A0-A14, source rules, per-step detail, session log. A new chat starts here

@@ -1,0 +1,28 @@
+// node tests/feature_guide_test.js - Feature Guide (js/149 data + js/150 screen): every tool has a full entry, ids valid, search works
+const vm=require('vm'),fs=require('fs'),path=require('path');
+const base=path.join(__dirname,'..','apps','birth-chart','js')+'/';
+const store={}; const ctx={console,JSON,Math,localStorage:{getItem:k=>(k in store?store[k]:null),setItem:(k,v)=>{store[k]=String(v);}}};
+ctx.window=ctx; vm.createContext(ctx);
+const s25=fs.readFileSync(base+'25-home-and-tabs.js','utf8'); const a=s25.indexOf('const HOME_ITEMS=['), b=s25.indexOf('];',a)+2;
+vm.runInContext(s25.slice(a,b),ctx);
+['147-tools-hub.js','149-feature-guide-data.js','150-feature-guide.js'].forEach(f=>vm.runInContext(fs.readFileSync(base+f,'utf8'),ctx,{filename:f}));
+const run=s=>vm.runInContext(s,ctx); let fail=0; const ok=(c,m)=>{ if(!c){fail++;console.log('FAIL',m);} else console.log('ok  ',m); };
+const ids=run('HOME_ITEMS.map(i=>i[0])'), E=run('FG_DATA.e');
+ok(ids.every(i=>E[i]),'every tool in HOME_ITEMS has a guide entry ('+ids.length+')');
+ok(Object.keys(E).every(i=>ids.includes(i)),'no guide entry for a tool that does not exist');
+ok(Object.values(E).every(e=>e.what.length>30&&e.when.length>15&&e.how.length>=2&&e.tip.length>5),'every entry has what, when, 2+ steps and a tip');
+ok(Object.values(E).every(e=>(e.see||[]).every(s=>ids.includes(s))),'every "read with" link points to a real tool');
+ok(Object.values(E).every(e=>Array.isArray(e.terms)&&e.terms.every(t=>t.length===2&&t[0]&&t[1])),'key words are [word, meaning] pairs');
+const bad=/\b(doom|death|fatal|curse|disaster|ruin|danger|will die|accident)\b/i;
+ok(!Object.values(E).some(e=>bad.test(JSON.stringify(e))),'no fate or fear words');
+ok(run('FG_DATA.tabs.length')===6,'six bottom-bar tabs described');
+const top=q=>{const r=run(`FG.search(${JSON.stringify(q)})`); return r?r.map(x=>x.i[0]):null;};
+ok(top('')===null,'empty search shows everything');
+ok(top('marriage').includes('panel-match')&&top('marriage').includes('panel-synastry'),'"marriage" finds matching and synastry');
+ok(top('sade sati').includes('panel-transits'),'"sade sati" finds Transits');
+ok(top('lunar birthday').includes('panel-tithi'),'text inside entries is searched');
+ok(top('zzzqq').length===0,'nonsense finds nothing');
+const h=run('FG.html()'); ok(h.split('class="fg-card').length-1===ids.length,'all tools drawn as cards');
+run("FG.ST.open='panel-dasha'"); const h2=run('FG.html()'); ok(/How to use it/.test(h2)&&/Open Dasha/.test(h2),'an open card shows steps and an Open button');
+ok(run("FG.html().split('fg-body').length-1")===1||run("FG.html().split('class=\"fg-body').length-1")===1,'only one card open at a time');
+process.exit(fail?1:0);

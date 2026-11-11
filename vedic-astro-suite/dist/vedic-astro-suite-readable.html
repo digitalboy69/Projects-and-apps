@@ -16047,6 +16047,52 @@ body.cl-open{overflow:hidden}
 .exb-flash.bad{background:#2b1717;border-color:#d96c6c;color:#f3c4c4}
 @media (max-width:380px){.exb-coords{grid-template-columns:1fr 1fr}.exb-q{width:100%;margin:6px 0 0}.exb-step h4{flex-wrap:wrap}}
 </style>
+<style>
+/* Feature Guide (js/150), fg- prefix. Animates only opacity and transform. Works at 360px. */
+.fg{padding:0 2px 30px}
+.fg-hero{position:relative;overflow:hidden;margin:0 0 14px;padding:20px 18px 18px;border-radius:20px;border:1px solid rgba(212,175,55,.3);background:linear-gradient(150deg,#1a1730 0%,#10131c 55%,#171208 100%)}
+.fg-glow{position:absolute;right:-50px;top:-60px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.35),rgba(212,175,55,0) 70%);animation:fgPulse 6s ease-in-out infinite;pointer-events:none}
+@keyframes fgPulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.15);opacity:1}}
+.fg-kick{position:relative;display:inline-block;font-size:10.5px;letter-spacing:.18em;color:var(--gold-bright,#f0d27a);padding:3px 10px;border-radius:999px;border:1px solid rgba(212,175,55,.45);margin-bottom:10px}
+.fg-hero h3{position:relative;margin:0 0 6px;font-size:24px;line-height:1.2;background:linear-gradient(90deg,#f6e3a1,#d4af37);-webkit-background-clip:text;background-clip:text;color:transparent}
+.fg-hero p{position:relative;margin:0;font-size:13.5px;line-height:1.55;color:var(--text-dim,#a9afc4)}
+.fg-sb{position:sticky;top:0;z-index:5;padding:6px 0 8px;background:linear-gradient(#0b0d14 70%,rgba(11,13,20,0))}
+.fg-q{width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border-radius:14px;border:1px solid rgba(212,175,55,.35);background:#10131c url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E") 13px 50%/18px no-repeat;color:inherit;font:inherit;font-size:15px}
+.fg-q:focus{outline:2px solid rgba(212,175,55,.6);outline-offset:1px}
+.fg-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.fg-chips::-webkit-scrollbar{display:none}
+.fg-chips button{flex:0 0 auto;padding:8px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:#10131c;color:var(--text-dim,#a9afc4);font:inherit;font-size:12.5px;cursor:pointer}
+.fg-chips button.on{background:rgba(212,175,55,.16);border-color:var(--gold,#d4af37);color:var(--gold-bright,#f0d27a)}
+.fg-sec{margin:0 0 22px}
+.fg-sec h3{display:flex;align-items:center;gap:8px;margin:0 0 2px;font-size:15.5px}
+.fg-sec h3 i{width:4px;height:16px;border-radius:2px;background:var(--c,#d4af37)}
+.fg-sec h3 em{margin-left:auto;font-style:normal;font-size:11.5px;color:var(--text-dim,#a9afc4);font-weight:400}
+.fg-use{margin:0 0 9px 12px;font-size:12.5px;color:var(--text-dim,#a9afc4);line-height:1.4}
+.fg-cnt{font-size:12px;color:var(--text-dim,#a9afc4);margin:0 0 8px}
+.fg-card{margin:0 0 8px;border-radius:16px;border:1px solid rgba(255,255,255,.08);border-left:3px solid var(--c,#d4af37);background:#10131c;overflow:hidden}
+.fg-card.on{border-color:var(--c,#d4af37);background:#121624}
+.fg-head{display:grid;grid-template-columns:38px 1fr 18px;gap:11px;align-items:center;width:100%;padding:11px 12px;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.fg-head:active{transform:scale(.985)}
+.fg-i{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.06);font-size:19px}
+.fg-t{min-width:0}.fg-t b{display:block;font-size:14.5px;font-weight:600;line-height:1.3}
+.fg-t small{display:block;margin-top:2px;font-size:12px;line-height:1.4;color:var(--text-dim,#a9afc4);overflow-wrap:anywhere}
+.fg-ch{font-size:22px;color:var(--text-dim,#a9afc4);transition:transform .2s}.fg-card.on .fg-ch{transform:rotate(90deg);color:var(--c,#d4af37)}
+.fg-body{padding:2px 14px 16px 14px;animation:fgIn .25s ease-out}
+@keyframes fgIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.fg-blk{margin:12px 0 0}.fg-blk h5{margin:0 0 5px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--c,#d4af37)}
+.fg-blk p{margin:0;font-size:13.5px;line-height:1.6}
+.fg-steps{list-style:none;margin:0;padding:0;counter-reset:s;display:flex;flex-direction:column;gap:7px}
+.fg-steps li{counter-increment:s;display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start;font-size:13.5px;line-height:1.5}
+.fg-steps li::before{content:counter(s);display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--c,#d4af37);color:#0b0d14;font-size:12px;font-weight:700}
+.fg-terms{margin:0;display:grid;gap:6px}.fg-terms dt{font-weight:600;font-size:13px;color:var(--gold-bright,#f0d27a)}.fg-terms dd{margin:0 0 4px;font-size:13px;line-height:1.5;color:var(--text-dim,#a9afc4)}
+.fg-tip{display:flex;flex-direction:column;gap:3px;margin:14px 0 0;padding:10px 12px;border-radius:12px;background:rgba(212,175,55,.08);border:1px dashed rgba(212,175,55,.4);font-size:13px;line-height:1.5}.fg-tip b{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-bright,#f0d27a)}
+.fg-see{display:flex;flex-wrap:wrap;gap:6px}.fg-chip{padding:7px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:#0b0d14;color:inherit;font:inherit;font-size:12.5px;cursor:pointer}
+.fg-go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:16px 0 0;padding:13px;border:0;border-radius:14px;background:linear-gradient(90deg,#d4af37,#f0d27a);color:#0b0d14;font:inherit;font-size:14.5px;font-weight:700;cursor:pointer}.fg-go:active{transform:scale(.98)}
+.fg-tg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.fg-tab{padding:11px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#10131c}.fg-tab span{font-size:20px}.fg-tab b{display:block;margin:4px 0 2px;font-size:13.5px}.fg-tab small{display:block;font-size:11.5px;line-height:1.4;color:var(--text-dim,#a9afc4)}
+.fg-empty{padding:26px 8px;text-align:center}.fg-empty b{display:block;margin-bottom:6px}.fg-empty span{font-size:13px;color:var(--text-dim,#a9afc4)}
+@media (prefers-reduced-motion:reduce){.fg-glow,.fg-body{animation:none}}
+</style>
 
 
 
@@ -20025,6 +20071,7 @@ const HOME_ITEMS=[
  ['panel-ashtakavarga','▦','Ashtakavarga','Point-strength system','Analysis','home'],
  ['panel-relationships','⚯','Relationships','Conjunctions & aspects','Analysis','home'],
  ['panel-match','💞','Kundali Matching','Ashtakoota 36-point match & Manglik check','Compatibility','match'],
+ ['panel-guide','📖','Feature Guide','Every tool explained: what it does and how to use it','Export & Help','home'],
  ['panel-export','📤','Export & Share','Download a file or copy your full report','Export & Help','export'],
  ['panel-contact','💬','Contact Developer','Bugs, ideas or astrology chat','Export & Help','export']];
 const HOME_SEC_COL={'Your Chart':'#D4AF37','Fix Birth Time':'#5EC4B7','Time & Cycles':'#8A6FB8','Analysis':'#6B7FA3','Compatibility':'#D96C9B','Export & Help':'#C95050'};
@@ -55751,7 +55798,7 @@ const THB = (() => {
     ['deeper', 'Combinations & deeper study', 'Look for yogas, doshas and a second opinion on a house', '#4F8FBF', ['panel-yogas', 'panel-dosha', 'panel-argala', 'panel-bhavat', 'panel-kp', 'panel-sahams', 'panel-relationships', 'panel-triggerlab', 'panel-meaninglab']],
     ['people', 'People & compatibility', 'Compare my chart with someone else', '#D96C9B', ['panel-match', 'panel-synastry']],
     ['fix', 'Fix the birth time or date', 'Correct an uncertain birth time or find a forgotten birth date', '#E0A64A', ['panel-rectification', 'panel-lifeevents', 'panel-sandhi', 'panel-vargatimeline', 'panel-transittimer', 'panel-datefinder']],
-    ['learn', 'Learn & look things up', 'Learn the basics or look up a planet, sign or number', '#7FB77E', ['panel-atlas', 'panel-planetency', 'panel-numerology']],
+    ['learn', 'Learn & look things up', 'Learn the basics or look up a planet, sign or number', '#7FB77E', ['panel-guide', 'panel-atlas', 'panel-planetency', 'panel-numerology']],
     ['share', 'Export & help', 'Save, share or ask the developer', '#C95050', ['panel-export', 'panel-contact']]
   ];
   /* everyday words people type; added to the search text only */
@@ -55767,7 +55814,7 @@ const THB = (() => {
     'panel-dosha': 'manglik kaal sarp pitru gand mool remedy problem', 'panel-yogas': 'raj yoga dhana combination',
     'panel-rectification': 'birth time wrong unsure correct fix', 'panel-datefinder': 'forgotten birth date festival family remembers',
     'panel-numerology': 'name number lucky', 'panel-atlas': 'basics beginner learn glossary', 'panel-shadbala': 'planet power strength', 'panel-ashtakavarga': 'bindu points sarvashtakavarga',
-    'panel-asx': 'prastara sodhana kakshya reduction transit points', 'panel-export': 'download pdf copy share save report', 'panel-contact': 'bug feedback help support'
+    'panel-asx': 'prastara sodhana kakshya reduction transit points', 'panel-export': 'download pdf copy share save report', 'panel-contact': 'bug feedback help support', 'panel-guide': 'help how to use manual index what does explain instructions learn'
   };
   /* four big shortcuts under Recently used (owner's choice): [panel id, label, one line] */
   const QUICK = [['panel-vargas', 'Divisional Charts', 'D1 to D144 chart viewer'], ['panel-dasha', 'Vimshottari Dasha', 'Life-period timeline'], ['panel-reading', 'Reading', 'Plain-language chart reading'], ['panel-ashtakavarga', 'Ashtakavarga', 'Point-strength system']];
@@ -56112,6 +56159,372 @@ const EXB = (() => {
   window.buildExportBuilderPanel = function () { load(); return html(); };
   if (typeof registerLatePanel === 'function') registerLatePanel('panel-export', window.buildExportBuilderPanel);
   return { defs, flat, sectionsFor, splitText, total, buildText, rawJSON, load, state: ST, BASE, PRESETS, presetOn, sizeOf, measure, html };
+})();
+<\/script>
+<script>
+/* Feature Guide data (js/149): one plain-language entry for EVERY tool in HOME_ITEMS (js/25), plus the six bottom-bar tabs.
+   Entry: id -> { what, when, how: [steps], terms: [[word, meaning]], tip, see: [panel ids] }.
+   Written from what each screen really shows. Tendency wording only (no fate or fear words). tests/feature_guide_test.js checks every tool has an entry,
+   every "see" id exists, and no entry is empty. Add a new tool? Add its entry here (the test will fail until you do). */
+const FG_DATA = {
+  tabs: [
+    ['🏠', 'Home', 'Your starting page: tiles for every tool, a search box and a short "ask" area.'],
+    ['🧰', 'Tools', 'Every tool in one list, grouped by what you want to do. Search, pick a group, or reopen something you used recently.'],
+    ['📜', 'My Chart', 'Your birth chart and the pages that read it: overview, planets, houses, divisional charts.'],
+    ['🔎', 'Rectify', 'Tools for fixing an uncertain birth time or finding a forgotten birth date.'],
+    ['💞', 'Match', 'Kundali Matching: compare two charts with the 36-point Ashtakoota system.'],
+    ['📤', 'Export', 'Choose exactly what goes into a file or a copied report, then download or copy it.']
+  ],
+  e: {
+    'panel-reading': { what: 'A plain-language reading of your whole chart, written automatically from classical rules (house lords, dignity, aspects, Ashtakavarga and Dasha). It is split into ten short parts.',
+      when: 'You want the big picture first, in words, before opening any technical page.',
+      how: ['Open it after your chart is made.', 'Pick a part from the row: Right now, Summary, Life areas, Planets, Now, Yogas, Deep reading, Strength, Ashtakavarga or Problem finder.', 'Read one part at a time; the counter shows how many you have explored.'],
+      terms: [['Life areas', 'The twelve houses, each read as an area of life such as money, home or work.'], ['Dignity', 'How comfortable a planet is in its sign (own, exalted, friendly, weak).']],
+      tip: 'Treat it as a starting point for a reading, not a final answer.', see: ['panel-problem', 'panel-dasha'] },
+    'panel-problem': { what: 'Pick a life problem you are facing and see the chart reasons that tend to sit behind it, with the planets and houses involved.',
+      when: 'You have a specific worry (delay, work, relationships, health) and want to know where the chart points.',
+      how: ['Choose the problem that fits best.', 'Read the reasons shown from your own chart.', 'Open the linked tool for more detail.'],
+      terms: [['House lord', 'The planet that rules the sign of a house; its condition colours that area.']],
+      tip: 'It shows tendencies in the chart, not a verdict.', see: ['panel-reading', 'panel-dosha'] },
+    'panel-overview': { what: 'Your birth chart drawn as a diagram, with your Lagna (rising sign), Moon sign and Sun sign and the birth details.',
+      when: 'You want to see the chart itself, or switch between North and South Indian style.',
+      how: ['Read the three cards: Lagna, Rashi (Moon sign) and Surya (Sun sign).', 'Tap North Indian or South Indian to change the drawing style.', 'Open "Calculation details" to see the settings used.'],
+      terms: [['Lagna', 'The sign rising in the east at birth; house 1.'], ['Rashi', 'The sign the Moon was in.']],
+      tip: 'This is the D1 (Rashi) chart; other charts are in Divisional Charts.', see: ['panel-vargas', 'panel-planets'] },
+    'panel-avakahada': { what: 'The standard table at the top of a kundli: varna, vashya, yoni, gana, nadi, paya, name sound and more, all from the Moon and birth moment.',
+      when: 'You need the classic kundli details, or the name syllables for your birth star.',
+      how: ['Scroll the table.', 'Tap "What is this?" beside any item for a plain explanation.'],
+      terms: [['Nakshatra', 'The birth star (one of 27) the Moon was in.'], ['Nadi / Gana / Yoni', 'Matching factors used in Kundali Matching.']],
+      tip: 'These same factors feed the Ashtakoota match.', see: ['panel-match', 'panel-overview'] },
+    'panel-planets': { what: 'Where every planet stood at birth: sign, degree, nakshatra and pada, house, dignity, and what it aspects.',
+      when: 'You want the exact placement and condition of a planet.',
+      how: ['Tap any planet to open its full story.', 'Use the filters: All, Retrograde, Strong, Challenged.'],
+      terms: [['Retrograde (℞)', 'The planet appears to move backward; read as turned inward.'], ['Pada', 'A quarter of a nakshatra.']],
+      tip: 'Open the Planet Encyclopedia to learn what each planet means.', see: ['panel-planetency', 'panel-shadbala'] },
+    'panel-bhava': { what: 'Bhava Chalit: house cusps by the Sripati method. A planet near a sign edge can shift into the neighbouring house.',
+      when: 'A planet sits close to a house edge and you want to know which house it really acts in.',
+      how: ['Read the Lagna and Midheaven cards.', 'See the "planets changing house" list.'],
+      terms: [['Whole-sign house', 'Each house is one full sign.'], ['Sripati', 'A way of centring each house on its midpoint.']],
+      tip: 'If nothing shifts, the whole-sign chart already tells the story.', see: ['panel-overview'] },
+    'panel-vargas': { what: 'A viewer for all divisional (varga) charts, D1 to D144. Each chart zooms into one area of life.',
+      when: 'You want Navamsa (marriage), Dashamsa (career) or any other divisional chart.',
+      how: ['Tap a chart tile or use the dropdown.', 'Choose North or South style.', 'Switch on aspects if you want them drawn.', 'Use Copy if the Copy switch is on in Settings.'],
+      terms: [['D9 Navamsa', 'The marriage and dharma chart, the most used after D1.'], ['Varga', 'A divisional chart.']],
+      tip: 'Start with D1 and D9, then add others as needed.', see: ['panel-vimshopaka', 'panel-lagnas'] },
+    'panel-lagnas': { what: 'Twenty-three alternate ascendants (special lagnas), each viewable as a full chart.',
+      when: 'You study Jaimini or deeper methods and want Arudha, Hora, Ghati or Upapada lagna.',
+      how: ['Tap a lagna card.', 'Pick a divisional chart and style.', 'Copy all lagnas if you need the list.'],
+      terms: [['Arudha Lagna (AL)', 'The image of you that others see.'], ['Upapada (UL)', 'The lagna read for marriage and partner.']],
+      tip: 'The Arudha and Upapada are the usual starting points.', see: ['panel-bhavat'] },
+    'panel-rectification': { what: 'A guided studio for finding the true birth time. You say how sure you are and it points you to the right tool.',
+      when: 'The birth time is uncertain, rounded, or you want to confirm it.',
+      how: ['Choose how sure you are (to the minute, within 30 minutes, a few hours, or unknown).', 'Follow the suggested tools.', 'Check the dial and scan until the chart fits real events.'],
+      terms: [['Rectification', 'Adjusting the birth time until the chart matches known life events.']],
+      tip: 'Use Life-Event Checker last, to confirm.', see: ['panel-lifeevents', 'panel-sandhi', 'panel-vargatimeline'] },
+    'panel-datefinder': { what: 'Finds a forgotten birth date from clues such as a festival, tithi, weekday, nakshatra or Moon sign.',
+      when: 'You only remember something like "born on Diwali" or "on a Tuesday in the waning Moon".',
+      how: ['Enter the years to search.', 'Add any clues you know (tithi, weekday, festival, star, Moon sign, month).', 'Pick from the matching dates.'],
+      terms: [['Tithi', 'A lunar day (1 of 30 in a month).'], ['Masa', 'The lunar month.']],
+      tip: 'More clues give fewer dates.', see: ['panel-pcal', 'panel-panchanga'] },
+    'panel-sandhi': { what: 'Shows the window in which the ascendant stays the same across all divisional charts.',
+      when: 'You want to know how much the birth time can move before a chart changes sign.',
+      how: ['Tap "Calculate Sandhi Table Now".', 'Read the window per chart.'],
+      terms: [['Sandhi', 'The junction where one sign changes to the next.']],
+      tip: 'Narrow windows show which charts are most time-sensitive.', see: ['panel-vargatimeline', 'panel-rectification'] },
+    'panel-vargatimeline': { what: 'Maps the birth window on any chosen divisional chart, showing when the ascendant changes there.',
+      when: 'You test a birth time against one divisional chart.',
+      how: ['Pick a divisional chart.', 'Tap "Map Out Timeline".', 'Read the start and end of each stretch.'],
+      terms: [['Window', 'The span of time in which the D1 ascendant stays the same.']],
+      tip: 'Use D9 first.', see: ['panel-sandhi'] },
+    'panel-transittimer': { what: 'Tells when a planet or the Lagna changes house or sign in a chosen chart.',
+      when: 'You want the exact moment of a sign change, for example around the birth time.',
+      how: ['Pick the body and divisional chart.', 'Tap "Check Transit Timing".'],
+      terms: [['Ingress', 'The moment a planet enters a new sign.']],
+      tip: 'Handy for judging how near an ascendant change is.', see: ['panel-sandhi'] },
+    'panel-lifeevents': { what: 'Confirm the birth time using real events such as marriage, a move, or a job, checked against Dasha and transits.',
+      when: 'You know a few dated life events and want to test candidate birth times.',
+      how: ['Add events with their dates.', 'Run the check.', 'Compare how well each time fits.'],
+      terms: [['Dasha', 'The running life period of a planet.']],
+      tip: 'Use at least three events.', see: ['panel-rectification', 'panel-dasha'] },
+    'panel-today': { what: 'Your day read from your own Moon: Chandrabala, Tarabala, planet holds and good time slots.',
+      when: 'You want a daily planning aid or to look ahead at a chosen date.',
+      how: ['Open it; it starts at today.', 'Change the date or time, or tap Now.', 'Read the one-line tone first, then the checks below.'],
+      terms: [['Chandrabala', 'How the Moon of the day sits from your Moon sign.'], ['Tarabala', 'The day star counted from your birth star.']],
+      tip: 'It counts only the two Moon checks for its tone; it is a planning aid.', see: ['panel-choghadiya', 'panel-panchanga'] },
+    'panel-prashna': { what: 'A Prashna (horary) chart cast for the moment you ask a question, with the signs read for your topic.',
+      when: 'You have a single question right now and no birth data matters.',
+      how: ['Pick the topic (marriage, job, money, travel and more).', 'Use Now or set a date and time.', 'Check the location, then read the signs.'],
+      terms: [['Prashna', 'Question chart.']],
+      tip: 'Ask one clear question at a time.', see: ['panel-today'] },
+    'panel-triggerlab': { what: 'Pick a Dasha pattern and your own transit rules; it finds every time they hold together.',
+      when: 'You study timing and want to test a rule such as "this Dasha plus Saturn in this sign".',
+      how: ['Choose Single or Double pattern.', 'Set your transit rules (sign, lord, aspect, nakshatra).', 'Tap "Find triggers".'],
+      terms: [['Trigger', 'A moment when the Dasha pattern and your transit rules agree.']],
+      tip: 'You do not pick planets: it finds them.', see: ['panel-dasha', 'panel-transits'] },
+    'panel-meaninglab': { what: 'Mix any planets, houses, signs, lords and nakshatras and read each raw meaning side by side from your Knowledge Database.',
+      when: 'You want to build your own reading from pieces.',
+      how: ['Choose a type and a value, then tap Add.', 'Or add a planet with its sign and house.', 'Write your own meaning for each piece and the combined result.'],
+      terms: [['Raw meaning', 'The stored keyword meaning before interpretation.']],
+      tip: 'You do the reading; the lab gathers the pieces.', see: ['panel-atlas'] },
+    'panel-avasthas': { what: 'Planet States (Avasthas): each planet\'s age, alertness and mood, and how freely it can give results.',
+      when: 'You want a second view of planet strength beyond points.',
+      how: ['Read the summary line.', 'Open "How these are worked out" for the rules.'],
+      terms: [['Baladi', 'Age state: infant, young, adult, old, spent.'], ['Jagradadi', 'Alertness: awake, dreaming, asleep.']],
+      tip: 'Use with Shadbala.', see: ['panel-shadbala'] },
+    'panel-vimshopaka': { what: 'A strength out of 20 for each planet, built from how it sits across the divisional charts.',
+      when: 'You want to know if a planet\'s promise holds up across many charts.',
+      how: ['Pick a scheme (Shadvarga, Saptavarga, Dashavarga, Shodashavarga).', 'Tap a planet to see every chart it uses.'],
+      terms: [['Varga', 'A divisional chart.']],
+      tip: 'Higher tends to mean steadier results.', see: ['panel-vargas', 'panel-shadbala'] },
+    'panel-upagrahas': { what: 'Shadow points (Dhuma, Vyatipata, Parivesha, Indrachapa, Upaketu and Gulika): where each falls in your chart.',
+      when: 'You study Gulika or other sub-planets.',
+      how: ['Read each card for sign, house and nakshatra.', 'Open "How these are worked out".'],
+      terms: [['Upagraha', 'A calculated point, not a body.'], ['Gulika', 'Saturn\'s son, worked from Saturn\'s part of the day.']],
+      tip: 'Read them as supporting detail.', see: ['panel-planets'] },
+    'panel-sensitive': { what: 'Degrees read with extra care (Gandanta, Mrityu Bhaga) and nourishing ones (Pushkara).',
+      when: 'You want to check whether any planet sits on a marked degree.',
+      how: ['Scan the list; flagged planets are highlighted.', 'Open "Where these come from".'],
+      terms: [['Gandanta', 'The junction between water and fire signs.'], ['Pushkara', 'A nourishing degree.']],
+      tip: 'A mark is a note to read with care, not a verdict.', see: ['panel-planets'] },
+    'panel-sudarshana': { what: 'Three views of one chart at once (Lagna, Moon and Sun), showing which house each year of life lights.',
+      when: 'You want a yearly view of themes by age.',
+      how: ['Use − and + or Now to pick the year of life.', 'Read what sits in the lit house in all three rings.'],
+      terms: [['Sudarshana', 'The wheel of three reference points.']],
+      tip: 'Where all three agree, the theme is stronger.', see: ['panel-dasha', 'panel-tithi'] },
+    'panel-argala': { what: 'Jaimini Argala: planets that press on a house from the 2nd, 4th and 11th, and the ones that obstruct them.',
+      when: 'You want to know who supports or blocks a house.',
+      how: ['Tap a house.', 'Read the planets that intervene and the ones that obstruct.'],
+      terms: [['Argala', 'Intervention on a house.'], ['Virodha', 'Obstruction of an argala.']],
+      tip: 'Equal numbers on both sides are read as contested.', see: ['panel-bhavat'] },
+    'panel-bhavat': { what: 'House from the House (Bhavat Bhavam) and all twelve Arudha Padas, a second reading of each house.',
+      when: 'You want to read a matter twice, for example a partner through the 7th and the 1st.',
+      how: ['Open a house row.', 'Read the sign, lord and planets there.', 'See the Arudha Pada for the same house.'],
+      terms: [['Bhavat Bhavam', 'The Nth house from the Nth house.'], ['Pada', 'The Arudha of a house; how it appears to the world.']],
+      tip: 'It supplements the main reading.', see: ['panel-lagnas', 'panel-argala'] },
+    'panel-asx': { what: 'The working behind the Ashtakavarga numbers: Prastara, Sodhana (reductions), Kakshya and Transit tabs.',
+      when: 'You want to see how a point score was made, or check a transit against it.',
+      how: ['Switch tab: Prastara, Sodhana, Kakshya, Transit.', 'Pick a planet.', 'Copy the table if needed.'],
+      terms: [['Bindu', 'A single point in the system.'], ['Kakshya', 'An eight-part split of a sign.']],
+      tip: 'Use Ashtakavarga first for the totals.', see: ['panel-ashtakavarga'] },
+    'panel-pcal': { what: 'A month calendar with tithi, nakshatra, Ekadashi, full and new moons, Sankranti, festivals and eclipses.',
+      when: 'You want to find a festival, a fasting day or a lunar date.',
+      how: ['Use ‹ and › to change month, or tap Today.', 'Tap a day for details.', 'Choose Purnimanta or Amanta month names.'],
+      terms: [['Purnimanta', 'Months that end on the full Moon (North India).'], ['Sankranti', 'The Sun entering a new sign.']],
+      tip: 'A few Bhadra-based festivals can differ from other almanacs; the page flags them.', see: ['panel-panchanga', 'panel-datefinder'] },
+    'panel-synastry': { what: 'How two charts sit on each other: planets in the other\'s houses, contacts, and the two Moons.',
+      when: 'You want to see how two people\'s charts interact, beyond the 36-point score.',
+      how: ['Pick the first and second person.', 'Tap ⇄ to swap them.', 'Read the strongest contacts, then the house overlays.'],
+      terms: [['Overlay', 'A planet of one person falling in a house of the other.']],
+      tip: 'These are placements, not predictions.', see: ['panel-match'] },
+    'panel-kp': { what: 'The KP system: cusps, star and sub lords, significators, event promise and ruling planets.',
+      when: 'You follow Krishnamurti Paddhati and want its tables.',
+      how: ['Read the cusp table.', 'Check significators (A strongest to D).', 'Copy the KP table if needed.'],
+      terms: [['Sub lord', 'The finer division of a star; decides if a matter is promised.'], ['Significator', 'A planet linked to a house.']],
+      tip: 'KP uses its own ayanamsa, kept separate from your main one.', see: ['panel-planets'] },
+    'panel-chakra': { what: 'Three classical transit charts (Sarvatobhadra, Kota, Shoola) read against your birth star, tithi and name.',
+      when: 'You want to see what today\'s planets touch in your chart, or any other moment.',
+      how: ['Pick the chart tab.', 'Move the date and time with ‹ › and the −/+ steppers, or tap Now.', 'Read what touches your natal pillars.'],
+      terms: [['Vedha', 'A piercing; a planet striking a point.'], ['Paala', 'The guardian of a Kota section.']],
+      tip: 'Use the option rows to turn naam, vara and rays on or off.', see: ['panel-transit'] },
+    'panel-choghadiya': { what: 'Good and bad time slots for day and night: Amrit, Shubh, Labh, Chal, Rog, Kaal and Udveg.',
+      when: 'You want to pick a time for a task today.',
+      how: ['Change the date or time if needed.', 'Read the slots marked Good, So-so or Avoid.', 'Open "What each name means".'],
+      terms: [['Choghadiya', 'An eight-part split of day and night.']],
+      tip: 'Slots shift with sunrise at your place.', see: ['panel-panchanga', 'panel-today'] },
+    'panel-panchanga': { what: 'The five limbs of the day: tithi, vara, nakshatra, yoga and karana, with end times and sunrise.',
+      when: 'You want the almanac for a day, or for your birth moment.',
+      how: ['Set the date and time, or tap At birth or Now.', 'Read each limb and its end time.'],
+      terms: [['Yoga', 'A 27-part Sun-Moon measure.'], ['Karana', 'Half a tithi.']],
+      tip: 'Use the Calendar for a whole month.', see: ['panel-pcal'] },
+    'panel-vbday': { what: 'Your Vedic birthday: when your birth tithi, nakshatra and Sun position return in any year.',
+      when: 'You want to celebrate by the Hindu calendar.',
+      how: ['Pick a year with ‹ ›, or tap This year.', 'Read the tithi, nakshatra and solar birthdays.', 'Open the list of Janma Nakshatra days or the next 10 years.'],
+      terms: [['Janma Nakshatra', 'The day the Moon returns to your birth star.']],
+      tip: 'The tithi birthday can fall on two dates in a year.', see: ['panel-tithi', 'panel-pcal'] },
+    'panel-active': { what: 'Life Activation: which of your 12 houses are switched on now, from your running Dasha plus transiting planets.',
+      when: 'You want to know which life areas are in focus at a date.',
+      how: ['Move the date with «1y ‹1m 1m› 1y» or tap Today.', 'Read the big-picture line, then open each house.'],
+      terms: [['Activation', 'A house that Dasha and transits both touch.']],
+      tip: 'Pick a past date to see why a period felt a certain way.', see: ['panel-dasha', 'panel-transit'] },
+    'panel-yeartimeline': { what: 'Pick two dates and get one file of planet moves, nakshatra changes, transit contacts and Dasha changes, for any AI to read.',
+      when: 'You want a factual timeline of a period to share.',
+      how: ['Choose From and To.', 'Tick the extras (Moon moves, outer planets, a question).', 'Tap Create file, then copy or download.'],
+      terms: [['Ingress', 'A planet entering a sign.']],
+      tip: 'The file holds facts only.', see: ['panel-export'] },
+    'panel-dasha': { what: 'Your 120-year Vimshottari Dasha timeline, level by level (Maha, Antar and deeper).',
+      when: 'You want to know which period you are in and what comes next.',
+      how: ['Read the "You are in" card.', 'Tap Now or At birth, or set a date.', 'Tap a period to open its sub-periods.'],
+      terms: [['Mahadasha', 'The main period of a planet.'], ['Antardasha', 'A sub-period inside it.']],
+      tip: 'Open the navigator for deeper levels.', see: ['panel-dashasys', 'panel-active'] },
+    'panel-dashasys': { what: 'Thirty-six dasha systems in seven groups, each opened level by level with start and end dates.',
+      when: 'You want to compare Vimshottari with Yogini, Chara, Narayana and others.',
+      how: ['Open a group.', 'Tap a system.', 'Drill through Maha to Prana.'],
+      terms: [['Chara dasha', 'A Jaimini sign-based system.']],
+      tip: 'Start with Vimshottari, then add one other to compare.', see: ['panel-dasha'] },
+    'panel-tithi': { what: 'Tithi Pravesh: the chart for the exact moment each year when the Moon returns to its birth angle from the Sun.',
+      when: 'You want the yearly chart of your lunar birthday.',
+      how: ['Pick a year with ‹ Year, Year ›.', 'Choose Pravesh 1 or 2, and North, South or Wheel.', 'Open Focus, Planets, Panchang or Mudda tabs.'],
+      terms: [['Muntha', 'The yearly progressed point.'], ['Mudda', 'A short yearly Dasha.']],
+      tip: 'Some years have two Praveshas.', see: ['panel-vbday', 'panel-sahams'] },
+    'panel-transits': { what: 'Saturn and Jupiter transits against your Moon and Lagna, including Sade Sati, Kantaka and Ashtama Shani, plus Rahu and Ketu dates.',
+      when: 'You want to know if a Saturn phase is running or when the next sign change is.',
+      how: ['Read the status cards.', 'Tap a planet tab.', 'Tap "Show full timeline" for all dates.'],
+      terms: [['Sade Sati', 'Saturn in the 12th, 1st and 2nd sign from the Moon.']],
+      tip: 'Phases are tendencies; the soft wording is deliberate.', see: ['panel-transit'] },
+    'panel-transit': { what: 'Live Sky: today\'s planets placed against your birth chart.',
+      when: 'You want to see where the planets are right now relative to your houses.',
+      how: ['Check the location and timezone (it need not be your birth place).', 'Tap "Check Live Transits".'],
+      terms: [['Gochara', 'Transit.']],
+      tip: 'Enter where you are now.', see: ['panel-transits', 'panel-active'] },
+    'panel-atlas': { what: 'The basics of Vedic astrology in one place: weekdays, planets, signs, body parts, houses, nakshatras, time, rules, charts, yogas and remedies.',
+      when: 'You are new, or need a quick definition.',
+      how: ['Tap a topic chip.', 'Read the short tables.'],
+      terms: [['Atlas', 'A reference, not a reading.']],
+      tip: 'Use it alongside the Planet Encyclopedia.', see: ['panel-planetency'] },
+    'panel-planetency': { what: 'Every planet in full: nature, aspects, exalted and weak signs, friends and foes, houses, and how it sits in your chart.',
+      when: 'You want to understand what a planet stands for.',
+      how: ['Tap a planet.', 'Switch between Nature, Aspects, Strength, Friends & foes, Houses, Your chart.'],
+      terms: [['Exaltation', 'The sign where a planet is strongest.']],
+      tip: 'The "Your chart" tab ties the text to your placements.', see: ['panel-planets'] },
+    'panel-numerology': { what: 'Name number and birth-date numbers with meanings, in Chaldean or Pythagorean systems.',
+      when: 'You are curious about the numbers of a name or birth date.',
+      how: ['Choose Name only or Birth date + name.', 'Pick Chaldean or Pythagorean.', 'Type the name; add a date if you want.'],
+      terms: [['Chaldean', 'The traditional system with numbers 1 to 8.']],
+      tip: 'Use the English spelling of the name.', see: ['panel-avakahada'] },
+    'panel-dosha': { what: 'Checks for Manglik, Kaal Sarp, Pitru, Gand Mool, Guru Chandala and more, each with the exact reason and what softens it.',
+      when: 'You want to know if a classical marker is present and how heavily to read it.',
+      how: ['Read the count at the top.', 'Tap a check to see the reason from your chart.'],
+      terms: [['Dosha', 'A marker that asks for care, not a verdict.']],
+      tip: 'Many astrologers read these lightly.', see: ['panel-match', 'panel-yogas'] },
+    'panel-yogas': { what: 'Notable planet combinations in your chart, grouped by type.',
+      when: 'You want to know which classical combinations are present.',
+      how: ['Use the filter chips.', 'Tap a card to read its meaning.'],
+      terms: [['Yoga', 'A planet-house-sign combination.']],
+      tip: 'It is a focused, verified set, not every yoga in the texts.', see: ['panel-dosha'] },
+    'panel-shadbala': { what: 'Six-fold planet strength ranked, with each planet\'s total against the minimum required.',
+      when: 'You want to know which planets are strong or weak.',
+      how: ['Read strongest and weakest.', 'Tap a planet to see its six parts.', 'Open the full planet detail.'],
+      terms: [['Rupa', 'A unit of strength.']],
+      tip: 'The tick marks the required minimum.', see: ['panel-vimshopaka', 'panel-avasthas'] },
+    'panel-bhavabala': { what: 'Strength of each of the twelve houses: which life areas get natural support.',
+      when: 'You want to know which areas of life are better supported.',
+      how: ['Switch By house or By strength.', 'Open "How is this calculated?".'],
+      terms: [['Bhava', 'House.']],
+      tip: 'Compare with Shadbala for the planets.', see: ['panel-shadbala'] },
+    'panel-fate': { what: 'Fate Meter: an index of how much is set versus in your control, built from Shadbala, Bhava Bala, Ashtakavarga, Dasha and Yogas.',
+      when: 'You want a thoughtful balance read on each life area.',
+      how: ['Read the main percentage.', 'Tap a house chip to see its own balance.'],
+      terms: [['Index', 'An interpretive score, not a classical one.']],
+      tip: 'It shows a starting position, not an ending.', see: ['panel-bhavabala'] },
+    'panel-sahams': { what: 'Thirty-six sensitive points (Sahams) with readings, for the birth chart or the annual chart.',
+      when: 'You want finer points for marriage, career, children and more.',
+      how: ['Switch Birth chart or Annual.', 'Tap a saham to read it.'],
+      terms: [['Saham', 'An Arabic-Persian sensitive point used in annual charts.']],
+      tip: 'Night charts reverse some formulas; the page notes this.', see: ['panel-tithi'] },
+    'panel-ashtakavarga': { what: 'The point-strength system: Sarva totals and a table for each planet across the signs.',
+      when: 'You want to know which signs and houses are supported.',
+      how: ['Tap Σ Sarva or a planet.', 'Read the sign tiles from your Lagna.'],
+      terms: [['SAV', 'Sarvashtakavarga: all points per sign.']],
+      tip: '32+ excellent, 28+ good, 25–27 average, below 25 weak.', see: ['panel-asx'] },
+    'panel-relationships': { what: 'Pick two or more planets and find when they were last in conjunction or aspect and when they next will be.',
+      when: 'You want dates of planetary meetings.',
+      how: ['Tap the planets.', 'Choose Vedic (house aspects) or Western aspects.', 'Run the search.'],
+      terms: [['Conjunction', 'Two planets at the same degree.']],
+      tip: 'Searched against real planetary motion.', see: ['panel-transit'] },
+    'panel-match': { what: 'Ashtakoota matching: eight factors worth 36 points, plus a Manglik check.',
+      when: 'You are comparing two charts for marriage.',
+      how: ['Choose two people (a saved profile or a new person).', 'Tap check.', 'Read the score and each factor.'],
+      terms: [['Ashtakoota', 'The eight-fold match.'], ['Manglik', 'A Mars placement check.']],
+      tip: 'Use Synastry for a deeper view.', see: ['panel-synastry', 'panel-dosha'] },
+    'panel-export': { what: 'Export & Share: a builder where you choose every section, as text or JSON, and split it into parts for AI tools.',
+      when: 'You want to save, share, or give your chart to an AI.',
+      how: ['Pick a preset (Essentials, AI, All, None).', 'Tick sections by group.', 'Choose format and part size.', 'Download or copy.'],
+      terms: [['Parts', 'Smaller pieces of 20K, 50K or 100K characters.']],
+      tip: 'Your choices are remembered on this device.', see: ['panel-yeartimeline'] },
+    'panel-contact': { what: 'A form to report bugs, suggest ideas or ask the developer about astrology.',
+      when: 'Something looks wrong or you have an idea.',
+      how: ['Open it and write your message.', 'Send it.'],
+      terms: [],
+      tip: 'Say which tool and what you tapped.', see: [] },
+    'panel-guide': { what: 'This guide: every tool explained, searchable, with a button to open each.',
+      when: 'You do not know which tool to use or what one does.',
+      how: ['Type a word in the search box.', 'Or pick a group chip.', 'Tap a card to open it and read the steps.', 'Tap "Open this tool".'],
+      terms: [],
+      tip: 'Search works on plain words like "marriage" or "time".', see: ['panel-atlas', 'panel-planetency'] }
+  }
+};
+<\/script>
+<script>
+/* Feature Guide (js/150): a searchable, illustrated manual for every tool. Data lives in js/149 (FG_DATA); tool names, icons and groups come from
+   HOME_ITEMS (js/25) and THB.CATS (js/147), so it can never drift from the app. Cards open one at a time; "Open this tool" uses switchAppTab.
+   Search looks at the title, description, what/when text, steps, key terms and the everyday words in THB.WORDS. Classes fg- prefixed; animates only opacity/transform.
+   Registered as panel-guide (registerLatePanel, js/120). Tests: tests/feature_guide_test.js, tests/feature_guide_browser_test.py. */
+const FG = (() => {
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const item = id => (typeof HOME_ITEMS !== 'undefined' ? HOME_ITEMS : []).find(i => i[0] === id);
+  const ST = { q: '', cat: 'all', open: '' };
+  const groups = () => (typeof THB !== 'undefined' ? THB.groups() : [{ id: 'all', title: 'All tools', col: '#D4AF37', items: (typeof HOME_ITEMS !== 'undefined' ? HOME_ITEMS : []) }]);
+  const words = id => (typeof THB !== 'undefined' && THB.WORDS[id]) || '';
+  const entry = id => (FG_DATA.e[id] || null);
+  function hay(i, g) {
+    const e = entry(i[0]) || {};
+    return [i[2], i[3], g.title, words(i[0]), e.what, e.when, (e.how || []).join(' '), (e.terms || []).map(t => t.join(' ')).join(' '), e.tip].join(' ').toLowerCase();
+  }
+  function search(q) {
+    const t = String(q || '').toLowerCase().split(/\s+/).filter(Boolean); if (!t.length) return null;
+    const out = [];
+    groups().forEach(g => g.items.forEach(i => {
+      const h = hay(i, g), ti = i[2].toLowerCase();
+      if (t.every(w => h.indexOf(w) >= 0)) out.push({ i, g, score: t.reduce((s, w) => s + (ti.indexOf(w) === 0 ? 5 : ti.indexOf(w) > 0 ? 4 : (words(i[0]).indexOf(w) >= 0 ? 2 : 1)), 0) });
+    }));
+    return out.sort((a, b) => b.score - a.score);
+  }
+  function card(i, g) {
+    const e = entry(i[0]), on = ST.open === i[0];
+    if (!e) return '';
+    const see = (e.see || []).map(item).filter(Boolean);
+    const body = on ? `<div class="fg-body" role="region">
+        <div class="fg-blk"><h5>What it does</h5><p>${esc(e.what)}</p></div>
+        <div class="fg-blk"><h5>Use it when</h5><p>${esc(e.when)}</p></div>
+        <div class="fg-blk"><h5>How to use it</h5><ol class="fg-steps">${e.how.map(s => `<li><span>${esc(s)}</span></li>`).join('')}</ol></div>
+        ${e.terms && e.terms.length ? `<div class="fg-blk"><h5>Words you will see</h5><dl class="fg-terms">${e.terms.map(t => `<dt>${esc(t[0])}</dt><dd>${esc(t[1])}</dd>`).join('')}</dl></div>` : ''}
+        <div class="fg-tip"><b>Good to know</b><span>${esc(e.tip)}</span></div>
+        ${see.length ? `<div class="fg-blk"><h5>Read it with</h5><div class="fg-see">${see.map(s => `<button type="button" class="fg-chip" data-fg="open" data-id="${s[0]}">${s[1]} ${esc(s[2])}</button>`).join('')}</div></div>` : ''}
+        <button type="button" class="fg-go" data-fg="go" data-id="${i[0]}">Open ${esc(i[2])} <span aria-hidden="true">→</span></button>
+      </div>` : '';
+    return `<article class="fg-card${on ? ' on' : ''}" id="fg-${i[0]}" style="--c:${g.col}"><button type="button" class="fg-head" data-fg="tog" data-id="${i[0]}" aria-expanded="${on}"><span class="fg-i">${i[1]}</span><span class="fg-t"><b>${esc(i[2])}</b><small>${esc(e.what.split('. ')[0].replace(/\.$/, ''))}.</small></span><span class="fg-ch" aria-hidden="true">›</span></button>${body}</article>`;
+  }
+  function list() {
+    const s = search(ST.q);
+    if (s) return s.length ? `<div class="fg-cnt">${s.length} ${s.length === 1 ? 'tool' : 'tools'} found</div>${s.map(x => card(x.i, x.g)).join('')}` : `<div class="fg-empty"><b>Nothing matches "${esc(ST.q)}"</b><span>Try one plain word, like marriage, time, strength or today.</span></div>`;
+    let h = '';
+    if (ST.cat === 'all') h += `<section class="fg-sec fg-tabs"><h3><i></i>The six tabs at the bottom</h3><div class="fg-tg">${FG_DATA.tabs.map(t => `<div class="fg-tab"><span>${t[0]}</span><b>${esc(t[1])}</b><small>${esc(t[2])}</small></div>`).join('')}</div></section>`;
+    groups().filter(g => ST.cat === 'all' || g.id === ST.cat).forEach(g => { h += `<section class="fg-sec" style="--c:${g.col}"><h3><i></i>${esc(g.title)}<em>${g.items.length}</em></h3><p class="fg-use">${esc(g.use)}</p>${g.items.map(i => card(i, g)).join('')}</section>`; });
+    return h;
+  }
+  function html() {
+    const G = groups(), n = G.reduce((a, g) => a + g.items.length, 0);
+    return `<div class="fg"><div class="fg-hero"><div class="fg-glow" aria-hidden="true"></div><span class="fg-kick">FEATURE GUIDE</span><h3>Every tool, explained</h3><p>${n} tools. Search a word, or pick a group. Tap any card to see what it does, when to use it and the steps.</p></div>
+      <div class="fg-sb"><input type="search" id="fgQ" class="fg-q" placeholder="Search: marriage, time, strength…" aria-label="Search the guide" autocomplete="off" value="${esc(ST.q)}"></div>
+      <div class="fg-chips" id="fgChips" role="tablist" aria-label="Groups"><button type="button" role="tab" class="${ST.cat === 'all' ? 'on' : ''}" data-fg="cat" data-c="all">All</button>${G.map(g => `<button type="button" role="tab" class="${ST.cat === g.id ? 'on' : ''}" data-fg="cat" data-c="${g.id}" style="--c:${g.col}">${esc(g.title)}</button>`).join('')}</div>
+      <div id="fgBody">${list()}</div></div>`;
+  }
+  const redraw = () => { const b = document.getElementById('fgBody'); if (b) b.innerHTML = list(); };
+  function bind() {
+    document.addEventListener('input', e => { if (e.target.id !== 'fgQ') return; ST.q = e.target.value; ST.open = ''; redraw(); });
+    document.addEventListener('click', e => {
+      const b = e.target.closest && e.target.closest('[data-fg]'); if (!b) return; const root = b.closest('.fg'); if (!root) return;
+      const k = b.dataset.fg, id = b.dataset.id;
+      if (k === 'tog') { ST.open = ST.open === id ? '' : id; redraw(); const c = document.getElementById('fg-' + id); if (c && ST.open && c.scrollIntoView) c.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+      if (k === 'go') { if (typeof switchAppTab === 'function') switchAppTab(id); return; }
+      if (k === 'open') { ST.q = ''; ST.cat = 'all'; ST.open = id; const q = root.querySelector('#fgQ'); if (q) q.value = ''; root.querySelectorAll('#fgChips button').forEach((x, n) => x.classList.toggle('on', n === 0)); redraw(); const c = document.getElementById('fg-' + id); if (c && c.scrollIntoView) c.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+      if (k === 'cat') { ST.cat = b.dataset.c; ST.q = ''; ST.open = ''; const q = root.querySelector('#fgQ'); if (q) q.value = ''; root.querySelectorAll('#fgChips button').forEach(x => x.classList.toggle('on', x === b)); redraw(); }
+    });
+  }
+  if (typeof document !== 'undefined' && document.addEventListener) bind();
+  window.buildGuidePanel = function () { ST.q = ''; ST.cat = 'all'; ST.open = ''; return html(); };
+  if (typeof registerLatePanel === 'function') registerLatePanel('panel-guide', window.buildGuidePanel);
+  return { ST, groups, search, html, entry };
 })();
 <\/script>
 <script>

@@ -56,6 +56,7 @@ const HOME_ITEMS=[
  ['panel-ashtakavarga','▦','Ashtakavarga','Point-strength system','Analysis','home'],
  ['panel-relationships','⚯','Relationships','Conjunctions & aspects','Analysis','home'],
  ['panel-match','💞','Kundali Matching','Ashtakoota 36-point match & Manglik check','Compatibility','match'],
+ ['panel-guide','📖','Feature Guide','Every tool explained: what it does and how to use it','Export & Help','home'],
  ['panel-export','📤','Export & Share','Download a file or copy your full report','Export & Help','export'],
  ['panel-contact','💬','Contact Developer','Bugs, ideas or astrology chat','Export & Help','export']];
 const HOME_SEC_COL={'Your Chart':'#D4AF37','Fix Birth Time':'#5EC4B7','Time & Cycles':'#8A6FB8','Analysis':'#6B7FA3','Compatibility':'#D96C9B','Export & Help':'#C95050'};
