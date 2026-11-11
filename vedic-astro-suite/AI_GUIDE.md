@@ -203,11 +203,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-11 - 2135 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-11 - 2139 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 240 files, 34565 lines, 2862 KB
+**birth-chart** - 240 files, 34566 lines, 2862 KB
 ```
 index.html                                         665 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -271,7 +271,7 @@ js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
 js/147-tools-hub.js                                117 lines   11 KB
 js/148-export-builder.js                           260 lines   25 KB
-js/149-feature-guide-data.js                       297 lines   29 KB
+js/149-feature-guide-data.js                       298 lines   29 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
 js/16-rectification-engine.js                       36 lines    2 KB
@@ -466,9 +466,9 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 89 files, 8561 lines, 529 KB
+**sky3d** - 91 files, 8672 lines, 538 KB
 ```
-index.html                                         516 lines   32 KB
+index.html                                         518 lines   33 KB
 js/01-astro-engine.js                              163 lines   10 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -526,6 +526,7 @@ js/54-degree-houses.js                             140 lines   12 KB
 js/55-live-shadbala-engine.js                      330 lines   16 KB
 js/56-live-shadbala.js                             101 lines   10 KB
 js/57-profile-from-moment.js                        78 lines    6 KB
+js/58-ui-all-tabs.js                                44 lines    3 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -557,6 +558,7 @@ css/27-panel-unify.css                              67 lines    5 KB
 css/28-degree-houses.css                            43 lines    5 KB
 css/29-live-shadbala.css                            32 lines    5 KB
 css/30-profile-from-moment.css                      22 lines    2 KB
+css/31-ui-refresh.css                               65 lines    5 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -667,3 +669,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Export tab rebuilt (owner request): js/148-export-builder.js (`EXB`) + css/79; replaces the old pop-up for the Export tab and openExportModal(); presets, text or JSON, split into parts (20K/50K/100K), grouped sections with sizes, live totals, sky-right-now place, remembered selection. Same report engine (buildFullReportText); base sections must be passed explicitly (absent = ON). Copy buttons follow the Settings switch in shared/copy-toggle.js (OFF by default). tests/export_builder_browser_test.py.
 - Feature Guide (js/149 data + js/150 screen + css/80, panel-guide): searchable card index with what/when/steps/key words/tip for every tool. NEW TOOL RULE: add its entry to FG_DATA.e in js/149 (tests/feature_guide_test.js fails until you do).
 - 3D Sky: Reverse play (◀ beside ▶; `playDir` in js/16, tick js/34, buttons js/36) and Make a profile from a moment (js/57 + css/30; 👤 in timeline bar and on Saved moments, js/49). Test needs no CDN: tests/sky3d_profile_moment_browser_test.py stubs Three.js. Both are listed in the Feature Guide (`FG_DATA.sky3d`).
+- 3D Sky interface refresh (phone): css/31-ui-refresh.css (loaded last, wins over older layers; use `html body` selectors) + js/58-ui-all-tabs.js. Timeline bar is a 12-column grid (3 short rows); 'All' grid for the 15 tabs. The Three.js wheel itself was NOT changed (cannot be rendered in the sandbox).

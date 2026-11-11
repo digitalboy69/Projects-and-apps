@@ -14,6 +14,7 @@ const FG_DATA = {
   /* features of the other apps in the suite (no tile in this app); shown under the six tabs */
   sky3d: [
     ['◀', 'Reverse play (3D Sky)', 'Beside ▶ in the timeline bar. Tap ◀ and time runs backward at the chosen speed (1d/s to 1y/s). Tap ▶ while it runs backward to turn time around, tap the running button to pause.'],
+    ['⊞', 'All tabs grid (3D Sky)', 'Tap All at the start of the tab strip under the sky to see every tab as a big grid with a short line each. One tap opens that tab. The strip scrolls to keep the tab you opened in view.'],
     ['👤', 'Make a profile from a moment (3D Sky)', 'Tap 👤 in the timeline bar to turn the moment showing now (even while time is running), or 👤 on any Saved moment, into a natal profile. Date and time are the ones shown; the place is your "Where are you now?" place.']
   ],
   e: {
