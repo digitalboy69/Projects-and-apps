@@ -45,18 +45,18 @@ const BMD = (() => {
   };
   /* reading recipes by question: primary and derived come from the rule, extra = more X-from-Y checks (same source tags) */
   const TOPICS = [
-    { id: 'marriage', t: 'Marriage and partner', h: 7, note: 'Read the 7th first, then the 1st (the 7th from the 7th). Compare who carries the partnership.', extra: [{ x: 8, y: 7, s: 'VJ' }, { x: 12, y: 7, s: 'VJ' }, { x: 7, y: 8, s: 'VJ' }] },
-    { id: 'career', t: 'Career and standing', h: 10, note: 'Read the 10th first, then the 7th (the 10th from the 10th): partners, clients and advisors shape the career.', extra: [{ x: 5, y: 10, s: 'VJ' }] },
-    { id: 'wealth', t: 'Wealth and savings', h: 2, note: 'Read the 2nd first, then the 3rd: how savings grow through effort. Add the 11th for gains.', extra: [{ x: 11, y: 4, s: 'VJ' }, { x: 12, y: 3, s: 'VJ' }] },
-    { id: 'children', t: 'Children and learning', h: 5, note: 'Read the 5th first, then the 9th: values, grandchildren and merit behind the children.', extra: [{ x: 10, y: 5, s: 'VJ' }] },
-    { id: 'mother', t: 'Mother and home', h: 4, note: 'Read the 4th first, then the 7th: the mother\'s partnerships and the home as a finished place.', extra: [{ x: 11, y: 4, s: 'VJ' }] },
-    { id: 'father', t: 'Father and fortune', h: 9, note: 'Read the 9th first, then the 5th: the father\'s outlook and the merit behind luck.', extra: [{ x: 6, y: 9, s: 'VJ' }] },
-    { id: 'health', t: 'Health and obstacles', h: 6, note: 'Read the 6th first, then the 11th: whether strain settles into gain or builds up.', extra: [{ x: 9, y: 6, s: 'VJ' }] },
-    { id: 'gains', t: 'Gains and networks', h: 11, note: 'Read the 11th first, then the 9th: whether the network also gives wisdom and guidance.', extra: [{ x: 4, y: 11, s: 'VJ' }] },
-    { id: 'change', t: 'Change and the hidden', h: 8, note: 'Read the 8th first, then the 3rd: change often arrives through effort and news. The 3rd also adds to longevity judgement.', extra: [{ x: 7, y: 8, s: 'VJ' }] },
-    { id: 'siblings', t: 'Siblings and effort', h: 3, note: 'Read the 3rd first, then the 5th: effort that turns into recognised work.', extra: [{ x: 12, y: 3, s: 'VJ' }] },
-    { id: 'release', t: 'Rest, losses and release', h: 12, note: 'Read the 12th first, then the 11th: how expense and retreat feed later gains.', extra: [{ x: 3, y: 12, s: 'VJ' }] },
-    { id: 'self', t: 'Self and body', h: 1, note: 'The 1st from the 1st is itself. Read the Lagna, its lord and the 7th (the mirror) instead.', extra: [{ x: 7, y: 1, s: 'M' }] }
+    { id: 'marriage', ic: '💍', t: 'Marriage and partner', h: 7, note: 'Read the 7th first, then the 1st (the 7th from the 7th). Compare who carries the partnership.', extra: [{ x: 8, y: 7, s: 'VJ' }, { x: 12, y: 7, s: 'VJ' }, { x: 7, y: 8, s: 'VJ' }] },
+    { id: 'career', ic: '💼', t: 'Career and standing', h: 10, note: 'Read the 10th first, then the 7th (the 10th from the 10th): partners, clients and advisors shape the career.', extra: [{ x: 5, y: 10, s: 'VJ' }] },
+    { id: 'wealth', ic: '🪙', t: 'Wealth and savings', h: 2, note: 'Read the 2nd first, then the 3rd: how savings grow through effort. Add the 11th for gains.', extra: [{ x: 11, y: 4, s: 'VJ' }, { x: 12, y: 3, s: 'VJ' }] },
+    { id: 'children', ic: '🧸', t: 'Children and learning', h: 5, note: 'Read the 5th first, then the 9th: values, grandchildren and merit behind the children.', extra: [{ x: 10, y: 5, s: 'VJ' }] },
+    { id: 'mother', ic: '🏡', t: 'Mother and home', h: 4, note: 'Read the 4th first, then the 7th: the mother\'s partnerships and the home as a finished place.', extra: [{ x: 11, y: 4, s: 'VJ' }] },
+    { id: 'father', ic: '🌅', t: 'Father and fortune', h: 9, note: 'Read the 9th first, then the 5th: the father\'s outlook and the merit behind luck.', extra: [{ x: 6, y: 9, s: 'VJ' }] },
+    { id: 'health', ic: '🌿', t: 'Health and obstacles', h: 6, note: 'Read the 6th first, then the 11th: whether strain settles into gain or builds up.', extra: [{ x: 9, y: 6, s: 'VJ' }] },
+    { id: 'gains', ic: '🌐', t: 'Gains and networks', h: 11, note: 'Read the 11th first, then the 9th: whether the network also gives wisdom and guidance.', extra: [{ x: 4, y: 11, s: 'VJ' }] },
+    { id: 'change', ic: '🌀', t: 'Change and the hidden', h: 8, note: 'Read the 8th first, then the 3rd: change often arrives through effort and news. The 3rd also adds to longevity judgement.', extra: [{ x: 7, y: 8, s: 'VJ' }] },
+    { id: 'siblings', ic: '🤝', t: 'Siblings and effort', h: 3, note: 'Read the 3rd first, then the 5th: effort that turns into recognised work.', extra: [{ x: 12, y: 3, s: 'VJ' }] },
+    { id: 'release', ic: '🕊️', t: 'Rest, losses and release', h: 12, note: 'Read the 12th first, then the 11th: how expense and retreat feed later gains.', extra: [{ x: 3, y: 12, s: 'VJ' }] },
+    { id: 'self', ic: '🧘', t: 'Self and body', h: 1, note: 'The 1st from the 1st is itself. Read the Lagna, its lord and the 7th (the mirror) instead.', extra: [{ x: 7, y: 1, s: 'M' }] }
   ];
   const RULES = [
     { t: 'The main house always leads', b: 'Read the house itself first. The second house adds colour and never replaces it.', tag: 'S', src: ['AS'] },

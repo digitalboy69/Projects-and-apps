@@ -53,7 +53,8 @@ for(let i=0;i<60;i++){
   const S=run('BMC.html(_c)');
   if(/undefined|NaN|\[object/.test(S)){bad++;why.push('html-bad');}
   if(/fatal|doom|cursed|will die|death/i.test(S)){bad++;why.push('fear-word');}
-  if((S.match(/class="bmc-h"/g)||[]).length<12+12){bad++;why.push('cards');}
+  if((S.match(/class="bmc-h[ "]/g)||[]).length<12+12+7){bad++;why.push('cards');}
+  if((S.match(/class="bmc-wn /g)||[]).length!==24||(S.match(/class="bmc-tile /g)||[]).length!==12||(S.match(/class="bmc-mb/g)||[]).length!==144){bad++;why.push('visuals');}
   const x=run('BMC.cell(_c,8,7)'); if(x.h!==2){bad++;why.push('cell');}
   if(run('BMC.hats(_c,2)').length!==12){bad++;why.push('hats');}
 }

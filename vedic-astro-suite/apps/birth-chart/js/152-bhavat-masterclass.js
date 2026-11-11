@@ -92,28 +92,51 @@ const BMC = (() => {
   /* ---------- HTML ---------- */
   const tag = (t, s) => `<span class="bmc-tag t${t}" title="${t === 'S' ? 'Stated by the published sources' : t === 'M' ? 'Worked out from the counting rule' : 'Common practice and teaching aid'}">${t === 'S' ? 'Sources' : t === 'M' ? 'Worked out' : 'Common practice'}${s && s.length ? ' · ' + s.join(', ') : ''}</span>`;
   const chip = s => `<span class="bmc-chip ${s.tone}">${esc(s.label)} <i>${sgn(s.score)}</i></span>`;
+  const gauge = sc => { const w = Math.abs(sc) / 6 * 50; return `<span class="bmc-gauge" role="img" aria-label="Support score ${sgn(sc)} on a scale from minus 6 to plus 6"><i class="${sc > 0 ? 'p' : sc < 0 ? 'n' : 'z'}" style="left:${sc >= 0 ? 50 : 50 - w}%;width:${w}%"></i></span>`; };
   const facts_html = f => `<div class="bmc-f"><b>${esc(f.signName)}</b> · lord ${esc(f.lord)} in house ${f.lordHouse} (${esc(f.lordSign)})<br><span>Inside: ${esc(pl(f.occ))}</span><br><span>Looked at by: ${esc(pl(f.asp))}</span></div>`;
   const parts_html = s => `<ul class="bmc-parts">${s.parts.map(p => `<li class="${p.v > 0 ? 'p' : p.v < 0 ? 'n' : 'z'}"><i>${sgn(p.v)}</i><span><b>${esc(p.k)}</b> ${esc(p.why)}</span></li>`).join('')}</ul>`;
+  /* the pair map: every house points to its second house. rows = compute() rows to colour the houses by Support score, or null for a plain teaching wheel */
+  function wheelSvg(rows, uid) {
+    const cx = 160, cy = 160, R = 116, nr = 17, P = h => { const a = (-90 + (h - 1) * 30) * Math.PI / 180; return [cx + R * Math.cos(a), cy + R * Math.sin(a)]; }, f1 = v => v.toFixed(1);
+    let arcs = '';
+    for (let h = 1; h <= 12; h++) {
+      const d = derived(h); if (d === h) continue;
+      const a = P(h), b = P(d), L = Math.hypot(b[0] - a[0], b[1] - a[1]), ux = (b[0] - a[0]) / L, uy = (b[1] - a[1]) / L;
+      const sx = a[0] + ux * (nr + 2), sy = a[1] + uy * (nr + 2), ex = b[0] - ux * (nr + 6), ey = b[1] - uy * (nr + 6);
+      const qx = cx + ((sx + ex) / 2 - cx) * 0.3, qy = cy + ((sy + ey) / 2 - cy) * 0.3;
+      arcs += `<path class="bmc-wa" d="M${f1(sx)} ${f1(sy)}Q${f1(qx)} ${f1(qy)} ${f1(ex)} ${f1(ey)}" marker-end="url(#bmcAr${uid})"/>`;
+    }
+    const p1 = P(1); arcs += `<circle class="bmc-wself" cx="${f1(p1[0])}" cy="${f1(p1[1])}" r="${nr + 5}"/>`;
+    let nodes = '';
+    for (let h = 1; h <= 12; h++) {
+      const p = P(h), t = rows ? rows[h - 1].ps.tone : 'm', btn = rows ? ` tabindex="0" role="button" aria-label="Open the ${ORD(h)} house row" onclick="BMC.go(${h})" onkeydown="if(event.key==='Enter')BMC.go(${h})"` : '';
+      nodes += `<g class="bmc-wn ${t}${h % 2 ? ' d' : ''}"${btn} transform="translate(${f1(p[0])} ${f1(p[1])})"><circle r="${nr}"/><text y="5" text-anchor="middle">${h}</text></g>`;
+    }
+    return `<svg class="bmc-wheel" viewBox="0 0 320 320" role="img" aria-label="Map of the twelve houses, each with an arrow to its second house"><defs><marker id="bmcAr${uid}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#e6b94f"/></marker></defs><circle class="bmc-wring" cx="160" cy="160" r="${R + nr + 8}"/><circle class="bmc-wring in" cx="160" cy="160" r="${R - nr - 12}"/>${arcs}${nodes}<text class="bmc-wc1" x="160" y="152" text-anchor="middle">Bhavat</text><text class="bmc-wc1" x="160" y="172" text-anchor="middle">Bhavam</text><text class="bmc-wc2" x="160" y="190" text-anchor="middle">N → 2N − 1</text></svg>`;
+  }
   function houseCard(r) {
-    const same = r.house === r.derived, act = r.tm.active;
-    return `<details class="bmc-h"><summary><span class="bmc-n">${r.house}</span><span class="bmc-ar">${same ? '=' : '→'}</span><span class="bmc-n d">${r.derived}</span><span class="bmc-st"><b>${ORD(r.house)} from the ${ORD(r.house)} is the ${ORD(r.derived)}</b><small>${esc(D.SHORT[r.house - 1])} read through ${esc(D.SHORT[r.derived - 1])}</small></span>${act.length ? '<span class="bmc-live" title="Running dasha touches this pair">now</span>' : ''}</summary>
+    const same = r.house === r.derived, pair = D.PAIRS[r.house - 1];
+    return `<details class="bmc-h ${r.rel.k}" id="bmcRow${r.house}"><summary><span class="bmc-n">${r.house}</span><span class="bmc-ar">${same ? '=' : '→'}</span><span class="bmc-n d">${r.derived}</span><span class="bmc-st"><b>${ORD(r.house)} from the ${ORD(r.house)} is the ${ORD(r.derived)}</b><small>${esc(D.SHORT[r.house - 1])} read through ${esc(D.SHORT[r.derived - 1])}</small></span><span class="bmc-dots" aria-hidden="true"><i class="${r.ps.tone}"></i><i class="${r.qs.tone}"></i></span>${r.tm.active.length ? '<span class="bmc-live" title="A running dasha touches this pair">now</span>' : ''}</summary>
       <div class="bmc-body">
-        <div class="bmc-formula">Formula: 2 × ${r.house} − 1 = ${2 * r.house - 1}${2 * r.house - 1 > 12 ? `, minus 12 = ${r.derived}` : ''}. Sign of the ${ORD(r.derived)} house = your Lagna sign + ${r.derived - 1} signs.</div>
-        <div class="bmc-layer"><h5>Main layer: the ${ORD(r.house)} house ${chip(r.ps)}</h5>${facts_html(r.pf)}${parts_html(r.ps)}</div>
-        ${same ? '' : `<div class="bmc-layer"><h5>Second layer: the ${ORD(r.derived)} house ${chip(r.qs)}</h5>${facts_html(r.qf)}${parts_html(r.qs)}</div>`}
-        <div class="bmc-rel ${r.rel.k}"><b>How they sit together</b> ${esc(r.rel.t)}</div>
-        <div class="bmc-tm"><b>Timing</b> ${r.tm.active.length ? r.tm.active.map(a => `<span>${esc(a.planet)} (${a.level}) is ${esc(a.roles.join(' and '))}.</span>`).join(' ') : `<span>The running periods${perTxt ? ' (' + esc(perTxt) + ')' : ''} do not directly involve these two houses. Look ahead for their lords in the Dasha tool.</span>`}</div>
-        ${r.karaka ? `<div class="bmc-kar"><b>Natural significator note</b> ${esc(r.karaka)} sits in its own house here. One source says this can thin out that house\'s results. Look closer; it is not a verdict.</div>` : ''}
-        <div class="bmc-pair"><b>What the pair means</b> ${esc(D.PAIRS[r.house - 1].a)} ${esc(D.PAIRS[r.house - 1].b)}</div>
+        <div class="bmc-formula"><b>The count</b> 2 × ${r.house} − 1 = ${2 * r.house - 1}${2 * r.house - 1 > 12 ? `, minus 12 = ${r.derived}` : ''}. The ${ORD(r.derived)} house is your Lagna sign plus ${r.derived - 1} sign${r.derived - 1 === 1 ? '' : 's'}.</div>
+        <div class="bmc-layer"><div class="bmc-lh"><h5><span class="bmc-lk">Main</span> ${ORD(r.house)} house</h5>${chip(r.ps)}</div>${gauge(r.ps.score)}${facts_html(r.pf)}${parts_html(r.ps)}</div>
+        ${same ? '' : `<div class="bmc-layer two"><div class="bmc-lh"><h5><span class="bmc-lk">Second</span> ${ORD(r.derived)} house</h5>${chip(r.qs)}</div>${gauge(r.qs.score)}${facts_html(r.qf)}${parts_html(r.qs)}</div>`}
+        <div class="bmc-rel ${r.rel.k}"><b>🔗 How they sit together</b>${esc(r.rel.t)}</div>
+        <div class="bmc-tm"><b>⏳ Timing</b>${r.tm.active.length ? r.tm.active.map(a => `<span class="bmc-ta">${G(a.planet)} ${esc(a.planet)} · ${a.level}</span> is ${esc(a.roles.join(' and '))}.`).join(' ') : `The running periods${perTxt ? ' (' + esc(perTxt) + ')' : ''} do not directly involve these two houses. Look ahead for their lords in the Dasha tool.`}</div>
+        ${r.karaka ? `<div class="bmc-kar"><b>🔎 Natural significator note</b>${esc(r.karaka)} sits in its own house here. One source says this can thin out that house\'s results. Look closer; it is not a verdict.</div>` : ''}
+        <div class="bmc-pair"><b>📖 What the pair means</b>${esc(pair.a)} ${esc(pair.b)}</div>
       </div></details>`;
   }
   function paneChart(C) {
     perTxt = C.per ? `${C.per.md}${C.per.ad ? '/' + C.per.ad : ''}` : '';
-    const top = C.best.map(r => `<li>${r.house} → ${r.derived} <small>${esc(D.SHORT[r.house - 1])} through ${esc(D.SHORT[r.derived - 1])}</small></li>`).join('');
-    const low = C.care.map(r => `<li>${r.house} → ${r.derived} <small>${esc(D.SHORT[r.house - 1])} through ${esc(D.SHORT[r.derived - 1])}</small></li>`).join('');
-    return `<div class="bmc-hero"><h3>Your twelve pairs</h3><p>Each house is read twice: the house itself, then the house counted the same number of places from it. Open a row to see both layers, the score behind each, how they agree and which dasha is touching them. ${C.per ? `Running now: <b>${esc(C.per.md)}</b> Mahadasha${C.per.ad ? `, <b>${esc(C.per.ad)}</b> Antardasha` : ''}.` : ''}</p></div>
-      <div class="bmc-sum"><div><h5>Best supported pairs</h5><ol>${top}</ol></div><div><h5>Most care needed</h5><ol>${low}</ol></div></div>
-      <div class="bmc-list">${C.rows.map(houseCard).join('')}</div>
+    const li = r => `<li><span class="bmc-n sm">${r.house}</span><span class="bmc-ar">→</span><span class="bmc-n sm d">${r.derived}</span><span>${esc(D.SHORT[r.house - 1])} <small>through ${esc(D.SHORT[r.derived - 1])}</small></span></li>`;
+    const tiles = C.rows.map(r => `<button type="button" class="bmc-tile ${r.ps.tone}" onclick="BMC.go(${r.house})" aria-label="Open pair ${r.house} to ${r.derived}, ${esc(r.ps.label)}"><b>${r.house}</b><small>→ ${r.derived}</small><i class="${r.qs.tone}"></i></button>`).join('');
+    return `<div class="bmc-banner"><span class="bmc-orn" aria-hidden="true">🪞</span><h3>Your twelve pairs</h3><p>Each house is read twice: the house itself, then the house counted the same number of places from it.</p>${C.per ? `<div class="bmc-now"><span>Running now</span><b>${G(C.per.md)} ${esc(C.per.md)} <em>Mahadasha</em></b>${C.per.ad ? `<b>${G(C.per.ad)} ${esc(C.per.ad)} <em>Antardasha</em></b>` : ''}</div>` : ''}</div>
+      <div class="bmc-card"><h4>The pair map</h4><p class="bmc-cap">Tap a house to jump to its reading. Colour shows its Support score; gold rings mark the houses that act as second houses.</p>${wheelSvg(C.rows, 'a')}
+        <div class="bmc-legend"><span><i class="g2"></i>Well supported</span><span><i class="g1"></i>Leaning supportive</span><span><i class="m"></i>Mixed</span><span><i class="r1"></i>Leaning strained</span><span><i class="r2"></i>Needs care</span></div></div>
+      <div class="bmc-card"><h4>At a glance</h4><p class="bmc-cap">Big colour: the main house. Small dot: its second house.</p><div class="bmc-tiles">${tiles}</div></div>
+      <div class="bmc-sum"><div class="bmc-good"><h5>✦ Best supported</h5><ol>${C.best.map(li).join('')}</ol></div><div class="bmc-warn"><h5>◈ Most care needed</h5><ol>${C.care.map(li).join('')}</ol></div></div>
+      <h4 class="bmc-sec">Read each pair</h4><div class="bmc-list">${C.rows.map(houseCard).join('')}</div>
       <p class="bmc-fine">Scores add a few visible signals so you can see why a house looks easy or hard. They are a teaching aid, not a verdict. ${tag('C')}</p>`;
   }
   const sel = (id, from, to, cur, fn, lab) => `<label class="bmc-sel"><span>${lab}</span><select id="${id}" onchange="BMC.${fn}()">${Array.from({ length: to - from + 1 }, (_, i) => from + i).map(n => `<option value="${n}"${n === cur ? ' selected' : ''}>${ORD(n)} house</option>`).join('')}</select></label>`;
@@ -124,40 +147,48 @@ const BMC = (() => {
       ${c.note ? `<p class="bmc-nt"><b>From the sources:</b> ${esc(c.note)}</p>` : ''}
       <p class="bmc-wk">Working: ${esc(c.work)}</p></div>`;
   }
-  function hatsHtml(list, h) {
+  function hatsHtml(list) {
     return `<ol class="bmc-hats">${list.map(c => `<li><span class="bmc-hn">${c.y}</span><span><b>${ORD(c.x)} from the ${ORD(c.y)}</b> <small>${esc(c.f.signName)}</small><br>${esc(c.note ? c.note : c.phrase)}${c.note ? ' ' + tag('S', c.x === c.y ? D.PAIRS[c.x - 1].src : ['VJ']) : ''}</span></li>`).join('')}</ol>`;
   }
+  function matrixGrid(y, x) {
+    let g = '<div class="bmc-mx" aria-label="The house you land on, for every starting house and every count"><span class="bmc-mc"></span>';
+    for (let xx = 1; xx <= 12; xx++) g += `<span class="bmc-mh">${xx}</span>`;
+    for (let yy = 1; yy <= 12; yy++) { g += `<span class="bmc-mh">${yy}</span>`; for (let xx = 1; xx <= 12; xx++) g += `<button type="button" class="bmc-mb${xx === yy ? ' same' : ''}${xx === x && yy === y ? ' on' : ''}" data-y="${yy}" data-x="${xx}" onclick="BMC.pickCell(${yy},${xx})" aria-label="${ORD(xx)} from the ${ORD(yy)}">${ref(xx, yy)}</button>`; }
+    return g + '</div>';
+  }
   function paneExplorer(chart) {
-    return `<div class="bmc-hero"><h3>Any house from any house</h3><p>Pick a starting house, then pick which house to count from it. The starting house is treated like a Lagna of its own.</p></div>
+    return `<div class="bmc-banner sm"><span class="bmc-orn" aria-hidden="true">🧭</span><h3>Any house from any house</h3><p>Pick a starting house, then which house to count from it. The starting house is treated like a Lagna of its own.</p></div>
       <div class="bmc-ctl">${sel('bmcY', 1, 12, 7, 'upMatrix', 'Count from')}${sel('bmcX', 1, 12, 8, 'upMatrix', 'Count to')}</div>
       <div id="bmcCell">${cellHtml(cell(chart, 8, 7))}</div>
-      <div class="bmc-hero"><h3>Every house wears twelve hats</h3><p>One house seen from all twelve starting points. Choose a house.</p></div>
+      <div class="bmc-card"><h4>The full map</h4><p class="bmc-cap">Rows are the starting house, columns are the count. The number is the house you land on. Tap any square. The gold diagonal is the same-number rule.</p>${matrixGrid(7, 8)}</div>
+      <h4 class="bmc-sec">Every house wears twelve hats</h4><p class="bmc-cap">One house seen from all twelve starting points.</p>
       <div class="bmc-ctl">${sel('bmcH', 1, 12, 2, 'upHats', 'Which house')}</div>
-      <div id="bmcHats">${hatsHtml(hats(chart, 2), 2)}</div>`;
+      <div id="bmcHats">${hatsHtml(hats(chart, 2))}</div>`;
   }
   function paneRecipes(chart, C) {
-    return `<div class="bmc-hero"><h3>Reading recipes</h3><p>Pick a question. Each recipe says which house to read first, which second, and what else to count, with your own signs and planets.</p></div>
+    return `<div class="bmc-banner sm"><span class="bmc-orn" aria-hidden="true">🧩</span><h3>Reading recipes</h3><p>Pick a question. Each recipe says which house to read first, which second, and what else to count, with your own signs and planets.</p></div>
       <div class="bmc-list">${D.TOPICS.map(t => {
         const r = C.rows[t.h - 1], ex = t.extra.map(e => { const c = cell(chart, e.x, e.y); return `<li><b>${ORD(e.x)} from the ${ORD(e.y)}</b> = house ${c.h} (${esc(c.f.signName)}, inside: ${esc(pl(c.f.occ))})<br><small>${esc(D.EX[e.x + '-' + e.y] || c.phrase)} ${tag(e.s === 'M' ? 'M' : 'S', e.s === 'M' ? [] : [e.s])}</small></li>`; }).join('');
-        return `<details class="bmc-h"><summary><span class="bmc-n">${t.h}</span><span class="bmc-ar">→</span><span class="bmc-n d">${r.derived}</span><span class="bmc-st"><b>${esc(t.t)}</b><small>${chip(r.ps)} ${r.house !== r.derived ? chip(r.qs) : ''}</small></span></summary><div class="bmc-body"><p>${esc(t.note)}</p><div class="bmc-rel ${r.rel.k}"><b>Your chart</b> ${esc(r.rel.t)}</div><h5>Also count</h5><ul class="bmc-ex">${ex}</ul></div></details>`;
+        return `<details class="bmc-h ${r.rel.k}"><summary><span class="bmc-ic" aria-hidden="true">${t.ic}</span><span class="bmc-st"><b>${esc(t.t)}</b><small>House ${t.h} → ${r.derived}</small></span><span class="bmc-dots" aria-hidden="true"><i class="${r.ps.tone}"></i><i class="${r.qs.tone}"></i></span></summary><div class="bmc-body"><p>${esc(t.note)}</p><div class="bmc-lh">${chip(r.ps)}${r.house !== r.derived ? chip(r.qs) : ''}</div><div class="bmc-rel ${r.rel.k}"><b>🔗 Your chart</b>${esc(r.rel.t)}</div><h5>Also count</h5><ul class="bmc-ex">${ex}</ul></div></details>`;
       }).join('')}</div>`;
   }
-  const srcLinks = a => a.map(k => `<a href="${D.SRC[k].u}" target="_blank" rel="noopener">${k}</a>`).join(', ');
+  const srcLinks = a => a.map(k => `<a href="${D.SRC[k].u}" target="_blank" rel="noopener">${esc(D.SRC[k].n)}</a>`).join(' · ');
   function paneLearn() {
-    const ch = (t, body, open) => `<details class="bmc-h bmc-ch"${open ? ' open' : ''}><summary><span class="bmc-st"><b>${t}</b></span></summary><div class="bmc-body">${body}</div></details>`;
-    return `<div class="bmc-hero"><h3>The masterclass</h3><p>Seven short chapters: what it is, the formula, the twelve pairs, the rules, where teachers differ, a step-by-step recipe, and common mistakes.</p></div><div class="bmc-list">
-      ${ch('1. What Bhavat Bhavam means', `<p><b>Bhavat Bhavam</b> means "from house to house". It has two uses. First, the <b>same-number pair</b>: count the Nth house from the Nth house, so the 7th from the 7th is the 1st. Second, <b>any house from any house</b>: treat any house as a Lagna and read the others from it, so the 2nd from the 7th is the 8th and tells about the partner's money. Both give a house a second layer of meaning beyond the first reading. ${tag('S', ['PB', 'AS', 'BP', 'VJ'])}</p>`, true)}
-      ${ch('2. The formula', `<p>Count the starting house as 1.</p><p class="bmc-code">House X counted from house Y<br>= ((Y − 1) + (X − 1)) mod 12 + 1</p><p class="bmc-code">Same-number pair (X = Y = N)<br>derived = (2N − 2) mod 12 + 1 &nbsp;(2N − 1, minus 12 if above 12)</p><p class="bmc-code">Sign of a house<br>= (Lagna sign + house − 1) mod 12</p><p>Worked: the 8th from the 8th is (7 + 7) mod 12 + 1 = 3. The 5th from the 5th is (4 + 4) + 1 = 9. ${tag('M')}</p>`)}
-      ${ch('3. The twelve pairs', `<div class="bmc-pairs">${D.PAIRS.map(p => `<div class="bmc-pr"><span class="bmc-n">${p.n}</span><span class="bmc-ar">→</span><span class="bmc-n d">${p.d}</span><span><b>${esc(p.a)}</b><br><small>${esc(p.b)}</small><br>${tag('S', p.src)}</span></div>`).join('')}</div><p>Houses that are 6 apart share a second house: 1 and 7 give the 1st, 2 and 8 give the 3rd, 3 and 9 give the 5th, 4 and 10 give the 7th, 5 and 11 give the 9th, 6 and 12 give the 11th. ${tag('M')}</p>`)}
-      ${ch('4. The rules', D.RULES.map(r => `<div class="bmc-rule"><b>${esc(r.t)}</b> ${tag(r.tag, r.src)}<br>${esc(r.b)}</div>`).join(''))}
-      ${ch('5. Where teachers differ', D.DIFFS.map(r => `<div class="bmc-rule"><b>${esc(r.t)}</b><br>${esc(r.b)}</div>`).join(''))}
-      ${ch('6. The reading recipe', `<ol class="bmc-steps">${D.STEPS.map(s => `<li>${esc(s)}</li>`).join('')}</ol><p>How the Support score is built (a teaching aid): lord in a kendra or trikona +1; lord strong +1 or weak −1; each benefic inside +1, each malefic −1 (not counted in the 3rd, 6th, 10th, 11th); Jupiter or Venus looking at it +1, a malefic −1; Ashtakavarga 30 or more +1, 25 or less −1. ${tag('C')}</p>`)}
-      ${ch('7. Common mistakes', `<ul class="bmc-steps">${D.MISTAKES.map(s => `<li>${esc(s)}</li>`).join('')}</ul>`)}
+    const ch = (n, ic, t, body, open) => `<details class="bmc-h bmc-ch"${open ? ' open' : ''}><summary><span class="bmc-ic" aria-hidden="true">${ic}</span><span class="bmc-st"><b>${n}. ${t}</b></span></summary><div class="bmc-body">${body}</div></details>`;
+    const fc = (lab, f) => `<div class="bmc-fc"><small>${lab}</small><code>${f}</code></div>`;
+    return `<div class="bmc-banner sm"><span class="bmc-orn" aria-hidden="true">🎓</span><h3>The masterclass</h3><p>Seven short chapters: what it is, the formula, the twelve pairs, the rules, where teachers differ, a step-by-step recipe, and common mistakes.</p></div><div class="bmc-list">
+      ${ch(1, '🪞', 'What Bhavat Bhavam means', `<p><b>Bhavat Bhavam</b> means "from house to house". It has two uses.</p><div class="bmc-two"><div><b>1 · Same-number pair</b><span>Count the Nth house from the Nth house. The 7th from the 7th is the 1st.</span></div><div><b>2 · Any house from any house</b><span>Treat any house as a Lagna. The 2nd from the 7th is the 8th, the partner's money.</span></div></div><p>Both give a house a second layer of meaning beyond the first reading. ${tag('S', ['PB', 'AS', 'BP', 'VJ'])}</p>`, true)}
+      ${ch(2, '🧮', 'The formula', `<p>Count the starting house as 1.</p>${fc('House X counted from house Y', '((Y − 1) + (X − 1)) mod 12 + 1')}${fc('Same-number pair (X = Y = N)', '(2N − 2) mod 12 + 1<br>= 2N − 1, minus 12 if above 12')}${fc('Sign of a house', '(Lagna sign + house − 1) mod 12')}<p>Worked: the 8th from the 8th is (7 + 7) mod 12 + 1 = 3. The 5th from the 5th is (4 + 4) + 1 = 9. ${tag('M')}</p>`)}
+      ${ch(3, '🕸️', 'The twelve pairs', `${wheelSvg(null, 'b')}<div class="bmc-pairs">${D.PAIRS.map(p => `<div class="bmc-pr"><div class="bmc-prh"><span class="bmc-n">${p.n}</span><span class="bmc-ar">→</span><span class="bmc-n d">${p.d}</span><b>${esc(p.a)}</b></div><small>${esc(p.b)}</small>${tag('S', p.src)}</div>`).join('')}</div><p>Houses 6 apart share a second house: 1 and 7 give the 1st, 2 and 8 give the 3rd, 3 and 9 give the 5th, 4 and 10 give the 7th, 5 and 11 give the 9th, 6 and 12 give the 11th. ${tag('M')}</p>`)}
+      ${ch(4, '📜', 'The rules', D.RULES.map(r => `<div class="bmc-rule"><b>${esc(r.t)}</b>${tag(r.tag, r.src)}<span>${esc(r.b)}</span></div>`).join(''))}
+      ${ch(5, '⚖️', 'Where teachers differ', D.DIFFS.map(r => `<div class="bmc-rule"><b>${esc(r.t)}</b><span>${esc(r.b)}</span></div>`).join(''))}
+      ${ch(6, '🗺️', 'The reading recipe', `<ol class="bmc-steps">${D.STEPS.map(s => `<li>${esc(s)}</li>`).join('')}</ol><div class="bmc-rule"><b>How the Support score is built</b>${tag('C')}<span>Lord in a kendra or trikona +1. Lord strong +1 or weak −1. Each benefic inside +1, each malefic −1 (not counted in the 3rd, 6th, 10th, 11th). Jupiter or Venus looking at it +1, a malefic −1. Ashtakavarga 30 or more +1, 25 or less −1. Range −6 to +6.</span></div>`)}
+      ${ch(7, '🚧', 'Common mistakes', `<ul class="bmc-steps">${D.MISTAKES.map(s => `<li>${esc(s)}</li>`).join('')}</ul>`)}
     </div><p class="bmc-fine">Sources read: ${srcLinks(Object.keys(D.SRC))}. A classical verse for the same-number rule was not verified. These are tendencies, to be read with the whole chart.</p>`;
   }
   function html(chart) {
     lastChart = chart; const C = compute(chart);
-    return `<div class="bmc"><div class="bmc-tabs" role="tablist">${[['chart', 'My chart'], ['explore', 'Explorer'], ['recipes', 'Recipes'], ['learn', 'Learn']].map((t, i) => `<button type="button" role="tab" data-bmc-tab="${t[0]}" class="${i ? '' : 'on'}" onclick="BMC.tab(this)">${t[1]}</button>`).join('')}</div>
+    return `<div class="bmc"><div class="bmc-tabs" role="tablist">${[['chart', '🪞', 'My chart'], ['explore', '🧭', 'Explorer'], ['recipes', '🧩', 'Recipes'], ['learn', '🎓', 'Learn']].map((t, i) => `<button type="button" role="tab" data-bmc-tab="${t[0]}" class="${i ? '' : 'on'}" onclick="BMC.tab(this)"><span aria-hidden="true">${t[1]}</span>${t[2]}</button>`).join('')}</div>
       <section data-bmc-pane="chart">${paneChart(C)}</section>
       <section data-bmc-pane="explore" hidden>${paneExplorer(chart)}</section>
       <section data-bmc-pane="recipes" hidden>${paneRecipes(chart, C)}</section>
@@ -170,8 +201,10 @@ const BMC = (() => {
   const api = {
     compute, cell, hats, facts, signal, relation, currentPeriod, derived, ref, inv, html, text, GR,
     tab(b) { const root = b.closest('.bmc'); if (!root) return; root.querySelectorAll('[data-bmc-tab]').forEach(x => x.classList.toggle('on', x === b)); root.querySelectorAll('[data-bmc-pane]').forEach(p => { p.hidden = p.getAttribute('data-bmc-pane') !== b.getAttribute('data-bmc-tab'); }); },
-    upMatrix() { const y = +document.getElementById('bmcY').value, x = +document.getElementById('bmcX').value, el = document.getElementById('bmcCell'); if (el && lastChart) el.innerHTML = cellHtml(cell(lastChart, x, y)); },
-    upHats() { const h = +document.getElementById('bmcH').value, el = document.getElementById('bmcHats'); if (el && lastChart) el.innerHTML = hatsHtml(hats(lastChart, h), h); }
+    upMatrix() { const y = +document.getElementById('bmcY').value, x = +document.getElementById('bmcX').value, el = document.getElementById('bmcCell'); if (el && lastChart) el.innerHTML = cellHtml(cell(lastChart, x, y)); document.querySelectorAll('.bmc-mb').forEach(b => b.classList.toggle('on', +b.getAttribute('data-y') === y && +b.getAttribute('data-x') === x)); },
+    pickCell(y, x) { const sy = document.getElementById('bmcY'), sx = document.getElementById('bmcX'); if (!sy || !sx) return; sy.value = y; sx.value = x; api.upMatrix(); },
+    upHats() { const h = +document.getElementById('bmcH').value, el = document.getElementById('bmcHats'); if (el && lastChart) el.innerHTML = hatsHtml(hats(lastChart, h)); },
+    go(h) { const row = document.getElementById('bmcRow' + h); if (!row) return; const t = row.closest('.bmc').querySelector('[data-bmc-tab=chart]'); if (t) api.tab(t); row.open = true; try { row.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { row.scrollIntoView(); } }
   };
   window.buildBhavatMasterclassPanel = function (chart) { return html(chart); };
   if (typeof registerLatePanel === 'function') registerLatePanel('panel-bhavatclass', window.buildBhavatMasterclassPanel);

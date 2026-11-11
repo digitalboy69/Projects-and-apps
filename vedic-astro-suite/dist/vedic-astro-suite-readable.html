@@ -16485,76 +16485,173 @@ body.cl-open{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.fg-glow,.fg-body{animation:none}}
 </style>
 <style>
-/* Bhavat Bhavam Masterclass (js/152). Class-scoped (bmc-) only; never bare i/b/span. */
-.bmc{--g:#e6b94f;--line:rgba(255,255,255,.09);--mut:var(--text-muted,#9f9a8f);padding-bottom:14px}
-.bmc-tabs{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px;margin:0 0 12px;border:1px solid var(--line);border-radius:14px;background:rgba(20,18,14,.92);backdrop-filter:blur(8px)}
-.bmc-tabs button{border:0;border-radius:10px;background:transparent;color:var(--mut);font:600 13px var(--font-sans);padding:9px 2px;min-height:40px;cursor:pointer}
-.bmc-tabs button.on{background:rgba(230,185,79,.16);color:var(--g)}
-.bmc-tabs button:focus-visible,.bmc summary:focus-visible,.bmc select:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+/* Bhavat Bhavam Masterclass (js/152). Class-scoped (bmc-) only; never bare i/b/span.
+   Performance rule: only transform/opacity animate; no backdrop-filter, no looping glow. */
+.bmc{--g:#e6b94f;--teal:#5ec4b7;--rose:#d96c9b;--vio:#8a6fb8;--line:rgba(255,255,255,.09);--mut:var(--text-muted,#9f9a8f);--card:rgba(255,255,255,.035);padding-bottom:16px}
+.bmc *{box-sizing:border-box}
+@keyframes bmcIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.bmc-banner,.bmc-card,.bmc-sum>div,.bmc-h,.bmc-cell,.bmc-tile{animation:bmcIn .42s ease both}
+@media (prefers-reduced-motion:reduce){.bmc-banner,.bmc-card,.bmc-sum>div,.bmc-h,.bmc-cell,.bmc-tile{animation:none}}
+
+/* tabs */
+.bmc-tabs{position:sticky;top:0;z-index:5;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:5px;margin:0 0 14px;border:1px solid rgba(230,185,79,.22);border-radius:16px;background:#15130f;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.bmc-tabs button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:0;border-radius:12px;background:transparent;color:var(--mut);font:600 11.5px var(--font-sans);padding:5px 2px;min-height:48px;cursor:pointer;transition:background .2s,color .2s}
+.bmc-tabs button span{font-size:17px;line-height:1.1;opacity:.75}
+.bmc-tabs button.on{background:linear-gradient(160deg,rgba(230,185,79,.26),rgba(230,185,79,.1));color:var(--g)}
+.bmc-tabs button.on span{opacity:1}
+.bmc-tabs button:focus-visible,.bmc summary:focus-visible,.bmc select:focus-visible,.bmc-tile:focus-visible,.bmc-mb:focus-visible,.bmc-wn:focus-visible{outline:2px solid var(--g);outline-offset:2px}
 .bmc section[hidden]{display:none}
-.bmc-hero h3{margin:6px 0 6px;font:600 24px/1.15 var(--font-serif,serif);color:var(--tx)}
-.bmc-hero p{margin:0 0 12px;font-size:13.5px;line-height:1.6;color:var(--mut)}
-.bmc-hero p b{color:var(--tx)}
+
+/* banner */
+.bmc-banner{position:relative;overflow:hidden;margin-bottom:14px;padding:18px 16px 16px;border:1px solid rgba(230,185,79,.3);border-radius:22px;background:radial-gradient(120% 140% at 100% 0,rgba(138,111,184,.28),transparent 55%),radial-gradient(90% 120% at 0 100%,rgba(94,196,183,.16),transparent 60%),linear-gradient(135deg,rgba(230,185,79,.2),rgba(230,185,79,.05))}
+.bmc-banner.sm{padding:14px 16px}
+.bmc-orn{position:absolute;right:10px;top:4px;font-size:62px;line-height:1;opacity:.16;pointer-events:none}
+.bmc-banner h3{position:relative;margin:0 0 6px;font:600 26px/1.1 var(--font-serif,serif);color:var(--tx)}
+.bmc-banner.sm h3{font-size:22px}
+.bmc-banner p{position:relative;margin:0;font-size:13.5px;line-height:1.55;color:var(--mut);max-width:30em}
+.bmc-now{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(230,185,79,.2);font-size:12.5px}
+.bmc-now span{font:600 10.5px var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--g)}
+.bmc-now b{color:var(--tx);font-weight:600;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:999px;padding:4px 11px;white-space:nowrap}
+.bmc-now em{font-style:normal;font-weight:500;color:var(--mut);font-size:11px;margin-left:3px}
+
+/* cards, headings */
+.bmc-card{margin-bottom:12px;padding:14px;border:1px solid var(--line);border-radius:18px;background:var(--card)}
+.bmc-card h4,.bmc-sec{margin:0 0 4px;font:600 18px/1.2 var(--font-serif,serif);color:var(--tx)}
+.bmc-sec{margin:18px 2px 8px}
+.bmc-cap{margin:0 0 10px;font-size:12.5px;line-height:1.5;color:var(--mut)}
+.bmc-fine{font-size:12px;line-height:1.6;color:var(--mut);margin:12px 2px 0}
+.bmc-fine a,.bmc-body a{color:var(--g);text-underline-offset:2px}
+
+/* wheel */
+.bmc-wheel{display:block;width:100%;max-width:340px;margin:2px auto 0;height:auto}
+.bmc-wring{fill:none;stroke:rgba(230,185,79,.22);stroke-width:1;stroke-dasharray:2 5}
+.bmc-wring.in{stroke:rgba(255,255,255,.07);stroke-dasharray:none}
+.bmc-wa{fill:none;stroke:#e6b94f;stroke-opacity:.55;stroke-width:1.4}
+.bmc-wself{fill:none;stroke:#e6b94f;stroke-opacity:.55;stroke-width:1.2;stroke-dasharray:3 3}
+.bmc-wn{cursor:pointer;outline:none}
+.bmc-wn circle{fill:rgba(255,255,255,.1);stroke:rgba(255,255,255,.28);stroke-width:1.2;transition:transform .2s}
+.bmc-wn.d circle{stroke:#e6b94f;stroke-width:2.2}
+.bmc-wn.g2 circle{fill:rgba(94,196,183,.62)}.bmc-wn.g1 circle{fill:rgba(94,196,183,.32)}.bmc-wn.m circle{fill:rgba(255,255,255,.12)}.bmc-wn.r1 circle{fill:rgba(217,108,155,.36)}.bmc-wn.r2 circle{fill:rgba(217,108,155,.66)}
+.bmc-wn text{fill:#fff;font:700 13px var(--font-sans,sans-serif);pointer-events:none}
+.bmc-wn:hover circle,.bmc-wn:focus-visible circle{stroke-width:3}
+.bmc-wc1{fill:#e6b94f;font:600 17px var(--font-serif,serif)}
+.bmc-wc2{fill:#9f9a8f;font:500 11px var(--font-sans,sans-serif)}
+.bmc-legend{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;margin-top:8px;font-size:11px;color:var(--mut)}
+.bmc-legend span{display:inline-flex;align-items:center;gap:5px}
+.bmc-legend i,.bmc-dots i{display:inline-block;width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16)}
+.bmc-legend i.g2,.bmc-dots i.g2,.bmc-tile i.g2{background:#5ec4b7}.bmc-legend i.g1,.bmc-dots i.g1,.bmc-tile i.g1{background:rgba(94,196,183,.5)}.bmc-legend i.m,.bmc-dots i.m,.bmc-tile i.m{background:rgba(255,255,255,.35)}.bmc-legend i.r1,.bmc-dots i.r1,.bmc-tile i.r1{background:rgba(217,108,155,.6)}.bmc-legend i.r2,.bmc-dots i.r2,.bmc-tile i.r2{background:#d96c9b}
+
+/* heat tiles */
+.bmc-tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.bmc-tile{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1;border:1px solid var(--line);border-radius:12px;color:var(--tx);cursor:pointer;padding:0;font-family:var(--font-sans)}
+.bmc-tile b{font-size:16px;line-height:1}
+.bmc-tile small{font-size:10px;color:var(--mut);margin-top:2px}
+.bmc-tile i{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%}
+.bmc-tile.g2{background:rgba(94,196,183,.3)}.bmc-tile.g1{background:rgba(94,196,183,.14)}.bmc-tile.m{background:rgba(255,255,255,.05)}.bmc-tile.r1{background:rgba(217,108,155,.16)}.bmc-tile.r2{background:rgba(217,108,155,.32)}
+
+/* best / care */
+.bmc-sum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px}
+.bmc-sum>div{border:1px solid var(--line);border-radius:16px;padding:11px 12px;background:var(--card)}
+.bmc-good{border-top:3px solid var(--teal)!important}.bmc-warn{border-top:3px solid var(--rose)!important}
+.bmc-sum h5{margin:0 0 8px;font:600 12.5px var(--font-sans);color:var(--tx)}
+.bmc-sum ol{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.bmc-sum li{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--tx);line-height:1.25}
+.bmc-sum li small{display:block;color:var(--mut);font-size:10.5px}
+.bmc-sum li>span:last-child{margin-left:3px;min-width:0}
+
+/* rows */
 .bmc-list{display:grid;gap:8px;margin-bottom:8px}
-.bmc-h{border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035)}
-.bmc-h>summary{list-style:none;display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer}
+.bmc-h{scroll-margin-top:72px;border:1px solid var(--line);border-left:3px solid var(--line);border-radius:16px;background:var(--card)}
+.bmc-h.reinforced{border-left-color:var(--teal)}.bmc-h.care{border-left-color:var(--rose)}.bmc-h.effort,.bmc-h.help,.bmc-h.mixed,.bmc-h.same{border-left-color:var(--g)}
+.bmc-h>summary{list-style:none;display:flex;align-items:center;gap:8px;padding:11px 12px;cursor:pointer;min-height:56px}
 .bmc-h>summary::-webkit-details-marker{display:none}
+.bmc-h>summary::after{content:"";flex:none;width:8px;height:8px;border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:rotate(45deg);margin:-3px 2px 0 4px;transition:transform .2s}
+.bmc-h[open]>summary::after{transform:rotate(-135deg);margin-top:3px}
 .bmc-h[open]>summary{border-bottom:1px solid var(--line)}
-.bmc-n{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:600 13px var(--font-sans);color:var(--g);background:rgba(230,185,79,.12)}
-.bmc-n.d{background:rgba(230,185,79,.3);color:#17130a}
+.bmc-n{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font:600 13px var(--font-sans);color:var(--g);background:rgba(230,185,79,.12);border:1px solid rgba(230,185,79,.25)}
+.bmc-n.d{background:linear-gradient(160deg,#f1cd70,#d9a63c);color:#17130a;border-color:transparent}
+.bmc-n.sm{width:22px;height:22px;font-size:11px}
 .bmc-ar{flex:none;color:var(--mut);font-size:13px}
 .bmc-st{min-width:0;flex:1}
-.bmc-st b{display:block;font:600 14px var(--font-sans);color:var(--tx)}
+.bmc-st b{display:block;font:600 14px/1.25 var(--font-sans);color:var(--tx)}
 .bmc-st small{display:block;font-size:11.5px;color:var(--mut);margin-top:2px}
-.bmc-live{flex:none;font:700 10px var(--font-sans);letter-spacing:.06em;text-transform:uppercase;color:#17130a;background:var(--g);border-radius:999px;padding:3px 7px}
-.bmc-body{padding:10px 12px 12px;font-size:13px;line-height:1.55;color:var(--mut)}
-.bmc-body p{margin:0 0 9px}
-.bmc-body h5,.bmc-sum h5{margin:0 0 6px;font:600 13px var(--font-sans);color:var(--tx)}
-.bmc-formula{font-size:12px;color:var(--mut);background:rgba(255,255,255,.04);border-radius:10px;padding:8px 10px;margin-bottom:10px}
-.bmc-layer{margin-bottom:10px;padding:10px;border:1px solid var(--line);border-radius:12px}
+.bmc-dots{flex:none;display:flex;flex-direction:column;gap:4px}
+.bmc-live{flex:none;font:700 10px var(--font-sans);letter-spacing:.06em;text-transform:uppercase;color:#17130a;background:var(--g);border-radius:999px;padding:3px 8px}
+.bmc-ic{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:linear-gradient(160deg,rgba(230,185,79,.22),rgba(138,111,184,.16));border:1px solid rgba(230,185,79,.22)}
+.bmc-body{padding:12px;font-size:13px;line-height:1.55;color:var(--mut)}
+.bmc-body p{margin:0 0 10px}
+.bmc-body h5{margin:12px 0 6px;font:600 13px var(--font-sans);color:var(--tx)}
+.bmc-formula{margin-bottom:10px;padding:9px 11px;border-radius:12px;background:rgba(230,185,79,.08);border:1px dashed rgba(230,185,79,.3);font-size:12.5px;color:var(--tx)}
+.bmc-formula b{display:block;font:600 10.5px var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--g);margin-bottom:2px}
+.bmc-layer{margin-bottom:10px;padding:11px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02)}
+.bmc-layer.two{border-color:rgba(230,185,79,.28);background:rgba(230,185,79,.04)}
+.bmc-lh{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.bmc-lh h5{margin:0;font:600 14px var(--font-sans);color:var(--tx)}
+.bmc-lk{display:inline-block;margin-right:4px;font:700 10px var(--font-sans);letter-spacing:.07em;text-transform:uppercase;color:#17130a;background:var(--g);border-radius:6px;padding:2px 6px;vertical-align:1px}
+.bmc-layer.two .bmc-lk{background:#f1cd70}
+.bmc-chip{display:inline-block;font:600 11px var(--font-sans);border-radius:999px;padding:3px 9px;border:1px solid var(--line);color:var(--tx);white-space:nowrap}
+.bmc-chip i{font-style:normal;opacity:.7}
+.bmc-chip.g2{background:rgba(94,196,183,.26)}.bmc-chip.g1{background:rgba(94,196,183,.12)}.bmc-chip.m{background:rgba(255,255,255,.06)}.bmc-chip.r1{background:rgba(217,108,155,.14)}.bmc-chip.r2{background:rgba(217,108,155,.3)}
+.bmc-gauge{position:relative;display:block;height:8px;margin:2px 0 10px;border-radius:99px;background:rgba(255,255,255,.07)}
+.bmc-gauge::before{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:rgba(255,255,255,.35)}
+.bmc-gauge i{position:absolute;top:0;bottom:0;border-radius:99px}
+.bmc-gauge i.p{background:linear-gradient(90deg,rgba(94,196,183,.6),#5ec4b7)}.bmc-gauge i.n{background:linear-gradient(90deg,#d96c9b,rgba(217,108,155,.6))}
 .bmc-f{font-size:12.5px;line-height:1.6;color:var(--mut)}
 .bmc-f b{color:var(--tx)}
-.bmc-chip{display:inline-block;font:600 11px var(--font-sans);border-radius:999px;padding:2px 8px;margin-left:4px;border:1px solid var(--line);color:var(--tx);white-space:nowrap}
-.bmc-chip i{font-style:normal;opacity:.7}
-.bmc-chip.g2{background:rgba(94,196,183,.22)}.bmc-chip.g1{background:rgba(94,196,183,.1)}.bmc-chip.m{background:rgba(255,255,255,.05)}.bmc-chip.r1{background:rgba(217,108,155,.12)}.bmc-chip.r2{background:rgba(217,108,155,.26)}
-.bmc-parts{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}
-.bmc-parts li{display:flex;gap:8px;font-size:12px;align-items:baseline}
-.bmc-parts li i{flex:none;width:22px;font-style:normal;font-weight:600;text-align:right}
-.bmc-parts li.p i{color:#5ec4b7}.bmc-parts li.n i{color:#d96c9b}.bmc-parts li.z i{color:var(--mut)}
+.bmc-parts{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:5px}
+.bmc-parts li{display:flex;gap:8px;font-size:12px;line-height:1.4;align-items:flex-start}
+.bmc-parts li i{flex:none;width:24px;height:20px;border-radius:7px;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:11px;background:rgba(255,255,255,.06);color:var(--mut)}
+.bmc-parts li.p i{background:rgba(94,196,183,.2);color:#5ec4b7}.bmc-parts li.n i{background:rgba(217,108,155,.2);color:#e98ab3}
 .bmc-parts li b{color:var(--tx);font-weight:600}
-.bmc-rel,.bmc-tm,.bmc-kar,.bmc-pair{margin-top:8px;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.04);font-size:12.5px}
-.bmc-rel b,.bmc-tm b,.bmc-kar b,.bmc-pair b{display:block;color:var(--tx);margin-bottom:2px}
-.bmc-rel.reinforced{border-left:3px solid #5ec4b7}.bmc-rel.care{border-left:3px solid #d96c9b}.bmc-rel.effort,.bmc-rel.help,.bmc-rel.mixed,.bmc-rel.same{border-left:3px solid var(--g)}
-.bmc-sum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.bmc-sum>div{border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.035)}
-.bmc-sum ol{margin:0;padding-left:18px;font-size:13px;color:var(--tx)}
-.bmc-sum li small{display:block;color:var(--mut);font-size:11px}
-.bmc-fine{font-size:12px;line-height:1.55;color:var(--mut);margin:10px 0 0}
-.bmc-fine a,.bmc-body a{color:var(--g)}
-.bmc-tag{display:inline-block;font:600 10px var(--font-sans);letter-spacing:.03em;border-radius:999px;padding:1px 7px;border:1px solid var(--line);vertical-align:middle}
-.bmc-tag.tS{color:#5ec4b7}.bmc-tag.tM{color:#8a6fb8}.bmc-tag.tC{color:var(--g)}
+.bmc-rel,.bmc-tm,.bmc-kar,.bmc-pair{margin-top:8px;padding:10px 11px;border-radius:13px;background:rgba(255,255,255,.04);font-size:12.5px;line-height:1.55}
+.bmc-rel b,.bmc-tm b,.bmc-kar b,.bmc-pair b{display:block;color:var(--tx);font-size:12.5px;margin-bottom:3px}
+.bmc-rel{border-left:3px solid var(--g)}.bmc-rel.reinforced{border-left-color:var(--teal)}.bmc-rel.care{border-left-color:var(--rose)}
+.bmc-ta{display:inline-block;font:600 11px var(--font-sans);color:#17130a;background:var(--g);border-radius:999px;padding:1px 8px;margin-right:2px}
+.bmc-tag{display:inline-block;font:600 10px var(--font-sans);letter-spacing:.03em;border-radius:999px;padding:1px 7px;margin:0 4px;border:1px solid var(--line);vertical-align:middle}
+.bmc-tag.tS{color:#5ec4b7;border-color:rgba(94,196,183,.35)}.bmc-tag.tM{color:#a78bd6;border-color:rgba(138,111,184,.4)}.bmc-tag.tC{color:var(--g);border-color:rgba(230,185,79,.35)}
+
+/* explorer */
 .bmc-ctl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .bmc-ctl:has(:only-child){grid-template-columns:1fr}
-.bmc-sel{display:grid;gap:4px;font-size:11.5px;color:var(--mut)}
-.bmc-sel select{min-height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--tx);font:500 14px var(--font-sans);padding:0 10px}
-.bmc-cell{border:1px solid var(--line);border-radius:14px;padding:12px;background:rgba(255,255,255,.035);margin-bottom:14px}
-.bmc-big{font:600 17px/1.3 var(--font-serif,serif);color:var(--tx);margin-bottom:6px}
+.bmc-sel{display:grid;gap:4px;font:600 11px var(--font-sans);letter-spacing:.05em;text-transform:uppercase;color:var(--mut)}
+.bmc-sel select{min-height:46px;border-radius:13px;border:1px solid rgba(230,185,79,.3);background:rgba(255,255,255,.05);color:var(--tx);font:500 14px var(--font-sans);padding:0 10px;text-transform:none;letter-spacing:0}
+.bmc-cell{border:1px solid rgba(230,185,79,.3);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(230,185,79,.1),rgba(255,255,255,.02));margin-bottom:12px}
+.bmc-big{font:600 18px/1.3 var(--font-serif,serif);color:var(--tx);margin-bottom:8px}
 .bmc-big em{font-style:normal;color:var(--g)}
 .bmc-ph,.bmc-nt,.bmc-wk{font-size:12.5px;line-height:1.55;color:var(--mut);margin:8px 0 0}
-.bmc-wk{font-size:11.5px}
+.bmc-nt b{color:var(--teal)}
+.bmc-wk{font:500 11.5px ui-monospace,Menlo,monospace}
+.bmc-mx{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:2px}
+.bmc-mh{display:grid;place-items:center;font:600 10px var(--font-sans);color:var(--g);min-height:20px}
+.bmc-mb{aspect-ratio:1;border:0;border-radius:6px;background:rgba(255,255,255,.05);color:var(--mut);font:600 11px var(--font-sans);padding:0;cursor:pointer;min-width:0}
+.bmc-mb.same{background:rgba(230,185,79,.22);color:var(--g)}
+.bmc-mb.on{background:var(--g);color:#17130a;outline:2px solid #fff;outline-offset:-1px}
 .bmc-hats{list-style:none;margin:0 0 6px;padding:0;display:grid;gap:6px}
-.bmc-hats li{display:flex;gap:10px;border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:rgba(255,255,255,.03);font-size:12.5px;line-height:1.5;color:var(--mut)}
+.bmc-hats li{display:flex;gap:10px;border:1px solid var(--line);border-radius:14px;padding:10px 11px;background:var(--card);font-size:12.5px;line-height:1.5;color:var(--mut)}
 .bmc-hats li b{color:var(--tx)}
-.bmc-hn{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:600 12px var(--font-sans);color:var(--g);background:rgba(230,185,79,.12)}
+.bmc-hn{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:600 12px var(--font-sans);color:var(--g);background:rgba(230,185,79,.12);border:1px solid rgba(230,185,79,.25)}
 .bmc-ex{margin:0;padding-left:18px;font-size:12.5px;line-height:1.55}
-.bmc-ex li{margin-bottom:6px}.bmc-ex b{color:var(--tx)}
-.bmc-code{font:500 13px/1.6 ui-monospace,Menlo,monospace;color:var(--tx);background:rgba(255,255,255,.05);border-radius:10px;padding:9px 10px;overflow-wrap:anywhere}
-.bmc-pairs{display:grid;gap:8px;margin-bottom:10px}
-.bmc-pr{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.5}
-.bmc-pr b{color:var(--tx)}
-.bmc-rule{margin-bottom:10px;font-size:12.5px;line-height:1.55}.bmc-rule b{color:var(--tx)}
-.bmc-steps{margin:0 0 8px;padding-left:20px;font-size:12.5px;line-height:1.6}.bmc-steps li{margin-bottom:5px}
-@media (max-width:359px){.bmc-sum,.bmc-ctl{grid-template-columns:1fr}}
+.bmc-ex li{margin-bottom:7px}.bmc-ex b{color:var(--tx)}
+
+/* learn */
+.bmc-two{display:grid;gap:8px;margin:0 0 10px}
+.bmc-two div{padding:10px 11px;border-radius:13px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.bmc-two b{display:block;color:var(--g);font-size:12.5px;margin-bottom:2px}
+.bmc-two span{color:var(--mut);font-size:12.5px}
+.bmc-fc{margin-bottom:8px;padding:10px 12px;border-radius:13px;background:rgba(138,111,184,.1);border:1px solid rgba(138,111,184,.3)}
+.bmc-fc small{display:block;font:600 10.5px var(--font-sans);letter-spacing:.07em;text-transform:uppercase;color:#a78bd6;margin-bottom:3px}
+.bmc-fc code{font:600 14px/1.5 ui-monospace,Menlo,monospace;color:var(--tx);overflow-wrap:anywhere}
+.bmc-pairs{display:grid;gap:8px;margin:10px 0}
+.bmc-pr{padding:10px 11px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03);font-size:12.5px;line-height:1.5}
+.bmc-prh{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.bmc-prh b{color:var(--tx);font-size:13px;line-height:1.3;margin-left:2px}
+.bmc-pr small{display:block;color:var(--mut);font-size:12px;margin-bottom:5px}
+.bmc-rule{margin-bottom:11px;padding-bottom:11px;border-bottom:1px solid var(--line);font-size:12.5px;line-height:1.55}
+.bmc-rule:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
+.bmc-rule b{color:var(--tx)}
+.bmc-rule span{display:block;margin-top:3px}
+.bmc-steps{margin:0 0 10px;padding-left:20px;font-size:12.5px;line-height:1.6}.bmc-steps li{margin-bottom:6px}
+@media (max-width:359px){.bmc-sum,.bmc-ctl{grid-template-columns:1fr}.bmc-tiles{grid-template-columns:repeat(4,1fr)}}
 </style>
 
 
@@ -56773,7 +56870,7 @@ const FG_DATA = {
       tip: 'It supplements the main reading.', see: ['panel-bhavatclass', 'panel-lagnas', 'panel-argala'] },
     'panel-bhavatclass': { what: 'A full course on Bhavat Bhavam with your own chart: every house read twice, a Support score with its formula, how the two layers agree, and which dasha is touching them.',
       when: 'You want to know why a house looks easy or hard, or to read a matter through a second house, or to count any house from any house.',
-      how: ['Open My chart and tap a row, for example 7 → 1.', 'Read the main layer, the second layer and how they sit together.', 'Use Explorer to count any house from any house, or see one house from all twelve starting points.', 'Use Recipes for a question like marriage or career, and Learn for the formulas and rules.'],
+      how: ['Open My chart. Tap a house on the pair map or a colour tile, or open a row, for example 7 → 1.', 'Read the main layer, the second layer and how they sit together.', 'Use Explorer to tap any square of the 12 by 12 map, or see one house from all twelve starting points.', 'Use Recipes for a question like marriage or career, and Learn for the formulas and rules.'],
       terms: [['Bhavat Bhavam', 'House from house: the Nth house counted from the Nth house, or any house counted from any other.'], ['Support score', 'A small teaching score from the lord, its strength, planets inside, aspects and Ashtakavarga. Not a verdict.'], ['Derived house', 'The second house found by the pair rule.']],
       tip: 'The main house leads. The second house adds colour and never replaces it.', see: ['panel-bhavat', 'panel-argala', 'panel-dasha'] },
     'panel-asx': { what: 'The working behind the Ashtakavarga numbers: Prastara, Sodhana (reductions), Kakshya and Transit tabs.',
@@ -57051,18 +57148,18 @@ const BMD = (() => {
   };
   /* reading recipes by question: primary and derived come from the rule, extra = more X-from-Y checks (same source tags) */
   const TOPICS = [
-    { id: 'marriage', t: 'Marriage and partner', h: 7, note: 'Read the 7th first, then the 1st (the 7th from the 7th). Compare who carries the partnership.', extra: [{ x: 8, y: 7, s: 'VJ' }, { x: 12, y: 7, s: 'VJ' }, { x: 7, y: 8, s: 'VJ' }] },
-    { id: 'career', t: 'Career and standing', h: 10, note: 'Read the 10th first, then the 7th (the 10th from the 10th): partners, clients and advisors shape the career.', extra: [{ x: 5, y: 10, s: 'VJ' }] },
-    { id: 'wealth', t: 'Wealth and savings', h: 2, note: 'Read the 2nd first, then the 3rd: how savings grow through effort. Add the 11th for gains.', extra: [{ x: 11, y: 4, s: 'VJ' }, { x: 12, y: 3, s: 'VJ' }] },
-    { id: 'children', t: 'Children and learning', h: 5, note: 'Read the 5th first, then the 9th: values, grandchildren and merit behind the children.', extra: [{ x: 10, y: 5, s: 'VJ' }] },
-    { id: 'mother', t: 'Mother and home', h: 4, note: 'Read the 4th first, then the 7th: the mother\'s partnerships and the home as a finished place.', extra: [{ x: 11, y: 4, s: 'VJ' }] },
-    { id: 'father', t: 'Father and fortune', h: 9, note: 'Read the 9th first, then the 5th: the father\'s outlook and the merit behind luck.', extra: [{ x: 6, y: 9, s: 'VJ' }] },
-    { id: 'health', t: 'Health and obstacles', h: 6, note: 'Read the 6th first, then the 11th: whether strain settles into gain or builds up.', extra: [{ x: 9, y: 6, s: 'VJ' }] },
-    { id: 'gains', t: 'Gains and networks', h: 11, note: 'Read the 11th first, then the 9th: whether the network also gives wisdom and guidance.', extra: [{ x: 4, y: 11, s: 'VJ' }] },
-    { id: 'change', t: 'Change and the hidden', h: 8, note: 'Read the 8th first, then the 3rd: change often arrives through effort and news. The 3rd also adds to longevity judgement.', extra: [{ x: 7, y: 8, s: 'VJ' }] },
-    { id: 'siblings', t: 'Siblings and effort', h: 3, note: 'Read the 3rd first, then the 5th: effort that turns into recognised work.', extra: [{ x: 12, y: 3, s: 'VJ' }] },
-    { id: 'release', t: 'Rest, losses and release', h: 12, note: 'Read the 12th first, then the 11th: how expense and retreat feed later gains.', extra: [{ x: 3, y: 12, s: 'VJ' }] },
-    { id: 'self', t: 'Self and body', h: 1, note: 'The 1st from the 1st is itself. Read the Lagna, its lord and the 7th (the mirror) instead.', extra: [{ x: 7, y: 1, s: 'M' }] }
+    { id: 'marriage', ic: '💍', t: 'Marriage and partner', h: 7, note: 'Read the 7th first, then the 1st (the 7th from the 7th). Compare who carries the partnership.', extra: [{ x: 8, y: 7, s: 'VJ' }, { x: 12, y: 7, s: 'VJ' }, { x: 7, y: 8, s: 'VJ' }] },
+    { id: 'career', ic: '💼', t: 'Career and standing', h: 10, note: 'Read the 10th first, then the 7th (the 10th from the 10th): partners, clients and advisors shape the career.', extra: [{ x: 5, y: 10, s: 'VJ' }] },
+    { id: 'wealth', ic: '🪙', t: 'Wealth and savings', h: 2, note: 'Read the 2nd first, then the 3rd: how savings grow through effort. Add the 11th for gains.', extra: [{ x: 11, y: 4, s: 'VJ' }, { x: 12, y: 3, s: 'VJ' }] },
+    { id: 'children', ic: '🧸', t: 'Children and learning', h: 5, note: 'Read the 5th first, then the 9th: values, grandchildren and merit behind the children.', extra: [{ x: 10, y: 5, s: 'VJ' }] },
+    { id: 'mother', ic: '🏡', t: 'Mother and home', h: 4, note: 'Read the 4th first, then the 7th: the mother\'s partnerships and the home as a finished place.', extra: [{ x: 11, y: 4, s: 'VJ' }] },
+    { id: 'father', ic: '🌅', t: 'Father and fortune', h: 9, note: 'Read the 9th first, then the 5th: the father\'s outlook and the merit behind luck.', extra: [{ x: 6, y: 9, s: 'VJ' }] },
+    { id: 'health', ic: '🌿', t: 'Health and obstacles', h: 6, note: 'Read the 6th first, then the 11th: whether strain settles into gain or builds up.', extra: [{ x: 9, y: 6, s: 'VJ' }] },
+    { id: 'gains', ic: '🌐', t: 'Gains and networks', h: 11, note: 'Read the 11th first, then the 9th: whether the network also gives wisdom and guidance.', extra: [{ x: 4, y: 11, s: 'VJ' }] },
+    { id: 'change', ic: '🌀', t: 'Change and the hidden', h: 8, note: 'Read the 8th first, then the 3rd: change often arrives through effort and news. The 3rd also adds to longevity judgement.', extra: [{ x: 7, y: 8, s: 'VJ' }] },
+    { id: 'siblings', ic: '🤝', t: 'Siblings and effort', h: 3, note: 'Read the 3rd first, then the 5th: effort that turns into recognised work.', extra: [{ x: 12, y: 3, s: 'VJ' }] },
+    { id: 'release', ic: '🕊️', t: 'Rest, losses and release', h: 12, note: 'Read the 12th first, then the 11th: how expense and retreat feed later gains.', extra: [{ x: 3, y: 12, s: 'VJ' }] },
+    { id: 'self', ic: '🧘', t: 'Self and body', h: 1, note: 'The 1st from the 1st is itself. Read the Lagna, its lord and the 7th (the mirror) instead.', extra: [{ x: 7, y: 1, s: 'M' }] }
   ];
   const RULES = [
     { t: 'The main house always leads', b: 'Read the house itself first. The second house adds colour and never replaces it.', tag: 'S', src: ['AS'] },
@@ -57198,28 +57295,51 @@ const BMC = (() => {
   /* ---------- HTML ---------- */
   const tag = (t, s) => `<span class="bmc-tag t${t}" title="${t === 'S' ? 'Stated by the published sources' : t === 'M' ? 'Worked out from the counting rule' : 'Common practice and teaching aid'}">${t === 'S' ? 'Sources' : t === 'M' ? 'Worked out' : 'Common practice'}${s && s.length ? ' · ' + s.join(', ') : ''}</span>`;
   const chip = s => `<span class="bmc-chip ${s.tone}">${esc(s.label)} <i>${sgn(s.score)}</i></span>`;
+  const gauge = sc => { const w = Math.abs(sc) / 6 * 50; return `<span class="bmc-gauge" role="img" aria-label="Support score ${sgn(sc)} on a scale from minus 6 to plus 6"><i class="${sc > 0 ? 'p' : sc < 0 ? 'n' : 'z'}" style="left:${sc >= 0 ? 50 : 50 - w}%;width:${w}%"></i></span>`; };
   const facts_html = f => `<div class="bmc-f"><b>${esc(f.signName)}</b> · lord ${esc(f.lord)} in house ${f.lordHouse} (${esc(f.lordSign)})<br><span>Inside: ${esc(pl(f.occ))}</span><br><span>Looked at by: ${esc(pl(f.asp))}</span></div>`;
   const parts_html = s => `<ul class="bmc-parts">${s.parts.map(p => `<li class="${p.v > 0 ? 'p' : p.v < 0 ? 'n' : 'z'}"><i>${sgn(p.v)}</i><span><b>${esc(p.k)}</b> ${esc(p.why)}</span></li>`).join('')}</ul>`;
+  /* the pair map: every house points to its second house. rows = compute() rows to colour the houses by Support score, or null for a plain teaching wheel */
+  function wheelSvg(rows, uid) {
+    const cx = 160, cy = 160, R = 116, nr = 17, P = h => { const a = (-90 + (h - 1) * 30) * Math.PI / 180; return [cx + R * Math.cos(a), cy + R * Math.sin(a)]; }, f1 = v => v.toFixed(1);
+    let arcs = '';
+    for (let h = 1; h <= 12; h++) {
+      const d = derived(h); if (d === h) continue;
+      const a = P(h), b = P(d), L = Math.hypot(b[0] - a[0], b[1] - a[1]), ux = (b[0] - a[0]) / L, uy = (b[1] - a[1]) / L;
+      const sx = a[0] + ux * (nr + 2), sy = a[1] + uy * (nr + 2), ex = b[0] - ux * (nr + 6), ey = b[1] - uy * (nr + 6);
+      const qx = cx + ((sx + ex) / 2 - cx) * 0.3, qy = cy + ((sy + ey) / 2 - cy) * 0.3;
+      arcs += `<path class="bmc-wa" d="M${f1(sx)} ${f1(sy)}Q${f1(qx)} ${f1(qy)} ${f1(ex)} ${f1(ey)}" marker-end="url(#bmcAr${uid})"/>`;
+    }
+    const p1 = P(1); arcs += `<circle class="bmc-wself" cx="${f1(p1[0])}" cy="${f1(p1[1])}" r="${nr + 5}"/>`;
+    let nodes = '';
+    for (let h = 1; h <= 12; h++) {
+      const p = P(h), t = rows ? rows[h - 1].ps.tone : 'm', btn = rows ? ` tabindex="0" role="button" aria-label="Open the ${ORD(h)} house row" onclick="BMC.go(${h})" onkeydown="if(event.key==='Enter')BMC.go(${h})"` : '';
+      nodes += `<g class="bmc-wn ${t}${h % 2 ? ' d' : ''}"${btn} transform="translate(${f1(p[0])} ${f1(p[1])})"><circle r="${nr}"/><text y="5" text-anchor="middle">${h}</text></g>`;
+    }
+    return `<svg class="bmc-wheel" viewBox="0 0 320 320" role="img" aria-label="Map of the twelve houses, each with an arrow to its second house"><defs><marker id="bmcAr${uid}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#e6b94f"/></marker></defs><circle class="bmc-wring" cx="160" cy="160" r="${R + nr + 8}"/><circle class="bmc-wring in" cx="160" cy="160" r="${R - nr - 12}"/>${arcs}${nodes}<text class="bmc-wc1" x="160" y="152" text-anchor="middle">Bhavat</text><text class="bmc-wc1" x="160" y="172" text-anchor="middle">Bhavam</text><text class="bmc-wc2" x="160" y="190" text-anchor="middle">N → 2N − 1</text></svg>`;
+  }
   function houseCard(r) {
-    const same = r.house === r.derived, act = r.tm.active;
-    return `<details class="bmc-h"><summary><span class="bmc-n">${r.house}</span><span class="bmc-ar">${same ? '=' : '→'}</span><span class="bmc-n d">${r.derived}</span><span class="bmc-st"><b>${ORD(r.house)} from the ${ORD(r.house)} is the ${ORD(r.derived)}</b><small>${esc(D.SHORT[r.house - 1])} read through ${esc(D.SHORT[r.derived - 1])}</small></span>${act.length ? '<span class="bmc-live" title="Running dasha touches this pair">now</span>' : ''}</summary>
+    const same = r.house === r.derived, pair = D.PAIRS[r.house - 1];
+    return `<details class="bmc-h ${r.rel.k}" id="bmcRow${r.house}"><summary><span class="bmc-n">${r.house}</span><span class="bmc-ar">${same ? '=' : '→'}</span><span class="bmc-n d">${r.derived}</span><span class="bmc-st"><b>${ORD(r.house)} from the ${ORD(r.house)} is the ${ORD(r.derived)}</b><small>${esc(D.SHORT[r.house - 1])} read through ${esc(D.SHORT[r.derived - 1])}</small></span><span class="bmc-dots" aria-hidden="true"><i class="${r.ps.tone}"></i><i class="${r.qs.tone}"></i></span>${r.tm.active.length ? '<span class="bmc-live" title="A running dasha touches this pair">now</span>' : ''}</summary>
       <div class="bmc-body">
-        <div class="bmc-formula">Formula: 2 × ${r.house} − 1 = ${2 * r.house - 1}${2 * r.house - 1 > 12 ? `, minus 12 = ${r.derived}` : ''}. Sign of the ${ORD(r.derived)} house = your Lagna sign + ${r.derived - 1} signs.</div>
-        <div class="bmc-layer"><h5>Main layer: the ${ORD(r.house)} house ${chip(r.ps)}</h5>${facts_html(r.pf)}${parts_html(r.ps)}</div>
-        ${same ? '' : `<div class="bmc-layer"><h5>Second layer: the ${ORD(r.derived)} house ${chip(r.qs)}</h5>${facts_html(r.qf)}${parts_html(r.qs)}</div>`}
-        <div class="bmc-rel ${r.rel.k}"><b>How they sit together</b> ${esc(r.rel.t)}</div>
-        <div class="bmc-tm"><b>Timing</b> ${r.tm.active.length ? r.tm.active.map(a => `<span>${esc(a.planet)} (${a.level}) is ${esc(a.roles.join(' and '))}.</span>`).join(' ') : `<span>The running periods${perTxt ? ' (' + esc(perTxt) + ')' : ''} do not directly involve these two houses. Look ahead for their lords in the Dasha tool.</span>`}</div>
-        ${r.karaka ? `<div class="bmc-kar"><b>Natural significator note</b> ${esc(r.karaka)} sits in its own house here. One source says this can thin out that house\'s results. Look closer; it is not a verdict.</div>` : ''}
-        <div class="bmc-pair"><b>What the pair means</b> ${esc(D.PAIRS[r.house - 1].a)} ${esc(D.PAIRS[r.house - 1].b)}</div>
+        <div class="bmc-formula"><b>The count</b> 2 × ${r.house} − 1 = ${2 * r.house - 1}${2 * r.house - 1 > 12 ? `, minus 12 = ${r.derived}` : ''}. The ${ORD(r.derived)} house is your Lagna sign plus ${r.derived - 1} sign${r.derived - 1 === 1 ? '' : 's'}.</div>
+        <div class="bmc-layer"><div class="bmc-lh"><h5><span class="bmc-lk">Main</span> ${ORD(r.house)} house</h5>${chip(r.ps)}</div>${gauge(r.ps.score)}${facts_html(r.pf)}${parts_html(r.ps)}</div>
+        ${same ? '' : `<div class="bmc-layer two"><div class="bmc-lh"><h5><span class="bmc-lk">Second</span> ${ORD(r.derived)} house</h5>${chip(r.qs)}</div>${gauge(r.qs.score)}${facts_html(r.qf)}${parts_html(r.qs)}</div>`}
+        <div class="bmc-rel ${r.rel.k}"><b>🔗 How they sit together</b>${esc(r.rel.t)}</div>
+        <div class="bmc-tm"><b>⏳ Timing</b>${r.tm.active.length ? r.tm.active.map(a => `<span class="bmc-ta">${G(a.planet)} ${esc(a.planet)} · ${a.level}</span> is ${esc(a.roles.join(' and '))}.`).join(' ') : `The running periods${perTxt ? ' (' + esc(perTxt) + ')' : ''} do not directly involve these two houses. Look ahead for their lords in the Dasha tool.`}</div>
+        ${r.karaka ? `<div class="bmc-kar"><b>🔎 Natural significator note</b>${esc(r.karaka)} sits in its own house here. One source says this can thin out that house\'s results. Look closer; it is not a verdict.</div>` : ''}
+        <div class="bmc-pair"><b>📖 What the pair means</b>${esc(pair.a)} ${esc(pair.b)}</div>
       </div></details>`;
   }
   function paneChart(C) {
     perTxt = C.per ? `${C.per.md}${C.per.ad ? '/' + C.per.ad : ''}` : '';
-    const top = C.best.map(r => `<li>${r.house} → ${r.derived} <small>${esc(D.SHORT[r.house - 1])} through ${esc(D.SHORT[r.derived - 1])}</small></li>`).join('');
-    const low = C.care.map(r => `<li>${r.house} → ${r.derived} <small>${esc(D.SHORT[r.house - 1])} through ${esc(D.SHORT[r.derived - 1])}</small></li>`).join('');
-    return `<div class="bmc-hero"><h3>Your twelve pairs</h3><p>Each house is read twice: the house itself, then the house counted the same number of places from it. Open a row to see both layers, the score behind each, how they agree and which dasha is touching them. ${C.per ? `Running now: <b>${esc(C.per.md)}</b> Mahadasha${C.per.ad ? `, <b>${esc(C.per.ad)}</b> Antardasha` : ''}.` : ''}</p></div>
-      <div class="bmc-sum"><div><h5>Best supported pairs</h5><ol>${top}</ol></div><div><h5>Most care needed</h5><ol>${low}</ol></div></div>
-      <div class="bmc-list">${C.rows.map(houseCard).join('')}</div>
+    const li = r => `<li><span class="bmc-n sm">${r.house}</span><span class="bmc-ar">→</span><span class="bmc-n sm d">${r.derived}</span><span>${esc(D.SHORT[r.house - 1])} <small>through ${esc(D.SHORT[r.derived - 1])}</small></span></li>`;
+    const tiles = C.rows.map(r => `<button type="button" class="bmc-tile ${r.ps.tone}" onclick="BMC.go(${r.house})" aria-label="Open pair ${r.house} to ${r.derived}, ${esc(r.ps.label)}"><b>${r.house}</b><small>→ ${r.derived}</small><i class="${r.qs.tone}"></i></button>`).join('');
+    return `<div class="bmc-banner"><span class="bmc-orn" aria-hidden="true">🪞</span><h3>Your twelve pairs</h3><p>Each house is read twice: the house itself, then the house counted the same number of places from it.</p>${C.per ? `<div class="bmc-now"><span>Running now</span><b>${G(C.per.md)} ${esc(C.per.md)} <em>Mahadasha</em></b>${C.per.ad ? `<b>${G(C.per.ad)} ${esc(C.per.ad)} <em>Antardasha</em></b>` : ''}</div>` : ''}</div>
+      <div class="bmc-card"><h4>The pair map</h4><p class="bmc-cap">Tap a house to jump to its reading. Colour shows its Support score; gold rings mark the houses that act as second houses.</p>${wheelSvg(C.rows, 'a')}
+        <div class="bmc-legend"><span><i class="g2"></i>Well supported</span><span><i class="g1"></i>Leaning supportive</span><span><i class="m"></i>Mixed</span><span><i class="r1"></i>Leaning strained</span><span><i class="r2"></i>Needs care</span></div></div>
+      <div class="bmc-card"><h4>At a glance</h4><p class="bmc-cap">Big colour: the main house. Small dot: its second house.</p><div class="bmc-tiles">${tiles}</div></div>
+      <div class="bmc-sum"><div class="bmc-good"><h5>✦ Best supported</h5><ol>${C.best.map(li).join('')}</ol></div><div class="bmc-warn"><h5>◈ Most care needed</h5><ol>${C.care.map(li).join('')}</ol></div></div>
+      <h4 class="bmc-sec">Read each pair</h4><div class="bmc-list">${C.rows.map(houseCard).join('')}</div>
       <p class="bmc-fine">Scores add a few visible signals so you can see why a house looks easy or hard. They are a teaching aid, not a verdict. ${tag('C')}</p>`;
   }
   const sel = (id, from, to, cur, fn, lab) => `<label class="bmc-sel"><span>${lab}</span><select id="${id}" onchange="BMC.${fn}()">${Array.from({ length: to - from + 1 }, (_, i) => from + i).map(n => `<option value="${n}"${n === cur ? ' selected' : ''}>${ORD(n)} house</option>`).join('')}</select></label>`;
@@ -57230,40 +57350,48 @@ const BMC = (() => {
       ${c.note ? `<p class="bmc-nt"><b>From the sources:</b> ${esc(c.note)}</p>` : ''}
       <p class="bmc-wk">Working: ${esc(c.work)}</p></div>`;
   }
-  function hatsHtml(list, h) {
+  function hatsHtml(list) {
     return `<ol class="bmc-hats">${list.map(c => `<li><span class="bmc-hn">${c.y}</span><span><b>${ORD(c.x)} from the ${ORD(c.y)}</b> <small>${esc(c.f.signName)}</small><br>${esc(c.note ? c.note : c.phrase)}${c.note ? ' ' + tag('S', c.x === c.y ? D.PAIRS[c.x - 1].src : ['VJ']) : ''}</span></li>`).join('')}</ol>`;
   }
+  function matrixGrid(y, x) {
+    let g = '<div class="bmc-mx" aria-label="The house you land on, for every starting house and every count"><span class="bmc-mc"></span>';
+    for (let xx = 1; xx <= 12; xx++) g += `<span class="bmc-mh">${xx}</span>`;
+    for (let yy = 1; yy <= 12; yy++) { g += `<span class="bmc-mh">${yy}</span>`; for (let xx = 1; xx <= 12; xx++) g += `<button type="button" class="bmc-mb${xx === yy ? ' same' : ''}${xx === x && yy === y ? ' on' : ''}" data-y="${yy}" data-x="${xx}" onclick="BMC.pickCell(${yy},${xx})" aria-label="${ORD(xx)} from the ${ORD(yy)}">${ref(xx, yy)}</button>`; }
+    return g + '</div>';
+  }
   function paneExplorer(chart) {
-    return `<div class="bmc-hero"><h3>Any house from any house</h3><p>Pick a starting house, then pick which house to count from it. The starting house is treated like a Lagna of its own.</p></div>
+    return `<div class="bmc-banner sm"><span class="bmc-orn" aria-hidden="true">🧭</span><h3>Any house from any house</h3><p>Pick a starting house, then which house to count from it. The starting house is treated like a Lagna of its own.</p></div>
       <div class="bmc-ctl">${sel('bmcY', 1, 12, 7, 'upMatrix', 'Count from')}${sel('bmcX', 1, 12, 8, 'upMatrix', 'Count to')}</div>
       <div id="bmcCell">${cellHtml(cell(chart, 8, 7))}</div>
-      <div class="bmc-hero"><h3>Every house wears twelve hats</h3><p>One house seen from all twelve starting points. Choose a house.</p></div>
+      <div class="bmc-card"><h4>The full map</h4><p class="bmc-cap">Rows are the starting house, columns are the count. The number is the house you land on. Tap any square. The gold diagonal is the same-number rule.</p>${matrixGrid(7, 8)}</div>
+      <h4 class="bmc-sec">Every house wears twelve hats</h4><p class="bmc-cap">One house seen from all twelve starting points.</p>
       <div class="bmc-ctl">${sel('bmcH', 1, 12, 2, 'upHats', 'Which house')}</div>
-      <div id="bmcHats">${hatsHtml(hats(chart, 2), 2)}</div>`;
+      <div id="bmcHats">${hatsHtml(hats(chart, 2))}</div>`;
   }
   function paneRecipes(chart, C) {
-    return `<div class="bmc-hero"><h3>Reading recipes</h3><p>Pick a question. Each recipe says which house to read first, which second, and what else to count, with your own signs and planets.</p></div>
+    return `<div class="bmc-banner sm"><span class="bmc-orn" aria-hidden="true">🧩</span><h3>Reading recipes</h3><p>Pick a question. Each recipe says which house to read first, which second, and what else to count, with your own signs and planets.</p></div>
       <div class="bmc-list">${D.TOPICS.map(t => {
         const r = C.rows[t.h - 1], ex = t.extra.map(e => { const c = cell(chart, e.x, e.y); return `<li><b>${ORD(e.x)} from the ${ORD(e.y)}</b> = house ${c.h} (${esc(c.f.signName)}, inside: ${esc(pl(c.f.occ))})<br><small>${esc(D.EX[e.x + '-' + e.y] || c.phrase)} ${tag(e.s === 'M' ? 'M' : 'S', e.s === 'M' ? [] : [e.s])}</small></li>`; }).join('');
-        return `<details class="bmc-h"><summary><span class="bmc-n">${t.h}</span><span class="bmc-ar">→</span><span class="bmc-n d">${r.derived}</span><span class="bmc-st"><b>${esc(t.t)}</b><small>${chip(r.ps)} ${r.house !== r.derived ? chip(r.qs) : ''}</small></span></summary><div class="bmc-body"><p>${esc(t.note)}</p><div class="bmc-rel ${r.rel.k}"><b>Your chart</b> ${esc(r.rel.t)}</div><h5>Also count</h5><ul class="bmc-ex">${ex}</ul></div></details>`;
+        return `<details class="bmc-h ${r.rel.k}"><summary><span class="bmc-ic" aria-hidden="true">${t.ic}</span><span class="bmc-st"><b>${esc(t.t)}</b><small>House ${t.h} → ${r.derived}</small></span><span class="bmc-dots" aria-hidden="true"><i class="${r.ps.tone}"></i><i class="${r.qs.tone}"></i></span></summary><div class="bmc-body"><p>${esc(t.note)}</p><div class="bmc-lh">${chip(r.ps)}${r.house !== r.derived ? chip(r.qs) : ''}</div><div class="bmc-rel ${r.rel.k}"><b>🔗 Your chart</b>${esc(r.rel.t)}</div><h5>Also count</h5><ul class="bmc-ex">${ex}</ul></div></details>`;
       }).join('')}</div>`;
   }
-  const srcLinks = a => a.map(k => `<a href="${D.SRC[k].u}" target="_blank" rel="noopener">${k}</a>`).join(', ');
+  const srcLinks = a => a.map(k => `<a href="${D.SRC[k].u}" target="_blank" rel="noopener">${esc(D.SRC[k].n)}</a>`).join(' · ');
   function paneLearn() {
-    const ch = (t, body, open) => `<details class="bmc-h bmc-ch"${open ? ' open' : ''}><summary><span class="bmc-st"><b>${t}</b></span></summary><div class="bmc-body">${body}</div></details>`;
-    return `<div class="bmc-hero"><h3>The masterclass</h3><p>Seven short chapters: what it is, the formula, the twelve pairs, the rules, where teachers differ, a step-by-step recipe, and common mistakes.</p></div><div class="bmc-list">
-      ${ch('1. What Bhavat Bhavam means', `<p><b>Bhavat Bhavam</b> means "from house to house". It has two uses. First, the <b>same-number pair</b>: count the Nth house from the Nth house, so the 7th from the 7th is the 1st. Second, <b>any house from any house</b>: treat any house as a Lagna and read the others from it, so the 2nd from the 7th is the 8th and tells about the partner's money. Both give a house a second layer of meaning beyond the first reading. ${tag('S', ['PB', 'AS', 'BP', 'VJ'])}</p>`, true)}
-      ${ch('2. The formula', `<p>Count the starting house as 1.</p><p class="bmc-code">House X counted from house Y<br>= ((Y − 1) + (X − 1)) mod 12 + 1</p><p class="bmc-code">Same-number pair (X = Y = N)<br>derived = (2N − 2) mod 12 + 1 &nbsp;(2N − 1, minus 12 if above 12)</p><p class="bmc-code">Sign of a house<br>= (Lagna sign + house − 1) mod 12</p><p>Worked: the 8th from the 8th is (7 + 7) mod 12 + 1 = 3. The 5th from the 5th is (4 + 4) + 1 = 9. ${tag('M')}</p>`)}
-      ${ch('3. The twelve pairs', `<div class="bmc-pairs">${D.PAIRS.map(p => `<div class="bmc-pr"><span class="bmc-n">${p.n}</span><span class="bmc-ar">→</span><span class="bmc-n d">${p.d}</span><span><b>${esc(p.a)}</b><br><small>${esc(p.b)}</small><br>${tag('S', p.src)}</span></div>`).join('')}</div><p>Houses that are 6 apart share a second house: 1 and 7 give the 1st, 2 and 8 give the 3rd, 3 and 9 give the 5th, 4 and 10 give the 7th, 5 and 11 give the 9th, 6 and 12 give the 11th. ${tag('M')}</p>`)}
-      ${ch('4. The rules', D.RULES.map(r => `<div class="bmc-rule"><b>${esc(r.t)}</b> ${tag(r.tag, r.src)}<br>${esc(r.b)}</div>`).join(''))}
-      ${ch('5. Where teachers differ', D.DIFFS.map(r => `<div class="bmc-rule"><b>${esc(r.t)}</b><br>${esc(r.b)}</div>`).join(''))}
-      ${ch('6. The reading recipe', `<ol class="bmc-steps">${D.STEPS.map(s => `<li>${esc(s)}</li>`).join('')}</ol><p>How the Support score is built (a teaching aid): lord in a kendra or trikona +1; lord strong +1 or weak −1; each benefic inside +1, each malefic −1 (not counted in the 3rd, 6th, 10th, 11th); Jupiter or Venus looking at it +1, a malefic −1; Ashtakavarga 30 or more +1, 25 or less −1. ${tag('C')}</p>`)}
-      ${ch('7. Common mistakes', `<ul class="bmc-steps">${D.MISTAKES.map(s => `<li>${esc(s)}</li>`).join('')}</ul>`)}
+    const ch = (n, ic, t, body, open) => `<details class="bmc-h bmc-ch"${open ? ' open' : ''}><summary><span class="bmc-ic" aria-hidden="true">${ic}</span><span class="bmc-st"><b>${n}. ${t}</b></span></summary><div class="bmc-body">${body}</div></details>`;
+    const fc = (lab, f) => `<div class="bmc-fc"><small>${lab}</small><code>${f}</code></div>`;
+    return `<div class="bmc-banner sm"><span class="bmc-orn" aria-hidden="true">🎓</span><h3>The masterclass</h3><p>Seven short chapters: what it is, the formula, the twelve pairs, the rules, where teachers differ, a step-by-step recipe, and common mistakes.</p></div><div class="bmc-list">
+      ${ch(1, '🪞', 'What Bhavat Bhavam means', `<p><b>Bhavat Bhavam</b> means "from house to house". It has two uses.</p><div class="bmc-two"><div><b>1 · Same-number pair</b><span>Count the Nth house from the Nth house. The 7th from the 7th is the 1st.</span></div><div><b>2 · Any house from any house</b><span>Treat any house as a Lagna. The 2nd from the 7th is the 8th, the partner's money.</span></div></div><p>Both give a house a second layer of meaning beyond the first reading. ${tag('S', ['PB', 'AS', 'BP', 'VJ'])}</p>`, true)}
+      ${ch(2, '🧮', 'The formula', `<p>Count the starting house as 1.</p>${fc('House X counted from house Y', '((Y − 1) + (X − 1)) mod 12 + 1')}${fc('Same-number pair (X = Y = N)', '(2N − 2) mod 12 + 1<br>= 2N − 1, minus 12 if above 12')}${fc('Sign of a house', '(Lagna sign + house − 1) mod 12')}<p>Worked: the 8th from the 8th is (7 + 7) mod 12 + 1 = 3. The 5th from the 5th is (4 + 4) + 1 = 9. ${tag('M')}</p>`)}
+      ${ch(3, '🕸️', 'The twelve pairs', `${wheelSvg(null, 'b')}<div class="bmc-pairs">${D.PAIRS.map(p => `<div class="bmc-pr"><div class="bmc-prh"><span class="bmc-n">${p.n}</span><span class="bmc-ar">→</span><span class="bmc-n d">${p.d}</span><b>${esc(p.a)}</b></div><small>${esc(p.b)}</small>${tag('S', p.src)}</div>`).join('')}</div><p>Houses 6 apart share a second house: 1 and 7 give the 1st, 2 and 8 give the 3rd, 3 and 9 give the 5th, 4 and 10 give the 7th, 5 and 11 give the 9th, 6 and 12 give the 11th. ${tag('M')}</p>`)}
+      ${ch(4, '📜', 'The rules', D.RULES.map(r => `<div class="bmc-rule"><b>${esc(r.t)}</b>${tag(r.tag, r.src)}<span>${esc(r.b)}</span></div>`).join(''))}
+      ${ch(5, '⚖️', 'Where teachers differ', D.DIFFS.map(r => `<div class="bmc-rule"><b>${esc(r.t)}</b><span>${esc(r.b)}</span></div>`).join(''))}
+      ${ch(6, '🗺️', 'The reading recipe', `<ol class="bmc-steps">${D.STEPS.map(s => `<li>${esc(s)}</li>`).join('')}</ol><div class="bmc-rule"><b>How the Support score is built</b>${tag('C')}<span>Lord in a kendra or trikona +1. Lord strong +1 or weak −1. Each benefic inside +1, each malefic −1 (not counted in the 3rd, 6th, 10th, 11th). Jupiter or Venus looking at it +1, a malefic −1. Ashtakavarga 30 or more +1, 25 or less −1. Range −6 to +6.</span></div>`)}
+      ${ch(7, '🚧', 'Common mistakes', `<ul class="bmc-steps">${D.MISTAKES.map(s => `<li>${esc(s)}</li>`).join('')}</ul>`)}
     </div><p class="bmc-fine">Sources read: ${srcLinks(Object.keys(D.SRC))}. A classical verse for the same-number rule was not verified. These are tendencies, to be read with the whole chart.</p>`;
   }
   function html(chart) {
     lastChart = chart; const C = compute(chart);
-    return `<div class="bmc"><div class="bmc-tabs" role="tablist">${[['chart', 'My chart'], ['explore', 'Explorer'], ['recipes', 'Recipes'], ['learn', 'Learn']].map((t, i) => `<button type="button" role="tab" data-bmc-tab="${t[0]}" class="${i ? '' : 'on'}" onclick="BMC.tab(this)">${t[1]}</button>`).join('')}</div>
+    return `<div class="bmc"><div class="bmc-tabs" role="tablist">${[['chart', '🪞', 'My chart'], ['explore', '🧭', 'Explorer'], ['recipes', '🧩', 'Recipes'], ['learn', '🎓', 'Learn']].map((t, i) => `<button type="button" role="tab" data-bmc-tab="${t[0]}" class="${i ? '' : 'on'}" onclick="BMC.tab(this)"><span aria-hidden="true">${t[1]}</span>${t[2]}</button>`).join('')}</div>
       <section data-bmc-pane="chart">${paneChart(C)}</section>
       <section data-bmc-pane="explore" hidden>${paneExplorer(chart)}</section>
       <section data-bmc-pane="recipes" hidden>${paneRecipes(chart, C)}</section>
@@ -57276,8 +57404,10 @@ const BMC = (() => {
   const api = {
     compute, cell, hats, facts, signal, relation, currentPeriod, derived, ref, inv, html, text, GR,
     tab(b) { const root = b.closest('.bmc'); if (!root) return; root.querySelectorAll('[data-bmc-tab]').forEach(x => x.classList.toggle('on', x === b)); root.querySelectorAll('[data-bmc-pane]').forEach(p => { p.hidden = p.getAttribute('data-bmc-pane') !== b.getAttribute('data-bmc-tab'); }); },
-    upMatrix() { const y = +document.getElementById('bmcY').value, x = +document.getElementById('bmcX').value, el = document.getElementById('bmcCell'); if (el && lastChart) el.innerHTML = cellHtml(cell(lastChart, x, y)); },
-    upHats() { const h = +document.getElementById('bmcH').value, el = document.getElementById('bmcHats'); if (el && lastChart) el.innerHTML = hatsHtml(hats(lastChart, h), h); }
+    upMatrix() { const y = +document.getElementById('bmcY').value, x = +document.getElementById('bmcX').value, el = document.getElementById('bmcCell'); if (el && lastChart) el.innerHTML = cellHtml(cell(lastChart, x, y)); document.querySelectorAll('.bmc-mb').forEach(b => b.classList.toggle('on', +b.getAttribute('data-y') === y && +b.getAttribute('data-x') === x)); },
+    pickCell(y, x) { const sy = document.getElementById('bmcY'), sx = document.getElementById('bmcX'); if (!sy || !sx) return; sy.value = y; sx.value = x; api.upMatrix(); },
+    upHats() { const h = +document.getElementById('bmcH').value, el = document.getElementById('bmcHats'); if (el && lastChart) el.innerHTML = hatsHtml(hats(lastChart, h)); },
+    go(h) { const row = document.getElementById('bmcRow' + h); if (!row) return; const t = row.closest('.bmc').querySelector('[data-bmc-tab=chart]'); if (t) api.tab(t); row.open = true; try { row.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { row.scrollIntoView(); } }
   };
   window.buildBhavatMasterclassPanel = function (chart) { return html(chart); };
   if (typeof registerLatePanel === 'function') registerLatePanel('panel-bhavatclass', window.buildBhavatMasterclassPanel);
