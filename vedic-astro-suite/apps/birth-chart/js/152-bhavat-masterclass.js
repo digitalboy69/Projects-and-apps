@@ -127,16 +127,30 @@ const BMC = (() => {
         <div class="bmc-pair"><b>📖 What the pair means</b>${esc(pair.a)} ${esc(pair.b)}</div>
       </div></details>`;
   }
+  /* 12-segment balance ring: one arc per house, coloured by its Support score */
+  function ringSvg(rows) {
+    const c = 60, r = 46, f = v => v.toFixed(2), pt = a => [c + r * Math.cos(a * Math.PI / 180), c + r * Math.sin(a * Math.PI / 180)];
+    let arcs = '';
+    rows.forEach((x, i) => { const a0 = -90 + i * 30 + 3, a1 = -90 + (i + 1) * 30 - 3, p0 = pt(a0), p1 = pt(a1); arcs += `<path class="bmc-rg ${x.ps.tone}" d="M${f(p0[0])} ${f(p0[1])}A${r} ${r} 0 0 1 ${f(p1[0])} ${f(p1[1])}"/>`; });
+    const good = rows.filter(x => x.ps.score >= 1).length;
+    return `<svg class="bmc-ring" viewBox="0 0 120 120" role="img" aria-label="${good} of 12 houses lean supportive">${arcs}<text class="bmc-rn" x="60" y="62" text-anchor="middle">${good}<tspan class="bmc-rd">/12</tspan></text><text class="bmc-rl" x="60" y="78" text-anchor="middle">supportive</text></svg>`;
+  }
+  const RELIC = { reinforced: ['✦', 'Steady'], care: ['◈', 'Care'], effort: ['↗', 'Effort'], help: ['↙', 'Helped'], mixed: ['≈', 'Mixed'], same: ['＝', 'Self'] };
+  const bar = s => `<span class="bmc-mini" title="${esc(s.label)} ${sgn(s.score)}"><i class="${s.tone}" style="width:${Math.max(6, Math.round((s.score + 6) / 12 * 100))}%"></i></span>`;
   function paneChart(C) {
     perTxt = C.per ? `${C.per.md}${C.per.ad ? '/' + C.per.ad : ''}` : '';
+    const rows = C.rows, lagna = rows[0].pf.signName, good = rows.filter(x => x.ps.score >= 1).length, mid = rows.filter(x => x.ps.score === 0).length, low = rows.filter(x => x.ps.score <= -1).length, live = rows.filter(x => x.tm.active.length).length;
     const li = r => `<li><span class="bmc-n sm">${r.house}</span><span class="bmc-ar">→</span><span class="bmc-n sm d">${r.derived}</span><span>${esc(D.SHORT[r.house - 1])} <small>through ${esc(D.SHORT[r.derived - 1])}</small></span></li>`;
-    const tiles = C.rows.map(r => `<button type="button" class="bmc-tile ${r.ps.tone}" onclick="BMC.go(${r.house})" aria-label="Open pair ${r.house} to ${r.derived}, ${esc(r.ps.label)}"><b>${r.house}</b><small>→ ${r.derived}</small><i class="${r.qs.tone}"></i></button>`).join('');
-    return `<div class="bmc-banner"><span class="bmc-orn" aria-hidden="true">🪞</span><h3>Your twelve pairs</h3><p>Each house is read twice: the house itself, then the house counted the same number of places from it.</p>${C.per ? `<div class="bmc-now"><span>Running now</span><b>${G(C.per.md)} ${esc(C.per.md)} <em>Mahadasha</em></b>${C.per.ad ? `<b>${G(C.per.ad)} ${esc(C.per.ad)} <em>Antardasha</em></b>` : ''}</div>` : ''}</div>
-      <div class="bmc-card"><h4>The pair map</h4><p class="bmc-cap">Tap a house to jump to its reading. Colour shows its Support score; gold rings mark the houses that act as second houses.</p>${wheelSvg(C.rows, 'a')}
-        <div class="bmc-legend"><span><i class="g2"></i>Well supported</span><span><i class="g1"></i>Leaning supportive</span><span><i class="m"></i>Mixed</span><span><i class="r1"></i>Leaning strained</span><span><i class="r2"></i>Needs care</span></div></div>
-      <div class="bmc-card"><h4>At a glance</h4><p class="bmc-cap">Big colour: the main house. Small dot: its second house.</p><div class="bmc-tiles">${tiles}</div></div>
+    const snaps = rows.map(r => { const ic = RELIC[r.rel.k]; return `<button type="button" class="bmc-snap ${r.rel.k}" onclick="BMC.go(${r.house})" aria-label="Open pair ${r.house} to ${r.derived}. Main ${esc(r.ps.label)}, second ${esc(r.qs.label)}"><span class="bmc-n sm">${r.house}</span><span class="bmc-ar">→</span><span class="bmc-n sm d">${r.derived}</span><span class="bmc-sn"><b>${esc(D.SHORT[r.house - 1])}${r.house === r.derived ? '' : ' <em>via</em> ' + esc(D.SHORT[r.derived - 1])}</b><small>${esc(r.pf.signName)}${r.house === r.derived ? '' : ' · ' + esc(r.qf.signName)}</small></span><span class="bmc-bars">${bar(r.ps)}${r.house === r.derived ? '' : bar(r.qs)}</span><span class="bmc-ri" title="${ic[1]}">${ic[0]}</span>${r.tm.active.length ? '<span class="bmc-live sm" title="A running dasha touches this pair">now</span>' : ''}</button>`; }).join('');
+    return `<div class="bmc-banner top"><span class="bmc-orn" aria-hidden="true">🪞</span><div class="bmc-hrow"><div class="bmc-hl"><h3>Your twelve pairs</h3><p>Every house is read twice: itself, then the house counted the same number of places from it.</p></div>${ringSvg(rows)}</div>
+      <div class="bmc-stats"><div class="bmc-sg"><b>${good}</b><small>Supportive</small></div><div><b>${mid}</b><small>Mixed</small></div><div class="bmc-sr"><b>${low}</b><small>Strained</small></div><div class="bmc-sa"><b>${live}</b><small>Live now</small></div></div>
+      <div class="bmc-now"><span>Lagna</span><b>${esc(lagna)}</b>${C.per ? `<span class="gap">Running now</span><b>${G(C.per.md)} ${esc(C.per.md)} <em>Mahadasha</em></b>${C.per.ad ? `<b>${G(C.per.ad)} ${esc(C.per.ad)} <em>Antardasha</em></b>` : ''}` : ''}</div></div>
+      <div class="bmc-card"><h4>All twelve at a glance</h4><p class="bmc-cap">One line per pair. Top bar is the main house, lower bar its second house. Tap a line to open the full reading.</p><div class="bmc-snaps">${snaps}</div>
+        <div class="bmc-legend"><span><i class="g2"></i>Well supported</span><span><i class="g1"></i>Supportive</span><span><i class="m"></i>Mixed</span><span><i class="r1"></i>Strained</span><span><i class="r2"></i>Needs care</span></div>
+        <div class="bmc-legend key"><span>✦ Steady</span><span>↗ Effort</span><span>↙ Helped</span><span>◈ Care</span><span>≈ Mixed</span></div></div>
       <div class="bmc-sum"><div class="bmc-good"><h5>✦ Best supported</h5><ol>${C.best.map(li).join('')}</ol></div><div class="bmc-warn"><h5>◈ Most care needed</h5><ol>${C.care.map(li).join('')}</ol></div></div>
-      <h4 class="bmc-sec">Read each pair</h4><div class="bmc-list">${C.rows.map(houseCard).join('')}</div>
+      <div class="bmc-card"><h4>The pair map</h4><p class="bmc-cap">Tap a house to jump to its reading. Colour is its Support score; gold rings mark the houses that act as second houses.</p>${wheelSvg(rows, 'a')}</div>
+      <h4 class="bmc-sec">Read each pair</h4><div class="bmc-list">${rows.map(houseCard).join('')}</div>
       <p class="bmc-fine">Scores add a few visible signals so you can see why a house looks easy or hard. They are a teaching aid, not a verdict. ${tag('C')}</p>`;
   }
   const sel = (id, from, to, cur, fn, lab) => `<label class="bmc-sel"><span>${lab}</span><select id="${id}" onchange="BMC.${fn}()">${Array.from({ length: to - from + 1 }, (_, i) => from + i).map(n => `<option value="${n}"${n === cur ? ' selected' : ''}>${ORD(n)} house</option>`).join('')}</select></label>`;

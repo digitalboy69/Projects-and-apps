@@ -23,6 +23,7 @@
 .bmc-banner.sm h3{font-size:22px}
 .bmc-banner p{position:relative;margin:0;font-size:13.5px;line-height:1.55;color:var(--mut);max-width:30em}
 .bmc-now{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(230,185,79,.2);font-size:12.5px}
+.bmc-now span.gap{margin-left:6px}
 .bmc-now span{font:600 10.5px var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--g)}
 .bmc-now b{color:var(--tx);font-weight:600;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:999px;padding:4px 11px;white-space:nowrap}
 .bmc-now em{font-style:normal;font-weight:500;color:var(--mut);font-size:11px;margin-left:3px}
@@ -165,3 +166,38 @@
 .bmc-rule span{display:block;margin-top:3px}
 .bmc-steps{margin:0 0 10px;padding-left:20px;font-size:12.5px;line-height:1.6}.bmc-steps li{margin-bottom:6px}
 @media (max-width:359px){.bmc-sum,.bmc-ctl{grid-template-columns:1fr}.bmc-tiles{grid-template-columns:repeat(4,1fr)}}
+
+/* ---- My chart overview (hero ring, stat strip, snapshot list) ---- */
+.bmc-banner.top{padding:16px 14px 14px}
+.bmc-hrow{position:relative;display:flex;align-items:center;gap:8px}
+.bmc-hl{flex:1;min-width:0}
+.bmc-hl p{font-size:13px}
+.bmc-ring{flex:none;width:112px;height:112px}
+.bmc-rg{fill:none;stroke-width:11;stroke-linecap:butt;stroke:rgba(255,255,255,.14)}
+.bmc-rg.g2{stroke:#5ec4b7}.bmc-rg.g1{stroke:rgba(94,196,183,.55)}.bmc-rg.m{stroke:rgba(255,255,255,.3)}.bmc-rg.r1{stroke:rgba(217,108,155,.6)}.bmc-rg.r2{stroke:#d96c9b}
+.bmc-rn{fill:#f4e7bf;font:600 27px var(--font-serif,serif)}
+.bmc-rd{fill:#9f9a8f;font:500 12px var(--font-sans,sans-serif)}
+.bmc-rl{fill:#9f9a8f;font:600 8.5px var(--font-sans,sans-serif);letter-spacing:.08em;text-transform:uppercase}
+.bmc-stats{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
+.bmc-stats div{padding:9px 2px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid var(--line);text-align:center;min-width:0}
+.bmc-stats b{display:block;font:600 20px/1.1 var(--font-serif,serif);color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bmc-stats small{display:block;margin-top:3px;font:600 9px var(--font-sans);letter-spacing:.04em;white-space:nowrap;text-transform:uppercase;color:var(--mut)}
+.bmc-stats .bmc-sg b{color:#5ec4b7}.bmc-stats .bmc-sr b{color:#e98ab3}.bmc-stats .bmc-sa b{color:var(--g)}
+.bmc-snaps{display:grid;gap:5px}
+.bmc-snap{position:relative;display:flex;align-items:center;gap:5px;width:100%;min-height:52px;padding:6px 10px;border:1px solid var(--line);border-left:3px solid var(--line);border-radius:13px;background:rgba(255,255,255,.03);color:var(--tx);text-align:left;cursor:pointer;font-family:var(--font-sans);animation:bmcIn .42s ease both}
+.bmc-snap.reinforced{border-left-color:var(--teal)}.bmc-snap.care{border-left-color:var(--rose)}.bmc-snap.effort,.bmc-snap.help,.bmc-snap.mixed,.bmc-snap.same{border-left-color:var(--g)}
+.bmc-snap:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.bmc-snap .bmc-n.sm{flex:none}
+.bmc-sn{flex:1;min-width:0;margin-left:2px}
+.bmc-sn b{display:block;font:600 12.5px/1.2 var(--font-sans);color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bmc-sn b em{font-style:normal;font-weight:500;color:var(--mut);font-size:10.5px}
+.bmc-sn small{display:block;margin-top:2px;font-size:10.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bmc-bars{flex:none;width:62px;display:grid;gap:5px}
+.bmc-mini{display:block;height:7px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.bmc-mini i{display:block;height:100%;border-radius:99px;background:rgba(255,255,255,.3)}
+.bmc-mini i.g2{background:#5ec4b7}.bmc-mini i.g1{background:rgba(94,196,183,.6)}.bmc-mini i.m{background:rgba(255,255,255,.35)}.bmc-mini i.r1{background:rgba(217,108,155,.65)}.bmc-mini i.r2{background:#d96c9b}
+.bmc-ri{flex:none;width:24px;text-align:center;font-size:15px;color:var(--g)}
+.bmc-snap.reinforced .bmc-ri{color:var(--teal)}.bmc-snap.care .bmc-ri{color:var(--rose)}
+.bmc-live.sm{position:absolute;top:-6px;right:8px;font-size:8.5px;padding:1px 6px}
+.bmc-legend.key{margin-top:4px;color:var(--g)}
+@media (max-width:359px){.bmc-ring{width:92px;height:92px}}
