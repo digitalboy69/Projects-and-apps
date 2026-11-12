@@ -200,16 +200,17 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Divisional Charts page tidied (step 1 of the layout clean-up): shorter title, compact controls card (picker, style, one options row), compact chart head so the chart shows on the first screen (css/27 end block, text in js/58 and js/84).
 - Compare Lab (experiment, 🧪 button on Divisional Charts): full-screen canvas, three-dot menu adds up to 4 charts (D1 vs D9, any vs any), per-chart style, tap a planet to follow it across charts, planet-by-chart table, plain-language notes, copy as text (hidden while the app's Copy-buttons setting is off). js/115-compare-lab.js (CMPLAB), css/54-compare-lab.css, test tests/compare_lab_test.py; planet badges in js/61 now carry class ch-pl + data-p.
 - Bhavat Bhavam Masterclass (new Home > Analysis tile `panel-bhavatclass`, 2026-11-12): `js/151-bhavat-masterclass-data.js` (BMD, rules tagged S/M/C with source ids) + `js/152-bhavat-masterclass.js` (BMC) + `css/81`. Tabs: My chart (pair-map wheel, heat tiles, 12 pair rows with score gauges, agreement, dasha timing), Explorer (any house from any house, tap 12x12 matrix, 12 hats), Recipes (icons), Learn. Visual polish: only transform/opacity animation, no backdrop-filter. Sources PB/AS/BP/VJ; no classical verse verified (said on the page). Test: `node tests/bhavat_masterclass_test.js`. Old `panel-bhavat` links to it.
+- Varga Matrix (new Home > Your Chart tile `panel-vargamatrix`, 2026-11-12): `js/153-varga-matrix.js` (VMX) + `css/82`. One grid: rows = charts (Sapta 7 / Shodasha 16 / All 24), columns = Lagna + 9 planets, cell = sign glyph coloured by dignity, star = Vargottama, ring = same sign as D1. Tap a cell for sign, house, motion, D1 comparison; strongest/weakest planets and Vargottama list below. Reads chart.vargas only. Lesson: short class names (.hero, .ex, .rd) collide with older global CSS, so always prefix (vmx-, vx-). Tests: `node tests/varga_matrix_test.js`, `python3 tests/varga_matrix_browser_test.py`.
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-12 - 2172 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-12 - 2183 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 243 files, 35107 lines, 2922 KB
+**birth-chart** - 245 files, 35309 lines, 2943 KB
 ```
-index.html                                         668 lines   38 KB
+index.html                                         670 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -271,11 +272,12 @@ js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
 js/147-tools-hub.js                                117 lines   11 KB
 js/148-export-builder.js                           260 lines   25 KB
-js/149-feature-guide-data.js                       303 lines   30 KB
+js/149-feature-guide-data.js                       308 lines   32 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
 js/151-bhavat-masterclass-data.js                   99 lines   13 KB
 js/152-bhavat-masterclass.js                       228 lines   27 KB
+js/153-varga-matrix.js                             108 lines   11 KB
 js/16-rectification-engine.js                       36 lines    2 KB
 js/17-special-lagnas.js                            404 lines   23 KB
 js/18-ui-location-profiles.js                      124 lines    5 KB
@@ -285,7 +287,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             173 lines   19 KB
+js/25-home-and-tabs.js                             174 lines   19 KB
 js/26-rectification-studio.js                      250 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -452,6 +454,7 @@ css/78-tools-hub.css                                35 lines    3 KB
 css/79-export-builder.css                           49 lines    5 KB
 css/80-feature-guide.css                            46 lines    5 KB
 css/81-bhavat-masterclass.css                      204 lines   18 KB
+css/82-varga-matrix.css                             86 lines    8 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB

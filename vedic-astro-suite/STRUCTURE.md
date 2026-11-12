@@ -543,6 +543,10 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/152-bhavat-masterclass.js` — Bhavat Bhavam Masterclass engine and panel (global `BMC`): derived-house formula, any house from any house, twelve hats, Support score per house, agreement of the two layers, dasha timing check; panel-bhavatclass (tabs My chart, Explorer, Recipes, Learn)
 - `apps/birth-chart/css/81-bhavat-masterclass.css` — styles for the Masterclass (`bmc-` prefix)
 - `tests/bhavat_masterclass_test.js` — node test for js/151-152 (formulas vs sources, inverse of all 144 counts, scoring rules, dasha, 60 real charts)
+- `apps/birth-chart/js/153-varga-matrix.js` — Varga Matrix engine and panel (global `VMX`): all nine planets across D1 to D144 in one colour-coded grid (sets Sapta 7, Shodasha 16, All), dignity points, Vargottama list, strongest and weakest planets, tap detail; panel-vargamatrix
+- `apps/birth-chart/css/82-varga-matrix.css` — styles for the Varga Matrix (`vmx-` and `vx-` prefixes)
+- `tests/varga_matrix_test.js` — node test for js/153 (cells equal raw varga data, points recomputed by hand, Vargottama, 60 real charts x 3 sets)
+- `tests/varga_matrix_browser_test.py` — Playwright test of the Varga Matrix at 390 and 360px (`VMX_SHOTS=dir`)
 - `tests/bhavat_masterclass_browser_test.py` — Playwright test of the Masterclass at 390 and 360px (`BMC_SHOTS=dir`)
 - `apps/birth-chart/js/141-ashtakavarga-extras.js` — Ashtakavarga Workings (global `ASX`): Prastara, Sodhana + pindas, Kakshya and Transit tabs (A8a-d); panel-asx
 - `apps/birth-chart/js/142-gochara-vedha.js` — Gochara vedha pair tables and check (global `GVD`); used by Today for You to mark a favourable planet as held back
