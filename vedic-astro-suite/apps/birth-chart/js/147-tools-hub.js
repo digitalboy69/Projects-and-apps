@@ -8,7 +8,7 @@ const THB = (() => {
   const CATS = [
     ['read', 'Read my chart', 'Understand my chart in plain words', '#D4AF37', ['panel-reading', 'panel-problem', 'panel-overview', 'panel-avakahada', 'panel-planets', 'panel-bhava', 'panel-vargas', 'panel-lagnas']],
     ['now', 'Today & now', 'See what the sky is doing today', '#5EC4B7', ['panel-today', 'panel-active', 'panel-transit', 'panel-choghadiya', 'panel-panchanga', 'panel-pcal', 'panel-prashna', 'panel-chakra']],
-    ['timing', 'Life timing & cycles', 'Know which period of life is running and what comes next', '#8A6FB8', ['panel-ppf', 'panel-dasha', 'panel-dashasys', 'panel-transits', 'panel-sudarshana', 'panel-tithi', 'panel-vbday', 'panel-yeartimeline']],
+    ['timing', 'Life timing & cycles', 'Know which period of life is running and what comes next', '#8A6FB8', ['panel-hora', 'panel-ppf', 'panel-dasha', 'panel-dashasys', 'panel-transits', 'panel-sudarshana', 'panel-tithi', 'panel-vbday', 'panel-yeartimeline']],
     ['strength', 'Planet & house strength', 'Check how strong or weak each planet and house is', '#6B7FA3', ['panel-shadbala', 'panel-bhavabala', 'panel-vimshopaka', 'panel-avasthas', 'panel-ashtakavarga', 'panel-asx', 'panel-fate', 'panel-sensitive', 'panel-upagrahas']],
     ['deeper', 'Combinations & deeper study', 'Look for yogas, doshas and a second opinion on a house', '#4F8FBF', ['panel-yogas', 'panel-dosha', 'panel-argala', 'panel-bhavat', 'panel-bhavatclass', 'panel-vargamatrix', 'panel-kp', 'panel-sahams', 'panel-relationships', 'panel-triggerlab', 'panel-meaninglab']],
     ['people', 'People & compatibility', 'Compare my chart with someone else', '#D96C9B', ['panel-match', 'panel-synastry']],
@@ -24,7 +24,7 @@ const THB = (() => {
     'panel-transit': 'gochar current planets live today sky', 'panel-choghadiya': 'muhurat good time bad time rahu kalam slot',
     'panel-panchanga': 'panchang almanac tithi nakshatra yoga karana sunrise sunset', 'panel-pcal': 'festival ekadashi purnima amavasya eclipse holiday diwali month',
     'panel-prashna': 'horary ask question now', 'panel-chakra': 'sarvatobhadra kota shoola vedha',
-    'panel-dasha': 'mahadasha antardasha vimshottari period running', 'panel-ppf': 'past present future timeline life periods dasha chart ease what next', 'panel-transits': 'sade sati saturn jupiter rahu ketu ingress',
+    'panel-dasha': 'mahadasha antardasha vimshottari period running', 'panel-hora': 'planetary hours hora best time muhurta auspicious time sun moon mars hora today', 'panel-ppf': 'past present future timeline life periods dasha chart ease what next', 'panel-transits': 'sade sati saturn jupiter rahu ketu ingress',
     'panel-match': 'marriage matching gun milan ashtakoota partner manglik', 'panel-synastry': 'marriage compatibility couple partner two charts relationship',
     'panel-dosha': 'manglik kaal sarp pitru gand mool remedy problem', 'panel-yogas': 'raj yoga dhana combination',
     'panel-rectification': 'birth time wrong unsure correct fix', 'panel-datefinder': 'forgotten birth date festival family remembers',

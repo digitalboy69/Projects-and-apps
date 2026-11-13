@@ -5,8 +5,8 @@ Existing in the app today (checked 2026-11-13): only a one-line "Hora now" in th
 ## Checklist (first unchecked box is the next step)
 - [x] S1 Research (two sources each): hora order, unequal hours, planet nature, activity suitability, birth hora, differences between teachers. Record URLs in Notes.
 - [x] S2 Engine `js/156-hora-engine.js` (global HORA) + node test `tests/hora_test.js`. Backend step: push live after it passes.
-- [ ] S3 Panel `js/157-hora-panel.js` + `css/85-hora.css` (`panel-hora`, prefix `hr-`): tabs Now / Today / Week / Best times / Learn. Browser test at 390 and 360. Screenshots, WAIT for owner approval, then push.
-- [ ] S4 Wire: HOME_ITEMS (js/25), `reg` (js/120), Tools group "Time" (js/147), Panchang card link, Feature Guide entry (js/149), STRUCTURE.md, AI_GUIDE section 7.
+- [x] S3 Panel `js/157-hora-panel.js` + `css/85-hora.css` (`panel-hora`, prefix `hr-`): tabs Now / Today / Week / Best times / Learn. Browser test at 390 and 360. Screenshots, WAIT for owner approval, then push.
+- [x] S4 Wire: HOME_ITEMS (js/25), `reg` (js/120), Tools group "Time" (js/147), Panchang card link, Feature Guide entry (js/149), STRUCTURE.md, AI_GUIDE section 7.
 - [ ] S5 Full regression + final screenshots, push main and Root after approval.
 
 ## Feature list (what "fully powerful" means here)
@@ -27,3 +27,4 @@ Tendency wording only. Say plainly that hora is a popular timing practice (Muhur
 - Activity table: kept pairs that two or more of Drik, Shubh, Dekho agree on as 'good'; a pair seen on one page is 'fair'; cautions (Saturn: new beginnings, Mars: peacemaking and auspicious starts) are on two pages. Weekday-strength claims on Drik (Sun hora strongest Tue/Thu/Sun) are single-source and NOT used.
 - Chart link (hora lord's house, dignity, ease, relation to Lagna lord and Mahadasha lord) and the 0..5 score are the app's own teaching aid, built from VDA/VDB. Labelled as such on the page.
 - 2026-11-13 S2 done: js/156 engine + tests/hora_test.py (21 checks). Friday Jupiter hora = 1.5 because Jupiter is an enemy of the day lord Venus; Thursday Jupiter = 2.5.
+- 2026-11-13 S3/S4 built locally: js/157 + css/85, wired in HOME_ITEMS, js/120, Tools 'Time' group, Feature Guide, STRUCTURE. tests/hora_browser_test.py 56 checks pass at 390 and 360. WAITING for owner approval of screenshots before pushing (S5).

@@ -202,16 +202,17 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Bhavat Bhavam Masterclass (new Home > Analysis tile `panel-bhavatclass`, 2026-11-12): `js/151-bhavat-masterclass-data.js` (BMD, rules tagged S/M/C with source ids) + `js/152-bhavat-masterclass.js` (BMC) + `css/81`. Tabs: My chart (pair-map wheel, heat tiles, 12 pair rows with score gauges, agreement, dasha timing), Explorer (any house from any house, tap 12x12 matrix, 12 hats), Recipes (icons), Learn. Visual polish: only transform/opacity animation, no backdrop-filter. Sources PB/AS/BP/VJ; no classical verse verified (said on the page). Test: `node tests/bhavat_masterclass_test.js`. Old `panel-bhavat` links to it.
 - Varga Matrix (new Home > Your Chart tile `panel-vargamatrix`, 2026-11-12): `js/153-varga-matrix.js` (VMX) + `css/82`. One grid: rows = charts (Sapta 7 / Shodasha 16 / All 24), columns = Lagna + 9 planets, cell = sign glyph coloured by dignity, star = Vargottama, ring = same sign as D1. Tap a cell for sign, house, motion, D1 comparison; strongest/weakest planets and Vargottama list below. Reads chart.vargas only. Lesson: short class names (.hero, .ex, .rd) collide with older global CSS, so always prefix (vmx-, vx-). Tests: `node tests/varga_matrix_test.js`, `python3 tests/varga_matrix_browser_test.py`.
 - Past · Present · Future (`panel-ppf`, 2026-11-13): `js/155-past-present-future.js` + `css/84`: directional + chart, life river of Mahadashas, ten-years-back/ahead ease bars, Past/Present/Future tabs; dasha parts read only VDA (js/91) and the engine. Directional chart (owner described it from a teacher's video): house groups 1-5-9, 2-6-10, 3-7-11, 4-8-12 confirmed by Wikipedia Bhava and vedicbirth.com; the rule ahead=future, opposite=present, behind=past is the teacher's, NOT verified in a classical text, and the page says so. Test: `python3 tests/past_present_future_browser_test.py`.
+- Hora (`panel-hora`, 2026-11-13): `js/156-hora-engine.js` (HORA: 24 unequal horas sunrise to next sunrise, Chaldean order from the weekday lord, Rahu/Yama/Gulika overlap, Choghadiya, 14-activity table, teaching-aid score, best(), week(), forYou()) + `js/157-hora-panel.js` + `css/85` (tabs Now/Today/Week/Best/Learn). Plan and research log: `docs/HORA_PLAN.md` (Drik, Shubh, Dekho Panchang, Wikipedia; where teachers differ is on the Learn tab). Tests: `tests/hora_test.py` (engine, 21 checks) and `tests/hora_browser_test.py` (56 checks, `HORA_SHOTS=dir`).
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-13 - 2215 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-13 - 2235 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 248 files, 35747 lines, 2986 KB
+**birth-chart** - 250 files, 36098 lines, 3027 KB
 ```
-index.html                                         673 lines   38 KB
+index.html                                         675 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -273,7 +274,7 @@ js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
 js/147-tools-hub.js                                117 lines   11 KB
 js/148-export-builder.js                           260 lines   25 KB
-js/149-feature-guide-data.js                       313 lines   34 KB
+js/149-feature-guide-data.js                       318 lines   35 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
 js/151-bhavat-masterclass-data.js                   99 lines   13 KB
@@ -281,6 +282,7 @@ js/152-bhavat-masterclass.js                       228 lines   27 KB
 js/153-varga-matrix.js                             108 lines   11 KB
 js/155-past-present-future.js                      199 lines   21 KB
 js/156-hora-engine.js                              101 lines    9 KB
+js/157-hora-panel.js                               203 lines   27 KB
 js/16-rectification-engine.js                       36 lines    2 KB
 js/17-special-lagnas.js                            404 lines   23 KB
 js/18-ui-location-profiles.js                      124 lines    5 KB
@@ -290,7 +292,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             175 lines   19 KB
+js/25-home-and-tabs.js                             176 lines   19 KB
 js/26-rectification-studio.js                      250 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -459,6 +461,7 @@ css/80-feature-guide.css                            46 lines    5 KB
 css/81-bhavat-masterclass.css                      204 lines   18 KB
 css/82-varga-matrix.css                             86 lines    8 KB
 css/84-past-present-future.css                     129 lines   11 KB
+css/85-hora.css                                    140 lines   13 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB

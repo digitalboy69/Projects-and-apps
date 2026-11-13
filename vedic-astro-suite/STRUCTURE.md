@@ -549,6 +549,9 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/css/84-past-present-future.css` — styles for the Past · Present · Future panel (`ppf-` prefix)
 - `tests/past_present_future_browser_test.py` — Playwright test of the Past · Present · Future panel at 390 and 360px (`PPF_SHOTS=dir`)
 - `apps/birth-chart/js/156-hora-engine.js` — Hora (planetary hours) engine (global `HORA`): 24 unequal horas per Vedic day (12 day = day length / 12, 12 night = night length / 12) in Chaldean order from the weekday lord, overlaps with Rahu Kalam / Yamaganda / Gulika, Choghadiya at the midpoint, 14-activity table, teaching-aid score with reasons, best-times search, week, chart link (`forYou`); reuses panchangaAt, CHG, VDB, VDA only
+- `apps/birth-chart/js/157-hora-panel.js` — Hora panel (global `HORAUI`, `panel-hora`, Home > Time & Cycles + Tools): tabs Now (live countdown ring, next 3, whole-day ribbon, hora planet in your chart), Today (24 horas for any date, score for any activity, copy as text), Week (7 x 24 colour grid, glow by activity), Best (best and worst horas for 14 activities over 24 h / 3 / 7 days with reasons), Learn (how horas are made, order, planets, scoring, where teachers differ); reads HORA (js/156) only
+- `apps/birth-chart/css/85-hora.css` — styles for the Hora panel (`hr-` prefix)
+- `tests/hora_browser_test.py` — Playwright test of the Hora panel at 390 and 360px (`HORA_SHOTS=dir`)
 - `docs/HORA_PLAN.md` — Hora plan, checklist and research log (sources, where teachers differ)
 - `tests/hora_test.py` — Playwright test of the Hora engine against panchangaAt (order, contiguity, Drik day/night lengths)
 - `tests/varga_matrix_test.js` — node test for js/153 (cells equal raw varga data, points recomputed by hand, Vargottama, 60 real charts x 3 sets)
