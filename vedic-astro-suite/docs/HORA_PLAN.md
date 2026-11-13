@@ -28,3 +28,4 @@ Tendency wording only. Say plainly that hora is a popular timing practice (Muhur
 - Chart link (hora lord's house, dignity, ease, relation to Lagna lord and Mahadasha lord) and the 0..5 score are the app's own teaching aid, built from VDA/VDB. Labelled as such on the page.
 - 2026-11-13 S2 done: js/156 engine + tests/hora_test.py (21 checks). Friday Jupiter hora = 1.5 because Jupiter is an enemy of the day lord Venus; Thursday Jupiter = 2.5.
 - 2026-11-13 S3/S4 built locally: js/157 + css/85, wired in HOME_ITEMS, js/120, Tools 'Time' group, Feature Guide, STRUCTURE. tests/hora_browser_test.py 56 checks pass at 390 and 360. WAITING for owner approval of screenshots before pushing (S5).
+- 2026-11-13 owner added: Moment tab (any date + time) and custom location. Tests now 82 browser checks. Owner approved push with this addition.

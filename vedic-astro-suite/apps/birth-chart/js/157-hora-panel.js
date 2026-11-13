@@ -7,7 +7,8 @@ const HORAUI = (() => {
   const WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const TONE = { good: ['hr-s', 'supportive'], mid: ['hr-m', 'mixed'], care: ['hr-c', 'careful'] };
   const BANDC = { Excellent: 'hr-s', Good: 'hr-s', Fair: 'hr-m', Neutral: 'hr-m', Avoid: 'hr-c' };
-  const S = { tab: 'now', date: null, wdate: null, act: 'start', show: '', range: 3, useChart: true, open: null, cell: null, loc: null, chart: null };
+  const S = { tab: 'now', date: null, wdate: null, mdate: null, mtime: '12:00', act: 'start', show: '', range: 3, useChart: true, open: null, cell: null, loc: null, birth: null, prof: null, chart: null, placeOpen: false, res: [] };
+  const LSK = 'hora_place_v1';
   let timer = null;
 
   const nowJd = () => Date.now() / 864e5 + 2440587.5;
@@ -23,6 +24,11 @@ const HORAUI = (() => {
   const short = n => n.replace(' Kalam', '');
   const cdText = ms => { const s = Math.max(0, Math.floor(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60, p = n => String(n).padStart(2, '0'); return h ? h + ':' + p(m) + ':' + p(x) : p(m) + ':' + p(x); };
   const chartOn = () => (S.useChart ? S.chart : null);
+  const fmtTz = tz => 'UTC' + (tz < 0 ? '−' : '+') + Math.floor(Math.abs(tz)) + (Math.abs(tz) % 1 ? ':' + String(Math.round(Math.abs(tz) % 1 * 60)).padStart(2, '0') : '');
+  const TZS = () => (typeof TZ_OPTIONS !== 'undefined' && TZ_OPTIONS && TZ_OPTIONS.length) ? TZ_OPTIONS : [-12, -11, -10, -9.5, -9, -8, -7, -6, -5, -4, -3.5, -3, -2, -1, 0, 1, 2, 3, 3.5, 4, 4.5, 5, 5.5, 5.75, 6, 6.5, 7, 8, 8.75, 9, 9.5, 10, 10.5, 11, 12, 12.75, 13, 14];
+  const validLoc = l => l && isFinite(l.lat) && isFinite(l.lon) && isFinite(l.tz) && Math.abs(l.lat) <= 89 && Math.abs(l.lon) <= 180 && Math.abs(l.tz) <= 14;
+  const placeName = () => esc(S.loc.place || 'your place');
+  const momentJd = () => { const [y, m, d] = S.mdate.split('-').map(Number), [hh, mm] = S.mtime.split(':').map(Number); return toJulianDay(y, m, d, hh || 0, mm || 0, 0) - S.loc.tz / 24; };
 
   /* ---------- shared bits ---------- */
   function ribbon(day, jd) {
@@ -38,7 +44,7 @@ const HORAUI = (() => {
     return `<div class="hr-card"><h4>${esc(lord)} in your chart</h4><p class="hr-p">${esc(lord)} sits in your <b>${f.house}${['th', 'st', 'nd', 'rd'][(f.house % 100 > 10 && f.house % 100 < 14) ? 0 : Math.min(f.house % 10, 4) % 4] || 'th'} house</b>${f.sign ? ' in ' + esc(f.sign) : ''}${f.dignity ? ' (' + esc(String(f.dignity).toLowerCase()) + ')' : ''}. ${chip(e[0], e[1])}</p>
       <p class="hr-p hr-mu">${f.lagnaLord ? `${esc(lord)} is ${o(f.toLagnaLord)} your Lagna lord ${esc(f.lagnaLord)}.` : ''} ${f.dashaLord ? `Compared with your running Mahadasha lord ${esc(f.dashaLord)}, it is ${o(f.toDashaLord)} it.` : ''}</p>${f.why.length ? `<p class="hr-p hr-mu">Why: ${esc(f.why.join('; '))}.</p>` : ''}</div>`;
   }
-  const unavailable = () => `<div class="hr-card"><p class="hr-p">The Sun does not rise and set normally at this place and date, so the horas cannot be worked out.</p></div>`;
+  const unavailable = () => `<div class="hr-card"><p class="hr-p">The Sun does not rise and set normally at ${placeName()} on this date, so the horas cannot be worked out. Try another place or date.</p></div>`;
 
   /* ---------- NOW ---------- */
   function nowPane() {
@@ -60,6 +66,36 @@ const HORAUI = (() => {
       ${forYou(h.lord)}`;
   }
 
+  const facts = d => `<div class="hr-facts"><div><small>Day lord</small><b>${pg(d.vara.lord)} ${esc(d.vara.lord)}</b></div><div><small>Sunrise</small><b>${t12(d.sunrise)}</b></div><div><small>Sunset</small><b>${t12(d.sunset)}</b></div><div><small>Day hora</small><b>${mins(d.dayMin)}</b></div><div><small>Night hora</small><b>${mins(d.nightMin)}</b></div></div>`;
+
+  /* ---------- MOMENT (any date and time) ---------- */
+  function momentPane() {
+    const inputs = `<div class="hr-card"><h4>Pick any date and time</h4><div class="hr-mi"><label><span>Date</span><input type="date" id="hrMDate" value="${esc(S.mdate)}" min="1900-01-01" max="2100-12-31"></label><label><span>Time</span><input type="time" id="hrMTime" value="${esc(S.mtime)}"></label></div>
+      <div class="hr-mb"><button type="button" class="hr-tb" data-mnow="1">Right now</button><button type="button" class="hr-tb" data-mbirth="1">My birth moment</button></div>
+      <p class="hr-cap">Local time at ${placeName()} (${fmtTz(S.loc.tz)}). If daylight saving applied on that date, set the time zone in Place.</p></div>`;
+    let a = null; try { a = HORA.at(momentJd(), S.loc.lat, S.loc.lon, S.loc.tz); } catch (e) { a = null; }
+    if (!a || !a.hora) return inputs + unavailable();
+    const h = a.hora, d = a.day, jd = momentJd(), pl = HORA.PL[h.lord], f = (jd - h.from) / (h.to - h.from), prev = a.idx > 0 ? d.horas[a.idx - 1] : null;
+    const early = d.date !== S.mdate, sc = S.show ? HORA.score(h, d, S.show, chartOn()) : null;
+    return inputs + `<div class="hr-hero hr-mh" style="--pc:${pl.color}">
+        <p class="hr-ml">${esc(dnice(S.mdate))} · ${esc(t12(jd))}</p>
+        <div class="hr-mr"><span class="hr-pg hr-bg" style="--pc:${pl.color}">${esc(G(h.lord))}</span><div><b>${esc(h.lord)} Hora</b><small>${h.night ? 'Night' : 'Day'} hora ${h.night ? h.n - 12 : h.n} of 12 · hora ${h.n} of 24</small></div></div>
+        <div class="hr-rng">${span(h)}</div>
+        <div class="hr-pb" role="img" aria-label="${Math.round(f * 100)} percent through this hora"><i><u style="width:${(f * 100).toFixed(1)}%"></u></i><small>${Math.round(f * 100)}% through · ${mins((h.to - jd) * 1440)} left</small></div>
+        <div class="hr-chips">${chip('hr-t', pl.tag)}${toneChip(h.tone)}${h.chog ? chip(h.chog.tone === 'good' ? 'hr-s' : h.chog.tone === 'bad' ? 'hr-c' : 'hr-m', 'Choghadiya ' + h.chog.name) : ''}${overChips(h)}</div>
+        ${early ? `<p class="hr-warn hr-info">This is before sunrise (${t12(d.sunrise)}), so it still belongs to the Vedic day of ${esc(d.vara.name)}.</p>` : ''}
+        ${h.over.length ? `<p class="hr-warn">${esc(h.over.map(short).join(' and '))} ${h.over.length > 1 ? 'are' : 'is'} running at this time.</p>` : ''}
+      </div>
+      <div class="hr-card"><h4>${esc(h.lord)} hora tends to favour</h4><p class="hr-p">${esc(pl.does)}.</p><p class="hr-p hr-mu"><b>Be careful with:</b> ${esc(pl.careful)}.</p>
+        ${prev || a.next ? `<div class="hr-pn">${prev ? `<div style="--pc:${HORA.PL[prev.lord].color}">${pg(prev.lord)}<span><small>Before</small><b>${esc(prev.lord)}</b>${span(prev)}</span></div>` : ''}${a.next ? `<div style="--pc:${HORA.PL[a.next.lord].color}">${pg(a.next.lord)}<span><small>After</small><b>${esc(a.next.lord)}</b>${span(a.next)}</span></div>` : ''}</div>` : ''}
+        ${sc ? `<p class="hr-p"><b>${esc(HORA.act(S.show).name)}:</b> ${chip(BANDC[sc.band], sc.band + ' · ' + sc.score)}</p><ul class="hr-why">${sc.why.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : ''}</div>
+      ${forYou(h.lord)}
+      <h4 class="hr-h">Full hora of ${esc(d.vara.name)} <small>${esc(dnice(d.date))}</small></h4>
+      ${facts(d)}<div class="hr-card">${ribbon(d, jd)}</div>${sel()}
+      ${d.horas.map(x => row(x, d, jd, 'this time')).join('')}
+      <p class="hr-fine">The Vedic day runs from sunrise to the next sunrise. Hora is a popular timing practice (Muhurta), not a guarantee.</p>`;
+  }
+
   /* ---------- TODAY ---------- */
   function sel() { return `<label class="hr-sel"><span>Show a score for</span><select id="hrShow"><option value="">Nothing</option>${HORA.ACTS.map(a => `<option value="${a.id}"${S.show === a.id ? ' selected' : ''}>${esc(a.name)}</option>`).join('')}</select></label>`; }
   function detail(h, day) {
@@ -69,16 +105,16 @@ const HORAUI = (() => {
       ${h.chog ? `<p class="hr-p hr-mu">Choghadiya at the middle of this hora: ${esc(h.chog.name)}.</p>` : ''}${h.over.length ? `<p class="hr-p hr-mu">Overlaps ${esc(h.over.join(' and '))}.</p>` : ''}
       ${sc ? `<p class="hr-p"><b>${esc(HORA.act(S.show).name)}:</b> ${chip(BANDC[sc.band], sc.band + ' · ' + sc.score)}</p><ul class="hr-why">${sc.why.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : ''}</div>`;
   }
-  function row(h, day, jd) {
+  function row(h, day, jd, lbl) {
     const now = jd >= h.from && jd < h.to, sc = S.show ? HORA.score(h, day, S.show, chartOn()) : null, open = S.open === day.date + ':' + h.i;
     return `<div class="hr-rw${now ? ' hr-now' : ''}${open ? ' hr-open' : ''}" style="--pc:${HORA.PL[h.lord].color}"><button type="button" class="hr-row" data-row="${day.date}:${h.i}" aria-expanded="${open}"><span class="hr-n">${h.n}</span>${pg(h.lord)}
-      <span class="hr-rm"><b>${esc(h.lord)}</b><small>${span(h)}</small></span><span class="hr-rc2">${now ? chip('hr-t', 'now') : ''}${sc ? chip(BANDC[sc.band], sc.band) : toneChip(h.tone)}${overChips(h)}</span></button>${open ? detail(h, day) : ''}</div>`;
+      <span class="hr-rm"><b>${esc(h.lord)}</b><small>${span(h)}</small></span><span class="hr-rc2">${now ? chip('hr-t', lbl || 'now') : ''}${sc ? chip(BANDC[sc.band], sc.band) : toneChip(h.tone)}${overChips(h)}</span></button>${open ? detail(h, day) : ''}</div>`;
   }
   function todayPane() {
     const ds = S.date, d = HORA.dayOf(ds, S.loc.lat, S.loc.lon, S.loc.tz); if (!d) return unavailable();
     const jd = nowJd();
     return `<div class="hr-bar"><button type="button" class="hr-ar" data-day="-1" aria-label="Previous day">‹</button><label class="hr-dt"><span>${esc(dnice(ds))}</span><input type="date" id="hrDate" value="${ds}" aria-label="Choose a date"></label><button type="button" class="hr-ar" data-day="1" aria-label="Next day">›</button><button type="button" class="hr-tb" data-today="1">Today</button></div>
-      <div class="hr-facts"><div><small>Day lord</small><b>${pg(d.vara.lord)} ${esc(d.vara.lord)}</b></div><div><small>Sunrise</small><b>${t12(d.sunrise)}</b></div><div><small>Sunset</small><b>${t12(d.sunset)}</b></div><div><small>Day hora</small><b>${mins(d.dayMin)}</b></div><div><small>Night hora</small><b>${mins(d.nightMin)}</b></div></div>
+      ${facts(d)}
       <div class="hr-card">${ribbon(d, jd)}</div>${sel()}
       <h4 class="hr-h">Day horas <small>sunrise to sunset</small></h4>${d.horas.slice(0, 12).map(h => row(h, d, jd)).join('')}
       <h4 class="hr-h">Night horas <small>sunset to next sunrise</small></h4>${d.horas.slice(12).map(h => row(h, d, jd)).join('')}
@@ -141,9 +177,54 @@ const HORAUI = (() => {
       ${sec('Sources', `<p class="hr-p">Drik Panchang (hora page), Shubh Panchang (hora page), Dekho Panchang (learn: hora) and Wikipedia (Planetary hours). The activity table keeps pairs that at least two of the three almanac pages agree on. The planet order, day and night lengths and weekday rule are the same in all of them.</p>`)}`;
   }
 
+  /* ---------- place (custom location) ---------- */
+  function placeHtml() {
+    if (!S.placeOpen) return '';
+    return `<div class="hr-card hr-pcard"><h4>Choose a place</h4><p class="hr-cap">Sunrise and sunset, and so every hora, depend on the place. Currently ${placeName()} (${fmtTz(S.loc.tz)}).</p>
+      <label class="hr-sel"><span>Search a city or town</span><input id="hrQ" type="search" class="hr-fld" placeholder="For example Jaipur, London, Dubai" autocomplete="off"></label><div id="hrQR" class="hr-qr" aria-live="polite"></div>
+      <div class="hr-mb"><button type="button" class="hr-tb" data-useloc="1">Use my current location</button><button type="button" class="hr-tb" data-birthloc="1">Use my birth place</button></div>
+      <details class="hr-ls"><summary>Enter coordinates yourself</summary><div class="hr-lb"><div class="hr-mi"><label><span>Latitude</span><input id="hrLat" class="hr-fld" type="number" inputmode="decimal" step="0.0001" min="-89" max="89" value="${S.loc.lat}"></label><label><span>Longitude</span><input id="hrLon" class="hr-fld" type="number" inputmode="decimal" step="0.0001" min="-180" max="180" value="${S.loc.lon}"></label></div>
+        <label class="hr-sel"><span>Time zone</span><select id="hrTz">${TZS().map(z => `<option value="${z}"${z === S.loc.tz ? ' selected' : ''}>${fmtTz(z)}</option>`).join('')}</select></label><div class="hr-mb"><button type="button" class="hr-tb" data-applyloc="1">Use these</button></div></div></details>
+      <p class="hr-msg" id="hrMsg" role="status"></p></div>`;
+  }
+  const msg = t => { const m = document.getElementById('hrMsg'); if (m) m.textContent = t; };
+  function chipText() { return '⌖ ' + (S.loc.place || 'Your place') + ' · ' + fmtTz(S.loc.tz) + ' ✎'; }
+  function setLoc(l, persist) {
+    if (!validLoc(l)) { msg('That place is not valid. Latitude must be between −89 and 89, longitude between −180 and 180.'); return false; }
+    S.loc = { lat: +l.lat, lon: +l.lon, tz: +l.tz, place: l.place || 'Custom place' }; S.placeOpen = false; S.open = S.cell = null;
+    if (persist) { try { localStorage.setItem(LSK, JSON.stringify(S.loc)); } catch (e) { /* optional */ } }
+    else { try { localStorage.removeItem(LSK); } catch (e) { /* optional */ } }
+    const b = document.getElementById('hrPlaceBtn'); if (b) b.textContent = chipText();
+    const c = document.getElementById('hrPlace'); if (c) c.innerHTML = ''; render(); return true;
+  }
+  let qTimer = null, qSeq = 0;
+  function search(q) {
+    clearTimeout(qTimer); const box = document.getElementById('hrQR'); if (!box) return;
+    if (q.trim().length < 3) { box.innerHTML = ''; return; }
+    box.innerHTML = '<p class="hr-cap">Searching…</p>';
+    qTimer = setTimeout(async () => {
+      const my = ++qSeq;
+      try {
+        const r = await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&q=' + encodeURIComponent(q.trim()), { headers: { 'Accept-Language': 'en' } }), d = await r.json(); if (my !== qSeq) return;
+        S.res = d; box.innerHTML = d.length ? d.map((x, i) => `<button type="button" class="hr-qi" data-pick="${i}"><b>${esc(x.display_name.split(',')[0])}</b><small>${esc(x.display_name)}</small></button>`).join('') : '<p class="hr-cap">No place found. Try another spelling, or enter coordinates below.</p>';
+      } catch (e) { box.innerHTML = '<p class="hr-cap">Search needs an internet connection. You can enter coordinates below instead.</p>'; }
+    }, 900);
+  }
+  function pick(i) {
+    const x = S.res[i]; if (!x) return; const lat = parseFloat(x.lat), lon = parseFloat(x.lon);
+    const tz = typeof estimateTz === 'function' ? estimateTz(lat, lon, x) : Math.round(lon / 7.5) / 2;
+    setLoc({ lat, lon, tz, place: x.display_name.split(',')[0] }, true);
+  }
+  function useHere() {
+    if (!navigator.geolocation) return msg('This browser cannot share your location. Search for a place instead.');
+    msg('Finding you…');
+    navigator.geolocation.getCurrentPosition(p => { const raw = -new Date().getTimezoneOffset() / 60, tz = TZS().reduce((a, b) => Math.abs(b - raw) < Math.abs(a - raw) ? b : a); setLoc({ lat: p.coords.latitude, lon: p.coords.longitude, tz, place: 'My location' }, true); },
+      () => msg('Could not get your location. Allow location access, or search for a place instead.'), { timeout: 10000 });
+  }
+
   /* ---------- shell ---------- */
-  const TABS = [['now', 'Now'], ['today', 'Today'], ['week', 'Week'], ['best', 'Best'], ['learn', 'Learn']];
-  function pane() { try { return S.tab === 'today' ? todayPane() : S.tab === 'week' ? weekPane() : S.tab === 'best' ? bestPane() : S.tab === 'learn' ? learnPane() : nowPane(); } catch (e) { console.warn('hora pane', e); return '<div class="meta-err">This part could not be built. Please refresh the page.</div>'; } }
+  const TABS = [['now', 'Now'], ['moment', 'Moment'], ['today', 'Today'], ['week', 'Week'], ['best', 'Best'], ['learn', 'Learn']];
+  function pane() { try { return S.tab === 'moment' ? momentPane() : S.tab === 'today' ? todayPane() : S.tab === 'week' ? weekPane() : S.tab === 'best' ? bestPane() : S.tab === 'learn' ? learnPane() : nowPane(); } catch (e) { console.warn('hora pane', e); return '<div class="meta-err">This part could not be built. Please refresh the page.</div>'; } }
   function render() { const b = document.getElementById('hrBody'); if (!b) return; b.classList.remove('hr-in'); b.innerHTML = pane(); void b.offsetWidth; b.classList.add('hr-in'); startTimer(); }
   function setTab(t) { S.tab = t; document.querySelectorAll('.hr-tabs button').forEach(x => { const on = x.getAttribute('data-tab') === t; x.classList.toggle('hr-on', on); x.setAttribute('aria-selected', on); }); render(); }
   function tick() {
@@ -159,10 +240,11 @@ const HORAUI = (() => {
     if (S.tab === 'now' && !timer) timer = setInterval(tick, 1000); else if (S.tab !== 'now' && timer) { clearInterval(timer); timer = null; }
   }
   function html(chart, profile) {
-    S.chart = chart; S.loc = { lat: Number(profile.lat), lon: Number(profile.lon), tz: Number(profile.tz != null ? profile.tz : chart.tzOffsetHours), place: (profile.place || '').split(',')[0] };
-    S.date = S.wdate = dateOf(nowJd()); S.open = S.cell = null;
+    S.chart = chart; S.prof = profile; S.birth = { lat: Number(profile.lat), lon: Number(profile.lon), tz: Number(profile.tz != null ? profile.tz : chart.tzOffsetHours), place: (profile.place || '').split(',')[0] };
+    S.loc = S.birth; try { const sv = JSON.parse(localStorage.getItem(LSK)); if (validLoc(sv)) S.loc = sv; } catch (e) { /* optional */ }
+    S.date = S.wdate = S.mdate = dateOf(nowJd()); S.mtime = jdToLocalParts(nowJd(), S.loc.tz).timeStr.slice(0, 5); S.open = S.cell = null; S.placeOpen = false;
     setTimeout(() => { render(); }, 0);
-    return `<div class="hr"><div class="hr-banner"><span class="hr-orn" aria-hidden="true">☉</span><h3>Hora</h3><p>The planet that rules every hour of your day, with the best times for what you want to do.</p><div class="hr-pl-r"><span>Place</span><b>${esc(S.loc.place || 'your place')}</b></div></div>
+    return `<div class="hr"><div class="hr-banner"><span class="hr-orn" aria-hidden="true">☉</span><h3>Hora</h3><p>The planet that rules every hour of your day, with the best times for what you want to do.</p><div class="hr-pl-r"><span>Place</span><button type="button" class="hr-placebtn" id="hrPlaceBtn" data-place="1" aria-label="Change place">${esc(chipText())}</button></div></div><div id="hrPlace"></div>
       <div class="hr-tabs" role="tablist" aria-label="Hora views">${TABS.map(t => `<button type="button" role="tab" aria-selected="${t[0] === S.tab}" class="${t[0] === S.tab ? 'hr-on' : ''}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</div>
       <div id="hrBody" class="hr-body"></div></div>`;
   }
@@ -173,9 +255,16 @@ const HORAUI = (() => {
     try { navigator.clipboard.writeText(t).then(() => done('Copied'), () => done('Could not copy')); } catch (e) { done('Could not copy'); }
   }
   document.addEventListener('click', e => {
-    const t = e.target.closest && e.target.closest('#panel-hora [data-tab],#panel-hora [data-row],#panel-hora [data-day],#panel-hora [data-today],#panel-hora [data-wk],#panel-hora [data-wtoday],#panel-hora [data-cell],#panel-hora [data-act],#panel-hora [data-rng],#panel-hora [data-best],#panel-hora [data-copy],#panel-hora [data-go]'); if (!t) return;
+    const t = e.target.closest && e.target.closest('#panel-hora [data-tab],#panel-hora [data-row],#panel-hora [data-day],#panel-hora [data-today],#panel-hora [data-wk],#panel-hora [data-wtoday],#panel-hora [data-cell],#panel-hora [data-act],#panel-hora [data-rng],#panel-hora [data-best],#panel-hora [data-copy],#panel-hora [data-go],#panel-hora [data-place],#panel-hora [data-mnow],#panel-hora [data-mbirth],#panel-hora [data-useloc],#panel-hora [data-birthloc],#panel-hora [data-applyloc],#panel-hora [data-pick]'); if (!t) return;
     const g = n => t.getAttribute(n);
     if (g('data-tab')) return setTab(g('data-tab'));
+    if (g('data-place')) { S.placeOpen = !S.placeOpen; const c = document.getElementById('hrPlace'); if (c) c.innerHTML = placeHtml(); const q = document.getElementById('hrQ'); if (q) q.focus({ preventScroll: true }); return; }
+    if (g('data-pick')) return pick(+g('data-pick'));
+    if (g('data-useloc')) return useHere();
+    if (g('data-birthloc')) return setLoc(S.birth, false);
+    if (g('data-applyloc')) { const tz = parseFloat(document.getElementById('hrTz').value); return setLoc({ lat: parseFloat(document.getElementById('hrLat').value), lon: parseFloat(document.getElementById('hrLon').value), tz, place: 'Custom place' }, true); }
+    if (g('data-mnow')) { S.mdate = dateOf(nowJd()); S.mtime = jdToLocalParts(nowJd(), S.loc.tz).timeStr.slice(0, 5); S.open = null; return render(); }
+    if (g('data-mbirth')) { const pf = S.prof || {}; if (!pf.dob) return; S.mdate = pf.dob; S.mtime = String(pf.tob || '12:00').slice(0, 5); S.open = null; if (S.loc !== S.birth) return setLoc(S.birth, false); return render(); }
     if (g('data-row')) { S.open = S.open === g('data-row') ? null : g('data-row'); const y = window.scrollY; render(); window.scrollTo(0, y); return; }
     if (g('data-day')) { S.date = addDays(S.date, +g('data-day')); S.open = null; return render(); }
     if (g('data-today')) { S.date = dateOf(nowJd()); S.open = null; return render(); }
@@ -191,12 +280,14 @@ const HORAUI = (() => {
   document.addEventListener('change', e => {
     const t = e.target; if (!t.closest || !t.closest('#panel-hora')) return;
     if (t.id === 'hrDate' && t.value) { S.date = t.value; S.open = null; render(); }
+    else if ((t.id === 'hrMDate' && t.value) || (t.id === 'hrMTime' && t.value)) { if (t.id === 'hrMDate') S.mdate = t.value; else S.mtime = t.value; S.open = null; render(); }
     else if (t.id === 'hrShow') { S.show = t.value; const y = window.scrollY; render(); window.scrollTo(0, y); }
     else if (t.id === 'hrChart') { S.useChart = t.checked; const y = window.scrollY; render(); window.scrollTo(0, y); }
   });
+  document.addEventListener('input', e => { if (e.target && e.target.id === 'hrQ') search(e.target.value); });
   window.buildHoraPanel = function (chart, profile) { return html(chart, profile); };
   if (typeof registerLatePanel === 'function') registerLatePanel('panel-hora', window.buildHoraPanel);
-  const api = { html, setTab, S, render };
+  const api = { html, setTab, S, render, setLoc, momentJd };
   window.HORAUI = api;
   return api;
 })();
