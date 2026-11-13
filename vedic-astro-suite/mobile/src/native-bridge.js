@@ -23,28 +23,6 @@
       t.style.cssText = 'position:fixed;left:50%;bottom:88px;transform:translateX(-50%);z-index:2147483647;background:#151b2b;color:#f6d775;border:1px solid rgba(246,215,117,.5);padding:10px 16px;border-radius:14px;font:13px system-ui;max-width:86vw;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5)';
       document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 6000); } catch(e){}
   }
-  async function bundledId(){ try { var r = await fetch('/version.json', { cache: 'no-store' }); var j = await r.json(); return j && j.id; } catch(e){ return null; } }
-  async function check(){
-    if (!U || navigator.onLine === false) return;
-    try {
-      var r = await fetch(OTA + '/latest.json?t=' + Date.now(), { cache: 'no-store' }); if (!r.ok) return;
-      var latest = await r.json(); if (!latest || !latest.id || !latest.url) return;
-      var have = ls('otaApplied') || await bundledId();
-      if (latest.id === have || latest.id === ls('otaPending')) return;
-      var b = await U.download({ url: latest.url, version: String(latest.id) });
-      if (!b || !b.id) return;
-      await U.next({ id: b.id });
-      ls('otaPending', latest.id); ls('otaApplied', latest.id);
-      toast('Update downloaded. It opens the next time you start the app.');
-    } catch(e){ /* offline or blocked: keep the current version */ }
-  }
-  var IS_ROOT = !/\/apps\//.test(location.pathname);      // the launcher does the background check; app pages only offer the manual button
-  if (IS_ROOT) window.addEventListener('load', function(){ setTimeout(check, 4000); });
-  if (IS_ROOT){
-    window.addEventListener('online', function(){ setTimeout(check, 1500); });
-    document.addEventListener('visibilitychange', function(){ if (!document.hidden) setTimeout(check, 2000); });
-  }
-
   /* ---- In-app "Update app": only exists inside the APK (this file is never part of the website). ----
      Update now        : downloads the newest published build (the whole web app) and restarts into it; works offline afterwards.
      Build, then update: asks GitHub to build the newest code first (needs a token kept on this phone only), waits, then updates. */
@@ -54,22 +32,11 @@
   function say(msg, kind){ var m = sheet && sheet.querySelector('.vu-msg'); if (m){ m.textContent = msg; m.style.color = kind === 'err' ? '#ff8f8f' : kind === 'ok' ? '#5ad6c4' : '#cfd5e3'; } }
   function setBusy(b){ busy = b; if (!sheet) return; sheet.querySelectorAll('button.vu-b').forEach(function(x){ x.disabled = b; x.style.opacity = b ? .55 : 1; }); }
   function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
-  async function getLatest(){ var r = await fetch(OTA + '/latest.json?t=' + Date.now(), { cache: 'no-store' }); if (!r.ok) throw new Error('No published build found (' + r.status + ').'); var j = await r.json(); if (!j || !j.id || !j.url) throw new Error('Build info is incomplete.'); return j; }
-  async function applyLatest(latest){
-    var have = ls('otaApplied') || await bundledId();
-    if (latest.id === have){ say('You already have the newest build (built ' + String(latest.built || '').slice(0, 16).replace('T', ' ') + ' UTC).', 'ok'); return false; }
-    say('Downloading the new version… keep the app open.');
-    var b = await U.download({ url: latest.url, version: String(latest.id) });
-    if (!b || !b.id) throw new Error('Download did not finish.');
-    ls('otaPending', latest.id); ls('otaApplied', latest.id);
-    say('Installed. Restarting into the new version…', 'ok');
-    await sleep(700); await U.set({ id: b.id });                 // applies and reloads right now
-    return true;
-  }
+  var BUILD = parseInt('__BUILD__', 10) || 0;                  // build number baked into this APK
+  async function getLatest(){ var r = await fetch('https://api.github.com/repos/' + REPO + '/releases/latest', { headers: { 'Accept': 'application/vnd.github+json' }, cache: 'no-store' }); if (!r.ok) throw new Error('No published build found (' + r.status + ').'); var j = await r.json(), n = parseInt(String(j.tag_name || '').replace(/\D/g, ''), 10); if (!n) throw new Error('Build info is incomplete.'); return { id: n, built: j.published_at || '' }; }
   /* Full update: opens the newest VedicAstroSuite.apk (always the .apk file of the latest release) in the phone's browser, which downloads it and offers to install over the current app. */
   async function openApk(latest){
-    var have = ls('otaApplied'), inApp = await bundledId();
-    if (latest && (latest.id === have || latest.id === inApp)){ say('You already have the newest build (built ' + String(latest.built || '').slice(0, 16).replace('T', ' ') + ' UTC).', 'ok'); return false; }
+    if (latest && latest.id <= BUILD){ say('You already have the newest build (built ' + String(latest.built || '').slice(0, 16).replace('T', ' ') + ' UTC).', 'ok'); return false; }
     var url = OTA + '/VedicAstroSuite.apk';
     say('Downloading VedicAstroSuite.apk… when it finishes, open it and tap Install (allow “install unknown apps” for the browser once).', 'ok');
     await sleep(900);
@@ -80,13 +47,6 @@
     if (busy) return; if (navigator.onLine === false){ say('You are offline. The app keeps working with the version it has.', 'err'); return; }
     setBusy(true); say('Checking for the newest build…');
     try { await openApk(await getLatest()); } catch(e){ say('Could not update: ' + (e && e.message || e), 'err'); }
-    setBusy(false);
-  }
-  async function quickUpdate(){
-    if (busy) return; if (!U){ say('Updates are only available in the installed app.', 'err'); return; }
-    if (navigator.onLine === false){ say('You are offline. The app keeps working with the version it has.', 'err'); return; }
-    setBusy(true); say('Checking for the newest build…');
-    try { await applyLatest(await getLatest()); } catch(e){ say('Could not update: ' + (e && e.message || e), 'err'); }
     setBusy(false);
   }
   async function gh(path, opt){ var r = await fetch('https://api.github.com/repos/' + REPO + path, opt); return r; }
@@ -127,16 +87,15 @@
     card.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center"><b style="font:700 20px Georgia,serif;color:#f6d775">Update app</b><button class="vu-x" style="width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#fff;font-size:16px">✕</button></div>'
       + '<div style="margin:8px 0 4px;color:#9aa3b5">Downloads the newest app (VedicAstroSuite.apk) and installs it over this one. Your charts stay on the phone.</div>'
       + '<button class="vu-b vu-now" style="' + bs + ';background:linear-gradient(135deg,#f8dd85,#c9962f);color:#1a1405">Update now (APK)</button>'
-      + '<button class="vu-b vu-quick" style="' + bs + ';background:transparent;border:1px solid rgba(255,255,255,.18);color:#cfd5e3;font-weight:600;font-size:13px">Quick web-only update (no install)</button>'
       + '<button class="vu-b vu-build" style="' + bs + ';background:rgba(90,214,196,.12);border:1px solid rgba(90,214,196,.4);color:#5ad6c4">Build the latest code, then update</button>'
       + '<div class="vu-tokbox" style="display:none;margin-top:10px"><input class="vu-tok" type="password" autocomplete="off" placeholder="GitHub token (saved on this phone only)" style="width:100%;box-sizing:border-box;padding:13px;border-radius:14px;border:1px solid rgba(246,215,117,.3);background:#0e121c;color:#fff;font:14px system-ui"><div style="margin-top:6px;font-size:12px;color:#7f8899">Create a fine-grained token for ' + REPO + ' with “Actions: Read and write”. It is stored only in this app.</div></div>'
       + '<div class="vu-msg" style="margin-top:14px;min-height:42px"></div>';
     sheet.appendChild(card); document.body.appendChild(sheet);
     card.querySelector('.vu-x').onclick = function(){ if (!busy) sheet.style.display = 'none'; };
     sheet.addEventListener('pointerdown', function(e){ if (e.target === sheet && !busy) sheet.style.display = 'none'; });
-    card.querySelector('.vu-now').onclick = updateNow; card.querySelector('.vu-quick').onclick = quickUpdate; card.querySelector('.vu-build').onclick = buildThenUpdate;
+    card.querySelector('.vu-now').onclick = updateNow; card.querySelector('.vu-build').onclick = buildThenUpdate;
     if (ls('ghBuildToken')) card.querySelector('.vu-tok').placeholder = 'Token saved. Paste a new one to replace it.';
-    (async function(){ try { var l = await getLatest(), have = ls('otaApplied') || await bundledId(); say(l.id === have ? 'You are on the newest published build.' : 'A newer build is ready to install.', l.id === have ? 'ok' : ''); } catch(e){} })();
+    (async function(){ try { var l = await getLatest(); say(l.id <= BUILD ? 'You are on the newest published build.' : 'A newer build is ready to install.', l.id <= BUILD ? 'ok' : ''); } catch(e){} })();
   }
   window.vedicNativeUpdate = openSheet;
   function addButton(){

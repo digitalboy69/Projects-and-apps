@@ -50,7 +50,7 @@ function walk(d, out = []){ fs.readdirSync(d).forEach(n => { const p = path.join
   console.log('fonts downloaded:', fontFiles);
 
   // native bridge
-  fs.writeFileSync(path.join(OUT, 'native-bridge.js'), fs.readFileSync(path.join(__dirname, '..', 'src', 'native-bridge.js'), 'utf8').replace('__OTA_BASE__', OTA_LATEST));
+  fs.writeFileSync(path.join(OUT, 'native-bridge.js'), fs.readFileSync(path.join(__dirname, '..', 'src', 'native-bridge.js'), 'utf8').replace('__OTA_BASE__', OTA_LATEST).replace('__BUILD__', String(process.env.VERSION_CODE || '0')));
   const idx = path.join(OUT, 'index.html'); let ih = fs.readFileSync(idx, 'utf8');
   if (!ih.includes('native-bridge.js')) ih = ih.replace('</head>', '<script src="native-bridge.js"></script></head>');
   fs.writeFileSync(idx, ih);

@@ -1,8 +1,8 @@
 name: Android app and live updates
 
 # Every push to main that touches the Vedic Astro Suite:
-#   1. builds the web app into a live-update bundle and publishes it (each build is a GitHub release); installed apps download it on their own
-#   2. builds the native Android app (APK) with the whole web app inside (works fully offline) and publishes it (same release)
+#   builds the native Android app (APK) with the whole web app inside (works fully offline) and publishes ONLY the .apk as a GitHub release (no .zip asset);
+#   the in-app Update app button reads the newest release tag and downloads that .apk
 # Install link: https://github.com/<owner>/<repo>/releases/latest/download/VedicAstroSuite.apk
 on:
   push:
@@ -98,10 +98,10 @@ jobs:
       - name: Publish this build (APK + live-update bundle)
         run: |
           # Releases here are immutable, so every build is a new release and "releases/latest/download/..." always points at the newest.
-          gh release create "build-${{ github.run_number }}" out/VedicAstroSuite.apk ota/bundle.zip ota/latest.json \
+          gh release create "build-${{ github.run_number }}" out/VedicAstroSuite.apk \
             --target "$GITHUB_SHA" --latest \
             --title "Vedic Astro Suite build ${{ github.run_number }}" \
-            --notes "Android app and live-update bundle for commit ${GITHUB_SHA::7}. Install VedicAstroSuite.apk. The app works offline and downloads newer builds by itself when online."
+            --notes "Android app for commit ${GITHUB_SHA::7}. Install VedicAstroSuite.apk (the in-app Update app button fetches it)."
           # keep the newest 6 builds
           gh release list --limit 100 --json tagName,createdAt --jq 'map(select(.tagName|startswith("build-"))) | sort_by(.createdAt) | reverse | .[6:] | .[].tagName' | while read t; do gh release delete "$t" --yes --cleanup-tag || true; done
           gh release delete ota-latest --yes --cleanup-tag 2>/dev/null || true
