@@ -54,7 +54,7 @@ const VMX = (() => {
   const tag = (t) => `<span class="vmx-tag">${esc(t)}</span>`;
   function detailHtml(d) {
     if (!d) return '<p class="vmx-cap">Tap any square to see the details.</p>';
-    return `<div class="vmx-dh"><span class="vmx-gl ${d.c.cls}">${esc(SIGNS[d.c.sign].symbol)}</span><div><b>${esc(d.title)}</b><small>${esc(d.about)}</small></div></div>
+    return `<div class="vmx-dh"><span class="vmx-gl ${d.c.cls}">${esc((SIGNS[d.c.sign].symbol + '\uFE0E'))}</span><div><b>${esc(d.title)}</b><small>${esc(d.about)}</small></div></div>
       <ul class="vmx-dl"><li><i>Sign</i><span>${esc(d.signName)} <em class="vmx-pill ${d.c.cls}">${esc(WORD[d.c.status] || d.c.status)}</em></span></li>
       <li><i>House</i><span>${ORD(d.c.house)} house from the ${esc(d.key)} Lagna (${esc(d.lagnaName)})</span></li>
       <li><i>Motion</i><span>${d.c.retro ? 'Retrograde in the birth chart' : 'Direct'}</span></li>
@@ -63,10 +63,10 @@ const VMX = (() => {
   }
   function matrixHtml(M) {
     const head = `<div class="vmx-r vmx-hd"><span class="vmx-lb"></span><span class="vmx-hc vmx-lg">Lg</span>${GR.map(p => `<span class="vmx-hc" title="${p}">${esc(G(p))}</span>`).join('')}</div>`;
-    const body = M.rows.map(r => `<div class="vmx-r"><span class="vmx-lb"><b>${esc(r.key)}</b><small>${esc(r.name)}</small></span><span class="vmx-lc">${esc(SIGNS[r.lagna].symbol)}</span>${r.cells.map((c, i) => {
+    const body = M.rows.map(r => `<div class="vmx-r"><span class="vmx-lb"><b>${esc(r.key)}</b><small>${esc(r.name)}</small></span><span class="vmx-lc">${esc((SIGNS[r.lagna].symbol + '\uFE0E'))}</span>${r.cells.map((c, i) => {
       if (!c) return '<span class="vmx-c vmx-none">–</span>';
       const d1 = M.d1 ? cellOf(lastChart, 'D1', GR[i]) : null, same = d1 && d1.sign === c.sign, vot = r.key === 'D9' && same;
-      return `<button type="button" class="vmx-c ${c.cls}${same && r.key !== 'D1' ? ' vmx-same' : ''}${vot ? ' vmx-vot' : ''}${pick.k === r.key && pick.p === GR[i] ? ' vmx-on' : ''}" data-k="${r.key}" data-p="${GR[i]}" onclick="VMX.tap('${r.key}','${GR[i]}')" aria-label="${GR[i]} in ${r.key} ${esc(r.name)}: ${esc(SIGNS[c.sign].name)}, ${esc(WORD[c.status] || c.status)}${vot ? ', Vargottama' : ''}">${esc(SIGNS[c.sign].symbol)}${c.retro ? '<i class="vmx-rt">R</i>' : ''}${vot ? '<i class="vmx-st">★</i>' : ''}</button>`;
+      return `<button type="button" class="vmx-c ${c.cls}${same && r.key !== 'D1' ? ' vmx-same' : ''}${vot ? ' vmx-vot' : ''}${pick.k === r.key && pick.p === GR[i] ? ' vmx-on' : ''}" data-k="${r.key}" data-p="${GR[i]}" onclick="VMX.tap('${r.key}','${GR[i]}')" aria-label="${GR[i]} in ${r.key} ${esc(r.name)}: ${esc(SIGNS[c.sign].name)}, ${esc(WORD[c.status] || c.status)}${vot ? ', Vargottama' : ''}">${esc((SIGNS[c.sign].symbol + '\uFE0E'))}${c.retro ? '<i class="vmx-rt">R</i>' : ''}${vot ? '<i class="vmx-st">★</i>' : ''}</button>`;
     }).join('')}</div>`).join('');
     return `<div class="vmx-mx" role="group" aria-label="Planet signs and dignity across divisional charts">${head}${body}</div>`;
   }
@@ -87,7 +87,7 @@ const VMX = (() => {
   function html(chart) {
     lastChart = chart;
     const lg = SIGNS[chart.vargas.D1.ascendantSign];
-    return `<div class="vmx"><div class="vmx-banner"><span class="vmx-orn" aria-hidden="true">◫</span><h3>Varga Matrix</h3><p>All nine planets across your divisional charts in one grid. The colour is how comfortable each planet is in its sign.</p><div class="vmx-now"><span>Lagna</span><b>${esc(lg.symbol)} ${esc(lg.name)}</b></div></div>
+    return `<div class="vmx"><div class="vmx-banner"><span class="vmx-orn" aria-hidden="true">◫</span><h3>Varga Matrix</h3><p>All nine planets across your divisional charts in one grid. The colour is how comfortable each planet is in its sign.</p><div class="vmx-now"><span>Lagna</span><b>${esc(lg.symbol + '\uFE0E')} ${esc(lg.name)}</b></div></div>
       <div class="vmx-sets" role="tablist" aria-label="Which charts to show">${SETS.map(s => `<button type="button" role="tab" class="${s.id === setId ? 'vmx-on' : ''}" data-set="${s.id}" onclick="VMX.setSet('${s.id}')">${esc(s.t)}</button>`).join('')}</div>
       <div id="vmxBody">${bodyHtml(chart, setId)}</div></div>`;
   }
