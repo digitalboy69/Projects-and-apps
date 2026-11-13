@@ -548,6 +548,9 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/155-past-present-future.js` — Past · Present · Future panel (global `PPF`, `panel-ppf`): directional + chart (houses in four groups 1·5·9, 2·6·10, 3·7·11, 4·8·12; arm of the chosen planet = You, next clockwise = Future, opposite = Present, behind = Past), life river of Mahadashas (faded past, NOW needle), ten-years-back/ahead ease bars of Antardashas, Past / Present / Future tabs (period cards with sub-period strip, running clocks with progress, houses lit now, next 5 years); reads VDA (js/91) and the dasha engine only
 - `apps/birth-chart/css/84-past-present-future.css` — styles for the Past · Present · Future panel (`ppf-` prefix)
 - `tests/past_present_future_browser_test.py` — Playwright test of the Past · Present · Future panel at 390 and 360px (`PPF_SHOTS=dir`)
+- `apps/birth-chart/js/156-hora-engine.js` — Hora (planetary hours) engine (global `HORA`): 24 unequal horas per Vedic day (12 day = day length / 12, 12 night = night length / 12) in Chaldean order from the weekday lord, overlaps with Rahu Kalam / Yamaganda / Gulika, Choghadiya at the midpoint, 14-activity table, teaching-aid score with reasons, best-times search, week, chart link (`forYou`); reuses panchangaAt, CHG, VDB, VDA only
+- `docs/HORA_PLAN.md` — Hora plan, checklist and research log (sources, where teachers differ)
+- `tests/hora_test.py` — Playwright test of the Hora engine against panchangaAt (order, contiguity, Drik day/night lengths)
 - `tests/varga_matrix_test.js` — node test for js/153 (cells equal raw varga data, points recomputed by hand, Vargottama, 60 real charts x 3 sets)
 - `tests/varga_matrix_browser_test.py` — Playwright test of the Varga Matrix at 390 and 360px (`VMX_SHOTS=dir`)
 - `tests/bhavat_masterclass_browser_test.py` — Playwright test of the Masterclass at 390 and 360px (`BMC_SHOTS=dir`)
