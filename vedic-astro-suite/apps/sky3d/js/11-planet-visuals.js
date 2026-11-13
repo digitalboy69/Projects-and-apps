@@ -87,7 +87,7 @@ function drawBorders(){
 }
 
 function updateSceneForJD(jd){
-  const snap = snapshotPositions(jd);
+  const snap = NAV.snap(jd);   /* js/61: the normal sky, or the Navamsha sky when it is switched on */
 
   // Geocentric zodiac wheel positions
   const planetOrbitRadius = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2, Uranus:10.6, Neptune:10.95, Pluto:11.3 };

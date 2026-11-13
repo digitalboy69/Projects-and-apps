@@ -115,7 +115,7 @@ function showNakshatraHighlight(nakIdx){
   bodyMeshes["nakshatra_highlight"].position.copy(labelPt);
   
   // 3. SHOOT BEAM TO OCCUPYING PLANETS AT EXACT DEGREE & CALCULATE TRANSIT TIMINGS
-  const snap = snapshotPositions(currentJD);
+  const snap = NAV.snap(currentJD);
   const planetOrbitRadius = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2, Uranus:10.6, Neptune:10.95, Pluto:11.3 };
   let found = false;
   let occupantsHtml = '';

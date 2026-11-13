@@ -85,27 +85,27 @@ function _updateOverlays(snap){
     let sp = ln.el.querySelector('.cond'); if (!sp){ sp = document.createElement('span'); sp.className = 'cond'; ln.el.appendChild(sp); }
     let t = ''; const si = getSignIndex(sid[n]);
     if (CONDEX[n] === si) t += ' <b style="color:#6EE7B7">▲</b>'; else if ((CONDEX[n]+6)%12 === si) t += ' <b style="color:#FF6B4A">▼</b>'; else if (SIGNS[si].lord === n) t += ' <b style="color:#F4C45C">★</b>';
-    if (COMBUST[n] && Math.abs(angDiff(sid[n], sid.Sun)) < COMBUST[n]) t += ' <b style="color:#FFA94D">☀</b>';
+    if (!snap.nav && COMBUST[n] && Math.abs(angDiff(sid[n], sid.Sun)) < COMBUST[n]) t += ' <b style="color:#FFA94D">☀</b>';
     if (snap.retro[n] && n !== 'Rahu' && n !== 'Ketu') t += ' <b style="color:#FF8A66">℞</b>';
     if (!_on('L_cond')) t = '';
     if (sp._k !== t){ sp._k = t; sp.innerHTML = t; }
   });
   // moon phase
   const mm = bodyMeshes.geo_Moon.position, sm = bodyMeshes.geo_Sun.position;
-  T.moonU.sd.value.copy(sm).sub(mm).normalize();
+  if (snap.raw) T.moonU.sd.value.copy(_pt(snap.raw.Sun, ORB_R.Sun)).sub(_pt(snap.raw.Moon, ORB_R.Moon)).normalize(); else T.moonU.sd.value.copy(sm).sub(mm).normalize();   /* Moon phase always from the real sky */
   // rahu-ketu axis + eclipse season
   T.axis.rotation.y = sid.Rahu*DEG; T.axis.visible = _on('L_axis');
-  const nodeD = Math.min(Math.abs(angDiff(sid.Sun, sid.Rahu)), Math.abs(angDiff(sid.Sun, sid.Ketu)));
+  const rw = snap.raw || sid, nodeD = Math.min(Math.abs(angDiff(rw.Sun, rw.Rahu)), Math.abs(angDiff(rw.Sun, rw.Ketu)));
   const ecl = nodeD < 15; T.axis.material.color.set(ecl ? 0xFF6B4A : 0x9B8CFF); T.axis.material.opacity = ecl ? 0.7 : 0.3;
   T.axisLbl.obj.position.copy(_pt(sid.Rahu, 10.9)); vis(T.axisLbl, ecl && _on('L_axis'));
   // natal-dependent layers
-  if (has && A.np !== p){ A.np = p; A.natal = snapshotPositions(computeNatalAscendant(p).jd).sidereal; }
+  if (has && A.np !== p){ A.np = p; A.natal = NAV.snap(computeNatalAscendant(p).jd).sidereal; }
   if (!has){ A.np = null; A.natal = null; A.lagnaLon = null; }
   // current rising sign at the viewer's place: start / end lines of the sign
-  const liveL = getLiveLoc(), lonR = siderealAscendant(snap.jd, liveL.lat, liveL.lon), rsI = getSignIndex(lonR), riseOn = _on('L_rise');
+  const liveL = getLiveLoc(), lonR = NAV.asc(snap.jd, liveL.lat, liveL.lon), rsI = getSignIndex(lonR), riseOn = _on('L_rise');
   A.lagnaLon = lonR; T.riseG.visible = riseOn; T.riseG.rotation.y = rsI*30*DEG;
-  T.riseLbl.obj.position.copy(_pt(rsI*30 + 15, 14.4)); T.riseLbl.el.innerHTML = `↑ Rising ${SIGNS[rsI].symbol} ${SIGNS[rsI].name}`; vis(T.riseLbl, riseOn);
-  const gOn = _on('L_gulika') && typeof GK !== 'undefined', gl = gOn ? GK.live(snap.jd) : null, gn = (gOn && has) ? GK.natal(p) : null;
+  T.riseLbl.obj.position.copy(_pt(rsI*30 + 15, 14.4)); T.riseLbl.el.innerHTML = `↑ ${snap.nav ? 'Navamsha lagna' : 'Rising'} ${SIGNS[rsI].symbol} ${SIGNS[rsI].name}`; vis(T.riseLbl, riseOn);
+  const gOn = _on('L_gulika') && !snap.nav && typeof GK !== 'undefined', gl = gOn ? GK.live(snap.jd) : null, gn = (gOn && has) ? GK.natal(p) : null;
   if (gl) T.gulL.obj.position.copy(_pt(gl.lon, 11.9));
   if (gn) T.gulN.obj.position.copy(_pt(gn.lon, 11.9));
   vis(T.gulL, !!gl); T.gulR.visible = !!gl; vis(T.gulN, !!gn); T.gulNR.visible = !!gn;
@@ -132,7 +132,7 @@ function _updateOverlays(snap){
     T.ascLbl.obj.position.copy(_pt(lon, 15.3)); T.ascLbl.el.innerHTML = `ASC ${SIGNS[ls].symbol} ${degreeInSign(lon).deg}°`; vis(T.ascLbl, _on('L_lagna'));
     const hs = _on('L_houses'); T.wedgeG.visible = hs; T.wedgeG.rotation.y = ls*30*DEG;
     T.houseLbl.forEach((h,i)=>{ h.obj.position.copy(_pt(((ls+i)%12)*30+15, 10.95)); vis(h, hs); });
-    const ms = getSignIndex(A.natal.Moon), d = (getSignIndex(sid.Saturn) - ms + 12) % 12, active = d === 11 || d === 0 || d === 1, ss = _on('L_sade');
+    const ms = getSignIndex(A.natal.Moon), d = (getSignIndex(sid.Saturn) - ms + 12) % 12, active = d === 11 || d === 0 || d === 1, ss = _on('L_sade') && !snap.nav;
     T.sadeG.visible = ss; T.sadeG.rotation.y = ((ms+11)%12)*30*DEG; T.sade.material.color.set(active ? 0xFF6B4A : 0x9B8CFF); T.sade.material.opacity = active ? 0.9 : 0.35;
     T.sadeLbl.obj.position.copy(_pt(ms*30+15, 15.3)); vis(T.sadeLbl, active && ss);
   } else {

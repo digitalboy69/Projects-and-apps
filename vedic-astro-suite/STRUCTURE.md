@@ -332,8 +332,10 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/css/30-profile-from-moment.css` — popup styles (`pm-` prefix) and the running glow on the Reverse button
 - `apps/sky3d/js/58-ui-all-tabs.js` — "All" button in the tab strip: grid of every tab (one tap to open), keeps the active tab in view
 - `apps/sky3d/css/31-ui-refresh.css` — phone interface refresh loaded last: slim timeline grid, compact top card, hidden logo mark, compact tab strip, All-tabs grid (`ui-` prefix)
+- `apps/sky3d/css/32-tools-menu.css` — top-right Eye + Tools pill, Tools drop-down menu and the D9 Navamsha badge (`tools-menu`, `tm-`, `hud-nav`)
 - `apps/sky3d/js/59-wheel-frame.js` — wheel framing on phones: finds the free band between the cards and the timeline bar, shifts the picture into it (camera view offset) and re-fits the zoom; `wheelBand()`, `wheelFrameUpdate()`
 - `apps/sky3d/js/60-wheel-beauty.js` — Zodiac Wheel beauty pass: soft Sun glow (replaces hard shells), degree scale on the sign ring, golden aura and inner plate, Earth/Moon lift, gentle Sun breathing and gem twinkle; off with localStorage vax3d_beauty='0'
+- `apps/sky3d/js/61-navamsha-sky.js` — global `NAV`: Navamsha (D9) sky (`NAV.snap/asc/set`, D9 = lon×9 mod 360) used by scene, HUD, sky table, overlays and chart tab; top-right Tools drop-down wiring (`#toolsBtn`, `#toolsMenu`, `#navBtn`, `#navBadge`); forced off in Solar System view
 - `tests/sky3d_shadbala_test.js` — engine parity with the Birth Chart plus live adapter checks
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
@@ -490,6 +492,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/sky3d_date_test.py` — 3D app BC/Julian date maths and Day/Month/Year checks (node, no browser)
 - `tests/sky3d_profile_moment_browser_test.py` — 3D Sky at phone width (Three.js stubbed): Reverse play both ways and pause, Make a profile from the current moment and from a saved moment
 - `tests/sky3d_ui_refresh_browser_test.py` — 3D Sky at 390 and 360 wide (Three.js stubbed): slim timeline, buttons in one row, All-tabs grid opens each tab, no overflow
+- `tests/sky3d_navamsha_tools_browser_test.py` — 3D Sky Tools drop-down, Eye, Navamsha sky toggle and D9 math at 390 and 360 (Three.js stubbed; `S3_SHOTS=dir` for screenshots)
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/life_narratives_test.py` — Life-area narratives: 12 charts x 9 areas (length, structure, wording, consistency with scores), variation, sensitivity, Deep reading + report + PDF wiring
 - `tests/varga_reading_test.py` — Divisional chart readings: 12 charts x 6 vargas cross-checked with the app's own varga data and VDB's D9 vargottama, variation, one-fact sensitivity, Deep reading + report + PDF wiring

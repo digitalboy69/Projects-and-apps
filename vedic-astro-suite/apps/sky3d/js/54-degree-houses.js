@@ -53,7 +53,7 @@ function place(sid, c){
 }
 function current(){
   const live = (src !== 'natal') || !isValidProfile(activeNatalProfile);
-  if (live){ const loc = getLiveLoc(), jd = (A && A.snap) ? A.snap.jd : currentJD, s = (A && A.snap) ? A.snap.sidereal : snapshotPositions(jd).sidereal, c = cusps(jd, loc.lat, loc.lon, sys); return { live: true, jd, c, p: place(s, c), name: 'Sky now · ' + (loc.label || 'your place') }; }
+  if (live){ const loc = getLiveLoc(), jd = (A && A.snap) ? A.snap.jd : currentJD, s = (A && A.snap) ? (A.snap.raw || A.snap.sidereal) : snapshotPositions(jd).sidereal, c = cusps(jd, loc.lat, loc.lon, sys); return { live: true, jd, c, p: place(s, c), name: 'Sky now · ' + (loc.label || 'your place') }; }
   const n = computeNatalAscendant(activeNatalProfile), s = snapshotPositions(n.jd).sidereal, c = cusps(n.jd, activeNatalProfile.lat, activeNatalProfile.lon, sys);
   return { live: false, jd: n.jd, c, p: place(s, c), name: (activeNatalProfile.name || 'Natal chart') };
 }
@@ -120,7 +120,7 @@ function update3D(force){
   init3D(); if (!L3) return;
   const now = performance.now(); if (!force && now - last3 < 120) return; last3 = now;
   try {
-    const loc = getLiveLoc(), jd = A.snap ? A.snap.jd : currentJD, s = A.snap ? A.snap.sidereal : snapshotPositions(jd).sidereal, c = cusps(jd, loc.lat, loc.lon, sys), pl = place(s, c);
+    const loc = getLiveLoc(), jd = A.snap ? A.snap.jd : currentJD, s = A.snap ? (A.snap.raw || A.snap.sidereal) : snapshotPositions(jd).sidereal, c = cusps(jd, loc.lat, loc.lon, sys), pl = place(s, c);
     L3.G.visible = true;
     for (let i = 0; i < 12; i++){ L3.lines[i].rotation.y = c.begin[i] * DEG; const mid = c.madhya[i]; L3.lbls[i].obj.position.set(12.3 * Math.cos(mid * DEG), 0, -12.3 * Math.sin(mid * DEG)); L3.lbls[i].el.style.opacity = ''; }
     PLANET_LIST.forEach(n => { const ln = labelNodes['geo_' + n]; if (!ln) return; let sp = ln.el.querySelector('.dhx'); if (!sp){ sp = document.createElement('span'); sp.className = 'dhx'; ln.el.appendChild(sp); }

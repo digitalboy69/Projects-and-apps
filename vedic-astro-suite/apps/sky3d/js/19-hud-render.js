@@ -1,15 +1,15 @@
 function renderHUD(snap){
   document.getElementById('hudDate').textContent = formatHudDate(snap.jd);
   document.getElementById('hudTime').textContent = formatHudTime(snap.jd);
-  document.getElementById('hudSub').textContent = `JD ${snap.jd.toFixed(3)} · Ayanamsa ${snap.ayanamsa.toFixed(3)}°`;
+  document.getElementById('hudSub').textContent = (snap.nav ? 'NAVAMSHA SKY · ' : '') + `JD ${snap.jd.toFixed(3)} · Ayanamsa ${snap.ayanamsa.toFixed(3)}°`;
   const moonLon = snap.sidereal.Moon;
   const moonSign = SIGNS[getSignIndex(moonLon)];
   const moonNak = NAKSHATRAS[getNakshatraIndex(moonLon)];
-  document.getElementById('hudMoon').textContent = `☽ ${moonSign.symbol} ${moonSign.name} · ${moonNak} Nakshatra`;
+  document.getElementById('hudMoon').textContent = snap.nav ? `☽ ${moonSign.symbol} ${moonSign.name} · Navamsha (real: ${SIGNS[getSignIndex(snap.raw.Moon)].name})` : `☽ ${moonSign.symbol} ${moonSign.name} · ${moonNak} Nakshatra`;
   const ascEl = document.getElementById('hudAsc');
   if (ascEl){
-    const L = getLiveLoc(), aLon = siderealAscendant(snap.jd, L.lat, L.lon), aSign = SIGNS[getSignIndex(aLon)];
-    ascEl.innerHTML = `↑ Rising ${aSign.symbol} ${aSign.name} ${degreeInSign(aLon).deg}°<span class="asc-nak"> · ${L.approx ? 'tap to set your place' : hudEsc(L.label)}</span> <span class="asc-pin">📍</span>`;
+    const L = getLiveLoc(), aLon = NAV.asc(snap.jd, L.lat, L.lon), aSign = SIGNS[getSignIndex(aLon)];
+    ascEl.innerHTML = `↑ ${snap.nav ? 'Navamsha rising' : 'Rising'} ${aSign.symbol} ${aSign.name} ${degreeInSign(aLon).deg}°<span class="asc-nak"> · ${L.approx ? 'tap to set your place' : hudEsc(L.label)}</span> <span class="asc-pin">📍</span>`;
   }
   renderRising(false);
 }
@@ -53,7 +53,8 @@ function renderSkyTable(snap){
     const pada = Math.floor((normDeg(lon) % (360/27)) / ((360/27)/4)) + 1;
     const deg = getDegInSign(lon);
     const nakLord = NAKSHATRA_LORDS[nakIdx];
-    nodes.sign.textContent = `${sign.symbol} ${sign.name} (${sign.sk}) · ${nak} Pada ${pada} (Lord: ${nakLord})` + (OUTER_LIST.includes(name) ? ` · ${OUTER_SK[name]} (outer planet)` : '');
+    if (snap.nav){ const rs = SIGNS[getSignIndex(snap.raw[name])]; nodes.sign.textContent = `${sign.symbol} ${sign.name} (${sign.sk}) · Navamsha of ${rs.name} ${formatDeg(getDegInSign(snap.raw[name]))}`; }
+    else nodes.sign.textContent = `${sign.symbol} ${sign.name} (${sign.sk}) · ${nak} Pada ${pada} (Lord: ${nakLord})` + (OUTER_LIST.includes(name) ? ` · ${OUTER_SK[name]} (outer planet)` : '');
     nodes.deg.textContent = formatDeg(deg);
     const showRetro = snap.retro[name] && name!=="Rahu" && name!=="Ketu";
     nodes.retro.style.display = showRetro ? '' : 'none';

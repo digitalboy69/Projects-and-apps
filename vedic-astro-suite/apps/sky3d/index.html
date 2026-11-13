@@ -39,6 +39,7 @@
 <link rel="stylesheet" href="css/30-profile-from-moment.css">
 <link rel="stylesheet" href="css/25-date-entry.css">
 <link rel="stylesheet" href="css/31-ui-refresh.css">
+<link rel="stylesheet" href="css/32-tools-menu.css">
 <link rel="stylesheet" href="../../shared/meta.css">
 <script src="../../shared/icons.js"></script>
 <link rel="stylesheet" href="../../shared/liquid-glass.css">
@@ -116,11 +117,20 @@
     </div>
     <div class="viewport-legend" id="viewportLegend"></div>
     <div class="viewport-actions">
-      <button class="vp-btn" id="dashBtn" title="Sky Dashboard" aria-label="Sky Dashboard">▦</button>
-      <button class="vp-btn" id="aspExpBtn" title="Aspect Explorer" aria-label="Aspect Explorer">☍</button>
-      <button class="vp-btn" id="planetPickBtn" title="Select a planet" aria-label="Select a planet">🪐</button>
-      <button class="vp-btn" id="resetViewBtn" title="Reset view">⟲</button>
-      <button class="vp-btn" id="clearViewBtn" type="button" title="Hide controls" aria-label="Hide controls" aria-pressed="false"></button>
+      <div class="vp-row">
+        <button class="vp-btn" id="clearViewBtn" type="button" title="Hide controls" aria-label="Hide controls" aria-pressed="false"></button>
+        <button class="vp-btn vp-tools" id="toolsBtn" type="button" title="Tools" aria-label="Tools" aria-haspopup="true" aria-expanded="false" aria-controls="toolsMenu"><span class="tm-ic" aria-hidden="true">⚒</span>Tools<span class="tm-car" aria-hidden="true">▼</span></button>
+      </div>
+      <button class="hud-nav" id="navBadge" type="button" style="display:none" aria-label="Back to the normal sky"><b>D9 · NAVAMSHA</b><i>tap: normal sky</i></button>
+      <div class="tools-menu" id="toolsMenu" role="group" aria-label="Tools" hidden>
+        <button class="vp-btn" id="dashBtn" type="button" title="Sky Dashboard" aria-label="Sky Dashboard"><span class="tm-ic" aria-hidden="true">▦</span><span class="tm-lb">Sky Dashboard</span></button>
+        <button class="vp-btn" id="aspExpBtn" type="button" title="Aspect Explorer" aria-label="Aspect Explorer"><span class="tm-ic" aria-hidden="true">☍</span><span class="tm-lb">Aspect Explorer</span></button>
+        <button class="vp-btn" id="planetPickBtn" type="button" title="Select a planet" aria-label="Select a planet"><span class="tm-ic" aria-hidden="true">🪐</span><span class="tm-lb">Select a planet</span></button>
+        <button class="vp-btn" id="resetViewBtn" type="button" title="Reset view" aria-label="Reset view"><span class="tm-ic" aria-hidden="true">⟲</span><span class="tm-lb">Reset view</span></button>
+        <div class="tm-sep" role="separator"></div>
+        <div class="tm-sec">Sky</div>
+        <button class="vp-btn" id="navBtn" type="button" title="Show the sky in Navamsha (D9)" aria-label="Navamsha sky" aria-pressed="false"><span class="tm-ic" aria-hidden="true">९</span><span class="tm-lb">Navamsha sky</span><span class="tm-st">Off</span></button>
+      </div>
     </div>
     <div id="planetLabels"></div>
     <div class="freefly-stick move" id="ffMoveStick">
@@ -495,6 +505,7 @@
 <script src="js/39-smoothness.js"></script>
 <script src="js/40-3d-astro-layers.js"></script>
 <script src="js/41-quick-planet-picker.js"></script>
+<script src="js/61-navamsha-sky.js"></script>
 <script src="js/42-init.js"></script>
 <script src="js/43-degree-finder-returns.js"></script>
 <script src="js/44-retrograde-planner.js"></script>

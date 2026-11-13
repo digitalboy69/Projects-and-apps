@@ -2402,6 +2402,39 @@ html[data-app] .btn-secondary-block:hover{border-color:var(--u-gold);background:
 @media (prefers-reduced-motion:reduce){.ui-card{animation:none}}
 </style>
 <style>
+/* Tools drop-down + eye in the top-right of the 3D view, and the Navamsha-sky badge (js/61). Only opacity/transform animate; no backdrop-filter added here. */
+.viewport-actions{align-items:flex-end}
+.vp-row{display:flex;align-items:center;gap:8px}
+.vp-btn.vp-tools{width:auto;padding:0 14px;gap:8px;font:600 13px var(--font-sans,system-ui,sans-serif);letter-spacing:.02em;color:var(--text,#e8ecf4)}
+.vp-tools .tm-ic{font-size:17px;line-height:1}
+.vp-tools .tm-car{font-size:11px;opacity:.7;transition:transform .2s}
+.vp-tools[aria-expanded="true"] .tm-car{transform:rotate(180deg)}
+#clearViewBtn{display:flex!important;align-items:center;justify-content:center}
+.tools-menu{display:flex;flex-direction:column;gap:6px;min-width:210px;padding:8px;border-radius:16px;border:1px solid rgba(255,255,255,.14);background:rgba(14,20,33,.94);box-shadow:0 14px 36px rgba(0,0,0,.5);transform-origin:top right;animation:tmIn .18s ease both}
+.tools-menu[hidden]{display:none}
+@keyframes tmIn{from{opacity:0;transform:translateY(-6px) scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tools-menu{animation:none}}
+.tools-menu .vp-btn{width:100%;height:46px;justify-content:flex-start;gap:12px;padding:0 12px;border-radius:12px;font-size:17px;text-align:left}
+.tools-menu .vp-btn .tm-lb{flex:1;font:500 13.5px var(--font-sans,system-ui,sans-serif);color:var(--text,#e8ecf4)}
+.tools-menu .vp-btn .tm-ic{flex:0 0 22px;text-align:center}
+.tools-menu .tm-st{font:600 10.5px var(--font-mono,monospace);padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--text-dim,#9aa5b8)}
+.tools-menu .vp-btn.on{border-color:#d4a24a;background:rgba(212,162,74,.16)}
+.tools-menu .vp-btn.on .tm-st{background:#d4a24a;color:#14110a}
+.tools-menu .vp-btn:disabled{opacity:.4;cursor:not-allowed}
+.tm-sep{height:1px;margin:2px 4px;background:rgba(255,255,255,.1)}
+.tm-sec{padding:2px 6px;font:600 9.5px var(--font-mono,monospace);letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint,#6f7a8f)}
+html[data-app] .vp-btn.vp-tools:hover{border-color:#d4a24a}
+.app.clean .vp-tools,.app.clean .tools-menu{display:none!important}
+.hud-nav{display:inline-flex;align-items:center;gap:8px;margin-top:8px;padding:5px 10px;border-radius:999px;border:1px solid #d4a24a;background:rgba(212,162,74,.16);color:#f0d9a8;font:600 11px var(--font-mono,monospace);letter-spacing:.06em;pointer-events:auto;cursor:pointer}
+.hud-nav b{font-weight:700}
+.hud-nav i{font-style:normal;opacity:.75;text-transform:none;letter-spacing:0}
+@media (max-width:820px){.vp-btn.vp-tools{height:40px;padding:0 12px}.tools-menu{min-width:200px}}
+@media (max-width:720px){html body .viewport-hud{top:calc(110px + var(--safe-t))}html body .view-switch-wrap{top:calc(228px + var(--safe-t))}html body .app.navsky .viewport-hud{top:calc(150px + var(--safe-t))}html body .app.navsky .view-switch-wrap{top:calc(274px + var(--safe-t))}}
+@media (min-width:721px){html body .view-switch-wrap{right:176px}}
+.viewport-actions .hud-nav{margin-top:0;align-self:flex-end}
+.viewport-actions{z-index:30!important}
+</style>
+<style>
 /* ============================================================================
    META LAYER  ·  shared/meta.css
    One file for the "feel" of every screen: smooth motion, gentle touch feedback,
@@ -2807,11 +2840,20 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
     </div>
     <div class="viewport-legend" id="viewportLegend"></div>
     <div class="viewport-actions">
-      <button class="vp-btn" id="dashBtn" title="Sky Dashboard" aria-label="Sky Dashboard">▦</button>
-      <button class="vp-btn" id="aspExpBtn" title="Aspect Explorer" aria-label="Aspect Explorer">☍</button>
-      <button class="vp-btn" id="planetPickBtn" title="Select a planet" aria-label="Select a planet">🪐</button>
-      <button class="vp-btn" id="resetViewBtn" title="Reset view">⟲</button>
-      <button class="vp-btn" id="clearViewBtn" type="button" title="Hide controls" aria-label="Hide controls" aria-pressed="false"></button>
+      <div class="vp-row">
+        <button class="vp-btn" id="clearViewBtn" type="button" title="Hide controls" aria-label="Hide controls" aria-pressed="false"></button>
+        <button class="vp-btn vp-tools" id="toolsBtn" type="button" title="Tools" aria-label="Tools" aria-haspopup="true" aria-expanded="false" aria-controls="toolsMenu"><span class="tm-ic" aria-hidden="true">⚒</span>Tools<span class="tm-car" aria-hidden="true">▼</span></button>
+      </div>
+      <button class="hud-nav" id="navBadge" type="button" style="display:none" aria-label="Back to the normal sky"><b>D9 · NAVAMSHA</b><i>tap: normal sky</i></button>
+      <div class="tools-menu" id="toolsMenu" role="group" aria-label="Tools" hidden>
+        <button class="vp-btn" id="dashBtn" type="button" title="Sky Dashboard" aria-label="Sky Dashboard"><span class="tm-ic" aria-hidden="true">▦</span><span class="tm-lb">Sky Dashboard</span></button>
+        <button class="vp-btn" id="aspExpBtn" type="button" title="Aspect Explorer" aria-label="Aspect Explorer"><span class="tm-ic" aria-hidden="true">☍</span><span class="tm-lb">Aspect Explorer</span></button>
+        <button class="vp-btn" id="planetPickBtn" type="button" title="Select a planet" aria-label="Select a planet"><span class="tm-ic" aria-hidden="true">🪐</span><span class="tm-lb">Select a planet</span></button>
+        <button class="vp-btn" id="resetViewBtn" type="button" title="Reset view" aria-label="Reset view"><span class="tm-ic" aria-hidden="true">⟲</span><span class="tm-lb">Reset view</span></button>
+        <div class="tm-sep" role="separator"></div>
+        <div class="tm-sec">Sky</div>
+        <button class="vp-btn" id="navBtn" type="button" title="Show the sky in Navamsha (D9)" aria-label="Navamsha sky" aria-pressed="false"><span class="tm-ic" aria-hidden="true">९</span><span class="tm-lb">Navamsha sky</span><span class="tm-st">Off</span></button>
+      </div>
     </div>
     <div id="planetLabels"></div>
     <div class="freefly-stick move" id="ffMoveStick">
@@ -3802,7 +3844,7 @@ function showNakshatraHighlight(nakIdx){
   bodyMeshes["nakshatra_highlight"].position.copy(labelPt);
   
   // 3. SHOOT BEAM TO OCCUPYING PLANETS AT EXACT DEGREE & CALCULATE TRANSIT TIMINGS
-  const snap = snapshotPositions(currentJD);
+  const snap = NAV.snap(currentJD);
   const planetOrbitRadius = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2, Uranus:10.6, Neptune:10.95, Pluto:11.3 };
   let found = false;
   let occupantsHtml = '';
@@ -4548,7 +4590,7 @@ function drawBorders(){
 }
 
 function updateSceneForJD(jd){
-  const snap = snapshotPositions(jd);
+  const snap = NAV.snap(jd);   /* js/61: the normal sky, or the Navamsha sky when it is switched on */
 
   // Geocentric zodiac wheel positions
   const planetOrbitRadius = { Sun:4, Moon:2.6, Mercury:5, Venus:6, Mars:7, Jupiter:8, Saturn:9.2, Rahu:10.2, Ketu:10.2, Uranus:10.6, Neptune:10.95, Pluto:11.3 };
@@ -5249,7 +5291,7 @@ function renderRising(force){
   if (!popEl || !tabEl) return;
   const popOn = popEl.classList.contains('show'), tabOn = tabEl.classList.contains('active');
   if (!popOn && !tabOn) return;
-  const snap = A.snap || snapshotPositions(currentJD), L = getLiveLoc();
+  const snap = (A.snap && !A.snap.nav) ? A.snap : snapshotPositions(currentJD), L = getLiveLoc();
   const key = Math.floor(snap.jd * 1440) + '|' + L.lat + '|' + L.lon;
   if (!force && key === risingKey) return;
   risingKey = key;
@@ -5270,15 +5312,15 @@ document.addEventListener('keydown', function(e){ if ((e.key === 'Enter' || e.ke
 function renderHUD(snap){
   document.getElementById('hudDate').textContent = formatHudDate(snap.jd);
   document.getElementById('hudTime').textContent = formatHudTime(snap.jd);
-  document.getElementById('hudSub').textContent = `JD ${snap.jd.toFixed(3)} · Ayanamsa ${snap.ayanamsa.toFixed(3)}°`;
+  document.getElementById('hudSub').textContent = (snap.nav ? 'NAVAMSHA SKY · ' : '') + `JD ${snap.jd.toFixed(3)} · Ayanamsa ${snap.ayanamsa.toFixed(3)}°`;
   const moonLon = snap.sidereal.Moon;
   const moonSign = SIGNS[getSignIndex(moonLon)];
   const moonNak = NAKSHATRAS[getNakshatraIndex(moonLon)];
-  document.getElementById('hudMoon').textContent = `☽ ${moonSign.symbol} ${moonSign.name} · ${moonNak} Nakshatra`;
+  document.getElementById('hudMoon').textContent = snap.nav ? `☽ ${moonSign.symbol} ${moonSign.name} · Navamsha (real: ${SIGNS[getSignIndex(snap.raw.Moon)].name})` : `☽ ${moonSign.symbol} ${moonSign.name} · ${moonNak} Nakshatra`;
   const ascEl = document.getElementById('hudAsc');
   if (ascEl){
-    const L = getLiveLoc(), aLon = siderealAscendant(snap.jd, L.lat, L.lon), aSign = SIGNS[getSignIndex(aLon)];
-    ascEl.innerHTML = `↑ Rising ${aSign.symbol} ${aSign.name} ${degreeInSign(aLon).deg}°<span class="asc-nak"> · ${L.approx ? 'tap to set your place' : hudEsc(L.label)}</span> <span class="asc-pin">📍</span>`;
+    const L = getLiveLoc(), aLon = NAV.asc(snap.jd, L.lat, L.lon), aSign = SIGNS[getSignIndex(aLon)];
+    ascEl.innerHTML = `↑ ${snap.nav ? 'Navamsha rising' : 'Rising'} ${aSign.symbol} ${aSign.name} ${degreeInSign(aLon).deg}°<span class="asc-nak"> · ${L.approx ? 'tap to set your place' : hudEsc(L.label)}</span> <span class="asc-pin">📍</span>`;
   }
   renderRising(false);
 }
@@ -5322,7 +5364,8 @@ function renderSkyTable(snap){
     const pada = Math.floor((normDeg(lon) % (360/27)) / ((360/27)/4)) + 1;
     const deg = getDegInSign(lon);
     const nakLord = NAKSHATRA_LORDS[nakIdx];
-    nodes.sign.textContent = `${sign.symbol} ${sign.name} (${sign.sk}) · ${nak} Pada ${pada} (Lord: ${nakLord})` + (OUTER_LIST.includes(name) ? ` · ${OUTER_SK[name]} (outer planet)` : '');
+    if (snap.nav){ const rs = SIGNS[getSignIndex(snap.raw[name])]; nodes.sign.textContent = `${sign.symbol} ${sign.name} (${sign.sk}) · Navamsha of ${rs.name} ${formatDeg(getDegInSign(snap.raw[name]))}`; }
+    else nodes.sign.textContent = `${sign.symbol} ${sign.name} (${sign.sk}) · ${nak} Pada ${pada} (Lord: ${nakLord})` + (OUTER_LIST.includes(name) ? ` · ${OUTER_SK[name]} (outer planet)` : '');
     nodes.deg.textContent = formatDeg(deg);
     const showRetro = snap.retro[name] && name!=="Rahu" && name!=="Ketu";
     nodes.retro.style.display = showRetro ? '' : 'none';
@@ -5547,10 +5590,10 @@ function getChartContext(liveSnap){
     const snap = snapshotPositions(jd);
     return { sidereal: snap.sidereal, retro: snap.retro, lagnaLon, label: `${p.name}'s Natal Chart`, isNatal:true, jd };
   }
-  const snap = liveSnap || snapshotPositions(currentJD);
+  const snap = liveSnap || NAV.snap(currentJD);
   // Without a saved birth location we can't compute a true live ascendant, so
   // we default Lagna to Aries (0°) and clearly label this as sign-only view.
-  return { sidereal: snap.sidereal, retro: snap.retro, lagnaLon: 0, label: "Current Sky (no natal profile — Aries set as reference Lagna)", isNatal:false, jd: snap.jd };
+  return { sidereal: snap.sidereal, retro: snap.retro, lagnaLon: 0, label: snap.nav ? "Navamsha Sky (current sky in D9 — Aries set as reference Lagna)" : "Current Sky (no natal profile — Aries set as reference Lagna)", isNatal:false, jd: snap.jd };
 }
 
 let chartTabContextJD = currentJD; // exposed globally so inline onclick handlers on the wheel/house table can reach it
@@ -6330,7 +6373,7 @@ function openPlanetDetail(name, jd){
       <div class="pd-gauge-row pdx-in" style="--i:1">${buildDegreeGaugeSVG(dms.raw, col)}<div class="pd-gauge-label"><div class="pd-gauge-deg">${dms.deg}° ${dms.min}' ${dms.sec}"</div><div class="pd-gauge-sign">into ${sign.symbol} ${sign.name} (${sign.sk})</div></div></div>
       <div class="pdx-grid" style="margin-top:12px">
         ${card('Sidereal longitude', lon.toFixed(3)+'°', ayanName()+' ayanamsa')}${card('Nakshatra', nak, 'Lord '+NAKSHATRA_LORDS[nakIdx]+' · Pada '+pada+' of 4')}
-        ${card('Sign lord', sign.lord, sign.sk+' rashi')}${card('Navamsa (D9)', SIGNS[nSign].symbol+' '+SIGNS[nSign].name, varg?'Vargottama: same sign in D1 and D9':'Soul and marriage strength')}${house}
+        ${card('Sign lord', sign.lord, sign.sk+' rashi')}${card('Navamsa (D9)', SIGNS[nSign].symbol+' '+SIGNS[nSign].name, (varg?'Vargottama: same sign in D1 and D9':'Soul and marriage strength')+' · exact '+(NAV.d9(lon)%30).toFixed(1)+'° in D9')}${house}
         ${card('Daily motion', (speed>=0?'+':'')+speed.toFixed(4)+'°/day', speedCategory(name, jd))}
         ${conj.length ? `<div class="pdx-card wide pdx-in"><div class="k">Sharing the sign with</div><div class="pdx-chips" style="margin-top:8px">${conj.map(pchip).join('')}</div></div>` : ''}
       </div>
@@ -7209,27 +7252,27 @@ function _updateOverlays(snap){
     let sp = ln.el.querySelector('.cond'); if (!sp){ sp = document.createElement('span'); sp.className = 'cond'; ln.el.appendChild(sp); }
     let t = ''; const si = getSignIndex(sid[n]);
     if (CONDEX[n] === si) t += ' <b style="color:#6EE7B7">▲</b>'; else if ((CONDEX[n]+6)%12 === si) t += ' <b style="color:#FF6B4A">▼</b>'; else if (SIGNS[si].lord === n) t += ' <b style="color:#F4C45C">★</b>';
-    if (COMBUST[n] && Math.abs(angDiff(sid[n], sid.Sun)) < COMBUST[n]) t += ' <b style="color:#FFA94D">☀</b>';
+    if (!snap.nav && COMBUST[n] && Math.abs(angDiff(sid[n], sid.Sun)) < COMBUST[n]) t += ' <b style="color:#FFA94D">☀</b>';
     if (snap.retro[n] && n !== 'Rahu' && n !== 'Ketu') t += ' <b style="color:#FF8A66">℞</b>';
     if (!_on('L_cond')) t = '';
     if (sp._k !== t){ sp._k = t; sp.innerHTML = t; }
   });
   // moon phase
   const mm = bodyMeshes.geo_Moon.position, sm = bodyMeshes.geo_Sun.position;
-  T.moonU.sd.value.copy(sm).sub(mm).normalize();
+  if (snap.raw) T.moonU.sd.value.copy(_pt(snap.raw.Sun, ORB_R.Sun)).sub(_pt(snap.raw.Moon, ORB_R.Moon)).normalize(); else T.moonU.sd.value.copy(sm).sub(mm).normalize();   /* Moon phase always from the real sky */
   // rahu-ketu axis + eclipse season
   T.axis.rotation.y = sid.Rahu*DEG; T.axis.visible = _on('L_axis');
-  const nodeD = Math.min(Math.abs(angDiff(sid.Sun, sid.Rahu)), Math.abs(angDiff(sid.Sun, sid.Ketu)));
+  const rw = snap.raw || sid, nodeD = Math.min(Math.abs(angDiff(rw.Sun, rw.Rahu)), Math.abs(angDiff(rw.Sun, rw.Ketu)));
   const ecl = nodeD < 15; T.axis.material.color.set(ecl ? 0xFF6B4A : 0x9B8CFF); T.axis.material.opacity = ecl ? 0.7 : 0.3;
   T.axisLbl.obj.position.copy(_pt(sid.Rahu, 10.9)); vis(T.axisLbl, ecl && _on('L_axis'));
   // natal-dependent layers
-  if (has && A.np !== p){ A.np = p; A.natal = snapshotPositions(computeNatalAscendant(p).jd).sidereal; }
+  if (has && A.np !== p){ A.np = p; A.natal = NAV.snap(computeNatalAscendant(p).jd).sidereal; }
   if (!has){ A.np = null; A.natal = null; A.lagnaLon = null; }
   // current rising sign at the viewer's place: start / end lines of the sign
-  const liveL = getLiveLoc(), lonR = siderealAscendant(snap.jd, liveL.lat, liveL.lon), rsI = getSignIndex(lonR), riseOn = _on('L_rise');
+  const liveL = getLiveLoc(), lonR = NAV.asc(snap.jd, liveL.lat, liveL.lon), rsI = getSignIndex(lonR), riseOn = _on('L_rise');
   A.lagnaLon = lonR; T.riseG.visible = riseOn; T.riseG.rotation.y = rsI*30*DEG;
-  T.riseLbl.obj.position.copy(_pt(rsI*30 + 15, 14.4)); T.riseLbl.el.innerHTML = `↑ Rising ${SIGNS[rsI].symbol} ${SIGNS[rsI].name}`; vis(T.riseLbl, riseOn);
-  const gOn = _on('L_gulika') && typeof GK !== 'undefined', gl = gOn ? GK.live(snap.jd) : null, gn = (gOn && has) ? GK.natal(p) : null;
+  T.riseLbl.obj.position.copy(_pt(rsI*30 + 15, 14.4)); T.riseLbl.el.innerHTML = `↑ ${snap.nav ? 'Navamsha lagna' : 'Rising'} ${SIGNS[rsI].symbol} ${SIGNS[rsI].name}`; vis(T.riseLbl, riseOn);
+  const gOn = _on('L_gulika') && !snap.nav && typeof GK !== 'undefined', gl = gOn ? GK.live(snap.jd) : null, gn = (gOn && has) ? GK.natal(p) : null;
   if (gl) T.gulL.obj.position.copy(_pt(gl.lon, 11.9));
   if (gn) T.gulN.obj.position.copy(_pt(gn.lon, 11.9));
   vis(T.gulL, !!gl); T.gulR.visible = !!gl; vis(T.gulN, !!gn); T.gulNR.visible = !!gn;
@@ -7256,7 +7299,7 @@ function _updateOverlays(snap){
     T.ascLbl.obj.position.copy(_pt(lon, 15.3)); T.ascLbl.el.innerHTML = `ASC ${SIGNS[ls].symbol} ${degreeInSign(lon).deg}°`; vis(T.ascLbl, _on('L_lagna'));
     const hs = _on('L_houses'); T.wedgeG.visible = hs; T.wedgeG.rotation.y = ls*30*DEG;
     T.houseLbl.forEach((h,i)=>{ h.obj.position.copy(_pt(((ls+i)%12)*30+15, 10.95)); vis(h, hs); });
-    const ms = getSignIndex(A.natal.Moon), d = (getSignIndex(sid.Saturn) - ms + 12) % 12, active = d === 11 || d === 0 || d === 1, ss = _on('L_sade');
+    const ms = getSignIndex(A.natal.Moon), d = (getSignIndex(sid.Saturn) - ms + 12) % 12, active = d === 11 || d === 0 || d === 1, ss = _on('L_sade') && !snap.nav;
     T.sadeG.visible = ss; T.sadeG.rotation.y = ((ms+11)%12)*30*DEG; T.sade.material.color.set(active ? 0xFF6B4A : 0x9B8CFF); T.sade.material.opacity = active ? 0.9 : 0.35;
     T.sadeLbl.obj.position.copy(_pt(ms*30+15, 15.3)); vis(T.sadeLbl, active && ss);
   } else {
@@ -7312,6 +7355,59 @@ function initPlanetPicker(){
   const _scm = setCamMode; setCamMode = function(m){ _scm(m); syncPickBtn(); };
   document.getElementById('focusPlanetSelect').addEventListener('change', syncPickBtn);
 }
+<\/script>
+<script>
+/* Navamsha sky (js/61, global NAV) + the Tools drop-down in the top-right of the 3D view.
+   Navamsha (D9) longitude = (sidereal longitude x 9) mod 360. Each 3°20' slice of a sign is stretched over a whole 30° sign. This equals the Parashari rule
+   (movable signs start from themselves, fixed from the 9th, dual from the 5th) and the app's Navamsha code in js/18, with the exact degree kept.
+   NAV.snap(jd) is the snapshot the 3D scene, HUD, sky table, overlays and chart tab draw from: the normal sky, or the Navamsha sky when it is on.
+   Everything else (planet pop-ups, dashboard, transit feeds, rising-sign timings, degree houses) keeps the real sky: it reads snapshotPositions directly,
+   or snap.raw when it is handed a Navamsha snapshot. Wheel view only; switching to the Solar System view turns it off. */
+const NAV = (() => {
+  'use strict';
+  const st = { on: false };
+  const d9 = lon => normDeg(lon * 9);
+  function snap(jd) {
+    const s = snapshotPositions(jd); if (!st.on) return s;
+    const sid = {}; ALL_BODIES.forEach(n => { sid[n] = d9(s.sidereal[n]); });
+    return Object.assign({}, s, { sidereal: sid, raw: s.sidereal, nav: true });
+  }
+  const asc = (jd, lat, lon) => { const a = siderealAscendant(jd, lat, lon); return st.on ? d9(a) : a; };
+  const $ = id => document.getElementById(id);
+  function paint() {
+    const b = $('navBtn'); if (b) { b.setAttribute('aria-pressed', String(st.on)); b.classList.toggle('on', st.on); const t = b.querySelector('.tm-st'); if (t) t.textContent = st.on ? 'On' : 'Off'; }
+    const g = $('navBadge'); if (g) g.style.display = st.on ? '' : 'none';
+    const app = document.querySelector('.app'); if (app) app.classList.toggle('navsky', st.on);
+  }
+  function set(v, quiet) {
+    if (v && typeof SOL !== 'undefined' && SOL.view === 'solar') return false;
+    st.on = !!v; try { A.np = null; A.natal = null; } catch (e) { /* overlays not ready yet */ }
+    paint(); if (!quiet && typeof refreshAll === 'function') refreshAll(); return true;
+  }
+  /* ---- Tools drop-down ---- */
+  let open = false;
+  function setOpen(v) { open = !!v; const m = $('toolsMenu'), b = $('toolsBtn'); if (m) m.hidden = !open; if (b) { b.setAttribute('aria-expanded', String(open)); b.classList.toggle('active', open); } }
+  function wire() {
+    const tb = $('toolsBtn'), menu = $('toolsMenu'); if (!tb || !menu) return;
+    tb.addEventListener('click', e => { e.stopPropagation(); setOpen(!open); });
+    menu.addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.disabled) return; if (b.id === 'navBtn') set(!st.on); setOpen(false); });
+    document.addEventListener('click', e => { if (open && !e.target.closest('.viewport-actions')) setOpen(false); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && open) { setOpen(false); tb.focus(); } });
+    const off = $('navBadge'); if (off) off.addEventListener('click', () => set(false));
+    const eye = $('clearViewBtn'); if (eye) eye.addEventListener('click', () => setOpen(false));
+    const _sv = window.setSceneView;
+    if (typeof _sv === 'function') window.setSceneView = function (v) {
+      if (v === 'solar' && st.on) set(false, true);
+      const r = _sv.apply(this, arguments); const n = $('navBtn'); if (n) { n.disabled = (v === 'solar'); n.title = n.disabled ? 'Navamsha sky works in the Zodiac Wheel view' : 'Show the sky in Navamsha (D9)'; }
+      if (typeof refreshAll === 'function') refreshAll(); return r;
+    };
+    paint();
+  }
+  const api = { snap, asc, d9, set, setOpen, get on() { return st.on; } };
+  window.NAV = api;
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();
+  return api;
+})();
 <\/script>
 <script>
 /* ============================================================================
@@ -8991,7 +9087,7 @@ function place(sid, c){
 }
 function current(){
   const live = (src !== 'natal') || !isValidProfile(activeNatalProfile);
-  if (live){ const loc = getLiveLoc(), jd = (A && A.snap) ? A.snap.jd : currentJD, s = (A && A.snap) ? A.snap.sidereal : snapshotPositions(jd).sidereal, c = cusps(jd, loc.lat, loc.lon, sys); return { live: true, jd, c, p: place(s, c), name: 'Sky now · ' + (loc.label || 'your place') }; }
+  if (live){ const loc = getLiveLoc(), jd = (A && A.snap) ? A.snap.jd : currentJD, s = (A && A.snap) ? (A.snap.raw || A.snap.sidereal) : snapshotPositions(jd).sidereal, c = cusps(jd, loc.lat, loc.lon, sys); return { live: true, jd, c, p: place(s, c), name: 'Sky now · ' + (loc.label || 'your place') }; }
   const n = computeNatalAscendant(activeNatalProfile), s = snapshotPositions(n.jd).sidereal, c = cusps(n.jd, activeNatalProfile.lat, activeNatalProfile.lon, sys);
   return { live: false, jd: n.jd, c, p: place(s, c), name: (activeNatalProfile.name || 'Natal chart') };
 }
@@ -9058,7 +9154,7 @@ function update3D(force){
   init3D(); if (!L3) return;
   const now = performance.now(); if (!force && now - last3 < 120) return; last3 = now;
   try {
-    const loc = getLiveLoc(), jd = A.snap ? A.snap.jd : currentJD, s = A.snap ? A.snap.sidereal : snapshotPositions(jd).sidereal, c = cusps(jd, loc.lat, loc.lon, sys), pl = place(s, c);
+    const loc = getLiveLoc(), jd = A.snap ? A.snap.jd : currentJD, s = A.snap ? (A.snap.raw || A.snap.sidereal) : snapshotPositions(jd).sidereal, c = cusps(jd, loc.lat, loc.lon, sys), pl = place(s, c);
     L3.G.visible = true;
     for (let i = 0; i < 12; i++){ L3.lines[i].rotation.y = c.begin[i] * DEG; const mid = c.madhya[i]; L3.lbls[i].obj.position.set(12.3 * Math.cos(mid * DEG), 0, -12.3 * Math.sin(mid * DEG)); L3.lbls[i].el.style.opacity = ''; }
     PLANET_LIST.forEach(n => { const ln = labelNodes['geo_' + n]; if (!ln) return; let sp = ln.el.querySelector('.dhx'); if (!sp){ sp = document.createElement('span'); sp.className = 'dhx'; ln.el.appendChild(sp); }
@@ -57170,6 +57266,7 @@ const FG_DATA = {
   ],
   /* features of the other apps in the suite (no tile in this app); shown under the six tabs */
   sky3d: [
+    ['⚒', 'Tools menu and Navamsha sky (3D Sky)', 'Top right of the 3D Sky now has just two buttons: the eye 👁 (hides all controls for a clean view) and Tools. Tap Tools to drop down Sky Dashboard, Aspect Explorer, Select a planet, Reset view and Navamsha sky. Navamsha sky redraws the exact current sky with every planet at its Navamsha (D9) position; the HUD, sky table and chart tab switch to D9, and a gold D9 badge shows (tap it to go back). It works in the Zodiac Wheel view only. Planet pop-ups keep the real data and add the exact D9 degree.'],
     ['◀', 'Reverse play (3D Sky)', 'Beside ▶ in the timeline bar. Tap ◀ and time runs backward at the chosen speed (1d/s to 1y/s). Tap ▶ while it runs backward to turn time around, tap the running button to pause.'],
     ['⊞', 'All tabs grid (3D Sky)', 'Tap All at the start of the tab strip under the sky to see every tab as a big grid with a short line each. One tap opens that tab. The strip scrolls to keep the tab you opened in view.'],
     ['👤', 'Make a profile from a moment (3D Sky)', 'Tap 👤 in the timeline bar to turn the moment showing now (even while time is running), or 👤 on any Saved moment, into a natal profile. Date and time are the ones shown; the place is your "Where are you now?" place.']

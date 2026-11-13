@@ -90,7 +90,7 @@ function renderRising(force){
   if (!popEl || !tabEl) return;
   const popOn = popEl.classList.contains('show'), tabOn = tabEl.classList.contains('active');
   if (!popOn && !tabOn) return;
-  const snap = A.snap || snapshotPositions(currentJD), L = getLiveLoc();
+  const snap = (A.snap && !A.snap.nav) ? A.snap : snapshotPositions(currentJD), L = getLiveLoc();
   const key = Math.floor(snap.jd * 1440) + '|' + L.lat + '|' + L.lon;
   if (!force && key === risingKey) return;
   risingKey = key;

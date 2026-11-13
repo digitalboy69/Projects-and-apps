@@ -207,11 +207,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-13 - 2242 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-13 - 2248 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 250 files, 36224 lines, 3042 KB
+**birth-chart** - 250 files, 36225 lines, 3042 KB
 ```
 index.html                                         675 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -275,7 +275,7 @@ js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
 js/147-tools-hub.js                                117 lines   11 KB
 js/148-export-builder.js                           260 lines   25 KB
-js/149-feature-guide-data.js                       318 lines   36 KB
+js/149-feature-guide-data.js                       319 lines   36 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
 js/151-bhavat-masterclass-data.js                   99 lines   13 KB
@@ -480,9 +480,9 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 93 files, 8835 lines, 551 KB
+**sky3d** - 95 files, 8931 lines, 559 KB
 ```
-index.html                                         520 lines   33 KB
+index.html                                         531 lines   34 KB
 js/01-astro-engine.js                              163 lines   10 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -501,7 +501,7 @@ js/15-planet-labels.js                              75 lines    4 KB
 js/16-app-state.js                                  35 lines    1 KB
 js/17-render-sky-table.js                           23 lines    1 KB
 js/18-rising-sign-timeline.js                      109 lines    8 KB
-js/19-hud-render.js                                 63 lines    2 KB
+js/19-hud-render.js                                 64 lines    3 KB
 js/20-transit-conjunction-scanner.js               152 lines    6 KB
 js/21-natal-profile.js                              50 lines    2 KB
 js/22-chart-tab.js                                  38 lines    1 KB
@@ -543,6 +543,7 @@ js/57-profile-from-moment.js                        78 lines    6 KB
 js/58-ui-all-tabs.js                                44 lines    3 KB
 js/59-wheel-frame.js                                54 lines    4 KB
 js/60-wheel-beauty.js                               77 lines    6 KB
+js/61-navamsha-sky.js                               52 lines    3 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -575,6 +576,7 @@ css/28-degree-houses.css                            43 lines    5 KB
 css/29-live-shadbala.css                            32 lines    5 KB
 css/30-profile-from-moment.css                      22 lines    2 KB
 css/31-ui-refresh.css                               65 lines    5 KB
+css/32-tools-menu.css                               32 lines    3 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -688,3 +690,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - 3D Sky interface refresh (phone): css/31-ui-refresh.css (loaded last, wins over older layers; use `html body` selectors) + js/58-ui-all-tabs.js. Timeline bar is a 12-column grid (3 short rows); 'All' grid for the 15 tabs. The Three.js wheel itself was NOT changed (cannot be rendered in the sandbox).
 - 3D wheel on phones: js/07 `wheelFitDist()`/`wheelFitPhi()` (zoom from screen shape + free band, replaces the old fixed 26), js/59 band + view offset, js/15 planet labels now avoid overlapping each other. To SEE the real wheel in the sandbox, clone the three.js r128 tag with `git clone --depth 1 --branch r128 --filter=blob:none --no-checkout https://github.com/mrdoob/three.js.git` then `git checkout r128 -- build/three.min.js`, serve it for the CDN URL in Playwright, and launch Chromium with `--use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader`.
 - Wheel beauty pass: js/60-wheel-beauty.js (adds/swaps visuals after the scene is built; never touches astronomy). Animation rides the label update after each drawn frame, so there is no extra loop. Flag: localStorage vax3d_beauty='0' turns it off.
+- 3D Sky Tools menu + Navamsha sky: js/61-navamsha-sky.js (global `NAV`: `NAV.snap(jd)` is the D9-or-real snapshot used ONLY by scene/HUD/sky table/overlays/chart tab; everything else keeps `snapshotPositions`; `snap.raw` = real sky inside a D9 snap), css/32-tools-menu.css, top-right = Eye + Tools pill + `#toolsMenu` (old button IDs kept). Test: tests/sky3d_navamsha_tools_browser_test.py. Add new divisional skies as more buttons in `#toolsMenu`.
