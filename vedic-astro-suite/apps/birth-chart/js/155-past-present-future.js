@@ -11,7 +11,7 @@ const PPF = (() => {
   const fmtD = d => d.getDate() + ' ' + MON[d.getMonth()] + ' ' + d.getFullYear();
   const TC = { supportive: 'ppf-s', mixed: 'ppf-m', challenging: 'ppf-c' };
   const TCOL = { supportive: '#5ec4b7', mixed: '#e6b94f', challenging: '#d96c9b' };
-  let lastChart = null, tab = 'present', pickI = null, pickBar = null, bars = [];
+  let lastChart = null, sig = 'Lagna', tab = 'present', pickI = null, pickBar = null, bars = [];
 
   const left = (end, now) => {
     let m = Math.max(0, Math.round((end - now) / (YEAR / 12))); const y = Math.floor(m / 12); m -= y * 12;
@@ -118,6 +118,42 @@ const PPF = (() => {
     return tab === 'past' ? pastPane(chart, m, now) : tab === 'future' ? futurePane(chart, m, now) : presentPane(chart, m, now);
   }
 
+  /* ---------- directional (+) chart: houses counted in four groups ---------- */
+  const ARMS = [
+    { houses: [1, 5, 9], name: 'Dharma', note: 'purpose, values, luck and teachers' },
+    { houses: [2, 6, 10], name: 'Artha', note: 'money, work and daily effort' },
+    { houses: [3, 7, 11], name: 'Kama', note: 'desires, courage, partners and gains' },
+    { houses: [4, 8, 12], name: 'Moksha', note: 'home, inner life, change and letting go' }];
+  const SIGS = ['Lagna', 'Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
+  const houseOf = (chart, n) => n === 'Lagna' ? 1 : (chart.planets[n] ? chart.planets[n].house : null);
+  function dirModel(chart, who) {
+    const arms = ARMS.map(a => ({ ...a, planets: [] }));
+    SIGS.slice(1).forEach(n => { const h = houseOf(chart, n); if (!h) return; const a = arms.find(x => x.houses.includes(h)); if (a) a.planets.push({ n, h }); });
+    const h0 = houseOf(chart, who), s = arms.findIndex(a => a.houses.includes(h0));
+    arms.forEach((a, i) => { a.role = i === s ? 'you' : i === (s + 3) % 4 ? 'past' : i === (s + 1) % 4 ? 'future' : 'present'; });
+    return { arms, s, who, h0 };
+  }
+  const ROLE = { you: 'You', past: 'Past', present: 'Present', future: 'Future' };
+  function armHtml(a, pos) {
+    const chips = a.planets.length ? a.planets.map(p => `<span class="ppf-pc" title="${esc(p.n)} in house ${p.h}"><b>${esc(G(p.n))}</b><i>${p.h}</i></span>`).join('') : '<span class="ppf-em">empty</span>';
+    return `<div class="ppf-arm ppf-a-${a.role}" style="grid-area:${pos}"><div class="ppf-ah"><span class="ppf-role">${ROLE[a.role]}</span><b>${a.houses.join(' · ')}</b><small>${esc(a.name)}</small></div><div class="ppf-pcs">${chips}</div></div>`;
+  }
+  function dirReading(chart, m) {
+    const D = (typeof VDA !== 'undefined' && VDA && VDA.data && VDA.data.planet) || {};
+    return ['past', 'present', 'future'].map(r => { const a = m.arms.find(x => x.role === r);
+      const body = a.planets.length ? a.planets.map(p => `<li><b>${esc(G(p.n))} ${esc(p.n)}</b> in house ${p.h}${D[p.n] && D[p.n].theme ? ': ' + esc(D[p.n].theme) : ''}</li>`).join('') : '<li class="ppf-mt">No planet sits in these houses, so there is nothing to read here from planets alone.</li>';
+      return `<div class="ppf-dr ppf-a-${r}"><div class="ppf-ph"><span class="ppf-role">${ROLE[r]}</span><b>Houses ${a.houses.join(' · ')}</b><em>${esc(a.name)}</em></div><p class="ppf-pm">${esc(a.note)}</p><ul>${body}</ul></div>`; }).join('');
+  }
+  function dirHtml(chart) {
+    const m = dirModel(chart, sig), pos = ['1 / 2', '2 / 3', '3 / 2', '2 / 1'];
+    const you = m.arms[m.s], sg = sig === 'Lagna' ? '' : esc(G(sig));
+    return `<div class="ppf-chips" role="group" aria-label="Who to read for">${SIGS.map(n => `<button type="button" data-sig="${n}" class="${n === sig ? 'ppf-on' : ''}" aria-pressed="${n === sig}">${n === 'Lagna' ? 'Lagna' : esc(G(n)) + ' ' + n}</button>`).join('')}</div>
+      <div class="ppf-plus" role="group" aria-label="Directional chart"><div class="ppf-hub"><small>Reading for</small><b>${sg} ${esc(sig)}</b><i>house ${m.h0}</i></div>${m.arms.map((a, i) => armHtml(a, pos[i])).join('')}</div>
+      <p class="ppf-cap ppf-dn">Arms run clockwise: 1·5·9 at the top, 2·6·10 right, 3·7·11 bottom, 4·8·12 left. The number beside each planet is its house.</p>
+      ${dirReading(chart, m)}
+      <p class="ppf-fine">How it works: the houses are put in four groups (Dharma, Artha, Kama, Moksha). Find the group where ${esc(sig)} sits. The group just ahead (clockwise) is read as the future, the group opposite as the present, and the group behind as the past. The four house groups are standard. The past, present and future rule is a teaching method, and I could not verify it in a classical text, so treat it as a lens for reflection, not a prediction.</p>`;
+  }
+
   /* ---------- screen ---------- */
   function html(chart) {
     lastChart = chart; const now = new Date(), m = model(chart, now);
@@ -126,6 +162,7 @@ const PPF = (() => {
     const nowTxt = c && c.md ? `${esc(c.md.lord)}${c.ad ? ' – ' + esc(c.ad.lord) : ''}` : 'cycle complete';
     return `<div class="ppf"><div class="ppf-banner"><span class="ppf-orn" aria-hidden="true">⏳</span><h3>Past · Present · Future</h3><p>Your whole life on one line, then what has run, what runs now and what comes next, from your Vimshottari periods.</p>
       <div class="ppf-now-r"><span>Now</span><b>Age ${age.toFixed(1)}</b><b>${nowTxt}</b></div></div>
+      <div class="ppf-card"><h4>Directional chart</h4><p class="ppf-cap">Count the houses into four groups and draw them as a + . Choose who you are reading for.</p><div id="ppfDir">${dirHtml(chart)}</div></div>
       <div class="ppf-card"><h4>Your life by Mahadasha</h4><p class="ppf-cap">Each block is one big stage. Faded blocks are behind you. Tap a block.</p><div id="ppfRiver">${riverSvg(m, now)}</div><div id="ppfPick">${pickHtml(m, now)}</div>
         <div class="ppf-legend"><span><i class="ppf-s"></i>Supportive</span><span><i class="ppf-m"></i>Mixed</span><span><i class="ppf-c"></i>Challenging</span></div></div>
       <div class="ppf-card"><h4>Ten years back, ten years ahead</h4><p class="ppf-cap">Each bar is one sub-period. Up is easier, down is more testing. Tap a bar.</p><div id="ppfEase">${chartSvg(chart, m, now)}</div><div id="ppfBar">${barHtml()}</div></div>
@@ -145,11 +182,13 @@ const PPF = (() => {
     html, model,
     setTab(t) { tab = t; document.querySelectorAll('.ppf-tabs button').forEach(b => { const on = b.getAttribute('data-tab') === t; b.classList.toggle('ppf-on', on); b.setAttribute('aria-selected', on); }); const el = document.getElementById('ppfBody'); if (el && lastChart) el.innerHTML = pane(lastChart); },
     pickPeriod(i) { pickI = i; refreshPick(); },
-    pickSub(k) { pickBar = k; refreshBar(); }
+    pickSub(k) { pickBar = k; refreshBar(); },
+    setWho(n) { sig = n; const e = document.getElementById('ppfDir'); if (e && lastChart) e.innerHTML = dirHtml(lastChart); },
+    dirModel
   };
   document.addEventListener('click', e => {
-    const t = e.target.closest && e.target.closest('.ppf-tabs button, .ppf-seg, .ppf-bar'); if (!t) return;
-    if (t.matches('.ppf-tabs button')) api.setTab(t.getAttribute('data-tab')); else if (t.matches('.ppf-seg')) api.pickPeriod(+t.getAttribute('data-i')); else api.pickSub(+t.getAttribute('data-k'));
+    const t = e.target.closest && e.target.closest('.ppf-tabs button, .ppf-seg, .ppf-bar, .ppf-chips button'); if (!t) return;
+    if (t.matches('.ppf-chips button')) api.setWho(t.getAttribute('data-sig')); else if (t.matches('.ppf-tabs button')) api.setTab(t.getAttribute('data-tab')); else if (t.matches('.ppf-seg')) api.pickPeriod(+t.getAttribute('data-i')); else api.pickSub(+t.getAttribute('data-k'));
   });
   document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.ppf-seg, .ppf-bar')) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
   window.buildPastPresentFuturePanel = function (chart) { return html(chart); };

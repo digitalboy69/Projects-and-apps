@@ -16872,6 +16872,39 @@ body.cl-open{overflow:hidden}
 .ppf-row.ppf-now{margin:0 -6px;padding:10px 6px;border-radius:12px;border-top:0;background:rgba(230,185,79,.08)}
 .ppf-fine{margin:6px 2px 0;font-size:11.5px;line-height:1.55;color:var(--mut)}
 @media (max-width:380px){.ppf-banner h3{font-size:23px}.ppf-hs{gap:4px}}
+/* directional (+) chart */
+.ppf{--c-past:#a79be0;--c-present:#5ec4b7;--c-future:#e6b94f}
+.ppf-chips{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 12px}
+.ppf-chips button{min-height:40px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);color:var(--mut);font:600 12.5px var(--font-sans);cursor:pointer;transition:background .2s,color .2s}
+.ppf-chips button.ppf-on{background:linear-gradient(160deg,rgba(230,185,79,.28),rgba(230,185,79,.1));border-color:rgba(230,185,79,.5);color:var(--g)}
+.ppf-chips button:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.ppf-plus{position:relative;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto;gap:6px;margin:0 auto;max-width:360px}
+.ppf-plus::before,.ppf-plus::after{content:"";position:absolute;background:rgba(255,255,255,.07);pointer-events:none}
+.ppf-plus::before{left:50%;top:0;bottom:0;width:2px;margin-left:-1px}
+.ppf-plus::after{top:50%;left:0;right:0;height:2px;margin-top:-1px}
+.ppf-hub{grid-area:2 / 2;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-radius:50%;aspect-ratio:1;background:radial-gradient(circle,rgba(230,185,79,.22),rgba(230,185,79,.05));border:1px solid rgba(230,185,79,.45);padding:4px}
+.ppf-hub small{font:600 9px var(--font-sans);letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.ppf-hub b{font:600 14px/1.2 var(--font-serif,serif);color:var(--tx)}
+.ppf-hub i{font:500 10.5px var(--font-sans);font-style:normal;color:var(--g)}
+.ppf-arm{position:relative;z-index:1;min-height:104px;padding:8px 6px;border:1px solid var(--line);border-radius:16px;background:#15120d;display:flex;flex-direction:column;gap:6px;min-width:0}
+.ppf-ah{display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center}
+.ppf-ah b{font:700 13px var(--font-sans);color:var(--tx);white-space:nowrap}
+.ppf-ah small{font:500 10px var(--font-sans);color:var(--mut)}
+.ppf-role{display:inline-block;padding:2px 8px;border-radius:999px;font:700 9.5px var(--font-sans);letter-spacing:.07em;text-transform:uppercase;color:#14110a;background:#fff}
+.ppf-a-past .ppf-role{background:var(--c-past)}.ppf-a-present .ppf-role{background:var(--c-present)}.ppf-a-future .ppf-role{background:var(--c-future)}.ppf-a-you .ppf-role{background:#fff}
+.ppf-arm.ppf-a-past{border-color:var(--c-past)}.ppf-arm.ppf-a-present{border-color:var(--c-present)}.ppf-arm.ppf-a-future{border-color:var(--c-future)}.ppf-arm.ppf-a-you{border-color:#fff;border-style:dashed}
+.ppf-pcs{display:flex;flex-wrap:wrap;justify-content:center;gap:4px}
+.ppf-pc{display:inline-flex;align-items:center;gap:3px;min-width:34px;justify-content:center;padding:3px 6px;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid var(--line)}
+.ppf-pc b{font-size:14px;color:var(--tx)}
+.ppf-pc i{font:600 10px var(--font-sans);font-style:normal;color:var(--g)}
+.ppf-em{align-self:center;margin:auto;font:500 11px var(--font-sans);color:var(--mut)}
+.ppf-dn{margin-top:10px}
+.ppf-dr{margin-top:10px;padding:11px 12px;border:1px solid var(--line);border-left-width:4px;border-radius:14px;background:rgba(255,255,255,.03)}
+.ppf-dr.ppf-a-past{border-left-color:var(--c-past)}.ppf-dr.ppf-a-present{border-left-color:var(--c-present)}.ppf-dr.ppf-a-future{border-left-color:var(--c-future)}
+.ppf-dr ul{margin:6px 0 0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--tx)}
+.ppf-dr .ppf-mt{list-style:none;margin-left:-18px;color:var(--mut)}
+.ppf-dr .ppf-ph em{margin-left:auto;font-style:normal}
+@media (max-width:380px){.ppf-arm{padding:7px 4px}.ppf-hub b{font-size:12.5px}}
 </style>
 
 
@@ -57090,10 +57123,10 @@ const FG_DATA = {
       how: ['Open a house row.', 'Read the sign, lord and planets there.', 'See the Arudha Pada for the same house.'],
       terms: [['Bhavat Bhavam', 'The Nth house from the Nth house.'], ['Pada', 'The Arudha of a house; how it appears to the world.']],
       tip: 'It supplements the main reading.', see: ['panel-bhavatclass', 'panel-lagnas', 'panel-argala'] },
-    'panel-ppf': { what: 'Your whole life on one line, then three views: what has already run, what is running now and what comes next, all from your Vimshottari dasha periods.',
+    'panel-ppf': { what: 'A + shaped directional chart (houses counted in four groups, with the past, present and future arms), then your whole life on one line and three views: what has already run, what is running now and what comes next, from your Vimshottari dasha periods.',
       when: 'You want to know which stage of life you are in, look back at past stages, or see what the next few years tend to be about.',
-      how: ['Read the coloured life line at the top. Each block is one big stage (Mahadasha). Faded blocks are behind you and the needle is today. Tap a block to read it.', 'Look at the bar chart of ten years back and ten years ahead. Up bars are easier sub-periods, down bars are more testing. Tap a bar to read it.', 'Use the Past, Present and Future tabs. Present shows three running clocks with progress bars and the houses lit up now. Future lists the next five years and the bigger stages after.', 'On each card, open "More about this stage" and read the line that starts "Looking back" or "When it arrives" to check it against your life.'],
-      terms: [['Mahadasha', 'The big stage of life, ruled by one planet, lasting 6 to 20 years.'], ['Antardasha', 'A sub-stage inside a Mahadasha, ruled by another planet.'], ['Pratyantardasha', 'A shorter stage inside the Antardasha.'], ['Supportive, mixed, challenging', 'A teaching aid for how easy a period tends to feel, from how friendly the lord is for your rising sign, its dignity and its house.']],
+      how: ['Start with the + shaped directional chart. Pick who you are reading for (Lagna or a planet). The arm where that planet sits is You. The arm ahead (clockwise) is the Future, the arm opposite is the Present and the arm behind is the Past. Read the planets in each arm below the chart.', 'Read the coloured life line. Each block is one big stage (Mahadasha). Faded blocks are behind you and the needle is today. Tap a block to read it.', 'Look at the bar chart of ten years back and ten years ahead. Up bars are easier sub-periods, down bars are more testing. Tap a bar to read it.', 'Use the Past, Present and Future tabs. Present shows three running clocks with progress bars and the houses lit up now. Future lists the next five years and the bigger stages after.', 'On each card, open "More about this stage" and read the line that starts "Looking back" or "When it arrives" to check it against your life.'],
+      terms: [['Directional chart', 'The 12 houses in four groups: 1·5·9 Dharma, 2·6·10 Artha, 3·7·11 Kama, 4·8·12 Moksha, drawn as a +. The groups are standard; the past, present and future rule is a teaching method, not a verified classical rule.'], ['Mahadasha', 'The big stage of life, ruled by one planet, lasting 6 to 20 years.'], ['Antardasha', 'A sub-stage inside a Mahadasha, ruled by another planet.'], ['Pratyantardasha', 'A shorter stage inside the Antardasha.'], ['Supportive, mixed, challenging', 'A teaching aid for how easy a period tends to feel, from how friendly the lord is for your rising sign, its dignity and its house.']],
       tip: 'Dates depend on the birth time, so check the Moon-based start is right before trusting a boundary date.', see: ['panel-dasha', 'panel-dashasys', 'panel-yeartimeline'] },
     'panel-vargamatrix': { what: 'Every planet in every divisional chart (D1 to D144) in one colour-coded grid, so you can see where each planet is comfortable or strained across the whole chart family.',
       when: 'You want the big picture of your divisional charts quickly, or want to spot Vargottama planets and the strongest and weakest planets across the charts.',
@@ -57784,7 +57817,7 @@ const PPF = (() => {
   const fmtD = d => d.getDate() + ' ' + MON[d.getMonth()] + ' ' + d.getFullYear();
   const TC = { supportive: 'ppf-s', mixed: 'ppf-m', challenging: 'ppf-c' };
   const TCOL = { supportive: '#5ec4b7', mixed: '#e6b94f', challenging: '#d96c9b' };
-  let lastChart = null, tab = 'present', pickI = null, pickBar = null, bars = [];
+  let lastChart = null, sig = 'Lagna', tab = 'present', pickI = null, pickBar = null, bars = [];
 
   const left = (end, now) => {
     let m = Math.max(0, Math.round((end - now) / (YEAR / 12))); const y = Math.floor(m / 12); m -= y * 12;
@@ -57891,6 +57924,42 @@ const PPF = (() => {
     return tab === 'past' ? pastPane(chart, m, now) : tab === 'future' ? futurePane(chart, m, now) : presentPane(chart, m, now);
   }
 
+  /* ---------- directional (+) chart: houses counted in four groups ---------- */
+  const ARMS = [
+    { houses: [1, 5, 9], name: 'Dharma', note: 'purpose, values, luck and teachers' },
+    { houses: [2, 6, 10], name: 'Artha', note: 'money, work and daily effort' },
+    { houses: [3, 7, 11], name: 'Kama', note: 'desires, courage, partners and gains' },
+    { houses: [4, 8, 12], name: 'Moksha', note: 'home, inner life, change and letting go' }];
+  const SIGS = ['Lagna', 'Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
+  const houseOf = (chart, n) => n === 'Lagna' ? 1 : (chart.planets[n] ? chart.planets[n].house : null);
+  function dirModel(chart, who) {
+    const arms = ARMS.map(a => ({ ...a, planets: [] }));
+    SIGS.slice(1).forEach(n => { const h = houseOf(chart, n); if (!h) return; const a = arms.find(x => x.houses.includes(h)); if (a) a.planets.push({ n, h }); });
+    const h0 = houseOf(chart, who), s = arms.findIndex(a => a.houses.includes(h0));
+    arms.forEach((a, i) => { a.role = i === s ? 'you' : i === (s + 3) % 4 ? 'past' : i === (s + 1) % 4 ? 'future' : 'present'; });
+    return { arms, s, who, h0 };
+  }
+  const ROLE = { you: 'You', past: 'Past', present: 'Present', future: 'Future' };
+  function armHtml(a, pos) {
+    const chips = a.planets.length ? a.planets.map(p => `<span class="ppf-pc" title="${esc(p.n)} in house ${p.h}"><b>${esc(G(p.n))}</b><i>${p.h}</i></span>`).join('') : '<span class="ppf-em">empty</span>';
+    return `<div class="ppf-arm ppf-a-${a.role}" style="grid-area:${pos}"><div class="ppf-ah"><span class="ppf-role">${ROLE[a.role]}</span><b>${a.houses.join(' · ')}</b><small>${esc(a.name)}</small></div><div class="ppf-pcs">${chips}</div></div>`;
+  }
+  function dirReading(chart, m) {
+    const D = (typeof VDA !== 'undefined' && VDA && VDA.data && VDA.data.planet) || {};
+    return ['past', 'present', 'future'].map(r => { const a = m.arms.find(x => x.role === r);
+      const body = a.planets.length ? a.planets.map(p => `<li><b>${esc(G(p.n))} ${esc(p.n)}</b> in house ${p.h}${D[p.n] && D[p.n].theme ? ': ' + esc(D[p.n].theme) : ''}</li>`).join('') : '<li class="ppf-mt">No planet sits in these houses, so there is nothing to read here from planets alone.</li>';
+      return `<div class="ppf-dr ppf-a-${r}"><div class="ppf-ph"><span class="ppf-role">${ROLE[r]}</span><b>Houses ${a.houses.join(' · ')}</b><em>${esc(a.name)}</em></div><p class="ppf-pm">${esc(a.note)}</p><ul>${body}</ul></div>`; }).join('');
+  }
+  function dirHtml(chart) {
+    const m = dirModel(chart, sig), pos = ['1 / 2', '2 / 3', '3 / 2', '2 / 1'];
+    const you = m.arms[m.s], sg = sig === 'Lagna' ? '' : esc(G(sig));
+    return `<div class="ppf-chips" role="group" aria-label="Who to read for">${SIGS.map(n => `<button type="button" data-sig="${n}" class="${n === sig ? 'ppf-on' : ''}" aria-pressed="${n === sig}">${n === 'Lagna' ? 'Lagna' : esc(G(n)) + ' ' + n}</button>`).join('')}</div>
+      <div class="ppf-plus" role="group" aria-label="Directional chart"><div class="ppf-hub"><small>Reading for</small><b>${sg} ${esc(sig)}</b><i>house ${m.h0}</i></div>${m.arms.map((a, i) => armHtml(a, pos[i])).join('')}</div>
+      <p class="ppf-cap ppf-dn">Arms run clockwise: 1·5·9 at the top, 2·6·10 right, 3·7·11 bottom, 4·8·12 left. The number beside each planet is its house.</p>
+      ${dirReading(chart, m)}
+      <p class="ppf-fine">How it works: the houses are put in four groups (Dharma, Artha, Kama, Moksha). Find the group where ${esc(sig)} sits. The group just ahead (clockwise) is read as the future, the group opposite as the present, and the group behind as the past. The four house groups are standard. The past, present and future rule is a teaching method, and I could not verify it in a classical text, so treat it as a lens for reflection, not a prediction.</p>`;
+  }
+
   /* ---------- screen ---------- */
   function html(chart) {
     lastChart = chart; const now = new Date(), m = model(chart, now);
@@ -57899,6 +57968,7 @@ const PPF = (() => {
     const nowTxt = c && c.md ? `${esc(c.md.lord)}${c.ad ? ' – ' + esc(c.ad.lord) : ''}` : 'cycle complete';
     return `<div class="ppf"><div class="ppf-banner"><span class="ppf-orn" aria-hidden="true">⏳</span><h3>Past · Present · Future</h3><p>Your whole life on one line, then what has run, what runs now and what comes next, from your Vimshottari periods.</p>
       <div class="ppf-now-r"><span>Now</span><b>Age ${age.toFixed(1)}</b><b>${nowTxt}</b></div></div>
+      <div class="ppf-card"><h4>Directional chart</h4><p class="ppf-cap">Count the houses into four groups and draw them as a + . Choose who you are reading for.</p><div id="ppfDir">${dirHtml(chart)}</div></div>
       <div class="ppf-card"><h4>Your life by Mahadasha</h4><p class="ppf-cap">Each block is one big stage. Faded blocks are behind you. Tap a block.</p><div id="ppfRiver">${riverSvg(m, now)}</div><div id="ppfPick">${pickHtml(m, now)}</div>
         <div class="ppf-legend"><span><i class="ppf-s"></i>Supportive</span><span><i class="ppf-m"></i>Mixed</span><span><i class="ppf-c"></i>Challenging</span></div></div>
       <div class="ppf-card"><h4>Ten years back, ten years ahead</h4><p class="ppf-cap">Each bar is one sub-period. Up is easier, down is more testing. Tap a bar.</p><div id="ppfEase">${chartSvg(chart, m, now)}</div><div id="ppfBar">${barHtml()}</div></div>
@@ -57918,11 +57988,13 @@ const PPF = (() => {
     html, model,
     setTab(t) { tab = t; document.querySelectorAll('.ppf-tabs button').forEach(b => { const on = b.getAttribute('data-tab') === t; b.classList.toggle('ppf-on', on); b.setAttribute('aria-selected', on); }); const el = document.getElementById('ppfBody'); if (el && lastChart) el.innerHTML = pane(lastChart); },
     pickPeriod(i) { pickI = i; refreshPick(); },
-    pickSub(k) { pickBar = k; refreshBar(); }
+    pickSub(k) { pickBar = k; refreshBar(); },
+    setWho(n) { sig = n; const e = document.getElementById('ppfDir'); if (e && lastChart) e.innerHTML = dirHtml(lastChart); },
+    dirModel
   };
   document.addEventListener('click', e => {
-    const t = e.target.closest && e.target.closest('.ppf-tabs button, .ppf-seg, .ppf-bar'); if (!t) return;
-    if (t.matches('.ppf-tabs button')) api.setTab(t.getAttribute('data-tab')); else if (t.matches('.ppf-seg')) api.pickPeriod(+t.getAttribute('data-i')); else api.pickSub(+t.getAttribute('data-k'));
+    const t = e.target.closest && e.target.closest('.ppf-tabs button, .ppf-seg, .ppf-bar, .ppf-chips button'); if (!t) return;
+    if (t.matches('.ppf-chips button')) api.setWho(t.getAttribute('data-sig')); else if (t.matches('.ppf-tabs button')) api.setTab(t.getAttribute('data-tab')); else if (t.matches('.ppf-seg')) api.pickPeriod(+t.getAttribute('data-i')); else api.pickSub(+t.getAttribute('data-k'));
   });
   document.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.ppf-seg, .ppf-bar')) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
   window.buildPastPresentFuturePanel = function (chart) { return html(chart); };
