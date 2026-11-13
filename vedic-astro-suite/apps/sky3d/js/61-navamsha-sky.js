@@ -16,7 +16,7 @@ const NAV = (() => {
   const asc = (jd, lat, lon) => { const a = siderealAscendant(jd, lat, lon); return st.on ? d9(a) : a; };
   const $ = id => document.getElementById(id);
   function paint() {
-    const b = $('navBtn'); if (b) { b.setAttribute('aria-pressed', String(st.on)); b.classList.toggle('on', st.on); const t = b.querySelector('.tm-st'); if (t) t.textContent = st.on ? 'On' : 'Off'; }
+    const b = $('navBtn'); if (b) { b.setAttribute('aria-pressed', String(st.on)); b.classList.toggle('on', st.on); }
     const g = $('navBadge'); if (g) g.style.display = st.on ? '' : 'none';
     const app = document.querySelector('.app'); if (app) app.classList.toggle('navsky', st.on);
   }

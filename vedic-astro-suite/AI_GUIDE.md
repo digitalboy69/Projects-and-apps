@@ -480,9 +480,9 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 95 files, 8931 lines, 559 KB
+**sky3d** - 95 files, 8917 lines, 557 KB
 ```
-index.html                                         531 lines   34 KB
+index.html                                         528 lines   34 KB
 js/01-astro-engine.js                              163 lines   10 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -576,7 +576,7 @@ css/28-degree-houses.css                            43 lines    5 KB
 css/29-live-shadbala.css                            32 lines    5 KB
 css/30-profile-from-moment.css                      22 lines    2 KB
 css/31-ui-refresh.css                               65 lines    5 KB
-css/32-tools-menu.css                               32 lines    3 KB
+css/32-tools-menu.css                               21 lines    1 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -690,4 +690,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - 3D Sky interface refresh (phone): css/31-ui-refresh.css (loaded last, wins over older layers; use `html body` selectors) + js/58-ui-all-tabs.js. Timeline bar is a 12-column grid (3 short rows); 'All' grid for the 15 tabs. The Three.js wheel itself was NOT changed (cannot be rendered in the sandbox).
 - 3D wheel on phones: js/07 `wheelFitDist()`/`wheelFitPhi()` (zoom from screen shape + free band, replaces the old fixed 26), js/59 band + view offset, js/15 planet labels now avoid overlapping each other. To SEE the real wheel in the sandbox, clone the three.js r128 tag with `git clone --depth 1 --branch r128 --filter=blob:none --no-checkout https://github.com/mrdoob/three.js.git` then `git checkout r128 -- build/three.min.js`, serve it for the CDN URL in Playwright, and launch Chromium with `--use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader`.
 - Wheel beauty pass: js/60-wheel-beauty.js (adds/swaps visuals after the scene is built; never touches astronomy). Animation rides the label update after each drawn frame, so there is no extra loop. Flag: localStorage vax3d_beauty='0' turns it off.
-- 3D Sky Tools menu + Navamsha sky: js/61-navamsha-sky.js (global `NAV`: `NAV.snap(jd)` is the D9-or-real snapshot used ONLY by scene/HUD/sky table/overlays/chart tab; everything else keeps `snapshotPositions`; `snap.raw` = real sky inside a D9 snap), css/32-tools-menu.css, top-right = Eye + Tools pill + `#toolsMenu` (old button IDs kept). Test: tests/sky3d_navamsha_tools_browser_test.py. Add new divisional skies as more buttons in `#toolsMenu`.
+- 3D Sky Tools menu + Navamsha sky: js/61-navamsha-sky.js (global `NAV`: `NAV.snap(jd)` is the D9-or-real snapshot used ONLY by scene/HUD/sky table/overlays/chart tab; everything else keeps `snapshotPositions`; `snap.raw` = real sky inside a D9 snap), css/32-tools-menu.css, top-right = Eye + Tools icon + `#toolsMenu` (old button IDs kept). Test: tests/sky3d_navamsha_tools_browser_test.py. Add new divisional skies as more buttons in `#toolsMenu`.

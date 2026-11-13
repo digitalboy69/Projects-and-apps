@@ -332,7 +332,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/css/30-profile-from-moment.css` — popup styles (`pm-` prefix) and the running glow on the Reverse button
 - `apps/sky3d/js/58-ui-all-tabs.js` — "All" button in the tab strip: grid of every tab (one tap to open), keeps the active tab in view
 - `apps/sky3d/css/31-ui-refresh.css` — phone interface refresh loaded last: slim timeline grid, compact top card, hidden logo mark, compact tab strip, All-tabs grid (`ui-` prefix)
-- `apps/sky3d/css/32-tools-menu.css` — top-right Eye + Tools pill, Tools drop-down menu and the D9 Navamsha badge (`tools-menu`, `tm-`, `hud-nav`)
+- `apps/sky3d/css/32-tools-menu.css` — top-right Eye + Tools icon, Tools drop-down menu and the D9 Navamsha badge (`tools-menu`, `tm-`, `hud-nav`)
 - `apps/sky3d/js/59-wheel-frame.js` — wheel framing on phones: finds the free band between the cards and the timeline bar, shifts the picture into it (camera view offset) and re-fits the zoom; `wheelBand()`, `wheelFrameUpdate()`
 - `apps/sky3d/js/60-wheel-beauty.js` — Zodiac Wheel beauty pass: soft Sun glow (replaces hard shells), degree scale on the sign ring, golden aura and inner plate, Earth/Moon lift, gentle Sun breathing and gem twinkle; off with localStorage vax3d_beauty='0'
 - `apps/sky3d/js/61-navamsha-sky.js` — global `NAV`: Navamsha (D9) sky (`NAV.snap/asc/set`, D9 = lon×9 mod 360) used by scene, HUD, sky table, overlays and chart tab; top-right Tools drop-down wiring (`#toolsBtn`, `#toolsMenu`, `#navBtn`, `#navBadge`); forced off in Solar System view

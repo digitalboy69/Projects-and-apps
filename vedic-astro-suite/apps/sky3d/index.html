@@ -117,19 +117,16 @@
     </div>
     <div class="viewport-legend" id="viewportLegend"></div>
     <div class="viewport-actions">
-      <div class="vp-row">
         <button class="vp-btn" id="clearViewBtn" type="button" title="Hide controls" aria-label="Hide controls" aria-pressed="false"></button>
-        <button class="vp-btn vp-tools" id="toolsBtn" type="button" title="Tools" aria-label="Tools" aria-haspopup="true" aria-expanded="false" aria-controls="toolsMenu"><span class="tm-ic" aria-hidden="true">⚒</span>Tools<span class="tm-car" aria-hidden="true">▼</span></button>
-      </div>
-      <button class="hud-nav" id="navBadge" type="button" style="display:none" aria-label="Back to the normal sky"><b>D9 · NAVAMSHA</b><i>tap: normal sky</i></button>
+        <button class="vp-btn vp-tools" id="toolsBtn" type="button" title="Tools" aria-label="Tools" aria-haspopup="true" aria-expanded="false" aria-controls="toolsMenu"><span class="tm-ic" aria-hidden="true">⚒</span></button>
+      <button class="hud-nav" id="navBadge" type="button" style="display:none" title="Navamsha sky on: tap for the normal sky" aria-label="Navamsha sky on: tap for the normal sky"><b>D9</b></button>
       <div class="tools-menu" id="toolsMenu" role="group" aria-label="Tools" hidden>
-        <button class="vp-btn" id="dashBtn" type="button" title="Sky Dashboard" aria-label="Sky Dashboard"><span class="tm-ic" aria-hidden="true">▦</span><span class="tm-lb">Sky Dashboard</span></button>
-        <button class="vp-btn" id="aspExpBtn" type="button" title="Aspect Explorer" aria-label="Aspect Explorer"><span class="tm-ic" aria-hidden="true">☍</span><span class="tm-lb">Aspect Explorer</span></button>
-        <button class="vp-btn" id="planetPickBtn" type="button" title="Select a planet" aria-label="Select a planet"><span class="tm-ic" aria-hidden="true">🪐</span><span class="tm-lb">Select a planet</span></button>
-        <button class="vp-btn" id="resetViewBtn" type="button" title="Reset view" aria-label="Reset view"><span class="tm-ic" aria-hidden="true">⟲</span><span class="tm-lb">Reset view</span></button>
+        <button class="vp-btn" id="dashBtn" type="button" title="Sky Dashboard" aria-label="Sky Dashboard"><span class="tm-ic" aria-hidden="true">▦</span></button>
+        <button class="vp-btn" id="aspExpBtn" type="button" title="Aspect Explorer" aria-label="Aspect Explorer"><span class="tm-ic" aria-hidden="true">☍</span></button>
+        <button class="vp-btn" id="planetPickBtn" type="button" title="Select a planet" aria-label="Select a planet"><span class="tm-ic" aria-hidden="true">🪐</span></button>
+        <button class="vp-btn" id="resetViewBtn" type="button" title="Reset view" aria-label="Reset view"><span class="tm-ic" aria-hidden="true">⟲</span></button>
         <div class="tm-sep" role="separator"></div>
-        <div class="tm-sec">Sky</div>
-        <button class="vp-btn" id="navBtn" type="button" title="Show the sky in Navamsha (D9)" aria-label="Navamsha sky" aria-pressed="false"><span class="tm-ic" aria-hidden="true">९</span><span class="tm-lb">Navamsha sky</span><span class="tm-st">Off</span></button>
+        <button class="vp-btn" id="navBtn" type="button" title="Show the sky in Navamsha (D9)" aria-label="Navamsha sky" aria-pressed="false"><span class="tm-ic" aria-hidden="true">९</span><span class="tm-st" aria-hidden="true"></span></button>
       </div>
     </div>
     <div id="planetLabels"></div>
