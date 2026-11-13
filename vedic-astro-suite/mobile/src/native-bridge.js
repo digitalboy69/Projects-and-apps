@@ -66,7 +66,23 @@
     await sleep(700); await U.set({ id: b.id });                 // applies and reloads right now
     return true;
   }
+  /* Full update: opens the newest VedicAstroSuite.apk (always the .apk file of the latest release) in the phone's browser, which downloads it and offers to install over the current app. */
+  async function openApk(latest){
+    var have = ls('otaApplied'), inApp = await bundledId();
+    if (latest && (latest.id === have || latest.id === inApp)){ say('You already have the newest build (built ' + String(latest.built || '').slice(0, 16).replace('T', ' ') + ' UTC).', 'ok'); return false; }
+    var url = OTA + '/VedicAstroSuite.apk';
+    say('Downloading VedicAstroSuite.apk… when it finishes, open it and tap Install (allow “install unknown apps” for the browser once).', 'ok');
+    await sleep(900);
+    if (P.Browser && P.Browser.open) await P.Browser.open({ url: url }); else window.open(url, '_system');
+    return true;
+  }
   async function updateNow(){
+    if (busy) return; if (navigator.onLine === false){ say('You are offline. The app keeps working with the version it has.', 'err'); return; }
+    setBusy(true); say('Checking for the newest build…');
+    try { await openApk(await getLatest()); } catch(e){ say('Could not update: ' + (e && e.message || e), 'err'); }
+    setBusy(false);
+  }
+  async function quickUpdate(){
     if (busy) return; if (!U){ say('Updates are only available in the installed app.', 'err'); return; }
     if (navigator.onLine === false){ say('You are offline. The app keeps working with the version it has.', 'err'); return; }
     setBusy(true); say('Checking for the newest build…');
@@ -75,8 +91,7 @@
   }
   async function gh(path, opt){ var r = await fetch('https://api.github.com/repos/' + REPO + path, opt); return r; }
   async function buildThenUpdate(){
-    if (busy) return; if (!U){ say('Updates are only available in the installed app.', 'err'); return; }
-    if (navigator.onLine === false){ say('You are offline.', 'err'); return; }
+    if (busy) return; if (navigator.onLine === false){ say('You are offline.', 'err'); return; }
     var inp = sheet.querySelector('.vu-tok'), tok = (inp.value || '').trim() || ls('ghBuildToken') || '';
     if (!tok){ sheet.querySelector('.vu-tokbox').style.display = 'block'; say('Paste a GitHub token once (kept on this phone only) to start a build.', 'err'); return; }
     ls('ghBuildToken', tok); setBusy(true);
@@ -100,7 +115,7 @@
       }
       if (!run || run.status !== 'completed') throw new Error('The build is taking too long. Try “Update now” in a few minutes.');
       say('Build finished. Getting it…'); await sleep(4000);
-      await applyLatest(await getLatest());
+      await openApk(await getLatest());
     } catch(e){ say('Could not build/update: ' + (e && e.message || e), 'err'); }
     setBusy(false);
   }
@@ -110,15 +125,16 @@
     var card = el('div', 'width:100%;max-width:520px;box-sizing:border-box;padding:20px 18px calc(20px + env(safe-area-inset-bottom));border-radius:26px 26px 0 0;background:linear-gradient(180deg,#151c30,#0b101d);border:1px solid rgba(246,215,117,.28);color:#eee8dc;font:14px/1.55 system-ui,sans-serif');
     var bs = 'width:100%;padding:15px;border:0;border-radius:16px;font:700 15px system-ui;cursor:pointer;margin-top:10px';
     card.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center"><b style="font:700 20px Georgia,serif;color:#f6d775">Update app</b><button class="vu-x" style="width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#fff;font-size:16px">✕</button></div>'
-      + '<div style="margin:8px 0 4px;color:#9aa3b5">Downloads all the newest code into the app, so it keeps working offline.</div>'
-      + '<button class="vu-b vu-now" style="' + bs + ';background:linear-gradient(135deg,#f8dd85,#c9962f);color:#1a1405">Update now</button>'
+      + '<div style="margin:8px 0 4px;color:#9aa3b5">Downloads the newest app (VedicAstroSuite.apk) and installs it over this one. Your charts stay on the phone.</div>'
+      + '<button class="vu-b vu-now" style="' + bs + ';background:linear-gradient(135deg,#f8dd85,#c9962f);color:#1a1405">Update now (APK)</button>'
+      + '<button class="vu-b vu-quick" style="' + bs + ';background:transparent;border:1px solid rgba(255,255,255,.18);color:#cfd5e3;font-weight:600;font-size:13px">Quick web-only update (no install)</button>'
       + '<button class="vu-b vu-build" style="' + bs + ';background:rgba(90,214,196,.12);border:1px solid rgba(90,214,196,.4);color:#5ad6c4">Build the latest code, then update</button>'
       + '<div class="vu-tokbox" style="display:none;margin-top:10px"><input class="vu-tok" type="password" autocomplete="off" placeholder="GitHub token (saved on this phone only)" style="width:100%;box-sizing:border-box;padding:13px;border-radius:14px;border:1px solid rgba(246,215,117,.3);background:#0e121c;color:#fff;font:14px system-ui"><div style="margin-top:6px;font-size:12px;color:#7f8899">Create a fine-grained token for ' + REPO + ' with “Actions: Read and write”. It is stored only in this app.</div></div>'
       + '<div class="vu-msg" style="margin-top:14px;min-height:42px"></div>';
     sheet.appendChild(card); document.body.appendChild(sheet);
     card.querySelector('.vu-x').onclick = function(){ if (!busy) sheet.style.display = 'none'; };
     sheet.addEventListener('pointerdown', function(e){ if (e.target === sheet && !busy) sheet.style.display = 'none'; });
-    card.querySelector('.vu-now').onclick = updateNow; card.querySelector('.vu-build').onclick = buildThenUpdate;
+    card.querySelector('.vu-now').onclick = updateNow; card.querySelector('.vu-quick').onclick = quickUpdate; card.querySelector('.vu-build').onclick = buildThenUpdate;
     if (ls('ghBuildToken')) card.querySelector('.vu-tok').placeholder = 'Token saved. Paste a new one to replace it.';
     (async function(){ try { var l = await getLatest(), have = ls('otaApplied') || await bundledId(); say(l.id === have ? 'You are on the newest published build.' : 'A newer build is ready to install.', l.id === have ? 'ok' : ''); } catch(e){} })();
   }
