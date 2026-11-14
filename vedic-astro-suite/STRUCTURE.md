@@ -497,6 +497,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/sky3d_navamsha_tools_browser_test.py` — 3D Sky Tools drop-down, Eye, Navamsha sky toggle and D9 math at 390 and 360 (Three.js stubbed; `S3_SHOTS=dir` for screenshots)
 - `tests/sky3d_sky_alerts_browser_test.py` — Sky alerts rules (`SKA.calc`), HUD pill and bottom sheet at 390 and 360
 - `tests/ai_system_browser_test.py` — AI system: every index entry, route → fetch → answer with a stubbed provider, skills, personas, key rules, panel at 390 and 360
+- `tests/ai_paste_test.js` — paste-to-fill parser (cURL, JS fetch/axios/SDK, Python requests/SDK) for the AI provider settings
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/life_narratives_test.py` — Life-area narratives: 12 charts x 9 areas (length, structure, wording, consistency with scores), variation, sensitivity, Deep reading + report + PDF wiring
 - `tests/varga_reading_test.py` — Divisional chart readings: 12 charts x 6 vargas cross-checked with the app's own varga data and VDB's D9 vargottama, variation, one-fact sensitivity, Deep reading + report + PDF wiring

@@ -39,6 +39,12 @@ with sync_playwright() as p:
         ok(t + 'every index entry returns a value for a real chart', not r, r)
         r = pg.evaluate("()=>[AIX.get('raw:planets.Moon.nakshatra.name').ok,AIX.get('house.10').ok,AIX.get('varga.D9').ok,AIX.get('planet.Ketu').ok,AIX.get('nope.x').ok,AIX.get('raw:no.such.path').ok,AIX.get('house.13').ok,AIX.catalogue().length<4200]")
         ok(t + 'raw path, house, varga resolve; unknown ids are refused; catalogue stays small', r == [True, True, True, True, False, False, False, True], r)
+        # paste a cURL: fields fill automatically
+        pg.evaluate("()=>{AIUI.S.tab='set';AIUI.render()}")
+        pg.fill('#aixPaste', "curl https://api.stub.test/v1/chat/completions -H 'Authorization: Bearer sk-pasted-9' -H 'Content-Type: application/json' -d '{\"model\":\"pasted-model\",\"messages\":[]}'"); pg.wait_for_timeout(700)
+        r = pg.evaluate("()=>{const p=AIS.provider();return [p.baseUrl,p.model,p.apiKey,p.auth,p.kind,/Filled from cURL/.test(document.querySelector('.aix-paste').textContent)]}")
+        ok(t + 'pasting a cURL fills provider fields automatically', r == ['https://api.stub.test/v1', 'pasted-model', 'sk-pasted-9', 'bearer', 'openai', True], r)
+        if SHOTS: os.makedirs(SHOTS, exist_ok=True); pg.screenshot(path=f'{SHOTS}/ai_{W}_paste.png')
         # skill parsing
         r = pg.evaluate("()=>{const s=AIS.parseSkill('---\\nname: Career\\ndescription: d\\nvariables: house.10, bad.var, dasha.current\\n---\\nAlways start with the word SATURN.','c.md').skill;return [s.name,s.variables.join(','),s.instructions]}")
         ok(t + 'markdown skill parsed, bad variable ids dropped', r == ['Career', 'house.10,dasha.current', 'Always start with the word SATURN.'], r)

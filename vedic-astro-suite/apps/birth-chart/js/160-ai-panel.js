@@ -72,6 +72,7 @@ const AIUI = (() => {
   function settings() {
     const s = D(), p = AIS.provider(), c = s.settings, f = (k, l, t, ph) => `<label>${l}<input data-pf="${k}" type="${t || 'text'}" value="${esc(p[k] || '')}" ${ph ? `placeholder="${esc(ph)}"` : ''} autocomplete="off" autocapitalize="off" spellcheck="false"></label>`;
     return `${S.msg ? `<div class="aix-note">${esc(S.msg)}</div>` : ''}<h4 class="aix-gh">Provider</h4>
+      <div class="aix-paste"><label for="aixPaste">Paste a cURL command or code <small>fills every field below automatically</small></label><textarea id="aixPaste" rows="3" placeholder="curl https://api.openai.com/v1/chat/completions -H &quot;Authorization: Bearer sk-…&quot; -d '{&quot;model&quot;:&quot;gpt-4o-mini&quot;…}'" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>${S.pasteMsg ? `<div class="aix-note ${S.pasteMsg.ok ? 'aix-good' : 'aix-bad'}">${S.pasteMsg.html}</div>` : '<small class="aix-hint">Works with cURL, JavaScript fetch / axios / SDK, and Python requests / SDK. Nothing is sent anywhere; it is read here on your device.</small>'}</div>
       <div class="aix-row"><label class="aix-grow">Saved provider<select data-f="activeProvider">${s.providers.map(x => `<option value="${x.id}" ${x.id === p.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></label><button type="button" class="aix-btn" data-act="add-prov">＋ New</button>${s.providers.length > 1 ? '<button type="button" class="aix-btn aix-danger" data-act="del-prov">Delete</button>' : ''}</div>
       <label>Start from a preset<select data-f="preset"><option value="">Choose to fill the fields…</option>${AIS.PRESETS.map(x => `<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></label>
       ${f('name', 'Name')}<label>Type<select data-pf="kind">${[['openai', 'OpenAI-compatible (most servers)'], ['anthropic', 'Anthropic Messages'], ['gemini', 'Google Gemini']].map(x => `<option value="${x[0]}" ${p.kind === x[0] ? 'selected' : ''}>${x[1]}</option>`).join('')}</select></label>
@@ -140,8 +141,23 @@ const AIUI = (() => {
     if (t.hasAttribute('data-sf')) { const k = t.getAttribute('data-sf'); s.settings[k] = t.type === 'checkbox' ? t.checked : +t.value; AIS.save(); const b = $('aixv-' + k); if (b) b.textContent = s.settings[k]; return; }
     if (t.hasAttribute('data-f')) { const k = t.getAttribute('data-f'); if (k === 'preset') { const pr = AIS.PRESETS.find(x => x.id === t.value); if (pr) { const p = AIS.provider(); Object.assign(p, { kind: pr.kind, baseUrl: pr.baseUrl, model: pr.model || p.model, auth: pr.auth, preset: pr.id, path: '' }); if (!p.name || /^(My provider|Provider \d+)$/.test(p.name)) p.name = pr.name; AIS.save(); S.test = null; render(); } return; } s[k] = t.value; AIS.save(); S.test = null; return render(); }
   });
+  function applyPaste(txt) {
+    const r = AIS.parseRequest(txt);
+    if (r.error) { S.pasteMsg = { ok: false, html: esc(r.error) }; return render(); }
+    const p = AIS.provider(), o = r.p, was = {};
+    ['kind', 'baseUrl', 'path', 'model', 'auth'].forEach(k => { was[k] = p[k]; p[k] = o[k]; });
+    if (o.apiKey) p.apiKey = o.apiKey;
+    const mh = Object.keys(o.headers).length ? JSON.stringify(o.headers, null, 1) : '', mb = Object.keys(o.extraBody).length ? JSON.stringify(o.extraBody) : '';
+    p.headers = mh; p.extraBody = mb; p.preset = 'custom';
+    if (!p.name || /^(My provider|Provider \d+)$/.test(p.name)) { try { p.name = new URL(o.baseUrl).hostname.replace(/^(api|www)\./, ''); } catch (e) { /* keep */ } }
+    AIS.save(); S.test = null;
+    const got = [['Type', o.kind], ['Base URL', o.baseUrl], o.path ? ['Path', o.path] : null, ['Model', o.model || '—'], ['Auth', o.auth], ['Key', o.apiKey ? 'found (hidden)' : 'not found'], mh ? ['Headers', Object.keys(o.headers).join(', ')] : null, mb ? ['Extra body', Object.keys(o.extraBody).join(', ')] : null].filter(Boolean);
+    S.pasteMsg = { ok: true, html: '<b>Filled from ' + r.from + '.</b><br>' + got.map(g => esc(g[0]) + ': <code>' + esc(g[1]) + '</code>').join(' · ') + (o.notes.length ? '<br>' + o.notes.map(esc).join('<br>') : '') + '<br>Tap Test connection to check it.' };
+    render();
+  }
   document.addEventListener('input', e => {
     if (!inP(e)) return; const t = e.target;
+    if (t.id === 'aixPaste') { const v = t.value; if (/\bcurl\b|https?:\/\/|fetch\(|requests\.|axios|OpenAI\(/i.test(v) && v.trim().length > 20) { clearTimeout(S.pt); S.pt = setTimeout(() => applyPaste(v), 250); } return; }
     if (t.id === 'aixIn') { S.q = t.value; t.style.height = 'auto'; t.style.height = Math.min(140, t.scrollHeight) + 'px'; return; }
     if (t.id === 'aixVq') { S.vq = t.value; const pos = t.selectionStart; render(); const n = $('aixVq'); if (n) { n.focus(); n.setSelectionRange(pos, pos); } return; }
     if (t.hasAttribute('data-pe') && S.edit) { S.edit.v[t.getAttribute('data-pe')] = t.value; return; }

@@ -45,11 +45,97 @@ const AIS = (() => {
     o.variables = o.variables.filter(v => !AIX.resolve || AIX.resolve(v));
     return { skill: Object.assign({ id: uid('s'), on: true }, o) };
   }
+
+  /* ---- Paste a cURL command or a code snippet (JS fetch/axios/SDK, Python requests/SDK) and get the provider fields back ---- */
+  const PH = /\$\{[^}]*\}|\$[A-Z_][A-Z0-9_]*|<[^>]*>|YOUR[_ -]|process\.env|os\.environ|getenv|\{\{[^}]*\}\}|xxxx|\.\.\.|REPLACE/i;
+  function shellTokens(src) {
+    const t = []; let cur = '', q = null, has = false;
+    for (let i = 0; i < src.length; i++) { const c = src[i];
+      if (q) { if (c === q) { q = null; } else if (c === '\\' && q === '"' && /["\\$`]/.test(src[i + 1] || '')) { cur += src[++i]; } else cur += c; continue; }
+      if (c === '"' || c === "'") { q = c; has = true; continue; }
+      if (c === '\\' || c === '^') { if (src[i + 1] === '\n' || (src[i + 1] === '\r' && src[i + 2] === '\n')) { i += src[i + 1] === '\r' ? 2 : 1; continue; } if (c === '\\' && i + 1 < src.length) { cur += src[++i]; has = true; continue; } }
+      if (/\s/.test(c)) { if (cur || has) { t.push(cur); cur = ''; has = false; } continue; }
+      cur += c; has = true; }
+    if (cur || has) t.push(cur); return t;
+  }
+  function looseJSON(txt) {
+    let o = String(txt || '').trim(); if (!o) return null; try { return JSON.parse(o); } catch (e) { /* try loose */ }
+    o = o.replace(/\bTrue\b/g, 'true').replace(/\bFalse\b/g, 'false').replace(/\bNone\b|\bundefined\b/g, 'null').replace(/'((?:[^'\\]|\\.)*)'/g, (m, a) => JSON.stringify(a.replace(/\\'/g, "'"))).replace(/`((?:[^`\\]|\\.)*)`/g, (m, a) => JSON.stringify(a)).replace(/([{,]\s*)([A-Za-z_$][\w$-]*)\s*:/g, '$1"$2":').replace(/,\s*([}\]])/g, '$1');
+    try { return JSON.parse(o); } catch (e) { return null; }
+  }
+  function balanced(src, i) { const open = src[i], close = open === '{' ? '}' : ']'; let d = 0, q = null; for (let k = i; k < src.length; k++) { const c = src[k]; if (q) { if (c === '\\') k++; else if (c === q) q = null; continue; } if (c === '"' || c === "'" || c === '`') { q = c; continue; } if (c === open) d++; else if (c === close && --d === 0) return src.slice(i, k + 1); } return null; }
+  function after(src, re) { const m = re.exec(src); if (!m) return null; let i = m.index + m[0].length; while (i < src.length && /\s/.test(src[i])) i++; return src[i] === '{' || src[i] === '[' ? balanced(src, i) : null; }
+  function pairs(block) { const o = {}; const re = /["']?([A-Za-z][\w-]*)["']?\s*[:=]\s*(?:`([^`]*)`|"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)')/g; let m; while ((m = re.exec(block || ''))) o[m[1]] = m[2] != null ? m[2] : m[3] != null ? m[3] : m[4]; return o; }
+
+  function parseRequest(text) {
+    const src = String(text || '').replace(/\r/g, '').trim(); if (src.length < 8) return { error: 'Paste a cURL command or a code snippet.' };
+    let url = '', headers = {}, body = null, found = {}, isCurl = /^\s*(?:\$\s*)?curl\b/i.test(src);
+    if (isCurl) {
+      const tk = shellTokens(src.replace(/^\s*\$\s*/, '')), data = [];
+      for (let i = 1; i < tk.length; i++) { const a = tk[i], nx = () => tk[++i];
+        if (a === '-H' || a === '--header') { const h = nx() || '', k = h.indexOf(':'); if (k > 0) headers[h.slice(0, k).trim().toLowerCase()] = h.slice(k + 1).trim(); }
+        else if (/^-H./.test(a)) { const h = a.slice(2), k = h.indexOf(':'); if (k > 0) headers[h.slice(0, k).trim().toLowerCase()] = h.slice(k + 1).trim(); }
+        else if (/^(-d|--data|--data-raw|--data-binary|--data-ascii|--json)$/.test(a)) data.push(nx());
+        else if (a === '-u' || a === '--user') { const u = nx() || ''; found.user = u; }
+        else if (a === '--url') url = nx() || '';
+        else if (/^(-X|--request|-A|--user-agent|-e|--referer|-o|--output|-m|--max-time|--connect-timeout|-w|--retry|-b|--cookie|-x|--proxy)$/.test(a)) nx();
+        else if (/^https?:\/\//i.test(a) && !url) url = a;
+        else if (!/^-/.test(a) && !url && /^[\w.-]+\.[a-z]{2,}(?::\d+)?\//i.test(a)) url = 'https://' + a; }
+      if (data.length) body = looseJSON(data[data.length - 1]);
+    } else {
+      const um = src.match(/https?:\/\/[^\s'"`)<>,]+/); if (um) url = um[0].replace(/[;]+$/, '');
+      const hb = after(src, /\bheaders\b["']?\s*[:=]\s*(?=[{])/) || after(src, /\bheaders\s*=\s*(?=dict|[{])/) || after(src, /default_headers\s*[:=]\s*(?=[{])/); if (hb) { const pr = pairs(hb); Object.keys(pr).forEach(k => { headers[k.toLowerCase()] = pr[k]; }); }
+      const bb = after(src, /\b(?:body\s*:\s*JSON\.stringify\(|json\s*=\s*|data\s*=\s*json\.dumps\(|payload\s*=\s*|data\s*:\s*|\.create\(|\.post\([^,]+,\s*)(?=[{])/); if (bb) body = looseJSON(bb);
+      const kv = (re) => { const m = src.match(re); return m ? m[1] || m[2] || m[3] : null; };
+      found.sdkKey = kv(/\b(?:apiKey|api_key|api-key)["']?\s*[:=]\s*(?:"([^"]+)"|'([^']+)'|`([^`]+)`)/);
+      found.sdkBase = kv(/\b(?:baseURL|base_url|baseUrl|endpoint|api_base)["']?\s*[:=]\s*(?:"([^"]+)"|'([^']+)'|`([^`]+)`)/);
+      if (found.sdkBase && !url) url = found.sdkBase; else if (found.sdkBase && !/\/(chat|v1|messages|models)/.test(url)) url = found.sdkBase;
+      if (!body) { const m = kv(/\bmodel["']?\s*[:=]\s*(?:"([^"]+)"|'([^']+)'|`([^`]+)`)/); if (m) body = { model: m }; }
+    }
+    if (!url) return { error: 'No web address (https://…) found in that text.' };
+    let u; try { u = new URL(url); } catch (e) { return { error: 'The address in that text is not valid: ' + url.slice(0, 80) }; }
+    const out = { kind: 'openai', baseUrl: '', path: '', apiKey: '', model: '', auth: 'none', headers: {}, extraBody: {}, notes: [] };
+    const host = u.hostname.toLowerCase(), pth = u.pathname.replace(/\/+$/, '');
+    if (host.includes('anthropic.com') || /\/v1\/messages$/.test(pth) || headers['anthropic-version']) out.kind = 'anthropic';
+    else if (host.includes('generativelanguage.googleapis.com') || /:generateContent$|:streamGenerateContent$/.test(pth)) out.kind = 'gemini';
+    // key
+    let key = '', auth = 'none';
+    const ah = headers.authorization || '';
+    if (/^bearer\s+/i.test(ah)) { key = ah.replace(/^bearer\s+/i, ''); auth = 'bearer'; }
+    else if (headers['x-api-key']) { key = headers['x-api-key']; auth = 'x-api-key'; }
+    else if (headers['api-key']) { key = headers['api-key']; auth = 'bearer'; out.headers['api-key'] = key; out.notes.push('This server uses an "api-key" header; it is kept in Extra headers.'); }
+    else if (u.searchParams.get('key')) { key = u.searchParams.get('key'); auth = 'query'; }
+    else if (found.sdkKey) { key = found.sdkKey; auth = out.kind === 'anthropic' ? 'x-api-key' : 'bearer'; }
+    else if (found.user) { key = found.user.split(':').pop(); auth = 'bearer'; out.notes.push('Basic-auth style login found; the password was used as the key.'); }
+    if (key && PH.test(key)) { out.notes.push('The key in your text is a placeholder, so paste your real key in the API key field.'); key = ''; if (auth === 'none') auth = 'bearer'; }
+    if (!key && auth === 'none' && !/localhost|127\.0\.0\.1|192\.168\.|\.local\b/.test(host)) { auth = out.kind === 'anthropic' ? 'x-api-key' : out.kind === 'gemini' ? 'query' : 'bearer'; out.notes.push('No key was in the text. Paste your API key in the API key field.'); }
+    out.apiKey = key; out.auth = auth;
+    // base URL and path
+    const dflt = out.kind === 'anthropic' ? /\/v1\/messages$/ : out.kind === 'gemini' ? /\/models\/[^/]+:(?:stream)?[gG]enerateContent$/ : /\/(?:chat\/)?completions$/;
+    let base = u.origin + pth, path = '';
+    const dm = pth.match(dflt);
+    if (dm) { base = u.origin + pth.slice(0, pth.length - dm[0].length); path = ''; if (out.kind === 'openai' && !/chat\/completions$/.test(pth)) path = '/completions'; if (out.kind === 'anthropic') base = u.origin + pth.slice(0, pth.length - '/v1/messages'.length); }
+    else if (found.sdkBase && !isCurl) { base = found.sdkBase.replace(/\/+$/, ''); }
+    else { const k = pth.lastIndexOf('/'); if (k > 0 && /(responses|embeddings|generate|chat|messages)$/i.test(pth)) { base = u.origin + pth.slice(0, k); path = pth.slice(k); } }
+    if (out.kind === 'gemini') base = u.origin + (pth.replace(/\/models\/.*$/, '') || '/v1beta');
+    out.baseUrl = base.replace(/\/+$/, ''); out.path = path;
+    // model
+    let model = body && typeof body.model === 'string' ? body.model : ''; const gm = pth.match(/\/models\/([^/:]+)/); if (!model && gm) model = decodeURIComponent(gm[1]);
+    if (model && PH.test(model)) { out.notes.push('The model name looks like a placeholder; type the real model name.'); model = ''; }
+    out.model = model; if (!model) out.notes.push('No model name found; type it in the Model name field.');
+    // extra headers (anything that is not standard)
+    const std = /^(content-type|accept|authorization|x-api-key|anthropic-version|anthropic-dangerous-direct-browser-access|user-agent|content-length|host|connection|accept-encoding|accept-language|origin|referer)$/;
+    Object.keys(headers).forEach(k => { if (!std.test(k) && k !== 'api-key') out.headers[k] = headers[k]; });
+    // extra body (keep only sampling-type options)
+    if (body && typeof body === 'object') { const skip = /^(model|messages|input|contents|system|systemInstruction|system_instruction|prompt|stream|max_tokens|max_completion_tokens|maxOutputTokens|temperature|tools|tool_choice|n|user)$/; Object.keys(body).forEach(k => { if (!skip.test(k)) out.extraBody[k] = body[k]; }); }
+    if (body && body.stream) out.notes.push('The text had streaming turned on; this app asks for a normal (non-streaming) answer.');
+    return { ok: true, p: out, from: isCurl ? 'cURL' : 'code' };
+  }
   function exportJSON(withKeys) { const s = JSON.parse(JSON.stringify(load())); if (!withKeys) s.providers.forEach(p => { p.apiKey = ''; }); s.chat = []; return JSON.stringify(s, null, 2); }
   function importJSON(text) { let j; try { j = JSON.parse(text); } catch (e) { return { error: 'Not valid JSON.' }; } if (!j || typeof j !== 'object' || !Array.isArray(j.providers)) return { error: 'This is not an exported AI settings file.' };
     const cur = load(), keep = {}; cur.providers.forEach(p => { keep[p.id] = p.apiKey; }); j.providers.forEach(p => { if (!p.apiKey && keep[p.id]) p.apiKey = keep[p.id]; });
     st = merge(DEF(), j); st.chat = cur.chat; save(); return { ok: true }; }
-  const api = { PRESETS, BUILTIN_PERSONAS, load, save, uid, personas, persona, provider, skills, parseSkill, exportJSON, importJSON, reset() { st = DEF(); save(); return st; } };
+  const api = { PRESETS, BUILTIN_PERSONAS, load, save, uid, personas, persona, provider, skills, parseSkill, parseRequest, exportJSON, importJSON, reset() { st = DEF(); save(); return st; } };
   window.AIS = api; return api;
 })();
 
