@@ -2424,6 +2424,40 @@ html[data-app] .vp-btn.vp-tools:hover{border-color:#d4a24a}
 @media (min-width:721px){html body .view-switch-wrap{right:76px}}
 </style>
 <style>
+/* Sky alerts pill (under the Moon line in the HUD) + bottom sheet (js/62). Only opacity/transform animate. */
+.hud-ska{display:inline-flex;align-items:center;gap:7px;margin-top:7px;min-height:28px;padding:3px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(14,20,33,.7);color:var(--text,#e8ecf4);font:600 11px var(--font-mono,monospace);pointer-events:auto;cursor:pointer}
+.hud-ska .ska-ic{color:#d4a24a;font-size:12px}
+.hud-ska .ska-c.care{color:#f2b05e}
+.app.clean .hud-ska,.app.navsky .hud-ska{display:none!important}
+.ska-sheet{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-end;justify-content:center;background:rgba(5,8,14,.55)}
+.ska-sheet[hidden]{display:none}
+.ska-card{width:100%;max-width:560px;max-height:82vh;display:flex;flex-direction:column;border-radius:22px 22px 0 0;border:1px solid rgba(255,255,255,.14);border-bottom:0;background:#101726;box-shadow:0 -16px 40px rgba(0,0,0,.5);animation:skaUp .22s ease both}
+@keyframes skaUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.ska-card{animation:none}}
+.ska-card header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 16px 6px}
+.ska-card header b{display:block;font:600 18px var(--font-serif,Georgia,serif);color:#f6d775}
+.ska-card header small{font-size:11px;color:var(--text-dim,#9aa5b8)}
+.ska-card header button{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#fff;font-size:16px;cursor:pointer}
+.ska-tabs{display:flex;gap:8px;padding:6px 16px 10px}
+.ska-tabs button{flex:1;min-height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:transparent;color:var(--text-dim,#9aa5b8);font:600 13px var(--font-sans,system-ui,sans-serif);cursor:pointer}
+.ska-tabs button.on{background:rgba(212,162,74,.16);border-color:#d4a24a;color:#f0d9a8}
+.ska-tabs button:disabled{opacity:.4;cursor:not-allowed}
+.ska-body{overflow:auto;padding:0 16px 22px;-webkit-overflow-scrolling:touch}
+.ska-lead{margin:2px 0 10px;font-size:12.5px;color:var(--text-dim,#9aa5b8);line-height:1.5}
+.ska-sum{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.ska-sum span{padding:4px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);font:600 11.5px var(--font-mono,monospace)}
+.ska-sum .good{color:#7fd6a0;border-color:rgba(127,214,160,.4)}.ska-sum .care{color:#f2b05e;border-color:rgba(242,176,94,.4)}
+.ska-s h4{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:16px 0 4px;font:600 14px var(--font-sans,system-ui,sans-serif);color:#f6d775}
+.ska-s h4 i{font-style:normal;font-size:16px}.ska-s h4 small{font:400 11px var(--font-sans,system-ui,sans-serif);color:var(--text-dim,#9aa5b8)}
+.ska-ref{margin:8px 0 4px;font:600 10.5px var(--font-mono,monospace);letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint,#6f7a8f)}
+.ska-a{padding:10px 12px;margin-bottom:7px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-left:3px solid #6f7a8f}
+.ska-a.good{border-left-color:#7fd6a0}.ska-a.care{border-left-color:#f2b05e}.ska-a.info{border-left-color:#7cc7f2}
+.ska-at{font-weight:600;font-size:13.5px;line-height:1.35}
+.ska-ax{margin-top:3px;font-size:12.5px;line-height:1.5;color:var(--text-dim,#9aa5b8)}
+.ska-empty,.ska-foot{margin:14px 0 0;font-size:11.5px;line-height:1.55;color:var(--text-faint,#6f7a8f)}
+@media (max-width:720px){html body .view-switch-wrap{top:calc(230px + var(--safe-t))}}
+</style>
+<style>
 /* ============================================================================
    META LAYER  ·  shared/meta.css
    One file for the "feel" of every screen: smooth motion, gentle touch feedback,
@@ -2821,6 +2855,7 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
       <div class="hud-sub" id="hudSub">JD — · Ayanamsa —°</div>
       <div class="hud-asc" id="hudAsc" role="button" tabindex="0" title="Tap: set where you are · Hold: rising sign timings">↑ Rising — · —</div>
       <div class="hud-moon" id="hudMoon">☽ — · —</div>
+      <button class="hud-ska" id="skaPill" type="button" style="display:none" aria-label="Sky alerts" aria-haspopup="dialog"></button>
     </div>
     <div class="view-switch-wrap">
       <div class="view-switch" id="viewSwitch"><button data-v="wheel" class="active">☸ Zodiac Wheel</button><button data-v="solar">☉ Solar System</button></div>
@@ -3173,6 +3208,13 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>
+<div class="ska-sheet" id="skaSheet" role="dialog" aria-modal="true" aria-label="Sky alerts" hidden>
+  <div class="ska-card">
+    <header><div><b>Sky alerts</b><small>Trine · Square · Opposite</small></div><button type="button" id="skaClose" aria-label="Close">✕</button></header>
+    <div class="ska-tabs" id="skaTabs"></div>
+    <div class="ska-body" id="skaBody"></div>
+  </div>
+</div>
 <script>
 /* ============================================================================
    ASTRONOMICAL ENGINE — sidereal (Lahiri), validated against India Independence
@@ -5308,6 +5350,7 @@ function renderHUD(snap){
     const L = getLiveLoc(), aLon = NAV.asc(snap.jd, L.lat, L.lon), aSign = SIGNS[getSignIndex(aLon)];
     ascEl.innerHTML = `↑ ${snap.nav ? 'Navamsha rising' : 'Rising'} ${aSign.symbol} ${aSign.name} ${degreeInSign(aLon).deg}°<span class="asc-nak"> · ${L.approx ? 'tap to set your place' : hudEsc(L.label)}</span> <span class="asc-pin">📍</span>`;
   }
+  if (typeof SKA !== 'undefined') SKA.refresh(snap);
   renderRising(false);
 }
 
@@ -7391,6 +7434,133 @@ const NAV = (() => {
   }
   const api = { snap, asc, d9, set, setOpen, get on() { return st.on; } };
   window.NAV = api;
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();
+  return api;
+})();
+<\/script>
+<script>
+/* Sky alerts (js/62, global SKA): under the Rising and Moon lines in the 3D Sky HUD, a small pill counts the planets sitting in the trine (1-5-9), square (4-10) and opposite (7) houses
+   counted from the Rising sign and from the Moon sign; tap it for the full list. Also: planets on the Rising / Moon sign itself, the Rahu-Ketu axis on them, Jupiter's and Saturn's
+   favourable or hard houses from the Moon, Sade Sati, and the Jupiter + Saturn "double transit".
+   Sources: Wikipedia "Trikonasthanas" (1-5-9 are the Lakshmi / Dharma trikona; benefics are strengthened there, natural malefics tend to spoil it; kendras are 1-4-7-10; nodes in kendras are painful);
+   Dekho Panchang "Gochar" (from the Moon Jupiter is favourable in 2-5-7-9-11 and hard in 3-6-8-10-12, Saturn is favourable in 3-6-11, Sade Sati = Saturn in 12th, 1st, 2nd from the Moon,
+   Jupiter + Saturn both aspecting a house = double transit, Rahu-Ketu on the 1st-7th axis reshapes identity and relationships); aspects use ASPECT_OFFSETS (js/03).
+   Tendency wording only: these are teaching alerts, not verdicts. Two views: "Sky now" (live Rising + the Moon in the sky) and "For you" (your birth Rising and Moon, when a profile is loaded).
+   SKA.calc(sidereal, risingSign, moonSign) is pure (no DOM) so it can be tested. Hidden in the Navamsha sky (it reads the real sky). */
+const SKA = (() => {
+  'use strict';
+  const PL = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
+  const BEN = ['Jupiter', 'Venus', 'Mercury', 'Moon'];
+  const AREA = { 1: 'self and body', 4: 'home, mother and property', 5: 'mind, learning and children', 7: 'partnerships and marriage', 9: 'fortune, faith and father', 10: 'career and public life' };
+  const SHAPE = { 5: 'tri', 9: 'tri', 4: 'sq', 10: 'sq', 7: 'opp' };
+  const hs = (from, to) => ((to - from + 12) % 12) + 1;
+  const ord = n => n + ((n % 100 >= 11 && n % 100 <= 13) ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th'));
+  const sign = l => Math.floor(((l % 360) + 360) % 360 / 30);
+  const G = n => (typeof PLANET_GLYPHS !== 'undefined' && PLANET_GLYPHS[n]) || '';
+  const SN = i => (typeof SIGNS !== 'undefined' && SIGNS[i]) ? SIGNS[i].name : String(i);
+  const MAL_NOTE = {
+    '5:Mars': 'Mars in the 5th is said to strain the home, children and health',
+    '5:Saturn': 'Saturn in the 5th is said to bring slow, heavy results through mind and children',
+    '5:Sun': 'the Sun in the 5th is said to bring impatience and less peace at home',
+    '5:Rahu': 'Rahu in the 5th can cloud judgement and learning',
+    '5:Ketu': 'Ketu in the 5th leans the mind toward spirituality and detachment',
+    '9:Mars': 'Mars in the 9th is said to give power and generosity',
+    '9:Saturn': 'Saturn in the 9th is said to bring a lonely or delayed path to luck',
+    '9:Sun': 'the Sun in the 9th is said to bring friction with the spouse',
+    '9:Rahu': 'Rahu in the 9th can bring fame and wealth, but a hard-edged outlook',
+    '9:Ketu': 'Ketu in the 9th leans toward detachment from luck and tradition'
+  };
+  const SHAPE_LBL = { tri: 'Trine', sq: 'Square', opp: 'Opposite' };
+  const SHAPE_SYM = { tri: '△', sq: '□', opp: '☍' };
+
+  function calc(sid, riseSign, moonSign) {
+    const out = [], pSign = {}; PL.forEach(n => { pSign[n] = sign(sid[n]); });
+    const refs = [{ k: 'Rising', s: riseSign }, { k: 'Moon', s: moonSign }].filter(r => r.s != null);
+    refs.forEach(r => PL.forEach(n => {
+      if (r.k === 'Moon' && n === 'Moon') return;
+      const h = hs(r.s, pSign[n]), good = BEN.includes(n), shape = SHAPE[h];
+      if (h === 1) {
+        const tone = good ? 'good' : (n === 'Rahu' || n === 'Ketu') ? 'care' : 'info';
+        out.push({ g: 'one', ref: r.k, h, n, tone, t: `${G(n)} ${n} on your ${r.k} sign (${SN(r.s)})`, x: good ? `${n} sitting on the ${r.k} sign lends it ease and support` : (tone === 'care' ? `${n} on the ${r.k} sign tends to colour the self and mind with restlessness or unusual pull` : `${n} on the ${r.k} sign brings its energy straight into the self`) });
+      } else if (shape) {
+        const note = shape === 'tri' && !good ? MAL_NOTE[h + ':' + n] : '';
+        const x = good ? `${n} is a natural benefic, so the ${ord(h)} from ${r.k} (${AREA[h]}) tends to be supported` : (shape === 'tri' ? (note ? note.charAt(0).toUpperCase() + note.slice(1) : `${n} is a natural malefic in the ${ord(h)} (${AREA[h]}); go steady here`) : ((n === 'Rahu' || n === 'Ketu') ? `A node in the ${ord(h)} (${AREA[h]}) is classically uncomfortable; it can feel pressured there` : `${n} presses on the ${ord(h)} from ${r.k} (${AREA[h]}); expect friction or hard work there`));
+        out.push({ g: shape, ref: r.k, h, n, tone: good ? 'good' : (shape === 'tri' && (h + ':' + n === '9:Mars' || h + ':' + n === '5:Ketu')) ? 'info' : 'care', t: `${G(n)} ${n} in the ${ord(h)} from ${r.k}`, x });
+      }
+    }));
+    // special alerts (from the Moon / Rising)
+    const mh = n => hs(moonSign, pSign[n]), rh = n => hs(riseSign, pSign[n]);
+    if (moonSign != null) {
+      const jh = mh('Jupiter'), sh = mh('Saturn');
+      if ([2, 7, 11].includes(jh)) out.push({ g: 'sp', ref: 'Moon', n: 'Jupiter', tone: 'good', t: `♃ Jupiter in a favourable house (${ord(jh)}) from the Moon`, x: 'Jupiter transits the 2nd, 5th, 7th, 9th and 11th from the Moon are the classically good ones' });
+      if ([3, 6, 8, 10, 12].includes(jh)) out.push({ g: 'sp', ref: 'Moon', n: 'Jupiter', tone: 'info', t: `♃ Jupiter in a harder house (${ord(jh)}) from the Moon`, x: 'The 3rd, 6th, 8th, 10th and 12th from the Moon are the classically mixed houses for Jupiter; help comes with effort' });
+      if (sh === 12 || sh === 1 || sh === 2) out.push({ g: 'sp', ref: 'Moon', n: 'Saturn', tone: 'care', t: `♄ Sade Sati (${sh === 12 ? 'rising phase' : sh === 1 ? 'peak phase' : 'setting phase'})`, x: 'Saturn is in the 12th, 1st or 2nd from the Moon: a long stretch that tends to test the mind, routines and patience' });
+      else if ([3, 6, 11].includes(sh)) out.push({ g: 'sp', ref: 'Moon', n: 'Saturn', tone: 'good', t: `♄ Saturn in a favourable house (${ord(sh)}) from the Moon`, x: 'Saturn in the 3rd, 6th or 11th from the Moon is the classically helpful placement: effort pays off' });
+      else if (sh === 4 || sh === 8) out.push({ g: 'sp', ref: 'Moon', n: 'Saturn', tone: 'care', t: `♄ Saturn in the ${ord(sh)} from the Moon`, x: 'Saturn in the 4th or 8th from the Moon is traditionally a heavier period for comfort and change' });
+      const rm = mh('Rahu');
+      if (rm === 1 || rm === 7) out.push({ g: 'sp', ref: 'Moon', n: 'Rahu', tone: 'care', t: `☊☋ Rahu-Ketu axis over the Moon`, x: 'The nodes cross the Moon sign and its opposite: identity, moods and one-to-one bonds can feel reshaped' });
+    }
+    const rr = hs(riseSign, pSign.Rahu);
+    if (rr === 1 || rr === 7) out.push({ g: 'sp', ref: 'Rising', n: 'Rahu', tone: 'care', t: '☊☋ Rahu-Ketu axis over the Rising sign', x: 'The nodes cross the 1st-7th axis: sense of self and relationships tend to be reshaped' });
+    // double transit: Jupiter and Saturn both aspect (or sit in) the same house from Rising
+    [4, 5, 7, 10].forEach(H => {
+      const tgt = (riseSign + H - 1) % 12, hits = n => { const f = pSign[n]; return f === tgt || ASPECT_OFFSETS[n].some(o => (f + o - 1) % 12 === tgt); };
+      if (hits('Jupiter') && hits('Saturn')) out.push({ g: 'sp', ref: 'Rising', n: 'Jupiter', tone: 'info', t: `♃♄ Double transit on the ${ord(H)} (${SN(tgt)})`, x: `Jupiter and Saturn both touch the ${ord(H)} house (${AREA[H]}); matters here can move, if the running dasha also supports them` });
+    });
+    return out;
+  }
+  const counts = a => ({ tri: a.filter(x => x.g === 'tri').length, sq: a.filter(x => x.g === 'sq').length, opp: a.filter(x => x.g === 'opp').length, care: a.filter(x => x.tone === 'care').length, good: a.filter(x => x.tone === 'good').length, all: a.length });
+
+  /* ---- UI ---- */
+  const $ = id => document.getElementById(id), esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let mode = 'sky', last = { sky: [], you: null }, lastKey = '', open = false;
+  function refs(snap, who) {
+    const sid = snap.raw || snap.sidereal;
+    if (who === 'sky') { const L = getLiveLoc(); return { sid, rise: sign(siderealAscendant(snap.jd, L.lat, L.lon)), moon: sign(sid.Moon), label: 'Live Rising and the Moon in the sky now' }; }
+    const p = (typeof activeNatalProfile !== 'undefined' && isValidProfile(activeNatalProfile)) ? activeNatalProfile : null; if (!p) return null;
+    const nat = computeNatalAscendant(p), ns = snapshotPositions(nat.jd).sidereal;
+    return { sid, rise: sign(nat.lagnaLon), moon: sign(ns.Moon), label: `Your birth Rising (${SN(sign(nat.lagnaLon))}) and Moon (${SN(sign(ns.Moon))}) against today's planets` };
+  }
+  function refresh(snap) {
+    const pill = $('skaPill'); if (!pill) return;
+    if (!snap || snap.nav) { pill.style.display = 'none'; return; }
+    let r; try { r = refs(snap, 'sky'); } catch (e) { pill.style.display = 'none'; return; }
+    const key = Math.floor(snap.jd * 288) + '|' + r.rise + '|' + r.moon + '|' + mode + '|' + open;
+    if (key === lastKey) return; lastKey = key;
+    last.sky = calc(r.sid, r.rise, r.moon); const y = refs(snap, 'you'); last.you = y ? calc(y.sid, y.rise, y.moon) : null;
+    const c = counts(last.sky); pill.style.display = '';
+    pill.innerHTML = `<span class="ska-ic">⚑</span><span class="ska-c" title="Trine houses (1-5-9)">△${c.tri}</span><span class="ska-c" title="Square houses (4-10)">□${c.sq}</span><span class="ska-c" title="Opposite (7th)">☍${c.opp}</span>${c.care ? `<span class="ska-c care">!${c.care}</span>` : ''}`;
+    pill.title = 'Sky alerts: planets in the trine, square and opposite houses from the Rising and the Moon. Tap for details.';
+    if (open) paint();
+  }
+  function card(a) { return `<div class="ska-a ${a.tone}"><div class="ska-at">${esc(a.t)}</div><div class="ska-ax">${esc(a.x)}</div></div>`; }
+  function paint() {
+    const body = $('skaBody'), snap = snapshotPositions(currentJD);
+    const hasYou = !!last.you; if (mode === 'you' && !hasYou) mode = 'sky';
+    const a = (mode === 'you' ? last.you : last.sky) || [], info = refs(snap, mode);
+    $('skaTabs').innerHTML = `<button type="button" data-m="sky" class="${mode === 'sky' ? 'on' : ''}">Sky now</button><button type="button" data-m="you" class="${mode === 'you' ? 'on' : ''}" ${hasYou ? '' : 'disabled title="Load a birth profile to see this"'}>For you</button>`;
+    const sec = (title, sym, list, hint) => list.length ? `<section class="ska-s"><h4><i>${sym}</i>${title}<small>${hint}</small></h4>${['Rising', 'Moon'].map(k => { const l = list.filter(x => x.ref === k); return l.length ? `<div class="ska-ref">from ${k}${k === 'Rising' ? ' (Lagna)' : ''}</div>${l.map(card).join('')}` : ''; }).join('')}</section>` : '';
+    const cn = counts(a);
+    body.innerHTML = `<p class="ska-lead">${esc(info ? info.label : '')}.</p>
+      <div class="ska-sum"><span>△ ${cn.tri}</span><span>□ ${cn.sq}</span><span>☍ ${cn.opp}</span><span class="good">${cn.good} supportive</span><span class="care">${cn.care} to watch</span></div>
+      ${sec('Trine', '△', a.filter(x => x.g === 'tri'), '1st, 5th, 9th: luck, mind and dharma')}
+      ${sec('Square', '□', a.filter(x => x.g === 'sq'), '4th, 10th: home and career pressure points')}
+      ${sec('Opposite', '☍', a.filter(x => x.g === 'opp'), '7th: partnerships')}
+      ${sec('On the sign itself', '●', a.filter(x => x.g === 'one'), 'planets in the same sign')}
+      ${sec('Timing alerts', '✦', a.filter(x => x.g === 'sp'), 'Gochara and double transit')}
+      ${a.length ? '' : '<p class="ska-empty">Nothing notable right now.</p>'}
+      <p class="ska-foot">Houses are counted by sign from the Rising and from the Moon. Alerts are tendencies drawn from classical rules (Trikonasthanas and Gochar), not predictions; read them with the whole chart and the running dasha.</p>`;
+  }
+  function setOpen(v) { open = !!v; const s = $('skaSheet'); if (!s) return; s.hidden = !open; document.body.classList.toggle('ska-open', open); if (open) { lastKey = ''; try { refresh(snapshotPositions(currentJD)); } catch (e) { /* ignore */ } paint(); $('skaClose').focus(); } else { const p = $('skaPill'); if (p) p.focus(); } }
+  function wire() {
+    const pill = $('skaPill'); if (!pill) return;
+    pill.addEventListener('click', e => { e.stopPropagation(); setOpen(true); });
+    $('skaClose').addEventListener('click', () => setOpen(false));
+    $('skaSheet').addEventListener('click', e => { if (e.target.id === 'skaSheet') setOpen(false); const b = e.target.closest('#skaTabs button'); if (b && !b.disabled) { mode = b.dataset.m; paint(); } });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && open) setOpen(false); });
+  }
+  const api = { calc, counts, refresh, setOpen, get open() { return open; } };
+  window.SKA = api;
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();
   return api;
 })();
@@ -57280,6 +57450,7 @@ const FG_DATA = {
   ],
   /* features of the other apps in the suite (no tile in this app); shown under the six tabs */
   sky3d: [
+    ['⚑', 'Sky alerts (3D Sky)', 'Under the Rising and Moon lines in the 3D Sky there is a small pill with counts: △ planets in the trine houses (1st, 5th, 9th), □ squares (4th, 10th), ☍ the 7th, and ! the ones to watch. Houses are counted by sign from the Rising and from the Moon. Tap it for the full list, plus planets on the sign itself, Jupiter and Saturn Gochara from the Moon, Sade Sati, the Rahu-Ketu axis and the Jupiter + Saturn double transit. Switch to For you to count from your own birth Rising and Moon. These are tendencies from classical rules, not predictions. Hidden in the Navamsha sky.'],
     ['⚒', 'Tools menu and Navamsha sky (3D Sky)', 'Top right of the 3D Sky now has just two icon buttons, one above the other: the eye 👁 (hides all controls for a clean view) and ⚒ Tools. Tap ⚒ to drop down icon buttons for Sky Dashboard, Aspect Explorer, Select a planet, Reset view and Navamsha sky (press and hold or hover an icon to see its name). Navamsha sky redraws the exact current sky with every planet at its Navamsha (D9) position; the HUD, sky table and chart tab switch to D9, and a gold D9 circle shows under the buttons (tap it to go back). It works in the Zodiac Wheel view only. Planet pop-ups keep the real data and add the exact D9 degree.'],
     ['◀', 'Reverse play (3D Sky)', 'Beside ▶ in the timeline bar. Tap ◀ and time runs backward at the chosen speed (1d/s to 1y/s). Tap ▶ while it runs backward to turn time around, tap the running button to pause.'],
     ['⊞', 'All tabs grid (3D Sky)', 'Tap All at the start of the tab strip under the sky to see every tab as a big grid with a short line each. One tap opens that tab. The strip scrolls to keep the tab you opened in view.'],

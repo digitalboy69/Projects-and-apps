@@ -11,6 +11,7 @@ function renderHUD(snap){
     const L = getLiveLoc(), aLon = NAV.asc(snap.jd, L.lat, L.lon), aSign = SIGNS[getSignIndex(aLon)];
     ascEl.innerHTML = `↑ ${snap.nav ? 'Navamsha rising' : 'Rising'} ${aSign.symbol} ${aSign.name} ${degreeInSign(aLon).deg}°<span class="asc-nak"> · ${L.approx ? 'tap to set your place' : hudEsc(L.label)}</span> <span class="asc-pin">📍</span>`;
   }
+  if (typeof SKA !== 'undefined') SKA.refresh(snap);
   renderRising(false);
 }
 

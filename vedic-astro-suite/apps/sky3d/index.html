@@ -40,6 +40,7 @@
 <link rel="stylesheet" href="css/25-date-entry.css">
 <link rel="stylesheet" href="css/31-ui-refresh.css">
 <link rel="stylesheet" href="css/32-tools-menu.css">
+<link rel="stylesheet" href="css/33-sky-alerts.css">
 <link rel="stylesheet" href="../../shared/meta.css">
 <script src="../../shared/icons.js"></script>
 <link rel="stylesheet" href="../../shared/liquid-glass.css">
@@ -109,6 +110,7 @@
       <div class="hud-sub" id="hudSub">JD — · Ayanamsa —°</div>
       <div class="hud-asc" id="hudAsc" role="button" tabindex="0" title="Tap: set where you are · Hold: rising sign timings">↑ Rising — · —</div>
       <div class="hud-moon" id="hudMoon">☽ — · —</div>
+      <button class="hud-ska" id="skaPill" type="button" style="display:none" aria-label="Sky alerts" aria-haspopup="dialog"></button>
     </div>
     <div class="view-switch-wrap">
       <div class="view-switch" id="viewSwitch"><button data-v="wheel" class="active">☸ Zodiac Wheel</button><button data-v="solar">☉ Solar System</button></div>
@@ -461,6 +463,13 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<div class="ska-sheet" id="skaSheet" role="dialog" aria-modal="true" aria-label="Sky alerts" hidden>
+  <div class="ska-card">
+    <header><div><b>Sky alerts</b><small>Trine · Square · Opposite</small></div><button type="button" id="skaClose" aria-label="Close">✕</button></header>
+    <div class="ska-tabs" id="skaTabs"></div>
+    <div class="ska-body" id="skaBody"></div>
+  </div>
+</div>
 <script src="js/01-astro-engine.js"></script>
 <script src="js/02-planetary-dignity.js"></script>
 <script src="js/03-ascendant-houses-drishti.js"></script>
@@ -503,6 +512,7 @@
 <script src="js/40-3d-astro-layers.js"></script>
 <script src="js/41-quick-planet-picker.js"></script>
 <script src="js/61-navamsha-sky.js"></script>
+<script src="js/62-sky-alerts.js"></script>
 <script src="js/42-init.js"></script>
 <script src="js/43-degree-finder-returns.js"></script>
 <script src="js/44-retrograde-planner.js"></script>
