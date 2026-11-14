@@ -77,3 +77,23 @@
 #panel-vargas .varga-asc-tag{width:100%;box-sizing:border-box;text-align:left;display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px;padding:7px 12px;font-size:12px}
 #panel-vargas .varga-asc-tag br{display:none}
 #panel-vargas .varga-chart-container{padding:14px 10px}
+
+/* House details tab: one column of full-width house cards (js/69 houses()) */
+.vx-hs.vxh{grid-template-columns:1fr;gap:12px}
+.vxh-c{padding:14px 14px 12px!important;border-radius:18px!important}
+.vxh-c header{display:flex;align-items:center;gap:11px;margin:0 0 10px!important}
+.vxh-c header>em{flex:0 0 36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px!important;border:1px solid rgba(246,215,117,.4);background:rgba(246,215,117,.08)}
+.vxh-t{min-width:0;flex:1;display:flex;flex-direction:column;line-height:1.25}.vxh-t b{font-size:15px}.vxh-t small{font-size:11px;color:var(--text-muted)}
+.vxh-lord{flex:0 0 auto;font-size:11px;color:var(--text-muted);padding:5px 9px;border-radius:999px;border:1px solid var(--border-light);white-space:nowrap}.vxh-lord b{color:var(--text-primary,#eee8dc);font-weight:600}
+.vxh-p{display:flex;gap:11px;padding:10px;margin-top:8px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.vxh-g{flex:0 0 34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(246,215,117,.1);color:var(--gold-bright)}
+.vxh-pb{min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}
+.vxh-l1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.vxh-l1 b{font-size:14px}
+.vxh-l2,.vxh-l3{display:flex;gap:7px;align-items:baseline;font-size:12px;color:var(--text-muted);line-height:1.45}
+.vxh-l2 i,.vxh-l3 i{font-style:normal;flex:0 0 14px;text-align:center;color:var(--gold-bright);opacity:.85}
+.vxh-l2 b{color:var(--text-primary,#eee8dc);font-weight:600}
+.vxh-l3 em{font-style:normal;display:inline-block;margin:0 5px 0 0;padding:1px 7px;border-radius:999px;font-size:11px;border:1px solid var(--border-light);color:var(--text-primary,#eee8dc)}
+.vxh-nt{font-size:11px;color:var(--text-muted);opacity:.8}
+.vxh-empty{margin-top:6px;padding:9px 11px;border-radius:12px;border:1px dashed var(--border-light);font-size:12px;color:var(--text-muted)}
+.vxh-ab{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,255,255,.07)}.vxh-ab small{font-size:11px;color:var(--text-muted);margin-right:2px}
+@media (min-width:760px){.vx-hs.vxh{max-width:640px;margin:0 auto}}

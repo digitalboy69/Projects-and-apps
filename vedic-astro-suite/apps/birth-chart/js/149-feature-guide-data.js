@@ -51,7 +51,7 @@ const FG_DATA = {
       tip: 'If nothing shifts, the whole-sign chart already tells the story.', see: ['panel-overview'] },
     'panel-vargas': { what: 'A viewer for all divisional (varga) charts, D1 to D144. Each chart zooms into one area of life.',
       when: 'You want Navamsa (marriage), Dashamsa (career) or any other divisional chart.',
-      how: ['Tap a chart tile or use the dropdown.', 'Choose North or South style.', 'Switch on aspects if you want them drawn.', 'Use Copy if the Copy switch is on in Settings.'],
+      how: ['Tap a chart tile or use the dropdown.', 'Choose North or South style.', 'Switch on aspects if you want them drawn.', 'Use Copy if the Copy switch is on in Settings.', 'Open the House details tab under the chart: one card per house with its sign, lord, and for every planet there its nakshatra, pada and nakshatra lord, the houses it aspects and its dignity, plus which planets aspect the house.'],
       terms: [['D9 Navamsa', 'The marriage and dharma chart, the most used after D1.'], ['Varga', 'A divisional chart.']],
       tip: 'Start with D1 and D9, then add others as needed.', see: ['panel-vimshopaka', 'panel-lagnas'] },
     'panel-lagnas': { what: 'Twenty-three alternate ascendants (special lagnas), each viewable as a full chart.',

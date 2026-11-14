@@ -207,11 +207,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-13 - 2248 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-14 - 2248 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 250 files, 36225 lines, 3042 KB
+**birth-chart** - 250 files, 36253 lines, 3047 KB
 ```
 index.html                                         675 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -275,7 +275,7 @@ js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
 js/147-tools-hub.js                                117 lines   11 KB
 js/148-export-builder.js                           260 lines   25 KB
-js/149-feature-guide-data.js                       319 lines   36 KB
+js/149-feature-guide-data.js                       319 lines   37 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
 js/151-bhavat-masterclass-data.js                   99 lines   13 KB
@@ -337,7 +337,7 @@ js/65-error-boundaries.js                           32 lines    1 KB
 js/66-modal-accessibility.js                        23 lines    1 KB
 js/67-friendly-input-page.js                       107 lines    9 KB
 js/68-intake-progress.js                            65 lines    3 KB
-js/69-divisional-areas.js                          132 lines   22 KB
+js/69-divisional-areas.js                          140 lines   23 KB
 js/70-chart-reading.js                              76 lines   17 KB
 js/71-life-activation.js                            50 lines    9 KB
 js/72-bhava-bala.js                                 47 lines    7 KB
@@ -402,7 +402,7 @@ css/23-vedic-birthday.css                           59 lines    6 KB
 css/24-dasha-navigator.css                          32 lines    4 KB
 css/25-vedic-birthday-hero.css                      97 lines   12 KB
 css/26-developer-card.css                           59 lines    7 KB
-css/27-d-chart-explorer.css                         80 lines    8 KB
+css/27-d-chart-explorer.css                        100 lines   11 KB
 css/28-drishti-explorer.css                         31 lines    3 KB
 css/29-special-lagnas.css                           63 lines    9 KB
 css/30-ashtakavarga.css                             99 lines   16 KB
@@ -691,3 +691,5 @@ shared/quick-menu.js                               190 lines   17 KB
 - 3D wheel on phones: js/07 `wheelFitDist()`/`wheelFitPhi()` (zoom from screen shape + free band, replaces the old fixed 26), js/59 band + view offset, js/15 planet labels now avoid overlapping each other. To SEE the real wheel in the sandbox, clone the three.js r128 tag with `git clone --depth 1 --branch r128 --filter=blob:none --no-checkout https://github.com/mrdoob/three.js.git` then `git checkout r128 -- build/three.min.js`, serve it for the CDN URL in Playwright, and launch Chromium with `--use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader`.
 - Wheel beauty pass: js/60-wheel-beauty.js (adds/swaps visuals after the scene is built; never touches astronomy). Animation rides the label update after each drawn frame, so there is no extra loop. Flag: localStorage vax3d_beauty='0' turns it off.
 - 3D Sky Tools menu + Navamsha sky: js/61-navamsha-sky.js (global `NAV`: `NAV.snap(jd)` is the D9-or-real snapshot used ONLY by scene/HUD/sky table/overlays/chart tab; everything else keeps `snapshotPositions`; `snap.raw` = real sky inside a D9 snap), css/32-tools-menu.css, top-right = Eye + Tools icon + `#toolsMenu` (old button IDs kept). Test: tests/sky3d_navamsha_tools_browser_test.py. Add new divisional skies as more buttons in `#toolsMenu`.
+
+- Divisional Charts > House details tab (js/69 `houses()`, css/27 `.vxh-*`): one column of house cards; each planet shows nakshatra, pada, nakshatra lord (always from the real D1 position), houses aspected (`getAspectedHouses`, js/09) and dignity; footer lists planets aspecting the house. Test: tests/varga_house_details_browser_test.py.

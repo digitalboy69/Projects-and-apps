@@ -13495,6 +13495,26 @@ img,svg{max-width:100%}
 #panel-vargas .varga-asc-tag{width:100%;box-sizing:border-box;text-align:left;display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px;padding:7px 12px;font-size:12px}
 #panel-vargas .varga-asc-tag br{display:none}
 #panel-vargas .varga-chart-container{padding:14px 10px}
+
+/* House details tab: one column of full-width house cards (js/69 houses()) */
+.vx-hs.vxh{grid-template-columns:1fr;gap:12px}
+.vxh-c{padding:14px 14px 12px!important;border-radius:18px!important}
+.vxh-c header{display:flex;align-items:center;gap:11px;margin:0 0 10px!important}
+.vxh-c header>em{flex:0 0 36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px!important;border:1px solid rgba(246,215,117,.4);background:rgba(246,215,117,.08)}
+.vxh-t{min-width:0;flex:1;display:flex;flex-direction:column;line-height:1.25}.vxh-t b{font-size:15px}.vxh-t small{font-size:11px;color:var(--text-muted)}
+.vxh-lord{flex:0 0 auto;font-size:11px;color:var(--text-muted);padding:5px 9px;border-radius:999px;border:1px solid var(--border-light);white-space:nowrap}.vxh-lord b{color:var(--text-primary,#eee8dc);font-weight:600}
+.vxh-p{display:flex;gap:11px;padding:10px;margin-top:8px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
+.vxh-g{flex:0 0 34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(246,215,117,.1);color:var(--gold-bright)}
+.vxh-pb{min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}
+.vxh-l1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.vxh-l1 b{font-size:14px}
+.vxh-l2,.vxh-l3{display:flex;gap:7px;align-items:baseline;font-size:12px;color:var(--text-muted);line-height:1.45}
+.vxh-l2 i,.vxh-l3 i{font-style:normal;flex:0 0 14px;text-align:center;color:var(--gold-bright);opacity:.85}
+.vxh-l2 b{color:var(--text-primary,#eee8dc);font-weight:600}
+.vxh-l3 em{font-style:normal;display:inline-block;margin:0 5px 0 0;padding:1px 7px;border-radius:999px;font-size:11px;border:1px solid var(--border-light);color:var(--text-primary,#eee8dc)}
+.vxh-nt{font-size:11px;color:var(--text-muted);opacity:.8}
+.vxh-empty{margin-top:6px;padding:9px 11px;border-radius:12px;border:1px dashed var(--border-light);font-size:12px;color:var(--text-muted)}
+.vxh-ab{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid rgba(255,255,255,.07)}.vxh-ab small{font-size:11px;color:var(--text-muted);margin-right:2px}
+@media (min-width:760px){.vx-hs.vxh{max-width:640px;margin:0 auto}}
 </style>
 <style>
 /* ===== Drishti (aspects) explorer ===== */
@@ -26671,9 +26691,17 @@ function planets(M){const {rows,m,k,c}=M;
     ${sb?kv('Shadbala',f(sb.totalRupas,2)+' / '+sb.requiredRupas+' rupas '+(sb.isStrong?'✓ strong':'✗ weak'),1)+`<div class="vx-kv w"><div class="vx-bar" style="grid-template-columns:1fr"><i><u style="width:${Math.min(100,(sb.percentOfRequired||0)/2)}%"></u></i></div></div>`:''}
    </div></details>`}).join('');}
 function houses(M){const {hs,rows,k,c}=M,sav=k==='D1'&&!M.cu&&c.ashtakavarga&&c.ashtakavarga.sav;
-  return `<div class="vx-hs">`+hs.map(h=>{const lr=rows.find(r=>r.n===h.signLord),th=(typeof HOUSE_THEMES!=='undefined'&&HOUSE_THEMES[h.houseNum-1])||'';
-   return `<div class="vx-h ${h.isEmpty?'':'occ'}"><header><em>${h.houseNum}</em><b>${h.signSymbol} ${h.signName}</b></header><p>${h.signSanskrit} · ${h.element} · ${h.modality}</p><p>${th}</p>
-   <p>Lord: <b>${h.signLord}</b>${lr?' in H'+lr.h+' ('+lr.sg.name+')':''}</p><div>${h.isEmpty?'<span class="vx-chip">Empty</span>':h.planets.map(p=>`<span class="vx-chip ${dc(p.dignity.status)}">${PLANET_GLYPHS[p.name]} ${p.name}${p.retrograde?' ℞':''}</span>`).join('')}</div>
+  const asp=n=>{const r=rows.find(x=>x.n===n);return r?getAspectedHouses(n,r.h):[];};
+  const by=hn=>rows.filter(r=>r.h!==hn&&asp(r.n).includes(hn));
+  const pr=q=>{const r=rows.find(x=>x.n===q.name),nk=(r&&r.p.nakshatra)||{},dg=q.dignity||{},st=(dg.label||dg.status||'').replace(/ \(.*\)/,'').replace(/ sign$/i,''),to=asp(q.name);
+    return `<div class="vxh-p"><span class="vxh-g">${PLANET_GLYPHS[q.name]}</span><div class="vxh-pb">
+      <div class="vxh-l1"><b>${q.name}${q.retrograde?' ℞':''}</b>${st&&!/^(Neutral|—|-)$/.test(st)?`<span class="vx-chip ${dc(dg.status)}">${st}</span>`:'<span class="vxh-nt">Neutral</span>'}</div>
+      <div class="vxh-l2"><i>✦</i><span><b>${nk.name||'—'}</b>${nk.pada?` · Pada ${nk.pada}`:''}${nk.lord?` · ruled by <b>${nk.lord}</b>`:''}</span></div>
+      <div class="vxh-l3"><i>↗</i><span>Aspects ${to.map(h=>`<em>H${h}</em>`).join('')}</span></div></div></div>`;};
+  return `<div class="vx-note">Nakshatra and Pada are always taken from the planet's real sky position. Aspects are the usual full aspects: all planets the 7th, plus Mars 4th and 8th, Jupiter 5th and 9th, Saturn 3rd and 10th.</div><div class="vx-hs vxh">`+hs.map(h=>{const lr=rows.find(r=>r.n===h.signLord),ab=by(h.houseNum);
+   return `<div class="vx-h vxh-c ${h.isEmpty?'':'occ'}"><header><em>${h.houseNum}</em><div class="vxh-t"><b>${h.signSymbol}︎ ${h.signName}</b><small>${h.signSanskrit}</small></div><span class="vxh-lord" title="Lord of this house">Lord <b>${PLANET_GLYPHS[h.signLord]} ${h.signLord}</b>${lr?` · H${lr.h}`:''}</span></header>
+   ${h.isEmpty?'<div class="vxh-empty">No planet here</div>':h.planets.map(pr).join('')}
+   <div class="vxh-ab"><small>Aspected by</small>${ab.length?ab.map(r=>`<span class="vx-chip">${PLANET_GLYPHS[r.n]} ${r.n}</span>`).join(''):'<span class="vxh-nt">No planet</span>'}</div>
    ${sav?`<div class="vx-bar" style="grid-template-columns:34px 1fr 22px"><span>SAV</span><i><u style="width:${Math.min(100,sav[h.sign]/40*100)}%"></u></i><b>${sav[h.sign]}</b></div>`:''}</div>`}).join('')+`</div>`;}
 function vsD1(M){const {rows,k,asc,c}=M;const a1=c.vargas.D1.ascendantSign;
   return `<div class="vx-note">Compare each planet's Rashi (D1) sign with its ${k} sign. Same sign = <b>Vargottama ★</b>.</div>
@@ -57290,7 +57318,7 @@ const FG_DATA = {
       tip: 'If nothing shifts, the whole-sign chart already tells the story.', see: ['panel-overview'] },
     'panel-vargas': { what: 'A viewer for all divisional (varga) charts, D1 to D144. Each chart zooms into one area of life.',
       when: 'You want Navamsa (marriage), Dashamsa (career) or any other divisional chart.',
-      how: ['Tap a chart tile or use the dropdown.', 'Choose North or South style.', 'Switch on aspects if you want them drawn.', 'Use Copy if the Copy switch is on in Settings.'],
+      how: ['Tap a chart tile or use the dropdown.', 'Choose North or South style.', 'Switch on aspects if you want them drawn.', 'Use Copy if the Copy switch is on in Settings.', 'Open the House details tab under the chart: one card per house with its sign, lord, and for every planet there its nakshatra, pada and nakshatra lord, the houses it aspects and its dignity, plus which planets aspect the house.'],
       terms: [['D9 Navamsa', 'The marriage and dharma chart, the most used after D1.'], ['Varga', 'A divisional chart.']],
       tip: 'Start with D1 and D9, then add others as needed.', see: ['panel-vimshopaka', 'panel-lagnas'] },
     'panel-lagnas': { what: 'Twenty-three alternate ascendants (special lagnas), each viewable as a full chart.',

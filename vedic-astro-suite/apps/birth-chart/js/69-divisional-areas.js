@@ -54,9 +54,17 @@ function planets(M){const {rows,m,k,c}=M;
     ${sb?kv('Shadbala',f(sb.totalRupas,2)+' / '+sb.requiredRupas+' rupas '+(sb.isStrong?'✓ strong':'✗ weak'),1)+`<div class="vx-kv w"><div class="vx-bar" style="grid-template-columns:1fr"><i><u style="width:${Math.min(100,(sb.percentOfRequired||0)/2)}%"></u></i></div></div>`:''}
    </div></details>`}).join('');}
 function houses(M){const {hs,rows,k,c}=M,sav=k==='D1'&&!M.cu&&c.ashtakavarga&&c.ashtakavarga.sav;
-  return `<div class="vx-hs">`+hs.map(h=>{const lr=rows.find(r=>r.n===h.signLord),th=(typeof HOUSE_THEMES!=='undefined'&&HOUSE_THEMES[h.houseNum-1])||'';
-   return `<div class="vx-h ${h.isEmpty?'':'occ'}"><header><em>${h.houseNum}</em><b>${h.signSymbol} ${h.signName}</b></header><p>${h.signSanskrit} · ${h.element} · ${h.modality}</p><p>${th}</p>
-   <p>Lord: <b>${h.signLord}</b>${lr?' in H'+lr.h+' ('+lr.sg.name+')':''}</p><div>${h.isEmpty?'<span class="vx-chip">Empty</span>':h.planets.map(p=>`<span class="vx-chip ${dc(p.dignity.status)}">${PLANET_GLYPHS[p.name]} ${p.name}${p.retrograde?' ℞':''}</span>`).join('')}</div>
+  const asp=n=>{const r=rows.find(x=>x.n===n);return r?getAspectedHouses(n,r.h):[];};
+  const by=hn=>rows.filter(r=>r.h!==hn&&asp(r.n).includes(hn));
+  const pr=q=>{const r=rows.find(x=>x.n===q.name),nk=(r&&r.p.nakshatra)||{},dg=q.dignity||{},st=(dg.label||dg.status||'').replace(/ \(.*\)/,'').replace(/ sign$/i,''),to=asp(q.name);
+    return `<div class="vxh-p"><span class="vxh-g">${PLANET_GLYPHS[q.name]}</span><div class="vxh-pb">
+      <div class="vxh-l1"><b>${q.name}${q.retrograde?' ℞':''}</b>${st&&!/^(Neutral|—|-)$/.test(st)?`<span class="vx-chip ${dc(dg.status)}">${st}</span>`:'<span class="vxh-nt">Neutral</span>'}</div>
+      <div class="vxh-l2"><i>✦</i><span><b>${nk.name||'—'}</b>${nk.pada?` · Pada ${nk.pada}`:''}${nk.lord?` · ruled by <b>${nk.lord}</b>`:''}</span></div>
+      <div class="vxh-l3"><i>↗</i><span>Aspects ${to.map(h=>`<em>H${h}</em>`).join('')}</span></div></div></div>`;};
+  return `<div class="vx-note">Nakshatra and Pada are always taken from the planet's real sky position. Aspects are the usual full aspects: all planets the 7th, plus Mars 4th and 8th, Jupiter 5th and 9th, Saturn 3rd and 10th.</div><div class="vx-hs vxh">`+hs.map(h=>{const lr=rows.find(r=>r.n===h.signLord),ab=by(h.houseNum);
+   return `<div class="vx-h vxh-c ${h.isEmpty?'':'occ'}"><header><em>${h.houseNum}</em><div class="vxh-t"><b>${h.signSymbol}︎ ${h.signName}</b><small>${h.signSanskrit}</small></div><span class="vxh-lord" title="Lord of this house">Lord <b>${PLANET_GLYPHS[h.signLord]} ${h.signLord}</b>${lr?` · H${lr.h}`:''}</span></header>
+   ${h.isEmpty?'<div class="vxh-empty">No planet here</div>':h.planets.map(pr).join('')}
+   <div class="vxh-ab"><small>Aspected by</small>${ab.length?ab.map(r=>`<span class="vx-chip">${PLANET_GLYPHS[r.n]} ${r.n}</span>`).join(''):'<span class="vxh-nt">No planet</span>'}</div>
    ${sav?`<div class="vx-bar" style="grid-template-columns:34px 1fr 22px"><span>SAV</span><i><u style="width:${Math.min(100,sav[h.sign]/40*100)}%"></u></i><b>${sav[h.sign]}</b></div>`:''}</div>`}).join('')+`</div>`;}
 function vsD1(M){const {rows,k,asc,c}=M;const a1=c.vargas.D1.ascendantSign;
   return `<div class="vx-note">Compare each planet's Rashi (D1) sign with its ${k} sign. Same sign = <b>Vargottama ★</b>.</div>
