@@ -41,6 +41,7 @@ const HOME_ITEMS=[
  ['panel-vbday','🎂','Vedic Birthday','Tithi, Nakshatra & solar birthday for any year','Time & Cycles','home'],
  ['panel-active','🔥','Life Activation','Houses lit up now · pick any date','Time & Cycles','home'],
  ['panel-yeartimeline','🗓️','Year Timeline File','Pick two dates: planet moves, transits & dashas as one file for AI','Time & Cycles','home'],
+ ['panel-ai','✦','AI Astrologer','Ask questions about your chart with your own AI model, persona and skills. It reads only the variables it needs','Analysis','home'],
  ['panel-hora','☉','Hora','Planetary hours: the planet of every hour and the best times for any task','Time & Cycles','home'],
  ['panel-ppf','⏳','Past · Present · Future','Your life periods: what has run, what runs now, what comes next','Time & Cycles','home'],
  ['panel-dasha','◷','Dasha','120-year life-period timeline','Time & Cycles','home'],

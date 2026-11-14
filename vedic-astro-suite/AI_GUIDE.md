@@ -207,13 +207,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-14 - 2256 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-15 - 2288 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 250 files, 36254 lines, 3047 KB
+**birth-chart** - 254 files, 36700 lines, 3112 KB
 ```
-index.html                                         675 lines   38 KB
+index.html                                         679 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -273,9 +273,9 @@ js/141-ashtakavarga-extras.js                      145 lines   16 KB
 js/142-gochara-vedha.js                             48 lines    3 KB
 js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
-js/147-tools-hub.js                                117 lines   11 KB
+js/147-tools-hub.js                                117 lines   12 KB
 js/148-export-builder.js                           260 lines   25 KB
-js/149-feature-guide-data.js                       320 lines   37 KB
+js/149-feature-guide-data.js                       325 lines   40 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
 js/151-bhavat-masterclass-data.js                   99 lines   13 KB
@@ -284,7 +284,10 @@ js/153-varga-matrix.js                             108 lines   11 KB
 js/155-past-present-future.js                      199 lines   21 KB
 js/156-hora-engine.js                              101 lines    9 KB
 js/157-hora-panel.js                               294 lines   38 KB
+js/158-ai-index.js                                  87 lines   12 KB
+js/159-ai-engine.js                                127 lines   14 KB
 js/16-rectification-engine.js                       36 lines    2 KB
+js/160-ai-panel.js                                 156 lines   25 KB
 js/17-special-lagnas.js                            404 lines   23 KB
 js/18-ui-location-profiles.js                      124 lines    5 KB
 js/19-planets-panel.js                             236 lines   17 KB
@@ -293,7 +296,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             176 lines   19 KB
+js/25-home-and-tabs.js                             177 lines   19 KB
 js/26-rectification-studio.js                      250 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -463,6 +466,7 @@ css/81-bhavat-masterclass.css                      204 lines   18 KB
 css/82-varga-matrix.css                             86 lines    8 KB
 css/84-past-present-future.css                     129 lines   11 KB
 css/85-hora.css                                    175 lines   16 KB
+css/86-ai.css                                       66 lines   10 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -697,3 +701,5 @@ shared/quick-menu.js                               190 lines   17 KB
 - Divisional Charts > House details tab (js/69 `houses()`, css/27 `.vxh-*`): one column of house cards; each planet shows nakshatra, pada, nakshatra lord (always from the real D1 position), houses aspected (`getAspectedHouses`, js/09) and dignity; footer lists planets aspecting the house. Test: tests/varga_house_details_browser_test.py.
 
 - 3D Sky alerts: apps/sky3d/js/62-sky-alerts.js (global `SKA`; `SKA.calc(sidereal, risingSign, moonSign)` is pure and tested) + css/33-sky-alerts.css; pill `#skaPill` under the Moon line in the HUD (refreshed from `renderHUD`, js/19), sheet `#skaSheet`. Rules: Wikipedia Trikonasthanas (1-5-9 trikona, benefic/malefic notes, nodes in kendras) and Dekho Panchang Gochar (Jupiter 2-5-7-9-11, Saturn 3-6-11 from Moon, Sade Sati, double transit, Rahu-Ketu axis). Tendency wording only. Test: tests/sky3d_sky_alerts_browser_test.py.
+
+- AI Astrologer (panel-ai): ONE index of variables `AIX` (apps/birth-chart/js/158-ai-index.js; add a new variable = add an entry `{id,g,t,d,l,p,f}`; `raw:<path>` already reaches any chart field), `AIS` store + `AIE` engine (js/159: providers OpenAI-compatible/Anthropic/Gemini/custom, route → fetch → answer, skills followed exactly, personas), panel js/160 + css/86. Keys live only in localStorage `vas_ai_v1`. APK: CapacitorHttp is enabled so provider calls skip CORS. Plan: docs/AI_SYSTEM_PLAN.md. Test: tests/ai_system_browser_test.py.

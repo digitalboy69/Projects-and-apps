@@ -496,6 +496,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/sky3d_ui_refresh_browser_test.py` — 3D Sky at 390 and 360 wide (Three.js stubbed): slim timeline, buttons in one row, All-tabs grid opens each tab, no overflow
 - `tests/sky3d_navamsha_tools_browser_test.py` — 3D Sky Tools drop-down, Eye, Navamsha sky toggle and D9 math at 390 and 360 (Three.js stubbed; `S3_SHOTS=dir` for screenshots)
 - `tests/sky3d_sky_alerts_browser_test.py` — Sky alerts rules (`SKA.calc`), HUD pill and bottom sheet at 390 and 360
+- `tests/ai_system_browser_test.py` — AI system: every index entry, route → fetch → answer with a stubbed provider, skills, personas, key rules, panel at 390 and 360
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
 - `tests/life_narratives_test.py` — Life-area narratives: 12 charts x 9 areas (length, structure, wording, consistency with scores), variation, sensitivity, Deep reading + report + PDF wiring
 - `tests/varga_reading_test.py` — Divisional chart readings: 12 charts x 6 vargas cross-checked with the app's own varga data and VDB's D9 vargottama, variation, one-fact sensitivity, Deep reading + report + PDF wiring
@@ -556,9 +557,14 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/past_present_future_browser_test.py` — Playwright test of the Past · Present · Future panel at 390 and 360px (`PPF_SHOTS=dir`)
 - `apps/birth-chart/js/156-hora-engine.js` — Hora (planetary hours) engine (global `HORA`): 24 unequal horas per Vedic day (12 day = day length / 12, 12 night = night length / 12) in Chaldean order from the weekday lord, overlaps with Rahu Kalam / Yamaganda / Gulika, Choghadiya at the midpoint, 14-activity table, teaching-aid score with reasons, best-times search, week, chart link (`forYou`); reuses panchangaAt, CHG, VDB, VDA only
 - `apps/birth-chart/js/157-hora-panel.js` — Hora panel (global `HORAUI`, `panel-hora`, Home > Time & Cycles + Tools): custom place (city search via Nominatim, current location, birth place, manual lat/lon/time zone, saved in localStorage `hora_place_v1`), tabs Now (live countdown ring, next 3, whole-day ribbon, hora planet in your chart), Moment (any date + time: hora, progress, before/after, full day of 24 horas, birth moment button), Today (24 horas for any date, score for any activity, copy as text), Week (7 x 24 colour grid, glow by activity), Best (best and worst horas for 14 activities over 24 h / 3 / 7 days with reasons), Learn (how horas are made, order, planets, scoring, where teachers differ); reads HORA (js/156) only
+- `apps/birth-chart/js/158-ai-index.js` — `AIX`: the ONE index/registry of every chart variable the AI can read (`catalogue()` for the model, `get(id)` on demand, `raw:<path>` for any field)
+- `apps/birth-chart/js/159-ai-engine.js` — `AIS` (local store: providers+keys, personas, skills, settings, import/export) and `AIE` (provider calls for OpenAI-compatible/Anthropic/Gemini/custom; route → fetch → answer flow)
+- `apps/birth-chart/js/160-ai-panel.js` — `AIUI` AI Astrologer panel (`panel-ai`): Chat, Variables, Persona, Skills, Settings tabs
 - `apps/birth-chart/css/85-hora.css` — styles for the Hora panel (`hr-` prefix)
+- `apps/birth-chart/css/86-ai.css` — styles for the AI Astrologer panel (`aix-` prefix)
 - `tests/hora_browser_test.py` — Playwright test of the Hora panel at 390 and 360px (`HORA_SHOTS=dir`)
 - `docs/HORA_PLAN.md` — Hora plan, checklist and research log (sources, where teachers differ)
+- `docs/AI_SYSTEM_PLAN.md` — plan and architecture of the AI system (index, engine, panel)
 - `tests/hora_test.py` — Playwright test of the Hora engine against panchangaAt (order, contiguity, Drik day/night lengths)
 - `tests/varga_matrix_test.js` — node test for js/153 (cells equal raw varga data, points recomputed by hand, Vargottama, 60 real charts x 3 sets)
 - `tests/varga_matrix_browser_test.py` — Playwright test of the Varga Matrix at 390 and 360px (`VMX_SHOTS=dir`)

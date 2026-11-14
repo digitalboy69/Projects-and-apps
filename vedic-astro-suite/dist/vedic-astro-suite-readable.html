@@ -17354,6 +17354,73 @@ body.cl-open{overflow:hidden}
 .hr-pn span b{display:block;font:600 13.5px var(--font-sans);color:var(--tx)}
 @media (max-width:380px){.hr-tabs button{font-size:11.5px}.hr-mr b{font-size:19px}}
 </style>
+<style>
+/* AI Astrologer panel (js/160). Class-scoped (aix-) only. Only transform/opacity animate; no backdrop-filter. */
+.aix{--g:#e6b94f;--teal:#5ec4b7;--bad:#e0605a;--line:rgba(255,255,255,.1);--mut:var(--text-muted,#9f9a8f);--card:rgba(255,255,255,.04);--tx:var(--text-primary,#eee8dc);padding-bottom:18px}
+.aix *{box-sizing:border-box}
+@keyframes aixIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes aixDot{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.aix-main{animation:aixIn .3s ease both}
+@media (prefers-reduced-motion:reduce){.aix-main,.aix-dots i{animation:none}}
+.aix-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px;padding:16px 14px;border:1px solid rgba(230,185,79,.3);border-radius:22px;background:radial-gradient(120% 140% at 100% 0,rgba(94,196,183,.16),transparent 60%),var(--card)}
+.aix-head h2{margin:0 0 4px;font:600 26px/1.1 var(--font-serif,serif);color:var(--tx)}
+.aix-head p{margin:0;font-size:12.5px;line-height:1.5;color:var(--mut)}
+.aix-chip{min-height:34px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--mut);font:600 12px var(--font-sans,system-ui,sans-serif);cursor:pointer;white-space:nowrap;max-width:46vw;overflow:hidden;text-overflow:ellipsis}
+.aix-chip.aix-ok{color:#7fd6a0;border-color:rgba(127,214,160,.45);background:rgba(127,214,160,.08)}
+.aix-chip.aix-warn{color:#f2b05e;border-color:rgba(242,176,94,.5);background:rgba(242,176,94,.08)}
+.aix-tabs{display:flex;gap:4px;margin-bottom:12px;padding:4px;border:1px solid var(--line);border-radius:16px;background:var(--card);overflow-x:auto;scrollbar-width:none}
+.aix-tabs button{flex:1;min-height:40px;padding:0 12px;border:0;border-radius:12px;background:transparent;color:var(--mut);font:600 13px var(--font-sans,system-ui,sans-serif);cursor:pointer;white-space:nowrap}
+.aix-tabs button.aix-on{background:rgba(230,185,79,.16);color:#f2dc9a}
+.aix-note{margin:0 0 12px;padding:12px 13px;border-radius:14px;border:1px solid rgba(230,185,79,.3);background:rgba(230,185,79,.07);font-size:12.5px;line-height:1.55;color:var(--tx)}
+.aix-note .aix-btn{display:block;margin-top:10px}
+.aix-note.aix-good{border-color:rgba(127,214,160,.5);background:rgba(127,214,160,.08);color:#9fe3b6}.aix-note.aix-bad{border-color:rgba(224,96,90,.5);background:rgba(224,96,90,.08);color:#f0a09b}
+.aix-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.aix-sel{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 6px 0 12px;border-radius:999px;border:1px solid rgba(230,185,79,.4);background:rgba(230,185,79,.08)}
+.aix-sel select{min-height:34px;border:0;background:transparent;color:var(--tx);font:600 12.5px var(--font-sans,system-ui,sans-serif)}.aix-sel select option{background:#1a1f2e;color:#eee}
+.aix-list{display:flex;flex-direction:column;gap:12px;min-height:200px;margin-bottom:12px}
+.aix-m{display:flex;flex-direction:column;max-width:92%}.aix-u{align-self:flex-end;align-items:flex-end}.aix-a{align-self:flex-start}
+.aix-b{padding:11px 14px;border-radius:18px;font-size:14px;line-height:1.6;color:var(--tx);overflow-wrap:anywhere}
+.aix-u .aix-b{background:linear-gradient(135deg,rgba(230,185,79,.28),rgba(230,185,79,.14));border:1px solid rgba(230,185,79,.4);border-bottom-right-radius:6px}
+.aix-a .aix-b{background:var(--card);border:1px solid var(--line);border-bottom-left-radius:6px}.aix-a .aix-b.aix-err{border-color:rgba(224,96,90,.5);color:#f0a09b}
+.aix-b .aix-li{position:relative;padding-left:16px;margin:3px 0}.aix-b .aix-li::before{content:"•";position:absolute;left:3px;color:var(--g)}.aix-sp{height:8px}
+.aix-b code{padding:1px 6px;border-radius:6px;background:rgba(255,255,255,.08);font:12.5px var(--font-mono,monospace)}
+i.aix-ref,.aix-ref{display:inline-block;margin:0 4px 4px 0;padding:1px 8px;border-radius:999px;border:1px solid var(--line);font:11px var(--font-mono,monospace);font-style:normal;color:#9fd8d1}
+.aix-used{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:7px 4px 0;font-size:10.5px;color:var(--mut)}.aix-used span{margin-right:4px}
+.aix-used i{padding:2px 8px;border-radius:999px;border:1px solid rgba(94,196,183,.4);background:rgba(94,196,183,.08);color:#9fd8d1;font:10.5px var(--font-mono,monospace);font-style:normal}.aix-used i.aix-bad{border-color:rgba(224,96,90,.5);color:#f0a09b;background:rgba(224,96,90,.08)}
+.aix-acts{margin:4px 4px 0}.aix-acts button{min-height:30px;padding:0 4px;border:0;background:transparent;color:var(--mut);font:12px var(--font-sans,system-ui,sans-serif);cursor:pointer}
+.aix-typing{display:flex;align-items:center;gap:8px;color:var(--mut);font-size:13px}.aix-dots{display:inline-flex;gap:4px}.aix-dots i{width:6px;height:6px;border-radius:50%;background:var(--g);animation:aixDot 1.1s infinite}.aix-dots i:nth-child(2){animation-delay:.15s}.aix-dots i:nth-child(3){animation-delay:.3s}
+.aix-empty{text-align:center;padding:18px 6px}.aix-orb{width:64px;height:64px;margin:0 auto 10px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:#14110a;background:radial-gradient(circle at 30% 30%,#f6d775,#c8962f)}
+.aix-empty p{margin:0 auto 14px;max-width:26em;font-size:13px;line-height:1.55;color:var(--mut)}
+.aix-ex{display:flex;flex-direction:column;gap:8px}.aix-ex button{min-height:44px;padding:10px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:13px var(--font-sans,system-ui,sans-serif);text-align:left;cursor:pointer}
+.aix-comp{position:sticky;bottom:0;display:flex;align-items:flex-end;gap:8px;padding:10px 0 4px;background:linear-gradient(to top,var(--bg-primary,#0d0f17) 70%,transparent)}
+.aix-comp textarea{flex:1;min-height:46px;max-height:140px;resize:none;padding:12px 14px;border-radius:16px;border:1px solid rgba(230,185,79,.4);background:rgba(255,255,255,.05);color:var(--tx);font:14px/1.4 var(--font-sans,system-ui,sans-serif)}
+.aix-send{width:46px;height:46px;flex:0 0 46px;border-radius:50%;border:0;background:linear-gradient(135deg,#f6d775,#c8962f);color:#14110a;font-size:18px;cursor:pointer}.aix-send:disabled{opacity:.5}
+.aix-lead{margin:0 0 12px;font-size:12.5px;line-height:1.55;color:var(--mut)}
+.aix-gh{margin:18px 0 8px;font:600 13px var(--font-sans,system-ui,sans-serif);letter-spacing:.06em;text-transform:uppercase;color:#f2dc9a}
+.aix-btn{min-height:40px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:600 12.5px var(--font-sans,system-ui,sans-serif);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.aix-btn.aix-gold{border-color:rgba(230,185,79,.6);background:rgba(230,185,79,.18);color:#f6dc8a}.aix-btn.aix-danger{color:#f0a09b;border-color:rgba(224,96,90,.4)}.aix-btn:disabled{opacity:.5}.aix-btn.aix-wide{width:100%;margin:6px 0 12px}
+.aix-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin:8px 0}.aix-grow{flex:1;min-width:140px}
+.aix-v,.aix-card{margin-bottom:10px;padding:13px;border-radius:16px;border:1px solid var(--line);background:var(--card)}.aix-sel-on{border-color:rgba(230,185,79,.55);background:rgba(230,185,79,.07)}
+.aix-vh{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.aix-vh code{display:block;font:12px var(--font-mono,monospace);color:#9fd8d1}.aix-vh b{display:block;margin-top:2px;font-size:14px;color:var(--tx)}
+.aix-v p,.aix-card p{margin:6px 0 8px;font-size:12.5px;line-height:1.5;color:var(--mut)}
+.aix-pin{width:40px;height:40px;flex:0 0 40px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--mut);font-size:17px;cursor:pointer}.aix-pin.aix-on{color:#14110a;background:var(--g);border-color:var(--g)}
+.aix-vf{display:flex;flex-wrap:wrap;align-items:center;gap:4px}.aix-vf .aix-btn{margin-left:auto;min-height:36px}
+.aix-prm select,.aix select,.aix input[type=text],.aix input[type=url],.aix input[type=search],.aix input[type=password],.aix input:not([type]),.aix textarea{width:100%;min-height:44px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--tx);font:14px var(--font-sans,system-ui,sans-serif)}
+.aix select option{background:#1a1f2e;color:#eee}.aix-sel select{width:auto;min-height:34px;padding:0;border:0;background:transparent}
+.aix label{display:block;margin:0 0 12px;font-size:12.5px;font-weight:600;color:var(--tx)}.aix label small{font-weight:400;color:var(--mut)}.aix label>input,.aix label>select,.aix label>textarea,.aix label>.aix-key{margin-top:5px}
+.aix-prm{margin-bottom:8px}.aix-raw{display:flex;gap:8px;margin:8px 0 12px}.aix-raw input{flex:1}.aix-vtop{margin-bottom:6px}.aix-vtop input[type=search]{margin-bottom:8px}
+.aix-pre{margin:8px 0;padding:10px 12px;max-height:260px;overflow:auto;border-radius:12px;background:rgba(0,0,0,.35);border:1px solid var(--line);font:11.5px/1.5 var(--font-mono,monospace);color:#cfd8c8;white-space:pre-wrap;word-break:break-word}.aix-pre.aix-err{color:#f0a09b}.aix-tok{font-size:11px;color:var(--mut);text-align:right}
+.aix-ch{display:flex;align-items:center;gap:10px}.aix-em{width:40px;height:40px;flex:0 0 40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(230,185,79,.12)}.aix-ch b{display:block;font-size:14px;color:var(--tx)}.aix-ch small{color:var(--mut);font-size:11.5px}
+.aix-form{margin-top:12px;padding:14px;border-radius:16px;border:1px solid rgba(230,185,79,.4);background:rgba(230,185,79,.05)}.aix-form h4{margin:0 0 10px;color:#f2dc9a}
+.aix-up{display:flex;flex-direction:column;align-items:center;gap:2px;margin:0 0 12px!important;padding:18px;border-radius:16px;border:1.5px dashed rgba(230,185,79,.5);background:rgba(230,185,79,.05);cursor:pointer;color:#f2dc9a!important;text-align:center}.aix-up small{color:var(--mut)}
+.aix-det{margin:10px 0;border:1px solid var(--line);border-radius:14px;padding:4px 12px;background:var(--card)}.aix-det summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:600;font-size:13px;color:var(--tx)}
+.aix-key{display:flex;gap:8px}.aix-key input{flex:1}
+.aix-tg{display:flex!important;gap:10px;align-items:flex-start}.aix-tg input{width:22px;height:22px;margin-top:2px;flex:0 0 22px}.aix-tg span{font-size:13px}.aix-tg small{display:block;margin-top:2px;line-height:1.45}
+.aix input[type=range]{width:100%;min-height:36px;padding:0;accent-color:var(--g)}
+.aix-filebtn{margin:0!important}
+.aix-head{flex-direction:column;align-items:stretch}.aix-head>.aix-chip{align-self:flex-start;max-width:100%}
+.aix-sel{flex:1 1 170px}.aix-sel select{width:100%;min-width:0;text-overflow:ellipsis}
+</style>
 
 
 
@@ -21317,6 +21384,7 @@ const HOME_ITEMS=[
  ['panel-vbday','🎂','Vedic Birthday','Tithi, Nakshatra & solar birthday for any year','Time & Cycles','home'],
  ['panel-active','🔥','Life Activation','Houses lit up now · pick any date','Time & Cycles','home'],
  ['panel-yeartimeline','🗓️','Year Timeline File','Pick two dates: planet moves, transits & dashas as one file for AI','Time & Cycles','home'],
+ ['panel-ai','✦','AI Astrologer','Ask questions about your chart with your own AI model, persona and skills. It reads only the variables it needs','Analysis','home'],
  ['panel-hora','☉','Hora','Planetary hours: the planet of every hour and the best times for any task','Time & Cycles','home'],
  ['panel-ppf','⏳','Past · Present · Future','Your life periods: what has run, what runs now, what comes next','Time & Cycles','home'],
  ['panel-dasha','◷','Dasha','120-year life-period timeline','Time & Cycles','home'],
@@ -53937,7 +54005,7 @@ window.buildAvakahadaPanel = function(chart, profile){ try { return AVK.html(cha
   }
   /* registrations */
   const reg = (id, name) => registerLatePanel(id, (c, p) => (window[name] ? window[name](c, p) : ''));
-  reg('panel-triggerlab', 'buildTriggerLabPanel'); reg('panel-bhavatclass', 'buildBhavatMasterclassPanel'); reg('panel-vargamatrix', 'buildVargaMatrixPanel'); reg('panel-ppf', 'buildPastPresentFuturePanel'); reg('panel-hora', 'buildHoraPanel'); reg('panel-meaninglab', 'buildMeaningLabPanel'); reg('panel-atlas', 'buildAtlasPanel'); reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel'); reg('panel-today', 'buildTodayPanel'); reg('panel-prashna', 'buildPrashnaPanel'); reg('panel-kp', 'buildKpPanel'); reg('panel-chakra', 'buildChakraExplorerPanel'); reg('panel-avasthas', 'buildAvasthasPanel'); reg('panel-vimshopaka', 'buildVimshopakaPanel'); reg('panel-upagrahas', 'buildUpagrahasPanel'); reg('panel-sensitive', 'buildSensitiveDegreesPanel'); reg('panel-sudarshana', 'buildSudarshanaPanel'); reg('panel-argala', 'buildArgalaPanel'); reg('panel-bhavat', 'buildBhavatBhavamPanel'); reg('panel-asx', 'buildAshtakavargaExtrasPanel'); reg('panel-synastry', 'buildSynastryPanel'); reg('panel-pcal', 'buildPanchangCalendarPanel'); reg('panel-tools', 'buildToolsPanel'); reg('panel-export', 'buildExportBuilderPanel');
+  reg('panel-triggerlab', 'buildTriggerLabPanel'); reg('panel-bhavatclass', 'buildBhavatMasterclassPanel'); reg('panel-vargamatrix', 'buildVargaMatrixPanel'); reg('panel-ppf', 'buildPastPresentFuturePanel'); reg('panel-ai', 'buildAiPanel'); reg('panel-hora', 'buildHoraPanel'); reg('panel-meaninglab', 'buildMeaningLabPanel'); reg('panel-atlas', 'buildAtlasPanel'); reg('panel-avakahada', 'buildAvakahadaPanel'); reg('panel-planetency', 'buildPlanetEncyPanel'); reg('panel-dosha', 'buildDoshaPanel'); reg('panel-choghadiya', 'buildChoghadiyaPanel'); reg('panel-today', 'buildTodayPanel'); reg('panel-prashna', 'buildPrashnaPanel'); reg('panel-kp', 'buildKpPanel'); reg('panel-chakra', 'buildChakraExplorerPanel'); reg('panel-avasthas', 'buildAvasthasPanel'); reg('panel-vimshopaka', 'buildVimshopakaPanel'); reg('panel-upagrahas', 'buildUpagrahasPanel'); reg('panel-sensitive', 'buildSensitiveDegreesPanel'); reg('panel-sudarshana', 'buildSudarshanaPanel'); reg('panel-argala', 'buildArgalaPanel'); reg('panel-bhavat', 'buildBhavatBhavamPanel'); reg('panel-asx', 'buildAshtakavargaExtrasPanel'); reg('panel-synastry', 'buildSynastryPanel'); reg('panel-pcal', 'buildPanchangCalendarPanel'); reg('panel-tools', 'buildToolsPanel'); reg('panel-export', 'buildExportBuilderPanel');
 })();
 <\/script>
 <script>
@@ -57064,7 +57132,7 @@ const PCAL = (() => {
 const THB = (() => {
   /* [id, title, "use it when you want to...", color, [panel ids]] */
   const CATS = [
-    ['read', 'Read my chart', 'Understand my chart in plain words', '#D4AF37', ['panel-reading', 'panel-problem', 'panel-overview', 'panel-avakahada', 'panel-planets', 'panel-bhava', 'panel-vargas', 'panel-lagnas']],
+    ['read', 'Read my chart', 'Understand my chart in plain words', '#D4AF37', ['panel-ai', 'panel-reading', 'panel-problem', 'panel-overview', 'panel-avakahada', 'panel-planets', 'panel-bhava', 'panel-vargas', 'panel-lagnas']],
     ['now', 'Today & now', 'See what the sky is doing today', '#5EC4B7', ['panel-today', 'panel-active', 'panel-transit', 'panel-choghadiya', 'panel-panchanga', 'panel-pcal', 'panel-prashna', 'panel-chakra']],
     ['timing', 'Life timing & cycles', 'Know which period of life is running and what comes next', '#8A6FB8', ['panel-hora', 'panel-ppf', 'panel-dasha', 'panel-dashasys', 'panel-transits', 'panel-sudarshana', 'panel-tithi', 'panel-vbday', 'panel-yeartimeline']],
     ['strength', 'Planet & house strength', 'Check how strong or weak each planet and house is', '#6B7FA3', ['panel-shadbala', 'panel-bhavabala', 'panel-vimshopaka', 'panel-avasthas', 'panel-ashtakavarga', 'panel-asx', 'panel-fate', 'panel-sensitive', 'panel-upagrahas']],
@@ -57082,7 +57150,7 @@ const THB = (() => {
     'panel-transit': 'gochar current planets live today sky', 'panel-choghadiya': 'muhurat good time bad time rahu kalam slot',
     'panel-panchanga': 'panchang almanac tithi nakshatra yoga karana sunrise sunset', 'panel-pcal': 'festival ekadashi purnima amavasya eclipse holiday diwali month',
     'panel-prashna': 'horary ask question now', 'panel-chakra': 'sarvatobhadra kota shoola vedha',
-    'panel-dasha': 'mahadasha antardasha vimshottari period running', 'panel-hora': 'planetary hours hora best time muhurta auspicious time sun moon mars hora today', 'panel-ppf': 'past present future timeline life periods dasha chart ease what next', 'panel-transits': 'sade sati saturn jupiter rahu ketu ingress',
+    'panel-dasha': 'mahadasha antardasha vimshottari period running', 'panel-ai': 'ai assistant chat gpt claude gemini ollama api key model persona skill ask question', 'panel-hora': 'planetary hours hora best time muhurta auspicious time sun moon mars hora today', 'panel-ppf': 'past present future timeline life periods dasha chart ease what next', 'panel-transits': 'sade sati saturn jupiter rahu ketu ingress',
     'panel-match': 'marriage matching gun milan ashtakoota partner manglik', 'panel-synastry': 'marriage compatibility couple partner two charts relationship',
     'panel-dosha': 'manglik kaal sarp pitru gand mool remedy problem', 'panel-yogas': 'raj yoga dhana combination',
     'panel-rectification': 'birth time wrong unsure correct fix', 'panel-datefinder': 'forgotten birth date festival family remembers',
@@ -57582,6 +57650,11 @@ const FG_DATA = {
       how: ['Open a house row.', 'Read the sign, lord and planets there.', 'See the Arudha Pada for the same house.'],
       terms: [['Bhavat Bhavam', 'The Nth house from the Nth house.'], ['Pada', 'The Arudha of a house; how it appears to the world.']],
       tip: 'It supplements the main reading.', see: ['panel-bhavatclass', 'panel-lagnas', 'panel-argala'] },
+    'panel-ai': { what: 'An AI assistant that you set up yourself: your own provider, API address, key and model, your own personas and your own uploaded skills. It answers questions about your chart, and for each question it reads only the chart variables it needs from one index, so it is not flooded with data.',
+      when: 'You want to ask your chart a question in plain words, use a model you choose (cloud or on your own computer), or make the AI follow your own instructions.',
+      how: ['Open Settings first. Pick a preset (OpenAI, OpenRouter, Groq, Anthropic, Gemini, Ollama, LM Studio) or Custom, then fill the base URL, API key and model name and tap Test connection. Everything, including the key, is stored only on this device.', 'Open Chat and ask. The app first shows the model a short index of variables, the model chooses the few it needs, the app fetches just those, and then the model answers from them. The chips under each answer show exactly which variables were used.', 'Open Variables to browse the index, preview any value, search it, or tap the star to include a variable in every question. The raw box can read any field of the chart by its path.', 'Open Persona to switch the voice (Classical Jyotishi, Friendly guide, Strict analyst) or make your own, with an optional language.', 'Open Skills and upload a .md, .txt or .json file of instructions. A skill that is switched on is followed exactly, and it can list variables it always needs.', 'Settings also lets you tune how many variables per question, answer length and creativity, turn smart routing off for small models, and export or import your setup (keys are left out unless you choose otherwise).'],
+      terms: [['Variable', 'One piece of chart data, such as planet.Mars, house.10, varga.D9 or dasha.current.'], ['Index', 'The single list of every variable the AI is allowed to ask for.'], ['Routing', 'The first small step in which the model picks which variables it needs.'], ['Persona', 'The voice and attitude the AI answers in.'], ['Skill', 'Instructions you upload that the AI follows exactly.']],
+      tip: 'Your question and the variables it needs go to the provider you chose, from this device. Answers are tendencies drawn from your chart data, not predictions; if something is missing the AI should name the variable it needs instead of guessing.', see: ['panel-reading', 'panel-vargas', 'panel-dasha'] },
     'panel-hora': { what: 'Hora (planetary hours): the planet that rules every hour of your day, a live countdown to the next one, the full hora of any date and time you type in, for any place, and the best times for what you want to do.',
       when: 'You want to pick a good hour for a task, see which planet rules right now, or plan the week.',
       how: ['Tap the place chip at the top to change the place. Search a city, use your current location, go back to your birth place, or type latitude, longitude and time zone. Every tab then uses that place.', 'Moment: type any date and time (or tap Right now or My birth moment) to see the hora at that moment: planet, where it starts and ends, how far through it you are, what comes before and after, and the full 24 horas of that day.', 'Now: see the planet ruling this hour, the countdown ring, what it tends to favour, and the next three horas.', 'Today: all 24 horas (12 day and 12 night) for any date. Tap a row to read it. Pick an activity to see a score on every row.', 'Week: a colour grid of seven days. Choose an activity and the horas that suit it glow. Tap a square to read it.', 'Best: choose what you want to do and the next 24 hours, 3 days or 7 days. You get the best horas ranked with reasons, and the times to skip.', 'Learn: how a hora is made, the planet order, what each planet is for, how the score works, and where teachers differ.'],
@@ -58862,6 +58935,379 @@ const HORAUI = (() => {
   const api = { html, setTab, S, render, setLoc, momentJd };
   window.HORAUI = api;
   return api;
+})();
+<\/script>
+<script>
+/* AI variable index (js/158, global AIX). The ONE registry of every variable the AI may read. The model never receives the data up front: it receives AIX.catalogue()
+   (id + one-line description + links, a few hundred tokens), decides which ids it needs, and the app fetches only those with AIX.get(id).
+   Entry: { id, g (group), t (title), d (description), l (linked ids), p (allowed parameters, for ids like varga.D9), f(arg, C) -> value }.
+   'raw:<dotted.path>' reaches ANY field of the chart object, so every variable is reachable even if it has no named entry.
+   Context C = { chart, profile } (set by the AI panel, falling back to window.__vgC). Values are rounded and compacted; large values are cut to a character budget. */
+const AIX = (() => {
+  'use strict';
+  const PL = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
+  const OUT = ['Uranus', 'Neptune', 'Pluto'];
+  const VG = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D16', 'RTN'];
+  const ctx = { chart: null, profile: null };
+  const C = () => ({ chart: ctx.chart || window.__vgC || null, profile: ctx.profile || window.__vgProf || null });
+  const sname = i => (typeof SIGNS !== 'undefined' && SIGNS[i]) ? SIGNS[i].name : String(i);
+  const hsOf = (from, to) => ((to - from + 12) % 12) + 1;
+  const lordOf = s => { try { return VDB.data.signs[s].lord; } catch (e) { return null; } };
+
+  function compact(v, depth) {
+    depth = depth || 0;
+    if (v == null || typeof v === 'function') return undefined;
+    if (typeof v === 'number') return Number.isFinite(v) ? Math.round(v * 100) / 100 : undefined;
+    if (v instanceof Date) return v.toISOString().slice(0, 10);
+    if (Array.isArray(v)) { const a = v.slice(0, 80).map(x => compact(x, depth + 1)).filter(x => x !== undefined); if (v.length > 80) a.push('…+' + (v.length - 80) + ' more'); return a; }
+    if (typeof v === 'object') { if (depth > 7) return '…'; const o = {}; Object.keys(v).forEach(k => { const c = compact(v[k], depth + 1); if (c !== undefined) o[k] = c; }); return o; }
+    return v;
+  }
+  const planetRow = (c, n) => { const p = c.planets[n] || (c.outer && c.outer[n]); if (!p) return null;
+    return { sign: sname(p.sign), house: p.house, deg: Math.round(p.degInSign * 100) / 100, lon: Math.round(p.longitude * 100) / 100, nakshatra: p.nakshatra ? p.nakshatra.name + ' pada ' + p.nakshatra.pada + ' (lord ' + p.nakshatra.lord + ')' : undefined, dignity: p.dignity && (p.dignity.label || p.dignity.status), retro: p.retrograde || undefined, combust: (p.combustion && p.combustion.combust) || undefined, aspectsHouses: p.aspectsHouses }; };
+
+  const E = [
+    { id: 'profile', g: 'Person', t: 'Birth details', d: 'name, birth date, time, place, latitude, longitude, time zone, ayanamsa', l: ['chart.summary'], f: (a, c) => { const p = c.profile || {}; return { name: p.name, dob: p.dob, tob: p.tob, place: p.place, lat: p.lat, lon: p.lon, tz: p.tz != null ? p.tz : c.chart && c.chart.tzOffsetHours, ayanamsa: c.chart && c.chart.ayanamsa, julianDay: c.chart && c.chart.julianDay }; } },
+    { id: 'chart.summary', g: 'Chart', t: 'Chart summary', d: 'lagna and every planet: sign, house, degree, nakshatra+pada, dignity, retrograde (best first look; about 600 tokens)', l: ['planet.{name}', 'house.{n}', 'dasha.current'], f: (a, c) => { const ch = c.chart, o = { lagna: { sign: sname(ch.ascendant.sign), deg: ch.ascendant.degInSign, nakshatra: ch.ascendant.nakshatra && (ch.ascendant.nakshatra.name || ch.ascendant.nakshatra) } }; PL.forEach(n => { o[n] = planetRow(ch, n); }); return o; } },
+    { id: 'ascendant', g: 'Chart', t: 'Ascendant (Lagna)', d: 'rising sign, degree, nakshatra, lagna lord and where it sits', l: ['house.1', 'chart.summary'], f: (a, c) => { const ch = c.chart, l = lordOf(ch.ascendant.sign); return { sign: sname(ch.ascendant.sign), deg: ch.ascendant.degInSign, nakshatra: ch.ascendant.nakshatra, lagnaLord: l, lagnaLordAt: l && planetRow(ch, l) }; } },
+    { id: 'planet', g: 'Chart', t: 'One planet in full', d: 'one planet: sign, house, degree, nakshatra pada lord deity, dignity, retrograde, combustion, speed, houses it aspects', p: PL.concat(OUT, ['Gulika']), l: ['house.{n}', 'dasha.current', 'varga.D9'], f: (a, c) => { if (a === 'Gulika') return c.chart.upagraha && c.chart.upagraha.Gulika; const r = planetRow(c.chart, a); if (!r) return null; const p = c.chart.planets[a] || c.chart.outer[a]; r.deity = p.nakshatra && p.nakshatra.deity; r.speed = p.speed; r.degRemaining = p.degRemainingInSign; return r; } },
+    { id: 'house', g: 'Chart', t: 'One house (bhava)', d: 'sign on the cusp, house lord and where it sits, planets inside, planets aspecting it', p: Array.from({ length: 12 }, (_, i) => String(i + 1)), l: ['planet.{name}', 'ashtakavarga.sav'], f: (a, c) => { const ch = c.chart, h = +a, sg = (ch.ascendant.sign + h - 1) % 12, lord = lordOf(sg), inH = PL.filter(n => ch.planets[n].house === h), asp = PL.filter(n => n !== 'Moon' || true).filter(n => (ch.planets[n].aspectsHouses || []).includes(h) && ch.planets[n].house !== h);
+        return { house: h, sign: sname(sg), lord, lordAt: lord && ch.planets[lord] ? { house: ch.planets[lord].house, sign: sname(ch.planets[lord].sign), dignity: ch.planets[lord].dignity && ch.planets[lord].dignity.label } : undefined, planets: inH, aspectedBy: asp, sav: ch.ashtakavarga && ch.ashtakavarga.sav ? ch.ashtakavarga.sav[sg] : undefined }; } },
+    { id: 'varga', g: 'Divisional charts', t: 'One divisional chart', d: 'a divisional chart (D9 navamsha, D10 dashamsha, D7, D12 ...): lagna and each planet in it', p: VG, l: ['planet.{name}', 'yogas'], f: (a, c) => c.chart.vargas && c.chart.vargas[a] },
+    { id: 'yogas', g: 'Chart', t: 'Yogas', d: 'pancha mahapurusha, gaja kesari, raja yogas, parivartana, viparita raja, neecha bhanga found in the chart', l: ['chart.summary'], f: (a, c) => c.chart.yogas },
+    { id: 'karakas', g: 'Chart', t: 'Chara karakas', d: 'Atmakaraka, Amatyakaraka and the other Jaimini karakas', l: ['varga.D9'], f: (a, c) => c.chart.charaKarakas },
+    { id: 'shadbala', g: 'Strength', t: 'Shadbala', d: 'six-fold planetary strength numbers and the day, hora, year, month lords', l: ['planet.{name}'], f: (a, c) => c.chart.shadbala },
+    { id: 'ashtakavarga.sav', g: 'Strength', t: 'Sarvashtakavarga', d: 'total ashtakavarga points per sign (and per house from lagna)', l: ['house.{n}'], f: (a, c) => { const s = c.chart.ashtakavarga && c.chart.ashtakavarga.sav; if (!s) return null; const o = {}; for (let h = 1; h <= 12; h++) o['H' + h + ' ' + sname((c.chart.ascendant.sign + h - 1) % 12)] = s[(c.chart.ascendant.sign + h - 1) % 12]; return o; } },
+    { id: 'ashtakavarga.bav', g: 'Strength', t: 'Bhinnashtakavarga of one planet', d: 'a planet\'s own ashtakavarga points per sign', p: ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'], l: ['ashtakavarga.sav'], f: (a, c) => c.chart.ashtakavarga && c.chart.ashtakavarga.bavTables && c.chart.ashtakavarga.bavTables[a] },
+    { id: 'dasha.current', g: 'Timing', t: 'Running dasha', d: 'Vimshottari mahadasha and antardasha running now, with dates and plain-words reading', l: ['dasha.timeline', 'dasha.upcoming', 'planet.{name}'], f: (a, c) => { const r = VDA.current(c.chart); return r && { mahadasha: r.md, antardasha: r.ad, antardashas: r.antardashas && r.antardashas.map(x => ({ lord: x.lord, start: x.start, end: x.end, status: x.status })) }; } },
+    { id: 'dasha.timeline', g: 'Timing', t: 'Mahadasha timeline', d: 'all mahadashas of the life with start and end dates', l: ['dasha.current'], f: (a, c) => (c.chart.dashaData.mahadashas || []).map(m => ({ lord: m.lord, start: m.startDate, end: m.endDate, years: m.years })) },
+    { id: 'dasha.upcoming', g: 'Timing', t: 'Upcoming periods', d: 'antardashas starting in the next 2 years', l: ['dasha.current'], f: (a, c) => VDA.upcoming(c.chart, 2).map(x => ({ md: x.md || undefined, lord: x.lord, start: x.start, end: x.end })) },
+    { id: 'transit.now', g: 'Timing', t: 'Planets in the sky now', d: 'today\'s planets: sign, degree, nakshatra, retrograde and the natal house each one falls in', l: ['transit.slow', 'dasha.current'], f: (a, c) => { const p = c.profile || {}, sky = computeLiveSky(p.lat != null ? +p.lat : 28.61, p.lon != null ? +p.lon : 77.2, c.chart.ascendant.sign), o = { asOf: sky.now.toISOString().slice(0, 16) + 'Z' }; PL.forEach(n => { const q = sky.planets[n]; if (q) o[n] = { sign: sname(q.sign), deg: Math.round(q.degInSign * 100) / 100, nakshatra: q.nakshatra && (q.nakshatra.name || q.nakshatra), retro: q.retrograde || undefined, natalHouse: hsOf(c.chart.ascendant.sign, q.sign), fromMoon: hsOf(c.chart.planets.Moon.sign, q.sign) }; }); return o; } },
+    { id: 'transit.slow', g: 'Timing', t: 'Saturn, Jupiter, nodes: stays and Sade Sati', d: 'Saturn/Jupiter/Rahu/Ketu sign stays and the Sade Sati, kantaka and ashtama Saturn cycles', l: ['transit.now'], f: (a, c) => { const t = computeTransits(c.chart, c.profile); return { sadeSati: t.sadeSati, kantaka: t.kantaka, ashtama: t.ashtama }; } },
+    { id: 'hora.now', g: 'Timing', t: 'Hora now', d: 'the planetary hour running now, the day lord, sunrise and sunset, next hora', l: ['panchang.birth'], f: (a, c) => { const p = c.profile || {}, tz = p.tz != null ? +p.tz : 5.5, r = HORA.at(Date.now() / 864e5 + 2440587.5, p.lat != null ? +p.lat : 28.61, p.lon != null ? +p.lon : 77.2, tz); return r && { dayLord: r.day.vara.lord, weekday: r.day.vara.name, now: r.hora && { lord: r.hora.lord, night: r.hora.night, over: r.hora.over, choghadiya: r.hora.chog }, next: r.next && r.next.lord }; } },
+    { id: 'panchang.birth', g: 'Chart', t: 'Birth panchang', d: 'vara, tithi, nakshatra, yoga, karana at birth', l: ['profile'], f: (a, c) => { const p = c.profile || {}; try { return compact(panchangaAt(c.chart.julianDay, +p.lat, +p.lon, c.chart.tzOffsetHours)); } catch (e) { return null; } } },
+    { id: 'outer', g: 'Chart', t: 'Outer planets and Gulika', d: 'Uranus, Neptune, Pluto and the Gulika upagraha', l: ['chart.summary'], f: (a, c) => ({ outer: c.chart.outer, gulika: c.chart.upagraha && c.chart.upagraha.Gulika }) },
+    { id: 'wars', g: 'Chart', t: 'Planetary wars', d: 'graha yuddha (planets within one degree) if any', l: ['chart.summary'], f: (a, c) => c.chart.wars },
+    { id: 'raw.keys', g: 'Raw', t: 'Chart field names', d: 'the list of every top-level field of the chart, to find the exact path for raw:<path>', l: ['raw:<path>'], f: (a, c) => Object.keys(c.chart).map(k => k + ' (' + (Array.isArray(c.chart[k]) ? 'list' : typeof c.chart[k]) + ')') }
+  ];
+  const byBase = {}; E.forEach(e => { byBase[e.id] = e; });
+
+  function resolve(id) {
+    id = String(id || '').trim();
+    if (/^raw:/i.test(id)) return { kind: 'raw', path: id.slice(4).trim() };
+    if (byBase[id]) return { kind: 'e', e: byBase[id], arg: null };
+    const m = id.match(/^([a-z.]+?)\.([^.]+)$/i) || null, tries = [];
+    if (m) tries.push([m[1], m[2]]);
+    const dot = id.lastIndexOf('.'); if (dot > 0) tries.push([id.slice(0, dot), id.slice(dot + 1)]);
+    for (const [b, a] of tries) { const e = byBase[b]; if (e && e.p) { const hit = e.p.find(x => String(x).toLowerCase() === a.toLowerCase()); if (hit != null) return { kind: 'e', e, arg: hit }; } }
+    return null;
+  }
+  function rawGet(chart, path) { let v = chart; for (const k of path.split('.').filter(Boolean)) { if (v == null) return undefined; v = v[k]; } return v; }
+  function get(id, maxChars) {
+    const r = resolve(id), c = C(); if (!c.chart) return { id, ok: false, text: 'No birth chart is loaded yet.' };
+    if (!r) return { id, ok: false, text: 'Unknown variable "' + id + '". Use an id from the index.' };
+    let v; try { v = r.kind === 'raw' ? rawGet(c.chart, r.path) : r.e.f(r.arg, c); } catch (e) { return { id, ok: false, text: 'Could not read ' + id + ': ' + (e && e.message || e) }; }
+    if (v === undefined || v === null) return { id, ok: false, text: id + ' has no value for this chart.' };
+    let t = JSON.stringify(compact(v)), cut = false; const max = maxChars || 6000; if (t.length > max) { t = t.slice(0, max) + '…[cut; ask for a narrower id]'; cut = true; }
+    return { id, ok: true, text: t, tokens: Math.ceil(t.length / 4), cut };
+  }
+  function catalogue() {
+    const lines = []; let g = '';
+    E.forEach(e => { if (e.g !== g) { g = e.g; lines.push('## ' + g); }
+      const idl = e.p ? e.id + '.{' + (e.p.length > 14 ? e.p.slice(0, 3).join('|') + '|…' : e.p.join('|')) + '}' : e.id;
+      lines.push('- ' + idl + ' — ' + e.d + (e.l && e.l.length ? ' [links: ' + e.l.join(', ') + ']' : '')); });
+    lines.push('## Raw', '- raw:<dotted.path> — any field of the chart by path, e.g. raw:planets.Moon.nakshatra or raw:dashaData.balanceYears');
+    return lines.join('\n');
+  }
+  const list = () => E.map(e => ({ id: e.id, g: e.g, t: e.t, d: e.d, l: e.l || [], p: e.p || null }));
+  const api = { E, list, get, resolve, catalogue, compact, setContext: (chart, profile) => { ctx.chart = chart || null; ctx.profile = profile || null; }, ctx, PL };
+  window.AIX = api;
+  return api;
+})();
+<\/script>
+<script>
+/* AI store + engine (js/159, globals AIS, AIE). Everything is stored in this device's localStorage ('vas_ai_v1'): providers (with their API keys), personas, skills, settings, chat.
+   Flow for one question (AIE.ask): ROUTE (small call: question + AIX.catalogue() -> JSON {need:[ids]}) -> FETCH (AIX.get for just those ids, plus pinned and skill variables, trimmed to a budget)
+   -> ANSWER (persona + uploaded skills followed exactly + the fetched DATA + a "do not invent" rule). Routing is plain JSON so it works on any model; turn it off for tiny local models.
+   Providers: kind 'openai' (any OpenAI-compatible server: OpenAI, OpenRouter, Groq, Ollama, LM Studio, vLLM ...), 'anthropic' (Messages API), 'gemini' (generateContent). Base URL, path,
+   auth style, extra headers and extra body are all editable. Calls go straight from the app to the URL the owner entered; nothing passes through any server of ours. */
+const AIS = (() => {
+  'use strict';
+  const KEY = 'vas_ai_v1';
+  const PRESETS = [
+    { id: 'openai', name: 'OpenAI', kind: 'openai', baseUrl: 'https://api.openai.com/v1', model: 'gpt-4o-mini', auth: 'bearer' },
+    { id: 'openrouter', name: 'OpenRouter', kind: 'openai', baseUrl: 'https://openrouter.ai/api/v1', model: 'openai/gpt-4o-mini', auth: 'bearer' },
+    { id: 'groq', name: 'Groq', kind: 'openai', baseUrl: 'https://api.groq.com/openai/v1', model: 'llama-3.3-70b-versatile', auth: 'bearer' },
+    { id: 'anthropic', name: 'Anthropic (Claude)', kind: 'anthropic', baseUrl: 'https://api.anthropic.com', model: '', auth: 'x-api-key' },
+    { id: 'gemini', name: 'Google Gemini', kind: 'gemini', baseUrl: 'https://generativelanguage.googleapis.com/v1beta', model: 'gemini-2.0-flash', auth: 'query' },
+    { id: 'ollama', name: 'Ollama (local)', kind: 'openai', baseUrl: 'http://localhost:11434/v1', model: 'llama3.1', auth: 'none' },
+    { id: 'lmstudio', name: 'LM Studio (local)', kind: 'openai', baseUrl: 'http://localhost:1234/v1', model: 'local-model', auth: 'none' },
+    { id: 'custom', name: 'Custom', kind: 'openai', baseUrl: '', model: '', auth: 'bearer' }
+  ];
+  const BUILTIN_PERSONAS = [
+    { id: 'classic', builtin: true, name: 'Classical Jyotishi', icon: '🪔', system: 'You are a thoughtful Vedic astrologer in the Parashari tradition. Explain chart facts in plain, kind language. Give tendencies, not certainties, and never frighten the person. Mention the relevant house, sign, nakshatra or dasha behind each point.' },
+    { id: 'friend', builtin: true, name: 'Friendly guide', icon: '🌿', system: 'You are a warm, encouraging guide who explains Vedic astrology in everyday words, with short sentences and simple examples. Avoid jargon unless you explain it in half a sentence.' },
+    { id: 'analyst', builtin: true, name: 'Strict analyst', icon: '📐', system: 'You are a precise analyst. Be concise and structured: findings first, then the chart facts that support each finding, in short bullet points. No filler, no reassurance, no predictions beyond what the data supports.' }
+  ];
+  const DEF = () => ({ v: 1, activeProvider: 'p1', providers: [{ id: 'p1', name: 'My provider', preset: 'custom', kind: 'openai', baseUrl: '', path: '', apiKey: '', model: '', auth: 'bearer', headers: '', extraBody: '' }], personas: [], activePersona: 'classic', skills: [], activeSkills: [],
+    settings: { router: true, maxVars: 6, varChars: 5000, temperature: 0.4, maxTokens: 1200, history: 6, pinned: ['chart.summary'], noticeOk: false }, chat: [] });
+  let st = null;
+  const merge = (a, b) => { const o = Object.assign({}, a); Object.keys(b || {}).forEach(k => { o[k] = (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]) && a[k] && typeof a[k] === 'object') ? merge(a[k], b[k]) : b[k]; }); return o; };
+  function load() { if (st) return st; let r = null; try { r = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { r = null; } st = merge(DEF(), r || {}); if (!st.providers.length) st.providers = DEF().providers; return st; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(load())); return true; } catch (e) { return false; } }
+  const uid = p => p + Math.random().toString(36).slice(2, 8);
+  const personas = () => BUILTIN_PERSONAS.concat(load().personas);
+  const persona = id => personas().find(p => p.id === (id || load().activePersona)) || BUILTIN_PERSONAS[0];
+  const provider = id => load().providers.find(p => p.id === (id || load().activeProvider)) || load().providers[0];
+  const skills = () => load().skills;
+
+  function parseSkill(text, filename) {
+    text = String(text || '').replace(/^﻿/, '');
+    const base = String(filename || 'Skill').replace(/\.[a-z0-9]+$/i, '');
+    let o = null;
+    if (/^\s*[{\[]/.test(text)) { try { const j = JSON.parse(text); const s = Array.isArray(j) ? j[0] : j; if (s && (s.instructions || s.prompt || s.system)) o = { name: s.name || base, description: s.description || '', instructions: String(s.instructions || s.prompt || s.system), variables: [].concat(s.variables || s.vars || []).map(String) }; } catch (e) { return { error: 'This file looks like JSON but could not be read: ' + e.message }; } }
+    if (!o) { let body = text, meta = {}; const m = text.match(/^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/); if (m) { m[1].split('\n').forEach(l => { const i = l.indexOf(':'); if (i > 0) meta[l.slice(0, i).trim().toLowerCase()] = l.slice(i + 1).trim(); }); body = m[2]; }
+      o = { name: meta.name || base, description: meta.description || '', instructions: body.trim(), variables: (meta.variables || meta.vars || '').split(/[,\s]+/).filter(Boolean) }; }
+    if (!o.instructions) return { error: 'The file has no instructions in it.' };
+    if (o.instructions.length > 30000) return { error: 'Instructions are longer than 30,000 characters.' };
+    o.variables = o.variables.filter(v => !AIX.resolve || AIX.resolve(v));
+    return { skill: Object.assign({ id: uid('s'), on: true }, o) };
+  }
+  function exportJSON(withKeys) { const s = JSON.parse(JSON.stringify(load())); if (!withKeys) s.providers.forEach(p => { p.apiKey = ''; }); s.chat = []; return JSON.stringify(s, null, 2); }
+  function importJSON(text) { let j; try { j = JSON.parse(text); } catch (e) { return { error: 'Not valid JSON.' }; } if (!j || typeof j !== 'object' || !Array.isArray(j.providers)) return { error: 'This is not an exported AI settings file.' };
+    const cur = load(), keep = {}; cur.providers.forEach(p => { keep[p.id] = p.apiKey; }); j.providers.forEach(p => { if (!p.apiKey && keep[p.id]) p.apiKey = keep[p.id]; });
+    st = merge(DEF(), j); st.chat = cur.chat; save(); return { ok: true }; }
+  const api = { PRESETS, BUILTIN_PERSONAS, load, save, uid, personas, persona, provider, skills, parseSkill, exportJSON, importJSON, reset() { st = DEF(); save(); return st; } };
+  window.AIS = api; return api;
+})();
+
+const AIE = (() => {
+  'use strict';
+  const tj = (s) => { if (!s || !String(s).trim()) return {}; try { const j = JSON.parse(s); return (j && typeof j === 'object') ? j : {}; } catch (e) { throw new Error('Extra headers / body must be valid JSON: ' + e.message); } };
+  const trimSlash = s => String(s || '').replace(/\/+$/, '');
+
+  async function callProvider(p, o) {
+    if (!p.baseUrl && p.kind !== 'anthropic') throw new Error('Add the provider\'s base URL first (Settings tab).');
+    if (!p.model && p.kind !== 'gemini') throw new Error('Add a model name first (Settings tab).');
+    const temp = o.temperature != null ? o.temperature : 0.4, max = o.maxTokens || 1200, extraH = tj(p.headers), extraB = tj(p.extraBody);
+    let url, headers = { 'Content-Type': 'application/json' }, body;
+    if (p.kind === 'anthropic') {
+      url = trimSlash(p.baseUrl || 'https://api.anthropic.com') + (p.path || '/v1/messages');
+      headers['anthropic-version'] = '2023-06-01'; headers['anthropic-dangerous-direct-browser-access'] = 'true'; if (p.apiKey) headers['x-api-key'] = p.apiKey;
+      body = { model: p.model, max_tokens: max, temperature: temp, system: o.system, messages: o.messages };
+    } else if (p.kind === 'gemini') {
+      const model = p.model || 'gemini-2.0-flash';
+      url = trimSlash(p.baseUrl || 'https://generativelanguage.googleapis.com/v1beta') + (p.path || '/models/' + model + ':generateContent'); if (p.apiKey) url += (url.includes('?') ? '&' : '?') + 'key=' + encodeURIComponent(p.apiKey);
+      body = { systemInstruction: { parts: [{ text: o.system }] }, contents: o.messages.map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })), generationConfig: { temperature: temp, maxOutputTokens: max } };
+    } else {
+      url = trimSlash(p.baseUrl) + (p.path || '/chat/completions');
+      if (p.auth === 'bearer' && p.apiKey) headers.Authorization = 'Bearer ' + p.apiKey; else if (p.auth === 'x-api-key' && p.apiKey) headers['x-api-key'] = p.apiKey; else if (p.auth === 'query' && p.apiKey) url += (url.includes('?') ? '&' : '?') + 'key=' + encodeURIComponent(p.apiKey);
+      body = { model: p.model, messages: [{ role: 'system', content: o.system }].concat(o.messages), temperature: temp, max_tokens: max };
+    }
+    Object.assign(headers, extraH); Object.assign(body, extraB);
+    const ac = new AbortController(), to = setTimeout(() => ac.abort(), o.timeout || 90000);
+    let res; try { res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body), signal: ac.signal }); }
+    catch (e) { clearTimeout(to); throw new Error(e.name === 'AbortError' ? 'The provider took too long to answer (90 s).' : 'Could not reach ' + url.replace(/\?.*$/, '') + '. Check the address, your connection and that the server allows browser (CORS) requests. (' + (e.message || e) + ')'); }
+    clearTimeout(to);
+    const raw = await res.text(); let j = null; try { j = JSON.parse(raw); } catch (e) { j = null; }
+    if (!res.ok) { const m = j && (j.error && (j.error.message || j.error) || j.message) || raw.slice(0, 300); throw new Error('Provider said ' + res.status + ': ' + (typeof m === 'string' ? m : JSON.stringify(m))); }
+    let text = '';
+    if (p.kind === 'anthropic') text = ((j && j.content) || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    else if (p.kind === 'gemini') text = (((j && j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || []).map(x => x.text || '')).join('');
+    else { const c = j && j.choices && j.choices[0]; text = c && ((c.message && (typeof c.message.content === 'string' ? c.message.content : (c.message.content || []).map(x => x.text || '').join(''))) || c.text) || ''; }
+    if (!text) throw new Error('The provider answered, but with no text. ' + (raw.slice(0, 200)));
+    return text.trim();
+  }
+  async function test(p) { const t0 = Date.now(), r = await callProvider(p, { system: 'Reply with the single word OK.', messages: [{ role: 'user', content: 'ping' }], maxTokens: 20, temperature: 0, timeout: 30000 }); return { ok: true, reply: r.slice(0, 60), ms: Date.now() - t0 }; }
+
+  const ROUTER_SYS = 'You are the data router of a Vedic astrology assistant. You will see the user\'s question and an INDEX of data variables that the app can supply. Choose the SMALLEST set of variable ids needed to answer well (at most {N}). Prefer specific ids (house.7, planet.Mars, varga.D9) over broad ones. Follow the [links] when the question needs related data. Parameter ids are written like varga.D9, house.7, planet.Mars, raw:planets.Moon.nakshatra. Reply with ONLY a JSON object: {"need":["id","id"],"note":"one short sentence"}. If no chart data is needed, reply {"need":[],"note":"general question"}.';
+  function parseRouter(text) { let ids = [], note = ''; const m = String(text).match(/\{[\s\S]*\}/); if (m) { try { const j = JSON.parse(m[0]); ids = [].concat(j.need || j.ids || []).map(String); note = String(j.note || ''); } catch (e) { ids = []; } }
+    if (!ids.length) { const re = /\b(?:raw:[\w.]+|[a-z]+(?:\.[A-Za-z0-9]+)+|profile|ascendant|yogas|karakas|shadbala|outer|wars)\b/g; (String(text).match(re) || []).forEach(x => ids.push(x)); }
+    return { ids, note }; }
+  function activeSkills() { const s = AIS.load(); return s.skills.filter(k => k.on && s.activeSkills.includes(k.id)); }
+
+  async function ask(question, opt) {
+    opt = opt || {}; const S = AIS.load(), cfg = S.settings, prov = AIS.provider(), per = AIS.persona(), sk = activeSkills(), stage = opt.onStage || (() => {});
+    if (!prov) throw new Error('Set up a provider first (Settings tab).');
+    const hist = (S.chat || []).slice(-cfg.history * 2).map(m => ({ role: m.role, content: m.text })), chartOk = !!(AIX.ctx.chart || window.__vgC);
+    let ids = [], note = '', routed = false;
+    const forced = []; (cfg.pinned || []).forEach(i => forced.push(i)); sk.forEach(k => (k.variables || []).forEach(i => forced.push(i)));
+    if (chartOk && cfg.router) {
+      stage('routing');
+      try { const r = await callProvider(prov, { system: ROUTER_SYS.replace('{N}', cfg.maxVars), messages: [{ role: 'user', content: 'INDEX:\n' + AIX.catalogue() + (sk.length ? '\n\nACTIVE SKILL NAMES: ' + sk.map(k => k.name).join(', ') : '') + '\n\nQUESTION: ' + question }], temperature: 0, maxTokens: 300 });
+        const pr = parseRouter(r); ids = pr.ids; note = pr.note; routed = true; } catch (e) { if (/CORS|reach|401|403|429/.test(String(e.message))) throw e; ids = []; }
+    }
+    if (chartOk && !routed) ids = ids.concat([]);
+    const seen = {}, want = []; ids.slice(0, cfg.maxVars).concat(forced).forEach(i => { const r = AIX.resolve(i); if (!r) return; const k = r.kind === 'raw' ? 'raw:' + r.path : r.e.id + '.' + (r.arg || ''); if (!seen[k]) { seen[k] = 1; want.push(i); } });
+    stage('fetching'); const used = [], blocks = [];
+    if (chartOk) want.forEach(i => { const g = AIX.get(i, cfg.varChars); used.push({ id: i, ok: g.ok, tokens: g.tokens || 0, cut: g.cut }); blocks.push('[' + i + ']\n' + g.text); });
+    const sys = [per.system + (per.language ? '\nAlways answer in ' + per.language + '.' : ''),
+      sk.length ? 'ACTIVE SKILLS. Follow these instructions exactly, in order, as written. They override your default style and format:\n' + sk.map(k => '### Skill: ' + k.name + '\n' + k.instructions).join('\n\n') : '',
+      'RULES: Use ONLY the DATA below for facts about this person\'s chart: never invent planetary positions, dates, yogas or periods. If you need something that is not in DATA, say exactly which variable id from the index would give it instead of guessing. Mention the id in square brackets, e.g. [planet.Mars], when you rely on it. Give tendencies, not certainties, and no medical, legal or financial instructions.',
+      chartOk ? 'DATA (fetched from the app for this question):\n' + (blocks.join('\n\n') || '(nothing fetched)') : 'No birth chart is loaded, so answer generally and say that a chart is needed for personal readings.'].filter(Boolean).join('\n\n');
+    stage('answering');
+    const answer = await callProvider(prov, { system: sys, messages: hist.concat([{ role: 'user', content: question }]), temperature: cfg.temperature, maxTokens: cfg.maxTokens });
+    return { answer, used, note, routed, persona: per.name, skills: sk.map(k => k.name), model: prov.model, sysTokens: Math.ceil(sys.length / 4) };
+  }
+  const api = { ask, test, callProvider, parseRouter, activeSkills };
+  window.AIE = api; return api;
+})();
+<\/script>
+<script>
+/* AI Astrologer panel (js/160, global AIUI, panel-ai). Tabs: Chat, Variables (browse the AIX index, preview a value, pin "always include"), Persona, Skills (upload instructions), Settings (providers, limits, privacy).
+   All logic is in AIS/AIE (js/159) and AIX (js/158). Class-scoped (aix-) only. Only transform/opacity animate; no backdrop-filter; 40px tap targets. */
+const AIUI = (() => {
+  'use strict';
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const S = { tab: 'chat', busy: false, stage: '', prev: null, pv: {}, edit: null, msg: '', sk: null, test: null, show: false, q: '' };
+  const $ = id => document.getElementById(id), D = () => AIS.load();
+  const TABS = [['chat', 'Chat'], ['vars', 'Variables'], ['persona', 'Persona'], ['skills', 'Skills'], ['set', 'Settings']];
+  const ex = ['Give me a short summary of my chart', 'Which dasha is running and what does it mean?', 'How does my 10th house look for career?', 'What is the hora right now, and is it good to start something?'];
+  const fmt = t => esc(t).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\[((?:raw:)?[A-Za-z0-9_.]+)\]/g, '<i class="aix-ref">$1</i>').split('\n').map(l => /^\s*[-*•]\s+/.test(l) ? '<div class="aix-li">' + l.replace(/^\s*[-*•]\s+/, '') + '</div>' : (l.trim() ? '<div>' + l + '</div>' : '<div class="aix-sp"></div>')).join('');
+  const ready = () => { const p = AIS.provider(); return !!(p && (p.baseUrl || p.kind !== 'openai') && (p.model || p.kind === 'gemini') && (p.apiKey || p.auth === 'none')); };
+
+  function head() { const p = AIS.provider(), per = AIS.persona();
+    return `<div class="aix-head"><div><h2>AI Astrologer</h2><p>Your model, your key, your rules. It reads only the chart variables each question needs.</p></div><button type="button" class="aix-chip ${ready() ? 'aix-ok' : 'aix-warn'}" data-tab="set">${ready() ? esc(p.name) + ' · ' + esc(p.model || 'default model') : 'Set up a provider'}</button></div>
+    <div class="aix-tabs" role="tablist">${TABS.map(t => `<button type="button" role="tab" data-tab="${t[0]}" class="${S.tab === t[0] ? 'aix-on' : ''}" aria-selected="${S.tab === t[0]}">${t[1]}</button>`).join('')}</div>`; }
+
+  /* ---------- Chat ---------- */
+  function chat() {
+    const s = D(), per = AIS.persona(), act = AIE.activeSkills().map(k => k.id), msgs = s.chat || [];
+    const notice = s.settings.noticeOk ? '' : `<div class="aix-note"><b>Before you chat.</b> Your question and the chart variables it needs are sent to the provider you set up, from this device, using your key. Nothing goes through our servers. Keys stay in this app's storage on this device only.<button type="button" class="aix-btn aix-gold" data-act="ok-notice">I understand</button></div>`;
+    const bar = `<div class="aix-bar"><label class="aix-sel"><span>${esc(per.icon || '✦')}</span><select data-f="activePersona" aria-label="Persona">${AIS.personas().map(p => `<option value="${p.id}" ${p.id === per.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></label>${s.skills.map(k => `<button type="button" class="aix-chip ${act.includes(k.id) ? 'aix-ok' : ''}" data-act="skill-use" data-id="${k.id}" title="Use this skill in the chat">${esc(k.name)}</button>`).join('')}${msgs.length ? '<button type="button" class="aix-chip" data-act="clear">Clear</button>' : ''}</div>`;
+    const list = msgs.length ? msgs.map((m, i) => m.role === 'user' ? `<div class="aix-m aix-u"><div class="aix-b">${fmt(m.text)}</div></div>` : `<div class="aix-m aix-a"><div class="aix-b ${m.err ? 'aix-err' : ''}">${fmt(m.text)}</div>${m.meta ? `<div class="aix-used"><span>${esc(m.meta.persona)}${m.meta.skills && m.meta.skills.length ? ' + ' + esc(m.meta.skills.join(', ')) : ''}</span>${(m.meta.used || []).map(u => `<i class="${u.ok ? '' : 'aix-bad'}" title="${u.ok ? '≈' + u.tokens + ' tokens' : 'no value'}">${esc(u.id)}</i>`).join('')}</div>` : ''}${!m.err ? `<div class="aix-acts"><button type="button" data-act="copy" data-i="${i}">Copy</button></div>` : ''}</div>`).join('')
+      : `<div class="aix-empty"><div class="aix-orb" aria-hidden="true">✦</div><p>Ask anything about this chart. The AI first looks at the index, then asks the app for only the variables it needs.</p><div class="aix-ex">${ex.map(x => `<button type="button" data-act="ex" data-q="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>`;
+    return `${notice}${bar}<div class="aix-list" id="aixList">${list}${S.busy ? `<div class="aix-m aix-a"><div class="aix-b aix-typing"><span class="aix-dots"><i></i><i></i><i></i></span> ${esc(S.stage)}</div></div>` : ''}</div>
+      <div class="aix-comp"><textarea id="aixIn" rows="1" placeholder="${ready() ? 'Ask about your chart…' : 'Set up a provider in Settings first'}" aria-label="Your question">${esc(S.q)}</textarea><button type="button" class="aix-send" data-act="send" aria-label="Send" ${S.busy ? 'disabled' : ''}>➤</button></div>`;
+  }
+  async function send(q) {
+    q = (q || '').trim(); if (!q || S.busy) return;
+    if (!ready()) { S.tab = 'set'; S.msg = 'Add your provider details first.'; return render(); }
+    const s = D(); s.chat = (s.chat || []).concat([{ role: 'user', text: q }]); S.q = ''; S.busy = true; S.stage = 'Choosing the data it needs…'; AIS.save(); render(); scrollEnd();
+    try {
+      const r = await AIE.ask(q, { onStage: g => { S.stage = g === 'routing' ? 'Choosing the data it needs…' : g === 'fetching' ? 'Reading those variables…' : 'Writing the answer…'; const t = $('aixList'); const el = t && t.querySelector('.aix-typing'); if (el) el.lastChild.textContent = ' ' + S.stage; } });
+      s.chat.push({ role: 'assistant', text: r.answer, meta: { used: r.used, persona: r.persona, skills: r.skills } });
+    } catch (e) { s.chat.push({ role: 'assistant', text: String(e.message || e), err: true }); }
+    s.chat = s.chat.slice(-60); S.busy = false; AIS.save(); render(); scrollEnd();
+  }
+  function scrollEnd() { const l = $('aixList'); if (l) l.lastElementChild && l.lastElementChild.scrollIntoView({ block: 'end', behavior: 'smooth' }); }
+
+  /* ---------- Variables ---------- */
+  function vars() {
+    const pins = D().settings.pinned || [], q = (S.vq || '').toLowerCase(), all = AIX.list().filter(e => !q || (e.id + ' ' + e.t + ' ' + e.d + ' ' + e.g).toLowerCase().includes(q));
+    let g = '', out = '';
+    all.forEach(e => { if (e.g !== g) { g = e.g; out += `<h4 class="aix-gh">${esc(g)}</h4>`; }
+      const sel = S.pv[e.id] || (e.p ? e.p[0] : ''), id = e.p ? e.id + '.' + sel : e.id, open = S.prev === id;
+      out += `<div class="aix-v"><div class="aix-vh"><div><code>${esc(e.p ? e.id + '.{…}' : e.id)}</code><b>${esc(e.t)}</b></div><button type="button" class="aix-pin ${pins.includes(id) ? 'aix-on' : ''}" data-act="pin" data-id="${esc(id)}" aria-label="Always include ${esc(id)}" title="Always include in every question">★</button></div><p>${esc(e.d)}</p>
+        ${e.p ? `<div class="aix-prm"><select data-pv="${e.id}" aria-label="Parameter">${e.p.map(x => `<option ${x === sel ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></div>` : ''}
+        <div class="aix-vf">${(e.l || []).map(l => `<span class="aix-ref">${esc(l)}</span>`).join('')}<button type="button" class="aix-btn" data-act="prev" data-id="${esc(id)}">${open ? 'Hide' : 'Preview'}</button></div>${open ? preview(id) : ''}</div>`; });
+    return `<div class="aix-vtop"><p class="aix-lead">This is the index the AI reads. Each question, it picks ids from here and the app fetches only those. Tap ★ to include a variable in every question.</p><input type="search" id="aixVq" placeholder="Search variables…" value="${esc(S.vq || '')}" aria-label="Search variables"><div class="aix-raw"><input id="aixRaw" placeholder="raw:planets.Moon.nakshatra" value="${esc(S.rawQ || '')}" aria-label="Raw path"><button type="button" class="aix-btn" data-act="prev-raw">Preview raw</button></div>${S.prev && /^raw:/.test(S.prev) ? preview(S.prev) : ''}</div>${out || '<p class="aix-lead">No variable matches.</p>'}`;
+  }
+  function preview(id) { const g = AIX.get(id, 3000); return `<pre class="aix-pre ${g.ok ? '' : 'aix-err'}">${esc(g.text)}</pre>${g.ok ? `<div class="aix-tok">≈ ${g.tokens} tokens</div>` : ''}`; }
+
+  /* ---------- Persona ---------- */
+  function persona() {
+    const s = D(), cur = AIS.persona().id, e = S.edit && S.edit.kind === 'persona' ? S.edit.v : null;
+    const row = p => `<div class="aix-card ${p.id === cur ? 'aix-sel-on' : ''}"><div class="aix-ch"><span class="aix-em">${esc(p.icon || '✦')}</span><div><b>${esc(p.name)}</b><small>${p.builtin ? 'Built in' : 'Custom'}${p.language ? ' · ' + esc(p.language) : ''}</small></div></div><p>${esc(p.system.slice(0, 160))}${p.system.length > 160 ? '…' : ''}</p><div class="aix-row"><button type="button" class="aix-btn ${p.id === cur ? 'aix-gold' : ''}" data-act="use-persona" data-id="${p.id}">${p.id === cur ? 'Active' : 'Use'}</button><button type="button" class="aix-btn" data-act="${p.builtin ? 'dup-persona' : 'edit-persona'}" data-id="${p.id}">${p.builtin ? 'Copy to edit' : 'Edit'}</button>${p.builtin ? '' : `<button type="button" class="aix-btn aix-danger" data-act="del-persona" data-id="${p.id}">Delete</button>`}</div></div>`;
+    const form = e ? `<div class="aix-form"><h4>${e.isNew ? 'New persona' : 'Edit persona'}</h4><label>Name<input data-pe="name" value="${esc(e.name)}"></label><label>Icon (one emoji)<input data-pe="icon" value="${esc(e.icon || '')}" maxlength="4"></label><label>Always answer in (optional)<input data-pe="language" value="${esc(e.language || '')}" placeholder="e.g. Hindi, Tamil, English"></label><label>Persona instructions<textarea data-pe="system" rows="7">${esc(e.system)}</textarea></label><div class="aix-row"><button type="button" class="aix-btn aix-gold" data-act="save-persona">Save</button><button type="button" class="aix-btn" data-act="cancel-edit">Cancel</button></div></div>` : '';
+    return `<p class="aix-lead">A persona is the voice and attitude the AI answers in. Switch any time; it also shows in the chat bar.</p>${AIS.personas().map(row).join('')}<button type="button" class="aix-btn aix-wide" data-act="new-persona">＋ New persona</button>${form}`;
+  }
+
+  /* ---------- Skills ---------- */
+  function skills() {
+    const s = D(), act = s.activeSkills;
+    const row = k => `<div class="aix-card ${act.includes(k.id) ? 'aix-sel-on' : ''}"><div class="aix-ch"><span class="aix-em">⚙</span><div><b>${esc(k.name)}</b><small>${esc(k.description || 'Uploaded skill')} · ${k.instructions.length} characters</small></div></div>${k.variables && k.variables.length ? `<div class="aix-vf">${k.variables.map(v => `<span class="aix-ref">${esc(v)}</span>`).join('')}</div>` : ''}${S.sk === k.id ? `<pre class="aix-pre">${esc(k.instructions)}</pre>` : ''}<div class="aix-row"><button type="button" class="aix-btn ${act.includes(k.id) ? 'aix-gold' : ''}" data-act="skill-use" data-id="${k.id}">${act.includes(k.id) ? 'In use' : 'Use in chat'}</button><button type="button" class="aix-btn" data-act="skill-view" data-id="${k.id}">${S.sk === k.id ? 'Hide' : 'View'}</button><button type="button" class="aix-btn" data-act="skill-exp" data-id="${k.id}">Export</button><button type="button" class="aix-btn aix-danger" data-act="skill-del" data-id="${k.id}">Delete</button></div></div>`;
+    return `<p class="aix-lead">A skill is a set of instructions you upload. When it is switched on, the AI follows it exactly, before its own style. Skills can also list variables they always need.</p>
+      ${S.msg ? `<div class="aix-note">${esc(S.msg)}</div>` : ''}<label class="aix-up"><input type="file" id="aixFile" accept=".md,.txt,.json,text/plain,application/json,text/markdown" multiple hidden><span>⬆ Upload skill file(s)</span><small>.md, .txt or .json</small></label>
+      ${s.skills.map(row).join('') || '<p class="aix-lead">No skills yet.</p>'}
+      <details class="aix-det"><summary>Or paste a skill</summary><label>Name<input id="aixSkN" placeholder="My skill"></label><label>Instructions<textarea id="aixSkT" rows="6" placeholder="Follow these steps exactly…"></textarea></label><button type="button" class="aix-btn aix-gold" data-act="skill-paste">Add skill</button></details>
+      <details class="aix-det"><summary>File format</summary><pre class="aix-pre">Markdown (.md / .txt):\n---\nname: Career reader\ndescription: 10th house focus\nvariables: house.10, dasha.current, planet.Saturn\n---\nYour instructions here, written exactly as you want them followed.\n\nJSON (.json):\n{"name":"Career reader","instructions":"…","variables":["house.10","dasha.current"]}</pre></details>`;
+  }
+
+  /* ---------- Settings ---------- */
+  function settings() {
+    const s = D(), p = AIS.provider(), c = s.settings, f = (k, l, t, ph) => `<label>${l}<input data-pf="${k}" type="${t || 'text'}" value="${esc(p[k] || '')}" ${ph ? `placeholder="${esc(ph)}"` : ''} autocomplete="off" autocapitalize="off" spellcheck="false"></label>`;
+    return `${S.msg ? `<div class="aix-note">${esc(S.msg)}</div>` : ''}<h4 class="aix-gh">Provider</h4>
+      <div class="aix-row"><label class="aix-grow">Saved provider<select data-f="activeProvider">${s.providers.map(x => `<option value="${x.id}" ${x.id === p.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></label><button type="button" class="aix-btn" data-act="add-prov">＋ New</button>${s.providers.length > 1 ? '<button type="button" class="aix-btn aix-danger" data-act="del-prov">Delete</button>' : ''}</div>
+      <label>Start from a preset<select data-f="preset"><option value="">Choose to fill the fields…</option>${AIS.PRESETS.map(x => `<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></label>
+      ${f('name', 'Name')}<label>Type<select data-pf="kind">${[['openai', 'OpenAI-compatible (most servers)'], ['anthropic', 'Anthropic Messages'], ['gemini', 'Google Gemini']].map(x => `<option value="${x[0]}" ${p.kind === x[0] ? 'selected' : ''}>${x[1]}</option>`).join('')}</select></label>
+      ${f('baseUrl', 'Base URL', 'url', 'https://api.example.com/v1')}${f('path', 'Path override (optional)', 'text', '/chat/completions')}
+      <label>API key <small>stored only on this device</small><span class="aix-key"><input data-pf="apiKey" type="${S.show ? 'text' : 'password'}" value="${esc(p.apiKey || '')}" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="aix-btn" data-act="show-key">${S.show ? 'Hide' : 'Show'}</button></span></label>
+      ${f('model', 'Model name', 'text', 'e.g. gpt-4o-mini, claude-…, gemini-2.0-flash, llama3.1')}
+      <label>Auth style<select data-pf="auth">${[['bearer', 'Authorization: Bearer key'], ['x-api-key', 'x-api-key header'], ['query', '?key= in the URL'], ['none', 'No key (local server)']].map(x => `<option value="${x[0]}" ${p.auth === x[0] ? 'selected' : ''}>${x[1]}</option>`).join('')}</select></label>
+      <label>Extra headers (JSON, optional)<textarea data-pf="headers" rows="2" placeholder='{"HTTP-Referer":"https://…"}'>${esc(p.headers || '')}</textarea></label>
+      <label>Extra body fields (JSON, optional)<textarea data-pf="extraBody" rows="2" placeholder='{"top_p":0.9}'>${esc(p.extraBody || '')}</textarea></label>
+      <div class="aix-row"><button type="button" class="aix-btn aix-gold" data-act="test" ${S.test === 'busy' ? 'disabled' : ''}>${S.test === 'busy' ? 'Testing…' : 'Test connection'}</button></div>${S.test && S.test !== 'busy' ? `<div class="aix-note ${S.test.ok ? 'aix-good' : 'aix-bad'}">${S.test.ok ? '✓ Connected in ' + S.test.ms + ' ms. Reply: ' + esc(S.test.reply) : esc(S.test.err)}</div>` : ''}
+      <h4 class="aix-gh">How it answers</h4>
+      <label class="aix-tg"><input type="checkbox" data-sf="router" ${c.router ? 'checked' : ''}><span>Smart data routing <small>the AI picks only the variables it needs (recommended). Turn off for very small models: pinned variables are used instead.</small></span></label>
+      ${[['maxVars', 'Max variables per question', 1, 12, 1], ['varChars', 'Max characters per variable', 1000, 20000, 500], ['temperature', 'Creativity (temperature)', 0, 1.5, 0.1], ['maxTokens', 'Max answer length (tokens)', 200, 8000, 100], ['history', 'Earlier turns remembered', 0, 20, 1]].map(r => `<label>${r[1]}: <b id="aixv-${r[0]}">${c[r[0]]}</b><input type="range" data-sf="${r[0]}" min="${r[2]}" max="${r[3]}" step="${r[4]}" value="${c[r[0]]}"></label>`).join('')}
+      <p class="aix-lead">Always included: ${(c.pinned || []).map(x => `<span class="aix-ref">${esc(x)}</span>`).join('') || 'nothing'} (change with ★ in Variables).</p>
+      <h4 class="aix-gh">Backup and privacy</h4>
+      <div class="aix-row"><button type="button" class="aix-btn" data-act="exp">Export settings</button><button type="button" class="aix-btn" data-act="exp-keys">Export with keys</button><label class="aix-btn aix-filebtn">Import<input type="file" id="aixImp" accept=".json,application/json" hidden></label></div>
+      <p class="aix-lead">Exports leave API keys out unless you choose "with keys". Chat history is never exported. Questions and the variables they need go only to the provider above.</p>
+      <div class="aix-row"><button type="button" class="aix-btn aix-danger" data-act="reset">Erase all AI settings and keys</button></div>`;
+  }
+
+  function pane() { return S.tab === 'vars' ? vars() : S.tab === 'persona' ? persona() : S.tab === 'skills' ? skills() : S.tab === 'set' ? settings() : chat(); }
+  function render() { const r = $('aixRoot'); if (!r) return; const kp = document.activeElement && document.activeElement.id, ss = r.querySelector('.aix-main'), y = ss ? ss.scrollTop : 0; r.innerHTML = head() + '<div class="aix-main">' + pane() + '</div>'; const m = r.querySelector('.aix-main'); if (m && S.tab !== 'chat') m.scrollTop = y; if (kp === 'aixIn') { const t = $('aixIn'); if (t) { t.focus(); t.setSelectionRange(t.value.length, t.value.length); } } }
+  function html(chart, profile) { AIX.setContext(chart, profile); return '<div class="aix" id="aixRoot">' + head() + '<div class="aix-main">' + pane() + '</div></div>'; }
+
+  /* ---------- events ---------- */
+  const inP = e => e.target && e.target.closest && e.target.closest('#panel-ai');
+  const dl = (name, text) => { const b = new Blob([text], { type: 'application/json' }), a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); };
+  document.addEventListener('click', e => {
+    if (!inP(e)) return; const t = e.target.closest('[data-tab],[data-act]'); if (!t) return; const s = D(), id = t.getAttribute('data-id');
+    if (t.hasAttribute('data-tab')) { S.tab = t.getAttribute('data-tab'); S.msg = ''; return render(); }
+    const a = t.getAttribute('data-act');
+    if (a === 'send') return send(($('aixIn') || {}).value);
+    if (a === 'ex') return send(t.getAttribute('data-q'));
+    if (a === 'ok-notice') { s.settings.noticeOk = true; AIS.save(); return render(); }
+    if (a === 'clear') { s.chat = []; AIS.save(); return render(); }
+    if (a === 'copy') { const m = (s.chat || [])[+t.getAttribute('data-i')]; if (m && navigator.clipboard) navigator.clipboard.writeText(m.text).then(() => { t.textContent = 'Copied'; setTimeout(() => { t.textContent = 'Copy'; }, 1200); }); return; }
+    if (a === 'skill-use') { const i = s.activeSkills.indexOf(id); if (i >= 0) s.activeSkills.splice(i, 1); else s.activeSkills.push(id); AIS.save(); return render(); }
+    if (a === 'skill-view') { S.sk = S.sk === id ? null : id; return render(); }
+    if (a === 'skill-del') { s.skills = s.skills.filter(k => k.id !== id); s.activeSkills = s.activeSkills.filter(x => x !== id); AIS.save(); return render(); }
+    if (a === 'skill-exp') { const k = s.skills.find(x => x.id === id); if (k) dl((k.name || 'skill').replace(/[^\w-]+/g, '_') + '.json', JSON.stringify({ name: k.name, description: k.description, instructions: k.instructions, variables: k.variables }, null, 2)); return; }
+    if (a === 'skill-paste') { const n = ($('aixSkN') || {}).value || 'Pasted skill', r = AIS.parseSkill(($('aixSkT') || {}).value, n); if (r.error) { S.msg = r.error; return render(); } r.skill.name = n; s.skills.push(r.skill); s.activeSkills.push(r.skill.id); S.msg = 'Added “' + n + '” and switched it on.'; AIS.save(); return render(); }
+    if (a === 'pin') { const p = s.settings.pinned, i = p.indexOf(id); if (i >= 0) p.splice(i, 1); else p.push(id); AIS.save(); return render(); }
+    if (a === 'prev') { S.prev = S.prev === id ? null : id; return render(); }
+    if (a === 'prev-raw') { const v = ($('aixRaw') || {}).value || ''; S.rawQ = v; S.prev = /^raw:/i.test(v) ? v : 'raw:' + v; return render(); }
+    if (a === 'use-persona') { s.activePersona = id; AIS.save(); return render(); }
+    if (a === 'dup-persona') { const b = AIS.persona(id); S.edit = { kind: 'persona', v: { id: AIS.uid('p'), name: b.name + ' (mine)', icon: b.icon, system: b.system, language: '', isNew: true } }; return render(); }
+    if (a === 'new-persona') { S.edit = { kind: 'persona', v: { id: AIS.uid('p'), name: '', icon: '🔮', system: '', language: '', isNew: true } }; return render(); }
+    if (a === 'edit-persona') { const p = s.personas.find(x => x.id === id); S.edit = { kind: 'persona', v: Object.assign({}, p) }; return render(); }
+    if (a === 'del-persona') { s.personas = s.personas.filter(x => x.id !== id); if (s.activePersona === id) s.activePersona = 'classic'; AIS.save(); return render(); }
+    if (a === 'cancel-edit') { S.edit = null; return render(); }
+    if (a === 'save-persona') { const v = S.edit && S.edit.v; if (!v || !v.name.trim() || !v.system.trim()) { S.msg = 'A persona needs a name and instructions.'; return render(); } const o = { id: v.id, name: v.name.trim(), icon: v.icon || '✦', system: v.system.trim(), language: (v.language || '').trim() }, i = s.personas.findIndex(x => x.id === v.id); if (i >= 0) s.personas[i] = o; else s.personas.push(o); s.activePersona = o.id; S.edit = null; S.msg = ''; AIS.save(); return render(); }
+    if (a === 'show-key') { S.show = !S.show; return render(); }
+    if (a === 'add-prov') { const p = { id: AIS.uid('p'), name: 'Provider ' + (s.providers.length + 1), preset: 'custom', kind: 'openai', baseUrl: '', path: '', apiKey: '', model: '', auth: 'bearer', headers: '', extraBody: '' }; s.providers.push(p); s.activeProvider = p.id; S.test = null; AIS.save(); return render(); }
+    if (a === 'del-prov') { s.providers = s.providers.filter(x => x.id !== s.activeProvider); s.activeProvider = s.providers[0].id; S.test = null; AIS.save(); return render(); }
+    if (a === 'test') { S.test = 'busy'; render(); AIE.test(AIS.provider()).then(r => { S.test = r; render(); }).catch(er => { S.test = { ok: false, err: String(er.message || er) }; render(); }); return; }
+    if (a === 'exp') return dl('vedic-ai-settings.json', AIS.exportJSON(false));
+    if (a === 'exp-keys') { if (window.confirm('This file will contain your API keys. Keep it private. Export anyway?')) dl('vedic-ai-settings-with-keys.json', AIS.exportJSON(true)); return; }
+    if (a === 'reset') { if (window.confirm('Erase all AI providers, keys, personas, skills and chat on this device?')) { AIS.reset(); S.test = null; S.msg = 'All AI settings were erased.'; render(); } return; }
+  });
+  document.addEventListener('change', e => {
+    if (!inP(e)) return; const t = e.target, s = D();
+    if (t.id === 'aixFile') { const files = [...t.files]; let n = 0, bad = []; Promise.all(files.map(f => f.text().then(x => { const r = AIS.parseSkill(x, f.name); if (r.error) bad.push(f.name + ': ' + r.error); else { s.skills.push(r.skill); s.activeSkills.push(r.skill.id); n++; } }))).then(() => { S.msg = (n ? 'Added ' + n + ' skill' + (n > 1 ? 's' : '') + ' and switched on. ' : '') + bad.join(' '); AIS.save(); render(); }); return; }
+    if (t.id === 'aixImp') { const f = t.files[0]; if (f) f.text().then(x => { const r = AIS.importJSON(x); S.msg = r.error || 'Settings imported.'; render(); }); return; }
+    if (t.hasAttribute('data-pv')) { S.pv[t.getAttribute('data-pv')] = t.value; S.prev = null; return render(); }
+    if (t.hasAttribute('data-pf')) { const p = AIS.provider(), k = t.getAttribute('data-pf'); p[k] = t.value.trim(); if (k === 'kind') { p.preset = 'custom'; } AIS.save(); S.test = null; if (k === 'kind' || k === 'auth') render(); return; }
+    if (t.hasAttribute('data-sf')) { const k = t.getAttribute('data-sf'); s.settings[k] = t.type === 'checkbox' ? t.checked : +t.value; AIS.save(); const b = $('aixv-' + k); if (b) b.textContent = s.settings[k]; return; }
+    if (t.hasAttribute('data-f')) { const k = t.getAttribute('data-f'); if (k === 'preset') { const pr = AIS.PRESETS.find(x => x.id === t.value); if (pr) { const p = AIS.provider(); Object.assign(p, { kind: pr.kind, baseUrl: pr.baseUrl, model: pr.model || p.model, auth: pr.auth, preset: pr.id, path: '' }); if (!p.name || /^(My provider|Provider \d+)$/.test(p.name)) p.name = pr.name; AIS.save(); S.test = null; render(); } return; } s[k] = t.value; AIS.save(); S.test = null; return render(); }
+  });
+  document.addEventListener('input', e => {
+    if (!inP(e)) return; const t = e.target;
+    if (t.id === 'aixIn') { S.q = t.value; t.style.height = 'auto'; t.style.height = Math.min(140, t.scrollHeight) + 'px'; return; }
+    if (t.id === 'aixVq') { S.vq = t.value; const pos = t.selectionStart; render(); const n = $('aixVq'); if (n) { n.focus(); n.setSelectionRange(pos, pos); } return; }
+    if (t.hasAttribute('data-pe') && S.edit) { S.edit.v[t.getAttribute('data-pe')] = t.value; return; }
+    if (t.type === 'range' && t.hasAttribute('data-sf')) { const b = $('aixv-' + t.getAttribute('data-sf')); if (b) b.textContent = t.value; }
+  });
+  document.addEventListener('keydown', e => { if (e.target && e.target.id === 'aixIn' && e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(e.target.value); } });
+  window.buildAiPanel = function (chart, profile) { return html(chart, profile); };
+  if (typeof registerLatePanel === 'function') registerLatePanel('panel-ai', window.buildAiPanel);
+  const api = { html, render, S, send };
+  window.AIUI = api; return api;
 })();
 <\/script>
 <script>
