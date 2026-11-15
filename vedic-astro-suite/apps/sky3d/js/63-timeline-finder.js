@@ -1,5 +1,5 @@
 /* Timeline finder (js/63, global TLF). Tools menu > Timeline finder: choose an age range (counted from today) or birth years, add conditions (planets in a sign, in a nakshatra, planets meeting,
-   retrograde) and the app lists every period in that range when ALL (or ANY) of the conditions were true. Tap a result to jump the 3D sky there.
+   retrograde) and the app lists every period in that range when ALL (or ANY) of the conditions were true. Tap a result to see every planet that day, then open that date in the 3D sky.
    Engine: siderealLongitude / isRetrograde (js/01) scanned with a step set by the fastest planet used, edges bisected to about a second; the app's own engine matches Drik Panchang
    ingress dates to the hour (Saturn into Capricorn 24 Jan 2020, Jupiter into Gemini 14 May 2025). TLF.test / TLF.search are pure (no DOM) so they can be tested. See docs/TIMELINE_FINDER_PLAN.md. */
 const TLF = (() => {
@@ -41,7 +41,7 @@ const TLF = (() => {
 
   /* ------------------------------ UI ------------------------------ */
   const KEY = 'sky3d_tlf';
-  const S = { mode: 'age', a0: 30, a1: 40, y0: 1986, y1: 1996, combine: 'all', conds: [{ t: 'sign', planets: ['Sun'], v: 6, mode: 'all' }, { t: 'sign', planets: ['Moon'], v: 11, mode: 'all' }], res: null, busy: false, prog: 0, msg: '', cancel: false };
+  const S = { mode: 'age', a0: 30, a1: 40, y0: 1986, y1: 1996, combine: 'all', conds: [{ t: 'sign', planets: ['Sun'], v: 6, mode: 'all' }, { t: 'sign', planets: ['Moon'], v: 11, mode: 'all' }], res: null, open: -1, mo: 'mid', busy: false, prog: 0, msg: '', cancel: false };
   try { const j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (j && Array.isArray(j.conds) && j.conds.length) Object.assign(S, { mode: j.mode, a0: j.a0, a1: j.a1, y0: j.y0, y1: j.y1, combine: j.combine, conds: j.conds }); } catch (e) { /* default */ }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify({ mode: S.mode, a0: S.a0, a1: S.a1, y0: S.y0, y1: S.y1, combine: S.combine, conds: S.conds })); } catch (e) { /* ignore */ } };
   const $ = id => document.getElementById(id), esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -67,8 +67,16 @@ const TLF = (() => {
     if (r.error) return `<div class="tlf-note bad">${esc(r.error)}</div>`;
     const R = range(), w = r.windows;
     if (!w.length) return `<div class="tlf-note">No period between ${fd(R.from)} and ${fd(R.to)} matches ${S.conds.length > 1 && S.combine === 'all' ? 'all of these together' : 'this'}. Try "Any condition", a wider age range, or fewer conditions.</div>`;
-    return `<div class="tlf-sum"><b>${w.length}${r.capped ? '+' : ''} period${w.length === 1 ? '' : 's'}</b> between ${fd(R.from)} and ${fd(R.to)}${r.capped ? ' (first ' + w.length + ' shown)' : ''}. Tap one to see that sky.</div>` + w.map((x, k) => { const sh = x.to - x.from < 3; const age = (nowJD() - x.mid) / YR;
-      return `<button type="button" class="tlf-r" data-a="go" data-k="${k}"><div class="tlf-r1"><b>${fd(x.from)}${sh ? ' ' + ft(x.from) : ''} → ${fd(x.to)}${sh ? ' ' + ft(x.to) : ''}</b><span>${dur(x.to - x.from)}</span></div><div class="tlf-r2">Age then: ${age.toFixed(1)}${S.conds.length > 1 && S.combine === 'any' && x.which.length ? ' · matched ' + x.which.map(i => '#' + (i + 1)).join(' + ') : ''}</div><div class="tlf-r3">${x.pos.map(p => `<i><span>${gl(p.n)}</span>${p.d}° ${SIGNS[p.s].name.slice(0, 3)}</i>`).join('')}</div></button>`; }).join('');
+    return `<div class="tlf-sum"><b>${w.length}${r.capped ? '+' : ''} period${w.length === 1 ? '' : 's'}</b> between ${fd(R.from)} and ${fd(R.to)}${r.capped ? ' (first ' + w.length + ' shown)' : ''}. Tap one to see every planet on that day.</div>` + w.map((x, k) => { const sh = x.to - x.from < 3; const age = (nowJD() - x.mid) / YR;
+      const op = S.open === k;
+      return `<div class="tlf-r${op ? ' open' : ''}"><button type="button" class="tlf-rh" data-a="open" data-k="${k}" aria-expanded="${op}"><div class="tlf-r1"><b>${fd(x.from)}${sh ? ' ' + ft(x.from) : ''} → ${fd(x.to)}${sh ? ' ' + ft(x.to) : ''}</b><span>${dur(x.to - x.from)}</span></div><div class="tlf-r2">Age then: ${age.toFixed(1)}${S.conds.length > 1 && S.combine === 'any' && x.which.length ? ' · matched ' + x.which.map(i => '#' + (i + 1)).join(' + ') : ''}</div><div class="tlf-r3">${x.pos.map(p => `<i><span>${gl(p.n)}</span>${p.d}° ${SIGNS[p.s].name.slice(0, 3)}</i>`).join('')}</div><div class="tlf-more">${op ? 'Hide the full sky ▴' : 'Show every planet on that day ▾'}</div></button>${op ? dayHtml(x, k) : ''}</div>`; }).join('');
+  }
+  function momentJD(x) { return S.mo === 'start' ? x.from : S.mo === 'end' ? x.to : x.mid; }
+  function dayHtml(x, k) {
+    const jd = momentJD(x), rows = PCH.map(n => { const lon = siderealLongitude(n, jd), si = Math.floor(lon / 30), dg = lon - si * 30, ni = getNakshatraIndex(lon), pada = Math.floor((lon % (360 / 27)) / (360 / 108)) + 1, rx = n !== 'Sun' && n !== 'Moon' && isRetrograde(n, jd);
+      return `<div class="tlf-pr"><span class="tlf-pg" style="--c:${PLANET_COLORS[n]}">${gl(n)}</span><b>${n}${rx ? ' <em>℞</em>' : ''}</b><span>${Math.floor(dg)}°${String(Math.floor((dg % 1) * 60)).padStart(2, '0')}′ ${sy(si)} ${SIGNS[si].name}</span><small>${NAKSHATRAS[ni]} ${pada}</small></div>`; }).join('');
+    const seg = [['start', 'Start'], ['mid', 'Middle'], ['end', 'End']].map(m => `<button type="button" class="${S.mo === m[0] ? 'on' : ''}" data-a="mo" data-v="${m[0]}" data-k="${k}">${m[1]}</button>`).join('');
+    return `<div class="tlf-day"><div class="tlf-dh"><b>Sky on ${fd(jd)} ${ft(jd)}</b><div class="tlf-seg sm" role="group" aria-label="Moment in this period">${seg}</div></div>${rows}<button type="button" class="tlf-go2" data-a="go" data-k="${k}">Open this date in the 3D Sky</button></div>`;
   }
   function html() {
     const R = range(), y0 = jdToDate(R.from).getFullYear(), y1 = jdToDate(R.to).getFullYear();
@@ -87,7 +95,7 @@ const TLF = (() => {
     const R = range(), list = S.conds; S.res = null; S.msg = ''; save();
     if (list.some(c => !valid(c))) { S.res = { error: 'Choose at least one planet in every condition.' }; return render(); }
     S.busy = true; S.prog = 0; S.cancel = false; render();
-    const r = await search(list, S.combine, R.from, R.to, { onProgress: p => { S.prog = p; const el = document.querySelector('.tlf-prog i'); if (el) el.style.width = Math.round(p * 100) + '%'; }, cancel: () => S.cancel });
+    S.open = -1; const r = await search(list, S.combine, R.from, R.to, { onProgress: p => { S.prog = p; const el = document.querySelector('.tlf-prog i'); if (el) el.style.width = Math.round(p * 100) + '%'; }, cancel: () => S.cancel });
     S.busy = false; S.res = r.cancelled ? { windows: r.windows, capped: false } : r; render();
     const t = $('tlfRes'); if (t && t.scrollIntoView) t.scrollIntoView({ block: 'start', behavior: 'smooth' });
   }
@@ -105,7 +113,9 @@ const TLF = (() => {
     if (a === 'rm') { if (S.conds.length > 1) S.conds.splice(i, 1); save(); return render(); }
     if (a === 'add') { S.conds.push({ t: 'sign', planets: [], v: 0, mode: 'all' }); save(); return render(); }
     if (a === 'ex') { S.conds = [{ t: 'sign', planets: ['Sun'], v: 6, mode: 'all' }, { t: 'sign', planets: ['Moon'], v: 11, mode: 'all' }]; S.combine = 'all'; S.res = null; save(); return render(); }
-    if (a === 'go') { const w = S.res && S.res.windows && S.res.windows[+t.dataset.k]; if (w) { setOpen(false); if (typeof jumpToJD === 'function') jumpToJD(w.mid); } }
+    if (a === 'open') { const k = +t.dataset.k; S.open = S.open === k ? -1 : k; render(); const el = document.querySelector('.tlf-r.open'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest' }); return; }
+    if (a === 'mo') { S.mo = t.dataset.v; return render(); }
+    if (a === 'go') { const w = S.res && S.res.windows && S.res.windows[+t.dataset.k]; if (w) { const jd = momentJD(w); setOpen(false); if (typeof jumpToJD === 'function') jumpToJD(jd); } }
   }
   function onChange(e) {
     const t = e.target; if (!t.dataset || !t.dataset.a) return; const a = t.dataset.a, i = +t.dataset.i, c = S.conds[i];

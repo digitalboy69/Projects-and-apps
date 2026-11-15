@@ -207,7 +207,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-15 - 2310 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-15 - 2312 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -484,7 +484,7 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 99 files, 9269 lines, 596 KB
+**sky3d** - 99 files, 9292 lines, 599 KB
 ```
 index.html                                         547 lines   35 KB
 js/01-astro-engine.js                              163 lines   10 KB
@@ -549,7 +549,7 @@ js/59-wheel-frame.js                                54 lines    4 KB
 js/60-wheel-beauty.js                               77 lines    6 KB
 js/61-navamsha-sky.js                               52 lines    3 KB
 js/62-sky-alerts.js                                126 lines   12 KB
-js/63-timeline-finder.js                           129 lines   17 KB
+js/63-timeline-finder.js                           139 lines   19 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -584,7 +584,7 @@ css/30-profile-from-moment.css                      22 lines    2 KB
 css/31-ui-refresh.css                               65 lines    5 KB
 css/32-tools-menu.css                               21 lines    1 KB
 css/33-sky-alerts.css                               33 lines    3 KB
-css/34-timeline-finder.css                          44 lines    6 KB
+css/34-timeline-finder.css                          57 lines    7 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
