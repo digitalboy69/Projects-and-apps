@@ -41,6 +41,7 @@
 <link rel="stylesheet" href="css/31-ui-refresh.css">
 <link rel="stylesheet" href="css/32-tools-menu.css">
 <link rel="stylesheet" href="css/33-sky-alerts.css">
+<link rel="stylesheet" href="css/34-timeline-finder.css">
 <link rel="stylesheet" href="../../shared/meta.css">
 <script src="../../shared/icons.js"></script>
 <link rel="stylesheet" href="../../shared/liquid-glass.css">
@@ -129,6 +130,7 @@
         <button class="vp-btn" id="resetViewBtn" type="button" title="Reset view" aria-label="Reset view"><span class="tm-ic" aria-hidden="true">⟲</span></button>
         <div class="tm-sep" role="separator"></div>
         <button class="vp-btn" id="navBtn" type="button" title="Show the sky in Navamsha (D9)" aria-label="Navamsha sky" aria-pressed="false"><span class="tm-ic" aria-hidden="true">९</span><span class="tm-st" aria-hidden="true"></span></button>
+        <button class="vp-btn" id="tlBtn" type="button" title="Timeline finder: when was this sky?" aria-label="Timeline finder" aria-haspopup="dialog"><span class="tm-ic" aria-hidden="true">⌛</span></button>
       </div>
     </div>
     <div id="planetLabels"></div>
@@ -470,6 +472,12 @@
     <div class="ska-body" id="skaBody"></div>
   </div>
 </div>
+<div class="tlf-sheet" id="tlfSheet" role="dialog" aria-modal="true" aria-label="Timeline finder" hidden>
+  <div class="tlf-card">
+    <header><div><b>Timeline finder</b><small>Work backwards from the sky to the dates</small></div><button type="button" id="tlfClose" aria-label="Close">✕</button></header>
+    <div class="tlf-body" id="tlfBody"></div>
+  </div>
+</div>
 <script src="js/01-astro-engine.js"></script>
 <script src="js/02-planetary-dignity.js"></script>
 <script src="js/03-ascendant-houses-drishti.js"></script>
@@ -513,6 +521,7 @@
 <script src="js/41-quick-planet-picker.js"></script>
 <script src="js/61-navamsha-sky.js"></script>
 <script src="js/62-sky-alerts.js"></script>
+<script src="js/63-timeline-finder.js"></script>
 <script src="js/42-init.js"></script>
 <script src="js/43-degree-finder-returns.js"></script>
 <script src="js/44-retrograde-planner.js"></script>

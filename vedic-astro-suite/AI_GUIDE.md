@@ -207,11 +207,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-15 - 2295 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-15 - 2310 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 254 files, 36803 lines, 3125 KB
+**birth-chart** - 254 files, 36804 lines, 3126 KB
 ```
 index.html                                         679 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -275,7 +275,7 @@ js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
 js/147-tools-hub.js                                117 lines   12 KB
 js/148-export-builder.js                           260 lines   25 KB
-js/149-feature-guide-data.js                       325 lines   40 KB
+js/149-feature-guide-data.js                       326 lines   41 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
 js/151-bhavat-masterclass-data.js                   99 lines   13 KB
@@ -484,9 +484,9 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 97 files, 9087 lines, 572 KB
+**sky3d** - 99 files, 9269 lines, 596 KB
 ```
-index.html                                         538 lines   34 KB
+index.html                                         547 lines   35 KB
 js/01-astro-engine.js                              163 lines   10 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -549,6 +549,7 @@ js/59-wheel-frame.js                                54 lines    4 KB
 js/60-wheel-beauty.js                               77 lines    6 KB
 js/61-navamsha-sky.js                               52 lines    3 KB
 js/62-sky-alerts.js                                126 lines   12 KB
+js/63-timeline-finder.js                           129 lines   17 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -583,6 +584,7 @@ css/30-profile-from-moment.css                      22 lines    2 KB
 css/31-ui-refresh.css                               65 lines    5 KB
 css/32-tools-menu.css                               21 lines    1 KB
 css/33-sky-alerts.css                               33 lines    3 KB
+css/34-timeline-finder.css                          44 lines    6 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -705,3 +707,5 @@ shared/quick-menu.js                               190 lines   17 KB
 - AI Astrologer (panel-ai): ONE index of variables `AIX` (apps/birth-chart/js/158-ai-index.js; add a new variable = add an entry `{id,g,t,d,l,p,f}`; `raw:<path>` already reaches any chart field), `AIS` store + `AIE` engine (js/159: providers OpenAI-compatible/Anthropic/Gemini/custom, route → fetch → answer, skills followed exactly, personas), panel js/160 + css/86. Keys live only in localStorage `vas_ai_v1`. APK: CapacitorHttp is enabled so provider calls skip CORS. Plan: docs/AI_SYSTEM_PLAN.md. Test: tests/ai_system_browser_test.py.
 
 - AI provider paste-to-fill: `AIS.parseRequest(text)` (apps/birth-chart/js/159) reads a cURL command or JS/Python snippet into provider fields; UI box `#aixPaste` in the Settings tab (js/160 `applyPaste`). Placeholder keys ($ENV, <KEY>) are never stored. Test: tests/ai_paste_test.js.
+
+- Timeline finder (3D Sky Tools menu, hourglass): `TLF` in apps/sky3d/js/63-timeline-finder.js searches a date span for sky conditions (sign, nakshatra, planet-planet aspect, retrograde) combined ALL/ANY; step scan plus 18-step bisect, chunked async. Sheet CSS css/34-timeline-finder.css. Plan: docs/TIMELINE_FINDER_PLAN.md. Test: tests/sky3d_timeline_finder_browser_test.py.

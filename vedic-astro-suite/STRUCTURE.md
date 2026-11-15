@@ -334,10 +334,12 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/css/31-ui-refresh.css` — phone interface refresh loaded last: slim timeline grid, compact top card, hidden logo mark, compact tab strip, All-tabs grid (`ui-` prefix)
 - `apps/sky3d/css/32-tools-menu.css` — top-right Eye + Tools icon, Tools drop-down menu and the D9 Navamsha badge (`tools-menu`, `tm-`, `hud-nav`)
 - `apps/sky3d/css/33-sky-alerts.css` — Sky alerts pill and bottom sheet (`hud-ska`, `ska-`)
+- `apps/sky3d/css/34-timeline-finder.css` — Timeline finder sheet (`tlf-` prefix)
 - `apps/sky3d/js/59-wheel-frame.js` — wheel framing on phones: finds the free band between the cards and the timeline bar, shifts the picture into it (camera view offset) and re-fits the zoom; `wheelBand()`, `wheelFrameUpdate()`
 - `apps/sky3d/js/60-wheel-beauty.js` — Zodiac Wheel beauty pass: soft Sun glow (replaces hard shells), degree scale on the sign ring, golden aura and inner plate, Earth/Moon lift, gentle Sun breathing and gem twinkle; off with localStorage vax3d_beauty='0'
 - `apps/sky3d/js/61-navamsha-sky.js` — global `NAV`: Navamsha (D9) sky (`NAV.snap/asc/set`, D9 = lon×9 mod 360) used by scene, HUD, sky table, overlays and chart tab; top-right Tools drop-down wiring (`#toolsBtn`, `#toolsMenu`, `#navBtn`, `#navBadge`); forced off in Solar System view
 - `apps/sky3d/js/62-sky-alerts.js` — global `SKA`: HUD pill under the Moon line + bottom sheet of trine (1-5-9), square (4-10), opposite (7), on-the-sign, Gochara, Sade Sati, Rahu-Ketu axis and Jupiter+Saturn double-transit alerts from the live Rising and Moon, or your birth Rising and Moon (`SKA.calc` is pure)
+- `apps/sky3d/js/63-timeline-finder.js` — global `TLF`: Tools > Timeline finder. Age range (from today) or birth years + conditions (planets in a sign, in a nakshatra, planets meeting/aspecting, retrograde), match ALL or ANY, scans the sky engine and lists every matching period; tap to jump the 3D sky (`TLF.test/search` are pure)
 - `tests/sky3d_shadbala_test.js` — engine parity with the Birth Chart plus live adapter checks
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
@@ -496,6 +498,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/sky3d_ui_refresh_browser_test.py` — 3D Sky at 390 and 360 wide (Three.js stubbed): slim timeline, buttons in one row, All-tabs grid opens each tab, no overflow
 - `tests/sky3d_navamsha_tools_browser_test.py` — 3D Sky Tools drop-down, Eye, Navamsha sky toggle and D9 math at 390 and 360 (Three.js stubbed; `S3_SHOTS=dir` for screenshots)
 - `tests/sky3d_sky_alerts_browser_test.py` — Sky alerts rules (`SKA.calc`), HUD pill and bottom sheet at 390 and 360
+- `tests/sky3d_timeline_finder_browser_test.py` — Timeline finder: ingress dates vs known values, Sun in Libra + Moon in Pisces, ALL vs ANY, planets meet, the sheet at 390 and 360
 - `tests/ai_system_browser_test.py` — AI system: every index entry, route → fetch → answer with a stubbed provider, skills, personas, key rules, panel at 390 and 360
 - `tests/ai_paste_test.js` — paste-to-fill parser (cURL, JS fetch/axios/SDK, Python requests/SDK) for the AI provider settings
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
@@ -566,6 +569,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/hora_browser_test.py` — Playwright test of the Hora panel at 390 and 360px (`HORA_SHOTS=dir`)
 - `docs/HORA_PLAN.md` — Hora plan, checklist and research log (sources, where teachers differ)
 - `docs/AI_SYSTEM_PLAN.md` — plan and architecture of the AI system (index, engine, panel)
+- `docs/TIMELINE_FINDER_PLAN.md` — plan, method and accuracy notes for the 3D Sky Timeline finder
 - `tests/hora_test.py` — Playwright test of the Hora engine against panchangaAt (order, contiguity, Drik day/night lengths)
 - `tests/varga_matrix_test.js` — node test for js/153 (cells equal raw varga data, points recomputed by hand, Vargottama, 60 real charts x 3 sets)
 - `tests/varga_matrix_browser_test.py` — Playwright test of the Varga Matrix at 390 and 360px (`VMX_SHOTS=dir`)
