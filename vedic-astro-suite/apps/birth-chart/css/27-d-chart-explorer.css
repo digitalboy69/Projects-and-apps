@@ -67,7 +67,7 @@
 #panel-vargas .varga-toolbar .varga-control-group:has(#vargaStyleToggle) .varga-style-toggle{width:100%}
 #panel-vargas .varga-toolbar .varga-control-group{width:auto;flex:0 1 auto}
 #panel-vargas .outer-chk{padding:7px 12px;border-radius:99px}
-#panel-vargas .vx-3d-btn{padding:7px 14px;border-radius:99px;font-size:12.5px}
+#panel-vargas .vx-3d-btn{padding:7px 14px;min-height:44px;border-radius:99px;font-size:12.5px}
 #panel-vargas .varga-card{padding:16px 14px}
 #panel-vargas .varga-card-head{gap:8px;margin-bottom:14px;padding-bottom:12px}
 #panel-vargas .varga-card-title{margin-bottom:2px}

@@ -23,6 +23,7 @@
     step(()=>{ const wb = document.querySelector('#viewSwitch [data-v="wheel"]'); if (wb && !wb.classList.contains('active')) wb.click(); });
     step(()=>{ if (isPlaying){ if (window.pausePlayback) window.pausePlayback(); else isPlaying = false; } });
     step(()=>{ if (isFinite(j.lat) && isFinite(j.lon)) liveLocMem = { lat:+j.lat, lon:+j.lon, label:(j.place ? String(j.place).split(',')[0] : 'birth place') }; });   // session only, not saved
+    step(()=>{ if (window.NAV && j.varga) NAV.set(j.varga !== 'D1', true, j.varga); });   // a divisional chart (D10, D60 ...) from the Birth Chart app: draw that chart's sky
     step(()=> jumpToJD(j.jd));
     step(()=> toast('🌌 ' + (j.label || 'Rectification') + ' · ' + j.local + (j.place ? ' · ' + String(j.place).split(',')[0] : '')));
   }

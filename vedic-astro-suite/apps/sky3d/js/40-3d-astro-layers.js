@@ -104,7 +104,7 @@ function _updateOverlays(snap){
   // current rising sign at the viewer's place: start / end lines of the sign
   const liveL = getLiveLoc(), lonR = NAV.asc(snap.jd, liveL.lat, liveL.lon), rsI = getSignIndex(lonR), riseOn = _on('L_rise');
   A.lagnaLon = lonR; T.riseG.visible = riseOn; T.riseG.rotation.y = rsI*30*DEG;
-  T.riseLbl.obj.position.copy(_pt(rsI*30 + 15, 14.4)); T.riseLbl.el.innerHTML = `↑ ${snap.nav ? 'Navamsha lagna' : 'Rising'} ${SIGNS[rsI].symbol} ${SIGNS[rsI].name}`; vis(T.riseLbl, riseOn);
+  T.riseLbl.obj.position.copy(_pt(rsI*30 + 15, 14.4)); T.riseLbl.el.innerHTML = `↑ ${snap.nav ? NAV.label + ' lagna' : 'Rising'} ${SIGNS[rsI].symbol} ${SIGNS[rsI].name}`; vis(T.riseLbl, riseOn);
   const gOn = _on('L_gulika') && !snap.nav && typeof GK !== 'undefined', gl = gOn ? GK.live(snap.jd) : null, gn = (gOn && has) ? GK.natal(p) : null;
   if (gl) T.gulL.obj.position.copy(_pt(gl.lon, 11.9));
   if (gn) T.gulN.obj.position.copy(_pt(gn.lon, 11.9));

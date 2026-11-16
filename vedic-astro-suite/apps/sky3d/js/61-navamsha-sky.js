@@ -3,26 +3,28 @@
    (movable signs start from themselves, fixed from the 9th, dual from the 5th) and the app's Navamsha code in js/18, with the exact degree kept.
    NAV.snap(jd) is the snapshot the 3D scene, HUD, sky table, overlays and chart tab draw from: the normal sky, or the Navamsha sky when it is on.
    Everything else (planet pop-ups, dashboard, transit feeds, rising-sign timings, degree houses) keeps the real sky: it reads snapshotPositions directly,
-   or snap.raw when it is handed a Navamsha snapshot. Wheel view only; switching to the Solar System view turns it off. */
+   or snap.raw when it is handed a Navamsha snapshot. Any other divisional chart (D10 Dasamsa ...) is drawn the same way through VG (js/64) when the Birth Chart app opens it in 3D. Wheel view only; switching to the Solar System view turns it off. */
 const NAV = (() => {
   'use strict';
-  const st = { on: false };
+  const st = { on: false, key: 'D9' };   // key = which divisional chart is drawn as the sky (D9 Navamsha by default, any D1-D144 from the Birth Chart app)
   const d9 = lon => normDeg(lon * 9);
+  const vl = lon => st.key === 'D9' ? d9(lon) : VG.lon(st.key, lon);
+  const label = () => st.key === 'D9' ? 'Navamsha' : VG.name(st.key);
   function snap(jd) {
     const s = snapshotPositions(jd); if (!st.on) return s;
-    const sid = {}; ALL_BODIES.forEach(n => { sid[n] = d9(s.sidereal[n]); });
+    const sid = {}; ALL_BODIES.forEach(n => { sid[n] = vl(s.sidereal[n]); });
     return Object.assign({}, s, { sidereal: sid, raw: s.sidereal, nav: true });
   }
-  const asc = (jd, lat, lon) => { const a = siderealAscendant(jd, lat, lon); return st.on ? d9(a) : a; };
+  const asc = (jd, lat, lon) => { const a = siderealAscendant(jd, lat, lon); return st.on && st.key !== 'RTN' ? vl(a) : a; };   // Rasi Tulya Navamsa keeps the D1 lagna
   const $ = id => document.getElementById(id);
   function paint() {
     const b = $('navBtn'); if (b) { b.setAttribute('aria-pressed', String(st.on)); b.classList.toggle('on', st.on); }
-    const g = $('navBadge'); if (g) g.style.display = st.on ? '' : 'none';
+    const g = $('navBadge'); if (g) { g.style.display = st.on ? '' : 'none'; const t = (st.key === 'D9' ? 'Navamsha (D9)' : st.key + ' ' + label()) + ' sky on: tap for the normal sky'; g.title = t; g.setAttribute('aria-label', t); const bb = g.querySelector('b'); if (bb) bb.textContent = st.key; }
     const app = document.querySelector('.app'); if (app) app.classList.toggle('navsky', st.on);
   }
-  function set(v, quiet) {
+  function set(v, quiet, key) {
     if (v && typeof SOL !== 'undefined' && SOL.view === 'solar') return false;
-    st.on = !!v; try { A.np = null; A.natal = null; } catch (e) { /* overlays not ready yet */ }
+    st.on = !!v; if (v) st.key = (key && VG.VARGAS[key] && key !== 'D1') ? key : 'D9'; try { A.np = null; A.natal = null; } catch (e) { /* overlays not ready yet */ }
     paint(); if (!quiet && typeof refreshAll === 'function') refreshAll(); return true;
   }
   /* ---- Tools drop-down ---- */
@@ -44,7 +46,7 @@ const NAV = (() => {
     };
     paint();
   }
-  const api = { snap, asc, d9, set, setOpen, get on() { return st.on; } };
+  const api = { snap, asc, d9, set, setOpen, get on() { return st.on; }, get key() { return st.key; }, get label() { return label(); } };
   window.NAV = api;
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();
   return api;

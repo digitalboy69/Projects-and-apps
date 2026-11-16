@@ -16,7 +16,7 @@ function getChartContext(liveSnap){
   const snap = liveSnap || NAV.snap(currentJD);
   // Without a saved birth location we can't compute a true live ascendant, so
   // we default Lagna to Aries (0°) and clearly label this as sign-only view.
-  return { sidereal: snap.sidereal, retro: snap.retro, lagnaLon: 0, label: snap.nav ? "Navamsha Sky (current sky in D9 — Aries set as reference Lagna)" : "Current Sky (no natal profile — Aries set as reference Lagna)", isNatal:false, jd: snap.jd };
+  return { sidereal: snap.sidereal, retro: snap.retro, lagnaLon: 0, label: snap.nav ? NAV.label + " Sky (current sky in " + NAV.key + " — Aries set as reference Lagna)" : "Current Sky (no natal profile — Aries set as reference Lagna)", isNatal:false, jd: snap.jd };
 }
 
 let chartTabContextJD = currentJD; // exposed globally so inline onclick handlers on the wheel/house table can reach it

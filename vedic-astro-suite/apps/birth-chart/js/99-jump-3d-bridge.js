@@ -11,7 +11,7 @@
     if (!o || !o.date || !o.time){ if (window.rsToast) rsToast('Pick a date and time first'); return; }
     const [y,m,d] = String(o.date).split('-').map(Number), [H,M,S] = String(o.time).split(':').map(Number), tz = +o.tz || 0;
     const ms = Date.UTC(y, m-1, d, H||0, M||0, S||0) - tz*3600000, jd = ms/86400000 + 2440587.5;
-    const pay = { ts:Date.now(), jd, local:o.date+' '+String(o.time).slice(0,8), tz, lat:+o.lat, lon:+o.lon, place:o.place || '', label:o.label || 'Rectification' };
+    const pay = { ts:Date.now(), jd, local:o.date+' '+String(o.time).slice(0,8), tz, lat:+o.lat, lon:+o.lon, place:o.place || '', label:o.label || 'Rectification', varga:o.varga || '' };
     try { localStorage.setItem(KEY, JSON.stringify(pay)); } catch(e){}
     if (window.rsToast) rsToast('Opening the 3D wheel at ' + pay.local + ' ✨');
     if (window.parent && window.parent !== window) window.parent.postMessage('vedic-open-3d', '*');
