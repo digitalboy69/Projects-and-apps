@@ -209,7 +209,7 @@ function dlRenderMoments(root, bi){
   const stacks = list.map(m=> dlStack(bi.moonLon, bi.birthMs, dlMomentMsOf(m), 6));
   el.innerHTML = list.map((m,i)=>{ const st = stacks[i], pr = st.levels[4], [y,mo,d] = m.date.split('-').map(Number);
     return `<div class="dl-m"><div class="dl-m1"><span class="dl-mlab">${rsEsc(m.label || 'Moment ' + (i+1))}</span><span class="dl-mwhen">${d} ${DL_MON[mo-1]} ${y}<span class="dl-tm">${m.time}</span></span>
-      <span class="dl-mbtns"><button type="button" class="dl-hop" data-dl-mopen="${m.id}" title="Open in the lens">⌖</button><button type="button" class="dl-hop" data-dl-m3d="${m.id}" title="Show in the 3D wheel">🌌</button><button type="button" class="dl-hop dl-x" data-dl-mdel="${m.id}" title="Remove" aria-label="Remove">✕</button></span></div>
+      <span class="dl-mbtns"><button type="button" class="dl-hop" data-dl-mopen="${m.id}" title="Open in the lens">⌖</button><button type="button" class="dl-hop" data-dl-m3d="${m.id}" title="Show in the 3D wheel">🌌</button><button type="button" class="dl-hop dl-x" data-dl-mdel="${m.id}" title="Remove">✕</button></span></div>
       <div class="dl-mchips">${st.levels.map((l,k)=>`<span class="dl-mc"><span class="dl-mtag">${DL_LV[k][1]}</span>${dlChip(l.lord)}</span>`).join('')}</div>
       <div class="dl-msub">Prana ${dlStamp(pr.start)} → ${dlStamp(pr.end)}</div></div>`; }).join('') +
     `<button type="button" class="dl-clear" id="dlMClear">Remove all ${list.length}</button>`;
@@ -277,13 +277,13 @@ function dlOpenInfo(){
 }
 function dlSheetRender(){
   const sheet = document.getElementById('dlSheet'), bi = dlBirth(), pr = currentProfileForExport; if (!sheet) return;
-  if (!bi || !pr){ sheet.innerHTML = `<div class="dl-sh"><div class="dl-sh-h"><b>Mismatch calculator</b><button type="button" class="dl-sh-x" data-dls-close="1" aria-label="Close">✕</button></div><div class="rs-empty">Generate a chart first.</div></div>`; return; }
+  if (!bi || !pr){ sheet.innerHTML = `<div class="dl-sh"><div class="dl-sh-h"><b>Mismatch calculator</b><button type="button" class="dl-sh-x" data-dls-close="1">✕</button></div><div class="rs-empty">Generate a chart first.</div></div>`; return; }
   const ev = dlMomentMs(), mg = dlMargin(bi, pr);
   const rows = [[1,'1 second'],[10,'10 seconds'],[30,'30 seconds'],[60,'1 minute'],[300,'5 minutes'],[900,'15 minutes'],[3600,'1 hour']].map(([sec,l])=>{ const r = dlShiftCore(bi, pr, ev, sec);
     return `<div class="dl-trow"><span class="dl-tl">${l}</span><span class="dl-tv">${r.same ? 'dasha dates move <b>' + dlDurFull(r.shiftMs) + '</b>' : '<b class="dl-bad">the Moon changes nakshatra: every dasha is different</b>'}</span></div>`; }).join('');
   const num = (k, lab, max)=>`<label class="dl-nf"><span>${lab}</span><input type="number" inputmode="numeric" min="0" max="${max}" value="${DLC[k]}" data-dls-num="${k}"></label>`;
   const dirBtn = (key, v, lab)=>`<button type="button" class="dl-sg${DLC[key]===v?' on':''}" data-dls-key="${key}" data-dls-dir="${v}">${lab}</button>`;
-  sheet.innerHTML = `<div class="dl-sh" role="dialog" aria-label="Mismatch calculator"><div class="dl-sh-h"><b>How much can a mismatch shift the timeline?</b><button type="button" class="dl-sh-x" data-dls-close="1" aria-label="Close">✕</button></div>
+  sheet.innerHTML = `<div class="dl-sh" role="dialog" aria-label="Mismatch calculator"><div class="dl-sh-h"><b>How much can a mismatch shift the timeline?</b><button type="button" class="dl-sh-x" data-dls-close="1">✕</button></div>
    <p class="dl-sh-p">The whole dasha timeline hangs on where the Moon was at birth. The Moon moves about 13° a day, so even a small error in the birth time moves <b>every</b> dasha and sub-period by the <b>same amount</b>. Numbers below are worked out from <b>this chart</b> (${rsEsc(bi.date)} ${rsEsc(bi.time)}, ${DL.src==='dial'?'Time Dial':'recorded time'}).</p>
    ${mg ? `<div class="dl-safe"><div class="dl-safe-t">🧭 Safe margin</div>The Moon is in <b>${rsEsc(mg.nak.name)}</b> (lord ${dlChip(mg.nak.lord)}). The birth time can move up to <b>${dlDurFull(mg.later*1000)} later</b> or <b>${dlDurFull(mg.earlier*1000)} earlier</b> before the Moon crosses into another nakshatra. Past that, <b>every dasha changes</b>, not just the dates.</div>` : ''}
    <div class="dl-ttl">If the birth time is wrong by…</div><div class="dl-trows">${rows}</div>

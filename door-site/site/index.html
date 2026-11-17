@@ -11,10 +11,10 @@ body{display:grid;place-items:center;padding:18px;min-height:100vh;min-height:10
 .card{position:relative;width:100%;max-width:420px;padding:28px 22px 20px;border-radius:28px;text-align:center;background:linear-gradient(180deg,rgba(20,26,44,.92),rgba(11,14,26,.94));border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.07);animation:up .5s cubic-bezier(.2,.8,.2,1) both}
 @keyframes up{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
 .om{width:68px;height:68px;margin:0 auto 12px;display:grid;place-items:center;font-size:32px;border-radius:50%;color:#1a1405;background:radial-gradient(circle at 30% 25%,#fff3c4,var(--gold2) 45%,#8c7323);box-shadow:0 8px 30px rgba(212,175,55,.35)}
-h1{color:#f2d675;font:700 20px Georgia,"Times New Roman",serif;letter-spacing:.1em;background:linear-gradient(90deg,#8c7323,#fff3c4,var(--gold2),#8c7323);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+h1{font:700 20px Georgia,"Times New Roman",serif;letter-spacing:.1em;background:linear-gradient(90deg,#8c7323,#fff3c4,var(--gold2),#8c7323);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 .sub{margin-top:6px;font-size:13.5px;color:var(--mut);line-height:1.5}
 .tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin:18px 0 14px;border-radius:14px;background:rgba(255,255,255,.06)}
-.tabs button{border:0;background:transparent;color:inherit;padding:10px;min-height:44px;border-radius:11px;font:600 13px inherit;cursor:pointer;opacity:.65;transition:all .2s}
+.tabs button{border:0;background:transparent;color:inherit;padding:10px;border-radius:11px;font:600 13px inherit;cursor:pointer;opacity:.65;transition:all .2s}
 .tabs button.on{background:linear-gradient(135deg,#f2d675,var(--gold));color:#1a1405;opacity:1}
 form,.fm{display:flex;flex-direction:column;gap:12px;text-align:left}
 label,.lab{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--mut)}
@@ -26,7 +26,7 @@ input:disabled{opacity:.55}
 .ghost{margin-top:8px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--tx);border-radius:14px;padding:12px;font:600 14px inherit;cursor:pointer;width:100%}
 .msg{padding:10px 12px;border-radius:12px;font-size:13px;background:rgba(255,120,120,.12);border:1px solid rgba(255,120,120,.3);color:#ffb0b0;text-align:left}
 .msg.ok{background:rgba(94,196,183,.12);border-color:rgba(94,196,183,.4);color:#aef3e6}
-.lnk{margin-top:0;padding:12px 10px;min-height:44px;border:0;background:none;color:#e7c766;font:13px inherit;cursor:pointer;text-decoration:underline}
+.lnk{margin-top:12px;border:0;background:none;color:#e7c766;font:13px inherit;cursor:pointer;text-decoration:underline}
 .note{margin-top:14px;font-size:12px;color:var(--mut);line-height:1.5}
 .note a{color:#e7c766}
 .price{margin:16px 0 4px;font:700 44px Georgia,serif;color:var(--gold2)}
@@ -57,9 +57,6 @@ input:disabled{opacity:.55}
 .logo .ph{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.08) center/cover;display:grid;place-items:center;font-size:20px;flex:none}
 .logo button{border:1px solid var(--line);background:rgba(255,255,255,.06);color:inherit;border-radius:11px;padding:9px 12px;font:600 12.5px inherit;cursor:pointer}
 @media(max-width:380px){.card{padding:24px 16px 18px}.price{font-size:38px}}
-
-@media (prefers-reduced-motion:reduce){.card{animation:none}.orb{animation-duration:2.6s}}
-@media (forced-colors:active){h1{background:none;-webkit-text-fill-color:currentColor;color:CanvasText}}
 </style></head><body>
 <div class="stars"></div>
 
@@ -69,11 +66,11 @@ input:disabled{opacity:.55}
   <h1 class="pname">VEDIC ASTRO SUITE</h1>
   <p class="sub">Sign in to open your charts, planets and tools.</p>
   <div class="share hide" id="shared">🔗 A chart was shared with you. Sign in to open it.</div>
-  <div class="tabs"><button type="button" id="tIn" class="on" aria-pressed="true">Sign in</button><button type="button" id="tUp" aria-pressed="false">Create account</button></div>
+  <div class="tabs"><button type="button" id="tIn" class="on">Sign in</button><button type="button" id="tUp">Create account</button></div>
   <form id="f" novalidate>
     <label>Email<input id="em" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com"></label>
     <label>Password<input id="pw" type="password" autocomplete="current-password" placeholder="At least 6 characters"></label>
-    <div class="msg hide" id="msg" role="alert"></div>
+    <div class="msg hide" id="msg"></div>
     <button class="go" id="go" type="submit">Sign in</button>
   </form>
   <button class="lnk" id="forgot" type="button">Forgot password?</button>
@@ -92,7 +89,7 @@ input:disabled{opacity:.55}
     <li>Smart search, reports and exports</li>
     <li>Your own brand name, logo and colours</li>
   </ul>
-  <div class="msg hide" id="payMsg" role="alert"></div>
+  <div class="msg hide" id="payMsg"></div>
   <button class="go" id="payBtn" type="button">Pay securely</button>
   <a class="wa hide" id="payWa" target="_blank" rel="noopener">💬 Need help? WhatsApp</a>
   <p class="note">🔒 Payment by Razorpay (UPI, cards, netbanking). We never see your card details.<br><a href="legal.html#refund" target="_blank">Refund policy</a></p>
@@ -113,7 +110,7 @@ input:disabled{opacity:.55}
     <div class="lab">Accent colour<div class="sw" id="bSw"></div></div>
     <div class="lab">Logo (optional)<div class="logo"><div class="ph" id="bPh">🖼</div><div><button type="button" id="bPick">Choose image</button> <button type="button" id="bClr">Remove</button></div></div></div>
     <input type="file" id="bFile" accept="image/png,image/jpeg,image/webp" class="hide">
-    <div class="msg hide" id="brMsg" role="alert"></div>
+    <div class="msg hide" id="brMsg"></div>
     <button class="go" id="brSave" type="button">Save &amp; open app</button>
     <button class="ghost" id="brSkip" type="button">Skip for now</button>
   </div>
@@ -168,7 +165,7 @@ input:disabled{opacity:.55}
   var settingsP=api('/rest/v1/rpc/public_settings',{}).then(function(j){ if(j&&typeof j==='object') for(var k in j) S[k]=j[k]; applySettings(); }).catch(function(){ applySettings(); });
 
   /* ---------- login ---------- */
-  function setMode(m){ mode=m; $('tIn').classList.toggle('on',m==='in'); $('tUp').classList.toggle('on',m==='up'); $('tIn').setAttribute('aria-pressed',m==='in'); $('tUp').setAttribute('aria-pressed',m==='up'); $('go').textContent=m==='in'?'Sign in':'Create account'; $('pw').autocomplete=m==='in'?'current-password':'new-password'; $('legalNote').style.display=m==='up'?'':'none'; msg('msg',''); }
+  function setMode(m){ mode=m; $('tIn').classList.toggle('on',m==='in'); $('tUp').classList.toggle('on',m==='up'); $('go').textContent=m==='in'?'Sign in':'Create account'; $('pw').autocomplete=m==='in'?'current-password':'new-password'; $('legalNote').style.display=m==='up'?'':'none'; msg('msg',''); }
   $('tIn').onclick=function(){setMode('in')}; $('tUp').onclick=function(){setMode('up')}; setMode('in');
   $('f').addEventListener('submit',function(e){
     e.preventDefault(); var em=$('em').value.trim(), pw=$('pw').value;

@@ -35,12 +35,6 @@
 :where(input,textarea,[contenteditable]){ caret-color:var(--meta-gold); }
 :where(:focus-visible){ outline:2px solid var(--meta-gold); outline-offset:2px; border-radius:inherit; }
 :where(:focus:not(:focus-visible)){ outline:none; }
-/* Keyboard-only ring for buttons, links, tabs and custom controls. Deliberately NOT zero-specificity:
-   many app rules say `outline:none` (e.g. .ppf-seg, .bmc-wn, #panel-vargas buttons) and would hide the
-   focus position from keyboard users (WCAG 2.4.7). Text fields keep their own border + glow. */
-:is(a[href],button,summary,[role=button],[role=tab],[role=menuitem],[role=menuitemradio],[role=link],[tabindex]:not([tabindex="-1"])):focus-visible{
-  outline:2px solid var(--meta-gold) !important; outline-offset:2px !important;
-}
 
 /* ---------- touch: no 300ms delay, no accidental double-tap zoom ---------- */
 :where(a,button,summary,select,label,input,[role=button],[role=tab],[role=menuitem],[role=menuitemradio]){ touch-action:manipulation; }

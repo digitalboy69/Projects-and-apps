@@ -204,17 +204,16 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 - Past · Present · Future (`panel-ppf`, 2026-11-13): `js/155-past-present-future.js` + `css/84`: directional + chart, life river of Mahadashas, ten-years-back/ahead ease bars, Past/Present/Future tabs; dasha parts read only VDA (js/91) and the engine. Directional chart (owner described it from a teacher's video): house groups 1-5-9, 2-6-10, 3-7-11, 4-8-12 confirmed by Wikipedia Bhava and vedicbirth.com; the rule ahead=future, opposite=present, behind=past is the teacher's, NOT verified in a classical text, and the page says so. Test: `python3 tests/past_present_future_browser_test.py`.
 - Hora (`panel-hora`, 2026-11-13): `js/156-hora-engine.js` (HORA: 24 unequal horas sunrise to next sunrise, Chaldean order from the weekday lord, Rahu/Yama/Gulika overlap, Choghadiya, 14-activity table, teaching-aid score, best(), week(), forYou()) + `js/157-hora-panel.js` + `css/85` (tabs Now/Moment/Today/Week/Best/Learn; Moment = any date and time; chip at the top = custom place (search, current location, birth place, manual coordinates). Class `hr-in` is the tab body's fade-in, inputs use `hr-fld`. Plan and research log: `docs/HORA_PLAN.md` (Drik, Shubh, Dekho Panchang, Wikipedia; where teachers differ is on the Learn tab). Tests: `tests/hora_test.py` (engine, 21 checks) and `tests/hora_browser_test.py` (56 checks, `HORA_SHOTS=dir`).
 - Varga Matrix and Masterclass: sticky bars sit below the 56px app header (top:56px, hd 114px, scroll-margin 124px) and sign symbols use the text marker \uFE0E so they do not render as emoji (2026-11-13).
-- UI/UX audit pass (2026-11-17): `shared/meta.css` now has a keyboard-only `:focus-visible` ring with `!important` (app-level `outline:none` rules were hiding focus); removed `maximum-scale=1` from the shell, sky3d, notepad and developer viewports so pinch-zoom works; icon-only close/remove buttons got `aria-label`; gate + door-site sign-in got `role=alert` errors, `aria-pressed` tabs, 44px tap targets, reduced-motion and forced-colors rules. NOT done (needs screenshots): 165 font sizes at 10px or less, legal page placeholders.
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-17 - 2316 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-16 - 2316 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 254 files, 36812 lines, 3128 KB
+**birth-chart** - 254 files, 36812 lines, 3127 KB
 ```
-index.html                                         679 lines   39 KB
+index.html                                         679 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -478,9 +477,9 @@ css/01-base.css                                     62 lines    2 KB
 css/02-developer-card.css                           66 lines    8 KB
 ```
 
-**notepad** - 3 files, 657 lines, 107 KB
+**notepad** - 3 files, 657 lines, 108 KB
 ```
-index.html                                          52 lines    2 KB
+index.html                                          52 lines    3 KB
 js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
@@ -598,14 +597,14 @@ shell/js/shell.js                                  248 lines   18 KB
 shell/js/updater.js                                 33 lines    2 KB
 ```
 
-**shared** - 7 files, 1196 lines, 93 KB
+**shared** - 7 files, 1190 lines, 92 KB
 ```
 shared/copy-toggle.js                               28 lines    1 KB
 shared/export-addon.js                             643 lines   47 KB
 shared/icons.js                                    169 lines   17 KB
 shared/liquid-glass.css                             46 lines    5 KB
 shared/liquid-glass.js                              16 lines    0 KB
-shared/meta.css                                    104 lines    6 KB
+shared/meta.css                                     98 lines    5 KB
 shared/quick-menu.js                               190 lines   17 KB
 ```
 <!-- AUTO:END -->

@@ -1,4 +1,4 @@
-<!DOCTYPE html><!--ᛟ ☉ ☽ ☿ ♀ ♂ ♃ ♄ ☊ ☋ · the sky does not explain itself · ᚠᚢᚦᚨᚱᚲ · ॐ--><html lang="en" class="booting"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#03060d"><title>Vedic Astro Suite</title><style>
+<!DOCTYPE html><!--ᛟ ☉ ☽ ☿ ♀ ♂ ♃ ♄ ☊ ☋ · the sky does not explain itself · ᚠᚢᚦᚨᚱᚲ · ॐ--><html lang="en" class="booting"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"><meta name="theme-color" content="#03060d"><title>Vedic Astro Suite</title><style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
 .shell{position:fixed;inset:0}
@@ -146,12 +146,6 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
 :where(input,textarea,[contenteditable]){ caret-color:var(--meta-gold); }
 :where(:focus-visible){ outline:2px solid var(--meta-gold); outline-offset:2px; border-radius:inherit; }
 :where(:focus:not(:focus-visible)){ outline:none; }
-/* Keyboard-only ring for buttons, links, tabs and custom controls. Deliberately NOT zero-specificity:
-   many app rules say `outline:none` (e.g. .ppf-seg, .bmc-wn, #panel-vargas buttons) and would hide the
-   focus position from keyboard users (WCAG 2.4.7). Text fields keep their own border + glow. */
-:is(a[href],button,summary,[role=button],[role=tab],[role=menuitem],[role=menuitemradio],[role=link],[tabindex]:not([tabindex="-1"])):focus-visible{
-  outline:2px solid var(--meta-gold) !important; outline-offset:2px !important;
-}
 
 /* ---------- touch: no 300ms delay, no accidental double-tap zoom ---------- */
 :where(a,button,summary,select,label,input,[role=button],[role=tab],[role=menuitem],[role=menuitemradio]){ touch-action:manipulation; }
@@ -575,7 +569,7 @@ let root=null,S=null,map=null,revT=0,revCtl=null,srT=0,srCtl=null;
 function build(){if(root)return;const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);root=document.createElement('div');root.className='lp';root.setAttribute('role','dialog');root.setAttribute('aria-modal','true');root.setAttribute('aria-label','Choose a location');
  root.innerHTML=`<div class="lp-card"><div class="lp-h"><div class="lp-t"><b id="lpTitle">Choose a location</b><small>Search, tap the map to drop a pin, or type coordinates</small></div><div class="lp-seg"><button data-t="map" class="on">🗺️ Map</button><button data-t="co">⌖ Coordinates</button></div><button class="lp-x" aria-label="Close">✕</button></div>
  <div class="lp-body">
-  <div class="lp-pane on" data-p="map"><div class="lp-map" id="lpMapBox"><div class="lpm-sb"><div class="lpm-si"><span style="font-size:16px">🔎</span><input id="lpQ" placeholder="Search a city, village or address…" autocomplete="off" spellcheck="false"><button id="lpClr" title="Clear" hidden aria-label="Clear search">✕</button></div><div class="lpm-r" id="lpR"></div></div>
+  <div class="lp-pane on" data-p="map"><div class="lp-map" id="lpMapBox"><div class="lpm-sb"><div class="lpm-si"><span style="font-size:16px">🔎</span><input id="lpQ" placeholder="Search a city, village or address…" autocomplete="off" spellcheck="false"><button id="lpClr" title="Clear" hidden>✕</button></div><div class="lpm-r" id="lpR"></div></div>
    <div class="lpm-c"><button id="lpZi" title="Zoom in">＋</button><button id="lpZo" title="Zoom out">－</button><button id="lpLoc" title="Use my current location">◎</button><button id="lpLy" class="ly" title="Change map style">Street</button></div><div class="lpm-hint" id="lpHint">👆 Tap the map to drop a pin · drag to move · pinch or scroll to zoom</div></div>
    <div class="lp-sheet"><div class="lp-pl empty" id="lpPl"><b>No place chosen yet</b><small>Search above or tap anywhere on the map</small></div><button class="lp-go" id="lpUse" disabled>Use this location</button></div></div>
   <div class="lp-pane" data-p="co"><div class="lp-co">
@@ -683,7 +677,7 @@ window.LocPicker={open,attach,parse,fmt,close};
 <html data-app="3d" lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#010308">
 <title>Ephemeris — Live Sky & Transit Console</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2560,12 +2554,6 @@ html[data-app] .vp-btn.vp-tools:hover{border-color:#d4a24a}
 :where(input,textarea,[contenteditable]){ caret-color:var(--meta-gold); }
 :where(:focus-visible){ outline:2px solid var(--meta-gold); outline-offset:2px; border-radius:inherit; }
 :where(:focus:not(:focus-visible)){ outline:none; }
-/* Keyboard-only ring for buttons, links, tabs and custom controls. Deliberately NOT zero-specificity:
-   many app rules say `outline:none` (e.g. .ppf-seg, .bmc-wn, #panel-vargas buttons) and would hide the
-   focus position from keyboard users (WCAG 2.4.7). Text fields keep their own border + glow. */
-:is(a[href],button,summary,[role=button],[role=tab],[role=menuitem],[role=menuitemradio],[role=link],[tabindex]:not([tabindex="-1"])):focus-visible{
-  outline:2px solid var(--meta-gold) !important; outline-offset:2px !important;
-}
 
 /* ---------- touch: no 300ms delay, no accidental double-tap zoom ---------- */
 :where(a,button,summary,select,label,input,[role=button],[role=tab],[role=menuitem],[role=menuitemradio]){ touch-action:manipulation; }
@@ -17857,12 +17845,6 @@ i.aix-ref,.aix-ref{display:inline-block;margin:0 4px 4px 0;padding:1px 8px;borde
 :where(input,textarea,[contenteditable]){ caret-color:var(--meta-gold); }
 :where(:focus-visible){ outline:2px solid var(--meta-gold); outline-offset:2px; border-radius:inherit; }
 :where(:focus:not(:focus-visible)){ outline:none; }
-/* Keyboard-only ring for buttons, links, tabs and custom controls. Deliberately NOT zero-specificity:
-   many app rules say `outline:none` (e.g. .ppf-seg, .bmc-wn, #panel-vargas buttons) and would hide the
-   focus position from keyboard users (WCAG 2.4.7). Text fields keep their own border + glow. */
-:is(a[href],button,summary,[role=button],[role=tab],[role=menuitem],[role=menuitemradio],[role=link],[tabindex]:not([tabindex="-1"])):focus-visible{
-  outline:2px solid var(--meta-gold) !important; outline-offset:2px !important;
-}
 
 /* ---------- touch: no 300ms delay, no accidental double-tap zoom ---------- */
 :where(a,button,summary,select,label,input,[role=button],[role=tab],[role=menuitem],[role=menuitemradio]){ touch-action:manipulation; }
@@ -18330,7 +18312,7 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
 
 <div class="pd-modal-overlay" id="planetDetailModal">
   <div class="pd-modal-box" id="pdBox">
-    <button type="button" class="pd-modal-close" id="pdModalClose" aria-label="Close">✕</button>
+    <button type="button" class="pd-modal-close" id="pdModalClose">✕</button>
     <div class="pd-modal-head">
       <div class="pd-modal-glyph" id="pdGlyph"></div>
       <div>
@@ -18348,7 +18330,7 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
 <div class="export-modal-overlay" id="exportModal">
   <div class="export-modal-box">
     <div class="export-modal-header">
-      <button type="button" class="export-modal-close" id="exportModalClose" aria-label="Close">✕</button>
+      <button type="button" class="export-modal-close" id="exportModalClose">✕</button>
       <div class="export-modal-title">Export &amp; Share</div>
       <div class="export-modal-subtitle">Pick what to include (everything is selected by default), then download it as a file or copy the text.</div>
     </div>
@@ -18473,7 +18455,7 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
 
 <div class="modal-overlay" id="mainMenuModal">
   <div class="menu-modal-box">
-    <button type="button" class="pd-modal-close" id="mainMenuClose" aria-label="Close">✕</button>
+    <button type="button" class="pd-modal-close" id="mainMenuClose">✕</button>
     <h3 class="menu-modal-title">Profile</h3>
     
     <div class="menu-section">
@@ -18505,7 +18487,7 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
 
 <div class="modal-overlay" id="profileDataModal">
   <div class="menu-modal-box profile-data-modal-box">
-    <button type="button" class="pd-modal-close" id="profileDataModalClose" aria-label="Close">✕</button>
+    <button type="button" class="pd-modal-close" id="profileDataModalClose">✕</button>
     <h3 class="menu-modal-title" id="profileDataModalTitle">Export Profiles</h3>
     <p class="profile-data-hint" id="profileDataModalHint">
       This is a backup of every saved profile on this device. Copy it somewhere safe (a note, an email to yourself) — on another device or browser, open this same menu, choose "Import Profiles", paste it in, and they'll all come back.
@@ -18521,7 +18503,7 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
 
 <div class="modal-overlay" id="contactModal">
   <div class="contact-modal-box dev-card">
-    <button type="button" class="pd-modal-close" id="contactModalClose" aria-label="Close">✕</button>
+    <button type="button" class="pd-modal-close" id="contactModalClose">✕</button>
     <div class="dc-orbs"><i></i><i></i><i></i></div>
     <div class="dc-hero">
       <div class="dc-avatar dc-in" style="--i:0"><span class="dc-ring"></span><span class="dc-initials">MY</span><em class="dc-badge">✓</em></div>
@@ -50519,7 +50501,7 @@ function dlRenderMoments(root, bi){
   const stacks = list.map(m=> dlStack(bi.moonLon, bi.birthMs, dlMomentMsOf(m), 6));
   el.innerHTML = list.map((m,i)=>{ const st = stacks[i], pr = st.levels[4], [y,mo,d] = m.date.split('-').map(Number);
     return `<div class="dl-m"><div class="dl-m1"><span class="dl-mlab">${rsEsc(m.label || 'Moment ' + (i+1))}</span><span class="dl-mwhen">${d} ${DL_MON[mo-1]} ${y}<span class="dl-tm">${m.time}</span></span>
-      <span class="dl-mbtns"><button type="button" class="dl-hop" data-dl-mopen="${m.id}" title="Open in the lens">⌖</button><button type="button" class="dl-hop" data-dl-m3d="${m.id}" title="Show in the 3D wheel">🌌</button><button type="button" class="dl-hop dl-x" data-dl-mdel="${m.id}" title="Remove" aria-label="Remove">✕</button></span></div>
+      <span class="dl-mbtns"><button type="button" class="dl-hop" data-dl-mopen="${m.id}" title="Open in the lens">⌖</button><button type="button" class="dl-hop" data-dl-m3d="${m.id}" title="Show in the 3D wheel">🌌</button><button type="button" class="dl-hop dl-x" data-dl-mdel="${m.id}" title="Remove">✕</button></span></div>
       <div class="dl-mchips">${st.levels.map((l,k)=>`<span class="dl-mc"><span class="dl-mtag">${DL_LV[k][1]}</span>${dlChip(l.lord)}</span>`).join('')}</div>
       <div class="dl-msub">Prana ${dlStamp(pr.start)} → ${dlStamp(pr.end)}</div></div>`; }).join('') +
     `<button type="button" class="dl-clear" id="dlMClear">Remove all ${list.length}</button>`;
@@ -50587,13 +50569,13 @@ function dlOpenInfo(){
 }
 function dlSheetRender(){
   const sheet = document.getElementById('dlSheet'), bi = dlBirth(), pr = currentProfileForExport; if (!sheet) return;
-  if (!bi || !pr){ sheet.innerHTML = `<div class="dl-sh"><div class="dl-sh-h"><b>Mismatch calculator</b><button type="button" class="dl-sh-x" data-dls-close="1" aria-label="Close">✕</button></div><div class="rs-empty">Generate a chart first.</div></div>`; return; }
+  if (!bi || !pr){ sheet.innerHTML = `<div class="dl-sh"><div class="dl-sh-h"><b>Mismatch calculator</b><button type="button" class="dl-sh-x" data-dls-close="1">✕</button></div><div class="rs-empty">Generate a chart first.</div></div>`; return; }
   const ev = dlMomentMs(), mg = dlMargin(bi, pr);
   const rows = [[1,'1 second'],[10,'10 seconds'],[30,'30 seconds'],[60,'1 minute'],[300,'5 minutes'],[900,'15 minutes'],[3600,'1 hour']].map(([sec,l])=>{ const r = dlShiftCore(bi, pr, ev, sec);
     return `<div class="dl-trow"><span class="dl-tl">${l}</span><span class="dl-tv">${r.same ? 'dasha dates move <b>' + dlDurFull(r.shiftMs) + '</b>' : '<b class="dl-bad">the Moon changes nakshatra: every dasha is different</b>'}</span></div>`; }).join('');
   const num = (k, lab, max)=>`<label class="dl-nf"><span>${lab}</span><input type="number" inputmode="numeric" min="0" max="${max}" value="${DLC[k]}" data-dls-num="${k}"></label>`;
   const dirBtn = (key, v, lab)=>`<button type="button" class="dl-sg${DLC[key]===v?' on':''}" data-dls-key="${key}" data-dls-dir="${v}">${lab}</button>`;
-  sheet.innerHTML = `<div class="dl-sh" role="dialog" aria-label="Mismatch calculator"><div class="dl-sh-h"><b>How much can a mismatch shift the timeline?</b><button type="button" class="dl-sh-x" data-dls-close="1" aria-label="Close">✕</button></div>
+  sheet.innerHTML = `<div class="dl-sh" role="dialog" aria-label="Mismatch calculator"><div class="dl-sh-h"><b>How much can a mismatch shift the timeline?</b><button type="button" class="dl-sh-x" data-dls-close="1">✕</button></div>
    <p class="dl-sh-p">The whole dasha timeline hangs on where the Moon was at birth. The Moon moves about 13° a day, so even a small error in the birth time moves <b>every</b> dasha and sub-period by the <b>same amount</b>. Numbers below are worked out from <b>this chart</b> (${rsEsc(bi.date)} ${rsEsc(bi.time)}, ${DL.src==='dial'?'Time Dial':'recorded time'}).</p>
    ${mg ? `<div class="dl-safe"><div class="dl-safe-t">🧭 Safe margin</div>The Moon is in <b>${rsEsc(mg.nak.name)}</b> (lord ${dlChip(mg.nak.lord)}). The birth time can move up to <b>${dlDurFull(mg.later*1000)} later</b> or <b>${dlDurFull(mg.earlier*1000)} earlier</b> before the Moon crosses into another nakshatra. Past that, <b>every dasha changes</b>, not just the dates.</div>` : ''}
    <div class="dl-ttl">If the birth time is wrong by…</div><div class="dl-trows">${rows}</div>
@@ -61596,7 +61578,7 @@ window.LEE = { analyse:leAnalyse, vim:leVim, links:leLinks, catalog:LEC };
 <html data-app="np" lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Jyotish Notebook</title>
 <style>
 :root{
@@ -61882,12 +61864,6 @@ input,select,textarea{font:inherit;color:inherit}
 :where(input,textarea,[contenteditable]){ caret-color:var(--meta-gold); }
 :where(:focus-visible){ outline:2px solid var(--meta-gold); outline-offset:2px; border-radius:inherit; }
 :where(:focus:not(:focus-visible)){ outline:none; }
-/* Keyboard-only ring for buttons, links, tabs and custom controls. Deliberately NOT zero-specificity:
-   many app rules say `outline:none` (e.g. .ppf-seg, .bmc-wn, #panel-vargas buttons) and would hide the
-   focus position from keyboard users (WCAG 2.4.7). Text fields keep their own border + glow. */
-:is(a[href],button,summary,[role=button],[role=tab],[role=menuitem],[role=menuitemradio],[role=link],[tabindex]:not([tabindex="-1"])):focus-visible{
-  outline:2px solid var(--meta-gold) !important; outline-offset:2px !important;
-}
 
 /* ---------- touch: no 300ms delay, no accidental double-tap zoom ---------- */
 :where(a,button,summary,select,label,input,[role=button],[role=tab],[role=menuitem],[role=menuitemradio]){ touch-action:manipulation; }
@@ -62481,7 +62457,7 @@ document.addEventListener('keydown',e=>{const k=e.key,m=e.ctrlKey||e.metaKey;
  if(k==='Tab'&&document.activeElement&&document.activeElement.id==='ed'){const s=getSelection(),c=s.anchorNode&&(s.anchorNode.nodeType===1?s.anchorNode:s.anchorNode.parentElement),td=c&&c.closest('td,th');if(td){e.preventDefault();let nx=e.shiftKey?td.previousElementSibling:td.nextElementSibling;if(!nx){const tr=td.parentElement;if(e.shiftKey){const pr=tr.previousElementSibling;nx=pr&&pr.lastElementChild;}else{let nr=tr.nextElementSibling;if(!nr){nr=tr.cloneNode(true);[...nr.cells].forEach(x=>x.innerHTML='<br>');tr.parentElement.appendChild(nr);changed();}nx=nr.firstElementChild;}}if(nx){const r=document.createRange();r.selectNodeContents(nx);r.collapse(true);s.removeAllRanges();s.addRange(r);}}}
  if(k==='Enter'&&document.activeElement&&document.activeElement.id==='tgadd'){e.preventDefault();addTag(document.activeElement.value);}
 });
-function addTag(v){const n=N(ui.sel);v=(v||'').trim().toLowerCase().replace(/[^a-z0-9ऀ-ॿ\- ]/g,'').slice(0,24);if(!n||!v)return;if(!n.tags.includes(v))n.tags.push(v);n.updated=Date.now();persist();renderNav();renderList();const tg=$('#tgin');tg.innerHTML=n.tags.map(t=>`<span class="tg">${esc(t)}<button data-rt="${esc(t)}" aria-label="Remove tag ${esc(t)}">×</button></span>`).join('')+`<label class="pill">＃ <input id="tgadd" placeholder="add tag" maxlength="24"></label>`;$('#tgadd').focus();}
+function addTag(v){const n=N(ui.sel);v=(v||'').trim().toLowerCase().replace(/[^a-z0-9ऀ-ॿ\- ]/g,'').slice(0,24);if(!n||!v)return;if(!n.tags.includes(v))n.tags.push(v);n.updated=Date.now();persist();renderNav();renderList();const tg=$('#tgin');tg.innerHTML=n.tags.map(t=>`<span class="tg">${esc(t)}<button data-rt="${esc(t)}">×</button></span>`).join('')+`<label class="pill">＃ <input id="tgadd" placeholder="add tag" maxlength="24"></label>`;$('#tgadd').focus();}
 document.addEventListener('click',e=>{const T=e.target;
  const ed0=T.closest('#ed');
  if(ed0){const li=T.closest('ul.cl li');if(li&&T===li&&e.offsetX<28){li.classList.toggle('done');changed();renderNav();return;}const wl=T.closest('a.wl');if(wl){e.preventDefault();const id=wl.dataset.note;if(N(id)){ui.view='all';openNote(id);}else toast('That linked note no longer exists');return;}const fg=T.closest('figure.chartfig');return;}
@@ -62801,7 +62777,7 @@ window.__np={S:()=>S,ui,TPL,sr:()=>savedRange&&[savedRange.startContainer.nodeNa
 </html>
 </script>
 <script type="text/plain" id="srcDev" data-enc="plain">
-<!DOCTYPE html><html data-app="dev" lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>About the developer — Vedic Astro Suite</title>
+<!DOCTYPE html><html data-app="dev" lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet"></noscript>
 <style>
 :root {
@@ -62970,12 +62946,6 @@ body{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
 :where(input,textarea,[contenteditable]){ caret-color:var(--meta-gold); }
 :where(:focus-visible){ outline:2px solid var(--meta-gold); outline-offset:2px; border-radius:inherit; }
 :where(:focus:not(:focus-visible)){ outline:none; }
-/* Keyboard-only ring for buttons, links, tabs and custom controls. Deliberately NOT zero-specificity:
-   many app rules say `outline:none` (e.g. .ppf-seg, .bmc-wn, #panel-vargas buttons) and would hide the
-   focus position from keyboard users (WCAG 2.4.7). Text fields keep their own border + glow. */
-:is(a[href],button,summary,[role=button],[role=tab],[role=menuitem],[role=menuitemradio],[role=link],[tabindex]:not([tabindex="-1"])):focus-visible{
-  outline:2px solid var(--meta-gold) !important; outline-offset:2px !important;
-}
 
 /* ---------- touch: no 300ms delay, no accidental double-tap zoom ---------- */
 :where(a,button,summary,select,label,input,[role=button],[role=tab],[role=menuitem],[role=menuitemradio]){ touch-action:manipulation; }
@@ -63274,7 +63244,7 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
 </head><body>
 <div class="modal-overlay show" id="contactModal">
   <div class="contact-modal-box dev-card">
-    <button type="button" class="pd-modal-close" id="contactModalClose" aria-label="Close">✕</button>
+    <button type="button" class="pd-modal-close" id="contactModalClose">✕</button>
     <div class="dc-orbs"><i></i><i></i><i></i></div>
     <div class="dc-hero">
       <div class="dc-avatar dc-in" style="--i:0"><span class="dc-ring"></span><span class="dc-initials">MY</span><em class="dc-badge">✓</em></div>

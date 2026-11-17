@@ -156,7 +156,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px 8px;
   function openDrawer(id){
     var m=M.filter(function(x){return x.user_id===id})[0]; if(!m) return; sel=id; var s=state(m), f=m.features||{};
     var sw=['#d4a24a','#e0584b','#3aa0ff','#2fbf9a','#9b6bff','#e8639b'];
-    $('dr').innerHTML='<div style="display:flex;justify-content:space-between;gap:8px"><div><h2>'+esc(m.email)+'</h2><span class="badge b-'+s+'">'+LBL[s]+'</span> <span class="mut">'+(m.plan==='lifetime'?'Never expires':'Until '+dt(m.expires_at))+' · paid '+inr(m.paid_total)+(m.last_paid?' · last '+dt(m.last_paid):'')+'</span></div><button class="btn" id="dClose" aria-label="Close">✕</button></div>'
+    $('dr').innerHTML='<div style="display:flex;justify-content:space-between;gap:8px"><div><h2>'+esc(m.email)+'</h2><span class="badge b-'+s+'">'+LBL[s]+'</span> <span class="mut">'+(m.plan==='lifetime'?'Never expires':'Until '+dt(m.expires_at))+' · paid '+inr(m.paid_total)+(m.last_paid?' · last '+dt(m.last_paid):'')+'</span></div><button class="btn" id="dClose">✕</button></div>'
     +'<div class="card" style="margin-top:12px"><h3>Access</h3><div class="acts">'
     +'<button class="btn pri" data-a="lifetime">★ Give lifetime</button>'
     +(m.status==='blocked'?'<button class="btn ok" data-a="unblock">Unblock</button>':'<button class="btn bad" data-a="block">Block</button>')
