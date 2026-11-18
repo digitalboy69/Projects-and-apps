@@ -207,11 +207,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-18 - 2348 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-19 - 2349 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 254 files, 36813 lines, 3128 KB
+**birth-chart** - 254 files, 36833 lines, 3131 KB
 ```
 index.html                                         679 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -274,7 +274,7 @@ js/142-gochara-vedha.js                             48 lines    3 KB
 js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
 js/147-tools-hub.js                                117 lines   12 KB
-js/148-export-builder.js                           260 lines   25 KB
+js/148-export-builder.js                           276 lines   27 KB
 js/149-feature-guide-data.js                       328 lines   43 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
@@ -460,7 +460,7 @@ css/75-ashtakavarga-extras.css                      59 lines    5 KB
 css/76-synastry.css                                 29 lines    2 KB
 css/77-panchang-calendar.css                        37 lines    3 KB
 css/78-tools-hub.css                                35 lines    3 KB
-css/79-export-builder.css                           49 lines    5 KB
+css/79-export-builder.css                           53 lines    6 KB
 css/80-feature-guide.css                            46 lines    5 KB
 css/81-bhavat-masterclass.css                      204 lines   18 KB
 css/82-varga-matrix.css                             86 lines    8 KB
@@ -717,3 +717,5 @@ shared/quick-menu.js                               190 lines   17 KB
 - Divisional chart sky in 3D: Birth Chart Divisional Charts > Open in 3D (apps/birth-chart/js/84 `vxSend3D` -> js/99 `vxJump3D` with `varga`) -> sky3d js/51 -> `NAV.set(true, quiet, key)` (js/61) with `VG` (js/64, rules copied from `calcVarga`, drift guarded by tests/sky3d_varga_parity_test.js). Plan: docs/VARGA_3D_PLAN.md. Test: tests/varga_open_3d_browser_test.py.
 
 - 3D Sky Export Studio: engine `XS` (apps/sky3d/js/65-export-studio.js; one model of kv/table/list/text blocks rendered as Markdown, JSON or text) and sheet `XSU` (js/66, css/35). Export tab launcher in index.html; `generateExportData(type)` (js/38) delegates to XS; the shared add-on's floating menu uses XS. Section data comes from DBX.analyse (js/50), VDasha, VG, SKA, findIngresses, findConjunctions, TLF.state. Buttons must not start with 'Copy' (shared/copy-toggle.js hides those by default). Plan: docs/EXPORT_STUDIO_PLAN.md. Test: tests/sky3d_export_studio_browser_test.py.
+
+- Birth Chart Export tab flicker fix: js/148 `ensurePages` used to flip through every unopened tool page (replaying the panel fade-in, jumping scroll, repainting the sticky bar per section). Now each page is tried once, html.exb-hold (css/79) holds animations at 0s while it happens, scroll is restored, and measuring paints once per ~25 ms batch. Test: tests/export_no_flicker_browser_test.py (samples panel opacity per frame).

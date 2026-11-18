@@ -54,11 +54,21 @@ const EXB = (() => {
   const chartOk = () => typeof currentChartForModal !== 'undefined' && currentChartForModal && typeof currentProfileForExport !== 'undefined' && currentProfileForExport;
 
   /* ---- build the text ---- */
+  /* A tool page that was never opened has no screen to read yet, so it is opened once and we come straight back. This used to flip the visible tabs one by one
+     (about 26 flips when the Export tab first opened): every flip replayed the panel fade-in, jumped the scroll to the top and repainted the sticky bar = the flicker.
+     Now: each page is tried ONCE (some, like panel-problem, never become a panel); the fade-in is held at zero length while it happens (html.exb-hold, css/79) and for
+     a moment after, so the returning panel does not replay it; and the scroll position is put back at once. */
+  const TRIED = {}; let holdT = 0;
   function ensurePages(keys) {
-    /* a tool page that was never opened has no screen to read yet: open it quietly, then come back */
-    const miss = keys.filter(k => k.indexOf('xp_panel-') === 0).map(k => k.slice(3)).filter(id => !document.getElementById(id));
+    const miss = keys.filter(k => k.indexOf('xp_panel-') === 0).map(k => k.slice(3)).filter(id => !document.getElementById(id) && !TRIED[id]);
     if (!miss.length || typeof switchAppTab !== 'function') return;
-    window.__thbQuiet = true; try { miss.forEach(id => { try { switchAppTab(id); } catch (e) { /* skip */ } }); switchAppTab('panel-export'); } finally { window.__thbQuiet = false; }
+    miss.forEach(id => { TRIED[id] = 1; });
+    const de = document.documentElement, sx = window.scrollX, sy = window.scrollY;
+    de.classList.add('exb-hold'); clearTimeout(holdT);
+    window.__thbQuiet = true;
+    try { miss.forEach(id => { try { switchAppTab(id); } catch (e) { /* skip */ } }); switchAppTab('panel-export'); } finally { window.__thbQuiet = false; }
+    try { window.scrollTo({ left: sx, top: sy, behavior: 'instant' }); } catch (e) { window.scrollTo(sx, sy); }
+    holdT = setTimeout(() => de.classList.remove('exb-hold'), 1500);
   }
   function sectionsFor(only) {
     const S = {}; BASE.forEach(k => S[k] = false); S.vargaKeys = [...ST.vg]; S.liveSky = false;
@@ -108,13 +118,18 @@ const EXB = (() => {
     const keys = flat().map(i => i[0]).filter(k => k !== 'liveSky');
     try { ST.base = buildFullReportText(currentChartForModal, currentProfileForExport, sectionsFor([]), null).length; } catch (e) { ST.base = 0; }
     let i = 0;
-    (function step() {
-      if (run !== sizeRun || i >= keys.length) { paintTotals(); return; }
-      const k = keys[i++];
-      try { ensurePages([k]); ST.sizes[k] = Math.max(0, buildFullReportText(currentChartForModal, currentProfileForExport, sectionsFor([k]), null).length - ST.base); } catch (e) { ST.sizes[k] = 0; }
-      const el = document.querySelector(`.exb [data-size="${k}"]`); if (el) el.textContent = fmtN(ST.sizes[k]);
-      paintGroups(); paintTotals(); setTimeout(step, 0);
-    })();
+    function step() {   // several sections per turn (about 25 ms), then ONE repaint of the numbers; was: one repaint per section
+      if (run !== sizeRun) return;
+      const t0 = performance.now();
+      while (i < keys.length && performance.now() - t0 < 25) {
+        const k = keys[i++];
+        try { ensurePages([k]); ST.sizes[k] = Math.max(0, buildFullReportText(currentChartForModal, currentProfileForExport, sectionsFor([k]), null).length - ST.base); } catch (e) { ST.sizes[k] = 0; }
+        const el = document.querySelector(`.exb [data-size="${k}"]`); if (el) { const tx = fmtN(ST.sizes[k]); if (el.textContent !== tx) el.textContent = tx; }
+      }
+      paintGroups(); paintTotals();
+      if (i < keys.length) setTimeout(step, 30);
+    }
+    setTimeout(step, 60);   // let the screen show first, then measure
   }
   const sizeOf = k => ST.sizes[k];
   function total() {
@@ -162,23 +177,24 @@ const EXB = (() => {
   }
   function paintTotals() {
     const el = document.getElementById('exbTot'); if (!el) return;
-    const t = total(), json = ST.fmt === 'json';
-    if (json) el.innerHTML = `<b>Raw chart data</b><small>JSON file of the whole computed chart</small>`;
+    const t = total(), json = ST.fmt === 'json'; let h = '';
+    if (json) h = `<b>Raw chart data</b><small>JSON file of the whole computed chart</small>`;
     else {
       const tok = Math.round(t.chars / 4), big = tok > 150000;
-      el.innerHTML = `<b>${t.on} section${t.on === 1 ? '' : 's'}</b><small>${t.pending ? 'measuring… ' : '≈ '}${fmtN(t.chars)} characters · ≈ ${fmtN(tok)} AI tokens</small>${big && !ST.split ? '<small class="exb-warn">Large. Some AI chats cannot take this much: use Split.</small>' : ''}`;
+      h = `<b>${t.on} section${t.on === 1 ? '' : 's'}</b><small>${t.pending ? 'measuring… ' : '≈ '}${fmtN(t.chars)} characters · ≈ ${fmtN(tok)} AI tokens</small>${big && !ST.split ? '<small class="exb-warn">Large. Some AI chats cannot take this much: use Split.</small>' : ''}`;
     }
+    if (el.__h !== h) { el.innerHTML = h; el.__h = h; }   // untouched when nothing changed: no needless repaint of the sticky bar
     const none = !json && t.on === 0; ['exbDl', 'exbCp'].forEach(id => { const b = document.getElementById(id); if (b) b.disabled = none; });
   }
   function paintGroups() {
     defs().forEach(g => {
       const all = (g.items || []).concat(...(g.sub || []).map(s => s.items)), n = all.filter(i => ST.sel[i[0]]).length, sz = all.reduce((a, i) => a + (ST.sel[i[0]] && ST.sizes[i[0]] != null ? ST.sizes[i[0]] : 0), 0);
-      const c = document.querySelector(`[data-gcount="${g.id}"]`); if (c) c.textContent = `${n} of ${all.length} selected${n ? ' · ' + fmtN(sz) : ''}`;
+      const c = document.querySelector(`[data-gcount="${g.id}"]`), tx = `${n} of ${all.length} selected${n ? ' · ' + fmtN(sz) : ''}`; if (c && c.textContent !== tx) c.textContent = tx;
     });
     document.querySelectorAll('.exb-r').forEach(r => { const cb = r.querySelector('input'); if (cb) { cb.checked = !!ST.sel[cb.dataset.k]; r.classList.toggle('on', cb.checked); } });
     document.querySelectorAll('#exbPre button').forEach(b => b.classList.toggle('on', presetOn(b.dataset.p)));
-    ['vargas', 'liveSky'].forEach(k => { const s = document.querySelector(`.exb-sub[data-for="${k}"]`); if (s) s.hidden = !ST.sel[k]; });
-    const sh = document.querySelector('.exb-sh span'); if (sh) sh.textContent = `Charts to include (${ST.vg.size} of ${Object.keys(VARGAS).length})`;
+    ['vargas', 'liveSky'].forEach(k => { const s = document.querySelector(`.exb-sub[data-for="${k}"]`); if (s && s.hidden !== !ST.sel[k]) s.hidden = !ST.sel[k]; });
+    const sh = document.querySelector('.exb-sh span'), st = `Charts to include (${ST.vg.size} of ${Object.keys(VARGAS).length})`; if (sh && sh.textContent !== st) sh.textContent = st;
     document.querySelectorAll('.exb-vg button').forEach(b => b.classList.toggle('on', ST.vg.has(b.dataset.k)));
   }
   function setGroup(id, v) { const g = defs().find(x => x.id === id); if (!g) return; (g.items || []).concat(...(g.sub || []).map(s => s.items)).forEach(i => { ST.sel[i[0]] = v; }); }

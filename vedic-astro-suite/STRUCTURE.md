@@ -606,6 +606,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/tools_hub_test.js` — node test for js/147 (every tool listed exactly once, groups, search words, recents)
 - `tests/tools_hub_browser_test.py` — Tools tab at phone width: bar fits, search, chips, open a tool, recents
 - `tests/export_builder_browser_test.py` — Export tab at phone width: presets, group All/None, divisional chart picks, remembered selection, txt/json download, split into parts, sky-right-now place, quiet opening of unopened tool pages
+- `tests/export_no_flicker_browser_test.py` — the Birth Chart Export tab does not flicker while it measures tool pages: always the Export panel on screen, no scroll jump, no fade-in replay, sizes still fill in
 - `tests/feature_guide_test.js` — node test: every tool has a full guide entry, links valid, no fear words, search finds plain words
 - `tests/feature_guide_browser_test.py` — Feature Guide at 390 and 360px: cards, one open at a time, search, group chips, Open button, listed in Tools tab
 - `tests/gochara_vedha_test.js` — node test for js/142 (pair tables vs the published house sets, exceptions both ways, nodes ignored)

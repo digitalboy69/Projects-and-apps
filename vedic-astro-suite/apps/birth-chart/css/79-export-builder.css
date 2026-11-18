@@ -46,3 +46,7 @@
 .exb-flash{position:absolute;left:12px;right:12px;bottom:calc(100% + 8px);padding:9px 12px;border-radius:10px;background:#1b2a1f;border:1px solid #5fd08a;color:#bff0d0;font-size:12.5px}
 .exb-flash.bad{background:#2b1717;border-color:#d96c6c;color:#f3c4c4}
 @media (max-width:380px){.exb-coords{grid-template-columns:1fr 1fr}.exb-q{width:100%;margin:6px 0 0}.exb-step h4{flex-wrap:wrap}}
+
+/* while the Export screen quietly opens tool pages to measure them (js/148 ensurePages): no fade-in replay, no smooth scroll, so nothing flashes */
+html.exb-hold,html.exb-hold body{scroll-behavior:auto!important}
+html.exb-hold .app-panel,html.exb-hold .app-panel>*{animation-duration:0s!important;animation-delay:0s!important}
