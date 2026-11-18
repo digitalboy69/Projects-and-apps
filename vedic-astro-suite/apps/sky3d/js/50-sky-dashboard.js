@@ -290,5 +290,5 @@ const DBX = (function(){
   }
   function hide(){ const r = el('dbxRoot'); if (r) r.classList.remove('show'); open = false; document.body.classList.remove('dbx-open'); }
   const btn = el('dashBtn'); if (btn) btn.addEventListener('click', show);
-  return { show, hide, refresh(){ if (open) render(); }, text(){ return lastText; } };
+  return { show, hide, refresh(){ if (open) render(); }, text(){ return lastText; }, analyse };   /* analyse(c) is reused by the Export Studio (js/65) */
 })();

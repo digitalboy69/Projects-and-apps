@@ -207,11 +207,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-16 - 2316 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-18 - 2348 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 254 files, 36812 lines, 3127 KB
+**birth-chart** - 254 files, 36813 lines, 3128 KB
 ```
 index.html                                         679 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -275,7 +275,7 @@ js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
 js/147-tools-hub.js                                117 lines   12 KB
 js/148-export-builder.js                           260 lines   25 KB
-js/149-feature-guide-data.js                       327 lines   42 KB
+js/149-feature-guide-data.js                       328 lines   43 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
 js/151-bhavat-masterclass-data.js                   99 lines   13 KB
@@ -484,7 +484,7 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 100 files, 9463 lines, 611 KB
+**sky3d** - 103 files, 9923 lines, 667 KB
 ```
 index.html                                         548 lines   35 KB
 js/01-astro-engine.js                              163 lines   10 KB
@@ -524,7 +524,7 @@ js/34-main-refresh-loop.js                          60 lines    2 KB
 js/35-ui-wiring.js                                  21 lines    1 KB
 js/36-mobile-bottom-sheet.js                        99 lines    5 KB
 js/37-natal-form-location.js                       118 lines    7 KB
-js/38-data-export-wiring.js                        124 lines    4 KB
+js/38-data-export-wiring.js                         12 lines    0 KB
 js/39-smoothness.js                                 51 lines    3 KB
 js/40-3d-astro-layers.js                           145 lines   11 KB
 js/41-quick-planet-picker.js                        47 lines    3 KB
@@ -551,6 +551,8 @@ js/61-navamsha-sky.js                               54 lines    4 KB
 js/62-sky-alerts.js                                126 lines   12 KB
 js/63-timeline-finder.js                           139 lines   19 KB
 js/64-varga-math.js                                166 lines   10 KB
+js/65-export-studio.js                             378 lines   36 KB
+js/66-export-studio-ui.js                          131 lines   15 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -586,6 +588,7 @@ css/31-ui-refresh.css                               65 lines    5 KB
 css/32-tools-menu.css                               21 lines    1 KB
 css/33-sky-alerts.css                               33 lines    3 KB
 css/34-timeline-finder.css                          58 lines    8 KB
+css/35-export-studio.css                            63 lines    9 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -597,10 +600,10 @@ shell/js/shell.js                                  248 lines   18 KB
 shell/js/updater.js                                 33 lines    2 KB
 ```
 
-**shared** - 7 files, 1190 lines, 92 KB
+**shared** - 7 files, 1191 lines, 93 KB
 ```
 shared/copy-toggle.js                               28 lines    1 KB
-shared/export-addon.js                             643 lines   47 KB
+shared/export-addon.js                             644 lines   48 KB
 shared/icons.js                                    169 lines   17 KB
 shared/liquid-glass.css                             46 lines    5 KB
 shared/liquid-glass.js                              16 lines    0 KB
@@ -712,3 +715,5 @@ shared/quick-menu.js                               190 lines   17 KB
 - Timeline finder (3D Sky Tools menu, hourglass): `TLF` in apps/sky3d/js/63-timeline-finder.js searches a date span for sky conditions (sign, nakshatra, planet-planet aspect, retrograde) combined ALL/ANY; step scan plus 18-step bisect, chunked async. Sheet CSS css/34-timeline-finder.css. Plan: docs/TIMELINE_FINDER_PLAN.md. Test: tests/sky3d_timeline_finder_browser_test.py.
 
 - Divisional chart sky in 3D: Birth Chart Divisional Charts > Open in 3D (apps/birth-chart/js/84 `vxSend3D` -> js/99 `vxJump3D` with `varga`) -> sky3d js/51 -> `NAV.set(true, quiet, key)` (js/61) with `VG` (js/64, rules copied from `calcVarga`, drift guarded by tests/sky3d_varga_parity_test.js). Plan: docs/VARGA_3D_PLAN.md. Test: tests/varga_open_3d_browser_test.py.
+
+- 3D Sky Export Studio: engine `XS` (apps/sky3d/js/65-export-studio.js; one model of kv/table/list/text blocks rendered as Markdown, JSON or text) and sheet `XSU` (js/66, css/35). Export tab launcher in index.html; `generateExportData(type)` (js/38) delegates to XS; the shared add-on's floating menu uses XS. Section data comes from DBX.analyse (js/50), VDasha, VG, SKA, findIngresses, findConjunctions, TLF.state. Buttons must not start with 'Copy' (shared/copy-toggle.js hides those by default). Plan: docs/EXPORT_STUDIO_PLAN.md. Test: tests/sky3d_export_studio_browser_test.py.

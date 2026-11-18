@@ -620,8 +620,9 @@
       ['Open export options…', function(){ if (typeof openExportModal === 'function') openExportModal(); return ''; }]
     ] : [
       ['Copy this tab', function(){ var p = activePanel(); return p ? withHead(titleOf(p), domToText(p)) : ''; }],
-      ['Copy EVERYTHING', function(){ return window.generateExportData('vax_everything'); }],
-      ['Copy detailed sky', function(){ return aSkyFull(); }]
+      ['Copy AI brief (structured)', function(){ return typeof XS !== 'undefined' ? XS.make(XS.applyPreset(XS.defaults(), 'ai')).text : aSkyFull(); }],
+      ['Copy EVERYTHING (structured)', function(){ return typeof XS !== 'undefined' ? XS.make(XS.applyPreset(XS.defaults(), 'everything')).text : window.generateExportData('vax_everything'); }],
+      ['Open Export Studio…', function(){ if (typeof XSU !== 'undefined') XSU.open(); return ''; }]
     ];
     items.forEach(function(it){
       var b = document.createElement('button'); b.type = 'button'; b.textContent = it[0];

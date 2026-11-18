@@ -42,6 +42,7 @@
 <link rel="stylesheet" href="css/32-tools-menu.css">
 <link rel="stylesheet" href="css/33-sky-alerts.css">
 <link rel="stylesheet" href="css/34-timeline-finder.css">
+<link rel="stylesheet" href="css/35-export-studio.css">
 <link rel="stylesheet" href="../../shared/meta.css">
 <script src="../../shared/icons.js"></script>
 <link rel="stylesheet" href="../../shared/liquid-glass.css">
@@ -389,21 +390,18 @@
       </div>
 
       <div class="panel-section" id="tab-export">
-        <div class="tab-intro"><span class="ico">⇪</span><div><b>Copy the data as text</b> to paste into notes, a document or an AI chat.</div></div>
-        <div class="panel-heading">Export / Copy Data</div>
-        <div class="sign-select-row">
-          <label for="exportSelect">Select Data to Copy</label>
-          <select id="exportSelect">
-            <option value="sky">Current Sky Positions</option>
-            <option value="transits">Upcoming Transits (2-Year Scan)</option>
-            <option value="conjunctions">Upcoming Conjunctions</option>
-            <option value="aspects">Planetary Aspects (Graha Drishti)</option>
-            <option value="sign_aspects">Sign Aspects (Rashi Drishti)</option>
-            <option value="all">All of the Above</option>
-          </select>
+        <div class="tab-intro"><span class="ico">⇪</span><div><b>Export the sky as clean, structured data</b> for an AI chat, a document or your own tools.</div></div>
+        <div class="xs-launch">
+          <button type="button" class="xs-big" id="xsOpenBtn">Open Export Studio</button>
+          <div class="xs-tip">Pick the exact sections, moment, format (Markdown, JSON or text) and add your own question, with a live preview. Or copy a ready-made set in one tap:</div>
+          <div class="xs-quick">
+            <button type="button" data-xq="ai"><b>AI brief</b><small>Chart, houses, aspects, alerts, Dasha</small></button>
+            <button type="button" data-xq="quick"><b>Quick sky</b><small>Planets and panchang</small></button>
+            <button type="button" data-xq="forecast"><b>Forecast</b><small>Dasha, transits, meetings, retrogrades</small></button>
+            <button type="button" data-xq="everything"><b>Everything</b><small>All sections, main divisional charts</small></button>
+          </div>
+          <div id="exportStatus" style="text-align:center; font-size:13px; font-weight:600; color:var(--cyan); display:none;"></div>
         </div>
-        <button type="button" class="btn-block" id="copyDataBtn">Copy to Clipboard</button>
-        <div id="exportStatus" style="text-align:center; margin-top:16px; font-size:13px; font-weight:600; color:var(--cyan); display:none;">Copied to clipboard! ✓</div>
       </div>
 
     </div>
@@ -523,6 +521,8 @@
 <script src="js/61-navamsha-sky.js"></script>
 <script src="js/62-sky-alerts.js"></script>
 <script src="js/63-timeline-finder.js"></script>
+<script src="js/65-export-studio.js"></script>
+<script src="js/66-export-studio-ui.js"></script>
 <script src="js/42-init.js"></script>
 <script src="js/43-degree-finder-returns.js"></script>
 <script src="js/44-retrograde-planner.js"></script>

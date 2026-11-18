@@ -335,12 +335,15 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/css/32-tools-menu.css` — top-right Eye + Tools icon, Tools drop-down menu and the D9 Navamsha badge (`tools-menu`, `tm-`, `hud-nav`)
 - `apps/sky3d/css/33-sky-alerts.css` — Sky alerts pill and bottom sheet (`hud-ska`, `ska-`)
 - `apps/sky3d/css/34-timeline-finder.css` — Timeline finder sheet (`tlf-` prefix)
+- `apps/sky3d/css/35-export-studio.css` — Export Studio sheet and the Export tab launcher (xs- classes)
 - `apps/sky3d/js/59-wheel-frame.js` — wheel framing on phones: finds the free band between the cards and the timeline bar, shifts the picture into it (camera view offset) and re-fits the zoom; `wheelBand()`, `wheelFrameUpdate()`
 - `apps/sky3d/js/60-wheel-beauty.js` — Zodiac Wheel beauty pass: soft Sun glow (replaces hard shells), degree scale on the sign ring, golden aura and inner plate, Earth/Moon lift, gentle Sun breathing and gem twinkle; off with localStorage vax3d_beauty='0'
 - `apps/sky3d/js/61-navamsha-sky.js` — global `NAV`: Navamsha (D9) sky (`NAV.snap/asc/set`, D9 = lon×9 mod 360) used by scene, HUD, sky table, overlays and chart tab; top-right Tools drop-down wiring (`#toolsBtn`, `#toolsMenu`, `#navBtn`, `#navBadge`); forced off in Solar System view
 - `apps/sky3d/js/62-sky-alerts.js` — global `SKA`: HUD pill under the Moon line + bottom sheet of trine (1-5-9), square (4-10), opposite (7), on-the-sign, Gochara, Sade Sati, Rahu-Ketu axis and Jupiter+Saturn double-transit alerts from the live Rising and Moon, or your birth Rising and Moon (`SKA.calc` is pure)
 - `apps/sky3d/js/63-timeline-finder.js` — global `TLF`: Tools > Timeline finder. Age range (from today) or birth years + conditions (planets in a sign, in a nakshatra, planets meeting/aspecting, retrograde), match ALL or ANY, scans the sky engine and lists every matching period; tap to jump the 3D sky (`TLF.test/search` are pure)
 - `apps/sky3d/js/64-varga-math.js` — global `VG`: divisional-chart sign rules copied from the Birth Chart `calcVarga`, plus `VG.lon` (a full 0-360 sky longitude in any varga); used by `NAV` to draw any D2-D144 chart as a sky
+- `apps/sky3d/js/65-export-studio.js` — global `XS`: the 3D Sky export engine. One data model (sections of kv / table / list / text blocks) rendered as Markdown, JSON or plain text; presets, section builders (planets, signs, houses, panchang, aspects, relations, alerts, divisional charts, Dasha, transits, meetings, retrograde, ephemeris, Timeline finder results)
+- `apps/sky3d/js/66-export-studio-ui.js` — global `XSU`: the Export Studio sheet (presets, chart and moment, section switches and options, format, question for the AI, live preview, Copy / Download / Share) and the one-tap copies on the Export tab
 - `tests/sky3d_shadbala_test.js` — engine parity with the Birth Chart plus live adapter checks
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
@@ -502,6 +505,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/sky3d_timeline_finder_browser_test.py` — Timeline finder: ingress dates vs known values, Sun in Libra + Moon in Pisces, ALL vs ANY, planets meet, the sheet at 390 and 360
 - `tests/sky3d_varga_parity_test.js` — the 3D Sky's varga rules equal the Birth Chart's for all 24 vargas and every degree; D9 equals the Navamsha sky
 - `tests/varga_open_3d_browser_test.py` — Divisional Charts > Open in 3D: the 3D Sky opens at the birth moment with that varga drawn as the sky, at 390 and 360
+- `tests/sky3d_export_studio_browser_test.py` — Export Studio: structured Markdown / JSON / text output, section and option switches, copy and download, the sheet at 390 and 360
 - `tests/ai_system_browser_test.py` — AI system: every index entry, route → fetch → answer with a stubbed provider, skills, personas, key rules, panel at 390 and 360
 - `tests/ai_paste_test.js` — paste-to-fill parser (cURL, JS fetch/axios/SDK, Python requests/SDK) for the AI provider settings
 - `tests/life_areas_test.py` — Life-area engine: bounds, determinism, calibration spread on 12 charts, per-input sensitivity, Deep reading + report + PDF wiring
@@ -574,6 +578,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `docs/AI_SYSTEM_PLAN.md` — plan and architecture of the AI system (index, engine, panel)
 - `docs/TIMELINE_FINDER_PLAN.md` — plan, method and accuracy notes for the 3D Sky Timeline finder
 - `docs/VARGA_3D_PLAN.md` — plan for opening any divisional chart as a sky in the 3D Sky
+- `docs/EXPORT_STUDIO_PLAN.md` — plan for the structured 3D Sky export and its control screen
 - `tests/hora_test.py` — Playwright test of the Hora engine against panchangaAt (order, contiguity, Drik day/night lengths)
 - `tests/varga_matrix_test.js` — node test for js/153 (cells equal raw varga data, points recomputed by hand, Vargottama, 60 real charts x 3 sets)
 - `tests/varga_matrix_browser_test.py` — Playwright test of the Varga Matrix at 390 and 360px (`VMX_SHOTS=dir`)
