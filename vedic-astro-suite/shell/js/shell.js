@@ -5,7 +5,8 @@
        - hosted / dev folder: the iframe loads apps/<name>/index.html directly (browser caches every css/js file, loads only the apps you open)
        - single-file build (dist/): the app text sits in <script type="text/plain" id="srcX" data-enc="b64|plain"> and goes in via srcdoc */
   /* Hosted: one ready-made file per app (apps/<name>/index.bundle.html, made by build.py) = 1 request instead of ~260. Open the shell with ?dev to load the plain source files while editing. */
-  const BN = /[?&]dev\b/.test(location.search) ? 'index.html' : 'index.bundle.html';
+  const USE_BUNDLES = true;   /* UNDO SWITCH: set to false to go back to the plain source files for everyone (see docs/STARTUP_SPEED_PLAN.md, "How to undo") */
+  const BN = (!USE_BUNDLES || /[?&]dev\b/.test(location.search)) ? 'index.html' : 'index.bundle.html';
   const APP_URL = { A:'apps/sky3d/' + BN, B:'apps/birth-chart/' + BN, N:'apps/notepad/' + BN, Dev:'apps/developer/' + BN };
   const decode = id => {
     const el = document.getElementById(id), raw = el.textContent;

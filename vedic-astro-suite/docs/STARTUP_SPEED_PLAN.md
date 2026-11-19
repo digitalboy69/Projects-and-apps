@@ -26,6 +26,12 @@ Done already (commit 88d1f47): removed the forced 1.5 s loader hold and the welc
 On a real connection every request costs a round trip, so the saving is larger than on this zero-latency test. On a slow CPU the time is spent running the code, which Step 2 addresses.
 - [ ] Not done on purpose: the APK still carries the plain source files next to the bundles (safe, small); removing them would shrink the APK.
 
+### How to undo Step 1 (any of these works)
+1. Quick, for everyone: in `shell/js/shell.js` set `USE_BUNDLES = false`, run `python3 build.py`, commit, push. The shell goes back to loading the plain source files (they were never removed).
+2. For one person or one try: open the app with `?dev` on the address.
+3. Full revert: `git revert 09a3a0a` (the bundling commit) and its follow-up, or reset to the tag `before-bundles` (the commit just before Step 1, `958036b`).
+Nothing was deleted by Step 1, so every option is safe.
+
 ## Step 2: load rare features only when opened (several hours, in stages)
 Order: biggest and least used first. For each feature: move it to a lazy file, load it on first tap with a short "opening" state, add a test that opens it, measure.
 - [ ] Reading and nakshatra databases (large data, used only in readings)

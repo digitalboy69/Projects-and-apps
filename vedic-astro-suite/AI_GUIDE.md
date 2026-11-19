@@ -597,12 +597,12 @@ css/35-export-studio.css                            63 lines    9 KB
 css/36-formula-maker.css                            61 lines   11 KB
 ```
 
-**shell** - 5 files, 593 lines, 67 KB
+**shell** - 5 files, 594 lines, 67 KB
 ```
 index.html                                           2 lines    2 KB
 shell/css/shell.css                                114 lines   12 KB
 shell/js/locpicker.js                              202 lines   34 KB
-shell/js/shell.js                                  242 lines   17 KB
+shell/js/shell.js                                  243 lines   17 KB
 shell/js/updater.js                                 33 lines    2 KB
 ```
 
