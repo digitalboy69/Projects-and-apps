@@ -6,3 +6,5 @@ Then read `STRUCTURE.md` (map of every file + feature + path). **Whenever you ad
 **The owner's working method is in `AI_GUIDE.md` section 0a: plan file, rebase before every step, two-source research, tests plus phone screenshots, wire the tool into HOME_ITEMS + js/120 + the Tools tab (js/147), push live after each backend step, and for visible UI changes show screenshots and wait for approval before pushing. Do exactly like that.**
 
 **Feature Guide rule (owner, 2026-11-11): whatever you build or change that people can see or use MUST be added to or updated in the Feature Guide (`apps/birth-chart/js/149-feature-guide-data.js`, `FG_DATA.e`). See `AI_GUIDE.md` section 0a item 5a.**
+
+**Two more owner rules (2026-11-20), details in `AI_GUIDE.md` section 0a: (2a) always rebase on the latest `origin/main` when behind: at the start, before each commit and before each push. (5b) every new feature follows `docs/STARTUP_SPEED_PLAN.md`: nothing heavy at boot (load on first open), no artificial waits, report the KB added.**

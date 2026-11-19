@@ -593,6 +593,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `docs/VARGA_3D_PLAN.md` — plan for opening any divisional chart as a sky in the 3D Sky
 - `docs/EXPORT_STUDIO_PLAN.md` — plan for the structured 3D Sky export and its control screen
 - `docs/FORMULA_MAKER_PLAN.md` — plan for the 3D Sky Formula Maker (subjects, relations, evaluator, find dates, library, sharing, UI)
+- `docs/STARTUP_SPEED_PLAN.md` — plan for faster start-up: bundle each app, load rare features on first open, how to measure, and the rule every new feature follows
 - `tests/hora_test.py` — Playwright test of the Hora engine against panchangaAt (order, contiguity, Drik day/night lengths)
 - `tests/varga_matrix_test.js` — node test for js/153 (cells equal raw varga data, points recomputed by hand, Vargottama, 60 real charts x 3 sets)
 - `tests/varga_matrix_browser_test.py` — Playwright test of the Varga Matrix at 390 and 360px (`VMX_SHOTS=dir`)
