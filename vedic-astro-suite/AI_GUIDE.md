@@ -595,12 +595,12 @@ css/35-export-studio.css                            63 lines    9 KB
 css/36-formula-maker.css                            61 lines   11 KB
 ```
 
-**shell** - 5 files, 595 lines, 67 KB
+**shell** - 5 files, 591 lines, 67 KB
 ```
 index.html                                           2 lines    2 KB
-shell/css/shell.css                                110 lines   11 KB
+shell/css/shell.css                                114 lines   12 KB
 shell/js/locpicker.js                              202 lines   34 KB
-shell/js/shell.js                                  248 lines   18 KB
+shell/js/shell.js                                  240 lines   17 KB
 shell/js/updater.js                                 33 lines    2 KB
 ```
 
@@ -723,5 +723,6 @@ shared/quick-menu.js                               190 lines   17 KB
 - 3D Sky Export Studio: engine `XS` (apps/sky3d/js/65-export-studio.js; one model of kv/table/list/text blocks rendered as Markdown, JSON or text) and sheet `XSU` (js/66, css/35). Export tab launcher in index.html; `generateExportData(type)` (js/38) delegates to XS; the shared add-on's floating menu uses XS. Section data comes from DBX.analyse (js/50), VDasha, VG, SKA, findIngresses, findConjunctions, TLF.state. Buttons must not start with 'Copy' (shared/copy-toggle.js hides those by default). Plan: docs/EXPORT_STUDIO_PLAN.md. Test: tests/sky3d_export_studio_browser_test.py.
 - 3D Sky Formula Maker (Tools menu, ƒ): engine `FM` (apps/sky3d/js/67-formula-engine.js: subjects incl. Chara Karakas, Bhrigu Bindu, Yogi points, special lagnas, Arudha; ~25 relations; tri-state tree evaluator; `FM.scan` find dates), library + `VF1.` share codec + Saved list `FMX` (js/68), sheet `FMU` (js/69, css/36). Plan docs/FORMULA_MAKER_PLAN.md; test tests/sky3d_formula_maker_browser_test.py. New relation = one `def(...)` in js/67 plus its params in `paramsHtml` (js/69).
 - Logo and favicons: one icon set in shared/brand (identical copy in ../door-site/site/brand), linked from shell, apps, root redirect and door site. APK icons come from mobile/resources/icon-*.png (adaptive icon = art feathered over an edge-matched purple background). To change the logo, regenerate all of them and keep both brand folders identical.
+- Start-up loader (shell/js/shell.js + shell/css/shell.css): no forced minimum time and no welcome greeting; contents only fade in after 0.3s, it hides the moment the view is ready, 3D Sky waits for 3 smooth frames (max 0.8s). Remaining start-up time is real: Birth Chart loads 170 scripts / 2.6 MB (about 1.5s on a fast PC, 4 to 5s at 4x slower CPU). Next speed-up would be per-app bundles or lazy-loading rare features.
 
 - Birth Chart Export tab flicker fix: js/148 `ensurePages` used to flip through every unopened tool page (replaying the panel fade-in, jumping scroll, repainting the sticky bar per section). Now each page is tried once, html.exb-hold (css/79) holds animations at 0s while it happens, scroll is restored, and measuring paints once per ~25 ms batch. Test: tests/export_no_flicker_browser_test.py (samples panel opacity per frame).

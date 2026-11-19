@@ -13,21 +13,13 @@
   const setSource = (f, key) => { if (document.getElementById('src' + key)) f.srcdoc = decode('src' + key); else f.src = APP_URL[key]; };
 
   setTimeout(()=>document.documentElement.classList.remove('booting'), 20000); /* failsafe */
-  /* welcome greeting (first start only) */
-  const T0 = performance.now(); let firstDone = false;
-  (function(){
-    const hr = new Date().getHours(), g = hr < 5 ? 'Shubh Ratri' : hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : hr < 21 ? 'Good evening' : 'Shubh Ratri';
-    document.getElementById('welHi').textContent = 'Namaste, ' + g.toLowerCase();
-    const z = document.getElementById('zring'), G = '\u2648\u2649\u264A\u264B\u264C\u264D\u264E\u264F\u2650\u2651\u2652\u2653';
-    for (let i = 0; i < 12; i++){ const e = document.createElement('s'); e.textContent = G[i] + '\uFE0E'; e.style.transform = 'rotate(' + i*30 + 'deg) translateY(-86px) rotate(' + (-i*30) + 'deg)'; e.style.animationDelay = (0.2 + i*0.07) + 's'; z.appendChild(e); }
-    const L = ['Welcome to your sky', 'Charts, planets and time, in one place', 'Preparing the heavens\u2026', 'Aligning the planets\u2026'], sub = document.getElementById('welSub'); let k = 0;
-    const t = setInterval(()=>{ if (firstDone){ clearInterval(t); return; } sub.style.opacity = 0; setTimeout(()=>{ k = (k+1) % L.length; sub.textContent = L[k]; sub.style.opacity = 1; }, 380); }, 1700);
-  })();
+  /* No forced hold and no welcome show: the loader only appears if start-up takes longer than ~0.3s and goes away the moment the view is ready. */
+  let firstDone = false;
   /* Loader state: ready[k] = that view finished starting up. The loader hides whenever the CURRENT view is ready
      (also when you switch back to a view that finished while you were away), so it can never stay stuck. */
   const ready = {}; let revT = 0, slowT = 0; const retryBtn = document.getElementById('retry');
-  function hideLoader(){ load.classList.add('hide'); load.classList.remove('slow'); firstDone = true; document.documentElement.classList.remove('booting'); setTimeout(()=>load.classList.add('compact'), 800); }
-  function reveal(){ clearTimeout(slowT); clearTimeout(revT); const wait0 = firstDone ? 0 : Math.max(0, 1500 - (performance.now() - T0)); revT = setTimeout(()=>{ if (ready[cur]) hideLoader(); }, wait0); }
+  function hideLoader(){ load.classList.add('hide'); load.classList.remove('slow'); firstDone = true; document.documentElement.classList.remove('booting'); setTimeout(()=>load.classList.add('compact'), 300); }
+  function reveal(){ clearTimeout(slowT); clearTimeout(revT); if (ready[cur]) hideLoader(); }
   function finish(k){ ready[k] = true; if (cur === k) reveal(); }
   function showLoader(k){
     clearTimeout(slowT); clearTimeout(revT);
@@ -51,14 +43,14 @@
       let n = 0;
       (function wait(){ let rdy = true; try{ const m = f.contentDocument.getElementById('loadingMask'); rdy = !m || m.classList.contains('hide'); }catch(e){}
         if (rdy || ++n > 60) settle(); else setTimeout(wait, 100); })();
-      /* 3D Sky: keep the loader until the scene runs smoothly (10 quick frames in a row, max 3s) */
+      /* 3D Sky: keep the loader until the scene is drawing (3 quick frames in a row, max 0.8s) */
       function settle(){
         if (k !== 'A'){ finish(k); return; }
         if (cur === k) txt.textContent = 'WARMING UP THE SKY\u2026';
         let good = 0, last = 0; const t0 = performance.now(); let w; try{ w = f.contentWindow; }catch(e){ finish(k); return; }
         (function f1(ts){
           if (last){ good = (ts - last) < 45 ? good + 1 : 0; } last = ts;
-          if (good >= 10 || performance.now() - t0 > 3000) finish(k); else w.requestAnimationFrame(f1);
+          if (good >= 3 || performance.now() - t0 > 800) finish(k); else w.requestAnimationFrame(f1);
         })(0);
       }
     };

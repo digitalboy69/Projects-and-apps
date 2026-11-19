@@ -5,7 +5,7 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
 .stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#03060d;display:none}
 .stage iframe.on{display:block;animation:fade .35s ease both}
 @keyframes fade{from{opacity:0}to{opacity:1}}
-.load{position:absolute;inset:0;z-index:3;display:grid;place-items:center;align-content:center;gap:26px;background:radial-gradient(70% 55% at 50% 42%,rgba(123,110,246,.20),transparent 70%),radial-gradient(40% 30% at 20% 80%,rgba(0,240,213,.07),transparent 70%),#03060d;transition:opacity .55s ease,visibility 0s .55s;overflow:hidden}
+.load{position:absolute;inset:0;z-index:3;display:grid;place-items:center;align-content:center;gap:26px;background:radial-gradient(70% 55% at 50% 42%,rgba(123,110,246,.20),transparent 70%),radial-gradient(40% 30% at 20% 80%,rgba(0,240,213,.07),transparent 70%),#03060d;transition:opacity .18s ease,visibility 0s .18s;overflow:hidden}
 .load.hide{opacity:0;visibility:hidden;pointer-events:none}
 .load::before{content:"";position:absolute;inset:-50%;background-image:radial-gradient(1.2px 1.2px at 12% 18%,#fff8 50%,transparent 51%),radial-gradient(1px 1px at 78% 12%,#fff6 50%,transparent 51%),radial-gradient(1.4px 1.4px at 34% 72%,#fff9 50%,transparent 51%),radial-gradient(1px 1px at 88% 66%,#fff7 50%,transparent 51%),radial-gradient(1.2px 1.2px at 56% 40%,#fff5 50%,transparent 51%),radial-gradient(1px 1px at 22% 46%,#fff6 50%,transparent 51%),radial-gradient(1.3px 1.3px at 66% 88%,#fff8 50%,transparent 51%);background-size:340px 340px;animation:drift 90s linear infinite;opacity:.8}
 @keyframes drift{to{transform:rotate(360deg)}}
@@ -107,3 +107,7 @@ html,body{height:100%;background:#03060d;color:#e8edf7;font-family:system-ui,-ap
 .vs-row input:checked+i{background:rgba(212,162,74,.35);border-color:#d4a24a}
 .vs-row input:checked+i::after{left:20px;background:#d4a24a}
 .vs-row input:focus-visible+i{outline:2px solid #d4a24a;outline-offset:2px}
+
+/* Loader: contents only fade in if start-up is not instant (no flash on fast starts) */
+.load>*{animation:loadIn .25s .3s both}
+@keyframes loadIn{from{opacity:0}to{opacity:1}}
