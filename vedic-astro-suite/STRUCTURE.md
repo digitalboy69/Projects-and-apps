@@ -481,6 +481,14 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `mobile/resources/icon-foreground.png` — adaptive icon foreground
 - `mobile/resources/icon-background.png` — adaptive icon background
 - `mobile/resources/splash.png` — splash screen
+- `shared/brand/logo.png` — the app logo (rounded master). Source for all icons; a copy of the web icons also lives in door-site/site/brand for the separately deployed door site
+- `shared/brand/favicon.ico` — website favicon (16, 32, 48)
+- `shared/brand/favicon-16.png` — website favicon 16px
+- `shared/brand/favicon-32.png` — website favicon 32px
+- `shared/brand/apple-touch-icon.png` — home-screen icon for iPhone / iPad (180px, full bleed)
+- `shared/brand/icon-192.png` — web app icon 192px (manifest)
+- `shared/brand/icon-512.png` — web app icon 512px (manifest)
+- `shared/brand/manifest.webmanifest` — web app manifest (name, colours, icons) linked from the shell
 - `mobile/resources/splash-dark.png` — splash screen (dark)
 - `tests/degree_houses_test.js` — Degree houses engine (Sripati / Equal): 12 houses cover 360°, Lagna madhya, shifted flag
 - `tests/varga_guide_test.py` — Divisional chart guide test: one guide per chart, all sections, tagged rules, follows the chart picker

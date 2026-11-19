@@ -18,7 +18,7 @@ def source_files():
         out += [(app, os.path.relpath(p, ROOT)) for p in sorted(glob.glob(os.path.join(d, 'css', '*.css')))]
     out += [('shell', 'index.html')]
     out += [('shell', os.path.relpath(p, ROOT)) for p in sorted(glob.glob(os.path.join(ROOT, 'shell', '*', '*')))]
-    out += [('shared', os.path.relpath(p, ROOT)) for p in sorted(glob.glob(os.path.join(ROOT, 'shared', '*')))]
+    out += [('shared', os.path.relpath(p, ROOT)) for p in sorted(glob.glob(os.path.join(ROOT, 'shared', '*'))) if os.path.isfile(p)]
     return out
 
 

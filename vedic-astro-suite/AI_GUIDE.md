@@ -207,7 +207,7 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-19 - 2405 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-20 - 2405 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
@@ -722,5 +722,6 @@ shared/quick-menu.js                               190 lines   17 KB
 
 - 3D Sky Export Studio: engine `XS` (apps/sky3d/js/65-export-studio.js; one model of kv/table/list/text blocks rendered as Markdown, JSON or text) and sheet `XSU` (js/66, css/35). Export tab launcher in index.html; `generateExportData(type)` (js/38) delegates to XS; the shared add-on's floating menu uses XS. Section data comes from DBX.analyse (js/50), VDasha, VG, SKA, findIngresses, findConjunctions, TLF.state. Buttons must not start with 'Copy' (shared/copy-toggle.js hides those by default). Plan: docs/EXPORT_STUDIO_PLAN.md. Test: tests/sky3d_export_studio_browser_test.py.
 - 3D Sky Formula Maker (Tools menu, ƒ): engine `FM` (apps/sky3d/js/67-formula-engine.js: subjects incl. Chara Karakas, Bhrigu Bindu, Yogi points, special lagnas, Arudha; ~25 relations; tri-state tree evaluator; `FM.scan` find dates), library + `VF1.` share codec + Saved list `FMX` (js/68), sheet `FMU` (js/69, css/36). Plan docs/FORMULA_MAKER_PLAN.md; test tests/sky3d_formula_maker_browser_test.py. New relation = one `def(...)` in js/67 plus its params in `paramsHtml` (js/69).
+- Logo and favicons: one icon set in shared/brand (identical copy in ../door-site/site/brand), linked from shell, apps, root redirect and door site. APK icons come from mobile/resources/icon-*.png (adaptive icon = art feathered over an edge-matched purple background). To change the logo, regenerate all of them and keep both brand folders identical.
 
 - Birth Chart Export tab flicker fix: js/148 `ensurePages` used to flip through every unopened tool page (replaying the panel fade-in, jumping scroll, repainting the sticky bar per section). Now each page is tried once, html.exb-hold (css/79) holds animations at 0s while it happens, scroll is restored, and measuring paints once per ~25 ms batch. Test: tests/export_no_flicker_browser_test.py (samples panel opacity per frame).
