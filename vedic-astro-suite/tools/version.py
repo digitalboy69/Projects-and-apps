@@ -7,6 +7,8 @@ def gen():
     for top in ('apps', 'shared', 'shell', 'vendor'):
         for d, _, fs in os.walk(os.path.join(ROOT, top)):
             for f in fs:
+                rel = os.path.relpath(os.path.join(d, f), ROOT).replace(os.sep, '/')
+                if top == 'apps' and not f.endswith('index.bundle.html'): continue   # the shell loads the per-app bundles, not the ~480 source files
                 if f.endswith(('.js', '.css', '.html', '.json')):
                     files.append(os.path.relpath(os.path.join(d, f), ROOT).replace(os.sep, '/'))
     files.sort(); h = hashlib.sha1()

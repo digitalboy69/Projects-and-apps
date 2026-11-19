@@ -4,7 +4,9 @@
   /* Two ways to get an app's document:
        - hosted / dev folder: the iframe loads apps/<name>/index.html directly (browser caches every css/js file, loads only the apps you open)
        - single-file build (dist/): the app text sits in <script type="text/plain" id="srcX" data-enc="b64|plain"> and goes in via srcdoc */
-  const APP_URL = { A:'apps/sky3d/index.html', B:'apps/birth-chart/index.html', N:'apps/notepad/index.html', Dev:'apps/developer/index.html' };
+  /* Hosted: one ready-made file per app (apps/<name>/index.bundle.html, made by build.py) = 1 request instead of ~260. Open the shell with ?dev to load the plain source files while editing. */
+  const BN = /[?&]dev\b/.test(location.search) ? 'index.html' : 'index.bundle.html';
+  const APP_URL = { A:'apps/sky3d/' + BN, B:'apps/birth-chart/' + BN, N:'apps/notepad/' + BN, Dev:'apps/developer/' + BN };
   const decode = id => {
     const el = document.getElementById(id), raw = el.textContent;
     if (el.dataset.enc === 'b64'){ const bin = atob(raw.trim()); const u = new Uint8Array(bin.length); for (let i=0;i<bin.length;i++) u[i] = bin.charCodeAt(i); return new TextDecoder('utf-8').decode(u); }

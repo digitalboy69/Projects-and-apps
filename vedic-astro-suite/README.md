@@ -19,6 +19,7 @@ vedic-astro-suite/
 │   ├── notepad/            Jyotish Notebook
 │   └── developer/          Developer card overlay
 │       each app:  index.html (markup) · css/NN-topic.css · js/NN-topic.js   (files load in number order)
+│                 index.bundle.html = generated one-file copy that the shell loads (python3 build.py makes it; open the shell with ?dev to use the plain files)
 ├── shared/export-addon.js  "Copy / Export" add-on used by 3D Sky and Birth Chart
 ├── vendor/qrlibs.js        QR libraries for share-by-link (see docs/THIRD_PARTY_LICENSES.md)
 ├── editions/customer/      Layer added only to the customer edition (brand, locked copy)
