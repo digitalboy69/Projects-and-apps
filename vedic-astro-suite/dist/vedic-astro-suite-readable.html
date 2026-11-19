@@ -2581,6 +2581,68 @@ body.xs-open .viewport-actions{display:none}
 .xs-tip{font-size:12px;line-height:1.55;color:var(--text-dim,#9aa5b8)}
 </style>
 <style>
+/* Formula Maker sheets (js/69). Prefix fm-. Only opacity/transform animate; no backdrop-filter. */
+.fm-sheet,.fm-pop{position:fixed;inset:0;display:flex;align-items:flex-end;justify-content:center;background:rgba(5,8,14,.6)}
+.fm-sheet{z-index:96}.fm-pop{z-index:98}.fm-pop2{z-index:99}
+.fm-sheet[hidden],.fm-pop[hidden]{display:none}
+.fm-card-s,.fm-pc{width:100%;max-width:640px;display:flex;flex-direction:column;border:1px solid rgba(255,255,255,.14);border-bottom:0;background:#101726;box-shadow:0 -16px 40px rgba(0,0,0,.5);animation:fmUp .22s ease-out}
+.fm-card-s{height:96vh;max-height:96vh;border-radius:22px 22px 0 0;position:relative}.fm-pc{max-height:88vh;border-radius:20px 20px 0 0}
+@keyframes fmUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.fm-card-s,.fm-pc{animation:none}}
+.fm-card-s>header,.fm-pc>header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 8px}
+.fm-card-s>header b,.fm-pc>header b{display:block;font:600 19px var(--font-serif,Georgia,serif);color:#f6d775}.fm-card-s>header small{font-size:11.5px;color:var(--text-dim,#9aa5b8)}
+.fm-card-s>header button{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#fff;font-size:16px;cursor:pointer}
+.fm-done{min-height:44px;padding:0 18px;border:0;border-radius:12px;background:linear-gradient(135deg,#f6dc8a,#d4a24a);color:#1a1405;font:700 14px var(--font-sans,system-ui,sans-serif);cursor:pointer}
+.fm-tabs{display:flex;gap:4px;margin:0 16px 6px;padding:3px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04)}
+.fm-tabs button{flex:1;min-height:44px;border:0;border-radius:11px;background:transparent;color:var(--text-dim,#9aa5b8);font:600 13px var(--font-sans,system-ui,sans-serif);cursor:pointer}.fm-tabs button.on{background:rgba(212,162,74,.22);color:#f6dc8a}
+.fm-body,.fm-pb{flex:1;overflow:auto;padding:6px 16px 30px;-webkit-overflow-scrolling:touch}
+.fm-seg{display:flex;gap:4px;padding:3px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);margin:6px 0}
+.fm-seg button{flex:1;min-height:42px;padding:0 6px;border:0;border-radius:9px;background:transparent;color:var(--text-dim,#9aa5b8);font:600 12.5px var(--font-sans,system-ui,sans-serif);cursor:pointer}.fm-seg button.on{background:rgba(212,162,74,.22);color:#f6dc8a}
+.fm-card,.fm-lc{margin:10px 0;padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.035)}
+.fm-card h4{margin:0 0 6px;font:600 13px var(--font-sans,system-ui,sans-serif);letter-spacing:.05em;text-transform:uppercase;color:#f6d775}
+.fm-lab{display:block;margin:8px 0 2px;font:600 11.5px var(--font-sans,system-ui,sans-serif);color:var(--text-dim,#9aa5b8)}.fm-lab.sm{margin:0}
+.fm-in,.fm-ta{display:block;width:100%;min-height:44px;margin-top:4px;padding:0 12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#e8ecf4;font:15px var(--font-sans,system-ui,sans-serif);box-sizing:border-box}
+.fm-ta{padding:10px 12px;resize:vertical;font:12.5px var(--font-mono,monospace);line-height:1.4}.fm-in option,.fm-in optgroup{background:#1a2133;color:#e8ecf4}
+.fm-row{display:flex;align-items:center;gap:10px}.fm-row .fm-seg{flex:1}.fm-row .fm-lab{margin:0;white-space:nowrap}
+.fm-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}.fm-sp{flex:1}
+.fm-btn{min-height:44px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#e8ecf4;font:600 13px var(--font-sans,system-ui,sans-serif);cursor:pointer}.fm-btn.ghost{border-style:dashed;color:var(--text-dim,#9aa5b8);font-weight:500}.fm-btn.pri{background:linear-gradient(135deg,#f6dc8a,#d4a24a);color:#1a1405;border:0}
+.fm-x{width:44px;height:44px;flex:0 0 44px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#f0a09b;font-size:15px;cursor:pointer}
+.fm-go{width:100%;min-height:52px;margin:14px 0 4px;border:0;border-radius:16px;background:linear-gradient(135deg,#f6d775,#c8962f);color:#14110a;font:700 15px var(--font-sans,system-ui,sans-serif);cursor:pointer}.fm-go:disabled{opacity:.55}
+.fm-hint{margin:10px 0 0;font-size:12px;line-height:1.5;color:var(--text-dim,#9aa5b8)}.fm-hint b{color:#e8ecf4;font-weight:600}
+.fm-g{margin:10px 0;padding:10px;border-radius:16px;border:1px solid rgba(212,162,74,.3);background:rgba(212,162,74,.04)}.fm-g.top{border-color:rgba(212,162,74,.45)}
+.fm-gh{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.fm-gh .fm-seg{margin:0;flex:1 1 220px}.fm-gl{font-size:11.5px;color:var(--text-dim,#9aa5b8)}
+.fm-step{display:inline-flex;align-items:center;gap:4px}.fm-step button{width:40px;height:40px;border-radius:10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#fff;font-size:18px;cursor:pointer}.fm-step b{min-width:22px;text-align:center;color:#f6dc8a}
+.fm-add{display:flex;gap:8px;margin-top:8px}
+.fm-r{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;margin:8px 0;border-radius:14px;border:1px solid rgba(255,255,255,.1);border-left:3px solid #d4a24a;background:rgba(255,255,255,.04)}.fm-r.warn{border-left-color:#e0605a}
+.fm-rt{flex:1 1 100%;min-width:0;min-height:48px;padding:10px 12px;background:none;border:0;color:#e8ecf4;text-align:left;cursor:pointer;font:inherit}.fm-rt b{font:600 13.5px var(--font-sans,system-ui,sans-serif);line-height:1.4;display:block}.fm-rt small{color:#f0a09b;font-size:11.5px}
+.fm-ra{display:flex;flex-direction:row;justify-content:flex-end;gap:2px;padding:0 4px 4px;margin-left:auto}.fm-ra button{min-width:44px;min-height:44px;border:0;background:none;color:var(--text-dim,#9aa5b8);font:700 12px var(--font-sans,system-ui,sans-serif);cursor:pointer;border-radius:10px}.fm-ra button.on{color:#f0a09b;background:rgba(224,96,90,.16)}
+.fm-v{display:inline-flex;align-items:center;min-height:34px;padding:0 14px;border-radius:999px;font:700 13px var(--font-sans,system-ui,sans-serif)}.fm-v.sm{min-height:30px;font-size:12px}
+.fm-v.yes{background:rgba(90,200,140,.18);color:#7fe0a8;border:1px solid rgba(90,200,140,.5)}.fm-v.no{background:rgba(224,96,90,.16);color:#f0a09b;border:1px solid rgba(224,96,90,.5)}.fm-v.unk{background:rgba(255,255,255,.08);color:#cfd5e3;border:1px solid rgba(255,255,255,.25)}
+.fm-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}.fm-top b{display:block;font:600 15px var(--font-sans,system-ui,sans-serif)}.fm-top small{color:var(--text-dim,#9aa5b8);font-size:12px}
+.fm-n{margin:6px 0;padding:8px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.1);border-left:3px solid #888;background:rgba(255,255,255,.03)}.fm-n.yes{border-left-color:#5ac88c}.fm-n.no{border-left-color:#e0605a}.fm-n.unk{border-left-color:#9aa5b8}
+.fm-nh{display:flex;align-items:flex-start;gap:8px}.fm-nh i{flex:0 0 18px;font-style:normal;font-weight:700}.fm-n.yes>.fm-nh i{color:#7fe0a8}.fm-n.no>.fm-nh i{color:#f0a09b}.fm-nh b{flex:1;font:600 13px var(--font-sans,system-ui,sans-serif);line-height:1.4}.fm-nh small{color:var(--text-dim,#9aa5b8);font-size:11.5px}
+.fm-nd{margin:4px 0 0 26px;font-size:12px;line-height:1.5;color:var(--text-dim,#9aa5b8)}.fm-kids{margin-top:6px;padding-left:6px}
+.fm-in2{display:flex;align-items:flex-end;gap:10px;margin:8px 0}.fm-in2 label{flex:1;font:600 11.5px var(--font-sans,system-ui,sans-serif);color:var(--text-dim,#9aa5b8)}.fm-in2 span{padding-bottom:12px;color:var(--text-dim,#9aa5b8)}
+.fm-pre{display:flex;gap:6px;flex-wrap:wrap}.fm-pre button{min-height:40px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:transparent;color:var(--text-dim,#9aa5b8);font:600 12px var(--font-sans,system-ui,sans-serif);cursor:pointer}
+.fm-prog{display:flex;align-items:center;gap:10px;margin-top:12px}.fm-prog>div{flex:1;height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}.fm-prog i{display:block;height:100%;background:#d4a24a}
+.fm-note{margin-top:12px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);font-size:13px;line-height:1.55}.fm-note.bad{border-color:rgba(224,96,90,.5);color:#f0a09b}
+.fm-sum{margin:12px 0 8px;font-size:13px;color:var(--text-dim,#9aa5b8)}.fm-sum b{color:#f6dc8a}
+.fm-w{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;min-height:48px;margin-bottom:8px;padding:8px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.1);border-left:3px solid #d4a24a;background:rgba(255,255,255,.04);color:#e8ecf4;text-align:left;cursor:pointer}.fm-w b{font:600 13.5px var(--font-sans,system-ui,sans-serif)}.fm-w span{font:11.5px var(--font-mono,monospace);color:#f6dc8a}
+.fm-card h5,.fm-pb h5{margin:12px 0 6px;font:600 11.5px var(--font-sans,system-ui,sans-serif);letter-spacing:.05em;text-transform:uppercase;color:#f6d775}
+.fm-pts{display:grid;grid-template-columns:1fr 1fr;gap:6px}.fm-pt{display:flex;flex-direction:column;padding:6px 9px;border-radius:10px;background:rgba(255,255,255,.04);min-width:0}.fm-pt b{font:600 12px var(--font-sans,system-ui,sans-serif);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fm-pt span{font:11.5px var(--font-mono,monospace);color:var(--text-dim,#9aa5b8)}
+.fm-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.fm-chips button{min-height:40px;padding:0 12px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.03);color:var(--text-dim,#9aa5b8);font:600 12.5px var(--font-sans,system-ui,sans-serif);cursor:pointer}.fm-chips button.on{border-color:#d4a24a;background:rgba(212,162,74,.2);color:#f6dc8a}.fm-chips.sm button{min-width:44px}
+.fm-sg{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:6px 0}.fm-sg button{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:46px;padding:2px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.03);color:var(--text-dim,#9aa5b8);cursor:pointer}.fm-sg button span{font-size:19px;line-height:1}.fm-sg button i{font:600 9.5px var(--font-mono,monospace);font-style:normal}.fm-sg button.on{border-color:#d4a24a;background:rgba(212,162,74,.2);color:#f6dc8a}
+.fm-ops{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.fm-op{display:inline-flex;align-items:center;gap:4px;min-height:40px;padding:0 4px 0 12px;border-radius:999px;border:1px solid rgba(212,162,74,.5);background:rgba(212,162,74,.12);color:#f6dc8a;font:600 12.5px var(--font-sans,system-ui,sans-serif)}.fm-op button{width:36px;height:36px;border:0;background:none;color:#f0a09b;cursor:pointer;font-size:13px}.fm-op.add{padding:0 14px;border-style:dashed;background:none;cursor:pointer}
+.fm-pre-s{margin:0 0 6px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05);font:600 13px var(--font-sans,system-ui,sans-serif);line-height:1.45;color:#f6dc8a}
+.fm-chips.pk button{text-align:left}
+.fm-lc b{font:600 14.5px var(--font-sans,system-ui,sans-serif)}.fm-lc small{margin-left:8px;color:var(--text-dim,#9aa5b8);font-size:11.5px}.fm-lc p{margin:6px 0 0;font-size:12.5px;line-height:1.5;color:#cfd5e3}
+.fm-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.fm-card-t{margin:0 0 6px;padding:10px 12px;max-height:30vh;overflow:auto;border-radius:12px;background:rgba(255,255,255,.05);font:12px/1.5 var(--font-mono,monospace);color:#e8ecf4;white-space:pre-wrap}
+.fm-toast{position:absolute;left:50%;bottom:22px;transform:translate(-50%,10px);max-width:86%;padding:10px 16px;border-radius:999px;background:#2a3350;border:1px solid rgba(212,162,74,.5);color:#f6dc8a;font:600 13px var(--font-sans,system-ui,sans-serif);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;text-align:center}.fm-toast.on{opacity:1;transform:translate(-50%,0)}
+.app.clean #fmBtn{display:none}
+.fm-card-s>header{padding-left:58px}
+</style>
+<style>
 /* ============================================================================
    META LAYER  ·  shared/meta.css
    One file for the "feel" of every screen: smooth motion, gentle touch feedback,
@@ -2998,6 +3060,7 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
         <div class="tm-sep" role="separator"></div>
         <button class="vp-btn" id="navBtn" type="button" title="Show the sky in Navamsha (D9)" aria-label="Navamsha sky" aria-pressed="false"><span class="tm-ic" aria-hidden="true">९</span><span class="tm-st" aria-hidden="true"></span></button>
         <button class="vp-btn" id="tlBtn" type="button" title="Timeline finder: when was this sky?" aria-label="Timeline finder" aria-haspopup="dialog"><span class="tm-ic" aria-hidden="true">⌛</span></button>
+        <button class="vp-btn" id="fmBtn" type="button" title="Formula maker: build, test and share formulas" aria-label="Formula maker" aria-haspopup="dialog"><span class="tm-ic" aria-hidden="true">ƒ</span></button>
       </div>
     </div>
     <div id="planetLabels"></div>
@@ -8401,6 +8464,745 @@ const XSU = (() => {
     const st = $('exportStatus'); quick(b.dataset.xq).then(o => { if (st) { st.textContent = 'Copied ' + o.chars.toLocaleString() + ' characters (' + XS.PRESETS[b.dataset.xq].label + ') ✓'; st.style.display = 'block'; clearTimeout(quick.t); quick.t = setTimeout(() => { st.style.display = 'none'; }, 3500); } }).catch(() => { if (st) { st.textContent = 'Copy was blocked. Open the Export Studio and use Download.'; st.style.display = 'block'; } });
   });
   return { open, close, quick, get cfg() { return cfg; }, set cfg(v) { cfg = XS.norm(v); } };
+})();
+<\/script>
+<script>
+/* Formula Maker engine (js/67, global FM). A formula is a tree of rules about a chart; every rule says "A is in relation R to B" and answers true / false / unknown (null).
+   Subjects: planets, Chara Karakas AK..DK (7 or 8 scheme), Lagna, Bhrigu Bindu, Yogi / Avayogi points and planets, Duplicate Yogi, Gulika, Hora / Ghati / Indu lagna, Karakamsa, Swamsha,
+   Arudha padas A1..A12, house lords, fixed signs and houses. Charts: C (the chart being checked), N (a person), S (sky moment), P (second person).
+   Pure functions on top of the sky3d engine globals (snapshotPositions, siderealLongitude, siderealAscendant, SIGNS, NAKSHATRAS, VG, GK ...). See docs/FORMULA_MAKER_PLAN.md. */
+const FM = (() => {
+  'use strict';
+  const P9 = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu', 'Ketu'];
+  const K7 = ['AK', 'AmK', 'BK', 'MK', 'PuK', 'GK', 'DK'], K8 = ['AK', 'AmK', 'BK', 'MK', 'PiK', 'PuK', 'GK', 'DK'];
+  const ROLE_NAME = { AK: 'Atmakaraka', AmK: 'Amatyakaraka', BK: 'Bhratrikaraka', MK: 'Matrikaraka', PiK: 'Pitrikaraka', PuK: 'Putrakaraka', GK: 'Gnatikaraka', DK: 'Darakaraka' };
+  const POINTS = { Lagna: 'Lagna (Ascendant)', BB: 'Bhrigu Bindu', YP: 'Yogi point', AP: 'Avayogi point', YL: 'Yogi planet', AL2: 'Avayogi planet', DY: 'Duplicate Yogi', Gulika: 'Gulika', Hora: 'Hora Lagna', Ghati: 'Ghati Lagna', Indu: 'Indu Lagna', Karakamsa: 'Karakamsa', Swamsha: 'Swamsha' };
+  const INDU = { Sun: 30, Moon: 16, Mars: 6, Mercury: 8, Jupiter: 10, Venus: 12, Saturn: 1 };
+  const nd = x => ((x % 360) + 360) % 360, sg = l => Math.floor(nd(l) / 30), dist = (a, b) => { const d = Math.abs(nd(a) - nd(b)); return d > 180 ? 360 - d : d; };
+  const sname = i => SIGNS[i].name, ord = n => n + ((n % 100 >= 11 && n % 100 <= 13) ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th'));
+  const dms = l => { const d = nd(l) % 30, m = Math.round((d - Math.floor(d)) * 60); return (m === 60 ? Math.floor(d) + 1 : Math.floor(d)) + '°' + String(m === 60 ? 0 : m).padStart(2, '0') + "'"; };
+  const hOf = (from, to) => ((to - from + 12) % 12) + 1;
+
+  /* ---------------------------- charts ---------------------------- */
+  function chart(o) { // {jd, lagna:lon|null, prof, loc, base:signIdx|null, scheme, label, birth}
+    const s = snapshotPositions(o.jd), C = { jd: o.jd, sid: s.sidereal, retro: s.retro, lagna: o.lagna == null ? null : nd(o.lagna), prof: o.prof || null, loc: o.loc || o.prof || null, scheme: o.scheme === 8 ? 8 : 7, label: o.label || '', birth: !!o.birth, _: {} };
+    C.base = C.lagna != null ? sg(C.lagna) : (o.base == null ? null : o.base);
+    return C;
+  }
+  const memo = (C, k, f) => (k in C._ ? C._[k] : (C._[k] = f()));
+  function karakas(C) {
+    return memo(C, 'kar' + C.scheme, () => {
+      const names = C.scheme === 8 ? ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn', 'Rahu'] : ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
+      const rows = names.map(n => ({ n, d: n === 'Rahu' ? 30 - (nd(C.sid[n]) % 30) : nd(C.sid[n]) % 30 })).sort((a, b) => b.d - a.d);
+      const roles = C.scheme === 8 ? K8 : K7, m = {}; rows.forEach((r, i) => { m[roles[i]] = r.n; }); return { map: m, rows };
+    });
+  }
+  const yogiPt = C => memo(C, 'yp', () => nd(C.sid.Sun + C.sid.Moon + 93 + 20 / 60));
+  const avaPt = C => memo(C, 'ap', () => nd(yogiPt(C) + 186 + 40 / 60));
+  const bhrigu = C => memo(C, 'bb', () => { const m = C.sid.Moon, r = C.sid.Rahu, gap = nd(r - m); let mid = nd((m + r) / 2); if (gap > 180) mid = nd(mid + 180); return mid; });
+  function gulikaLon(C) {
+    return memo(C, 'gk', () => { try { const r = C.birth && C.prof ? GK.natal(C.prof) : (C.loc ? GK.at(C.jd, C.loc.lat, C.loc.lon, C.loc.tz, 'start') : null); const v = r && (r.lon != null ? r.lon : r.longitude); return v == null ? null : nd(v); } catch (e) { return null; } });
+  }
+  function sunriseInfo(C) {
+    return memo(C, 'sr', () => {
+      const L = C.loc; if (!L || L.lat == null) return null;
+      try {
+        const loc = new Date((C.jd + L.tz / 24 - 2440587.5) * 86400000); let y = loc.getUTCFullYear(), m = loc.getUTCMonth() + 1, d = loc.getUTCDate();
+        let rs = GK.riseSet(y, m, d, L.lat, L.lon, L.tz); if (!rs || rs.rise == null) return null;
+        if (C.jd < rs.rise) { const t = new Date(Date.UTC(y, m - 1, d - 1)); rs = GK.riseSet(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate(), L.lat, L.lon, L.tz); if (!rs || rs.rise == null) return null; }
+        return { jd: rs.rise, sun: siderealLongitude('Sun', rs.rise) };
+      } catch (e) { return null; }
+    });
+  }
+  const hora = C => memo(C, 'hora', () => { const s = sunriseInfo(C); return s ? nd(s.sun + (C.jd - s.jd) * 720) : null; });
+  const ghati = C => memo(C, 'ghati', () => { const s = sunriseInfo(C); return s ? nd(s.sun + (C.jd - s.jd) * 1800) : null; });
+  const baseSign = C => C.base;
+  const houseSign = (C, h) => C.base == null ? null : (C.base + h - 1) % 12;
+  function indu(C) {
+    if (C.base == null) return null; const ms = sg(C.sid.Moon), lm = SIGNS[(ms + 8) % 12].lord, ll = SIGNS[(C.base + 8) % 12].lord;
+    let r = ((INDU[lm] || 0) + (INDU[ll] || 0)) % 12; if (r === 0) r = 12; return (ms + r - 1) % 12;
+  }
+  function arudha(C, h) {
+    if (C.base == null) return null; const hs = (C.base + h - 1) % 12, lord = SIGNS[hs].lord, ls = sg(C.sid[lord]); let p = (ls + ((ls - hs + 12) % 12)) % 12; const d = (p - hs + 12) % 12; if (d === 0 || d === 6) p = (p + 9) % 12; return p;
+  }
+  const d9 = l => VG.sign('D9', l);
+
+  /* ---------------------------- subjects ---------------------------- */
+  const PTL = { YP: 'Yogi point', AP: 'Avayogi point' };
+  function resolve(op, X) {
+    const ch = X[op.of || 'C']; const base = { op, ch };
+    if (!ch) return Object.assign(base, { miss: 'No chart is loaded for ' + (op.of === 'P' ? 'the second person' : op.of === 'N' ? 'the person' : 'this check') });
+    const mk = (name, lon, sign, planet, extra) => Object.assign(base, { name, lon, sign: sign == null ? (lon == null ? null : sg(lon)) : sign, planet: planet || null }, extra || {});
+    const miss = why => Object.assign(base, { miss: why, name: opName(op) });
+    const pl = n => mk(n, ch.sid[n], null, n);
+    switch (op.k) {
+      case 'planet': return pl(op.v);
+      case 'role': { const n = karakas(ch).map[op.v]; if (!n) return miss(op.v + ' needs the 8-karaka scheme'); return mk(op.v + ' (' + n + ')', ch.sid[n], null, n, { role: op.v }); }
+      case 'sign': return mk(sname(op.v), null, op.v, null, { fixed: true });
+      case 'house': { const s = houseSign(ch, op.v); return s == null ? miss('houses need a Lagna (birth time and place)') : mk(ord(op.v) + ' house (' + sname(s) + ')', null, s, null, { fixed: true }); }
+      case 'lord': { const s = houseSign(ch, op.v); if (s == null) return miss('house lords need a Lagna'); const n = SIGNS[s].lord; return mk('lord of ' + ord(op.v) + ' (' + n + ')', ch.sid[n], null, n); }
+      case 'arudha': { const s = arudha(ch, op.v); return s == null ? miss('Arudha needs a Lagna') : mk(op.v === 1 ? 'Arudha Lagna (AL)' : op.v === 12 ? 'Upapada (UL)' : 'A' + op.v, null, s); }
+      case 'point': {
+        const v = op.v;
+        if (v === 'Lagna') return ch.lagna == null ? miss('Lagna needs birth time and place') : mk('Lagna', ch.lagna);
+        if (v === 'BB') return mk('Bhrigu Bindu', bhrigu(ch));
+        if (v === 'YP') return mk('Yogi point', yogiPt(ch));
+        if (v === 'AP') return mk('Avayogi point', avaPt(ch));
+        if (v === 'YL') { const n = NAKSHATRA_LORDS[getNakshatraIndex(yogiPt(ch))]; return mk('Yogi planet (' + n + ')', ch.sid[n], null, n); }
+        if (v === 'AL2') { const n = NAKSHATRA_LORDS[getNakshatraIndex(avaPt(ch))]; return mk('Avayogi planet (' + n + ')', ch.sid[n], null, n); }
+        if (v === 'DY') { const n = SIGNS[sg(yogiPt(ch))].lord; return mk('Duplicate Yogi (' + n + ')', ch.sid[n], null, n); }
+        if (v === 'Gulika') { const l = gulikaLon(ch); return l == null ? miss('Gulika needs a place') : mk('Gulika', l); }
+        if (v === 'Hora') { const l = hora(ch); return l == null ? miss('Hora Lagna needs birth time and place') : mk('Hora Lagna', l); }
+        if (v === 'Ghati') { const l = ghati(ch); return l == null ? miss('Ghati Lagna needs birth time and place') : mk('Ghati Lagna', l); }
+        if (v === 'Indu') { const s = indu(ch); return s == null ? miss('Indu Lagna needs a Lagna') : mk('Indu Lagna', null, s); }
+        if (v === 'Karakamsa') { const n = karakas(ch).map.AK; return mk('Karakamsa', null, d9(ch.sid[n])); }
+        if (v === 'Swamsha') return ch.lagna == null ? miss('Swamsha needs a Lagna') : mk('Swamsha', null, d9(ch.lagna));
+      }
+    }
+    return miss('unknown subject');
+  }
+  function opName(op) {
+    const w = op.of && op.of !== 'C' ? { N: ' (person)', S: ' (sky)', P: ' (2nd person)' }[op.of] || '' : '';
+    switch (op.k) {
+      case 'planet': return op.v + w; case 'role': return op.v + w; case 'sign': return sname(op.v); case 'house': return ord(op.v) + ' house' + w; case 'lord': return 'lord of ' + ord(op.v) + w;
+      case 'arudha': return 'A' + op.v + w; case 'point': return (POINTS[op.v] || op.v) + w;
+    }
+    return '?';
+  }
+  const where = s => s.sign == null ? '' : (s.lon != null ? ' ' + dms(s.lon) + ' ' : ' ') + sname(s.sign);
+  const tag = s => s.name + (s.lon != null || s.sign != null ? ' [' + where(s).trim() + ']' : '');
+
+  /* ---------------------------- relations ---------------------------- */
+  const DIGS = ['Exalted', 'Own sign', 'Friendly', 'Neutral', 'Enemy', 'Debilitated'];
+  const ELEM = ['Fire', 'Earth', 'Air', 'Water'], MODE = ['Movable', 'Fixed', 'Dual'];
+  const lst = (a, f) => (a || []).map(f || (x => x)).join(' / ');
+  const needLon = s => s.lon == null, needSign = s => s.sign == null;
+  const R = {}; // id -> {label, bin:0|1|2(optional), u: params schema for UI, fn(a,b,p,X)->[true|false|null, text]}
+  const def = (id, label, bin, ui, fn) => { R[id] = { id, label, bin, ui, fn }; };
+  const yn = (v, t) => [v, t];
+  def('in_sign', 'is in sign', 0, ['signs'], (a, b, p) => needSign(a) ? yn(null, 'sign unknown') : yn((p.signs || []).includes(a.sign), 'is in ' + sname(a.sign)));
+  def('in_nak', 'is in nakshatra', 0, ['naks'], (a, b, p) => needLon(a) ? yn(null, 'no degree') : yn((p.naks || []).includes(getNakshatraIndex(a.lon)), 'is in ' + NAKSHATRAS[getNakshatraIndex(a.lon)]));
+  def('in_pada', 'is in nakshatra pada', 0, ['padas'], (a, b, p) => needLon(a) ? yn(null, 'no degree') : yn((p.padas || []).includes(getPadaIndex(a.lon) + 1), 'is in pada ' + (getPadaIndex(a.lon) + 1)));
+  def('in_house', 'is in house', 2, ['houses'], (a, b, p) => {
+    if (needSign(a)) return yn(null, 'sign unknown'); const bs = b ? b.sign : a.ch.base; if (bs == null) return yn(null, 'no Lagna to count houses from');
+    const h = hOf(bs, a.sign); return yn((p.houses || []).includes(h), 'is in the ' + ord(h) + ' house' + (b ? ' from ' + b.name : ''));
+  });
+  def('same_sign', 'shares a sign with', 1, [], (a, b) => needSign(a) || needSign(b) ? yn(null, 'sign unknown') : yn(a.sign === b.sign, a.sign === b.sign ? 'share ' + sname(a.sign) : 'are in different signs'));
+  def('conj', 'is conjunct (within orb)', 1, ['orb'], (a, b, p) => needLon(a) || needLon(b) ? yn(null, 'no degree') : (d => yn(d <= (p.orb == null ? 10 : p.orb), 'are ' + d.toFixed(1) + '° apart'))(dist(a.lon, b.lon)));
+  def('aspect', 'aspects (graha drishti)', 1, ['dir', 'only'], (a, b, p) => {
+    if (needSign(a) || needSign(b)) return yn(null, 'sign unknown');
+    const cast = (x, y) => { if (!x.planet) return [7].filter(o => (x.sign + o - 1) % 12 === y.sign).filter(o => !p.only || !p.only.length || p.only.includes(o)); return (ASPECT_OFFSETS[x.planet] || [7]).filter(o => (x.sign + o - 1) % 12 === y.sign && (!p.only || !p.only.length || p.only.includes(o))); };
+    const ab = cast(a, b), ba = cast(b, a), dir = p.dir || 'either'; let ok, t;
+    if (dir === 'a>b') { ok = ab.length > 0; t = ok ? 'aspects it with its ' + ord(ab[0]) + ' aspect' : 'does not aspect it'; }
+    else if (dir === 'b>a') { ok = ba.length > 0; t = ok ? 'is aspected by it (' + ord(ba[0]) + ' aspect)' : 'is not aspected by it'; }
+    else if (dir === 'mutual') { ok = ab.length > 0 && ba.length > 0; t = ok ? 'aspect each other' : 'do not aspect each other'; }
+    else { ok = ab.length > 0 || ba.length > 0; t = ok ? 'have an aspect between them' : 'have no aspect between them'; }
+    return yn(ok, t);
+  });
+  def('angle', 'makes an angle of', 1, ['angle', 'orb'], (a, b, p) => needLon(a) || needLon(b) ? yn(null, 'no degree') : (d => yn(Math.abs(d - (p.angle || 0)) <= (p.orb == null ? 6 : p.orb), 'are ' + d.toFixed(1) + '° apart'))(dist(a.lon, b.lon)));
+  def('deg_range', 'has degrees in its sign between', 0, ['lo', 'hi'], (a, b, p) => needLon(a) ? yn(null, 'no degree') : (d => yn(d >= (p.lo || 0) && d <= (p.hi == null ? 30 : p.hi), 'is at ' + d.toFixed(2) + '° of its sign'))(nd(a.lon) % 30));
+  def('lon_range', 'has zodiac longitude between', 0, ['lo', 'hi'], (a, b, p) => { if (needLon(a)) return yn(null, 'no degree'); const l = nd(a.lon), lo = nd(p.lo || 0), hi = nd(p.hi == null ? 360 : p.hi); return yn(lo <= hi ? l >= lo && l <= hi : l >= lo || l <= hi, 'is at ' + l.toFixed(2) + '°'); });
+  def('near_lon', 'is within orb of longitude', 0, ['lon', 'orb'], (a, b, p) => needLon(a) ? yn(null, 'no degree') : (d => yn(d <= (p.orb == null ? 3 : p.orb), 'is ' + d.toFixed(1) + '° from it'))(dist(a.lon, p.lon || 0)));
+  def('same_nak', 'shares a nakshatra with', 1, [], (a, b) => needLon(a) || needLon(b) ? yn(null, 'no degree') : (x => yn(x === getNakshatraIndex(b.lon), x === getNakshatraIndex(b.lon) ? 'share ' + NAKSHATRAS[x] : 'are in different nakshatras'))(getNakshatraIndex(a.lon)));
+  def('rules', 'rules the sign of', 1, [], (a, b) => !a.planet || needSign(b) ? yn(null, 'not applicable') : yn(SIGNS[b.sign].lord === a.planet, SIGNS[b.sign].lord === a.planet ? 'rules ' + sname(b.sign) : 'does not rule ' + sname(b.sign)));
+  def('dispositor', 'is disposited by (sign lord is)', 1, [], (a, b) => !b.planet || needSign(a) ? yn(null, 'not applicable') : yn(SIGNS[a.sign].lord === b.planet, 'sits in ' + sname(a.sign) + ' ruled by ' + SIGNS[a.sign].lord));
+  def('exchange', 'exchanges signs with', 1, [], (a, b) => !a.planet || !b.planet || needSign(a) || needSign(b) ? yn(null, 'not applicable') : yn(SIGNS[a.sign].lord === b.planet && SIGNS[b.sign].lord === a.planet, 'sign exchange ' + (SIGNS[a.sign].lord === b.planet && SIGNS[b.sign].lord === a.planet ? 'present' : 'absent')));
+  def('retro', 'is retrograde / direct', 0, ['on'], (a, b, p) => !a.planet ? yn(null, 'not a planet') : (r => yn(r === (p.on !== false), r ? 'is retrograde' : 'is direct'))(a.planet === 'Rahu' || a.planet === 'Ketu' ? true : !!a.ch.retro[a.planet]));
+  def('combust', 'is combust', 0, ['on'], (a, b, p) => { if (!a.planet) return yn(null, 'not a planet'); const lim = COMBUST[a.planet]; const c = !!lim && dist(a.ch.sid[a.planet], a.ch.sid.Sun) <= lim; return yn(c === (p.on !== false), c ? 'is combust' : 'is not combust'); });
+  def('dignity', 'has dignity', 0, ['digs'], (a, b, p) => { if (!a.planet || a.planet === 'Rahu' || a.planet === 'Ketu') return yn(null, 'not applicable'); let d; try { d = dignityOf(a.planet, sg(a.ch.sid[a.planet])); } catch (e) { return yn(null, 'not applicable'); } return yn((p.digs || []).includes(d), 'is ' + d.toLowerCase()); });
+  def('vargottama', 'is vargottama', 0, ['on'], (a, b, p) => needLon(a) ? yn(null, 'no degree') : (v => yn(v === (p.on !== false), v ? 'is vargottama' : 'is not vargottama'))(d9(a.lon) === sg(a.lon)));
+  def('gandanta', 'is in gandanta', 0, ['on'], (a, b, p) => needLon(a) ? yn(null, 'no degree') : (x => (v => yn(v === (p.on !== false), v ? 'is in gandanta' : 'is not in gandanta'))(x < 10 / 3 || x > 120 - 10 / 3))(nd(a.lon) % 120));
+  def('varga_sign', 'is in a sign of a divisional chart', 0, ['varga', 'signs'], (a, b, p) => needLon(a) ? yn(null, 'no degree') : (s => yn((p.signs || []).includes(s), 'is in ' + sname(s) + ' in ' + (p.varga || 'D9')))(VG.sign(p.varga || 'D9', a.lon)));
+  def('nak_lord', 'has nakshatra lord', 0, ['planets'], (a, b, p) => needLon(a) ? yn(null, 'no degree') : (n => yn((p.planets || []).includes(n), 'is in a nakshatra of ' + n))(NAKSHATRA_LORDS[getNakshatraIndex(a.lon)]));
+  def('sign_lord', 'sits in a sign ruled by', 0, ['planets'], (a, b, p) => needSign(a) ? yn(null, 'sign unknown') : (n => yn((p.planets || []).includes(n), 'sits in a sign ruled by ' + n))(SIGNS[a.sign].lord));
+  def('sign_type', 'sits in a sign of element / quality', 0, ['elem', 'mode'], (a, b, p) => needSign(a) ? yn(null, 'sign unknown') : (e => { const m = a.sign % 3 === 0 ? 0 : a.sign % 3 === 1 ? 1 : 2; const ok = (!p.elem || !p.elem.length || p.elem.includes(e)) && (!p.mode || !p.mode.length || p.mode.includes(m)); return yn(ok, 'sits in a ' + MODE[m].toLowerCase() + ' ' + ELEM[e].toLowerCase() + ' sign'); })(a.sign % 4));
+
+  const paramText = (id, p) => {
+    p = p || {};
+    switch (id) {
+      case 'in_sign': return lst(p.signs, sname) || '…'; case 'in_nak': return lst(p.naks, i => NAKSHATRAS[i]) || '…'; case 'in_pada': return lst(p.padas) || '…'; case 'in_house': return lst(p.houses, ord) || '…';
+      case 'conj': return 'within ' + (p.orb == null ? 10 : p.orb) + '°'; case 'angle': return (p.angle || 0) + '° ±' + (p.orb == null ? 6 : p.orb) + '°';
+      case 'aspect': return { 'a>b': 'A aspects B', 'b>a': 'B aspects A', mutual: 'mutual', either: 'either way' }[p.dir || 'either'] + (p.only && p.only.length ? ' (' + lst(p.only, ord) + ' only)' : '');
+      case 'deg_range': return (p.lo || 0) + '° – ' + (p.hi == null ? 30 : p.hi) + '°'; case 'lon_range': return (p.lo || 0) + '° – ' + (p.hi == null ? 360 : p.hi) + '°';
+      case 'near_lon': return (p.lon || 0) + '° ±' + (p.orb == null ? 3 : p.orb) + '°'; case 'retro': return p.on === false ? 'direct' : 'retrograde'; case 'dignity': return lst(p.digs) || '…';
+      case 'varga_sign': return (p.varga || 'D9') + ': ' + (lst(p.signs, sname) || '…'); case 'nak_lord': case 'sign_lord': return lst(p.planets) || '…';
+      case 'sign_type': return [lst(p.elem, i => ELEM[i]), lst(p.mode, i => MODE[i])].filter(Boolean).join(', ') || '…';
+      case 'combust': case 'vargottama': case 'gandanta': return p.on === false ? 'not' : 'yes';
+    }
+    return '';
+  };
+
+  /* ---------------------------- evaluation ---------------------------- */
+  const AND = a => a.some(v => v === false) ? false : a.some(v => v == null) ? null : true;
+  const OR = a => a.some(v => v === true) ? true : a.some(v => v == null) ? null : false;
+  const isGroup = n => n && n.g;
+  function evalRule(r, X) {
+    const rel = R[r.r]; if (!rel) return { t: null, text: 'Unknown relation', rule: r };
+    const A = (r.a || []).map(o => resolve(o, X)), B = (r.b || []).map(o => resolve(o, X)), p = r.p || {};
+    const notes = [];
+    const one = (a, b) => {
+      if (a.miss) return { t: null, why: a.miss };
+      if (b && b.miss) return { t: null, why: b.miss };
+      const [t, txt] = rel.fn(a, b, p, X); return { t, a, b, txt };
+    };
+    const per = A.map(a => {
+      if (rel.bin === 0) return one(a, null);
+      if (!B.length) return rel.bin === 2 ? one(a, null) : { t: null, why: 'choose the second subject' };
+      const rows = B.map(b => one(a, b)), t = (r.bq === 'all' ? AND : OR)(rows.map(x => x.t));
+      return { t, rows, a };
+    });
+    if (!A.length) return { t: null, text: 'Choose the first subject', rule: r };
+    const t0 = (r.q === 'all' ? AND : OR)(per.map(x => x.t));
+    const lines = per.map(x => {
+      if (x.why) return '? ' + x.why;
+      if (x.rows) return x.rows.map(y => y.why ? '? ' + y.why : tag(y.a) + ' ' + y.txt + (y.b ? ' ' + tag(y.b) : '')).join('; ');
+      return tag(x.a) + ' ' + x.txt;
+    });
+    const t = r.neg ? (t0 == null ? null : !t0) : t0;
+    return { t, rule: r, text: sentence(r), detail: lines.join(' · ') };
+  }
+  function sentence(r) {
+    const rel = R[r.r]; if (!rel) return '?';
+    const side = (l, q) => (l || []).length ? ((l.length > 1 ? (q === 'all' ? 'every one of ' : 'any of ') : '') + l.map(opName).join(' / ')) : '…';
+    let s = side(r.a, r.q) + ' ' + rel.label;
+    if (rel.bin === 1) s += ' ' + side(r.b, r.bq); else if (rel.bin === 2 && (r.b || []).length) s += ' ' + paramText(r.r, r.p) + ' from ' + side(r.b, r.bq); else { const pt = paramText(r.r, r.p); if (pt) s += ' ' + pt; }
+    if (rel.bin === 1) { const pt = paramText(r.r, r.p); if (pt) s += ' (' + pt + ')'; }
+    return r.neg ? 'NOT: ' + s : s;
+  }
+  function evalNode(n, X) {
+    if (!isGroup(n)) return evalRule(n, X);
+    const kids = (n.items || []).map(k => evalNode(k, X)), ts = kids.map(k => k.t), cnt = ts.filter(v => v === true).length, unk = ts.filter(v => v == null).length;
+    let t;
+    if (!kids.length) t = null;
+    else if (n.g === 'all') t = AND(ts); else if (n.g === 'any') t = OR(ts); else if (n.g === 'none') t = (v => v == null ? null : !v)(OR(ts));
+    else { const need = Math.max(1, n.n || 1); t = cnt >= need ? true : cnt + unk >= need ? null : false; }
+    return { t, g: n.g, n: n.n, kids, text: ({ all: 'ALL of these', any: 'ANY of these', none: 'NONE of these', atleast: 'AT LEAST ' + (n.n || 1) + ' of these' })[n.g] || n.g, count: cnt };
+  }
+  const evaluate = (f, X) => { X = X || {}; return evalNode(f.root, X); };
+
+  /* ---------------------------- charts for checking ---------------------------- */
+  const prof = p => p && isValidProfile(p) ? p : null;
+  function birthChart(p, scheme) { p = prof(p); if (!p) return null; const c = computeNatalAscendant(p); return chart({ jd: c.jd, lagna: c.lagnaLon, prof: p, birth: true, scheme, label: p.name + "'s birth chart" }); }
+  function skyChart(jd, o) { o = o || {}; const lp = prof(o.loc); const lag = lp ? siderealAscendant(jd, lp.lat, lp.lon) : null; return chart({ jd, lagna: lag, loc: lp, base: o.base, scheme: o.scheme, label: o.label || 'Sky' }); }
+  /* target: {type:'person', p} | {type:'sky', jd, loc}; opts: {person: N profile, other: P profile, scheme} */
+  function makeCtx(target, opts) {
+    opts = opts || {}; const sc = opts.scheme === 8 ? 8 : 7, X = {};
+    X.N = birthChart(opts.person || (target.type === 'person' ? target.p : null), sc);
+    X.P = birthChart(opts.other, sc);
+    if (target.type === 'person') { X.C = birthChart(target.p, sc); X.S = skyChart(target.jd == null ? currentJD : target.jd, { loc: target.p, base: X.C ? X.C.base : null, scheme: sc, label: 'Sky' }); }
+    else { X.C = skyChart(target.jd, { loc: target.loc || (X.N && X.N.prof), base: X.N ? X.N.base : null, scheme: sc, label: target.label || 'Sky' }); X.S = X.C; }
+    return X;
+  }
+
+  /* ---------------------------- the chart points list ---------------------------- */
+  function points(C) {
+    const out = [], add = (grp, name, s) => { if (s && !s.miss) out.push({ grp, name: s.name || name, lon: s.lon, sign: s.sign }); };
+    const X = { C }, rs = op => resolve(op, X);
+    P9.forEach(n => add('Planets', n, rs({ k: 'planet', v: n })));
+    (C.scheme === 8 ? K8 : K7).forEach(k => add('Karakas', k, rs({ k: 'role', v: k })));
+    Object.keys(POINTS).forEach(k => add('Points', k, rs({ k: 'point', v: k })));
+    for (let h = 1; h <= 12; h++) add('Arudha', 'A' + h, rs({ k: 'arudha', v: h }));
+    return out;
+  }
+
+  /* ---------------------------- find dates ---------------------------- */
+  const BASE = { Moon: .2, Sun: .5, Mercury: .4, Venus: .5, Mars: .5, Jupiter: 2, Saturn: 3, Rahu: 4, Ketu: 4 };
+  function ops(n, acc) { if (isGroup(n)) (n.items || []).forEach(k => ops(k, acc)); else { (n.a || []).concat(n.b || []).forEach(o => acc.push(o)); } return acc; }
+  function stepFor(f, mode) {
+    let dt = 99; const all = ops(f.root, []);
+    all.forEach(o => {
+      let s = 99;
+      if (o.k === 'planet') s = BASE[o.v] || 1;
+      else if (o.k === 'role') s = .2;
+      else if (o.k === 'point') s = ({ Lagna: mode === 'sky' ? .04 : 99, BB: .3, YP: .3, AP: .3, YL: .3, AL2: .3, DY: .3, Gulika: .04, Hora: .02, Ghati: .02, Indu: .5, Karakamsa: .5, Swamsha: mode === 'sky' ? .04 : 99 })[o.v] || .3;
+      else if (o.k === 'lord' || o.k === 'arudha' || o.k === 'house') s = mode === 'sky' ? .04 : 1;
+      dt = Math.min(dt, s);
+    });
+    if (all.some(o => o.k === 'planet' || o.k === 'role') && f.root && JSON.stringify(f.root).includes('"conj"')) dt = Math.min(dt, .25);
+    if (dt === 99) dt = 1;
+    return dt;
+  }
+  /* o: {mode:'sky'|'birth', j0, j1, person, other, scheme, loc, onProgress, cancel, max}; sky scans keep person N fixed. */
+  async function scan(f, o) {
+    const sc = f.scheme === 8 ? 8 : 7, mode = o.mode === 'birth' ? 'birth' : 'sky', N = birthChart(o.person, sc), P = birthChart(o.other, sc);
+    if (!(o.j1 > o.j0)) return { error: 'The end of the range must be after the start.' };
+    let dt = stepFor(f, mode); const span = o.j1 - o.j0; dt = Math.max(dt, span / 400000);
+    const mkC = jd => mode === 'birth' ? chart({ jd, lagna: null, scheme: sc, birth: true }) : skyChart(jd, { loc: o.loc || (N && N.prof), base: N ? N.base : null, scheme: sc });
+    const test = jd => { const C = mkC(jd); return evalNode(f.root, { C, S: C, N, P }).t === true; };
+    const edge = (a, b, sa) => { for (let i = 0; i < 18; i++) { const m = (a + b) / 2; if (test(m) === sa) a = m; else b = m; } return (a + b) / 2; };
+    const out = [], max = o.max || 300; let prevT = o.j0, prev = test(o.j0), start = prev ? o.j0 : null, n = 0; const total = span / dt;
+    for (let t = o.j0 + dt; ; t += dt) {
+      const tt = Math.min(t, o.j1), cur = test(tt);
+      if (cur !== prev) { const e = edge(prevT, tt, prev); if (cur) start = e; else { out.push({ from: start, to: e }); start = null; } prev = cur; }
+      prevT = tt; if (tt >= o.j1 || out.length >= max) break;
+      if (++n % 1500 === 0) { if (o.onProgress) o.onProgress(Math.min(1, n / total)); if (o.cancel && o.cancel()) return { cancelled: true, windows: out, step: dt }; await new Promise(r => setTimeout(r, 0)); }
+    }
+    if (prev && start != null && out.length < max) out.push({ from: start, to: o.j1, open: true });
+    return { windows: out, capped: out.length >= max, step: dt, mode };
+  }
+
+  /* ---------------------------- formula helpers ---------------------------- */
+  const uid = () => 'f' + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-3);
+  const rule = (a, r, b, p, o) => Object.assign({ a: [].concat(a), q: 'any', r, b: b ? [].concat(b) : [], bq: 'any', p: p || {} }, o || {});
+  const formula = (name, about, items, g, scheme) => ({ v: 1, id: uid(), name, about: about || '', scheme: scheme || 7, root: { g: g || 'all', items } });
+  function normalize(f) {
+    if (!f || typeof f !== 'object' || !f.root || !isGroup(f.root)) return null;
+    const fixNode = n => { if (isGroup(n)) { if (!['all', 'any', 'none', 'atleast'].includes(n.g)) return null; return { g: n.g, n: Math.max(1, +n.n || 1), items: (n.items || []).slice(0, 40).map(fixNode).filter(Boolean) }; }
+      if (!n || !R[n.r]) return null; const op = o => o && o.k && o.v != null ? { k: String(o.k), v: o.v, of: ['C', 'N', 'S', 'P'].includes(o.of) ? o.of : 'C' } : null;
+      return { a: (n.a || []).map(op).filter(Boolean).slice(0, 12), q: n.q === 'all' ? 'all' : 'any', r: n.r, b: (n.b || []).map(op).filter(Boolean).slice(0, 12), bq: n.bq === 'all' ? 'all' : 'any', p: n.p && typeof n.p === 'object' ? n.p : {}, neg: !!n.neg }; };
+    const root = fixNode(f.root); if (!root) return null;
+    return { v: 1, id: String(f.id || uid()), name: String(f.name || 'My formula').slice(0, 80), about: String(f.about || '').slice(0, 400), scheme: f.scheme === 8 ? 8 : 7, root };
+  }
+  function describe(f) {
+    const walk = (n, d) => { const pad = '  '.repeat(d); if (!isGroup(n)) return pad + '• ' + sentence(n); return pad + ({ all: 'ALL of:', any: 'ANY of:', none: 'NONE of:', atleast: 'AT LEAST ' + (n.n || 1) + ' of:' })[n.g] + '\n' + (n.items || []).map(k => walk(k, d + 1)).join('\n'); };
+    return f.name + '\n' + (f.about ? f.about + '\n' : '') + walk(f.root, 0) + (ops(f.root, []).some(o => o.k === 'role' ) ? '\n(Karakas: ' + (f.scheme === 8 ? '8' : '7') + '-karaka scheme)' : '');
+  }
+  const countRules = n => isGroup(n) ? (n.items || []).reduce((s, k) => s + countRules(k), 0) : 1;
+
+  return { P9, K7, K8, ROLE_NAME, POINTS, REL: R, DIGS, ELEM, MODE, chart, karakas, bhrigu, yogiPt, avaPt, resolve, opName, sentence, paramText, evaluate, evalNode, makeCtx, birthChart, skyChart, points, scan, stepFor, uid, rule, formula, normalize, describe, countRules, ops, dms, sname, ord, tag };
+})();
+window.FM = FM;
+<\/script>
+<script>
+/* Formula Maker library + sharing (js/68, global FMX). ~30 ready formulas (definitions only, no predictions), the share code (VF1.<base64url>), the #f= link, plain-English card text,
+   import from code / link / JSON, and the Saved list (localStorage sky3d_fm_saved). Needs FM (js/67). See docs/FORMULA_MAKER_PLAN.md. */
+const FMX = (() => {
+  'use strict';
+  const pl = (v, of) => ({ k: 'planet', v, of: of || 'C' }), role = v => ({ k: 'role', v, of: 'C' }), pt = (v, of) => ({ k: 'point', v, of: of || 'C' }), lord = (v, of) => ({ k: 'lord', v, of: of || 'C' });
+  const nk = name => Math.max(0, NAKSHATRAS.indexOf(name)), sgn = n => SIGNS.findIndex(s => s.name === n);
+  const KENDRA = [1, 4, 7, 10], TRIKONA = [1, 5, 9], DUS = [6, 8, 12], OTH5 = ['Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
+  const R = FM.rule, F = (cat, name, about, items, g, scheme) => Object.assign(FM.formula(name, about, items, g, scheme), { cat, id: 'lib_' + name.toLowerCase().replace(/[^a-z0-9]+/g, '_') });
+  const mahapurusha = (planet, signs, label) => F('Yogas', label + ' Yoga (Pancha Mahapurusha)', planet + ' in its own or exaltation sign and in a kendra (1, 4, 7 or 10) from the Lagna. Needs a birth time and place.',
+    [R(pl(planet), 'in_sign', null, { signs: signs.map(sgn) }), R(pl(planet), 'in_house', null, { houses: KENDRA })]);
+  const LIB = [
+    F('Yogas', 'Gajakesari', 'Jupiter in a kendra (1, 4, 7, 10) from the Moon.', [R(pl('Jupiter'), 'in_house', pl('Moon'), { houses: KENDRA })]),
+    F('Yogas', 'Budhaditya', 'Sun and Mercury in the same sign.', [R(pl('Sun'), 'same_sign', pl('Mercury'))]),
+    F('Yogas', 'Chandra-Mangala', 'Moon and Mars in the same sign.', [R(pl('Moon'), 'same_sign', pl('Mars'))]),
+    mahapurusha('Mars', ['Aries', 'Scorpio', 'Capricorn'], 'Ruchaka'), mahapurusha('Mercury', ['Gemini', 'Virgo'], 'Bhadra'), mahapurusha('Jupiter', ['Sagittarius', 'Pisces', 'Cancer'], 'Hamsa'),
+    mahapurusha('Venus', ['Taurus', 'Libra', 'Pisces'], 'Malavya'), mahapurusha('Saturn', ['Capricorn', 'Aquarius', 'Libra'], 'Sasa'),
+    F('Yogas', 'Sunapha', 'Any planet from Mars to Saturn in the 2nd house from the Moon.', [R(OTH5.map(n => pl(n)), 'in_house', pl('Moon'), { houses: [2] })]),
+    F('Yogas', 'Anapha', 'Any planet from Mars to Saturn in the 12th house from the Moon.', [R(OTH5.map(n => pl(n)), 'in_house', pl('Moon'), { houses: [12] })]),
+    F('Yogas', 'Duradhara', 'Planets (Mars to Saturn) on both sides of the Moon: 2nd and 12th from it.', [R(OTH5.map(n => pl(n)), 'in_house', pl('Moon'), { houses: [2] }), R(OTH5.map(n => pl(n)), 'in_house', pl('Moon'), { houses: [12] })]),
+    F('Yogas', 'Kemadruma (simple form)', 'No planet from Mars to Saturn in the 2nd or 12th from the Moon, and none with the Moon.', [{ g: 'none', n: 1, items: [R(OTH5.map(n => pl(n)), 'in_house', pl('Moon'), { houses: [2, 12] }), R(OTH5.map(n => pl(n)), 'same_sign', pl('Moon'))] }]),
+    F('Yogas', 'Guru-Chandal', 'Jupiter and Rahu in the same sign.', [R(pl('Jupiter'), 'same_sign', pl('Rahu'))]),
+    F('Yogas', 'Angarak', 'Mars and Rahu in the same sign.', [R(pl('Mars'), 'same_sign', pl('Rahu'))]),
+    F('Yogas', 'Grahan (eclipse) yoga', 'Sun or Moon in the same sign as Rahu or Ketu.', [R([pl('Sun'), pl('Moon')], 'same_sign', [pl('Rahu'), pl('Ketu')])]),
+    F('Yogas', 'Manglik placement', 'Mars in the 1st, 2nd, 4th, 7th, 8th or 12th house from the Lagna.', [R(pl('Mars'), 'in_house', null, { houses: [1, 2, 4, 7, 8, 12] })]),
+    F('Yogas', 'Dhana: lords of 2 and 11 together', 'Lord of the 2nd and lord of the 11th in the same sign.', [R(lord(2), 'same_sign', lord(11))]),
+    F('Yogas', 'Raja: lords of 9 and 10 together', 'Lord of the 9th and lord of the 10th in the same sign.', [R(lord(9), 'same_sign', lord(10))]),
+    F('Yogas', 'Dharma-Karmadhipati exchange', 'Lords of the 9th and 10th exchange signs.', [R(lord(9), 'exchange', lord(10))]),
+    F('Yogas', 'Lords of 6 / 8 / 12 in dusthanas', 'Any lord of the 6th, 8th or 12th sitting in the 6th, 8th or 12th house (simple form of Vipareeta).', [R([lord(6), lord(8), lord(12)], 'in_house', null, { houses: DUS })]),
+    F('Yogas', 'Moon is vargottama', 'The Moon is in the same sign in the D1 and the D9.', [R(pl('Moon'), 'vargottama', null, { on: true })]),
+    F('Yogas', 'A planet is exalted', 'Any of the seven planets in its exaltation sign.', [R(['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'].map(n => pl(n)), 'dignity', null, { digs: ['Exalted'] })]),
+    F('Karakas', 'Atmakaraka in a kendra', 'The planet with the highest degree is in a kendra from the Lagna.', [R(role('AK'), 'in_house', null, { houses: KENDRA })]),
+    F('Karakas', 'AK and DK in the same sign', 'Atmakaraka and Darakaraka share a sign.', [R(role('AK'), 'same_sign', role('DK'))]),
+    F('Karakas', 'AK aspects DK', 'Atmakaraka and Darakaraka aspect each other (graha drishti).', [R(role('AK'), 'aspect', role('DK'), { dir: 'mutual' })]),
+    F('Karakas', 'AK in own or exalted sign', 'Atmakaraka is exalted or in its own sign.', [R(role('AK'), 'dignity', null, { digs: ['Exalted', 'Own sign'] })]),
+    F('Karakas', 'Darakaraka in the 7th', 'The planet with the lowest degree sits in the 7th house.', [R(role('DK'), 'in_house', null, { houses: [7] })]),
+    F('Karakas', 'Karakamsa and Lagna same sign', 'The Atmakaraka\'s Navamsa sign equals the Lagna sign.', [R(pt('Karakamsa'), 'same_sign', pt('Lagna'))]),
+    F('Points', 'Bhrigu Bindu in the 10th', 'Bhrigu Bindu (Moon-Rahu midpoint) sits in the 10th house.', [R(pt('BB'), 'in_house', null, { houses: [10] })]),
+    F('Points', 'Yogi planet with the Moon', 'The Yogi planet shares a sign with the Moon.', [R(pt('YL'), 'same_sign', pl('Moon'))]),
+    F('Points', 'Avayogi planet in a dusthana', 'The Avayogi planet sits in the 6th, 8th or 12th.', [R(pt('AL2'), 'in_house', null, { houses: DUS })]),
+    F('Points', 'Arudha Lagna in a kendra', 'AL falls in a kendra from the Lagna.', [R({ k: 'arudha', v: 1, of: 'C' }, 'in_house', null, { houses: KENDRA })]),
+    F('Transits', 'Sade Sati (Saturn over your Moon)', 'Transit Saturn in the 12th, 1st or 2nd sign from your natal Moon. Add a person, then use "Find dates".', [R(pl('Saturn', 'S'), 'in_house', pl('Moon', 'N'), { houses: [12, 1, 2] })]),
+    F('Transits', 'Shani Dhaiya (Saturn 4th / 8th)', 'Transit Saturn in the 4th or 8th sign from your natal Moon.', [R(pl('Saturn', 'S'), 'in_house', pl('Moon', 'N'), { houses: [4, 8] })]),
+    F('Transits', 'Jupiter favourable from Moon', 'Transit Jupiter in the 2nd, 5th, 7th, 9th or 11th sign from your natal Moon.', [R(pl('Jupiter', 'S'), 'in_house', pl('Moon', 'N'), { houses: [2, 5, 7, 9, 11] })]),
+    F('Transits', 'Saturn over your Bhrigu Bindu', 'Transit Saturn within 3° of your natal Bhrigu Bindu.', [R(pl('Saturn', 'S'), 'conj', pt('BB', 'N'), { orb: 3 })]),
+    F('Transits', 'Jupiter over your Bhrigu Bindu', 'Transit Jupiter within 3° of your natal Bhrigu Bindu.', [R(pl('Jupiter', 'S'), 'conj', pt('BB', 'N'), { orb: 3 })]),
+    F('Transits', 'Jupiter over your Atmakaraka', 'Transit Jupiter within 5° of your natal Atmakaraka planet.', [R(pl('Jupiter', 'S'), 'conj', { k: 'role', v: 'AK', of: 'N' }, { orb: 5 })]),
+    F('Transits', 'Saturn crosses your Lagna sign', 'Transit Saturn in the same sign as your natal Lagna.', [R(pl('Saturn', 'S'), 'same_sign', pt('Lagna', 'N'))]),
+    F('Sky', 'Libra Sun + Pisces Moon', 'The Sun in Libra and the Moon in Pisces (sidereal).', [R(pl('Sun'), 'in_sign', null, { signs: [sgn('Libra')] }), R(pl('Moon'), 'in_sign', null, { signs: [sgn('Pisces')] })]),
+    F('Sky', 'Mercury retrograde', 'Mercury is moving retrograde.', [R(pl('Mercury'), 'retro', null, { on: true })]),
+    F('Sky', 'Full Moon (Purnima-like)', 'Sun and Moon about opposite (within 12°).', [R(pl('Sun'), 'angle', pl('Moon'), { angle: 180, orb: 12 })]),
+    F('Sky', 'New Moon (Amavasya-like)', 'Sun and Moon within 12° of each other.', [R(pl('Sun'), 'conj', pl('Moon'), { orb: 12 })]),
+    F('Sky', 'Pushya Moon', 'The Moon is in Pushya nakshatra.', [R(pl('Moon'), 'in_nak', null, { naks: [nk('Pushya')] })]),
+    F('Sky', 'Saturn and Jupiter in trine', 'Saturn and Jupiter 120° apart within 8°.', [R(pl('Saturn'), 'angle', pl('Jupiter'), { angle: 120, orb: 8 })]),
+    F('Sky', 'Moon in gandanta', 'The Moon is in a gandanta (water-fire sign junction) zone.', [R(pl('Moon'), 'gandanta', null, { on: true })])
+  ];
+  const cats = () => Array.from(new Set(LIB.map(f => f.cat)));
+  const clone = f => JSON.parse(JSON.stringify(f));
+
+  /* ---------------- share code ---------------- */
+  const OK = { planet: 'p', role: 'r', point: 'n', lord: 'l', arudha: 'a', sign: 's', house: 'h' }, KO = Object.fromEntries(Object.entries(OK).map(([k, v]) => [v, k]));
+  const opS = o => o.of && o.of !== 'C' ? [OK[o.k], o.v, o.of] : [OK[o.k], o.v];
+  const opD = a => Array.isArray(a) && KO[a[0]] ? { k: KO[a[0]], v: a[1], of: a[2] || 'C' } : null;
+  const nodeS = n => n.g ? { g: n.g, n: n.n > 1 ? n.n : undefined, i: n.items.map(nodeS) } : { a: n.a.map(opS), q: n.q === 'all' ? 1 : undefined, r: n.r, b: n.b.length ? n.b.map(opS) : undefined, u: n.bq === 'all' ? 1 : undefined, p: Object.keys(n.p || {}).length ? n.p : undefined, x: n.neg ? 1 : undefined };
+  const nodeD = n => n.g ? { g: n.g, n: n.n || 1, items: (n.i || []).map(nodeD) } : { a: (n.a || []).map(opD).filter(Boolean), q: n.q ? 'all' : 'any', r: n.r, b: (n.b || []).map(opD).filter(Boolean), bq: n.u ? 'all' : 'any', p: n.p || {}, neg: !!n.x };
+  const b64 = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const unb64 = s => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - s.length % 4) % 4))));
+  function encode(f) { const n = FM.normalize(f); if (!n) return ''; return 'VF1.' + b64(JSON.stringify({ n: n.name, d: n.about || undefined, s: n.scheme === 8 ? 8 : undefined, t: nodeS(n.root) })); }
+  function decode(text) {
+    let s = String(text || '').trim(); if (!s) return { error: 'Nothing to import.' };
+    const m = /VF1\.([A-Za-z0-9_-]+)/.exec(s);
+    try {
+      if (m) { const j = JSON.parse(unb64(m[1])); const f = FM.normalize({ v: 1, name: j.n, about: j.d, scheme: j.s, root: nodeD(j.t) }); return f ? { formula: f } : { error: 'That code is not a valid formula.' }; }
+      if (s[0] === '{') { const j = JSON.parse(s), f = FM.normalize(j.formula || j); return f ? { formula: f } : { error: 'That JSON is not a valid formula.' }; }
+    } catch (e) { return { error: 'Could not read that code.' }; }
+    return { error: 'Paste a share code (VF1…), a link or formula JSON.' };
+  }
+  const link = f => { const base = location.href.split('#')[0]; return base + '#f=' + encode(f); };
+  const card = f => FM.describe(f) + '\n\nShare code: ' + encode(f) + '\nOpen in the 3D Sky Formula Maker: ' + link(f) + '\n— Vedic Astro Suite';
+
+  /* ---------------- saved list ---------------- */
+  const KEY = 'sky3d_fm_saved';
+  const loadAll = () => { try { const a = JSON.parse(localStorage.getItem(KEY) || '[]'); return (Array.isArray(a) ? a : []).map(FM.normalize).filter(Boolean); } catch (e) { return []; } };
+  const store = a => { try { localStorage.setItem(KEY, JSON.stringify(a)); return true; } catch (e) { return false; } };
+  const save = f => { const n = FM.normalize(f); if (!n) return false; const a = loadAll(), i = a.findIndex(x => x.id === n.id); if (i >= 0) a[i] = n; else a.unshift(n); return store(a); };
+  const remove = id => store(loadAll().filter(x => x.id !== id));
+  const dup = id => { const a = loadAll(), f = a.find(x => x.id === id); if (!f) return null; const c = clone(f); c.id = FM.uid(); c.name = f.name + ' (copy)'; a.unshift(c); store(a); return c; };
+  const exportAll = () => JSON.stringify({ app: 'vedic-astro-suite', kind: 'formulas', v: 1, formulas: loadAll() }, null, 2);
+  function importAll(text) { try { const j = JSON.parse(text), arr = Array.isArray(j) ? j : j.formulas; if (!Array.isArray(arr)) return 0; let n = 0; arr.forEach(x => { const f = FM.normalize(x); if (f) { f.id = FM.uid(); save(f); n++; } }); return n; } catch (e) { return 0; } }
+  /* a link like ...#f=VF1.xxxx */
+  const fromHash = () => { const m = /[#&]f=([^&]+)/.exec(location.hash || ''); if (!m) return null; const r = decode(decodeURIComponent(m[1])); return r.formula || null; };
+
+  return { LIB, cats, clone, encode, decode, link, card, loadAll, save, remove, dup, exportAll, importAll, fromHash, pl, role, pt, lord };
+})();
+window.FMX = FMX;
+<\/script>
+<script>
+/* Formula Maker UI (js/69, global FMU). Tools menu > Formula maker (#fmBtn): full-screen sheet with tabs Build / Result / Library / Saved, a rule editor and an operand picker (bottom sheets),
+   check on a person / the sky, Find dates (scan), share (code, link, text card, JSON, PNG card), import, and #f= links. All sheets are created here. Prefix fm-. See docs/FORMULA_MAKER_PLAN.md. */
+const FMU = (() => {
+  'use strict';
+  const $ = id => document.getElementById(id), esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const gl = n => (PLANET_GLYPHS[n] || '') + '︎', sy = i => SIGNS[i].symbol + '︎';
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], KEY = 'sky3d_fm_cur';
+  const REL_GROUPS = [['Where it is', ['in_sign', 'in_nak', 'in_pada', 'in_house', 'sign_type', 'deg_range', 'lon_range', 'near_lon', 'varga_sign']], ['Between two things', ['same_sign', 'conj', 'aspect', 'angle', 'same_nak', 'rules', 'dispositor', 'exchange']],
+    ['Condition of a planet', ['retro', 'combust', 'dignity', 'vargottama', 'gandanta', 'nak_lord', 'sign_lord']]];
+  const blank = () => FM.formula('My formula', '', [], 'all', 7);
+  const S = { f: blank(), tab: 'build', lib: { cat: 'All', q: '' }, tgt: 'person', person: '', other: '', date: '', edit: null, pick: null, ofSel: 'C', msg: '', scan: { y0: new Date().getFullYear(), y1: new Date().getFullYear() + 10, mode: 'sky', busy: false, prog: 0, cancel: false, res: null }, open: false, imp: '' };
+  try { const j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (j) { const f = FM.normalize(j.f); if (f) S.f = f; ['tgt', 'person', 'other', 'date'].forEach(k => { if (typeof j[k] === 'string') S[k] = j[k]; }); } } catch (e) { /* ignore */ }
+  const persist = () => { try { localStorage.setItem(KEY, JSON.stringify({ f: S.f, tgt: S.tgt, person: S.person, other: S.other, date: S.date })); } catch (e) { /* ignore */ } };
+  const nowJD = () => Date.now() / 86400000 + 2440587.5;
+  const fd = jd => { const d = jdToDate(jd); return d.getDate() + ' ' + MON[d.getMonth()] + ' ' + yearLabel(d.getFullYear()); };
+  function dur(days) { if (days < 1 / 24) return Math.max(1, Math.round(days * 1440)) + ' min'; if (days < 2) return Math.round(days * 24) + ' h'; if (days < 60) return Math.round(days) + ' days'; if (days < 700) return (days / 30.44).toFixed(1).replace(/\.0$/, '') + ' months'; return (days / 365.25).toFixed(1).replace(/\.0$/, '') + ' years'; }
+  const toast = t => { S.msg = t; const el = $('fmToast'); if (el) { el.textContent = t; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), 2600); } };
+
+  /* ---------- people & targets ---------- */
+  const pkey = p => [p.name, p.dob, p.tob].join('|');
+  function people() {
+    let a = []; try { a = loadNatalProfiles().filter(isValidProfile); } catch (e) { a = []; }
+    if (isValidProfile(activeNatalProfile) && !a.some(p => pkey(p) === pkey(activeNatalProfile))) a.unshift(activeNatalProfile);
+    return a;
+  }
+  const personOf = k => { const a = people(); return k ? a.find(p => pkey(p) === k) || null : null; };
+  const defPerson = () => { if (!personOf(S.person)) { const p = isValidProfile(activeNatalProfile) ? activeNatalProfile : people()[0]; S.person = p ? pkey(p) : ''; } };
+  function ctx() {
+    defPerson(); const per = personOf(S.person), oth = personOf(S.other); let target;
+    if (S.tgt === 'person') { if (!per) return { err: 'Add a person first (Profile tool) to check a birth chart, or choose the sky.' }; target = { type: 'person', p: per, jd: currentJD }; }
+    else if (S.tgt === 'sky3d') target = { type: 'sky', jd: currentJD, label: 'Sky on ' + formatFullDate(currentJD) };
+    else if (S.tgt === 'now') target = { type: 'sky', jd: nowJD(), label: 'Sky right now' };
+    else { const d = parseDob(S.date); if (!d) return { err: 'Pick a date for the sky.' }; target = { type: 'sky', jd: toJulianDay(d[0], d[1], d[2], 12, 0, 0), label: 'Sky on ' + S.date }; }
+    try { return { X: FM.makeCtx(target, { person: per, other: oth, scheme: S.f.scheme }), target, per }; } catch (e) { return { err: 'Could not build the chart: ' + e.message }; }
+  }
+
+  /* ---------- tree helpers ---------- */
+  const at = path => path.reduce((n, i) => n.items[i], S.f.root);
+  const parent = path => at(path.slice(0, -1));
+  const newRule = () => FM.rule([], 'in_sign', null, {});
+  const isG = n => n && n.g;
+  const cnt = () => FM.countRules(S.f.root);
+  const pstr = p => p.join('.'), pparse = s => s === '' ? [] : s.split('.').map(Number);
+
+  /* ---------- rendering: build ---------- */
+  const seg = (items, cur, a, extra) => `<div class="fm-seg" role="group">${items.map(([v, l]) => `<button type="button" class="${String(cur) === String(v) ? 'on' : ''}" data-a="${a}" data-v="${v}" ${extra || ''}>${l}</button>`).join('')}</div>`;
+  function groupHtml(g, path) {
+    const p = pstr(path), top = path.length === 0;
+    let h = `<div class="fm-g ${top ? 'top' : ''}"><div class="fm-gh">${seg([['all', 'All'], ['any', 'Any'], ['none', 'None'], ['atleast', 'At least']], g.g, 'gt', `data-p="${p}"`)}`;
+    if (g.g === 'atleast') h += `<span class="fm-step"><button type="button" data-a="gn" data-d="-1" data-p="${p}" aria-label="Fewer">−</button><b>${g.n || 1}</b><button type="button" data-a="gn" data-d="1" data-p="${p}" aria-label="More">+</button></span>`;
+    h += `<span class="fm-gl">of these must be true</span>`;
+    if (!top) h += `<button type="button" class="fm-x" data-a="del" data-p="${p}" aria-label="Remove group">✕</button>`;
+    h += '</div>';
+    g.items.forEach((n, i) => { const q = path.concat(i); h += isG(n) ? groupHtml(n, q) : ruleHtml(n, q); });
+    h += `<div class="fm-add"><button type="button" class="fm-btn" data-a="addr" data-p="${p}">＋ Rule</button><button type="button" class="fm-btn ghost" data-a="addg" data-p="${p}">＋ Group</button></div></div>`;
+    return h;
+  }
+  function ruleHtml(r, path) {
+    const p = pstr(path), ok = r.a.length > 0 && (FM.REL[r.r].bin !== 1 || r.b.length > 0);
+    return `<div class="fm-r ${ok ? '' : 'warn'}"><button type="button" class="fm-rt" data-a="edit" data-p="${p}"><b>${esc(FM.sentence(r))}</b>${ok ? '' : '<small>Tap to finish this rule</small>'}</button>
+      <div class="fm-ra"><button type="button" data-a="neg" data-p="${p}" class="${r.neg ? 'on' : ''}" aria-pressed="${!!r.neg}">NOT</button><button type="button" data-a="dup" data-p="${p}" aria-label="Duplicate rule">⧉</button><button type="button" data-a="del" data-p="${p}" aria-label="Delete rule">✕</button></div></div>`;
+  }
+  function renderBuild() {
+    const f = S.f, c = ctx(); let badge = '';
+    if (!c.err) { try { const n = FM.evaluate(f, c.X); badge = cnt() ? verdict(n.t, true) : ''; } catch (e) { badge = ''; } }
+    return `<div class="fm-card"><label class="fm-lab">Name<input id="fmName" class="fm-in" value="${esc(f.name)}" maxlength="80" autocomplete="off"></label>
+      <label class="fm-lab">What it means (optional)<input id="fmAbout" class="fm-in" value="${esc(f.about)}" maxlength="400" autocomplete="off"></label>
+      <div class="fm-row"><span class="fm-lab">Karaka scheme</span>${seg([[7, '7 karakas'], [8, '8 (Rahu + Pitri)']], f.scheme, 'sch')}</div>
+      <div class="fm-bar">${badge}<span class="fm-sp"></span><button type="button" class="fm-btn" data-a="save">Save</button><button type="button" class="fm-btn" data-a="share">Share</button><button type="button" class="fm-btn ghost" data-a="new">New</button></div></div>
+      ${groupHtml(f.root, [])}
+      <p class="fm-hint">A formula is a list of rules. <b>Tap a rule</b> to change it. Rules about a person's Lagna, houses, Arudha or Hora need a birth time and place; if a rule can't be decided it shows <b>?</b>, never a guess.</p>
+      ${cnt() ? '<button type="button" class="fm-go" data-a="tores">Check this formula ▸</button>' : ''}`;
+  }
+  function verdict(t, small) {
+    const k = t === true ? 'yes' : t === false ? 'no' : 'unk', tx = t === true ? '✓ True' : t === false ? '✗ False' : '? Unknown';
+    return `<span class="fm-v ${k} ${small ? 'sm' : ''}">${tx}</span>`;
+  }
+
+  /* ---------- rendering: result ---------- */
+  function treeHtml(n) {
+    const k = n.t === true ? 'yes' : n.t === false ? 'no' : 'unk', ic = n.t === true ? '✓' : n.t === false ? '✗' : '?';
+    if (n.kids) return `<div class="fm-n g ${k}"><div class="fm-nh"><i>${ic}</i><b>${esc(n.text)}</b><small>${n.count}/${n.kids.length}</small></div><div class="fm-kids">${n.kids.map(treeHtml).join('')}</div></div>`;
+    return `<div class="fm-n ${k}"><div class="fm-nh"><i>${ic}</i><b>${esc(n.text)}</b></div>${n.detail ? `<div class="fm-nd">${esc(n.detail)}</div>` : ''}</div>`;
+  }
+  function pointsHtml(C) {
+    const rows = FM.points(C), groups = {}; rows.forEach(r => { (groups[r.grp] = groups[r.grp] || []).push(r); });
+    return Object.keys(groups).map(g => `<h5>${g}</h5><div class="fm-pts">${groups[g].map(r => `<div class="fm-pt"><b>${esc(r.name)}</b><span>${r.sign == null ? '' : sy(r.sign) + ' ' + (r.lon != null ? FM.dms(r.lon) + ' ' : '') + SIGNS[r.sign].name}</span></div>`).join('')}</div>`).join('');
+  }
+  const pplSel = (id, cur, none) => `<select id="${id}" class="fm-in">${none ? `<option value="">${none}</option>` : ''}${people().map(p => `<option value="${esc(pkey(p))}" ${pkey(p) === cur ? 'selected' : ''}>${esc(p.name || 'Unnamed')} · ${esc(p.dob)}</option>`).join('')}</select>`;
+  function scanNote(c) {
+    const sc = S.scan; let h = '';
+    if (sc.busy) h = `<div class="fm-prog"><div><i style="width:${Math.round(sc.prog * 100)}%"></i></div><button type="button" class="fm-btn" data-a="scancancel">Stop</button></div>`;
+    else if (sc.res) {
+      const r = sc.res;
+      if (r.error) h = `<div class="fm-note bad">${esc(r.error)}</div>`;
+      else {
+        const w = r.windows || [];
+        h = `<p class="fm-sum"><b>${w.length}</b>${r.capped ? '+' : ''} time${w.length === 1 ? '' : 's'} found${r.cancelled ? ' (stopped early)' : ''}. Tap one to open that day in the 3D sky.</p>` +
+          w.map((x, i) => `<button type="button" class="fm-w" data-a="goto" data-i="${i}"><b>${fd(x.from)}${x.open ? ' →' : x.to - x.from > 0.5 ? ' → ' + fd(x.to) : ''}</b><span>${x.open ? 'range end' : dur(x.to - x.from)}</span></button>`).join('');
+        if (!w.length) h += `<div class="fm-note">Never true in that range${r.why ? '. ' + esc(r.why) : '.'}</div>`;
+        else if (r.why) h += `<div class="fm-note">${esc(r.why)}</div>`;
+      }
+    }
+    return h;
+  }
+  function renderResult() {
+    const c = ctx(), sc = S.scan; let h = `<div class="fm-card"><div class="fm-lab">Check on</div>${seg([['person', 'Birth chart'], ['sky3d', '3D date'], ['now', 'Now'], ['date', 'A date']], S.tgt, 'tgt')}`;
+    h += `<label class="fm-lab">Person (their birth chart, and the “Person” part of transit formulas)${pplSel('fmPerson', S.person)}</label>`;
+    if (S.tgt === 'date') h += `<label class="fm-lab">Date<input type="date" id="fmDate" class="fm-in" value="${esc(S.date)}"></label>`;
+    h += `<label class="fm-lab">Second person (optional)${pplSel('fmOther', S.other, 'None')}</label></div>`;
+    if (c.err) return h + `<div class="fm-note bad">${esc(c.err)}</div>`;
+    const n = FM.evaluate(S.f, c.X);
+    h += `<div class="fm-card"><div class="fm-top">${verdict(n.t)}<div><b>${esc(S.f.name)}</b><small>${esc(c.X.C.label || c.target.label || '')}</small></div></div>${cnt() ? treeHtml(n) : '<p class="fm-hint">Add some rules in Build first.</p>'}
+      <div class="fm-bar"><button type="button" class="fm-btn" data-a="open3d">Open this moment in 3D</button><button type="button" class="fm-btn" data-a="share">Share</button></div></div>`;
+    h += `<div class="fm-card"><h4>Find dates</h4><p class="fm-hint">List every time this formula is true. <b>Sky</b> = the planets in the sky (transits). <b>Birth charts</b> = which birth dates match (uses noon; Lagna rules stay unknown).</p>
+      ${seg([['sky', 'Sky (transits)'], ['birth', 'Birth dates']], sc.mode, 'smode')}
+      <div class="fm-in2"><label>From year<input id="fmY0" type="number" class="fm-in" value="${sc.y0}"></label><span>to</span><label>To year<input id="fmY1" type="number" class="fm-in" value="${sc.y1}"></label></div>
+      <div class="fm-pre"><button type="button" data-a="pre" data-v="n10">Next 10 yrs</button><button type="button" data-a="pre" data-v="n30">Next 30 yrs</button><button type="button" data-a="pre" data-v="p30">Past 30 yrs</button><button type="button" data-a="pre" data-v="b">Birth years 1950–2010</button></div>
+      <button type="button" class="fm-go" data-a="scan" ${sc.busy || !cnt() ? 'disabled' : ''}>${sc.busy ? 'Searching…' : 'Find dates ▸'}</button>${scanNote(c)}</div>
+      <div class="fm-card"><h4>Chart points</h4><p class="fm-hint">Everything you can use in a rule, for this chart.</p>${pointsHtml(c.X.C)}</div>`;
+    return h;
+  }
+
+  /* ---------- rendering: library & saved ---------- */
+  function renderLib() {
+    const L = S.lib, cats = ['All'].concat(FMX.cats()), q = L.q.toLowerCase();
+    const list = FMX.LIB.filter(f => (L.cat === 'All' || f.cat === L.cat) && (!q || (f.name + ' ' + f.about).toLowerCase().includes(q)));
+    return `<div class="fm-card"><input id="fmQ" class="fm-in" type="search" placeholder="Search ${FMX.LIB.length} formulas" value="${esc(L.q)}"><div class="fm-chips">${cats.map(c => `<button type="button" class="${L.cat === c ? 'on' : ''}" data-a="cat" data-v="${c}">${c}</button>`).join('')}</div></div>` +
+      list.map(f => `<div class="fm-lc"><b>${esc(f.name)}</b><small>${esc(f.cat)}</small><p>${esc(f.about)}</p><div class="fm-bar"><button type="button" class="fm-btn" data-a="use" data-id="${f.id}">Use</button><button type="button" class="fm-btn" data-a="usechk" data-id="${f.id}">Check now</button></div></div>`).join('') + (list.length ? '' : '<p class="fm-hint">Nothing matches.</p>');
+  }
+  function renderSaved() {
+    const a = FMX.loadAll();
+    return `<div class="fm-card"><h4>Import a formula</h4><textarea id="fmImp" class="fm-ta" rows="3" placeholder="Paste a share code (VF1…), a link or formula JSON">${esc(S.imp)}</textarea><div class="fm-bar"><button type="button" class="fm-btn" data-a="import">Import</button><button type="button" class="fm-btn" data-a="exall">Export all</button><button type="button" class="fm-btn" data-a="imfile">Import backup</button></div><input type="file" id="fmFile" accept="application/json,.json" hidden></div>` +
+      (a.length ? a.map(f => `<div class="fm-lc"><b>${esc(f.name)}</b><small>${FM.countRules(f.root)} rule${FM.countRules(f.root) === 1 ? '' : 's'}</small><p>${esc(f.about)}</p><div class="fm-bar"><button type="button" class="fm-btn" data-a="open" data-id="${f.id}">Open</button><button type="button" class="fm-btn" data-a="sdup" data-id="${f.id}">Duplicate</button><button type="button" class="fm-btn" data-a="sshare" data-id="${f.id}">Share</button><button type="button" class="fm-x" data-a="sdel" data-id="${f.id}" aria-label="Delete">✕</button></div></div>`).join('') : '<p class="fm-hint">Nothing saved yet. Build a formula and tap Save.</p>');
+  }
+  function render() {
+    const b = $('fmBody'); if (!b) return; const top = b.scrollTop;
+    b.innerHTML = S.tab === 'build' ? renderBuild() : S.tab === 'result' ? renderResult() : S.tab === 'library' ? renderLib() : renderSaved();
+    document.querySelectorAll('#fmTabs button').forEach(t => { const on = t.dataset.v === S.tab; t.classList.toggle('on', on); t.setAttribute('aria-selected', String(on)); });
+    b.scrollTop = top;
+  }
+
+  /* ---------- rule editor ---------- */
+  const chips = (arr, label, a, cur, multi) => `<div class="fm-chips sm">${arr.map(([v, l]) => `<button type="button" class="${(multi ? (cur || []).includes(v) : cur === v) ? 'on' : ''}" data-a="${a}" data-v="${v}">${l}</button>`).join('')}</div>`;
+  const num = (k, v, lab, step) => `<label class="fm-lab sm">${lab}<input class="fm-in" type="number" step="${step || 1}" data-a="pn" data-k="${k}" value="${v}"></label>`;
+  function paramsHtml(r) {
+    const rel = FM.REL[r.r], p = r.p, h = [];
+    rel.ui.forEach(u => {
+      if (u === 'signs') h.push('<div class="fm-lab">Signs</div>' + `<div class="fm-sg">${SIGNS.map((s, i) => `<button type="button" class="${(p.signs || []).includes(i) ? 'on' : ''}" data-a="pt" data-k="signs" data-v="${i}" aria-label="${s.name}"><span>${sy(i)}</span><i>${s.name.slice(0, 3)}</i></button>`).join('')}</div>`);
+      else if (u === 'naks') h.push(`<label class="fm-lab">Add nakshatra<select class="fm-in" data-a="nk"><option value="">Choose…</option>${NAKSHATRAS.map((n, i) => `<option value="${i}">${n}</option>`).join('')}</select></label>` + chips((p.naks || []).map(i => [i, NAKSHATRAS[i] + ' ✕']), '', 'pt', null, false).replace(/data-a="pt"/g, 'data-a="pt" data-k="naks"').replace(/class=""/g, 'class="on"'));
+      else if (u === 'padas') h.push('<div class="fm-lab">Pada</div>' + chips([1, 2, 3, 4].map(i => [i, i]), '', 'ptk', p.padas, true).replace(/data-a="ptk"/g, 'data-a="pt" data-k="padas"'));
+      else if (u === 'houses') h.push('<div class="fm-lab">Houses</div>' + chips(Array.from({ length: 12 }, (_, i) => [i + 1, i + 1]), '', 'pt', p.houses, true).replace(/data-a="pt"/g, 'data-a="pt" data-k="houses"'));
+      else if (u === 'only') h.push('<div class="fm-lab">Only these aspects (empty = any)</div>' + chips([3, 4, 5, 7, 8, 9, 10].map(i => [i, ord(i)]), '', 'pt', p.only, true).replace(/data-a="pt"/g, 'data-a="pt" data-k="only"'));
+      else if (u === 'dir') h.push('<div class="fm-lab">Direction</div>' + seg([['either', 'Either way'], ['a>b', 'A → B'], ['b>a', 'B → A'], ['mutual', 'Mutual']], p.dir || 'either', 'pd'));
+      else if (u === 'on') h.push(seg([[1, r.r === 'retro' ? 'Retrograde' : 'Yes'], [0, r.r === 'retro' ? 'Direct' : 'No']], p.on === false ? 0 : 1, 'pon'));
+      else if (u === 'digs') h.push('<div class="fm-lab">Dignity</div>' + chips(FM.DIGS.map(d => [d, d]), '', 'pt', p.digs, true).replace(/data-a="pt"/g, 'data-a="pt" data-k="digs"'));
+      else if (u === 'planets') h.push('<div class="fm-lab">Planets</div>' + chips(FM.P9.map(n => [n, gl(n) + ' ' + n]), '', 'pt', p.planets, true).replace(/data-a="pt"/g, 'data-a="pt" data-k="planets"'));
+      else if (u === 'elem') h.push('<div class="fm-lab">Element</div>' + chips(FM.ELEM.map((n, i) => [i, n]), '', 'pt', p.elem, true).replace(/data-a="pt"/g, 'data-a="pt" data-k="elem"'));
+      else if (u === 'mode') h.push('<div class="fm-lab">Quality</div>' + chips(FM.MODE.map((n, i) => [i, n]), '', 'pt', p.mode, true).replace(/data-a="pt"/g, 'data-a="pt" data-k="mode"'));
+      else if (u === 'varga') h.push(`<label class="fm-lab">Divisional chart<select class="fm-in" data-a="pv">${VG.keys.map(k => `<option value="${k}" ${(p.varga || 'D9') === k ? 'selected' : ''}>${k} · ${esc(VG.name(k))}</option>`).join('')}</select></label>`);
+      else if (u === 'orb') h.push(num('orb', p.orb == null ? (r.r === 'conj' ? 10 : r.r === 'near_lon' ? 3 : 6) : p.orb, 'Orb (degrees)', 0.5));
+      else if (u === 'angle') h.push(`<label class="fm-lab sm">Angle<select class="fm-in" data-a="pa">${[0, 30, 45, 60, 90, 120, 150, 180].map(a => `<option value="${a}" ${(p.angle || 0) === a ? 'selected' : ''}>${a}°</option>`).join('')}</select></label>`);
+      else if (u === 'lo') h.push(num('lo', p.lo || 0, r.r === 'deg_range' ? 'From degree (0–30)' : 'From longitude', 0.01));
+      else if (u === 'hi') h.push(num('hi', p.hi == null ? (r.r === 'deg_range' ? 30 : 360) : p.hi, r.r === 'deg_range' ? 'To degree (0–30)' : 'To longitude', 0.01));
+      else if (u === 'lon') h.push(num('lon', p.lon || 0, 'Zodiac longitude (0–360, sidereal)', 0.01));
+    });
+    return h.join('');
+  }
+  const ord = FM.ord;
+  const opList = (r, side) => { const l = r[side], q = side === 'a' ? r.q : r.bq;
+    return `<div class="fm-ops">${l.map((o, i) => `<span class="fm-op">${esc(FM.opName(o))}<button type="button" data-a="opx" data-side="${side}" data-i="${i}" aria-label="Remove">✕</button></span>`).join('')}<button type="button" class="fm-op add" data-a="pick" data-side="${side}">＋ ${l.length ? 'Add more' : 'Choose'}</button></div>` +
+      (l.length > 1 ? `<div class="fm-row"><span class="fm-lab sm">Needs</span>${seg([['any', 'Any one'], ['all', 'All of them']], q, 'q' + side)}</div>` : ''); };
+  function renderEdit() {
+    const r = at(S.edit), rel = FM.REL[r.r], bn = rel.bin;
+    const relSel = REL_GROUPS.map(([g, ids]) => `<optgroup label="${g}">${ids.map(id => `<option value="${id}" ${r.r === id ? 'selected' : ''}>${esc(FM.REL[id].label)}</option>`).join('')}</optgroup>`).join('');
+    return `<div class="fm-pc"><header><b>Edit rule</b><button type="button" data-a="editdone" class="fm-done">Done</button></header><div class="fm-pb" id="fmEditBody">
+      <p class="fm-pre-s">${esc(FM.sentence(r))}</p>
+      <div class="fm-lab">First ${bn === 1 ? 'thing (A)' : 'subject'}</div>${opList(r, 'a')}
+      <label class="fm-lab">Relation<select class="fm-in" data-a="rel">${relSel}</select></label>
+      ${bn === 1 ? `<div class="fm-lab">Second thing (B)</div>${opList(r, 'b')}` : bn === 2 ? `<div class="fm-lab">…counted from (optional, default Lagna)</div>${opList(r, 'b')}` : ''}
+      ${paramsHtml(r)}
+      <div class="fm-row"><span class="fm-lab sm">Reverse the answer</span>${seg([[0, 'Normal'], [1, 'NOT']], r.neg ? 1 : 0, 'rneg')}</div></div></div>`;
+  }
+  function pickCatalog() {
+    const roles = S.f.scheme === 8 ? FM.K8 : FM.K7;
+    return [['Planets', FM.P9.map(n => ({ k: 'planet', v: n, t: gl(n) + ' ' + n }))], ['Karakas (by degree)', roles.map(k => ({ k: 'role', v: k, t: k + ' · ' + FM.ROLE_NAME[k] }))],
+      ['Points', Object.keys(FM.POINTS).map(k => ({ k: 'point', v: k, t: FM.POINTS[k] }))], ['House lords', Array.from({ length: 12 }, (_, i) => ({ k: 'lord', v: i + 1, t: 'Lord of ' + ord(i + 1) }))],
+      ['Houses (as a sign)', Array.from({ length: 12 }, (_, i) => ({ k: 'house', v: i + 1, t: ord(i + 1) + ' house' }))], ['Arudha padas', Array.from({ length: 12 }, (_, i) => ({ k: 'arudha', v: i + 1, t: i === 0 ? 'AL · Arudha Lagna' : i === 11 ? 'UL · Upapada (A12)' : 'A' + (i + 1) }))],
+      ['Signs', SIGNS.map((s, i) => ({ k: 'sign', v: i, t: sy(i) + ' ' + s.name }))]];
+  }
+  function renderPick() {
+    const r = at(S.edit), side = S.pick, list = r[side], of = S.ofSel;
+    const has = (k, v) => list.some(o => o.k === k && String(o.v) === String(v) && ((o.of || 'C') === of || k === 'sign'));
+    return `<div class="fm-pc"><header><b>Choose ${side === 'a' ? 'first' : 'second'} thing</b><button type="button" data-a="pickdone" class="fm-done">Done</button></header><div class="fm-pb" id="fmPickBody">
+      <div class="fm-lab">Take it from</div>${seg([['C', 'This chart'], ['N', 'Person (birth)'], ['S', 'Sky moment'], ['P', '2nd person']], of, 'of')}
+      <p class="fm-hint">“This chart” = whatever you check the formula on. Use Person + Sky moment for transit formulas, like Saturn over your Moon.</p>
+      ${pickCatalog().map(([g, items]) => `<h5>${g}</h5><div class="fm-chips pk">${items.map(it => `<button type="button" class="${has(it.k, it.v) ? 'on' : ''}" data-a="pk" data-k="${it.k}" data-v="${it.v}">${esc(it.t)}</button>`).join('')}</div>`).join('')}</div></div>`;
+  }
+  const layer = (id, html, on) => { const e = $(id); if (!e) return; e.hidden = !on; if (on) { const b = e.querySelector('.fm-pb'), top = b ? b.scrollTop : 0; e.innerHTML = html; const nb = e.querySelector('.fm-pb'); if (nb) nb.scrollTop = top; } };
+  const refreshLayers = () => { if (S.share) layer('fmEdit', renderShare(), true); else layer('fmEdit', S.edit ? renderEdit() : '', !!S.edit); layer('fmPick', S.pick && S.edit ? renderPick() : '', !!(S.pick && S.edit)); };
+
+  /* ---------- share ---------- */
+  function renderShare() {
+    const f = S.share, code = FMX.encode(f);
+    return `<div class="fm-pc"><header><b>Share “${esc(f.name)}”</b><button type="button" data-a="sharedone" class="fm-done">Done</button></header><div class="fm-pb">
+      <pre class="fm-card-t">${esc(FM.describe(f))}</pre>
+      <label class="fm-lab">Share code<textarea class="fm-ta" rows="3" readonly id="fmCode">${esc(code)}</textarea></label>
+      <div class="fm-grid"><button type="button" class="fm-btn pri" data-a="sh-native">Share…</button><button type="button" class="fm-btn" data-a="sh-link">Link to clipboard</button><button type="button" class="fm-btn" data-a="sh-code">Code to clipboard</button><button type="button" class="fm-btn" data-a="sh-text">Text card to clipboard</button><button type="button" class="fm-btn" data-a="sh-json">Download JSON</button><button type="button" class="fm-btn" data-a="sh-png">Save picture</button></div>
+      <p class="fm-hint">Anyone who opens the link gets this formula in their own Formula Maker. Nothing about you or any birth data is inside it, only the rules.</p></div></div>`;
+  }
+  function openShare(f) { S.share = f; layer('fmEdit', renderShare(), true); }
+  function clip(t, ok) { const done = () => toast(ok || 'Done'); if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, () => fb(t, done)); else fb(t, done); }
+  function fb(t, done) { const a = document.createElement('textarea'); a.value = t; a.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(a); a.select(); try { document.execCommand('copy'); done(); } catch (e) { toast('Could not use the clipboard'); } a.remove(); }
+  const fileName = f => (f.name || 'formula').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'formula';
+  function download(name, text, type) { const u = URL.createObjectURL(new Blob([text], { type })); const a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); }
+  function png(f) {
+    const lines = FM.describe(f).split('\n'), W = 1080, pad = 60, cv = document.createElement('canvas'), g = cv.getContext('2d'), wrap = [];
+    g.font = '30px system-ui,sans-serif';
+    lines.forEach((ln, i) => { const ind = (ln.match(/^ */) || [''])[0].length * 14, words = ln.trim().split(/\s+/); let cur = ''; words.forEach(w => { const t = cur ? cur + ' ' + w : w; if (g.measureText(t).width > W - pad * 2 - ind && cur) { wrap.push([cur, ind, i]); cur = w; } else cur = t; }); wrap.push([cur, ind, i]); });
+    const H = Math.max(700, 220 + wrap.length * 44 + 140); cv.width = W; cv.height = H;
+    const gr = g.createLinearGradient(0, 0, W, H); gr.addColorStop(0, '#0d1424'); gr.addColorStop(1, '#1b1630'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    g.strokeStyle = 'rgba(212,162,74,.6)'; g.lineWidth = 3; g.strokeRect(24, 24, W - 48, H - 48);
+    g.fillStyle = '#f6d775'; g.font = '700 54px Georgia,serif'; g.fillText(f.name.slice(0, 34), pad, 120);
+    g.font = '30px system-ui,sans-serif'; let y = 190; wrap.forEach(([t, ind, i]) => { if (i === 0) return; g.fillStyle = /^(ALL|ANY|NONE|AT LEAST)/.test(t.trim()) ? '#f6dc8a' : '#e8ecf4'; g.fillText(t, pad + ind, y); y += 44; });
+    g.fillStyle = '#9aa5b8'; g.font = '26px system-ui,sans-serif'; g.fillText('Vedic Astro Suite · 3D Sky Formula Maker', pad, H - 70); g.fillText(FMX.encode(f).slice(0, 52) + '…', pad, H - 36);
+    cv.toBlob(b => { if (!b) return toast('Could not make the picture'); const u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = fileName(f) + '.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); toast('Picture saved'); });
+  }
+
+  /* ---------- scan ---------- */
+  async function runScan() {
+    const sc = S.scan, c = ctx(); defPerson(); const per = personOf(S.person);
+    const j0 = toJulianDay(Math.min(sc.y0, sc.y1), 1, 1, 0, 0, 0), j1 = toJulianDay(Math.max(sc.y0, sc.y1), 12, 31, 23, 59, 0);
+    sc.busy = true; sc.prog = 0; sc.cancel = false; sc.res = null; render();
+    const r = await FM.scan(S.f, { mode: sc.mode, j0, j1, person: per, other: personOf(S.other), loc: per, onProgress: p => { sc.prog = p; const el = document.querySelector('.fm-prog i'); if (el) el.style.width = Math.round(p * 100) + '%'; }, cancel: () => sc.cancel });
+    sc.busy = false;
+    if (!r.error && !(r.windows || []).length) { try { const C = sc.mode === 'birth' ? FM.chart({ jd: (j0 + j1) / 2, scheme: S.f.scheme, birth: true }) : FM.skyChart((j0 + j1) / 2, { loc: per, base: per ? FM.birthChart(per, S.f.scheme).base : null, scheme: S.f.scheme }); const n = FM.evaluate(S.f, { C, S: C, N: FM.birthChart(per, S.f.scheme), P: FM.birthChart(personOf(S.other), S.f.scheme) }); if (n.t === null) r.why = 'Some rules cannot be decided here (they need a person, a Lagna or a place).'; } catch (e) { /* ignore */ } }
+    sc.res = r; sc.last = { j0, j1 }; render();
+  }
+
+  /* ---------- events ---------- */
+  function setTab(t) { S.tab = t; render(); const b = $('fmBody'); if (b) b.scrollTop = 0; }
+  function onClick(e) {
+    const t = e.target.closest('[data-a]'); if (!t) return; const a = t.dataset.a, p = t.dataset.p != null ? pparse(t.dataset.p) : null, v = t.dataset.v;
+    const pop = !!t.closest('#fmEdit, #fmPick');
+    switch (a) {
+      case 'tab': return setTab(v);
+      case 'gt': { const g = at(p); g.g = v; if (v === 'atleast' && !g.n) g.n = 1; persist(); return render(); }
+      case 'gn': { const g = at(p); g.n = Math.max(1, Math.min(20, (g.n || 1) + (+t.dataset.d))); persist(); return render(); }
+      case 'addr': { const g = at(p); g.items.push(newRule()); persist(); S.edit = p.concat(g.items.length - 1); render(); return refreshLayers(); }
+      case 'addg': { at(p).items.push({ g: 'any', n: 1, items: [] }); persist(); return render(); }
+      case 'del': { const par = parent(p); par.items.splice(p[p.length - 1], 1); persist(); return render(); }
+      case 'dup': { const par = parent(p), i = p[p.length - 1]; par.items.splice(i + 1, 0, JSON.parse(JSON.stringify(par.items[i]))); persist(); return render(); }
+      case 'neg': { const r = at(p); r.neg = !r.neg; persist(); return render(); }
+      case 'edit': S.edit = p; S.pick = null; return refreshLayers();
+      case 'editdone': S.edit = null; S.pick = null; persist(); render(); return refreshLayers();
+      case 'sch': S.f.scheme = +v; persist(); return render();
+      case 'save': { S.f.name = ($('fmName') || {}).value || S.f.name; if (FMX.save(S.f)) toast('Saved'); else toast('Could not save'); return; }
+      case 'new': S.f = blank(); persist(); return render();
+      case 'tores': return setTab('result');
+      case 'share': return openShare(S.f);
+      case 'sharedone': S.share = null; return refreshLayers();
+      case 'sh-native': { const f = S.share, d = { title: f.name, text: FM.describe(f), url: FMX.link(f) }; if (navigator.share) navigator.share(d).catch(() => { }); else clip(FMX.card(f), 'Card text on clipboard'); return; }
+      case 'sh-link': return clip(FMX.link(S.share), 'Link on clipboard');
+      case 'sh-code': return clip(FMX.encode(S.share), 'Code on clipboard');
+      case 'sh-text': return clip(FMX.card(S.share), 'Card text on clipboard');
+      case 'sh-json': return download(fileName(S.share) + '.formula.json', JSON.stringify({ app: 'vedic-astro-suite', kind: 'formula', v: 1, formula: S.share }, null, 2), 'application/json');
+      case 'sh-png': return png(S.share);
+      /* rule editor */
+      case 'rel': return;
+      case 'pick': S.pick = t.dataset.side; return refreshLayers();
+      case 'pickdone': S.pick = null; return refreshLayers();
+      case 'of': S.ofSel = v; return refreshLayers();
+      case 'pk': { const r = at(S.edit), l = r[S.pick], k = t.dataset.k, val = k === 'sign' || k === 'lord' || k === 'house' || k === 'arudha' ? +v : v, i = l.findIndex(o => o.k === k && String(o.v) === String(val) && ((o.of || 'C') === S.ofSel || k === 'sign'));
+        if (i >= 0) l.splice(i, 1); else if (l.length < 12) l.push({ k, v: val, of: k === 'sign' ? 'C' : S.ofSel }); persist(); refreshLayers(); return render(); }
+      case 'opx': { const r = at(S.edit); r[t.dataset.side].splice(+t.dataset.i, 1); persist(); refreshLayers(); return render(); }
+      case 'qa': case 'qb': { const r = at(S.edit); if (a === 'qa') r.q = v; else r.bq = v; persist(); refreshLayers(); return render(); }
+      case 'rneg': { at(S.edit).neg = v === '1'; persist(); refreshLayers(); return render(); }
+      case 'pt': { const r = at(S.edit), k = t.dataset.k, val = /^\d+$/.test(v) && k !== 'digs' && k !== 'planets' ? +v : v, arr = r.p[k] = r.p[k] || [], i = arr.indexOf(val); if (i >= 0) arr.splice(i, 1); else arr.push(val); persist(); refreshLayers(); return render(); }
+      case 'pd': { at(S.edit).p.dir = v; persist(); refreshLayers(); return render(); }
+      case 'pon': { at(S.edit).p.on = v === '1'; persist(); refreshLayers(); return render(); }
+      /* result */
+      case 'tgt': S.tgt = v; persist(); return render();
+      case 'smode': S.scan.mode = v; S.scan.res = null; if (v === 'birth' && S.scan.y0 > 2000) { S.scan.y0 = 1950; S.scan.y1 = 2010; } render(); return;
+      case 'pre': { const y = new Date().getFullYear(), s = S.scan; if (v === 'n10') { s.y0 = y; s.y1 = y + 10; } else if (v === 'n30') { s.y0 = y; s.y1 = y + 30; } else if (v === 'p30') { s.y0 = y - 30; s.y1 = y; } else { s.y0 = 1950; s.y1 = 2010; s.mode = 'birth'; } return render(); }
+      case 'scan': return runScan();
+      case 'scancancel': S.scan.cancel = true; return;
+      case 'goto': { const w = S.scan.res.windows[+t.dataset.i]; if (!w) return; const jd = S.scan.mode === 'birth' ? (w.from + Math.min(w.to, w.from + 0.5)) / 2 : (w.from + w.to) / 2; setOpen(false); if (typeof jumpToJD === 'function') jumpToJD(jd); return; }
+      case 'open3d': { const c = ctx(); if (c.err) return toast(c.err); setOpen(false); if (typeof jumpToJD === 'function') jumpToJD(c.X.C.jd); return; }
+      /* library & saved */
+      case 'cat': S.lib.cat = v; return render();
+      case 'use': case 'usechk': { const f = FMX.LIB.find(x => x.id === t.dataset.id); if (!f) return; const c = FMX.clone(f); c.id = FM.uid(); delete c.cat; S.f = FM.normalize(c); persist(); return setTab(a === 'use' ? 'build' : 'result'); }
+      case 'open': { const f = FMX.loadAll().find(x => x.id === t.dataset.id); if (f) { S.f = f; persist(); setTab('build'); } return; }
+      case 'sdup': FMX.dup(t.dataset.id); return render();
+      case 'sdel': FMX.remove(t.dataset.id); return render();
+      case 'sshare': { const f = FMX.loadAll().find(x => x.id === t.dataset.id); if (f) openShare(f); return; }
+      case 'import': { const r = FMX.decode(($('fmImp') || {}).value || S.imp); if (r.error) return toast(r.error); S.f = r.formula; persist(); toast('Imported “' + r.formula.name + '”'); return setTab('build'); }
+      case 'exall': return download('formulas-backup.json', FMX.exportAll(), 'application/json');
+      case 'imfile': { const i = $('fmFile'); if (i) i.click(); return; }
+    }
+    void pop;
+  }
+  function onChange(e) {
+    const t = e.target, a = t.dataset && t.dataset.a, id = t.id;
+    if (id === 'fmName') { S.f.name = t.value.slice(0, 80) || 'My formula'; return persist(); }
+    if (id === 'fmAbout') { S.f.about = t.value.slice(0, 400); return persist(); }
+    if (id === 'fmPerson') { S.person = t.value; persist(); return render(); }
+    if (id === 'fmOther') { S.other = t.value; persist(); return render(); }
+    if (id === 'fmDate') { S.date = t.value; persist(); return render(); }
+    if (id === 'fmY0' || id === 'fmY1') { const v = parseInt(t.value, 10); if (isFinite(v)) S.scan[id === 'fmY0' ? 'y0' : 'y1'] = v; return; }
+    if (id === 'fmFile') { const f = t.files && t.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => { const n = FMX.importAll(String(rd.result)); if (n) { toast(n + ' formula' + (n === 1 ? '' : 's') + ' imported'); setTab('saved'); } else { const r = FMX.decode(String(rd.result)); if (r.formula) { S.f = r.formula; persist(); toast('Imported'); setTab('build'); } else toast('That file has no formulas'); } }; rd.readAsText(f); t.value = ''; return; }
+    if (!a || !S.edit) return; const r = at(S.edit);
+    if (a === 'rel') { r.r = t.value; r.p = {}; if (FM.REL[r.r].bin === 0) r.b = []; persist(); refreshLayers(); return render(); }
+    if (a === 'nk') { const i = parseInt(t.value, 10); if (isFinite(i)) { const arr = r.p.naks = r.p.naks || []; if (!arr.includes(i)) arr.push(i); } persist(); refreshLayers(); return render(); }
+    if (a === 'pv') { r.p.varga = t.value; persist(); refreshLayers(); return render(); }
+    if (a === 'pa') { r.p.angle = +t.value; persist(); refreshLayers(); return render(); }
+    if (a === 'pn') { const v = parseFloat(t.value); if (isFinite(v)) r.p[t.dataset.k] = v; persist(); render(); const s = document.querySelector('#fmEdit .fm-pre-s'); if (s) s.textContent = FM.sentence(r); }
+  }
+  function onInput(e) { const t = e.target; if (t.id === 'fmQ') { S.lib.q = t.value; const pos = t.selectionStart; render(); const q = $('fmQ'); if (q) { q.focus(); q.setSelectionRange(pos, pos); } } if (t.id === 'fmImp') S.imp = t.value; if (t.id === 'fmName') { S.f.name = t.value.slice(0, 80); persist(); } }
+
+  /* ---------- shell ---------- */
+  function setOpen(v) {
+    S.open = !!v; const s = $('fmSheet'); if (!s) return; s.hidden = !S.open;
+    if (S.open) { render(); refreshLayers(); const c = $('fmClose'); if (c) c.focus(); } else { S.edit = null; S.pick = null; S.share = null; refreshLayers(); const t = $('toolsBtn'); if (t) t.focus(); }
+  }
+  function build() {
+    const mk = (id, cls, html) => { const d = document.createElement('div'); d.id = id; d.className = cls + ' vax-skip'; d.hidden = true; d.innerHTML = html || ''; document.body.appendChild(d); return d; };
+    const s = mk('fmSheet', 'fm-sheet', `<div class="fm-card-s" role="dialog" aria-modal="true" aria-label="Formula maker"><header><div><b>Formula maker</b><small>Build, test, find and share your own astrology formulas</small></div><button type="button" id="fmClose" aria-label="Close">✕</button></header>
+      <div class="fm-tabs" id="fmTabs" role="tablist">${[['build', 'Build'], ['result', 'Result'], ['library', 'Library'], ['saved', 'Saved']].map(([k, l]) => `<button type="button" role="tab" data-a="tab" data-v="${k}">${l}</button>`).join('')}</div>
+      <div class="fm-body" id="fmBody"></div><div class="fm-toast" id="fmToast" role="status" aria-live="polite"></div></div>`);
+    mk('fmEdit', 'fm-pop'); mk('fmPick', 'fm-pop fm-pop2');
+    $('fmClose').addEventListener('click', () => setOpen(false));
+    s.addEventListener('click', e => { if (e.target === s) setOpen(false); else onClick(e); });
+    ['fmEdit', 'fmPick'].forEach(id => { const p = $(id); p.addEventListener('click', e => { if (e.target === p) { if (id === 'fmPick') S.pick = null; else if (S.share) S.share = null; else { S.edit = null; S.pick = null; render(); } refreshLayers(); } else onClick(e); }); p.addEventListener('change', onChange); });
+    s.addEventListener('change', onChange); s.addEventListener('input', onInput);
+    document.addEventListener('keydown', e => { if (e.key !== 'Escape' || !S.open) return; if (S.pick) S.pick = null; else if (S.share) S.share = null; else if (S.edit) { S.edit = null; render(); } else return setOpen(false); refreshLayers(); });
+    const b = $('fmBtn'); if (b) b.addEventListener('click', () => setOpen(true));
+    const h = FMX.fromHash(); if (h) { S.f = h; persist(); S.tab = 'build'; setOpen(true); toast('Shared formula imported. Tap Save to keep it.'); try { history.replaceState(null, '', location.href.split('#')[0]); } catch (e) { /* ignore */ } }
+    window.addEventListener('hashchange', () => { const x = FMX.fromHash(); if (x) { S.f = x; persist(); S.tab = 'build'; setOpen(true); toast('Shared formula imported'); } });
+  }
+  const api = { state: S, setOpen, render, ctx, get open() { return S.open; }, load: f => { S.f = FM.normalize(f) || S.f; persist(); render(); } };
+  window.FMU = api;
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build); else build();
+  return api;
 })();
 <\/script>
 <script>
@@ -58390,6 +59192,7 @@ const FG_DATA = {
     ['⇪', 'Export Studio (3D Sky)', 'Open the Export tab and tap Open Export Studio to build clean, structured data for an AI chat or your own tools. Start from a preset (Quick sky, AI brief, Forecast, Everything), then choose the chart (sky, birth chart or both) and the moment (the 3D date, right now, or a date you pick). Switch each section on or off: Planets, Signs, Houses, Panchang, Aspects, Planet relations, Sky alerts, Divisional charts, Vimshottari Dasha, Sign changes, Planet meetings, Retrograde periods, an Ephemeris table and your last Timeline finder results. The gear next to a section sets its options, such as which divisional charts, how many years ahead, or the table step. Pick Markdown (best for AI), JSON or plain text, degrees or decimals, add a how-to-read guide and rules for the AI, and type your own question to put at the top. A live preview shows the size in characters and tokens. Export to clipboard, Download or Share. The Export tab also has one-tap AI brief, Quick sky, Forecast and Everything.'],
     ['🌌', 'Open a divisional chart in 3D (Birth Chart to 3D Sky)', 'In the Birth Chart, open Divisional Charts, pick any chart (D2 Hora, D10 Dasamsa, D60 and so on, even the nested D81, D108 and D144) and tap Open in 3D. The 3D Sky opens at the birth moment with that chart drawn as the sky, the same way the Navamsha sky works: every planet sits in its divisional sign, with its place inside the division stretched over the sign, and the Rising and Moon lines name the chart. A round badge (for example D10) at the top right shows it is on; tap it to return to the normal sky. Pick D1 to see the ordinary birth sky.'],
     ['⌛', 'Timeline finder (3D Sky)', 'Open the Tools menu and tap the hourglass to work backwards from the sky to dates. Step 1: pick when the person was born, either an age range counted from today (30 to 40 means the last 10 years of births) or a range of birth years. Step 2: add conditions: a planet or several planets in a sign, a planet in a nakshatra, two planets in conjunction, square, trine or opposition (with an orb you can set), or a planet retrograde. Add as many as you like and choose whether ALL must be true together or ANY one is enough. Example: Sun in Libra plus Moon in Pisces lists every window in that span when both were true, which is useful for reading a child chart as father and mother. Each retrograde re-entry shows as its own period. Tap a result and the 3D sky opens on that day, the same as typing the date. Tap All planets on that day under a result to read every planet with its sign, degree, nakshatra and pada (℞ when retrograde) at the start, middle or end of the period, with an Open this day in the 3D Sky button. Dates are sidereal (Lahiri) and accurate to about a minute.'],
+    ['ƒ', 'Formula maker (3D Sky)', 'Open the Tools menu and tap ƒ to build your own astrology formulas, test them, find dates and share them. A formula is a list of rules joined by All, Any, None or At least N. Each rule says that something is in a relation to something else, for example Jupiter is in a kendra from the Moon, the Atmakaraka is in the 1st, 4th, 7th or 10th, or Saturn is within 3 degrees of your Bhrigu Bindu. You can use planets, signs, nakshatras and padas, degrees, aspects, conjunctions, angles, houses, dignity, retrograde, combust, divisional-chart signs, house lords and the points: Chara Karakas AK to DK (7 or 8 karaka scheme), Bhrigu Bindu, Yogi and Avayogi points and planets, Duplicate Yogi, Gulika, Lagna, Hora, Ghati and Indu lagna, Karakamsa, Swamsha and Arudha A1 to A12. Each thing can come from this chart, a saved person, the sky moment or a second person, so transit formulas like Sade Sati are easy. The Result tab checks the formula on a birth chart, the 3D date, now or any date and shows every rule with a tick, cross or question mark and the actual values. A question mark means it cannot be decided (for example no birth time), never a guess. Find dates lists every time the formula is true, in the sky or as birth dates; tap one to open that day in 3D. The Library has about 45 ready formulas (yogas, karaka links, transits, sky events). Share gives a short VF1 code, a link that opens the formula for anyone, a text card, a JSON file and a picture; Saved keeps your list and can export or import all of it.'],
     ['⚑', 'Sky alerts (3D Sky)', 'Under the Rising and Moon lines in the 3D Sky there is a small pill with counts: △ planets in the trine houses (1st, 5th, 9th), □ squares (4th, 10th), ☍ the 7th, and ! the ones to watch. Houses are counted by sign from the Rising and from the Moon. Tap it for the full list, plus planets on the sign itself, Jupiter and Saturn Gochara from the Moon, Sade Sati, the Rahu-Ketu axis and the Jupiter + Saturn double transit. Switch to For you to count from your own birth Rising and Moon. These are tendencies from classical rules, not predictions. Hidden in the Navamsha sky.'],
     ['⚒', 'Tools menu and Navamsha sky (3D Sky)', 'Top right of the 3D Sky now has just two icon buttons, one above the other: the eye 👁 (hides all controls for a clean view) and ⚒ Tools. Tap ⚒ to drop down icon buttons for Sky Dashboard, Aspect Explorer, Select a planet, Reset view and Navamsha sky (press and hold or hover an icon to see its name). Navamsha sky redraws the exact current sky with every planet at its Navamsha (D9) position; the HUD, sky table and chart tab switch to D9, and a gold D9 circle shows under the buttons (tap it to go back). It works in the Zodiac Wheel view only. Planet pop-ups keep the real data and add the exact D9 degree.'],
     ['◀', 'Reverse play (3D Sky)', 'Beside ▶ in the timeline bar. Tap ◀ and time runs backward at the chosen speed (1d/s to 1y/s). Tap ▶ while it runs backward to turn time around, tap the running button to pause.'],

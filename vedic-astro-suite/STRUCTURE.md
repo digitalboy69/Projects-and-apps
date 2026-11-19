@@ -336,6 +336,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/css/33-sky-alerts.css` — Sky alerts pill and bottom sheet (`hud-ska`, `ska-`)
 - `apps/sky3d/css/34-timeline-finder.css` — Timeline finder sheet (`tlf-` prefix)
 - `apps/sky3d/css/35-export-studio.css` — Export Studio sheet and the Export tab launcher (xs- classes)
+- `apps/sky3d/css/36-formula-maker.css` — Formula Maker sheets: builder, rule editor, operand picker, result tree, library, share (fm- prefix)
 - `apps/sky3d/js/59-wheel-frame.js` — wheel framing on phones: finds the free band between the cards and the timeline bar, shifts the picture into it (camera view offset) and re-fits the zoom; `wheelBand()`, `wheelFrameUpdate()`
 - `apps/sky3d/js/60-wheel-beauty.js` — Zodiac Wheel beauty pass: soft Sun glow (replaces hard shells), degree scale on the sign ring, golden aura and inner plate, Earth/Moon lift, gentle Sun breathing and gem twinkle; off with localStorage vax3d_beauty='0'
 - `apps/sky3d/js/61-navamsha-sky.js` — global `NAV`: Navamsha (D9) sky (`NAV.snap/asc/set`, D9 = lon×9 mod 360) used by scene, HUD, sky table, overlays and chart tab; top-right Tools drop-down wiring (`#toolsBtn`, `#toolsMenu`, `#navBtn`, `#navBadge`); forced off in Solar System view
@@ -344,6 +345,10 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/64-varga-math.js` — global `VG`: divisional-chart sign rules copied from the Birth Chart `calcVarga`, plus `VG.lon` (a full 0-360 sky longitude in any varga); used by `NAV` to draw any D2-D144 chart as a sky
 - `apps/sky3d/js/65-export-studio.js` — global `XS`: the 3D Sky export engine. One data model (sections of kv / table / list / text blocks) rendered as Markdown, JSON or plain text; presets, section builders (planets, signs, houses, panchang, aspects, relations, alerts, divisional charts, Dasha, transits, meetings, retrograde, ephemeris, Timeline finder results)
 - `apps/sky3d/js/66-export-studio-ui.js` — global `XSU`: the Export Studio sheet (presets, chart and moment, section switches and options, format, question for the AI, live preview, Copy / Download / Share) and the one-tap copies on the Export tab
+- `apps/sky3d/js/67-formula-engine.js` — global `FM`: Formula Maker engine. Subjects (planets, Chara Karakas AK..DK 7/8 scheme, Bhrigu Bindu, Yogi/Avayogi, Gulika, Hora/Ghati/Indu lagna, Karakamsa, Swamsha, Arudha A1..A12, house lords), ~25 relations, tri-state evaluator with explained tree, charts C/N/S/P, Find-dates scan
+- `apps/sky3d/js/68-formula-library.js` — global `FMX`: ~45 ready formulas, share code `VF1.` + `#f=` link, text card, JSON import/export, Saved list (localStorage `sky3d_fm_saved`)
+- `apps/sky3d/js/69-formula-ui.js` — global `FMU`: Formula Maker sheet (Tools > ƒ): Build / Result / Library / Saved tabs, rule editor, operand picker, find dates, share sheet, PNG card
+- `tests/sky3d_formula_maker_browser_test.py` — Formula Maker: karakas, Bhrigu Bindu, Yogi points, relations, tri-state, every library formula, share round-trip, scan, and the sheet at 390 and 360
 - `tests/sky3d_shadbala_test.js` — engine parity with the Birth Chart plus live adapter checks
 - `apps/sky3d/css/01-base-tokens.css` — base + design tokens
 - `apps/sky3d/css/02-app-shell.css` — app shell (desktop)
@@ -579,6 +584,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `docs/TIMELINE_FINDER_PLAN.md` — plan, method and accuracy notes for the 3D Sky Timeline finder
 - `docs/VARGA_3D_PLAN.md` — plan for opening any divisional chart as a sky in the 3D Sky
 - `docs/EXPORT_STUDIO_PLAN.md` — plan for the structured 3D Sky export and its control screen
+- `docs/FORMULA_MAKER_PLAN.md` — plan for the 3D Sky Formula Maker (subjects, relations, evaluator, find dates, library, sharing, UI)
 - `tests/hora_test.py` — Playwright test of the Hora engine against panchangaAt (order, contiguity, Drik day/night lengths)
 - `tests/varga_matrix_test.js` — node test for js/153 (cells equal raw varga data, points recomputed by hand, Vargottama, 60 real charts x 3 sets)
 - `tests/varga_matrix_browser_test.py` — Playwright test of the Varga Matrix at 390 and 360px (`VMX_SHOTS=dir`)

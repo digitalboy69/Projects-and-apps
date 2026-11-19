@@ -207,11 +207,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-19 - 2349 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-19 - 2405 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 254 files, 36833 lines, 3131 KB
+**birth-chart** - 254 files, 36834 lines, 3132 KB
 ```
 index.html                                         679 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -275,7 +275,7 @@ js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
 js/147-tools-hub.js                                117 lines   12 KB
 js/148-export-builder.js                           276 lines   27 KB
-js/149-feature-guide-data.js                       328 lines   43 KB
+js/149-feature-guide-data.js                       329 lines   44 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
 js/151-bhavat-masterclass-data.js                   99 lines   13 KB
@@ -484,9 +484,9 @@ js/01-notepad.js                                   359 lines   73 KB
 css/01-notepad.css                                 246 lines   32 KB
 ```
 
-**sky3d** - 103 files, 9923 lines, 667 KB
+**sky3d** - 107 files, 10725 lines, 757 KB
 ```
-index.html                                         548 lines   35 KB
+index.html                                         553 lines   36 KB
 js/01-astro-engine.js                              163 lines   10 KB
 js/02-planetary-dignity.js                          50 lines    3 KB
 js/03-ascendant-houses-drishti.js                   52 lines    1 KB
@@ -553,6 +553,9 @@ js/63-timeline-finder.js                           139 lines   19 KB
 js/64-varga-math.js                                166 lines   10 KB
 js/65-export-studio.js                             378 lines   36 KB
 js/66-export-studio-ui.js                          131 lines   15 KB
+js/67-formula-engine.js                            296 lines   27 KB
+js/68-formula-library.js                            95 lines   12 KB
+js/69-formula-ui.js                                345 lines   39 KB
 css/01-base-tokens.css                              51 lines    1 KB
 css/02-app-shell.css                                48 lines    1 KB
 css/03-3d-viewport.css                              63 lines    5 KB
@@ -589,6 +592,7 @@ css/32-tools-menu.css                               21 lines    1 KB
 css/33-sky-alerts.css                               33 lines    3 KB
 css/34-timeline-finder.css                          58 lines    8 KB
 css/35-export-studio.css                            63 lines    9 KB
+css/36-formula-maker.css                            61 lines   11 KB
 ```
 
 **shell** - 5 files, 595 lines, 67 KB
@@ -717,5 +721,6 @@ shared/quick-menu.js                               190 lines   17 KB
 - Divisional chart sky in 3D: Birth Chart Divisional Charts > Open in 3D (apps/birth-chart/js/84 `vxSend3D` -> js/99 `vxJump3D` with `varga`) -> sky3d js/51 -> `NAV.set(true, quiet, key)` (js/61) with `VG` (js/64, rules copied from `calcVarga`, drift guarded by tests/sky3d_varga_parity_test.js). Plan: docs/VARGA_3D_PLAN.md. Test: tests/varga_open_3d_browser_test.py.
 
 - 3D Sky Export Studio: engine `XS` (apps/sky3d/js/65-export-studio.js; one model of kv/table/list/text blocks rendered as Markdown, JSON or text) and sheet `XSU` (js/66, css/35). Export tab launcher in index.html; `generateExportData(type)` (js/38) delegates to XS; the shared add-on's floating menu uses XS. Section data comes from DBX.analyse (js/50), VDasha, VG, SKA, findIngresses, findConjunctions, TLF.state. Buttons must not start with 'Copy' (shared/copy-toggle.js hides those by default). Plan: docs/EXPORT_STUDIO_PLAN.md. Test: tests/sky3d_export_studio_browser_test.py.
+- 3D Sky Formula Maker (Tools menu, ƒ): engine `FM` (apps/sky3d/js/67-formula-engine.js: subjects incl. Chara Karakas, Bhrigu Bindu, Yogi points, special lagnas, Arudha; ~25 relations; tri-state tree evaluator; `FM.scan` find dates), library + `VF1.` share codec + Saved list `FMX` (js/68), sheet `FMU` (js/69, css/36). Plan docs/FORMULA_MAKER_PLAN.md; test tests/sky3d_formula_maker_browser_test.py. New relation = one `def(...)` in js/67 plus its params in `paramsHtml` (js/69).
 
 - Birth Chart Export tab flicker fix: js/148 `ensurePages` used to flip through every unopened tool page (replaying the panel fade-in, jumping scroll, repainting the sticky bar per section). Now each page is tried once, html.exb-hold (css/79) holds animations at 0s while it happens, scroll is restored, and measuring paints once per ~25 ms batch. Test: tests/export_no_flicker_browser_test.py (samples panel opacity per frame).
