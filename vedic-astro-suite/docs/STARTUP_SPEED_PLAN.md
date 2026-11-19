@@ -29,7 +29,7 @@ On a real connection every request costs a round trip, so the saving is larger t
 ### How to undo Step 1 (any of these works)
 1. Quick, for everyone: in `shell/js/shell.js` set `USE_BUNDLES = false`, run `python3 build.py`, commit, push. The shell goes back to loading the plain source files (they were never removed).
 2. For one person or one try: open the app with `?dev` on the address.
-3. Full revert: `git revert 09a3a0a` (the bundling commit) and its follow-up, or reset to the tag `before-bundles` (the commit just before Step 1, `958036b`).
+3. Full revert: `git revert 09a3a0a` (the bundling commit) and its follow-up, or go back to commit `958036b` (the last commit before Step 1; it is on GitHub).
 Nothing was deleted by Step 1, so every option is safe.
 
 ## Step 2: load rare features only when opened (several hours, in stages)
