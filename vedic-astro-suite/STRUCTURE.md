@@ -418,6 +418,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tools/encrypt.py` — encryption helper for the customer edition
 - `tools/guide.py` — generates symbols.idx and the AI_GUIDE auto map
 - `tools/check_structure.py` — verifies STRUCTURE.md lists every project file
+- `tools/gen_all_features.py` — generates docs/ALL_FEATURES.md (the one-file guide: every tool, every file with lines/size/purpose, tests, storage keys); re-run after adding a tool or file
+- `tools/dump_features.js` — node helper for gen_all_features.py: prints HOME_ITEMS, THB.CATS and FG_DATA as JSON
 - `tools/reading_gen/p1_masters.py` — master tables (planets, houses, signs, vocabulary) for the knowledge database
 - `tools/reading_gen/p2_planet_house.py` — the 108 hand-written planet-in-house texts + tone markers
 - `tools/reading_gen/p3_more.py` — conjunctions, nakshatras, yogas, dasha lords, status modifiers (hand-written)
@@ -541,6 +543,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/camera_motion_test.py` — camera momentum test
 
 ### docs/, dist/
+- `docs/ALL_FEATURES.md` — GENERATED one-file guide to the whole app (what it is, every tool and what it does, 3D Sky features, every file with lines, size and purpose, tests, storage keys); regenerate with `python3 tools/gen_all_features.py`, never hand-edit
 - `docs/DOOR.md` — door / licensing site notes
 - `docs/HANDOFF.md` — handoff notes
 - `docs/FULL_READING_PLAN.md` — Plan for the PDF-grade full reading: audit of what exists, gaps, architecture, 12 sessions with checklist, working rules, decisions. READ FIRST in every reading session
