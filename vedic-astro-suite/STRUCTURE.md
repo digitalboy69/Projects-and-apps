@@ -166,6 +166,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/106-shadbala-ui.js` — the Strength tab of Chart Reading, the report text and the PDF Shadbala pages
 - `apps/birth-chart/js/108-ashtakavarga-ui.js` — Ashtakavarga tab, PDF plates and report text (AVRUI)
 - `apps/birth-chart/js/109-pdf-download.js` — PDF DOWNLOAD (PDFD): turns the PDF book straight into a .pdf file with no print window (hidden A4 frame, page cuts at block ends, browser-drawn pages as JPEG, built-in PDF writer); PDFR falls back to print if it fails
+- `apps/birth-chart/js/110-pdf-intelligence.js` — PDF intelligence (PDFI): page-cut rules for the PDF book (headings stay with their text, no lone lines, short paragraphs and rows kept whole, repeating table headers); runs only when the book is printed.
 - `apps/birth-chart/js/111-problem-finder.js` — PROBLEM FINDER engine (PRB): areas of life, exact problems, trigger (outside/inside) and how it shows up (inner pain/real events); reads the chart and returns the reasons (houses, lords, planets, aspects, Ashtakavarga, running periods, today's sky); every line carries the chart fact it came from
 - `apps/birth-chart/js/112-problem-finder-ui.js` — Problem finder tab (PFUI): the five questions, the result screens, Home tile hook
 - `apps/birth-chart/js/113-date-entry.js` — type Day, Month, Year and AD/BC yourself (old and BC dates); inDobValue / inLoadDob; Julian calendar before 15 Oct 1582, accuracy notes, local-mean-time button
@@ -511,6 +512,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/ephemeris_vs_swiss_test.js` — REAL-CHART verification: 14 real births vs the Swiss Ephemeris (Moon within 25 arcsec, Ascendant, Lahiri anchor = official ICRC value, delta-T) and 504 Vimshottari boundaries over 6 levels equal an independent calculation
 - `tests/pdf_report_test.py` — PDF report: 4 theme/paper variants x 4 charts clean and self-contained, sections/options, Studio dialog, real PDF render
 - `tests/pdf_text_fixes_test.py` — PDF text bugs: no doubled "At its best" wording, Bhava Chalit houses filled in, no repeated key planets, planet and yoga names keep their capitals.
+- `tests/pdf_intelligence_test.py` — prints the PDF book with Chromium, checks the text is real text and that pages end after a paragraph (compared with no rules).
 - `tests/area_deep_test.py` — area deep dive: every quoted number vs the chart over 12 charts, wording rules, determinism, Deep reading/report/PDF wiring
 - `tests/house_now_test.py` — Right now: sky, dasha chain, signs, lords, Ashtakavarga and scores vs the engines at two dates over 12 charts, wording, first tab, report and PDF
 - `tests/planet_states_test.py` — planet states: tags vs the chart over 12 charts, every planet x state paragraph, wording, Planets tab, report and PDF wiring
@@ -605,6 +607,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `docs/VARGA_3D_PLAN.md` — plan for opening any divisional chart as a sky in the 3D Sky
 - `docs/EXPORT_STUDIO_PLAN.md` — plan for the structured 3D Sky export and its control screen
 - `docs/FORMULA_MAKER_PLAN.md` — plan for the 3D Sky Formula Maker (subjects, relations, evaluator, find dates, library, sharing, UI)
+- `docs/PDF_INTELLIGENCE_PLAN.md` — plan for the PDF page-cut rules and the sharp text PDF route.
 - `docs/STARTUP_SPEED_PLAN.md` — plan for faster start-up: bundle each app, load rare features on first open, how to measure, and the rule every new feature follows
 - `tests/hora_test.py` — Playwright test of the Hora engine against panchangaAt (order, contiguity, Drik day/night lengths)
 - `tests/varga_matrix_test.js` — node test for js/153 (cells equal raw varga data, points recomputed by hand, Vargottama, 60 real charts x 3 sets)

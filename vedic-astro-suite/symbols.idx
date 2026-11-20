@@ -473,6 +473,7 @@ coSync	fn	shell/js/locpicker.js:160	shell
 countFromAriesOrPisces	fn	apps/birth-chart/js/17-special-lagnas.js:95	birth-chart
 counts	fn	apps/birth-chart/js/115-compare-lab.js:79	birth-chart
 COVER	const	apps/birth-chart/js/79-dasha-systems-nakshatra.js:6	birth-chart
+css	fn	apps/birth-chart/js/110-pdf-intelligence.js:9	birth-chart
 css	fn	apps/birth-chart/js/93-pdf-report.js:261	birth-chart
 CSS	const	shell/js/locpicker.js:74	shell
 ctrlHtml	fn	apps/birth-chart/js/82-dasha-systems-ui.js:84	birth-chart
@@ -1191,6 +1192,7 @@ lineBlock	fn	apps/notepad/js/01-notepad.js:86	notepad
 lineCopyHide	fn	apps/notepad/js/01-notepad.js:87	notepad
 lineCopyPlace	fn	apps/notepad/js/01-notepad.js:88	notepad
 lineCopyShow	fn	apps/notepad/js/01-notepad.js:89	notepad
+lineH	fn	apps/birth-chart/js/110-pdf-intelligence.js:27	birth-chart
 linkFor	fn	apps/birth-chart/js/76-share-link-qr.js:19	birth-chart
 links	fn	apps/birth-chart/js/128-meaning-lab.js:52	birth-chart
 links	fn	apps/birth-chart/js/90-year-timeline-engine.js:177	birth-chart
@@ -1666,6 +1668,7 @@ pravesh	fn	apps/birth-chart/js/73-tithi-pravesh.js:12	birth-chart
 PRB	const	apps/birth-chart/js/111-problem-finder.js:8	birth-chart
 predHTML	fn	apps/notepad/js/01-notepad.js:156	notepad
 predModal	fn	apps/notepad/js/01-notepad.js:206	notepad
+prepare	fn	apps/birth-chart/js/110-pdf-intelligence.js:29	birth-chart
 presentPane	fn	apps/birth-chart/js/155-past-present-future.js:96	birth-chart
 presetOn	fn	apps/birth-chart/js/148-export-builder.js:162	birth-chart
 preview	fn	apps/birth-chart/js/160-ai-panel.js:50	birth-chart

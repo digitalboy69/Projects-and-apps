@@ -8,7 +8,7 @@ class Q(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a): pass
 srv = socketserver.ThreadingTCPServer(('127.0.0.1', 0), functools.partial(Q, directory=ROOT)); srv.daemon_threads = True
 threading.Thread(target=srv.serve_forever, daemon=True).start()
-PAGE = 'http://127.0.0.1:%d/apps/birth-chart/index.html' % srv.server_address[1]
+PAGE = 'http://127.0.0.1:%d/apps/birth-chart/index.html?imgpdf' % srv.server_address[1]
 res = []
 def ok(n, c, d=''): res.append((n, bool(c), d))
 OUT = '/tmp/claude-0/dl.pdf'

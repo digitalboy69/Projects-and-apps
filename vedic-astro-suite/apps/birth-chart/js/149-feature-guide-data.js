@@ -313,7 +313,7 @@ const FG_DATA = {
       when: 'You want to save, share, or give your chart to an AI.',
       how: ['Pick a preset (Essentials, AI, All, None).', 'Tick sections by group.', 'Choose format and part size.', 'Download or copy.'],
       terms: [['Parts', 'Smaller pieces of 20K, 50K or 100K characters.']],
-      tip: 'Your choices are remembered on this device.', see: ['panel-yeartimeline'] },
+      tip: 'Your choices are remembered on this device. The PDF report opens the print window: choose Save as PDF for sharp, selectable text that never blurs when you zoom. Pages end after a paragraph, not in the middle of one.', see: ['panel-yeartimeline'] },
     'panel-contact': { what: 'A form to report bugs, suggest ideas or ask the developer about astrology.',
       when: 'Something looks wrong or you have an idea.',
       how: ['Open it and write your message.', 'Send it.'],

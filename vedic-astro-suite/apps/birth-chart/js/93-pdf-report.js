@@ -369,7 +369,7 @@ function build(chart, profile, opts){
     `<div class="foot"><span>${(opts.preparedBy || br.name) ? 'Prepared by ' + esc(opts.preparedBy || br.name) + (br.tagline ? ' · ' + esc(br.tagline) : '') : 'Prepared with care'}</span><span>${esc(made)}</span></div></div>`;
   const toc = `<div class="toc"><h2>Contents</h2><div class="tl"></div>${tocBits}<div class="how"><b>How to read this report.</b> Everything here describes tendencies drawn from the position of the planets at your birth. It is not a prediction of fixed events. Read each section with the questions in mind, keep what fits your life and let the rest go.</div><div class="how"><b>Please note.</b> This report is for reflection and self-understanding. It is not medical, legal, financial or psychological advice, and it does not replace a consultation with a qualified professional. Its accuracy depends on the birth date, time and place you gave: a difference of a few minutes can change the rising sign and the divisional charts, so use a time from a birth record where you can.</div></div>`;
   const end = `<section class="end">${mandala(th.accent2, .3)}<div><h2>A last word</h2><p>Astrology offers a language for reflection. It cannot replace medical, legal, financial or psychological advice, and nothing here is a promise about what will happen.</p><p>Your choices, effort and circumstances shape your life far more than any chart. Use this reading to understand yourself better, then act on what you learn.</p>${br.name || br.phone ? `<div class="bk">${br.logo ? `<img class="logo" src="${br.logo}" alt="">` : ''}<b>${esc(br.name)}</b>${br.tagline ? `<span>${esc(br.tagline)}</span>` : ''}${br.phone ? `<span>${esc(br.phone)}</span>` : ''}</div>` : ''}<p class="sm">${esc(title)} · ${esc(pr.name || '')} · ${esc(made)}</p></div></section>`;
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}${pr.name ? ' - ' + esc(pr.name) : ''}</title><style>${css(th, pr.name, br.name)}${typeof PDFR !== 'undefined' && PDFR.extraCss ? PDFR.extraCss(th) : ''}</style></head><body>${cover}${toc}${main}${end}</body></html>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}${pr.name ? ' - ' + esc(pr.name) : ''}</title><style>${css(th, pr.name, br.name)}${typeof PDFR !== 'undefined' && PDFR.extraCss ? PDFR.extraCss(th) : ''}${typeof PDFI !== 'undefined' ? PDFI.css(th) : ''}</style></head><body>${cover}${toc}${main}${end}</body></html>`;
 }
 
 /* ---------- one click: build the book and open the print window ---------- */
@@ -383,19 +383,21 @@ function generate(){
   note('Preparing your full report…', 8000);
   setTimeout(() => {
     let html; try { html = build(chart, profile); } catch (e) { note('Could not build the report: ' + (e && e.message || e), 8000); return; }
-    const f = document.createElement('iframe'); f.setAttribute('aria-hidden', 'true'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0';
+    const f = document.createElement('iframe'); f.setAttribute('aria-hidden', 'true'); f.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;height:1123px;border:0;opacity:0;pointer-events:none';
     let done = false;
     f.onload = () => {   // the empty about:blank frame fires 'load' first: print only once the book itself is in the frame
       if (done) return; let d = null; try { d = f.contentDocument; } catch (e) { d = null; }
       if (!d || !d.querySelector('.cover')) return; done = true;
-      setTimeout(() => { try { f.contentWindow.focus(); f.contentWindow.print(); window.focus(); note('Choose "Save as PDF" in the print window.', 6000); } catch (e) { window.focus(); note('Could not open the print window.', 6000); } setTimeout(() => f.remove(), 120000); }, 250);
+      setTimeout(() => { try { if (window.PDFI) PDFI.prepare(d); } catch (e) { if (window.console) console.warn('PDFI:', e); } try { f.contentWindow.focus(); f.contentWindow.print(); window.focus(); note('Choose "Save as PDF" in the print window.', 6000); } catch (e) { window.focus(); note('Could not open the print window.', 6000); } setTimeout(() => f.remove(), 120000); }, 250);
     };
     f.srcdoc = html; document.body.appendChild(f);
   }, 60);
 }
 /* one click: a direct .pdf download when the browser can do it (js/109), otherwise the print window */
 function go(){
-  if (window.PDFD && PDFD.ok){ PDFD.download().catch(e => { if (e && e.cancelled){ note('PDF cancelled.', 3000); return; } if (window.console) console.warn('PDFD fell back to print:', e); generate(); }); }
+  const nativeApp = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()), imgMode = /[?&]imgpdf\b/.test(location.search);
+  /* default: the real text PDF through the print window (sharp at any zoom); the picture PDF only in the app web view, where printing is not offered, or with ?imgpdf */
+  if (window.PDFD && PDFD.ok && (nativeApp || imgMode)){ PDFD.download().catch(e => { if (e && e.cancelled){ note('PDF cancelled.', 3000); return; } if (window.console) console.warn('PDFD fell back to print:', e); generate(); }); }
   else generate();
 }
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-pdf-studio],[data-pdf-generate]'); if (b){ e.preventDefault(); if (typeof closeExportModal === 'function') closeExportModal(); go(); } });
