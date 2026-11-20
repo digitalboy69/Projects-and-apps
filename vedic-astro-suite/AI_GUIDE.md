@@ -210,11 +210,11 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-20 - 2405 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-20 - 2407 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 254 files, 36834 lines, 3132 KB
+**birth-chart** - 254 files, 36854 lines, 3134 KB
 ```
 index.html                                         679 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -248,7 +248,7 @@ js/117-gulika.js                                    34 lines    3 KB
 js/118-choghadiya.js                                65 lines    6 KB
 js/119-avakahada.js                                 58 lines    6 KB
 js/12-yoga-detection.js                            117 lines    4 KB
-js/120-late-panels.js                               39 lines    3 KB
+js/120-late-panels.js                               54 lines    5 KB
 js/121-dosha.js                                     65 lines    7 KB
 js/122-today-for-you.js                             71 lines    9 KB
 js/123-prashna.js                                  133 lines   13 KB
@@ -342,7 +342,7 @@ js/64-edit-saved-profile.js                         32 lines    2 KB
 js/65-error-boundaries.js                           32 lines    1 KB
 js/66-modal-accessibility.js                        23 lines    1 KB
 js/67-friendly-input-page.js                       107 lines    9 KB
-js/68-intake-progress.js                            65 lines    3 KB
+js/68-intake-progress.js                            70 lines    3 KB
 js/69-divisional-areas.js                          140 lines   23 KB
 js/70-chart-reading.js                              76 lines   17 KB
 js/71-life-activation.js                            50 lines    9 KB
@@ -729,5 +729,6 @@ shared/quick-menu.js                               190 lines   17 KB
 - Start-up loader (shell/js/shell.js + shell/css/shell.css): no forced minimum time and no welcome greeting; contents only fade in after 0.3s, it hides the moment the view is ready, 3D Sky waits for 3 smooth frames (max 0.8s). Remaining start-up time is real: Birth Chart loads 170 scripts / 2.6 MB (about 1.5s on a fast PC, 4 to 5s at 4x slower CPU). Next speed-up would be per-app bundles or lazy-loading rare features.
 - Per-app bundles (tools/bundle.py): the shell loads apps/<name>/index.bundle.html (generated, never edit; the git hook and `python3 build.py` regenerate it). Edit the normal source files; to see source changes in the shell without building, open it with ?dev. version.json lists only the shell, shared, vendor and the bundles. Test: tests/startup_bundles_browser_test.py. Plan: docs/STARTUP_SPEED_PLAN.md (Step 1 done, Step 2 lazy-loading next).
 - Blank-tab check: tests/every_panel_not_blank_browser_test.py opens all 61 Birth Chart panels (7 are routed overlays or modals by design: problem, datefinder, lifeevents, sandhi, vargatimeline, transittimer, contact). mobile/scripts/prepare-web.js adds the native bridge to the .bundle.html copies too (the shell loads those).
+- Blank tabs on slow connections (found 2026-11-20 from a phone screenshot): js/68 restored the last profile as soon as its own script ran; on a slow link the later scripts (Year Timeline, Avakahada, Planet Encyclopedia ...) were not loaded yet, so the chart was drawn without those panels and their tabs were blank. Fix: the restore now waits for DOMContentLoaded (js/68), and js/120 redraws the chart once if a normal tool panel is missing when opened (self-heal). Rule: nothing that draws the chart may run before DOMContentLoaded. Test: tests/slow_load_restore_browser_test.py.
 
 - Birth Chart Export tab flicker fix: js/148 `ensurePages` used to flip through every unopened tool page (replaying the panel fade-in, jumping scroll, repainting the sticky bar per section). Now each page is tried once, html.exb-hold (css/79) holds animations at 0s while it happens, scroll is restored, and measuring paints once per ~25 ms batch. Test: tests/export_no_flicker_browser_test.py (samples panel opacity per frame).

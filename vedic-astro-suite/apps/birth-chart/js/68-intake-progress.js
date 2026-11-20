@@ -46,19 +46,24 @@ document.getElementById('modalConfirm').addEventListener('click', () => {
   localStorage.removeItem('VedicAstrology_lastProfileIdx');
 });
 
-// Auto-load last active profile on page load
+// Auto-load last active profile on page load.
+// MUST wait until every script has run (DOMContentLoaded): on a slow connection the browser can run this script long before the later ones
+// (Year Timeline, Avakahada, Planet Encyclopedia ... ) have loaded, and a chart drawn that early silently skips those panels, leaving blank tabs.
 (function autoLoadLastProfile() {
-  const profiles = loadProfiles();
-  if (profiles && profiles.length > 0) {
-    let lastIdx = localStorage.getItem('VedicAstrology_lastProfileIdx');
-    // Default to the most recently added profile if none is stored or index is invalid
-    if (lastIdx === null || lastIdx >= profiles.length || lastIdx < 0 || lastIdx === "") {
-      lastIdx = profiles.length - 1;
-    }
-    const sel = document.getElementById('profileSelect');
-    sel.value = lastIdx;
-    if (sel.value !== "") {
-      sel.dispatchEvent(new Event('change')); // Trigger chart rendering
+  function run() {
+    const profiles = loadProfiles();
+    if (profiles && profiles.length > 0) {
+      let lastIdx = localStorage.getItem('VedicAstrology_lastProfileIdx');
+      // Default to the most recently added profile if none is stored or index is invalid
+      if (lastIdx === null || lastIdx >= profiles.length || lastIdx < 0 || lastIdx === "") {
+        lastIdx = profiles.length - 1;
+      }
+      const sel = document.getElementById('profileSelect');
+      sel.value = lastIdx;
+      if (sel.value !== "") {
+        sel.dispatchEvent(new Event('change')); // Trigger chart rendering
+      }
     }
   }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
 })();

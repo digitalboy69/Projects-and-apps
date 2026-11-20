@@ -952,6 +952,7 @@ haveChart	fn	shared/export-addon.js:535	shared
 hay	fn	apps/birth-chart/js/150-feature-guide.js:12	birth-chart
 head	fn	apps/birth-chart/js/160-ai-panel.js:13	birth-chart
 head	fn	shared/quick-menu.js:84	shared
+heal	fn	apps/birth-chart/js/120-late-panels.js:23	birth-chart
 heat	fn	apps/birth-chart/js/71-life-activation.js:21	birth-chart
 heliocentricPos	fn	apps/birth-chart/js/03-ephemeris-engine.js:218	birth-chart
 heliocentricPos	fn	apps/sky3d/js/01-astro-engine.js:125	sky3d
@@ -1641,7 +1642,7 @@ pnDiff	fn	apps/birth-chart/js/45-panchanga-engine.js:17	birth-chart
 png	fn	apps/sky3d/js/69-formula-ui.js:216	sky3d
 pnMoon	fn	apps/birth-chart/js/45-panchanga-engine.js:19	birth-chart
 pnParts	fn	apps/birth-chart/js/45-panchanga-engine.js:54	birth-chart
-pnRender	fn	apps/birth-chart/js/120-late-panels.js:24	birth-chart
+pnRender	fn	apps/birth-chart/js/120-late-panels.js:39	birth-chart
 pnRender	fn	apps/birth-chart/js/48-panchanga-panel.js:35	birth-chart
 pnRiseSet	fn	apps/birth-chart/js/45-panchanga-engine.js:41	birth-chart
 pnSum	fn	apps/birth-chart/js/45-panchanga-engine.js:18	birth-chart
@@ -1876,6 +1877,7 @@ ruleHtml	fn	apps/sky3d/js/69-formula-ui.js:58	sky3d
 rulesHtml	fn	apps/birth-chart/js/131-astro-atlas.js:134	birth-chart
 ruleTrue	fn	apps/birth-chart/js/129-trigger-lab.js:53	birth-chart
 run	fn	apps/birth-chart/js/129-trigger-lab.js:157	birth-chart
+run	fn	apps/birth-chart/js/68-intake-progress.js:53	birth-chart
 run	fn	apps/sky3d/js/46-dasha-transit-engine.js:277	sky3d
 run	fn	apps/sky3d/js/53-exact-aspects.js:159	sky3d
 runDegree	fn	apps/sky3d/js/43-degree-finder-returns.js:134	sky3d
@@ -2127,7 +2129,7 @@ svg	fn	shared/icons.js:130	shared
 svgFor	fn	apps/birth-chart/js/109-pdf-download.js:59	birth-chart
 svList	fn	apps/sky3d/js/49-time-machine.js:104	sky3d
 svOpen	fn	apps/sky3d/js/49-time-machine.js:109	sky3d
-switchAppTab	fn	apps/birth-chart/js/120-late-panels.js:19	birth-chart
+switchAppTab	fn	apps/birth-chart/js/120-late-panels.js:34	birth-chart
 switchAppTab	fn	apps/birth-chart/js/147-tools-hub.js:98	birth-chart
 switchAppTab	fn	apps/birth-chart/js/148-export-builder.js:265	birth-chart
 switchAppTab	fn	apps/birth-chart/js/25-home-and-tabs.js:148	birth-chart

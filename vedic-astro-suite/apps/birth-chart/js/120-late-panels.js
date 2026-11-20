@@ -16,7 +16,22 @@
   }
   if (typeof switchAppTab === 'function'){
     const _s = switchAppTab;
-    window.switchAppTab = function(id){ ensure(id); return _s.apply(this, arguments); };
+    /* Self-heal (once per page load): if a normal tool panel is missing although a chart is showing (it was drawn before that script had loaded, e.g. on a slow connection),
+       draw the chart again now that everything has loaded, then open the tool. Panels that are routed on purpose (Rectification Studio, Problem Finder) are left alone. */
+    let healed = false;
+    const SKIP = { 'panel-home': 1, 'panel-contact': 1, 'panel-export': 1, 'panel-problem': 1 };
+    function heal(id){
+      try {
+        if (healed || SKIP[id] || document.getElementById(id)) return;
+        if (typeof HOME_ITEMS === 'undefined' || !HOME_ITEMS.some(i => i[0] === id)) return;
+        if (typeof RS_ROUTE !== 'undefined' && RS_ROUTE[id]) return;
+        const f = document.getElementById('birthForm'); if (!f || !document.querySelector('#results.show') || !window.__vgProf) return;
+        healed = true; console.warn('panel missing, redrawing once:', id);
+        f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', { cancelable: true }));
+        setTimeout(() => { if (document.getElementById(id)) window.switchAppTab(id); }, 900);
+      } catch (e) { console.warn('heal', e); }
+    }
+    window.switchAppTab = function(id){ ensure(id); heal(id); return _s.apply(this, arguments); };
   }
   /* Choghadiya inside the Panchanga panel (works with or without a hook in js/48) */
   if (typeof pnRender === 'function'){
