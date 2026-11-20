@@ -549,6 +549,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 
 ### docs/, dist/
 - `docs/ALL_FEATURES.md` — GENERATED one-file guide to the whole app (what it is, every tool and what it does, 3D Sky features, every file with lines, size and purpose, tests, storage keys); regenerate with `python3 tools/gen_all_features.py`, never hand-edit
+- `docs/RECTIFICATION_GUIDE.md` — full guide to birth-time rectification: the 9 tools in the Rectify studio (Date Finder, Time Dial, Second Scan, Sandhi Table, Varga Timeline, Transit Timer, Dasha Lens, Dasha Reverse, Life Events), how each works, workflows, accuracy notes, file map
 - `docs/DOOR.md` — door / licensing site notes
 - `docs/HANDOFF.md` — handoff notes
 - `docs/FULL_READING_PLAN.md` — Plan for the PDF-grade full reading: audit of what exists, gaps, architecture, 12 sessions with checklist, working rules, decisions. READ FIRST in every reading session
