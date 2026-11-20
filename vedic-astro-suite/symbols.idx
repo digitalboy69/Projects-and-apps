@@ -635,12 +635,12 @@ done	fn	shell/js/locpicker.js:157	shell
 doNew	fn	apps/notepad/js/01-notepad.js:228	notepad
 donut	fn	apps/birth-chart/js/131-astro-atlas.js:115	birth-chart
 doSearch	fn	shell/js/locpicker.js:151	shell
-download	fn	apps/birth-chart/js/109-pdf-download.js:92	birth-chart
+download	fn	apps/birth-chart/js/109-pdf-download.js:94	birth-chart
 download	fn	apps/sky3d/js/66-export-studio-ui.js:113	sky3d
 download	fn	apps/sky3d/js/69-formula-ui.js:215	sky3d
 downloadActiveChartImage	fn	apps/birth-chart/js/62-clipboard-download-helpers.js:43	birth-chart
 downloadActiveChartImageFromWrapper	fn	apps/birth-chart/js/62-clipboard-download-helpers.js:47	birth-chart
-draw	fn	apps/birth-chart/js/109-pdf-download.js:66	birth-chart
+draw	fn	apps/birth-chart/js/109-pdf-download.js:68	birth-chart
 draw	fn	apps/birth-chart/js/118-choghadiya.js:45	birth-chart
 draw	fn	apps/birth-chart/js/122-today-for-you.js:54	birth-chart
 draw	fn	apps/birth-chart/js/123-prashna.js:106	birth-chart
@@ -958,7 +958,7 @@ heliocentricPos	fn	apps/birth-chart/js/03-ephemeris-engine.js:218	birth-chart
 heliocentricPos	fn	apps/sky3d/js/01-astro-engine.js:125	sky3d
 HELPFUL	const	apps/birth-chart/js/88-deep-reading.js:16	birth-chart
 hero	fn	apps/sky3d/js/50-sky-dashboard.js:63	sky3d
-hexTitle	fn	apps/birth-chart/js/109-pdf-download.js:31	birth-chart
+hexTitle	fn	apps/birth-chart/js/109-pdf-download.js:33	birth-chart
 hide	fn	apps/sky3d/js/50-sky-dashboard.js:291	sky3d
 hideLoader	fn	shell/js/shell.js:24	shell
 histModal	fn	apps/notepad/js/01-notepad.js:208	notepad
@@ -1475,7 +1475,7 @@ pad	fn	apps/birth-chart/js/43-full-report-text.js:2	birth-chart
 pada	fn	apps/birth-chart/js/89-vedic-nakshatra-db.js:1111	birth-chart
 padaOrder	fn	apps/birth-chart/js/78-dasha-systems-core.js:88	birth-chart
 padHms	fn	apps/birth-chart/js/20-rectification-scan-tab.js:171	birth-chart
-pageCss	fn	apps/birth-chart/js/109-pdf-download.js:55	birth-chart
+pageCss	fn	apps/birth-chart/js/109-pdf-download.js:57	birth-chart
 paint	fn	apps/birth-chart/js/131-astro-atlas.js:158	birth-chart
 paint	fn	apps/birth-chart/js/82-dasha-systems-ui.js:158	birth-chart
 paint	fn	apps/sky3d/js/49-time-machine.js:80	sky3d
@@ -1992,7 +1992,7 @@ shiftLocalDateTime	fn	apps/birth-chart/js/16-rectification-engine.js:28	birth-ch
 shoolaCalc	fn	apps/birth-chart/js/130-chakra-explorer.js:197	birth-chart
 shoolaHTML	fn	apps/birth-chart/js/130-chakra-explorer.js:320	birth-chart
 shoolaSVG	fn	apps/birth-chart/js/130-chakra-explorer.js:261	birth-chart
-show	fn	apps/birth-chart/js/109-pdf-download.js:89	birth-chart
+show	fn	apps/birth-chart/js/109-pdf-download.js:91	birth-chart
 show	fn	apps/sky3d/js/50-sky-dashboard.js:276	sky3d
 show	fn	shell/js/shell.js:72	shell
 showLoader	fn	shell/js/shell.js:27	shell
@@ -2126,7 +2126,7 @@ sunriseInfo	fn	apps/sky3d/js/67-formula-engine.js:37	sky3d
 svCur	fn	apps/sky3d/js/49-time-machine.js:133	sky3d
 svg	fn	apps/birth-chart/js/138-sudarshana.js:43	birth-chart
 svg	fn	shared/icons.js:130	shared
-svgFor	fn	apps/birth-chart/js/109-pdf-download.js:59	birth-chart
+svgFor	fn	apps/birth-chart/js/109-pdf-download.js:61	birth-chart
 svList	fn	apps/sky3d/js/49-time-machine.js:104	sky3d
 svOpen	fn	apps/sky3d/js/49-time-machine.js:109	sky3d
 switchAppTab	fn	apps/birth-chart/js/120-late-panels.js:34	birth-chart
@@ -2279,7 +2279,7 @@ TZ_BY_COUNTRY	const	apps/birth-chart/js/18-ui-location-profiles.js:85	birth-char
 TZ_OPTIONS	const	apps/birth-chart/js/18-ui-location-profiles.js:4	birth-chart
 TZ_OPTIONS	const	apps/sky3d/js/37-natal-form-location.js:2	sky3d
 tzOf	fn	apps/birth-chart/js/130-chakra-explorer.js:377	birth-chart
-ui	fn	apps/birth-chart/js/109-pdf-download.js:83	birth-chart
+ui	fn	apps/birth-chart/js/109-pdf-download.js:85	birth-chart
 unpack	fn	apps/birth-chart/js/76-share-link-qr.js:10	birth-chart
 UPA	const	apps/birth-chart/js/136-upagrahas.js:8	birth-chart
 upcoming	fn	apps/birth-chart/js/91-dasha-reading.js:260	birth-chart
@@ -2390,7 +2390,7 @@ wireVargaTimelinePanel	fn	apps/birth-chart/js/23-varga-timeline-tab.js:4	birth-c
 withHead	fn	shared/export-addon.js:130	shared
 wrap	fn	apps/birth-chart/js/88-deep-reading.js:201	birth-chart
 write	fn	apps/birth-chart/js/91-year-timeline-writer.js:40	birth-chart
-writePdf	fn	apps/birth-chart/js/109-pdf-download.js:32	birth-chart
+writePdf	fn	apps/birth-chart/js/109-pdf-download.js:34	birth-chart
 X	fn	apps/birth-chart/js/70-chart-reading.js:13	birth-chart
 XSU	const	apps/sky3d/js/66-export-studio-ui.js:6	sky3d
 YCUR	const	apps/birth-chart/js/93-pdf-report.js:158	birth-chart

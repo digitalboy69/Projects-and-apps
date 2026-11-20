@@ -117,7 +117,7 @@ function savSvg(c, th){
   const asc = c.ascendant.sign, v = Array.from({ length: 12 }, (_, h) => av[(asc + h) % 12]), max = Math.max.apply(null, v.concat([40])), W = 560, Hh = 230, bw = 32, gap = 13, x0 = 28;
   let g = `<line x1="${x0 - 6}" y1="${Hh - 30}" x2="${W}" y2="${Hh - 30}" stroke="${th.rule}"/>`;
   const avg = v.reduce((a, b) => a + b, 0) / 12, ay = Hh - 30 - (avg / max) * (Hh - 70);
-  g += `<line x1="${x0 - 6}" y1="${ay.toFixed(1)}" x2="${W}" y2="${ay.toFixed(1)}" stroke="${th.accent}" stroke-dasharray="4 4" stroke-width="1"/><text x="${W - 2}" y="${(ay - 4).toFixed(1)}" text-anchor="end" class="cl">average ${avg.toFixed(1)}</text>`;
+  g += `<line x1="${x0 - 6}" y1="${ay.toFixed(1)}" x2="${W}" y2="${ay.toFixed(1)}" stroke="${th.accent}" stroke-dasharray="4 4" stroke-width="1"/><text x="${W - 2}" y="14" text-anchor="end" class="cl">dashed line = average ${avg.toFixed(1)}</text>`;
   v.forEach((b, i) => { const h = (b / max) * (Hh - 70), x = x0 + i * (bw + gap), y = Hh - 30 - h, hi = b >= avg + 3, lo = b <= avg - 3;
     g += `<rect x="${x}" y="${y.toFixed(1)}" width="${bw}" height="${h.toFixed(1)}" rx="4" fill="${hi ? th.accent : lo ? '#b9b3a6' : th.accent2}"/><text x="${x + bw / 2}" y="${(y - 5).toFixed(1)}" text-anchor="middle" class="cv">${b}</text><text x="${x + bw / 2}" y="${Hh - 14}" text-anchor="middle" class="cl">${i + 1}</text>`; });
   return `<svg class="bar-svg" viewBox="0 0 ${W + 6} ${Hh}" role="img" aria-label="Ashtakavarga points for each house">${g}</svg>`;

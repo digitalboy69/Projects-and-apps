@@ -68,7 +68,7 @@ function bLagnas(c){
   let out = `<p class="lead">Besides the rising sign, classical astrology uses special points that each look at one theme of life. Each is shown as a sign and as the house it falls in when counted from your rising sign.</p>` + table(['Point', 'What it looks at', 'Sign', 'From rising sign'], rows);
   let bc = null; try { bc = computeBhavaChalit(c, +pr.lat, +pr.lon); } catch (e) { bc = null; }
   if (bc){
-    const pl = n => { const v = bc.place && bc.place[n]; return typeof v === 'number' ? v : (v && (v.house || v.n)) || null; };
+    const pl = n => { const v = bc.place && bc.place[n]; return typeof v === 'number' ? v : (v && (v.chalit || v.house || v.n)) || null; };
     out += `<h3 class="grp">Bhava Chalit: houses by degrees</h3><p class="sm">The main chart uses whole signs as houses. Bhava Chalit (Sripati) instead centres each house on its midpoint. A planet near a house edge can fall in the neighbouring house here; its results then colour that house as well.</p>` +
       table(['House', 'Begins', 'Middle', 'Ends'], bc.houses.map(h => tr([`<b>${h.n}</b>`, lonTxt(h.begin), lonTxt(h.madhya), lonTxt(h.end)]))) +
       table(['Planet', 'House in the chart', 'House in Bhava Chalit', ''], PL.map(n => { const a = c.planets[n].house, b = pl(n); return tr([`<b>${esc(n)}</b>`, a, b == null ? '–' : b, b != null && b !== a ? chip('moves house', 'b') : '']); }));

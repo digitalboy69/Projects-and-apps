@@ -282,7 +282,7 @@ window.LAN = (function(D){
   const SIGN = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
   const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
   const fill = (t, a) => t.replace('{n}', a.noun).replace('{w}', a.win).replace('{s}', a.slip).replace('{m}', a.means);
-  const cap = s => s.charAt(0).toUpperCase() + s.slice(1), lc = s => s.charAt(0).toLowerCase() + s.slice(1), dot = s => /[.?!]$/.test(s) ? s : s + '.';
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1), lc = s => /^(Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu|Lagna|Ascendant)\b|^([A-Z][a-z]+ )+(Yoga|Dosha|Dasha)\b/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1), dot = s => /[.?!]$/.test(s) ? s : s + '.';
   const words = t => (t.match(/\S+/g) || []).length;
   const PN = { house: 'houses', lords: 'house lords', karaka: 'significators', varga: 'divisional chart', yogas: 'yogas', dasha: 'timing' };
 
@@ -295,7 +295,7 @@ window.LAN = (function(D){
     const h = ar.primary[0], lord = H1[h - 1].signLord, lp = P[lord];
     if (lp){
       const m = VMF.placement(lord, lp.house, lp.sign, lp.dignity && lp.dignity.status);
-      para.push({ h: 'How it shows up in daily life', text: `The lord of your ${ordn(h)} house is ${lord}, and it stands in your ${ordn(lp.house)} house in ${SIGN[lp.sign]}, so this area tends to be tied up with ${m.theme}. ${m.practice[0].line} ${m.practice[1].line} People tend to experience this as ${m.others.replace(/^People tend to experience this part of you as /, '').replace(/\.$/, '')}. At its best, you ${m.atBest}; under strain, you may ${m.underStress}.` });
+      para.push({ h: 'How it shows up in daily life', text: `The lord of your ${ordn(h)} house is ${lord}, and it stands in your ${ordn(lp.house)} house in ${SIGN[lp.sign]}, so this area tends to be tied up with ${m.theme}. ${m.practice[0].line} ${m.practice[1].line} People tend to experience this as ${m.others.replace(/^People tend to experience this part of you as /, '').replace(/\.$/, '')}. ${m.atBest} ${m.underStress}` });
     }
     { const ar2 = VMF.data.arena[h - 1]; if (ar2) para.push({ h: 'Where you may notice it', text: `Because your ${ordn(h)} house stands for ${ar2.theme}, you are most likely to notice this area in everyday moments such as: ${ar2.scenes.map(x => lc(x)).join('; ')}.` }); }
     // 3. strengths

@@ -510,6 +510,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/dasha_lens_test.js` — Dasha Lens engine in a Node vm: levels 1-5 equal the app's dasha engine on 1,200 random moments over 3 charts, nesting laws, Prana length, duration text
 - `tests/ephemeris_vs_swiss_test.js` — REAL-CHART verification: 14 real births vs the Swiss Ephemeris (Moon within 25 arcsec, Ascendant, Lahiri anchor = official ICRC value, delta-T) and 504 Vimshottari boundaries over 6 levels equal an independent calculation
 - `tests/pdf_report_test.py` — PDF report: 4 theme/paper variants x 4 charts clean and self-contained, sections/options, Studio dialog, real PDF render
+- `tests/pdf_text_fixes_test.py` — PDF text bugs: no doubled "At its best" wording, Bhava Chalit houses filled in, no repeated key planets, planet and yoga names keep their capitals.
 - `tests/area_deep_test.py` — area deep dive: every quoted number vs the chart over 12 charts, wording rules, determinism, Deep reading/report/PDF wiring
 - `tests/house_now_test.py` — Right now: sky, dasha chain, signs, lords, Ashtakavarga and scores vs the engines at two dates over 12 charts, wording, first tab, report and PDF
 - `tests/planet_states_test.py` — planet states: tags vs the chart over 12 charts, every planet x state paragraph, wording, Planets tab, report and PDF wiring

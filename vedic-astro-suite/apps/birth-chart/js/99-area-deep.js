@@ -115,7 +115,7 @@ window.ADD = (function(D){
   const P9 = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'], BEN = ['Jupiter','Venus','Mercury','Moon'], MAL = ['Sun','Mars','Saturn','Rahu','Ketu'];
   const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
   const nm = a => a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
-  const cap = s => s.charAt(0).toUpperCase() + s.slice(1), lc = s => s.charAt(0).toLowerCase() + s.slice(1), uniq = a => [...new Set(a)], avg = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0;
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1), lc = s => /^(Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu|Lagna|Ascendant)\b|^([A-Z][a-z]+ )+(Yoga|Dosha|Dasha)\b/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1), uniq = a => [...new Set(a)], avg = a => a.length ? a.reduce((s, x) => s + x, 0) / a.length : 0;
   const hash = s => { let h = 7; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; }, pick = (arr, seed) => arr[hash(seed) % arr.length];
   const STRONG = ['Exalted','OwnSign','Moolatrikona'], WEAK = ['Enemy','Debilitated'];
   const AREA = {}; LAE.data.areas.forEach(a => AREA[a.id] = a);
@@ -210,7 +210,7 @@ window.ADD = (function(D){
     // 7b. the area's own varga
     const V = chart.vargas[A.varga], vasc = V ? V.ascendantSign : null;
     if (V){ const h0 = prim[0], vh = V.houses[h0 - 1], vsg = (vasc + h0 - 1) % 12, vl = vh.signLord, vls = c.vsign(A.varga, vl), vst = vls != null ? (getDignity(vl, vls, 15) || {}).status : null, occ = (vh.planets || []).map(p => p.name);
-      const core = lordsP.concat(kar).filter(n => c.vsign(A.varga, n) != null).slice(0, 4), cs = core.map(n => `${n} in ${SIGN[c.vsign(A.varga, n)]} (${lc((c.vdig(A.varga, n) || 'Neutral').replace('OwnSign', 'own sign'))})`);
+      const core = uniq(lordsP.concat(kar)).filter(n => c.vsign(A.varga, n) != null).slice(0, 4), cs = core.map(n => `${n} in ${SIGN[c.vsign(A.varga, n)]} (${lc((c.vdig(A.varga, n) || 'Neutral').replace('OwnSign', 'own sign'))})`);
       const d9 = lordsP.map(n => c.vdig('D9', n)).filter(Boolean), good = [c.dig(lordsP[0]), c.vdig(A.varga, lordsP[0]), c.vdig('D9', lordsP[0])].filter(x => x && STRONG.concat(['Friend']).indexOf(x) >= 0).length;
       add('varga', `${cap(R.vnoun)} up close`, `In ${R.vnoun} the rising sign is ${SIGN[vasc]}, so the ${ordn(h0)} house of that chart falls in ${SIGN[vsg]}, ruled by ${vl}, which stands in ${vls != null ? SIGN[vls] : 'its sign'}${vst ? ' and is ' + (D.dig[vst] || 'in a neutral sign') : ''}. ${occ.length ? `${nm(occ)} ${occ.length > 1 ? 'sit' : 'sits'} in that house, adding ${nm(occ.map(n => D.role[n]))} to the picture.` : 'No planet sits in that house, so its lord carries it.'} The key planets there read: ${cs.join(', ')}. When the birth chart, this chart and the navamsa are compared for the main lord ${lordsP[0]}, ${good === 3 ? 'all three agree that it is in a comfortable or strong position, which is the clearest sign of a dependable area' : good === 2 ? 'two of the three agree it is comfortable, so the area is mostly reliable with one weaker view' : good === 1 ? 'only one of the three shows it comfortable, so the charts give split signals and the area rewards patience and checking' : 'none of the three shows it strongly placed, so the area asks for deliberate effort and the best results come from steady building'}.`);
       facts.vstrong = good; }

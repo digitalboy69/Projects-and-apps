@@ -214,7 +214,7 @@ _Generated 2026-11-20 - 2407 symbols in `symbols.idx` (paths are real files now:
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 254 files, 36854 lines, 3134 KB
+**birth-chart** - 254 files, 36863 lines, 3136 KB
 ```
 index.html                                         679 lines   38 KB
 js/01-dev-contact.js                                 7 lines    0 KB
@@ -236,7 +236,7 @@ js/105-shadbala-reading.js                         454 lines   36 KB
 js/106-shadbala-ui.js                               43 lines    5 KB
 js/107-ashtakavarga-reading.js                     324 lines   26 KB
 js/108-ashtakavarga-ui.js                           50 lines    6 KB
-js/109-pdf-download.js                             145 lines    9 KB
+js/109-pdf-download.js                             154 lines   10 KB
 js/11-ashtakavarga-engine.js                        32 lines    2 KB
 js/111-problem-finder.js                           406 lines   85 KB
 js/112-problem-finder-ui.js                         77 lines   10 KB
@@ -373,7 +373,7 @@ js/92-yoga-engine.js                              1379 lines   63 KB
 js/93-dasha-time-finder.js                         163 lines   10 KB
 js/93-pdf-report.js                                405 lines   57 KB
 js/94-life-areas.js                                416 lines   16 KB
-js/95-life-narratives.js                           331 lines   21 KB
+js/95-life-narratives.js                           331 lines   22 KB
 js/96-varga-reading.js                             189 lines   11 KB
 js/97-life-event-catalog.js                        451 lines   43 KB
 js/97-transit-reading.js                           224 lines   17 KB
@@ -732,3 +732,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Blank tabs on slow connections (found 2026-11-20 from a phone screenshot): js/68 restored the last profile as soon as its own script ran; on a slow link the later scripts (Year Timeline, Avakahada, Planet Encyclopedia ...) were not loaded yet, so the chart was drawn without those panels and their tabs were blank. Fix: the restore now waits for DOMContentLoaded (js/68), and js/120 redraws the chart once if a normal tool panel is missing when opened (self-heal). Rule: nothing that draws the chart may run before DOMContentLoaded. Test: tests/slow_load_restore_browser_test.py.
 
 - Birth Chart Export tab flicker fix: js/148 `ensurePages` used to flip through every unopened tool page (replaying the panel fade-in, jumping scroll, repainting the sticky bar per section). Now each page is tried once, html.exb-hold (css/79) holds animations at 0s while it happens, scroll is restored, and measuring paints once per ~25 ms batch. Test: tests/export_no_flicker_browser_test.py (samples panel opacity per frame).
+- PDF book fixes (2026-11-20): life-area paragraphs no longer double the "At its best / Under strain" wording (VMF already returns whole sentences); Bhava Chalit table reads `bc.place[n].chalit`; key-planet lists deduped; `lc()` keeps planet and yoga names capitalised (js/95, 96, 99); PDF page cuts use ceil and fall back to text-line boundaries (js/109); SAV chart average label moved to the top. Test: `tests/pdf_text_fixes_test.py`.

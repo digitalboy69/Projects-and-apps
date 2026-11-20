@@ -140,7 +140,7 @@ window.VGR = (function(D){
   const PL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'], BEN = ['Jupiter','Venus','Mercury','Moon'];
   const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
   const nm = arr => arr.length < 2 ? arr.join('') : arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1];
-  const lc = s => s.charAt(0).toLowerCase() + s.slice(1), cap = s => s.charAt(0).toUpperCase() + s.slice(1), clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const lc = s => /^(Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu|Lagna|Ascendant)\b|^([A-Z][a-z]+ )+(Yoga|Dosha|Dasha)\b/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1), cap = s => s.charAt(0).toUpperCase() + s.slice(1), clamp = (x, a, b) => Math.max(a, Math.min(b, x));
   const DIG = { Exalted: 1, OwnSign: 1, Moolatrikona: 1, Friend: .35, Neutral: 0, Enemy: -.35, Debilitated: -1 };
   const BANDS = [[62, 'Strong', 'g'], [50, 'Steady', 'g'], [38, 'Mixed', ''], [0, 'Needs care', 'b']];
   const words = t => (t.match(/\S+/g) || []).length;

@@ -20,7 +20,9 @@
         const cap = first ? H - BOT : H - TOP - BOT, limit = from + cap;
         if (u.height <= limit + 1){ out.push({ ui, from, to: u.height, first }); break; }
         let to = 0; for (let i = cuts.length - 1; i >= 0; i--){ if (cuts[i] <= limit){ to = cuts[i]; break; } }
-        if (to - from < cap * 0.35) to = limit;   // nothing sensible near the page end: cut where the page is full
+        if (to - from < cap * 0.35){   // nothing sensible near the page end: cut between two text lines, never through one
+          const lc = (u.lineCuts || []).filter(c => c > from + cap * 0.35 && c <= limit); to = lc.length ? lc[lc.length - 1] : limit;
+        }
         out.push({ ui, from, to, first }); from = to; first = false;
       }
     });
@@ -112,9 +114,16 @@
           const b = e.getBoundingClientRect(); if (!b.height) return;
           const inner = e.parentElement && e.parentElement.closest(AVOID);
           if (inner && k.contains(inner) && inner.getBoundingClientRect().height < H * 0.8) return;   // inside a block that should stay whole
-          cuts.push(Math.round(b.bottom + d.defaultView.scrollY - top));
+          cuts.push(Math.ceil(b.bottom + d.defaultView.scrollY - top));
         });
-        return { height: Math.round(r.height), cuts, xml: null, el: k };
+        const lineCuts = [];   // fallback cut points: the bottom of every text line inside long paragraphs
+        k.querySelectorAll('p,dd,li').forEach(e => {
+          if (e.getBoundingClientRect().height < 40) return;
+          const rg = d.createRange(); rg.selectNodeContents(e); const seen = {};
+          [...rg.getClientRects()].forEach(q => { const y = Math.ceil(q.bottom + d.defaultView.scrollY - top); if (!seen[y]){ seen[y] = 1; lineCuts.push(y); } });
+        });
+        lineCuts.sort((a, b) => a - b);
+        return { height: Math.round(r.height), cuts, lineCuts, xml: null, el: k };
       });
       const pagesPlan = plan(units), scale = (navigator.maxTouchPoints > 0 || window.innerWidth < 800) ? 1.0 : 1.2, pages = [];
       const base = ((profile && profile.name) || 'Vedic').toString();
