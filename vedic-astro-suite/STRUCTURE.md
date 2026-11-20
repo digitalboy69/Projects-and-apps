@@ -350,6 +350,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/sky3d/js/67-formula-engine.js` — global `FM`: Formula Maker engine. Subjects (planets, Chara Karakas AK..DK 7/8 scheme, Bhrigu Bindu, Yogi/Avayogi, Gulika, Hora/Ghati/Indu lagna, Karakamsa, Swamsha, Arudha A1..A12, house lords), ~25 relations, tri-state evaluator with explained tree, charts C/N/S/P, Find-dates scan
 - `apps/sky3d/js/68-formula-library.js` — global `FMX`: ~45 ready formulas, share code `VF1.` + `#f=` link, text card, JSON import/export, Saved list (localStorage `sky3d_fm_saved`)
 - `apps/sky3d/js/69-formula-ui.js` — global `FMU`: Formula Maker sheet (Tools > ƒ): Build / Result / Library / Saved tabs, rule editor, operand picker, find dates, share sheet, PNG card
+- `tests/every_panel_not_blank_browser_test.py` — Birth Chart: casts a chart (profile=demo|south|west|old|polar, `bundle` = generated one-file copy), opens every panel and lists any that are blank, missing or raise errors
 - `tests/startup_bundles_browser_test.py` — the shell loads the per-app bundles: bundles are fresh, same globals as the plain source files, no page errors, Formula Maker and Birth Chart usable, far fewer requests
 - `tests/sky3d_formula_maker_browser_test.py` — Formula Maker: karakas, Bhrigu Bindu, Yogi points, relations, tri-state, every library formula, share round-trip, scan, and the sheet at 390 and 360
 - `tests/sky3d_shadbala_test.js` — engine parity with the Birth Chart plus live adapter checks

@@ -55,7 +55,7 @@ function walk(d, out = []){ fs.readdirSync(d).forEach(n => { const p = path.join
   if (!ih.includes('native-bridge.js')) ih = ih.replace('</head>', '<script src="native-bridge.js"></script></head>');
   fs.writeFileSync(idx, ih);
   // the app pages get the bridge too (so the Update button exists inside them); this only happens in the APK build, never on the website
-  for (const sub of ['apps/birth-chart/index.html', 'apps/sky3d/index.html']){
+  for (const sub of ['apps/birth-chart/index.html', 'apps/sky3d/index.html', 'apps/birth-chart/index.bundle.html', 'apps/sky3d/index.bundle.html']){   // the shell loads the .bundle.html copies, so they need the bridge too
     const pf = path.join(OUT, sub); if (!fs.existsSync(pf)) continue; let ph = fs.readFileSync(pf, 'utf8');
     if (!ph.includes('native-bridge.js')) ph = ph.replace('</head>', '<script src="../../native-bridge.js"></script></head>');
     fs.writeFileSync(pf, ph);
