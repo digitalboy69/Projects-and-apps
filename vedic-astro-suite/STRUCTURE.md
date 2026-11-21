@@ -455,6 +455,18 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tools/reading_gen/regen.sh` — regenerates all four reading databases (js/87, 89, 90, 91); afterwards `git status` must show no change unless a table was edited
 - `tools/reading_gen/regen.sh — regenerates all four reading databases; afterwards `git status` must show no change unless a table was edited`
 - `tools/ai/session.sh` — AI session helper: start / check / test / ship (commit, rebase on moved main, check, push branch, fast-forward main; token only via GH_TOKEN env)
+- `tools/ai-brain-kit/README.md` — the reusable, project-neutral AI Brain Kit (blank template for OTHER projects: install, commands, token savings). NOT active in this repo: this repo uses tools/ai/brain.py and AI_START.md
+- `tools/ai-brain-kit/install.py` — copies the kit into any project and runs init (`--tool all|claude,cursor,copilot,windsurf,gemini,agents,cline,aider`)
+- `tools/ai-brain-kit/install.sh` — one-line wrapper for install.py
+- `tools/ai-brain-kit/brain/brain.py` — the generic kit tool (brief, ctx, find, show, outline, impact, tests-for, run, diff, learn, audit, handoff, secrets, cost, check, init ...); stdlib only
+- `tools/ai-brain-kit/brain/selftest.py` — self-test of the kit on a throw-away project (29 checks); run `python3 brain/brain.py selftest` inside an installed project
+- `tools/ai-brain-kit/brain/templates/AI_GUIDE.md` — blank AI_GUIDE template for new projects (rules, working method, router, changelog)
+- `tools/ai-brain-kit/brain/templates/AI_START_HERE.md` — blank "start here" template for new projects
+- `tools/ai-brain-kit/brain/templates/LESSONS.md` — blank lessons file template (audit checks its refs)
+- `tools/ai-brain-kit/brain/templates/PLAN_TEMPLATE.md` — blank plan template (checklist, owner decisions, notes, log)
+- `tools/ai-brain-kit/skill/codebase-brain/SKILL.md` — the codebase-brain Claude skill (use mode and set-up mode) for the kit
+- `tools/ai-brain-kit/skill/codebase-brain/references/prompts.md` — prompts to paste for the kit (new chat, set-up, impact check, finish, handoff)
+- `tools/ai-brain-kit/skill/codebase-brain/references/working-method.md` — the working method and measured token savings behind the kit
 - `tools/ai/brain.py` — AI Brain command: start, find, sec, tests, check, new, done, learn, audit (stdlib only)
 
 ### tests/
