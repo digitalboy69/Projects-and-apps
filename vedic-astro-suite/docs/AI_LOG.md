@@ -4,13 +4,14 @@ Newest first. Old lines move to docs/AI_LOG_ARCHIVE.md (grep it, never read it w
 ## NOW
 <!--NOW-->
 - Updated: 2026-11-21
-- Last task: AI Brain: ported ctx/show/outline/impact/tests-for/run/diff/secrets/handoff/cost/map into tools/ai/brain_nav.py (lazy); sim_savings.py shows ~95% fewer tokens per task, ctx 14/14
-- Pending: AI Brain waits for owner push
-- Owner decisions waiting: none
+- Last task: Session handoff: brain ported + simulated; next = A11/A13/Kota Paala decisions, then A14 final pass; optional brand PNG fix
+- Pending: owner decisions A11 muhurta list+school, A13 remedies tone+list, Kota Paala override; then A14 final pass
+- Owner decisions waiting: A11, A13, Kota Paala override?
 <!--/NOW-->
 
 ## LOG (one line per finished task)
 <!--LOG-->
+- 2026-11-21 Session handoff: brain ported + simulated; next = A11/A13/Kota Paala decisions, then A14 final pass; optional brand PNG fix
 - 2026-11-21 AI Brain: ported ctx/show/outline/impact/tests-for/run/diff/secrets/handoff/cost/map into tools/ai/brain_nav.py (lazy); sim_savings.py shows ~95% fewer tokens per task, ctx 14/14
 - 2026-11-21 AI Brain Kit v2 stored as a blank reusable template in tools/ai-brain-kit/ (not wired into this repo; this repo keeps tools/ai/brain.py): adds ctx, show, outline, impact, tests-for, run, secrets, handoff, multi-tool pointers (Cursor, Copilot, Windsurf, Gemini, AGENTS.md, Cline, Aider)
 - 2026-11-21 AI Brain (2026-11-21, docs/AI_BRAIN_PLAN.md): AI_START.md is the ONE entry file (about 0.9k tokens, was ~30k reading AI_GUIDE); tools/ai/brain.py gives start/find/sec/tests/check/new/done/learn/audit; docs/AI_LOG.md is the one living record (NOW, LOG, LESSONS); old section 7 archived; pre-commit runs audit --fix. Test: tests/ai_brain_test.py.
