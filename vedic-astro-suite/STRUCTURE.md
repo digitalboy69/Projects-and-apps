@@ -44,6 +44,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `symbols.idx` — generated symbol -> file:line index (grep only)
 - `AI_GUIDE.md` — rules + prompt router for AI (partly auto-generated)
 - `CLAUDE.md` — pointer to AI_GUIDE.md and STRUCTURE.md
+- `AI_START.md` — the ONE entry file for any new AI chat (loop, hard rules, commands); capped at 4.5 KB by `brain.py audit`
 - `STRUCTURE.md` — this file
 - `README.md` — human readme
 - `.githooks/pre-commit` — regenerates guide/index and checks this file
@@ -454,6 +455,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tools/reading_gen/regen.sh` — regenerates all four reading databases (js/87, 89, 90, 91); afterwards `git status` must show no change unless a table was edited
 - `tools/reading_gen/regen.sh — regenerates all four reading databases; afterwards `git status` must show no change unless a table was edited`
 - `tools/ai/session.sh` — AI session helper: start / check / test / ship (commit, rebase on moved main, check, push branch, fast-forward main; token only via GH_TOKEN env)
+- `tools/ai/brain.py` — AI Brain command: start, find, sec, tests, check, new, done, learn, audit (stdlib only)
 
 ### tests/
 - `tests/chakra_explorer_browser_test.py` — Chakra Explorer in the real app: Home tile, three drawings, date and step controls, every toggle, Kota Paala override, phone width, rebuild if missing (CHX_SHOTS=dir saves screenshots)
@@ -656,10 +658,14 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/feature_guide_browser_test.py` — Feature Guide at 390 and 360px: cards, one open at a time, search, group chips, Open button, listed in Tools tab
 - `tests/gochara_vedha_test.js` — node test for js/142 (pair tables vs the published house sets, exceptions both ways, nodes ignored)
 - `tests/ashtakavarga_extras_browser_test.py` — Playwright test of the Ashtakavarga Workings panel at 390px (`ASX_SHOTS=dir`)
+- `tests/ai_brain_test.py` — test of tools/ai/brain.py on a temporary fixture tree (start, find, sec, tests mapping, done, learn, audit caps, entry-size cap, dead paths)
 - `docs/ASTRO_FEATURES_PLAN.md` — Handoff plan for the astrologer tools the app still lacks (avasthas, Vimshopaka, upagrahas, sensitive degrees, Sudarshana, Argala, Ashtakavarga extras, Gochara vedha, synastry, Muhurta, Panchang calendar, remedies): ordered checklist A0-A14, source rules, per-step detail, session log. A new chat starts here
 - `docs/YEAR_TIMELINE_RESEARCH.md` — Research + plan for the "Year Timeline Pack" (date-range, AI-ready data file: timeline, transits, dasha changes, planet role map); sources, file layout, reuse map, build order
 - `docs/SUPABASE.md` — Supabase cloud-sync notes
 - `docs/THIRD_PARTY_LICENSES.md` — third-party licences
+- `docs/AI_BRAIN_PLAN.md` — plan for the AI Brain: one entry file, one command, one living log, self-upgrading audit
+- `docs/AI_LOG.md` — the ONE living AI record: NOW state, LOG (one line per task), LESSONS; written only by `brain.py done|learn|audit`
+- `docs/AI_LOG_ARCHIVE.md` — old AI changelog (former AI_GUIDE section 7 and capped log lines); grep only
 - `dist/vedic-astro-suite-readable.html` — GENERATED single-file build (plain code). Never read or hand-edit
 - `dist/vedic-astro-suite-2.html` — GENERATED single-file build (base64 apps). Never read or hand-edit
 

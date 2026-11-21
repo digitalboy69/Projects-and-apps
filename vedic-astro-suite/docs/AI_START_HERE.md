@@ -1,3 +1,5 @@
+> **Superseded for the daily loop (2026-11-21):** start with `AI_START.md` and `python3 tools/ai/brain.py start`; record work with `brain.py done`. This file keeps the older reading-plan details and lessons.
+
 # AI start here (read this first, then docs/FULL_READING_PLAN.md and AI_GUIDE.md)
 
 Start prompt the owner pastes in a new chat:

@@ -4,6 +4,8 @@ ROOT="$(git rev-parse --show-toplevel)"
 for d in "$ROOT/vedic-astro-suite" "$ROOT"; do
   if [ -f "$d/build.py" ] && [ -d "$d/apps" ]; then
     (cd "$d" && python3 build.py --guide >/dev/null 2>&1 && python3 build.py --bundles >/dev/null 2>&1 && git add AI_GUIDE.md symbols.idx version.json apps/*/index.bundle.html 2>/dev/null)
+    (cd "$d" && python3 tools/ai/brain.py audit --fix >/dev/null 2>&1; python3 tools/ai/brain.py audit --fix | grep -E "FAIL|MISSING|DEAD" ; git add docs/AI_LOG.md docs/AI_LOG_ARCHIVE.md 2>/dev/null)
+    (cd "$d" && python3 tools/ai/brain.py audit | grep -qE "FAIL|MISSING|DEAD" && { echo "commit blocked: fix the AI entry files (brain.py audit)"; exit 1; })
     (cd "$d" && python3 tools/check_structure.py) || { echo "commit blocked: update STRUCTURE.md"; exit 1; }
     break
   fi

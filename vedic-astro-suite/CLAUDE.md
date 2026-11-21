@@ -1,10 +1,4 @@
 # Vedic Astro Suite
-Read `AI_GUIDE.md` in this folder FIRST (where to look for each request, token-saving rules, build/test/deliver steps). Never read the built `dist/*.html` files; grep `symbols.idx` for the real file:line, then read only that range. After each task: `python3 build.py` and add one line to section 7 of AI_GUIDE.md.
+Read `AI_START.md` (one small file, about 1k tokens) and run `python3 tools/ai/brain.py start`. That is the whole orientation. Do not read `AI_GUIDE.md`, `STRUCTURE.md` or `dist/*.html` whole; use `brain.py find WORDS` and `brain.py sec N`.
 
-Then read `STRUCTURE.md` (map of every file + feature + path). **Whenever you add, rename, move or delete a file or add a feature, update `STRUCTURE.md` in the same change** (`python3 tools/check_structure.py` enforces it; the pre-commit hook blocks the commit otherwise).
-
-**The owner's working method is in `AI_GUIDE.md` section 0a: plan file, rebase before every step, two-source research, tests plus phone screenshots, wire the tool into HOME_ITEMS + js/120 + the Tools tab (js/147), push live after each backend step, and for visible UI changes show screenshots and wait for approval before pushing. Do exactly like that.**
-
-**Feature Guide rule (owner, 2026-11-11): whatever you build or change that people can see or use MUST be added to or updated in the Feature Guide (`apps/birth-chart/js/149-feature-guide-data.js`, `FG_DATA.e`). See `AI_GUIDE.md` section 0a item 5a.**
-
-**Two more owner rules (2026-11-20), details in `AI_GUIDE.md` section 0a: (2a) always rebase on the latest `origin/main` when behind: at the start, before each commit and before each push. (5b) every new feature follows `docs/STARTUP_SPEED_PLAN.md`: nothing heavy at boot (load on first open), no artificial waits, report the KB added.**
+Owner rules (details in `AI_START.md`): rebase on `origin/main` before each commit and push; plan file for big work; two-source research; tests plus phone screenshots at 390 and 360; Feature Guide entry (`apps/birth-chart/js/149-feature-guide-data.js`) for anything visible; `STRUCTURE.md` line for every new file; new features follow `docs/STARTUP_SPEED_PLAN.md`; record every task with `brain.py done`; push only after the owner says "push".

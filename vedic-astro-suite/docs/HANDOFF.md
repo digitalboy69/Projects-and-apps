@@ -1,6 +1,6 @@
 # Handoff (short)
-Everything an AI needs is in **`AI_GUIDE.md`** (prompt router, token-saving rules, build/test/deliver steps, changelog). Start every new chat with:
+Everything a new AI chat needs starts in **`AI_START.md`** (about 1k tokens). Paste:
 
-> Read AI_GUIDE.md first, then do: [task]. Return the readable HTML + zip, keep the reply short.
+> Open the Projects-and-apps repo (main), read vedic-astro-suite/AI_START.md, run `python3 tools/ai/brain.py start`, then do: [task]. Keep replies short.
 
-Project = a folder project: a shell (`index.html`, `shell/`) + 4 apps (`apps/sky3d`, `apps/birth-chart`, `apps/notepad`, `apps/developer`), each with its own `index.html`, `css/` and `js/` files. Edit the file that holds the feature (find it with `grep -P "^name\t" symbols.idx`), run `python3 build.py` (writes the single-file builds into `dist/`), test with `python3 tests/smoke.py`, commit.
+Live state, last tasks and lessons: `docs/AI_LOG.md` (written by `brain.py done`). Deep rules and the prompt router: `AI_GUIDE.md` (read one section with `brain.py sec N`).

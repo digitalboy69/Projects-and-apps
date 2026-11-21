@@ -2,6 +2,8 @@
 
 # Vedic Astro Suite
 
+> **AI assistants / new chats:** read `AI_START.md` (one small file) and run `python3 tools/ai/brain.py start`. Everything else is found on demand.
+
 Four small apps behind one floating switcher: **3D Sky**, **Birth Chart** (Vedic charts, rectification, Date Finder, Smart Search, Ask-AI, numerology, matching…), **Notepad** and the **Developer** card.
 
 Added by the astro roadmap (docs/ASTRO_FEATURES_PLAN.md): Planet States (Avasthas), Vimshopaka Bala, Upagrahas, Sensitive Degrees, Sudarshana Chakra, Argala, Bhavat Bhavam and Arudha Padas, Ashtakavarga Workings (Prastara, Sodhana, Kakshya, Transit), Gochara vedha in Today for You, Synastry, the Panchang Calendar, and the Chakra Explorer. Muhurta finder and Remedies wait for owner decisions.
