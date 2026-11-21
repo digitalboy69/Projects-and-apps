@@ -211,13 +211,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-21 - 2498 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-21 - 2523 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 260 files, 38049 lines, 3257 KB
+**birth-chart** - 261 files, 38264 lines, 3281 KB
 ```
-index.html                                         686 lines   39 KB
+index.html                                         687 lines   39 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -280,7 +280,7 @@ js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
 js/147-tools-hub.js                                117 lines   12 KB
 js/148-export-builder.js                           276 lines   27 KB
-js/149-feature-guide-data.js                       334 lines   46 KB
+js/149-feature-guide-data.js                       334 lines   47 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
 js/151-bhavat-masterclass-data.js                   99 lines   13 KB
@@ -293,10 +293,11 @@ js/158-ai-index.js                                  87 lines   12 KB
 js/159-ai-engine.js                                213 lines   24 KB
 js/16-rectification-engine.js                       36 lines    2 KB
 js/160-ai-panel.js                                 172 lines   27 KB
-js/160-workspace-engine.js                         165 lines   17 KB
+js/160-workspace-engine.js                         171 lines   18 KB
 js/161-workspace-widgets.js                        222 lines   23 KB
-js/162-workspace-ui.js                             382 lines   41 KB
-js/163-workspace-points.js                         110 lines    9 KB
+js/162-workspace-ui.js                             461 lines   52 KB
+js/163-workspace-points.js                         111 lines    9 KB
+js/164-workspace-vars.js                           112 lines    9 KB
 js/17-special-lagnas.js                            404 lines   23 KB
 js/18-ui-location-profiles.js                      124 lines    5 KB
 js/19-planets-panel.js                             236 lines   17 KB
@@ -476,7 +477,7 @@ css/82-varga-matrix.css                             86 lines    8 KB
 css/84-past-present-future.css                     129 lines   11 KB
 css/85-hora.css                                    175 lines   16 KB
 css/86-ai.css                                       67 lines   11 KB
-css/90-workspace.css                               243 lines   26 KB
+css/90-workspace.css                               259 lines   28 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -743,3 +744,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - PDF intelligence (2026-11-20): js/110 `PDFI` adds page-cut rules (headings stay with text, orphans/widows 3, short paragraphs, rows, figures kept whole, repeating table headers) and `prepare()` marks the laid-out book; the PDF button now prints a real text PDF (sharp at any zoom); the old picture PDF (js/109) is only used in the app web view or with `?imgpdf`. Mid-sentence page ends fell from 32 to 6 in the demo book. Plan `docs/PDF_INTELLIGENCE_PLAN.md`, test `tests/pdf_intelligence_test.py`.
 - Astrologer Workspace tab (2026-11-21, docs/ASTRO_WORKSPACE_PLAN.md): new tab before Export. js/160 `AW` (routines in localStorage `vax_workspace_v1`, share code AW1., starters), js/161 `AWW` (22 native cards drawn from the chart), js/162 `AWUI` (list, editor, add-step sheet, Flow / Board / Present, share and import; any tool panel is moved into a step and put back), css/90-workspace.css. Built late (`registerLatePanel` plus `window.ensureLatePanel` in js/120), nothing runs until the tab opens. Tests: tests/workspace_engine_test.js, tests/workspace_browser_test.py; the tools hub test now expects seven tabs.
 - Workspace Point Finder (2026-11-21, docs/WORKSPACE_FINDER_PLAN.md): js/163 `AWP` resolves any variable (planet, role such as AK/DK, house lord, special lagna/point, dasha lord, strongest/weakest) and places it in any divisional chart (planets from `chart.vargas[k].planetVargaSign`, points via `calcVarga`; sign-only points refuse other charts). New cards locate / locateall / points, planetreading takes any planet-valued variable, grouped selects and chip pickers in js/162, a Point finder view with Add-to-routine. Test: tests/workspace_points_test.py.
+- Workspace My variables (2026-11-21, docs/WORKSPACE_VARIABLES_PLAN.md): js/164 `AWV` (localStorage `vax_workspace_vars_v1`, max 40) lets users make variables = start (any point or pick strongest/degree among planets) + up to 6 steps (lord / nakshatra lord / nth house from); ids `cv:xxxx`; AWP.resolve delegates them, AW.subjectList adds group 'My variables', share codes/links carry `vars` (importDefs remaps ids). Editor in js/162 (viewVar). Tests: workspace_vars_test.js, workspace_vars_browser_test.py.

@@ -12,8 +12,8 @@
   const LORD = ['Mars','Venus','Mercury','Moon','Sun','Mercury','Venus','Mars','Jupiter','Saturn','Saturn','Jupiter'];
   const ROLE = { AK: 'Atmakaraka', AmK: 'Amatyakaraka', BK: 'Bhratrikaraka', MK: 'Matrikaraka', PuK: 'Putrakaraka', GK: 'Gnatikaraka', DK: 'Darakaraka' };
   const ORD = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
-  const label = id => { const a = (window.AW && AW.SUBJECTS || []).find(x => x[0] === id); return a ? a[1] : id; };
-  const group = id => { const a = (window.AW && AW.SUBJECTS || []).find(x => x[0] === id); return a ? a[2] : ''; };
+  const label = id => { const a = (window.AW && AW.subjectList ? AW.subjectList() : []).find(x => x[0] === id); return a ? a[1] : id; };
+  const group = id => { const a = (window.AW && AW.subjectList ? AW.subjectList() : []).find(x => x[0] === id); return a ? a[2] : ''; };
   const sg = lon => Math.floor((((lon % 360) + 360) % 360) / 30);
   const dsg = (n, s) => { try { return getDignity(n, s); } catch (e) { return null; } };
   const FN = { hora: 'calcHoraLagnaLongitude', ghati: 'calcGhatiLagnaLongitude', shree: 'calcShreeLagnaLongitude', prana: 'calcPranapadaLagnaLongitude', bhava: 'calcBhavaLagnaLongitude', vighati: 'calcVighatiLagnaLongitude', bb: 'calcBhriguBinduLongitude' };
@@ -25,6 +25,7 @@
   function resolve(id, c, pf){
     const base = { id, label: label(id), group: group(id), kind: 'planet', planet: null, lon: null, sign: null, via: '', err: '' };
     if (!c) return Object.assign(base, { err: 'Cast a chart first.' });
+    if (/^cv:/.test(id)){ if (!window.AWV) return Object.assign(base, { err: 'Custom variables are not available.' }); return AWV.resolve(id, c, pf); }
     try {
       let m, x;
       if (PL.indexOf(id) >= 0 || OUT.indexOf(id) >= 0){ x = planetPoint(c, id); if (!x) return Object.assign(base, { err: id + ' is not available for this chart.' }); return Object.assign(base, x, { via: id }); }
@@ -105,5 +106,5 @@
     return res;
   }
 
-  window.AWP = { resolve, locate, all, keys, label, SIGN, ORD };
+  window.AWP = { resolve, locate, all, keys, label, point: planetPoint, SIGN, ORD };
 })();

@@ -170,6 +170,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/160-workspace-engine.js` — Astrologer Workspace engine (AW): saved routines in localStorage, step and card catalogue, share code AW1., starter routines.
 - `apps/birth-chart/js/161-workspace-widgets.js` — Astrologer Workspace cards (AWW): charts, tables, dashas, transits, strength, yogas, readings drawn from the chart on screen.
 - `apps/birth-chart/js/162-workspace-ui.js` — Astrologer Workspace tab (AWUI): routine list, editor, add-step sheet, Flow / Board / Present views, share and import.
+- `apps/birth-chart/js/164-workspace-vars.js` — Workspace My variables (AWV): user-made variables as recipes (start or pick plus steps), storage, description, evaluation, sharing bundle.
 - `apps/birth-chart/js/163-workspace-points.js` — Workspace Point Finder (AWP): finds any planet, Atmakaraka to Darakaraka, house lord, special lagna or dasha lord in the main chart and in every divisional chart.
 - `apps/birth-chart/css/90-workspace.css` — styles of the Workspace tab (aw- classes).
 - `apps/birth-chart/js/111-problem-finder.js` — PROBLEM FINDER engine (PRB): areas of life, exact problems, trigger (outside/inside) and how it shows up (inner pain/real events); reads the chart and returns the reasons (houses, lords, planets, aspects, Ashtakavarga, running periods, today's sky); every line carries the chart fact it came from
@@ -521,6 +522,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/workspace_engine_test.js` — node test of the Workspace engine: storage, share code, limits, starters.
 - `tests/workspace_browser_test.py` — browser test of the Workspace tab at 390 and 360 px: build a routine, open it on two charts, tool steps, Board, Present, share code, reload.
 - `tests/workspace_points_test.py` — Point Finder test on three charts at 390 and 360 px: every planet in every chart agrees with the engine, AK/DK/lords, finder view, all-charts mode, add to a routine.
+- `tests/workspace_vars_test.js` — node test of user-made variables: sanitising, plain-English description, loops, limits, sharing bundle.
+- `tests/workspace_vars_browser_test.py` — browser test of my variables on three charts: built from the editor, compared with independent calculations, used in the finder and routines, share code carries them.
 - `tests/area_deep_test.py` — area deep dive: every quoted number vs the chart over 12 charts, wording rules, determinism, Deep reading/report/PDF wiring
 - `tests/house_now_test.py` — Right now: sky, dasha chain, signs, lords, Ashtakavarga and scores vs the engines at two dates over 12 charts, wording, first tab, report and PDF
 - `tests/planet_states_test.py` — planet states: tags vs the chart over 12 charts, every planet x state paragraph, wording, Planets tab, report and PDF wiring
@@ -619,6 +622,7 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `docs/PDF_INTELLIGENCE_PLAN.md` — plan for the PDF page-cut rules and the sharp text PDF route.
 - `docs/ASTRO_WORKSPACE_PLAN.md` — plan for the Astrologer Workspace tab (saved routines: charts, tables, dashas and any tool, in order, for any chart).
 - `docs/WORKSPACE_FINDER_PLAN.md` — plan for the Workspace Point Finder (find any planet, karaka, lord or special point in any divisional chart).
+- `docs/WORKSPACE_VARIABLES_PLAN.md` — plan for user-made variables in the Workspace (start, pick and steps; usable in every finder card and routine).
 - `docs/STARTUP_SPEED_PLAN.md` — plan for faster start-up: bundle each app, load rare features on first open, how to measure, and the rule every new feature follows
 - `tests/hora_test.py` — Playwright test of the Hora engine against panchangaAt (order, contiguity, Drik day/night lengths)
 - `tests/varga_matrix_test.js` — node test for js/153 (cells equal raw varga data, points recomputed by hand, Vargottama, 60 real charts x 3 sets)

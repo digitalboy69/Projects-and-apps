@@ -27,6 +27,9 @@
     [['dasha:md', 'Mahadasha lord now', 'Time and strength'], ['dasha:ad', 'Antardasha lord now', 'Time and strength'], ['strong', 'Strongest planet (Shadbala)', 'Time and strength'], ['weak', 'Weakest planet (Shadbala)', 'Time and strength'], ['nak:Moon', 'Nakshatra lord of the Moon', 'Time and strength'], ['nak:Lagna', 'Nakshatra lord of the Lagna', 'Time and strength']],
     [['sg:AL', 'Arudha Lagna (AL)', 'Sign-only points'], ['sg:UL', 'Upapada Lagna (UL)', 'Sign-only points'], ['sg:KL', 'Karakamsha (KL)', 'Sign-only points'], ['sg:INDU', 'Indu Lagna', 'Sign-only points'], ['sg:SWAMSHA', 'Swamsha Lagna', 'Sign-only points']]
   );
+  const SUBJECT_KEYS = ['subject', 'subjects', 'planet'];
+  /* every pickable variable now: the built-in ones plus the person's own (js/164) */
+  function subjectList(){ let mine = []; try { mine = (root.AWV && root.AWV.list ? root.AWV.list() : []).map(v => [v.id, v.name, 'My variables']); } catch (e) {} return SUBJECTS.concat(mine); }
   const SUBJ_VALUES = SUBJECTS.map(x => [x[0], x[1], x[2]]);
   const PLANET_SUBJECTS = SUBJECTS.filter(x => /^(Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu|role:|lord:|dasha:|strong|weak|nak:)/.test(x[0])).map(x => [x[0], x[1], x[2]]);
   const SUBJ_PRESETS = [['Karakas', 'role:AK,role:AmK,role:BK,role:MK,role:PuK,role:GK,role:DK'], ['Planets', PLANETS.join(',')], ['House lords', Array.from({ length: 12 }, (_, i) => 'lord:' + (i + 1)).join(',')], ['Special points', 'lagna,pt:gulika,pt:bb,pt:hora,pt:ghati,pt:shree'], ['Marriage', 'role:DK,lord:7,Venus,pt:bb,sg:UL']];
@@ -76,8 +79,9 @@
   function cleanOpts(id, o){
     const w = WMAP[id], out = defaults(id); if (!w || !o || typeof o !== 'object') return out;
     w.options.forEach(x => {
-      if (x.k === 'subjects'){ const ok = String(o[x.k] || '').split(',').filter((v, i, a2) => x.values.some(p => p[0] === v) && a2.indexOf(v) === i).slice(0, 12); if (ok.length) out[x.k] = ok.join(','); }
-      else if (x.values){ const v = String(o[x.k]); if (x.values.some(p => p[0] === v)) out[x.k] = v; }
+      const okv = v => x.values.some(p => p[0] === v) || (SUBJECT_KEYS.indexOf(x.k) >= 0 && /^cv:[a-z0-9_]{4,20}$/.test(v));
+      if (x.k === 'subjects'){ const ok = String(o[x.k] || '').split(',').filter((v, i, a2) => okv(v) && a2.indexOf(v) === i).slice(0, 12); if (ok.length) out[x.k] = ok.join(','); }
+      else if (x.values){ const v = String(o[x.k]); if (okv(v)) out[x.k] = v; }
       else if (typeof o[x.k] === 'string') out[x.k] = multi(o[x.k], 1200);
     });
     return out;
@@ -127,9 +131,10 @@
   /* ---------- sharing: AW1.<base64url of short JSON> ---------- */
   function b64e(s){ const b = typeof btoa === 'function' ? btoa(unescape(encodeURIComponent(s))) : Buffer.from(s, 'utf8').toString('base64'); return b.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
   function b64d(s){ s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return typeof atob === 'function' ? decodeURIComponent(escape(atob(s))) : Buffer.from(s, 'base64').toString('utf8'); }
-  function encode(r){
+  function encode(r, vars){
     const c = sanitize(r); if (!c) return '';
     const short = { n: c.name, i: c.icon, c: c.color, d: c.note, l: c.layout === 'board' ? 'b' : 'f', s: c.steps.map(s => { const o = { k: s.k, t: s.t }; if (s.k === 'w' && Object.keys(s.o).length) o.o = s.o; if (s.label) o.a = s.label; if (s.note) o.m = s.note; return o; }) };
+    if (Array.isArray(vars) && vars.length) short.v = vars.slice(0, 12);
     return 'AW1.' + b64e(JSON.stringify(short));
   }
   function decode(text){
@@ -138,10 +143,11 @@
       let raw;
       if (/^AW1\./.test(t)){
         const s = JSON.parse(b64d(t.slice(4)));
-        raw = { name: s.n, icon: s.i, color: s.c, note: s.d, layout: s.l === 'b' ? 'board' : 'flow', steps: (s.s || []).map(x => ({ k: x.k, t: x.t, o: x.o, label: x.a, note: x.m })) };
+        raw = { name: s.n, icon: s.i, color: s.c, note: s.d, layout: s.l === 'b' ? 'board' : 'flow', steps: (s.s || []).map(x => ({ k: x.k, t: x.t, o: x.o, label: x.a, note: x.m })), vars: s.v };
       } else if (t[0] === '{'){ raw = JSON.parse(t); }
       else return null;
       const r = sanitize(raw); if (!r) return null;
+      if (Array.isArray(raw.vars)) r.vars = raw.vars.slice(0, 12);
       r.id = uid(); r.made = Date.now(); r.used = 0; r.uses = 0; r.pin = false; delete r.starter; r.steps.forEach(s => { s.id = sid(); });
       return r;
     } catch (e) { return null; }
@@ -159,6 +165,6 @@
     ];
   }
 
-  const api = { SUBJECTS, SUBJ_PRESETS, PLANET_SUBJECTS, KEY, UIKEY, MAXSTEPS, WIDGETS, WMAP, GROUPS, COLORS, ICONS, VARGA_KEYS, VARGA_ABOUT, PLANETS, STYLES, uid, sid, defaults, cleanOpts, step, blank, sanitize, list, get, save, remove, duplicate, touch, move, ui, setUi, encode, decode, starters };
+  const api = { subjectList, SUBJECTS, SUBJ_PRESETS, PLANET_SUBJECTS, KEY, UIKEY, MAXSTEPS, WIDGETS, WMAP, GROUPS, COLORS, ICONS, VARGA_KEYS, VARGA_ABOUT, PLANETS, STYLES, uid, sid, defaults, cleanOpts, step, blank, sanitize, list, get, save, remove, duplicate, touch, move, ui, setUi, encode, decode, starters };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.AW = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -1,0 +1,28 @@
+// Node test of user-made variables (js/164-workspace-vars.js + the engine's variable handling). Run: node tests/workspace_vars_test.js
+const store = {}; global.localStorage = { getItem: k => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v); } };
+global.AW = require('../apps/birth-chart/js/160-workspace-engine.js'); const AWV = require('../apps/birth-chart/js/164-workspace-vars.js');
+let fail = 0; const ok = (n, c, d) => { console.log((c ? 'ok   ' : 'FAIL ') + n + (c ? '' : ' ' + (d || ''))); if (!c) fail++; };
+const v = AWV.sanitize({ name: '  My marriage planet  ', start: 'role:DK', steps: [{ op: 'lord' }, { op: 'bogus' }, { op: 'from', n: 99 }, { op: 'nak' }] });
+ok('name trimmed, bad step dropped, house number clamped', v.name === 'My marriage planet' && v.steps.length === 3 && v.steps[1].n === 12, JSON.stringify(v.steps));
+ok('id is cv:xxxx', /^cv:[a-z0-9]{4,12}$/.test(v.id), v.id);
+ok('description reads in plain English', AWV.describe(v) === 'Darakaraka, then the lord of the sign it stands in, then the 12th house from it, then its nakshatra lord', AWV.describe(v));
+const p = AWV.sanitize({ name: 'Best', pick: { m: 'shadbala', d: 'max', among: 'Jupiter,Venus,Venus,bad id!,Mercury' } });
+ok('pick keeps valid unique points only', p.pick.among === 'Jupiter,Venus,Mercury' && p.start === null, JSON.stringify(p.pick));
+ok('pick description', /^The strongest \(by Shadbala\) of Jupiter, Venus and Mercury$/.test(AWV.describe(p)), AWV.describe(p));
+ok('unknown start falls back, junk is refused', AWV.sanitize({ start: '<img>' }).start === 'role:AK' && AWV.sanitize(null) === null);
+const many = { name: 'x', start: 'Sun', steps: Array.from({ length: 20 }, () => ({ op: 'lord' })) }; ok('steps capped', AWV.sanitize(many).steps.length === AWV.MAXSTEP);
+AWV.save(v); AWV.save(p); ok('saved and listed', AWV.list().length === 2 && AWV.get(v.id).name === 'My marriage planet');
+ok('engine lists custom variables in the picker list', AW.subjectList().filter(x => x[2] === 'My variables').length === 2 && AW.subjectList().length === AW.SUBJECTS.length + 2);
+ok('engine accepts cv ids in options', AW.cleanOpts('locate', { subject: v.id, varga: 'D9' }).subject === v.id && AW.cleanOpts('points', { subjects: 'Sun,' + p.id }).subjects === 'Sun,' + p.id && AW.cleanOpts('planetreading', { planet: v.id }).planet === v.id);
+ok('engine still refuses nonsense ids', AW.cleanOpts('locate', { subject: 'cv:' }).subject === 'role:AK' && AW.cleanOpts('locate', { subject: 'zzz' }).subject === 'role:AK');
+const nested = AWV.sanitize({ name: 'Outer', start: v.id }); AWV.save(nested);
+const r = AW.blank('R'); r.steps.push(AW.step('w', 'locate', { subject: nested.id, varga: 'D9' }), AW.step('w', 'points', { subjects: 'Sun,' + p.id }));
+const used = AWV.collect(r); ok('routine collects the variables it uses, nested ones too', used.length === 3 && used.map(x => x.name).sort().join() === 'Best,My marriage planet,Outer', used.map(x => x.name));
+const code = AW.encode(r, used); const back = AW.decode(code);
+ok('share code carries the variables', back.vars && back.vars.length === 3);
+for (const k of Object.keys(store)) delete store[k];
+const map = AWV.importDefs(back.vars); AWV.remapRoutine(back, map);
+ok('import re-issues ids and remaps the routine', AWV.list().length === 3 && !Object.keys(map).some(o => AWV.get(o)) && back.steps[0].o.subject === map[nested.id] && AWV.get(back.steps[0].o.subject).start === map[v.id], JSON.stringify(map));
+ok('names survive import', AWV.get(map[v.id]).name === 'My marriage planet' && AWV.describe(AWV.get(back.steps[0].o.subject)).indexOf('My marriage planet') === 0);
+AWV.remove(map[v.id]); ok('remove works', !AWV.get(map[v.id]));
+console.log(fail ? fail + ' FAILED' : 'ALL PASS'); process.exit(fail ? 1 : 0);

@@ -240,3 +240,19 @@ body.aw-present .aw-sbody{font-size:1.06rem}
 .aw-sc button{min-height:44px;padding:0 13px;border-radius:12px;border:1px solid var(--aw-line);background:rgba(255,255,255,.05);font-size:.8rem;color:inherit;text-transform:none;letter-spacing:0;font-weight:500}
 .aw-sc button.on{background:rgba(212,175,55,.22);border-color:var(--aw-gold);color:#fff;font-weight:700}
 .aw-menu small{color:var(--aw-mu)}
+
+/* my variables */
+.aw-vars{margin-top:26px}.aw-vars .aw-sech{align-items:center}
+.aw-vgrid{display:grid;gap:12px}@media(min-width:680px){.aw-vgrid{grid-template-columns:1fr 1fr}}
+.aw-vc{display:flex;border-radius:16px;border:1px solid var(--aw-line);background:rgba(255,255,255,.035);overflow:hidden;animation:awIn .4s both}
+.aw-vc-main{flex:1;min-width:0;text-align:left;background:none;border:0;padding:14px;min-height:64px;display:flex;flex-direction:column;gap:3px}
+.aw-vc-main b{font-size:.96rem}.aw-vc-main em{font-style:normal;color:var(--aw-gold);font-size:.84rem;font-weight:700}.aw-vc-main em.bad{color:#ffb4b4;font-weight:500;font-size:.76rem}.aw-vc-main small{color:var(--aw-mu);font-size:.76rem;line-height:1.4}
+.aw-vc-act{display:flex;flex-direction:column;border-left:1px solid var(--aw-line)}.aw-vc-act button{flex:1;min-width:64px;min-height:44px;background:none;border:0;border-bottom:1px solid var(--aw-line);font-size:.8rem;font-weight:600;color:#d9d2c0}.aw-vc-act button:last-child{border-bottom:0}
+.aw-empty-s{padding:16px;border:1px dashed var(--aw-line2);border-radius:14px;color:var(--aw-mu);font-size:.86rem;line-height:1.55}
+.aw-vdesc{padding:12px 14px;border-radius:12px;background:rgba(212,175,55,.08);border:1px solid var(--aw-line2);font-size:.88rem;line-height:1.5;color:#f0e2a8}
+.aw-vs{grid-template-columns:26px 1fr;grid-template-areas:"n t" "a a"}.aw-vs .aw-n{grid-area:n}.aw-vsel{grid-area:t;display:grid;gap:8px}
+.aw-two2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.aw-lab select{width:100%;min-height:46px;padding:0 12px;border-radius:12px;border:1px solid var(--aw-line2);background:rgba(0,0,0,.35);color:var(--aw-tx);font:inherit;font-size:16px;text-transform:none;letter-spacing:0;font-weight:400}
+.aw-vsel select{width:100%;min-height:46px;padding:0 12px;border-radius:12px;border:1px solid var(--aw-line2);background:rgba(0,0,0,.35);color:var(--aw-tx);font:inherit;font-size:16px}
+.aw-mini{min-height:44px;padding:0 10px;border-radius:12px;border:1px solid var(--aw-line2);background:rgba(0,0,0,.35);color:var(--aw-tx);font:inherit;font-size:16px}
+.aw-sc0{padding:10px 0 0}

@@ -14,6 +14,8 @@
   const SKIPPED = { 'panel-home': 1, 'panel-export': 1, 'panel-contact': 1, 'panel-workspace': 1, 'panel-tools': 1 };
   let root = null, bound = false, toastT = 0, sheetEl = null, toastEl = null, exitEl = null, imported = '';
 
+  const SUBJ_KEYS = ['subject', 'subjects', 'planet'];
+  const valuesOf = x => SUBJ_KEYS.indexOf(x.k) >= 0 && window.AWV ? x.values.concat(AWV.list().map(v => [v.id, v.name, 'My variables'])) : x.values;
   const tools = () => (typeof HOME_ITEMS !== 'undefined' ? HOME_ITEMS : []).filter(i => !SKIPPED[i[0]]);
   const toolOf = id => tools().find(i => i[0] === id);
   const chart = () => (typeof currentChartForModal !== 'undefined' ? currentChartForModal : null);
@@ -26,14 +28,14 @@
     if (s.label) return s.label;
     if (s.k === 'p'){ const t = toolOf(s.t); return t ? t[2] : 'Tool'; }
     const w = AW.WMAP[s.t]; if (!w) return 'Missing card'; const o = s.o || {};
-    const sl = id => { const x = (AW.SUBJECTS || []).find(q => q[0] === id); return x ? x[1].replace(/ \(.*$/, '') : id; };
+    const sl = id => { const x = (AW.subjectList ? AW.subjectList() : AW.SUBJECTS || []).find(q => q[0] === id); return x ? x[1].replace(/ \(.*$/, '') : id; };
     const bit = s.t === 'chart2' ? ' · ' + o.a + ' and ' + o.b : o.subject ? ' · ' + sl(o.subject) + (o.varga ? ' in ' + o.varga : '') : o.subjects ? ' · ' + String(o.subjects).split(',').length + ' points in ' + o.varga : o.varga ? ' · ' + o.varga : o.house ? ' · house ' + o.house : o.planet ? ' · ' + sl(o.planet) : '';
     return w.name + bit;
   }
   function stepSummary(s){
     if (s.k === 'p'){ const t = toolOf(s.t); return t ? 'Tool · ' + t[3] : 'This tool is not in this version.'; }
     const w = AW.WMAP[s.t]; if (!w) return 'This card is not in this version.';
-    const bits = w.options.filter(x => x.values).map(x => { const v = (s.o || {})[x.k]; if (x.k === 'subjects') return String(v || '').split(',').filter(Boolean).length + ' points'; const p = x.values.find(q => q[0] === v); return p ? p[1].replace(/ \(.*$/, '') : ''; }).filter(Boolean);
+    const bits = w.options.filter(x => x.values).map(x => { const v = (s.o || {})[x.k]; if (x.k === 'subjects') return String(v || '').split(',').filter(Boolean).length + ' points'; const p = valuesOf(x).find(q => q[0] === v); return p ? p[1].replace(/ \(.*$/, '') : ''; }).filter(Boolean);
     return bits.length ? bits.join(' · ') : w.about;
   }
   function toast(msg, undo){
@@ -73,10 +75,55 @@
     if (imported){ h += `<div class="aw-banner">Imported from a link: <b>${esc(imported)}</b>. It is in your list below.</div>`; imported = ''; }
     if (!all.length) h += `<div class="aw-empty"><b>No routines yet</b><p>Make your first one, or bring back the starter set.</p><button type="button" class="aw-btn pri" data-act="starters">Add the starter routines</button></div>`;
     else h += `<section class="aw-grid">${sorted.map((r, i) => `<article class="aw-rc${r.pin ? ' pin' : ''}" style="--c:${esc(r.color)};--d:${Math.min(i, 8) * 45}ms"><button type="button" class="aw-rc-main" data-act="open" data-id="${esc(r.id)}" aria-label="Open ${esc(r.name)}"><span class="aw-rc-top"><span class="aw-ic">${esc(r.icon)}</span><b>${esc(r.name)}</b>${r.pin ? '<em title="Pinned">★</em>' : ''}</span>${r.note ? `<span class="aw-rc-note">${esc(r.note)}</span>` : ''}<span class="aw-rc-steps">${r.steps.slice(0, 9).map(s => `<i title="${esc(stepTitle(s))}">${esc(stepIcon(s))}</i>`).join('')}${r.steps.length > 9 ? `<i class="more">+${r.steps.length - 9}</i>` : ''}</span><span class="aw-rc-meta">${r.steps.length} step${r.steps.length === 1 ? '' : 's'}${r.uses ? ' · opened ' + r.uses + '×' : ''}${r.layout === 'board' ? ' · board' : ''}</span></button><span class="aw-rc-act"><button type="button" data-act="edit" data-id="${esc(r.id)}">Edit</button><button type="button" data-act="share" data-id="${esc(r.id)}">Share</button><button type="button" data-act="more" data-id="${esc(r.id)}" aria-label="More">⋯</button></span></article>`).join('')}</section>`;
+    h += varsSection();
     h += `<p class="aw-foot">Routines are saved on this device only. They hold no birth details, only what you check and in what order.</p>`;
     set(h); AW.setUi({ lastView: 'list' });
   }
 
+  function varsSection(){
+    if (!window.AWV) return '';
+    const vs = AWV.list(), c = chart(), pf = prof();
+    const cards = vs.map(v => { let res = ''; if (c){ const r = AWP.resolve(v.id, c, pf); res = r.err ? `<em class="bad">${esc(r.err)}</em>` : `<em>= ${esc(r.planet || SIGN[r.sign])}${r.kind === 'sign' ? ' (sign)' : ''}</em>`; } return `<article class="aw-vc"><button type="button" class="aw-vc-main" data-act="editvar" data-id="${esc(v.id)}"><b>${esc(v.name)}</b>${res}<small>${esc(AWV.describe(v))}.</small></button><span class="aw-vc-act"><button type="button" data-act="findvar" data-id="${esc(v.id)}">Find</button><button type="button" data-act="editvar" data-id="${esc(v.id)}">Edit</button></span></article>`; }).join('');
+    return `<section class="aw-vars"><div class="aw-sech"><h3>My variables</h3><button type="button" class="aw-btn sm" data-act="newvar">＋ New variable</button></div>${vs.length ? `<div class="aw-vgrid">${cards}</div>` : `<p class="aw-empty-s">Make your own: for example "my marriage planet" = the lord of the sign the Darakaraka stands in. Then find it in D9 or any chart, or use it in a routine.</p>`}</section>`;
+  }
+  function viewVar(id){
+    const v = AWV.get(id); if (!v){ viewList(); return; }
+    ST.view = 'var'; ST.vid = id; restoreAll(); drawVar(true);
+  }
+  function varPreview(){
+    const el = $('#awVPrev'), v = AWV.get(ST.vid); if (!el || !v) return;
+    const c = chart(), vg = ST.vvarga || 'D9';
+    el.innerHTML = c ? AWW.render('locate', c, prof(), { subject: v.id, varga: vg, style: 'north' }) : '<p class="aw-msg">Cast a chart to see what this variable equals.</p>';
+    const d = $('#awVDesc'); if (d) d.textContent = AWV.describe(v) + '.';
+  }
+  function varStepsHtml(v){
+    return v.steps.length ? v.steps.map((s, i) => `<li class="aw-es aw-vs" data-i="${i}"><span class="aw-n">${i + 1}</span><div class="aw-vsel"><select data-vf="op" data-i="${i}" aria-label="Step ${i + 1}"><option value="lord"${s.op === 'lord' ? ' selected' : ''}>Then: the lord of its sign</option><option value="nak"${s.op === 'nak' ? ' selected' : ''}>Then: its nakshatra lord</option><option value="from"${s.op === 'from' ? ' selected' : ''}>Then: the Nth house from it</option></select>${s.op === 'from' ? `<select data-vf="n" data-i="${i}" aria-label="Which house">${Array.from({ length: 12 }, (_, k) => `<option value="${k + 1}"${s.n === k + 1 ? ' selected' : ''}>${k === 0 ? 'the same sign (1st)' : AWP.ORD(k + 1) + ' from it'}</option>`).join('')}</select>` : ''}</div><span class="aw-es-a"><button type="button" data-act="vup" data-i="${i}" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>▲</button><button type="button" data-act="vdown" data-i="${i}" aria-label="Move down" ${i === v.steps.length - 1 ? 'disabled' : ''}>▼</button><button type="button" class="x" data-act="vdel" data-i="${i}" aria-label="Remove step">✕</button></span></li>`).join('') : '<li class="aw-es-empty">No steps: the variable is just its start. Add a step to follow a rule.</li>';
+  }
+  function drawVar(full){
+    const v = AWV.get(ST.vid); if (!v) return;
+    const mode = v.pick ? 'pick' : 'one';
+    if (!full && $('#awVSteps')){ $('#awVSteps').innerHTML = varStepsHtml(v); varPreview(); return; }
+    const startSel = AW.WMAP.locate.options[0];
+    set(`<div class="aw-var"><div class="aw-topbar"><button type="button" class="aw-ib" data-act="vdone" aria-label="Done">‹</button><div class="aw-tt"><b>My variable</b><small>Saved as you type</small></div><button type="button" class="aw-btn pri sm" data-act="findvar" data-id="${esc(v.id)}">Find it</button></div>
+      <div class="aw-form"><label class="aw-lab">Name<input data-vf="name" type="text" maxlength="40" value="${esc(v.name)}" autocomplete="off"></label>
+      <p class="aw-vdesc" id="awVDesc">${esc(AWV.describe(v))}.</p>
+      <div class="aw-lab">Start from<div class="aw-seg wide"><button type="button" data-act="vmode" data-v="one" class="${mode === 'one' ? 'on' : ''}">One point</button><button type="button" data-act="vmode" data-v="pick" class="${mode === 'pick' ? 'on' : ''}">Pick the best of several</button></div></div>
+      ${mode === 'one' ? `<label class="aw-lab">Which point${selectHtml(startSel, v.start).replace('data-opt="subject"', 'data-vf="start"')}</label>` :
+      `<div class="aw-two2"><label class="aw-lab">Measure<select data-vf="pm"><option value="shadbala"${v.pick.m === 'shadbala' ? ' selected' : ''}>By Shadbala strength</option><option value="degree"${v.pick.m === 'degree' ? ' selected' : ''}>By degree in its sign</option></select></label><label class="aw-lab">Take the<select data-vf="pd"><option value="max"${v.pick.d === 'max' ? ' selected' : ''}>${v.pick.m === 'shadbala' ? 'Strongest' : 'Highest degree'}</option><option value="min"${v.pick.d === 'min' ? ' selected' : ''}>${v.pick.m === 'shadbala' ? 'Weakest' : 'Lowest degree'}</option></select></label></div><div class="aw-lab">Among<div id="awVAmong">${amongChips(v.pick.among)}</div></div>`}
+      </div>
+      <div class="aw-sech"><h3>Then follow these steps</h3><span>${v.steps.length} of ${AWV.MAXSTEP}</span></div><ol class="aw-es-list" id="awVSteps">${varStepsHtml(v)}</ol>
+      <button type="button" class="aw-add" data-act="vadd">＋ Add a step</button>
+      <div class="aw-sech"><h3>What it equals now</h3><select id="awVVarga" class="aw-mini" aria-label="Chart">${AW.VARGA_KEYS.map(k => `<option value="${k}"${(ST.vvarga || 'D9') === k ? ' selected' : ''}>${k}</option>`).join('')}</select></div>
+      <div class="aw-step ready aw-fstep"><div class="aw-sbody" id="awVPrev"></div></div>
+      <div class="aw-ed-foot"><button type="button" class="aw-btn" data-act="vdup" data-id="${esc(v.id)}">Duplicate</button><button type="button" class="aw-btn danger" data-act="vremove" data-id="${esc(v.id)}">Delete</button></div></div>`);
+    varPreview();
+  }
+  function amongChips(cur){
+    const on = String(cur || '').split(',').filter(Boolean), list = AW.subjectList().filter(x => x[0] !== ST.vid && /^(Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu|role:|lord:|dasha:|nak:|cv:)/.test(x[0]));
+    const presets = [['Benefics', 'Jupiter,Venus,Mercury,Moon'], ['Malefics', 'Sun,Mars,Saturn'], ['Seven planets', 'Sun,Moon,Mars,Mercury,Jupiter,Venus,Saturn'], ['Karakas', 'role:AK,role:AmK,role:BK,role:MK,role:PuK,role:GK,role:DK']];
+    return `<div class="aw-presets">${presets.map(p => `<button type="button" data-act="vpreset" data-v="${p[1]}">${p[0]}</button>`).join('')}</div><div class="aw-sc aw-sc0">${list.map(x => `<button type="button" data-act="vtoggle" data-v="${esc(x[0])}" aria-pressed="${on.indexOf(x[0]) >= 0}" class="${on.indexOf(x[0]) >= 0 ? 'on' : ''}">${esc(x[1].replace(/ \(.*$/, ''))}</button>`).join('')}</div>`;
+  }
+  function varMut(fn){ const v = AWV.get(ST.vid); if (!v) return; fn(v); AWV.save(v); }
   function viewRun(id, startAt){
     const r = AW.get(id); if (!r){ viewList(); return; }
     if (ST.rid !== id){ AW.touch(id); } ST.rid = id; ST.view = 'run'; ST.layout = r.layout; ST.step = Math.max(0, Math.min(r.steps.length - 1, startAt || 0)); AW.setUi({ last: id }); restoreAll();
@@ -168,7 +215,7 @@
       <div class="aw-form"><label class="aw-lab">Point to find${selectHtml(subj, f.subject).replace('data-opt="subject"', 'id="awFSubj"')}</label>
       <div class="aw-lab">Look in<div class="aw-seg wide"><button type="button" data-act="fmode" data-v="one" class="${f.mode === 'one' ? 'on' : ''}">One chart</button><button type="button" data-act="fmode" data-v="all" class="${f.mode === 'all' ? 'on' : ''}">All 23 charts</button></div></div>
       <label class="aw-lab" id="awFindChart"${f.mode === 'all' ? ' hidden' : ''}>Divisional chart${selectHtml(vg, f.varga).replace('data-opt="varga"', 'id="awFVarga"')}</label></div>
-      <div class="aw-step ready aw-fstep"><div class="aw-sbody" id="awFindOut"></div></div></div>`);
+      <div class="aw-step ready aw-fstep"><div class="aw-sbody" id="awFindOut"></div></div><button type="button" class="aw-btn full" data-act="newvar">＋ Make my own variable</button></div>`);
     findOut();
   }
 
@@ -199,13 +246,13 @@
 
   function subjChips(cur){
     const on = String(cur || '').split(',').filter(Boolean), groups = [];
-    AW.SUBJECTS.forEach(x => { let g = groups.find(q => q[0] === x[2]); if (!g){ g = [x[2], []]; groups.push(g); } g[1].push(x); });
+    AW.subjectList().forEach(x => { let g = groups.find(q => q[0] === x[2]); if (!g){ g = [x[2], []]; groups.push(g); } g[1].push(x); });
     return `<div class="aw-presets">${AW.SUBJ_PRESETS.map(p => `<button type="button" data-act="preset" data-v="${esc(p[1])}">${esc(p[0])}</button>`).join('')}<button type="button" data-act="preset" data-v="">Clear</button></div>` + groups.map(g => `<details class="aw-sg"${g[1].some(x => on.indexOf(x[0]) >= 0) ? ' open' : ''}><summary>${esc(g[0])}<em>${g[1].filter(x => on.indexOf(x[0]) >= 0).length || ''}</em></summary><div class="aw-sc">${g[1].map(x => `<button type="button" data-act="subjtoggle" data-v="${esc(x[0])}" aria-pressed="${on.indexOf(x[0]) >= 0}" class="${on.indexOf(x[0]) >= 0 ? 'on' : ''}">${esc(x[1].replace(/ \(.*$/, ''))}</button>`).join('')}</div></details>`).join('');
   }
   function selectHtml(x, val){
-    const grouped = x.values.length && x.values[0][2], opts = grouped ? x.values.reduce((a, v) => { (a[v[2]] = a[v[2]] || []).push(v); return a; }, {}) : null;
+    const vals = valuesOf(x), grouped = vals.length && vals[0][2], opts = grouped ? vals.reduce((a, v) => { (a[v[2]] = a[v[2]] || []).push(v); return a; }, {}) : null;
     const one = v => `<option value="${esc(v[0])}"${val === v[0] ? ' selected' : ''}>${esc(v[1])}</option>`;
-    return `<select data-opt="${esc(x.k)}">${grouped ? Object.keys(opts).map(g => `<optgroup label="${esc(g)}">${opts[g].map(one).join('')}</optgroup>`).join('') : x.values.map(one).join('')}</select>`;
+    return `<select data-opt="${esc(x.k)}">${grouped ? Object.keys(opts).map(g => `<optgroup label="${esc(g)}">${opts[g].map(one).join('')}</optgroup>`).join('') : vals.map(one).join('')}</select>`;
   }
   function optionsHtml(w, o){
     return w.options.map(x => x.k === 'subjects' ? `<div class="aw-lab">${esc(x.label)}<div id="awSubj">${subjChips(o[x.k])}</div></div>` : x.values ? `<label class="aw-lab">${esc(x.label)}${selectHtml(x, o[x.k])}</label>` : `<label class="aw-lab">${esc(x.label)}<textarea data-opt="${esc(x.k)}" rows="5" maxlength="1200" placeholder="Write a line or a checklist. Start a line with - for a tick box.">${esc(o[x.k] || '')}</textarea></label>`).join('');
@@ -232,18 +279,20 @@
   }
 
   function shareSheet(id){
-    const r = AW.get(id); if (!r) return; const code = AW.encode(r), link = location.href.split('#')[0] + '#w=' + code;
+    const r = AW.get(id); if (!r) return; const code = AW.encode(r, window.AWV ? AWV.collect(r) : []), link = location.href.split('#')[0] + '#w=' + code;
     sheet('Share "' + r.name + '"', `<p class="aw-dim">Anyone who opens this code gets the same routine, ready for their own charts. It holds no birth details.</p><textarea class="aw-code" id="awCode" rows="4" readonly>${esc(code)}</textarea><div class="aw-sh-act"><button type="button" class="aw-btn pri" data-act="sharecode" data-id="${esc(id)}">Share the code</button><button type="button" class="aw-btn" data-act="sharelink" data-id="${esc(id)}">Share as a link</button><button type="button" class="aw-btn" data-act="dl" data-id="${esc(id)}">Save as a file</button></div>`, '');
   }
   function importSheet(){
     sheet('Import routines', `<p class="aw-dim">Paste a routine code, a link, or the contents of a backup file.</p><textarea class="aw-code" id="awImp" rows="5" placeholder="AW1.…" autocomplete="off"></textarea><div class="aw-sh-act"><button type="button" class="aw-btn pri" data-act="doimport">Import</button><label class="aw-btn file">Choose a file<input type="file" id="awFile" accept=".json,.txt,application/json,text/plain" hidden></label></div>`, '');
   }
   function importText(t){
-    t = String(t || '').trim(); const found = []; let r;
-    if (t[0] === '['){ try { JSON.parse(t).forEach(x => { const d = AW.decode(JSON.stringify(x)); if (d) found.push(d); }); } catch (e) {} }
-    else if (/AW1\./.test(t)){ (t.match(/AW1\.[A-Za-z0-9_-]+/g) || []).forEach(c => { r = AW.decode(c); if (r) found.push(r); }); }
-    else { r = AW.decode(t); if (r) found.push(r); }
-    found.slice(0, 20).forEach(x => AW.save(x)); return found;
+    t = String(t || '').trim(); const found = []; let r, nv = 0;
+    const take = d => { if (!d) return; if (d.vars && window.AWV){ const map = AWV.importDefs(d.vars); nv += Object.keys(map).length; AWV.remapRoutine(d, map); } delete d.vars; found.push(d); };
+    if (t[0] === '['){ try { JSON.parse(t).forEach(x => take(AW.decode(JSON.stringify(x)))); } catch (e) {} }
+    else if (t[0] === '{' && /"routines"\s*:/.test(t)){ try { const o = JSON.parse(t); if (window.AWV && Array.isArray(o.vars) && !(o.routines || []).length){ nv += Object.keys(AWV.importDefs(o.vars)).length; } else if (window.AWV && Array.isArray(o.vars)){ const map = AWV.importDefs(o.vars); nv += Object.keys(map).length; (o.routines || []).forEach(x => { const d = AW.decode(JSON.stringify(x)); if (d){ AWV.remapRoutine(d, map); delete d.vars; found.push(d); } }); } else (o.routines || []).forEach(x => take(AW.decode(JSON.stringify(x)))); } catch (e) {} }
+    else if (/AW1\./.test(t)){ (t.match(/AW1\.[A-Za-z0-9_-]+/g) || []).forEach(c => take(AW.decode(c))); }
+    else take(AW.decode(t));
+    found.slice(0, 20).forEach(x => AW.save(x)); found.vars = nv; return found;
   }
   function moreSheet(id){
     const r = AW.get(id); if (!r) return;
@@ -275,10 +324,23 @@
       case 'more': moreSheet(id); break;
       case 'import': importSheet(); break;
       case 'finder': ST.find = null; viewFinder(); break;
+      case 'newvar': { const n = AWV.blank('My variable'); AWV.save(n); viewVar(n.id); break; }
+      case 'editvar': viewVar(id); break;
+      case 'vdone': ST.vid = null; viewList(); break;
+      case 'findvar': { ST.find = { subject: id, varga: 'D9', mode: 'one' }; AW.setUi({ find: ST.find }); viewFinder(); break; }
+      case 'vmode': varMut(v => { if (b.dataset.v === 'pick'){ v.pick = v.pick || { m: 'shadbala', d: 'max', among: 'Jupiter,Venus,Mercury,Moon' }; } else { v.pick = null; v.start = v.start || 'role:DK'; } }); drawVar(true); break;
+      case 'vadd': varMut(v => { if (v.steps.length >= AWV.MAXSTEP){ toast('Up to ' + AWV.MAXSTEP + ' steps.'); return; } v.steps.push({ op: 'lord' }); }); drawVar(true); break;
+      case 'vdel': varMut(v => { v.steps.splice(+b.dataset.i, 1); }); drawVar(true); break;
+      case 'vup': varMut(v => { AW.move(v.steps, +b.dataset.i, +b.dataset.i - 1); }); drawVar(true); break;
+      case 'vdown': varMut(v => { AW.move(v.steps, +b.dataset.i, +b.dataset.i + 1); }); drawVar(true); break;
+      case 'vpreset': varMut(v => { if (v.pick) v.pick.among = b.dataset.v; }); $('#awVAmong').innerHTML = amongChips((AWV.get(ST.vid).pick || {}).among); varPreview(); break;
+      case 'vtoggle': varMut(v => { if (!v.pick) return; let cur = v.pick.among.split(',').filter(Boolean); const k = cur.indexOf(b.dataset.v); if (k >= 0){ if (cur.length > 1) cur.splice(k, 1); else toast('Keep at least one point.'); } else if (cur.length < 12) cur.push(b.dataset.v); v.pick.among = cur.join(','); }); $('#awVAmong').innerHTML = amongChips((AWV.get(ST.vid).pick || {}).among); varPreview(); break;
+      case 'vdup': { const v = AWV.get(id); if (!v) break; const c = Object.assign({}, JSON.parse(JSON.stringify(v)), { id: AWV.uid(), name: (v.name + ' (copy)').slice(0, 40) }); const sv = AWV.save(c); toast('Duplicated.'); viewVar(sv.id); break; }
+      case 'vremove': { const gone = AWV.remove(id); if (!gone) break; ST.vid = null; viewList(); toast('Variable deleted.', () => { AWV.save(gone); viewList(); }); break; }
       case 'fmode': ST.find.mode = b.dataset.v; findOut(); break;
       case 'fquick': ST.find.subject = b.dataset.v; { const sel = $('#awFSubj'); if (sel) sel.value = ST.find.subject; } $$('.aw-quick button').forEach(k => k.classList.toggle('on', k === b)); findOut(); break;
       case 'addtopick': { const all = AW.list(); sheet('Add to which routine?', all.length ? `<div class="aw-menu">${all.map(r => `<button type="button" data-act="addto" data-id="${esc(r.id)}">${esc(r.icon)} ${esc(r.name)} <small>· ${r.steps.length} steps</small></button>`).join('')}</div>` : '<p class="aw-msg">Make a routine first.</p>', ''); break; }
-      case 'backup': download('astro-workspace-' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify(AW.list(), null, 1)); toast('Backup saved as a file.'); break;
+      case 'backup': download('astro-workspace-' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify({ routines: AW.list(), vars: window.AWV ? AWV.list() : [] }, null, 1)); toast('Backup saved as a file.'); break;
       case 'starters': AW.starters().reverse().forEach(s => AW.save(s)); AW.setUi({ seeded: 1 }); viewList(); break;
       case 'go': go(+b.dataset.i); break;
       case 'prev': go(ST.step - 1); break;
@@ -315,10 +377,10 @@
       case 'addto': { const r = AW.get(id), f = ST.find; if (!r || !f) break; if (r.steps.length >= AW.MAXSTEPS){ toast('A routine can hold ' + AW.MAXSTEPS + ' steps.'); break; } r.steps.push(f.mode === 'all' ? AW.step('w', 'locateall', { subject: f.subject }) : AW.step('w', 'locate', { subject: f.subject, varga: f.varga })); AW.save(r); closeSheet(); toast('Added to "' + r.name + '".'); break; }
       case 'share': closeSheet(); shareSheet(id); break;
       case 'dup': case 'pin': case 'del': closeSheet(); act(a, b, id); break;
-      case 'sharecode': { const r = AW.get(id); if (!r) break; const code = AW.encode(r); if (navigator.share){ navigator.share({ title: r.name, text: code }).catch(() => {}); } else copyText(code).then(ok => toast(ok ? 'Code copied.' : 'Select the code and copy it.')); break; }
-      case 'sharelink': { const r = AW.get(id); if (!r) break; const link = location.href.split('#')[0] + '#w=' + AW.encode(r); if (navigator.share){ navigator.share({ title: r.name, url: link }).catch(() => {}); } else copyText(link).then(ok => toast(ok ? 'Link copied.' : 'Could not copy the link.')); break; }
-      case 'dl': { const r = AW.get(id); if (r) download('routine-' + slug(r.name) + '.json', JSON.stringify(r, null, 1)); break; }
-      case 'doimport': { const f = importText(($('#awImp', sheetEl) || {}).value); if (!f.length){ toast('That does not look like a routine code.'); break; } closeSheet(); viewList(); toast(f.length === 1 ? 'Imported "' + f[0].name + '".' : 'Imported ' + f.length + ' routines.'); break; }
+      case 'sharecode': { const r = AW.get(id); if (!r) break; const code = AW.encode(r, window.AWV ? AWV.collect(r) : []); if (navigator.share){ navigator.share({ title: r.name, text: code }).catch(() => {}); } else copyText(code).then(ok => toast(ok ? 'Code copied.' : 'Select the code and copy it.')); break; }
+      case 'sharelink': { const r = AW.get(id); if (!r) break; const link = location.href.split('#')[0] + '#w=' + AW.encode(r, window.AWV ? AWV.collect(r) : []); if (navigator.share){ navigator.share({ title: r.name, url: link }).catch(() => {}); } else copyText(link).then(ok => toast(ok ? 'Link copied.' : 'Could not copy the link.')); break; }
+      case 'dl': { const r = AW.get(id); if (r) download('routine-' + slug(r.name) + '.json', JSON.stringify(Object.assign({}, r, { vars: window.AWV ? AWV.collect(r) : [] }), null, 1)); break; }
+      case 'doimport': { const f = importText(($('#awImp', sheetEl) || {}).value); if (!f.length && !f.vars){ toast('That does not look like a routine code.'); break; } closeSheet(); viewList(); toast(!f.length ? 'Imported ' + f.vars + ' variable' + (f.vars === 1 ? '.' : 's.') : f.length === 1 ? 'Imported "' + f[0].name + '".' : 'Imported ' + f.length + ' routines.'); break; }
     }
   }
   function onSheetInput(e){
@@ -328,6 +390,22 @@
     if (t.dataset && t.dataset.opt && ST.pick && ST.pick.cfg){ ST.pick.cfg.o[t.dataset.opt] = t.value; if (t.tagName === 'TEXTAREA'){ clearTimeout(onSheetInput.t); onSheetInput.t = setTimeout(previewCfg, 250); } else previewCfg(); }
   }
   function onInput(e){
+    if (ST.view === 'var' && ST.vid){
+      const t = e.target, f = t.dataset && t.dataset.vf;
+      if (t.id === 'awVVarga'){ ST.vvarga = t.value; varPreview(); return; }
+      if (!f) return;
+      varMut(v => {
+        if (f === 'name') v.name = t.value.slice(0, 40) || 'My variable';
+        else if (f === 'start') v.start = t.value;
+        else if (f === 'pm' && v.pick) v.pick.m = t.value;
+        else if (f === 'pd' && v.pick) v.pick.d = t.value;
+        else if (f === 'op'){ const s = v.steps[+t.dataset.i]; if (s){ s.op = t.value; if (s.op === 'from') s.n = s.n || 7; else delete s.n; } }
+        else if (f === 'n'){ const s = v.steps[+t.dataset.i]; if (s) s.n = +t.value; }
+      });
+      if (f === 'name') { const d = $('#awVDesc'); if (d) d.textContent = AWV.describe(AWV.get(ST.vid)) + '.'; return; }
+      if (f === 'pm' || f === 'op') drawVar(true); else varPreview();
+      return;
+    }
     if (ST.view === 'finder' && ST.find){ if (e.target.id === 'awFSubj'){ ST.find.subject = e.target.value; $$('.aw-quick button').forEach(k => k.classList.toggle('on', k.dataset.v === ST.find.subject)); findOut(); } else if (e.target.id === 'awFVarga'){ ST.find.varga = e.target.value; findOut(); } return; }
     const r = ST.ed; if (!r) return;
     if (e.target.id === 'awName'){ r.name = e.target.value.slice(0, 60) || 'My routine'; persist(); }
@@ -361,6 +439,7 @@
     if (ST.view === 'run' && ST.rid && AW.get(ST.rid)) viewRun(ST.rid, ST.step);
     else if (ST.view === 'edit' && ST.ed) viewEdit(ST.ed.id);
     else if (ST.view === 'finder') viewFinder();
+    else if (ST.view === 'var' && ST.vid) viewVar(ST.vid);
     else viewList();
   }
   function leave(){ restoreAll(); present(false); closeSheet(); }
@@ -376,6 +455,6 @@
     };
   }
   /* a #w=AW1... link brings the routine in (a few bytes of work; nothing is drawn) */
-  try { const m = /[#&]w=(AW1\.[A-Za-z0-9_-]+)/.exec(location.hash || ''); if (m){ const r = AW.decode(m[1]); if (r){ AW.save(r); imported = r.name; } } } catch (e) {}
+  try { const m = /[#&]w=(AW1\.[A-Za-z0-9_-]+)/.exec(location.hash || ''); if (m){ const r = AW.decode(m[1]); if (r){ if (r.vars && window.AWV){ AWV.remapRoutine(r, AWV.importDefs(r.vars)); } delete r.vars; AW.save(r); imported = r.name; } } } catch (e) {}
   window.AWUI = { open: mount, openRoutine: id => { if (typeof switchAppTab === 'function') switchAppTab('panel-workspace'); setTimeout(() => viewRun(id), 0); }, restore: restoreAll };
 })();
