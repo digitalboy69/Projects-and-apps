@@ -1,0 +1,23 @@
+// Node test of the Workspace engine (js/160-workspace-engine.js): routines, storage, sharing code, starters. Run: node tests/workspace_engine_test.js
+const store = {}; global.localStorage = { getItem: k => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v); }, removeItem: k => { delete store[k]; } };
+const AW = require('../apps/birth-chart/js/160-workspace-engine.js');
+let fail = 0; const ok = (n, c, d) => { console.log((c ? 'ok   ' : 'FAIL ') + n + (c ? '' : ' ' + (d || ''))); if (!c) fail++; };
+ok('widgets listed with unique ids', AW.WIDGETS.length >= 20 && new Set(AW.WIDGETS.map(w => w.id)).size === AW.WIDGETS.length);
+ok('every widget group exists', AW.WIDGETS.every(w => AW.GROUPS.some(g => g[0] === w.group)));
+const r = AW.blank('My D9 check'); r.steps.push(AW.step('w', 'chart', { varga: 'D9', style: 'south' }), AW.step('w', 'chart', { varga: 'nonsense' }), AW.step('p', 'panel-dasha'), AW.step('w', 'note', { text: 'Ask about <b>work</b>\n- second line' }));
+ok('options are kept and cleaned', r.steps[0].o.varga === 'D9' && r.steps[0].o.style === 'south' && r.steps[1].o.varga === 'D1');
+AW.save(r); ok('saved and read back', AW.list().length === 1 && AW.get(r.id).steps.length === 4);
+const code = AW.encode(r); ok('share code starts AW1.', /^AW1\.[A-Za-z0-9_-]+$/.test(code), code.slice(0, 20));
+const back = AW.decode('hello ' + code + ' bye'); ok('code round-trips inside other text', back && back.name === 'My D9 check' && back.steps.length === 4 && back.steps[0].o.varga === 'D9' && back.steps[2].k === 'p' && back.id !== r.id);
+ok('note text survives, no markup trouble on decode', back.steps[3].o.text === 'Ask about <b>work</b>\n- second line');
+ok('json import works', AW.decode(JSON.stringify(r)) && AW.decode(JSON.stringify(r)).steps.length === 4);
+ok('garbage is refused', AW.decode('AW1.@@@') === null && AW.decode('hello') === null && AW.decode('{"x":') === null);
+ok('unsafe step ids are dropped', AW.sanitize({ name: 'x', steps: [{ k: 'p', t: '"><img src=x onerror=1>' }, { k: 'w', t: 'chart' }] }).steps.length === 1);
+const big = { name: 'big', steps: Array.from({ length: 80 }, () => ({ k: 'w', t: 'facts' })) }; ok('step count capped', AW.sanitize(big).steps.length === AW.MAXSTEPS);
+const d = AW.duplicate(r.id); ok('duplicate gets new ids and name', d && d.id !== r.id && /copy/.test(d.name) && d.steps[0].id !== r.steps[0].id && AW.list().length === 2);
+AW.touch(r.id); ok('touch counts a use', AW.get(r.id).uses === 1 && AW.get(r.id).used > 0);
+const arr = [1, 2, 3, 4]; AW.move(arr, 0, 2); ok('move reorders', arr.join() === '2,3,1,4');
+ok('remove returns the routine', AW.remove(d.id).id === d.id && AW.list().length === 1);
+const st = AW.starters(); ok('five starters, all steps valid', st.length === 5 && st.every(s => s.steps.length >= 4 && s.steps.every(x => AW.WMAP[x.t])));
+store[AW.KEY] = '{{broken'; ok('broken storage reads as empty', AW.list().length >= 0);
+console.log(fail ? fail + ' FAILED' : 'ALL PASS'); process.exit(fail ? 1 : 0);

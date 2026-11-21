@@ -7,6 +7,7 @@ const HOME_ITEMS=[
  ['panel-reading','📖','Chart Reading','Plain-language reading, life areas & timing','Your Chart','chart'],
  ['panel-problem','🧭','Problem Finder','Pick a life problem; see the chart reasons','Your Chart','chart'],
  ['panel-overview','◈','Overview','Birth chart & key details','Your Chart','chart'],
+ ['panel-workspace','🧰','Workspace','Your own routines: save the charts, dashas and tools you always check, in your order, and open them on any chart','Your Chart','workspace'],
  ['panel-avakahada','🪪','Avakahada Chakra','The standard kundli table: varna, yoni, gana, nadi, paya, name sounds','Your Chart','chart'],
  ['panel-planets','☉','Planets','Positions & aspects of every planet','Your Chart','chart'],
  ['panel-bhava','⌂','Bhava Chalit','Sripati house cusps & shifted planets','Your Chart','chart'],

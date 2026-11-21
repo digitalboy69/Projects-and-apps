@@ -211,13 +211,13 @@ Cross-app messages: Notepad → shell `postMessage('vedic-open-chart')`; the she
 
 ## 8. Auto-generated map (do not edit)
 <!-- AUTO:START (rewritten by build.py on every build; do not edit by hand) -->
-_Generated 2026-11-20 - 2410 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
+_Generated 2026-11-21 - 2489 symbols in `symbols.idx` (paths are real files now: `Read` them with offset/limit)._
 
 ### File map (lines / KB) - file names say what is inside
 
-**birth-chart** - 255 files, 36914 lines, 3139 KB
+**birth-chart** - 259 files, 37799 lines, 3228 KB
 ```
-index.html                                         680 lines   39 KB
+index.html                                         685 lines   39 KB
 js/01-dev-contact.js                                 7 lines    0 KB
 js/02-app-meta-layer.js                             74 lines    4 KB
 js/03-ephemeris-engine.js                          288 lines   14 KB
@@ -250,7 +250,7 @@ js/117-gulika.js                                    34 lines    3 KB
 js/118-choghadiya.js                                65 lines    6 KB
 js/119-avakahada.js                                 58 lines    6 KB
 js/12-yoga-detection.js                            117 lines    4 KB
-js/120-late-panels.js                               54 lines    5 KB
+js/120-late-panels.js                               55 lines    5 KB
 js/121-dosha.js                                     65 lines    7 KB
 js/122-today-for-you.js                             71 lines    9 KB
 js/123-prashna.js                                  133 lines   13 KB
@@ -280,7 +280,7 @@ js/143-synastry.js                                 135 lines   12 KB
 js/146-panchang-calendar.js                        169 lines   15 KB
 js/147-tools-hub.js                                117 lines   12 KB
 js/148-export-builder.js                           276 lines   27 KB
-js/149-feature-guide-data.js                       329 lines   44 KB
+js/149-feature-guide-data.js                       334 lines   46 KB
 js/15-chart-core-compute.js                        161 lines    7 KB
 js/150-feature-guide.js                             73 lines    7 KB
 js/151-bhavat-masterclass-data.js                   99 lines   13 KB
@@ -293,6 +293,9 @@ js/158-ai-index.js                                  87 lines   12 KB
 js/159-ai-engine.js                                213 lines   24 KB
 js/16-rectification-engine.js                       36 lines    2 KB
 js/160-ai-panel.js                                 172 lines   27 KB
+js/160-workspace-engine.js                         147 lines   13 KB
+js/161-workspace-widgets.js                        183 lines   17 KB
+js/162-workspace-ui.js                             338 lines   35 KB
 js/17-special-lagnas.js                            404 lines   23 KB
 js/18-ui-location-profiles.js                      124 lines    5 KB
 js/19-planets-panel.js                             236 lines   17 KB
@@ -301,7 +304,7 @@ js/21-transit-timer-tab.js                         101 lines    4 KB
 js/22-sandhi-table-tab.js                           69 lines    3 KB
 js/23-varga-timeline-tab.js                         79 lines    3 KB
 js/24-profile-backup.js                             80 lines    4 KB
-js/25-home-and-tabs.js                             177 lines   19 KB
+js/25-home-and-tabs.js                             178 lines   19 KB
 js/26-rectification-studio.js                      250 lines   14 KB
 js/27-date-finder-core.js                           50 lines    3 KB
 js/28-date-finder-engine.js                        186 lines   11 KB
@@ -472,6 +475,7 @@ css/82-varga-matrix.css                             86 lines    8 KB
 css/84-past-present-future.css                     129 lines   11 KB
 css/85-hora.css                                    175 lines   16 KB
 css/86-ai.css                                       67 lines   11 KB
+css/90-workspace.css                               205 lines   22 KB
 ```
 
 **developer** - 4 files, 183 lines, 13 KB
@@ -736,3 +740,4 @@ shared/quick-menu.js                               190 lines   17 KB
 - Birth Chart Export tab flicker fix: js/148 `ensurePages` used to flip through every unopened tool page (replaying the panel fade-in, jumping scroll, repainting the sticky bar per section). Now each page is tried once, html.exb-hold (css/79) holds animations at 0s while it happens, scroll is restored, and measuring paints once per ~25 ms batch. Test: tests/export_no_flicker_browser_test.py (samples panel opacity per frame).
 - PDF book fixes (2026-11-20): life-area paragraphs no longer double the "At its best / Under strain" wording (VMF already returns whole sentences); Bhava Chalit table reads `bc.place[n].chalit`; key-planet lists deduped; `lc()` keeps planet and yoga names capitalised (js/95, 96, 99); PDF page cuts use ceil and fall back to text-line boundaries (js/109); SAV chart average label moved to the top. Test: `tests/pdf_text_fixes_test.py`.
 - PDF intelligence (2026-11-20): js/110 `PDFI` adds page-cut rules (headings stay with text, orphans/widows 3, short paragraphs, rows, figures kept whole, repeating table headers) and `prepare()` marks the laid-out book; the PDF button now prints a real text PDF (sharp at any zoom); the old picture PDF (js/109) is only used in the app web view or with `?imgpdf`. Mid-sentence page ends fell from 32 to 6 in the demo book. Plan `docs/PDF_INTELLIGENCE_PLAN.md`, test `tests/pdf_intelligence_test.py`.
+- Astrologer Workspace tab (2026-11-21, docs/ASTRO_WORKSPACE_PLAN.md): new tab before Export. js/160 `AW` (routines in localStorage `vax_workspace_v1`, share code AW1., starters), js/161 `AWW` (22 native cards drawn from the chart), js/162 `AWUI` (list, editor, add-step sheet, Flow / Board / Present, share and import; any tool panel is moved into a step and put back), css/90-workspace.css. Built late (`registerLatePanel` plus `window.ensureLatePanel` in js/120), nothing runs until the tab opens. Tests: tests/workspace_engine_test.js, tests/workspace_browser_test.py; the tools hub test now expects seven tabs.

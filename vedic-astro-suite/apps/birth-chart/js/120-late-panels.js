@@ -14,6 +14,7 @@
     let h = ''; try { h = REG[id](ch, pf); } catch(e){ console.warn('late panel', id, e); h = '<div class="meta-err">This screen could not be built. Please refresh the page.</div>'; }
     const d = document.createElement('div'); d.className = 'app-panel'; d.id = id; d.innerHTML = h; r.appendChild(d);
   }
+  window.ensureLatePanel = ensure;
   if (typeof switchAppTab === 'function'){
     const _s = switchAppTab;
     /* Self-heal (once per page load): if a normal tool panel is missing although a chart is showing (it was drawn before that script had loaded, e.g. on a slow connection),

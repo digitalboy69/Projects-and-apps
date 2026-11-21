@@ -167,6 +167,10 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `apps/birth-chart/js/108-ashtakavarga-ui.js` — Ashtakavarga tab, PDF plates and report text (AVRUI)
 - `apps/birth-chart/js/109-pdf-download.js` — PDF DOWNLOAD (PDFD): turns the PDF book straight into a .pdf file with no print window (hidden A4 frame, page cuts at block ends, browser-drawn pages as JPEG, built-in PDF writer); PDFR falls back to print if it fails
 - `apps/birth-chart/js/110-pdf-intelligence.js` — PDF intelligence (PDFI): page-cut rules for the PDF book (headings stay with their text, no lone lines, short paragraphs and rows kept whole, repeating table headers); runs only when the book is printed.
+- `apps/birth-chart/js/160-workspace-engine.js` — Astrologer Workspace engine (AW): saved routines in localStorage, step and card catalogue, share code AW1., starter routines.
+- `apps/birth-chart/js/161-workspace-widgets.js` — Astrologer Workspace cards (AWW): charts, tables, dashas, transits, strength, yogas, readings drawn from the chart on screen.
+- `apps/birth-chart/js/162-workspace-ui.js` — Astrologer Workspace tab (AWUI): routine list, editor, add-step sheet, Flow / Board / Present views, share and import.
+- `apps/birth-chart/css/90-workspace.css` — styles of the Workspace tab (aw- classes).
 - `apps/birth-chart/js/111-problem-finder.js` — PROBLEM FINDER engine (PRB): areas of life, exact problems, trigger (outside/inside) and how it shows up (inner pain/real events); reads the chart and returns the reasons (houses, lords, planets, aspects, Ashtakavarga, running periods, today's sky); every line carries the chart fact it came from
 - `apps/birth-chart/js/112-problem-finder-ui.js` — Problem finder tab (PFUI): the five questions, the result screens, Home tile hook
 - `apps/birth-chart/js/113-date-entry.js` — type Day, Month, Year and AD/BC yourself (old and BC dates); inDobValue / inLoadDob; Julian calendar before 15 Oct 1582, accuracy notes, local-mean-time button
@@ -513,6 +517,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tests/pdf_report_test.py` — PDF report: 4 theme/paper variants x 4 charts clean and self-contained, sections/options, Studio dialog, real PDF render
 - `tests/pdf_text_fixes_test.py` — PDF text bugs: no doubled "At its best" wording, Bhava Chalit houses filled in, no repeated key planets, planet and yoga names keep their capitals.
 - `tests/pdf_intelligence_test.py` — prints the PDF book with Chromium, checks the text is real text and that pages end after a paragraph (compared with no rules).
+- `tests/workspace_engine_test.js` — node test of the Workspace engine: storage, share code, limits, starters.
+- `tests/workspace_browser_test.py` — browser test of the Workspace tab at 390 and 360 px: build a routine, open it on two charts, tool steps, Board, Present, share code, reload.
 - `tests/area_deep_test.py` — area deep dive: every quoted number vs the chart over 12 charts, wording rules, determinism, Deep reading/report/PDF wiring
 - `tests/house_now_test.py` — Right now: sky, dasha chain, signs, lords, Ashtakavarga and scores vs the engines at two dates over 12 charts, wording, first tab, report and PDF
 - `tests/planet_states_test.py` — planet states: tags vs the chart over 12 charts, every planet x state paragraph, wording, Planets tab, report and PDF wiring

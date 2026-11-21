@@ -6540,6 +6540,212 @@ i.aix-ref,.aix-ref{display:inline-block;margin:0 4px 4px 0;padding:1px 8px;borde
 .aix-sel{flex:1 1 170px}.aix-sel select{width:100%;min-width:0;text-overflow:ellipsis}
 .aix-paste{margin:0 0 16px;padding:12px;border-radius:16px;border:1.5px dashed rgba(94,196,183,.55);background:rgba(94,196,183,.06)}.aix-paste label{margin:0 0 8px!important;color:#9fd8d1!important}.aix-paste textarea{font:12px/1.45 var(--font-mono,monospace)!important}.aix-hint{display:block;margin-top:8px;font-size:11.5px;line-height:1.5;color:var(--mut)}.aix-paste .aix-note{margin:10px 0 0}.aix-note code{padding:0 5px;border-radius:5px;background:rgba(255,255,255,.08);font:11.5px var(--font-mono,monospace);overflow-wrap:anywhere}
 </style>
+<style>
+/* Astrologer Workspace tab (js/160-162). Prefix aw-. Dark and gold like the rest of the app. Only opacity/transform animate; no backdrop-filter; tap targets >= 44px. */
+.aw{--aw-bg:var(--bg-card,#0B0D14);--aw-line:rgba(212,175,55,.16);--aw-line2:rgba(212,175,55,.32);--aw-tx:var(--text-main,#EAE6DF);--aw-mu:var(--text-muted,#9F9A8F);--aw-gold:var(--gold,#D4AF37);--aw-g:#5EC4B7;--aw-r:#D95F5F;--aw-a:#E0A64A;color:var(--aw-tx);font-family:var(--font-sans,Inter,system-ui,sans-serif);padding:0 0 120px;max-width:980px;margin:0 auto}
+.aw *{box-sizing:border-box}
+.aw button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.aw h2,.aw h3,.aw h4,.aw p{margin:0}
+.aw-dim{color:var(--aw-mu)}.aw-sm{font-size:.74rem;margin-top:8px}
+.aw-msg{padding:14px 16px;border:1px dashed var(--aw-line2);border-radius:12px;color:var(--aw-mu);font-size:.86rem;line-height:1.5}
+
+/* hero */
+.aw-hero{position:relative;overflow:hidden;border-radius:22px;padding:26px 20px 22px;margin:4px 0 18px;background:radial-gradient(120% 140% at 100% 0%,rgba(138,111,184,.42),rgba(20,16,44,.1) 55%),linear-gradient(155deg,#1a1442 0%,#0d0b22 58%,#07060f 100%);border:1px solid var(--aw-line2);box-shadow:0 18px 40px -22px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.06)}
+.aw-hero::after{content:"";position:absolute;left:-40px;bottom:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.22),transparent 68%);pointer-events:none}
+.aw-mandala{position:absolute;right:-46px;top:-46px;width:210px;height:210px;color:var(--aw-gold);opacity:.2;pointer-events:none}
+.aw-hero small{display:block;letter-spacing:.22em;text-transform:uppercase;font-size:.66rem;color:var(--aw-gold);margin-bottom:6px}
+.aw-hero h2{font-family:var(--font-display,Cinzel,serif);font-size:1.7rem;line-height:1.15;letter-spacing:.02em;color:#fff}
+.aw-hero p{margin:8px 0 14px;max-width:34em;color:#cfc9bd;font-size:.9rem;line-height:1.55}
+.aw-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:99px;border:1px solid var(--aw-line2);background:rgba(0,0,0,.32);font-size:.76rem;color:#ece6d6}
+.aw-pill i{width:7px;height:7px;border-radius:50%;background:var(--aw-g);box-shadow:0 0 0 3px rgba(94,196,183,.18)}
+.aw-pill.off i{background:var(--aw-a);box-shadow:none}
+.aw-hero-act{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;position:relative;z-index:1}
+
+/* buttons */
+.aw-btn{min-height:44px;padding:0 18px;border-radius:12px;border:1px solid var(--aw-line2);background:rgba(255,255,255,.04);font-size:.88rem;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .15s,opacity .15s}
+.aw-btn:active{transform:scale(.97)}
+.aw-btn.pri{background:linear-gradient(135deg,#f3d36b,#c9a22e);color:#1b1503;border-color:transparent;box-shadow:0 8px 20px -10px rgba(212,175,55,.8)}
+.aw-btn.sm{min-height:40px;padding:0 14px}.aw-btn.full{width:100%;margin-top:14px}
+.aw-btn.danger{color:#ffb4b4;border-color:rgba(217,95,95,.45)}
+.aw-btn.file{position:relative}
+.aw-ib{width:44px;height:44px;flex:0 0 44px;border-radius:12px;border:1px solid var(--aw-line);background:rgba(255,255,255,.04);font-size:1.1rem;display:inline-flex;align-items:center;justify-content:center}
+.aw-ib.sm{width:44px;height:44px}
+.aw-banner{padding:12px 14px;border-radius:12px;border:1px solid rgba(94,196,183,.4);background:rgba(94,196,183,.08);font-size:.86rem;margin-bottom:14px}
+
+/* routine cards */
+.aw-grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:680px){.aw-grid{grid-template-columns:1fr 1fr}}
+.aw-rc{position:relative;border-radius:18px;background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.012)),var(--aw-bg);border:1px solid var(--aw-line);overflow:hidden;animation:awIn .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--d,0ms)}
+.aw-rc::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--c),transparent 85%)}
+.aw-rc.pin{border-color:var(--c)}
+.aw-rc-main{display:flex;flex-direction:column;gap:10px;width:100%;text-align:left;padding:18px 16px 12px;background:none;border:0;min-height:44px}
+.aw-rc-top{display:flex;align-items:center;gap:12px}
+.aw-rc-top b{font-size:1.05rem;font-weight:700;flex:1;line-height:1.25}
+.aw-rc-top em{color:var(--aw-gold);font-style:normal}
+.aw-ic{width:40px;height:40px;flex:0 0 40px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:1.15rem;background:color-mix(in srgb,var(--c,#D4AF37) 22%,transparent);color:var(--c,#D4AF37);border:1px solid color-mix(in srgb,var(--c,#D4AF37) 45%,transparent)}
+.aw-rc-note{font-size:.82rem;color:var(--aw-mu);line-height:1.45}
+.aw-rc-steps{display:flex;flex-wrap:wrap;gap:6px}
+.aw-rc-steps i{font-style:normal;min-width:30px;height:30px;padding:0 6px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:.92rem;background:rgba(255,255,255,.06);border:1px solid var(--aw-line)}
+.aw-rc-steps i.more{font-size:.72rem;color:var(--aw-mu)}
+.aw-rc-meta{font-size:.72rem;color:var(--aw-mu);letter-spacing:.04em}
+.aw-rc-act{display:flex;border-top:1px solid var(--aw-line)}
+.aw-rc-act button{flex:1;min-height:46px;background:none;border:0;border-right:1px solid var(--aw-line);font-size:.82rem;color:#d9d2c0;font-weight:600}
+.aw-rc-act button:last-child{flex:0 0 56px;border-right:0;font-size:1.2rem}
+.aw-rc-act button:active{background:rgba(255,255,255,.06)}
+.aw-empty{padding:30px 18px;text-align:center;border:1px dashed var(--aw-line2);border-radius:18px}
+.aw-empty b{display:block;font-size:1.05rem;margin-bottom:6px}.aw-empty p{color:var(--aw-mu);font-size:.88rem;margin-bottom:16px}
+.aw-foot{margin-top:22px;text-align:center;font-size:.74rem;color:var(--aw-mu)}
+@keyframes awIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* top bar, rail, stage */
+.aw-topbar{display:flex;align-items:center;gap:8px;padding:6px 0 10px;position:relative}
+.aw-modebar{margin:0 0 12px}
+.aw-tt{flex:1;min-width:0}.aw-tt b{display:block;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.aw-tt small{display:block;color:var(--aw-mu);font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aw-seg{display:inline-flex;border:1px solid var(--aw-line2);border-radius:12px;overflow:hidden;background:rgba(0,0,0,.25)}
+.aw-seg button{min-height:44px;padding:0 12px;border:0;background:none;font-size:.78rem;font-weight:600;color:var(--aw-mu)}
+.aw-seg button.on{background:linear-gradient(135deg,rgba(243,211,107,.9),rgba(201,162,46,.9));color:#1b1503}
+.aw-seg.wide{display:flex;width:100%}.aw-seg.wide button{flex:1}
+.aw-rail{position:relative;display:flex;gap:8px;overflow-x:auto;padding:4px 2px 14px;margin:0 -2px;scrollbar-width:none;scroll-snap-type:x proximity}
+.aw-rail::-webkit-scrollbar{display:none}
+.aw-rail button{flex:0 0 auto;scroll-snap-align:center;display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 12px 0 8px;border-radius:99px;border:1px solid var(--aw-line);background:rgba(255,255,255,.04);font-size:.78rem;color:var(--aw-mu);max-width:200px;transition:transform .2s,opacity .2s}
+.aw-rail button em{font-style:normal;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;background:rgba(255,255,255,.08)}
+.aw-rail button i{font-style:normal}
+.aw-rail button span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.aw-rail button.on{color:#1b1503;border-color:transparent;background:linear-gradient(135deg,var(--c,#f3d36b),#e8c75a);transform:scale(1.03)}
+.aw-rail button.on em{background:rgba(0,0,0,.18)}
+.aw-rail u{position:absolute;left:2px;right:2px;bottom:6px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--c,#D4AF37),var(--aw-g));transform-origin:left;transform:scaleX(0);transition:transform .45s cubic-bezier(.2,.8,.2,1);opacity:.7;pointer-events:none}
+.aw-step{border-radius:20px;background:linear-gradient(170deg,rgba(255,255,255,.05),rgba(255,255,255,.01)),var(--aw-bg);border:1px solid var(--aw-line);margin-bottom:16px;overflow:hidden;animation:awIn .45s cubic-bezier(.2,.8,.2,1) both}
+.aw-step>header{display:flex;align-items:center;gap:10px;padding:14px 14px 12px;border-bottom:1px solid var(--aw-line);background:linear-gradient(90deg,color-mix(in srgb,var(--c,#D4AF37) 14%,transparent),transparent 70%)}
+.aw-n{width:26px;height:26px;flex:0 0 26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.74rem;font-weight:700;background:var(--c,#D4AF37);color:#1b1503}
+.aw-step .aw-ic{width:34px;height:34px;flex-basis:34px;font-size:1rem;border-radius:10px}
+.aw-st{flex:1;min-width:0}.aw-st h3{font-size:.98rem;font-weight:700;line-height:1.25}.aw-st small{color:var(--aw-mu);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}
+.aw-snote{margin:0;padding:10px 16px;font-size:.84rem;color:#e8d9a6;background:rgba(212,175,55,.07);border-bottom:1px solid var(--aw-line);font-style:italic}
+.aw-sbody{padding:14px 14px 16px;min-height:60px}
+.aw-step.shut .aw-sbody{display:none}.aw-step.shut [data-act="fold"]{transform:rotate(-90deg)}
+.aw-skel{display:grid;gap:8px}.aw-skel i{height:14px;border-radius:7px;background:rgba(255,255,255,.07);animation:awPulse 1.2s ease-in-out infinite alternate}.aw-skel i:nth-child(2){width:80%}.aw-skel i:nth-child(3){width:55%}
+@keyframes awPulse{from{opacity:.35}to{opacity:.9}}
+.aw-step.ready .aw-skel{display:none}
+.aw-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0 12px}
+.aw-nav button{min-height:48px;padding:0 20px;border-radius:14px;border:1px solid var(--aw-line2);background:rgba(255,255,255,.05);font-weight:600;font-size:.9rem}
+.aw-nav button:last-child{background:linear-gradient(135deg,#f3d36b,#c9a22e);color:#1b1503;border-color:transparent}
+.aw-nav button:disabled{opacity:.35}
+.aw-nav span{font-size:.8rem;color:var(--aw-mu)}
+.aw-nav[hidden]{display:none}
+
+/* embedded real tool panels */
+.aw-sbody .app-panel.aw-embed{display:block!important;animation:none!important;padding:0;margin:0}
+.aw-sbody .app-panel.aw-embed>*{animation:none!important}
+
+/* native card widgets */
+.aw-chartbox{margin:0;text-align:center}
+.aw-svg{max-width:440px;margin:0 auto}.aw-svg svg{width:100%;height:auto;display:block}
+.aw-chartbox figcaption{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 12px;margin-top:8px;font-size:.78rem;color:var(--aw-mu)}.aw-chartbox figcaption b{color:var(--aw-gold);font-size:.9rem}
+.aw-two{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:760px){.aw-two{grid-template-columns:1fr 1fr}}
+.aw-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px;padding:0 4px}
+.aw-tbl{width:100%;border-collapse:collapse;font-size:.8rem;min-width:420px}
+.aw-tbl th{text-align:left;font-weight:600;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--aw-mu);padding:8px 8px;border-bottom:1px solid var(--aw-line2);white-space:nowrap}
+.aw-tbl td{padding:9px 8px;border-bottom:1px solid var(--aw-line);vertical-align:middle}
+.aw-tbl td.aw-f{font-weight:700;white-space:nowrap}
+.aw-tbl tr:last-child td{border-bottom:0}
+.aw-gl{font-style:normal;display:inline-block;width:1.4em;color:var(--aw-gold)}
+.aw-pn{display:inline-block;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.07);font-size:.74rem;margin:1px 2px 1px 0}
+.aw-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.aw-chip{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.7rem;font-weight:600;background:rgba(255,255,255,.07);border:1px solid var(--aw-line);color:#d9d2c0;margin:1px 3px 1px 0;white-space:nowrap}
+.aw-chip.g{background:rgba(94,196,183,.14);border-color:rgba(94,196,183,.45);color:#8fe0d5}
+.aw-chip.b{background:rgba(217,95,95,.14);border-color:rgba(217,95,95,.45);color:#ffa9a9}
+.aw-chip.m{background:rgba(224,166,74,.12);border-color:rgba(224,166,74,.4);color:#f0c98a}
+.aw-facts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(min-width:700px){.aw-facts{grid-template-columns:repeat(4,1fr)}}
+.aw-fact{padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--aw-line)}
+.aw-fact small{display:block;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--aw-mu)}
+.aw-fact b{display:block;font-size:1rem;margin:3px 0 1px;color:#fff}.aw-fact span{font-size:.72rem;color:var(--aw-mu)}
+.aw-dash{margin-bottom:14px}.aw-dh{display:flex;justify-content:space-between;font-size:.86rem;margin-bottom:6px}.aw-dh span{color:var(--aw-mu);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
+.aw-track{position:relative;height:10px;border-radius:6px;background:rgba(255,255,255,.08);overflow:visible}
+.aw-track i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:linear-gradient(90deg,#8a6fb8,#d4af37)}
+.aw-track.lo i{background:linear-gradient(90deg,#a64444,#e0a64a)}
+.aw-track u{position:absolute;top:-3px;bottom:-3px;width:2px;background:#fff;opacity:.7}
+.aw-dd{display:flex;justify-content:space-between;font-size:.7rem;color:var(--aw-mu);margin-top:5px}
+.aw-bars{display:grid;gap:10px}.aw-bar{display:grid;grid-template-columns:92px 1fr 62px;align-items:center;gap:10px;font-size:.82rem}
+.aw-bar b{text-align:right}.aw-bar small{color:var(--aw-mu);font-weight:400}
+.aw-cols{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;align-items:end}
+.aw-col{display:flex;flex-direction:column;align-items:center;gap:4px}.aw-col b{font-size:.7rem}.aw-col small{font-size:.64rem;color:var(--aw-mu)}
+.aw-ctrack{position:relative;width:100%;height:96px;border-radius:6px;background:rgba(255,255,255,.05);overflow:hidden}
+.aw-ctrack i{position:absolute;left:0;right:0;bottom:0;border-radius:5px 5px 0 0;background:linear-gradient(0deg,#8a6fb8,#b99de0)}
+.aw-ctrack i.hi{background:linear-gradient(0deg,#c9a22e,#f3d36b)}.aw-ctrack i.lo{background:linear-gradient(0deg,#6b675d,#9f9a8f)}
+.aw-ctrack u{position:absolute;left:0;right:0;height:0;border-top:1px dashed #fff;opacity:.6}
+.aw-list{display:grid;gap:10px}
+.aw-item{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.035);border:1px solid var(--aw-line)}
+.aw-it{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin-bottom:6px}.aw-it b{font-size:.92rem}.aw-it span{font-size:.74rem;color:var(--aw-mu)}
+.aw-item p{font-size:.84rem;line-height:1.55;color:#d9d2c0;margin-top:4px}
+.aw-yg summary{cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;min-height:30px;list-style:none}.aw-yg summary::-webkit-details-marker{display:none}.aw-yg summary b{font-size:.92rem}
+.aw-read p{font-size:.88rem;line-height:1.65;color:#ddd6c6;margin-bottom:10px}.aw-read p b{color:#fff}
+.aw-h{font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--aw-gold);margin:14px 0 6px}
+.aw-note{padding:4px 2px}.aw-note p{font-size:.92rem;line-height:1.6;margin-bottom:8px}
+.aw-nl{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:.92rem;line-height:1.45;border-bottom:1px solid var(--aw-line)}.aw-nl i{flex:0 0 18px;height:18px;border-radius:5px;border:1.5px solid var(--aw-gold);margin-top:2px}
+
+/* editor */
+.aw-form{display:grid;gap:14px;padding:6px 0 6px}
+.aw-lab{display:grid;gap:7px;font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--aw-mu);font-weight:600}
+.aw-lab input,.aw-lab select,.aw-lab textarea,.aw-search,.aw-code{width:100%;min-height:46px;padding:11px 13px;border-radius:12px;border:1px solid var(--aw-line2);background:rgba(0,0,0,.35);color:var(--aw-tx);font:inherit;font-size:16px;text-transform:none;letter-spacing:0;font-weight:400}
+.aw-lab textarea,.aw-code{resize:vertical;line-height:1.5}
+.aw-code{font-family:var(--font-mono,monospace);font-size:12px;word-break:break-all}
+.aw-lab input:focus,.aw-lab select:focus,.aw-lab textarea:focus,.aw-search:focus{outline:2px solid var(--aw-gold);outline-offset:1px}
+.aw-icons,.aw-swatches{display:flex;flex-wrap:wrap;gap:8px}
+.aw-icons button{width:46px;height:46px;border-radius:12px;border:1px solid var(--aw-line);background:rgba(255,255,255,.04);font-size:1.15rem}
+.aw-icons button.on{border-color:var(--aw-gold);background:rgba(212,175,55,.18)}
+.aw-swatches button{width:46px;height:46px;border-radius:50%;border:2px solid transparent;background:var(--k);box-shadow:inset 0 0 0 2px rgba(0,0,0,.35)}
+.aw-swatches button.on{border-color:#fff}
+.aw-sech{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px}.aw-sech h3{font-size:1rem;font-family:var(--font-display,Cinzel,serif);letter-spacing:.04em}.aw-sech span{font-size:.72rem;color:var(--aw-mu)}
+.aw-es-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.aw-es{display:grid;grid-template-columns:26px 40px 1fr;grid-template-areas:"n i t" "a a a";gap:8px 10px;align-items:center;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--aw-line);animation:awIn .35s both}
+.aw-es .aw-n{grid-area:n}.aw-es .aw-ic{grid-area:i}
+.aw-es-t{grid-area:t;text-align:left;background:none;border:0;min-height:44px;padding:0}
+.aw-es-t b{display:block;font-size:.92rem;line-height:1.3}.aw-es-t small{display:block;color:var(--aw-mu);font-size:.74rem;line-height:1.35;margin-top:2px}
+.aw-es-a{grid-area:a;display:flex;gap:8px;justify-content:flex-end}
+.aw-es-a button{width:48px;height:44px;border-radius:11px;border:1px solid var(--aw-line);background:rgba(255,255,255,.05);font-size:.9rem}
+.aw-es-a button:disabled{opacity:.3}.aw-es-a button.x{color:#ffb4b4}
+.aw-es-empty{padding:22px;text-align:center;color:var(--aw-mu);border:1px dashed var(--aw-line2);border-radius:16px;font-size:.88rem}
+.aw-add{width:100%;min-height:56px;margin-top:14px;border-radius:16px;border:1.5px dashed var(--aw-gold);background:rgba(212,175,55,.07);color:var(--aw-gold);font-weight:700;font-size:.98rem}
+.aw-ed-foot{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;justify-content:center}
+
+/* sheets and toast (on body) */
+.aw-sheet{position:fixed;inset:0;z-index:9700;display:none}
+.aw-sheet.on{display:block}
+.aw-sh-back{position:absolute;inset:0;background:rgba(2,2,8,.72);opacity:0;animation:awFade .25s forwards}
+.aw-sh-box{position:absolute;left:0;right:0;bottom:0;max-height:90vh;max-height:90dvh;display:flex;flex-direction:column;background:#0f1019;border:1px solid var(--aw-line2);border-bottom:0;border-radius:24px 24px 0 0;transform:translateY(100%);animation:awUp .38s cubic-bezier(.2,.8,.2,1) forwards;color:#eae6df;font-family:var(--font-sans,Inter,system-ui,sans-serif)}
+.aw-sheet.tall .aw-sh-box{height:90vh;height:90dvh}
+.aw-sh-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 6px 18px}.aw-sh-h b{font-size:1.05rem;font-family:var(--font-display,Cinzel,serif)}
+.aw-sh-b{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 16px 28px;display:flex;flex-direction:column;gap:12px}
+.aw-sh-b>*{flex:0 0 auto}
+@media(min-width:760px){.aw-sh-box{left:50%;right:auto;width:560px;bottom:auto;top:50%;border-radius:22px;border-bottom:1px solid var(--aw-line2);margin-left:-280px;transform:translateY(-46%);opacity:0;animation:awPop .3s cubic-bezier(.2,.8,.2,1) forwards;max-height:86vh}.aw-sheet.tall .aw-sh-box{height:auto;max-height:86vh}}
+@keyframes awFade{to{opacity:1}}@keyframes awUp{to{transform:none}}@keyframes awPop{to{transform:translateY(-50%);opacity:1}}
+html.aw-lock,html.aw-lock body{overflow:hidden}
+.aw-plist{display:grid;gap:8px}
+.aw-pr{display:flex;align-items:center;gap:12px;text-align:left;width:100%;min-height:58px;padding:10px 12px;border-radius:14px;border:1px solid var(--aw-line);background:rgba(255,255,255,.04);color:inherit;font:inherit}
+.aw-pr:active{background:rgba(212,175,55,.12)}
+.aw-pr b{display:block;font-size:.9rem}.aw-pr small{display:block;font-size:.74rem;color:var(--aw-mu);line-height:1.4;margin-top:2px}
+.aw-pr .aw-ic{--c:#D4AF37}
+.aw-chips-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}.aw-chips-row::-webkit-scrollbar{display:none}
+.aw-chips-row button{flex:0 0 auto;min-height:40px;padding:0 14px;border-radius:99px;border:1px solid var(--aw-line);background:rgba(255,255,255,.04);font-size:.78rem;color:inherit}
+.aw-chips-row button.on{background:var(--aw-gold);color:#1b1503;border-color:transparent;font-weight:700}
+.aw-opts{display:grid;gap:12px}
+.aw-prev{border:1px solid var(--aw-line);border-radius:16px;padding:12px;background:rgba(0,0,0,.25)}.aw-prev small{display:block;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--aw-mu);margin-bottom:8px}
+.aw-prev-b{max-height:340px;overflow:auto;border-radius:10px}
+.aw-sh-act{display:flex;flex-wrap:wrap;gap:10px}
+.aw-menu{display:grid;gap:8px}.aw-menu button{min-height:52px;text-align:left;padding:0 16px;border-radius:14px;border:1px solid var(--aw-line);background:rgba(255,255,255,.05);font-size:.95rem;color:inherit}.aw-menu .danger{color:#ffb4b4;border-color:rgba(217,95,95,.4)}
+.aw-toast{position:fixed;left:50%;bottom:92px;z-index:9800;transform:translate(-50%,20px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:14px;max-width:calc(100vw - 32px);padding:12px 16px;border-radius:14px;background:#1b1a26;border:1px solid var(--gold,#D4AF37);color:#f4efe2;font-size:.88rem;font-family:var(--font-sans,Inter,system-ui,sans-serif);box-shadow:0 12px 30px -10px #000;transition:opacity .25s,transform .25s}
+.aw-toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.aw-toast button{min-height:44px;padding:0 10px;background:none;border:0;color:var(--gold,#D4AF37);font-weight:700;font-size:.88rem}
+
+/* present mode: the routine alone, large */
+body.aw-present .app-tabbar,body.aw-present header,body.aw-present .panel-back,body.aw-present .qsearch-live-badge,body.aw-present #vqBtn{display:none!important}
+body.aw-present .aw-modebar,body.aw-present .aw-topbar [data-act="edit"],body.aw-present .aw-topbar [data-act="present"]{display:none}
+body.aw-present .aw-sbody{font-size:1.06rem}
+.aw-exit{position:fixed;top:12px;right:12px;z-index:9600;min-height:44px;padding:0 16px;border-radius:99px;border:1px solid var(--gold,#D4AF37);background:rgba(11,13,20,.92);color:#f3d36b;font-weight:700;font-size:.82rem}
+.aw-exit[hidden]{display:none}
+@media(prefers-reduced-motion:reduce){.aw *,.aw-sheet *,.aw-toast{animation:none!important;transition:none!important}.aw-sh-box{transform:none!important;opacity:1!important}.aw-sh-back{opacity:1!important}}
+</style>
 
 
 
@@ -6937,6 +7143,7 @@ html.lg .sw-item.on{background:rgba(212,162,74,.16);color:#f0d9a8;box-shadow:ins
     <button class="app-tab" data-group="chart" data-panel="panel-overview"><span class="tab-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5 20.5 12 12 20.5 3.5 12Z"/><path d="M12 8.2 15.8 12 12 15.8 8.2 12Z"/></svg></span>My Chart</button>
     <button class="app-tab" data-group="rectify" data-panel="panel-rectification"><span class="tab-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".9" fill="currentColor"/></svg></span>Rectify</button>
     <button class="app-tab" data-group="match" data-panel="panel-match"><span class="tab-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.4a4.3 4.3 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20Z"/></svg></span>Match</button>
+    <button class="app-tab" data-group="workspace" data-panel="panel-workspace"><span class="tab-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><path d="M17 13.5v7M13.5 17h7"/></svg></span>Workspace</button>
     <button class="app-tab" data-group="export" data-panel="panel-export"><span class="tab-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15.5V4"/><path d="m7.8 8.2 4.2-4.2 4.2 4.2"/><path d="M4.5 14v4.5a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5V14"/></svg></span>Export</button>
   </div>
 </nav>
@@ -10469,6 +10676,7 @@ const HOME_ITEMS=[
  ['panel-reading','📖','Chart Reading','Plain-language reading, life areas & timing','Your Chart','chart'],
  ['panel-problem','🧭','Problem Finder','Pick a life problem; see the chart reasons','Your Chart','chart'],
  ['panel-overview','◈','Overview','Birth chart & key details','Your Chart','chart'],
+ ['panel-workspace','🧰','Workspace','Your own routines: save the charts, dashas and tools you always check, in your order, and open them on any chart','Your Chart','workspace'],
  ['panel-avakahada','🪪','Avakahada Chakra','The standard kundli table: varna, yoni, gana, nadi, paya, name sounds','Your Chart','chart'],
  ['panel-planets','☉','Planets','Positions & aspects of every planet','Your Chart','chart'],
  ['panel-bhava','⌂','Bhava Chalit','Sripati house cusps & shifted planets','Your Chart','chart'],
@@ -43177,6 +43385,7 @@ window.buildAvakahadaPanel = function(chart, profile){ try { return AVK.html(cha
     let h = ''; try { h = REG[id](ch, pf); } catch(e){ console.warn('late panel', id, e); h = '<div class="meta-err">This screen could not be built. Please refresh the page.</div>'; }
     const d = document.createElement('div'); d.className = 'app-panel'; d.id = id; d.innerHTML = h; r.appendChild(d);
   }
+  window.ensureLatePanel = ensure;
   if (typeof switchAppTab === 'function'){
     const _s = switchAppTab;
     /* Self-heal (once per page load): if a normal tool panel is missing although a chart is showing (it was drawn before that script had loaded, e.g. on a slow connection),
@@ -46339,7 +46548,7 @@ const PCAL = (() => {
 const THB = (() => {
   /* [id, title, "use it when you want to...", color, [panel ids]] */
   const CATS = [
-    ['read', 'Read my chart', 'Understand my chart in plain words', '#D4AF37', ['panel-ai', 'panel-reading', 'panel-problem', 'panel-overview', 'panel-avakahada', 'panel-planets', 'panel-bhava', 'panel-vargas', 'panel-lagnas']],
+    ['read', 'Read my chart', 'Understand my chart in plain words', '#D4AF37', ['panel-ai', 'panel-reading', 'panel-problem', 'panel-overview', 'panel-workspace', 'panel-avakahada', 'panel-planets', 'panel-bhava', 'panel-vargas', 'panel-lagnas']],
     ['now', 'Today & now', 'See what the sky is doing today', '#5EC4B7', ['panel-today', 'panel-active', 'panel-transit', 'panel-choghadiya', 'panel-panchanga', 'panel-pcal', 'panel-prashna', 'panel-chakra']],
     ['timing', 'Life timing & cycles', 'Know which period of life is running and what comes next', '#8A6FB8', ['panel-hora', 'panel-ppf', 'panel-dasha', 'panel-dashasys', 'panel-transits', 'panel-sudarshana', 'panel-tithi', 'panel-vbday', 'panel-yeartimeline']],
     ['strength', 'Planet & house strength', 'Check how strong or weak each planet and house is', '#6B7FA3', ['panel-shadbala', 'panel-bhavabala', 'panel-vimshopaka', 'panel-avasthas', 'panel-ashtakavarga', 'panel-asx', 'panel-fate', 'panel-sensitive', 'panel-upagrahas']],
@@ -46362,7 +46571,7 @@ const THB = (() => {
     'panel-dosha': 'manglik kaal sarp pitru gand mool remedy problem', 'panel-yogas': 'raj yoga dhana combination',
     'panel-rectification': 'birth time wrong unsure correct fix', 'panel-datefinder': 'forgotten birth date festival family remembers',
     'panel-numerology': 'name number lucky', 'panel-atlas': 'basics beginner learn glossary', 'panel-shadbala': 'planet power strength', 'panel-ashtakavarga': 'bindu points sarvashtakavarga',
-    'panel-asx': 'prastara sodhana kakshya reduction transit points', 'panel-export': 'download pdf copy share save report', 'panel-contact': 'bug feedback help support', 'panel-guide': 'help how to use manual index what does explain instructions learn'
+    'panel-asx': 'prastara sodhana kakshya reduction transit points', 'panel-workspace': 'my routine formula checklist favourite saved sequence d1 d9 astrologer custom own view dashboard board', 'panel-export': 'download pdf copy share save report', 'panel-contact': 'bug feedback help support', 'panel-guide': 'help how to use manual index what does explain instructions learn'
   };
   /* four big shortcuts under Recently used (owner's choice): [panel id, label, one line] */
   const QUICK = [['panel-vargas', 'Divisional Charts', 'D1 to D144 chart viewer'], ['panel-dasha', 'Vimshottari Dasha', 'Life-period timeline'], ['panel-reading', 'Reading', 'Plain-language chart reading'], ['panel-ashtakavarga', 'Ashtakavarga', 'Point-strength system']];
@@ -47037,6 +47246,11 @@ const FG_DATA = {
       how: ['Choose two people (a saved profile or a new person).', 'Tap check.', 'Read the score and each factor.'],
       terms: [['Ashtakoota', 'The eight-fold match.'], ['Manglik', 'A Mars placement check.']],
       tip: 'Use Synastry for a deeper view.', see: ['panel-synastry', 'panel-dosha'] },
+    'panel-workspace': { what: 'Workspace: build your own routine once, the charts, dashas, tables and tools you always check, in your order. Open it on any chart and every item comes up in sequence.',
+      when: 'You check the same things for every client or question, for example D1, D9, the 7th house and the dasha, and want them in one tap.',
+      how: ['Open Workspace (the tab just before Export). Five starter routines are ready to edit.', 'Tap New routine, name it, then Add a step: pick a card (any chart D1 to D144, planet table, dasha, transits, strength, yogas, a house or planet reading, your own note) or any tool of the app.', 'Reorder with the arrows. Changes save as you type.', 'Tap a routine to open it. Flow shows one step at a time (swipe, arrows or the rail); Board stacks every step; the full-screen button presents it cleanly.', 'Open the same routine on another chart and the same items show that chart.'],
+      terms: [['Routine', 'Your saved list of steps. It holds no birth details, only what you check and in what order.'], ['Card', 'A ready-made view the Workspace draws itself, such as a D9 chart or the dasha running now.'], ['Share code', 'A short AW1 code that gives another astrologer the same routine.']],
+      tip: 'Routines are kept on this device. Use Share to send one, or Back up all to save every routine as a file.', see: ['panel-export'] },
     'panel-export': { what: 'Export & Share: a builder where you choose every section, as text or JSON, and split it into parts for AI tools.',
       when: 'You want to save, share, or give your chart to an AI.',
       how: ['Pick a preset (Essentials, AI, All, None).', 'Tick sections by group.', 'Choose format and part size.', 'Download or copy.'],
@@ -50191,6 +50405,677 @@ async function rsRunLife(){
 window.LEE = { analyse:leAnalyse, vim:leVim, links:leLinks, catalog:LEC };
 /* Same guard: if the studio was built before this file loaded, fill the Life Events pane now (keeping its Back/Next footer). */
 (function(){ const pn = document.querySelector('.rs-pane[data-rs-pane="life"]'); if (pn && !pn.querySelector('.le-root') && typeof rsBuildLife === 'function'){ const nx = pn.querySelector('.rs-next'); try { rsBuildLife(pn); if (nx) pn.appendChild(nx); } catch(e){ console.error('Life Events', e); } } })();
+</script>
+<script>
+/* ASTROLOGER WORKSPACE ENGINE (AW): the data side of the Workspace tab (docs/ASTRO_WORKSPACE_PLAN.md).
+   A routine = an ordered list of steps an astrologer always checks (a D9 chart, the dasha now, strength bars, any tool of the app...).
+   Saved in this device's localStorage; it holds no chart and no birth details, only the recipe, so it opens on any chart.
+   AW.list() / get(id) / save(routine) / remove(id) / duplicate(id) / move(id, from, to) / touch(id)
+   AW.blank() / sanitize(raw) / encode(routine) -> "AW1.<code>" / decode(text) -> routine | null / starters()
+   AW.WIDGETS: catalogue of the native widgets (id, name, icon, group, about, options); AW.GROUPS
+   Pure data and logic: no DOM, nothing runs at page load except defining the object. Works without storage (try/catch). */
+(function(root){
+  'use strict';
+  const KEY = 'vax_workspace_v1', UIKEY = 'vax_workspace_ui_v1', MAXSTEPS = 40, MAXROUT = 60;
+  const VARGA_KEYS = ['D1','D2','D3','D4','D5','D6','D7','D8','D9','D10','D11','D12','D16','D20','D24','D27','D30','D40','D45','D60','D81','D108','D144'];
+  const VARGA_ABOUT = { D1: 'Rashi (the main chart)', D2: 'Hora (wealth)', D3: 'Drekkana (siblings, courage)', D4: 'Chaturthamsha (home, luck)', D5: 'Panchamsha (fame, merit)', D6: 'Shashthamsha (health, debts)', D7: 'Saptamsha (children)', D8: 'Ashtamsha (sudden change)', D9: 'Navamsha (marriage, dharma)', D10: 'Dashamsha (career)', D11: 'Rudramsha (gains, ends)', D12: 'Dwadashamsha (parents)', D16: 'Shodashamsha (vehicles, comforts)', D20: 'Vimshamsha (devotion)', D24: 'Siddhamsha (learning)', D27: 'Bhamsha (strength)', D30: 'Trimshamsha (troubles)', D40: 'Khavedamsha (maternal line)', D45: 'Akshavedamsha (paternal line)', D60: 'Shashtiamsha (past karma)', D81: 'Navanavamsha', D108: 'Ashtottaramsha', D144: 'Dwadashadwadashamsha' };
+  const PLANETS = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
+  const STYLES = ['north','south'];
+  const GROUPS = [['chart','Charts','◈'],['table','Tables','▤'],['time','Time & dasha','◷'],['strength','Strength','⚖'],['combo','Combinations','✦'],['read','Plain words','✎']];
+  const opt = (k, label, values, def) => ({ k, label, values, def });
+  const VARGA_OPT = opt('varga', 'Divisional chart', VARGA_KEYS.map(k => [k, k + ' · ' + (VARGA_ABOUT[k] || '')]), 'D1');
+  const STYLE_OPT = opt('style', 'Chart style', [['north','North Indian'],['south','South Indian']], 'north');
+  const PLANET_OPT = opt('planet', 'Planet', PLANETS.map(p => [p, p]), 'Jupiter');
+  const HOUSE_OPT = opt('house', 'House', Array.from({ length: 12 }, (_, i) => [String(i + 1), 'House ' + (i + 1)]), '7');
+  /* [id, name, icon, group, about, options] */
+  const W = [
+    ['chart', 'Divisional chart', '◈', 'chart', 'Any chart from D1 to D144, drawn with its planets, in North or South style.', [VARGA_OPT, STYLE_OPT]],
+    ['chart2', 'Two charts side by side', '◫', 'chart', 'Compare two charts at a glance, for example D1 with D9.', [Object.assign({}, VARGA_OPT, { k: 'a', label: 'Left chart', def: 'D1' }), Object.assign({}, VARGA_OPT, { k: 'b', label: 'Right chart', def: 'D9' }), STYLE_OPT]],
+    ['moonchart', 'Chart from the Moon', '☾', 'chart', 'The chart counted from the Moon sign (Chandra Lagna).', [STYLE_OPT]],
+    ['facts', 'Quick facts strip', '✺', 'read', 'Lagna, Moon sign, nakshatra, Sun sign and the dasha running now, in one band.', []],
+    ['planets', 'Planet positions', '♃', 'table', 'Sign, degree, house, nakshatra, dignity and motion of every planet in any chart.', [VARGA_OPT]],
+    ['houses', 'Houses and their lords', '⌂', 'table', 'The twelve houses of any chart: sign, lord, where the lord sits and who occupies it.', [VARGA_OPT]],
+    ['karakas', 'Chara Karakas', '☉', 'table', 'Atmakaraka to Darakaraka: the planets ranked by degree, each with its role.', []],
+    ['nakshatras', 'Nakshatras of the planets', '✧', 'table', 'The nakshatra, pada and nakshatra lord of every planet.', []],
+    ['lagnas', 'Special lagnas', '⌖', 'table', 'Arudha, Hora, Ghati, Indu and other special rising points as signs and houses.', []],
+    ['dashanow', 'Dasha running now', '◷', 'time', 'Mahadasha, antardasha and pratyantardasha today, with dates and progress bars.', []],
+    ['dashanext', 'Coming dashas', '⏭', 'time', 'The next mahadashas and what each lord does in this chart.', []],
+    ['transits', 'Transits now', '⟲', 'time', 'Where the planets are in the sky today, and which house of your chart each one crosses.', []],
+    ['sadesati', 'Sade Sati and Saturn', '♄', 'time', 'Whether Saturn is moving over the Moon sign now, and where Saturn sits.', []],
+    ['panchang', 'Panchang today', '☼', 'time', 'Tithi, vara, nakshatra, yoga and karana of today.', []],
+    ['shadbala', 'Shadbala strength', '⚖', 'strength', 'The six-fold strength of the seven planets as bars against the needed minimum.', []],
+    ['avsav', 'Ashtakavarga points by house', '▦', 'strength', 'Sarvashtakavarga points of each house with the average line.', []],
+    ['yogas', 'Yogas in this chart', '✦', 'combo', 'The notable planet combinations found in the chart, with a plain meaning.', []],
+    ['dosha', 'Doshas check', '🧿', 'combo', 'Manglik, Kaal Sarp and the other doshas, found or not found.', []],
+    ['aspects', 'Aspects on a house', '⇆', 'combo', 'Which planets look at a chosen house and which planets sit in it.', [HOUSE_OPT]],
+    ['housereading', 'Reading of a house', '✎', 'read', 'A plain-words reading of one house: its lord, its planets and what it means for you.', [HOUSE_OPT]],
+    ['planetreading', 'Reading of a planet', '✎', 'read', 'A plain-words reading of one planet where it stands in this chart.', [PLANET_OPT]],
+    ['note', 'My own note', '✍', 'read', 'A card with your own words: a checklist, a question to ask, a reminder.', [opt('text', 'Your note', null, '')]]
+  ];
+  const WIDGETS = W.map(w => ({ id: w[0], name: w[1], icon: w[2], group: w[3], about: w[4], options: w[5] }));
+  const WMAP = {}; WIDGETS.forEach(w => { WMAP[w.id] = w; });
+
+  const COLORS = ['#D4AF37', '#5EC4B7', '#8A6FB8', '#D96C9B', '#E0A64A', '#4F8FBF', '#7FB77E', '#C95050'];
+  const ICONS = ['✦', '◈', '☾', '☉', '♃', '⌂', '◷', '⚖', '✺', '❖', '☸', '🔭'];
+
+  const multi = (x, n) => (typeof x === 'string' ? x : '').replace(/\r\n?/g, '\n').replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, ' ').trim().slice(0, n);
+  function uid(){ return 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function sid(){ return 's' + Math.random().toString(36).slice(2, 8); }
+  const str = (x, n) => (typeof x === 'string' ? x : '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, n);
+
+  /* defaults of one widget's options */
+  function defaults(id){ const w = WMAP[id], o = {}; if (w) w.options.forEach(x => { o[x.k] = x.def; }); return o; }
+  function cleanOpts(id, o){
+    const w = WMAP[id], out = defaults(id); if (!w || !o || typeof o !== 'object') return out;
+    w.options.forEach(x => {
+      if (x.values){ const v = String(o[x.k]); if (x.values.some(p => p[0] === v)) out[x.k] = v; }
+      else if (typeof o[x.k] === 'string') out[x.k] = multi(o[x.k], 1200);
+    });
+    return out;
+  }
+  function step(kind, target, o, label, note){
+    kind = kind === 'p' ? 'p' : 'w';
+    return { id: sid(), k: kind, t: str(target, 60), o: kind === 'w' ? cleanOpts(target, o) : {}, label: str(label, 60), note: str(note, 400) };
+  }
+  function sanitizeStep(s){
+    if (!s || typeof s !== 'object' || !s.t) return null;
+    const k = s.k === 'p' ? 'p' : 'w', t = str(s.t, 60);
+    if (!/^[a-z0-9_-]+$/i.test(t)) return null;
+    return { id: /^s[a-z0-9]{3,10}$/.test(s.id || '') ? s.id : sid(), k, t, o: k === 'w' ? cleanOpts(t, s.o) : {}, label: str(s.label, 60), note: str(s.note, 400) };
+  }
+  function blank(name){
+    return { v: 1, id: uid(), name: str(name || 'My routine', 60) || 'My routine', icon: ICONS[0], color: COLORS[0], note: '', layout: 'flow', steps: [], made: Date.now(), used: 0, uses: 0, pin: false };
+  }
+  function sanitize(raw){
+    if (!raw || typeof raw !== 'object') return null;
+    const r = blank(raw.name);
+    r.id = /^r[a-z0-9]{4,24}$/.test(raw.id || '') ? raw.id : r.id;
+    r.icon = str(raw.icon, 4) || r.icon; r.color = COLORS.indexOf(raw.color) >= 0 ? raw.color : (/^#[0-9a-f]{6}$/i.test(raw.color || '') ? raw.color : r.color);
+    r.note = str(raw.note, 400); r.layout = raw.layout === 'board' ? 'board' : 'flow';
+    r.steps = (Array.isArray(raw.steps) ? raw.steps : []).slice(0, MAXSTEPS).map(sanitizeStep).filter(Boolean);
+    r.made = +raw.made > 0 ? +raw.made : r.made; r.used = +raw.used > 0 ? +raw.used : 0; r.uses = +raw.uses > 0 ? Math.floor(+raw.uses) : 0; r.pin = !!raw.pin;
+    if (raw.starter) r.starter = str(raw.starter, 30);
+    return r;
+  }
+
+  /* ---------- storage ---------- */
+  function readAll(){ try { const a = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(a) ? a.map(sanitize).filter(Boolean).slice(0, MAXROUT) : []; } catch (e) { return mem.slice(); } }
+  let mem = [];
+  function writeAll(a){ mem = a.slice(); try { localStorage.setItem(KEY, JSON.stringify(a)); return true; } catch (e) { return false; } }
+  function list(){ return readAll(); }
+  function get(id){ return readAll().find(r => r.id === id) || null; }
+  function save(r){
+    const c = sanitize(r); if (!c) return null; const a = readAll(), i = a.findIndex(x => x.id === c.id);
+    if (i >= 0) a[i] = c; else a.unshift(c); writeAll(a.slice(0, MAXROUT)); return c;
+  }
+  function remove(id){ const a = readAll(), i = a.findIndex(x => x.id === id); if (i < 0) return null; const gone = a.splice(i, 1)[0]; writeAll(a); return gone; }
+  function duplicate(id){ const r = get(id); if (!r) return null; const c = sanitize(r); c.id = uid(); c.name = str(r.name + ' (copy)', 60); c.made = Date.now(); c.used = 0; c.uses = 0; c.pin = false; delete c.starter; c.steps.forEach(s => { s.id = sid(); }); return save(c); }
+  function touch(id){ const r = get(id); if (!r) return; r.used = Date.now(); r.uses = (r.uses || 0) + 1; save(r); }
+  function move(arr, from, to){ if (from === to || from < 0 || to < 0 || from >= arr.length || to >= arr.length) return arr; const x = arr.splice(from, 1)[0]; arr.splice(to, 0, x); return arr; }
+  function ui(){ try { const o = JSON.parse(localStorage.getItem(UIKEY) || '{}'); return o && typeof o === 'object' ? o : {}; } catch (e) { return {}; } }
+  function setUi(patch){ try { localStorage.setItem(UIKEY, JSON.stringify(Object.assign(ui(), patch))); } catch (e) {} }
+
+  /* ---------- sharing: AW1.<base64url of short JSON> ---------- */
+  function b64e(s){ const b = typeof btoa === 'function' ? btoa(unescape(encodeURIComponent(s))) : Buffer.from(s, 'utf8').toString('base64'); return b.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function b64d(s){ s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return typeof atob === 'function' ? decodeURIComponent(escape(atob(s))) : Buffer.from(s, 'base64').toString('utf8'); }
+  function encode(r){
+    const c = sanitize(r); if (!c) return '';
+    const short = { n: c.name, i: c.icon, c: c.color, d: c.note, l: c.layout === 'board' ? 'b' : 'f', s: c.steps.map(s => { const o = { k: s.k, t: s.t }; if (s.k === 'w' && Object.keys(s.o).length) o.o = s.o; if (s.label) o.a = s.label; if (s.note) o.m = s.note; return o; }) };
+    return 'AW1.' + b64e(JSON.stringify(short));
+  }
+  function decode(text){
+    try {
+      let t = String(text || '').trim(); const m = t.match(/AW1\.[A-Za-z0-9_-]+/); if (m) t = m[0];
+      let raw;
+      if (/^AW1\./.test(t)){
+        const s = JSON.parse(b64d(t.slice(4)));
+        raw = { name: s.n, icon: s.i, color: s.c, note: s.d, layout: s.l === 'b' ? 'board' : 'flow', steps: (s.s || []).map(x => ({ k: x.k, t: x.t, o: x.o, label: x.a, note: x.m })) };
+      } else if (t[0] === '{'){ raw = JSON.parse(t); }
+      else return null;
+      const r = sanitize(raw); if (!r) return null;
+      r.id = uid(); r.made = Date.now(); r.used = 0; r.uses = 0; r.pin = false; delete r.starter; r.steps.forEach(s => { s.id = sid(); });
+      return r;
+    } catch (e) { return null; }
+  }
+
+  /* ---------- starter routines (copied into the person's list the first time the tab opens; fully editable) ---------- */
+  const S = (name, icon, color, note, steps) => { const r = blank(name); r.icon = icon; r.color = color; r.note = note; r.starter = name; r.steps = steps.map(x => step(x[0], x[1], x[2], x[3])); return r; };
+  function starters(){
+    return [
+      S('Quick read', '✦', '#D4AF37', 'The first five minutes with any chart.', [['w', 'facts'], ['w', 'chart', { varga: 'D1' }], ['w', 'planets', { varga: 'D1' }], ['w', 'dashanow'], ['w', 'yogas']]),
+      S('Marriage check', '💞', '#D96C9B', 'Rashi, Navamsha, the 7th house and the timing around it.', [['w', 'chart2', { a: 'D1', b: 'D9' }], ['w', 'housereading', { house: '7' }], ['w', 'aspects', { house: '7' }], ['w', 'dosha'], ['w', 'dashanow']]),
+      S('Career check', '◆', '#4F8FBF', 'Rashi, Dashamsha, the 10th house, strength and timing.', [['w', 'chart2', { a: 'D1', b: 'D10' }], ['w', 'housereading', { house: '10' }], ['w', 'aspects', { house: '10' }], ['w', 'shadbala'], ['w', 'dashanow'], ['w', 'transits']]),
+      S('Dasha and transit', '◷', '#8A6FB8', 'What period is running and what the sky is doing over it.', [['w', 'dashanow'], ['w', 'dashanext'], ['w', 'transits'], ['w', 'sadesati']]),
+      S('Strength audit', '⚖', '#5EC4B7', 'Which planets and houses carry weight.', [['w', 'shadbala'], ['w', 'avsav'], ['w', 'planets', { varga: 'D1' }], ['w', 'houses', { varga: 'D1' }]])
+    ];
+  }
+
+  const api = { KEY, UIKEY, MAXSTEPS, WIDGETS, WMAP, GROUPS, COLORS, ICONS, VARGA_KEYS, VARGA_ABOUT, PLANETS, STYLES, uid, sid, defaults, cleanOpts, step, blank, sanitize, list, get, save, remove, duplicate, touch, move, ui, setUi, encode, decode, starters };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.AW = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+<script>
+/* ASTROLOGER WORKSPACE WIDGETS (AWW): the native cards of the Workspace tab (docs/ASTRO_WORKSPACE_PLAN.md).
+   AWW.render(id, chart, profile, options) -> HTML string for one widget (the catalogue and option lists are in AW.WIDGETS, js/160).
+   Every widget reads the chart already on screen and the app's own engines (VDA, TRS, YGE, VMF, panchangaAt, chart.shadbala, chart.ashtakavarga);
+   nothing here calculates astrology of its own. A widget that cannot draw returns a short plain message instead of throwing.
+   Called only when a routine is opened, never at page load. Classes are aw- prefixed (css/50-workspace.css). */
+(function(){
+  'use strict';
+  const SIGN = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const PL = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'], P7 = PL.slice(0, 7);
+  const GLY = { Sun: '☉', Moon: '☾', Mars: '♂', Mercury: '☿', Jupiter: '♃', Venus: '♀', Saturn: '♄', Rahu: '☊', Ketu: '☋' };
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+  const ordn = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
+  const dt = d => { d = new Date(d); return isNaN(d) ? '' : MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); };
+  const deg = x => { const d = Math.floor(x), m = Math.floor((x - d) * 60); return d + '°' + String(m).padStart(2, '0') + '′'; };
+  const chip = (t, c) => `<span class="aw-chip${c ? ' ' + c : ''}">${esc(t)}</span>`;
+  const msg = t => `<p class="aw-msg">${esc(t)}</p>`;
+  const tone = t => /support|help|benefic|good|strong/i.test(t || '') ? 'g' : /challeng|testing|strain|weak|malefic/i.test(t || '') ? 'b' : 'm';
+  const scroll = h => `<div class="aw-scroll">${h}</div>`;
+  const table = (head, rows) => scroll(`<table class="aw-tbl"><thead><tr>${head.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td${i === 0 ? ' class="aw-f"' : ''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`);
+  const gly = n => `<i class="aw-gl">${GLY[n] || ''}</i>`;
+  const houseOf = (sign, asc) => ((sign - asc + 12) % 12) + 1;
+  const AW_ = () => window.AW || { VARGA_ABOUT: {} };
+  const vkey = k => /^D\d{1,3}$/.test(k) ? k : 'D1';
+  const dignityChip = st => { if (!st) return ''; const t = String(st.label || st.status || ''); const s = String(st.status || ''); return chip(t.replace(/ \(.*\)/, '').replace(/ Sign$/, ''), /Exalt|Own|Moola/.test(s) ? 'g' : /Debil|Enemy/.test(s) ? 'b' : ''); };
+
+  /* a chart drawn by the app's own SVG builders (they read window.__vgC) */
+  function drawVarga(c, key, style){
+    const V = c.vargas && c.vargas[key]; if (!V) return null;
+    const prev = window.__vgC; window.__vgC = c;
+    try { return style === 'south' ? buildSouthIndianSvg(V, null) : buildNorthIndianSvg(V, null); }
+    catch (e) { return null; } finally { window.__vgC = prev; }
+  }
+  function chartBox(c, key, style, title){
+    const svg = drawVarga(c, key, style), A = AW_().VARGA_ABOUT[key] || '';
+    if (!svg) return msg(key + ' is not available for this chart.');
+    const V = c.vargas[key];
+    return `<figure class="aw-chartbox"><div class="aw-svg">${svg}</div><figcaption><b>${esc(title || key)}</b><span>${esc(A)}</span><span>Rising: ${esc(SIGN[V.ascendantSign])}</span></figcaption></figure>`;
+  }
+
+  const W = {};
+  W.chart = (c, pf, o) => chartBox(c, vkey(o.varga), o.style === 'south' ? 'south' : 'north');
+  W.chart2 = (c, pf, o) => `<div class="aw-two">${chartBox(c, vkey(o.a), o.style === 'south' ? 'south' : 'north')}${chartBox(c, vkey(o.b), o.style === 'south' ? 'south' : 'north')}</div>`;
+  W.moonchart = (c, pf, o) => {
+    const D1 = c.vargas.D1, ms = c.planets.Moon.sign, asc = D1.ascendantSign;
+    const houses = Array.from({ length: 12 }, (_, i) => Object.assign({}, D1.houses[(ms + i - asc + 12) % 12], { houseNum: i + 1 }));
+    const v = Object.assign({}, D1, { ascendantSign: ms, houses });
+    const prev = window.__vgC; window.__vgC = c; let svg = null;
+    try { svg = o.style === 'south' ? buildSouthIndianSvg(v, null) : buildNorthIndianSvg(v, null); } catch (e) { svg = null; } finally { window.__vgC = prev; }
+    return svg ? `<figure class="aw-chartbox"><div class="aw-svg">${svg}</div><figcaption><b>Chandra Lagna</b><span>Counted from the Moon in ${esc(SIGN[ms])}</span></figcaption></figure>` : msg('The Moon chart could not be drawn.');
+  };
+  W.facts = (c, pf) => {
+    const mo = c.planets.Moon, su = c.planets.Sun; let dn = ''; try { const cur = VDA.current(c); if (cur && cur.md) dn = cur.md.lord + (cur.ad ? ' / ' + cur.ad.lord : ''); } catch (e) {}
+    const f = [['Lagna', SIGN[c.ascendant.sign], c.ascendant.nakshatra ? c.ascendant.nakshatra.name : ''], ['Moon', SIGN[mo.sign], mo.nakshatra ? mo.nakshatra.name + ' · pada ' + mo.nakshatra.pada : ''], ['Sun', SIGN[su.sign], su.nakshatra ? su.nakshatra.name : ''], ['Dasha now', dn || '–', 'mahadasha / antardasha']];
+    return `<div class="aw-facts">${f.map(x => `<div class="aw-fact"><small>${esc(x[0])}</small><b>${esc(x[1])}</b><span>${esc(x[2])}</span></div>`).join('')}</div>`;
+  };
+  W.planets = (c, pf, o) => {
+    const key = vkey(o.varga), V = c.vargas[key]; if (!V) return msg(key + ' is not available.');
+    const asc = V.ascendantSign, pv = V.planetVargaSign || {};
+    return table(['Planet', 'Sign', 'House', key === 'D1' ? 'Degree' : 'D1 sign', 'Nakshatra', 'State'], PL.filter(n => pv[n] != null).map(n => {
+      const p = c.planets[n], s = pv[n]; let d = '';
+      try { d = key === 'D1' ? deg(p.degInSign) : SIGN[p.sign]; } catch (e) {}
+      let st = ''; try { st = dignityChip(key === 'D1' ? p.dignity : getDignity(n, s)); } catch (e) {}
+      const extra = (p.retrograde ? chip('R', 'b') : '') + (p.combustion && p.combustion.combust ? chip('combust', 'b') : '');
+      return [gly(n) + esc(n), esc(SIGN[s]), ordn(houseOf(s, asc)), esc(d), p.nakshatra ? esc(p.nakshatra.name) + ' ' + p.nakshatra.pada : '', st + extra];
+    }));
+  };
+  W.houses = (c, pf, o) => {
+    const key = vkey(o.varga), V = c.vargas[key]; if (!V) return msg(key + ' is not available.');
+    const asc = V.ascendantSign, pv = V.planetVargaSign || {};
+    return table(['House', 'Sign', 'Lord', 'Lord sits', 'Planets here'], V.houses.map((h, i) => {
+      const lord = h.signLord, ls = pv[lord]; const occ = (h.planets || []).map(p => p.name);
+      return [ordn(i + 1), esc(h.signName || SIGN[h.sign]), gly(lord) + esc(lord), ls == null ? '' : ordn(houseOf(ls, asc)) + ' · ' + esc(SIGN[ls]), occ.length ? occ.map(n => `<span class="aw-pn">${esc(n)}</span>`).join(' ') : '<span class="aw-dim">empty</span>'];
+    }));
+  };
+  W.karakas = c => {
+    const k = c.charaKarakas; if (!k) return msg('Chara Karakas are not available for this chart.');
+    const short = { Atmakaraka: 'AK · soul', Amatyakaraka: 'AmK · career', Bhratrikaraka: 'BK · siblings', Matrikaraka: 'MK · mother', Putrakaraka: 'PuK · children', Gnatikaraka: 'GK · rivals', Darakaraka: 'DK · partner' };
+    return table(['Role', 'Planet', 'Degree'], Object.keys(k).map(r => [esc(short[r] || r), gly(k[r].planet) + esc(k[r].planet), esc(deg(k[r].degree))]));
+  };
+  W.nakshatras = c => table(['Planet', 'Nakshatra', 'Pada', 'Lord', 'Deity'], PL.map(n => { const k = c.planets[n].nakshatra || {}; return [gly(n) + esc(n), esc(k.name), esc(k.pada), esc(k.lord), esc(k.deity)]; }));
+  W.lagnas = c => {
+    let S; try { S = computeAllSpecialLagnaSigns(c); } catch (e) { return msg('Special lagnas are not available.'); }
+    const L = [['AL', 'Arudha Lagna', 'public image'], ['UL', 'Upapada', 'marriage'], ['KL', 'Karakamsha', 'soul calling'], ['HL', 'Hora Lagna', 'wealth'], ['GL', 'Ghati Lagna', 'power'], ['INDU', 'Indu Lagna', 'income'], ['SL', 'Sree Lagna', 'fortune'], ['VGL', 'Vighati Lagna', 'finer timing'], ['BL', 'Bhava Lagna', 'bhava'], ['SWAMSHA', 'Swamsha', 'inner path']];
+    const asc = c.ascendant.sign, rows = L.filter(x => S[x[0]] != null && !isNaN(S[x[0]])).map(x => [`<b>${esc(x[0])}</b> ${esc(x[1])}`, esc(SIGN[S[x[0]]]), ordn(houseOf(S[x[0]], asc)) + ' house', `<span class="aw-dim">${esc(x[2])}</span>`]);
+    return rows.length ? table(['Point', 'Sign', 'From Lagna', 'Looks at'], rows) : msg('Special lagnas are not available.');
+  };
+  function dashaBar(label, d){
+    if (!d) return '';
+    const s = new Date(d.start), e = new Date(d.end), n = Date.now(), pct = Math.max(0, Math.min(100, ((n - s) / (e - s)) * 100));
+    return `<div class="aw-dash"><div class="aw-dh"><span>${esc(label)}</span><b>${gly(d.lord)}${esc(d.lord)}</b></div><div class="aw-track"><i style="width:${pct.toFixed(1)}%"></i></div><div class="aw-dd"><span>${esc(dt(s))}</span><span>${pct.toFixed(0)}% done</span><span>${esc(dt(e))}</span></div></div>`;
+  }
+  W.dashanow = c => {
+    let cur; try { cur = VDA.current(c); } catch (e) { cur = null; }
+    if (!cur || !cur.md) return msg('The dasha could not be worked out for this chart.');
+    const md = cur.md, ad = cur.ad;
+    let h = dashaBar('Mahadasha', md) + dashaBar('Antardasha', ad);
+    h += `<div class="aw-read"><p><b>${esc(md.lord)} period.</b> ${esc(md.arenaText || '')}</p>` + (ad && ad.blend ? `<p>${esc(ad.blend)}</p>` : '') + `</div>`;
+    return h + `<div class="aw-chips">${chip(md.tone || '', tone(md.tone))}${ad ? chip('sub-period: ' + (ad.tone || ''), tone(ad.tone)) : ''}</div>`;
+  };
+  W.dashanext = c => {
+    let t; try { t = VDA.timeline(c); } catch (e) { t = null; }
+    if (!t || !t.periods) return msg('The dasha list is not available.');
+    const nx = t.periods.filter(p => p.status === 'ahead').slice(0, 4);
+    if (!nx.length) return msg('No later periods in range.');
+    return `<div class="aw-list">${nx.map(p => `<div class="aw-item"><div class="aw-it"><b>${gly(p.lord)}${esc(p.lord)}</b><span>${esc(p.startYear)}–${esc(p.endYear)} · age ${esc(p.ageStart)}–${esc(p.ageEnd)}</span>${chip(p.tone || '', tone(p.tone))}</div><p>${esc(p.theme ? 'A stage of ' + p.theme + '.' : '')} ${esc(p.arenaText || '')}</p></div>`).join('')}</div>`;
+  };
+  function trs(c, pf){ try { return TRS && TRS.assess(c, pf, { now: new Date() }); } catch (e) { return null; } }
+  W.transits = (c, pf) => {
+    const a = trs(c, pf); if (!a || !a.available || !a.gochar) return msg('Transit reading is not available for this chart.');
+    return `<div class="aw-list">${a.gochar.map(g => `<div class="aw-item"><div class="aw-it"><b>${gly(g.planet)}${esc(g.planet)} in ${esc(g.sign)}</b><span>${esc(ordn(g.houseFromMoon))} from Moon · ${esc(ordn(g.houseFromLagna))} from Lagna</span>${chip(g.tone || '', tone(g.tone))}</div><p>${esc(g.text)}</p></div>`).join('')}</div>`;
+  };
+  W.sadesati = (c, pf) => {
+    const a = trs(c, pf); if (!a || !a.available) return msg('Saturn timing is not available for this chart.');
+    const act = (a.sade && a.sade.active) || [], sat = (a.gochar || []).find(g => g.planet === 'Saturn');
+    let h = act.length ? act.map(x => `<div class="aw-read"><p><b>${esc(x.name || x.kind || 'Saturn over the Moon')}</b> ${esc(x.text || '')}</p></div>`).join('') : `<div class="aw-read"><p><b>Not running now.</b> ${esc((a.sade && a.sade.next && a.sade.next.text) || '')}</p></div>`;
+    if (sat) h += `<div class="aw-chips">${chip('Saturn in ' + sat.sign)}${chip(ordn(sat.houseFromMoon) + ' from Moon')}${chip(sat.tone || '', tone(sat.tone))}</div>`;
+    return h;
+  };
+  W.panchang = (c, pf) => {
+    try {
+      const n = new Date(), jd = toJulianDay(n.getUTCFullYear(), n.getUTCMonth() + 1, n.getUTCDate(), n.getUTCHours(), n.getUTCMinutes(), 0), P = panchangaAt(jd, +pf.lat, +pf.lon, +pf.tz);
+      const f = [['Vara', P.vara.name, P.vara.lord], ['Tithi', P.tithi.paksha + ' ' + P.tithi.name, ''], ['Nakshatra', P.nakshatra.name, 'pada ' + P.nakshatra.pada], ['Yoga', P.yoga.name, ''], ['Karana', P.karana.name, P.karana.vishti ? 'Vishti' : '']];
+      return `<div class="aw-facts">${f.map(x => `<div class="aw-fact"><small>${esc(x[0])}</small><b>${esc(x[1])}</b><span>${esc(x[2])}</span></div>`).join('')}</div><p class="aw-dim aw-sm">For the birth place, now.</p>`;
+    } catch (e) { return msg('The panchang could not be worked out.'); }
+  };
+  W.shadbala = c => {
+    const S = c.shadbala && c.shadbala.planets; if (!S) return msg('Shadbala is not available for this chart (it needs a birth time).');
+    const rows = P7.filter(n => S[n]).map(n => { const p = S[n], pct = p.percentOfRequired || (p.totalRupas / p.requiredRupas * 100); return `<div class="aw-bar"><span>${gly(n)}${esc(n)}</span><div class="aw-track${pct >= 100 ? '' : ' lo'}"><i style="width:${Math.min(100, pct / 1.6).toFixed(1)}%"></i><u style="left:${(100 / 1.6).toFixed(1)}%"></u></div><b>${p.totalRupas.toFixed(1)}<small>/${p.requiredRupas}</small></b></div>`; });
+    return `<div class="aw-bars">${rows.join('')}</div><p class="aw-dim aw-sm">Rupas against the minimum needed. The line marks the minimum.</p>`;
+  };
+  W.avsav = c => {
+    const av = c.ashtakavarga && c.ashtakavarga.sav; if (!av) return msg('Ashtakavarga is not available for this chart.');
+    const asc = c.ascendant.sign, v = Array.from({ length: 12 }, (_, h) => av[(asc + h) % 12]), avg = v.reduce((a, b) => a + b, 0) / 12, mx = Math.max(40, ...v);
+    return `<div class="aw-cols">${v.map((x, i) => `<div class="aw-col"><b>${x}</b><div class="aw-ctrack"><i class="${x >= avg + 3 ? 'hi' : x <= avg - 3 ? 'lo' : ''}" style="height:${(x / mx * 100).toFixed(1)}%"></i><u style="bottom:${(avg / mx * 100).toFixed(1)}%"></u></div><small>${i + 1}</small></div>`).join('')}</div><p class="aw-dim aw-sm">Points of each house from the Lagna. The line is the average, ${avg.toFixed(1)}.</p>`;
+  };
+  function yogas(c){ try { return YGE.detect(c, { now: new Date() }) || []; } catch (e) { return null; } }
+  W.yogas = c => {
+    const y = yogas(c); if (!y) return msg('The yoga finder is not available.');
+    const list = y.filter(x => !/Doshas/.test(x.cat));
+    if (!list.length) return msg('No notable yoga was found.');
+    return `<div class="aw-list">${list.map(x => `<details class="aw-item aw-yg"><summary><b>${esc(x.name)}</b>${chip(x.cat)}${x.tone ? chip(x.tone, tone(x.tone)) : ''}</summary><p class="aw-dim">${esc(x.why || '')}</p><p>${esc(x.meaning || x.text || '')}</p></details>`).join('')}</div>`;
+  };
+  W.dosha = c => {
+    const y = yogas(c); if (!y) return msg('The dosha finder is not available.');
+    const d = y.filter(x => /Doshas/.test(x.cat));
+    if (!d.length) return `<div class="aw-read"><p><b>None of the checked doshas was found.</b> Manglik, Kaal Sarp, Kemadruma, Grahan and the other points that need care were looked at.</p></div>`;
+    return `<div class="aw-list">${d.map(x => `<details class="aw-item aw-yg"><summary><b>${esc(x.name)}</b>${x.cancelled ? chip('cancelled', 'g') : chip('found', 'b')}</summary><p class="aw-dim">${esc(x.why || '')}</p><p>${esc(x.meaning || x.text || '')}</p></details>`).join('')}</div>`;
+  };
+  W.aspects = (c, pf, o) => {
+    const h = Math.max(1, Math.min(12, +o.house || 7)), occ = PL.filter(n => c.planets[n].house === h), look = PL.filter(n => (c.planets[n].aspectsHouses || []).indexOf(h) >= 0 && c.planets[n].house !== h);
+    const hs = c.vargas.D1.houses[h - 1], lord = hs && hs.signLord;
+    return `<div class="aw-facts"><div class="aw-fact"><small>${esc(ordn(h))} house</small><b>${esc(hs ? hs.signName : '')}</b><span>lord ${esc(lord || '')}${lord && c.planets[lord] ? ' in ' + ordn(c.planets[lord].house) : ''}</span></div>` +
+      `<div class="aw-fact"><small>Sitting in it</small><b>${occ.length ? occ.map(esc).join(', ') : 'nobody'}</b><span></span></div><div class="aw-fact"><small>Looking at it</small><b>${look.length ? look.map(esc).join(', ') : 'nobody'}</b><span></span></div></div>`;
+  };
+  W.housereading = (c, pf, o) => {
+    const h = Math.max(1, Math.min(12, +o.house || 7)), V = c.vargas.D1, hs = V.houses[h - 1], lord = hs.signLord, lp = c.planets[lord];
+    let out = ''; const ar = (typeof VMF !== 'undefined' && VMF && VMF.data && VMF.data.arena) ? VMF.data.arena[h - 1] : null;
+    if (ar) out += `<p><b>${esc(ordn(h))} house in ${esc(hs.signName)}</b> is about ${esc(ar.theme)}.</p>`;
+    try { const m = VMF.placement(lord, lp.house, lp.sign, lp.dignity && lp.dignity.status); if (m) out += `<h4 class="aw-h">Its lord</h4><p>${esc(m.text)}</p>`; } catch (e) {}
+    const occ = (hs.planets || []).map(p => p.name);
+    occ.forEach(n => { try { const p = c.planets[n], m = VMF.placement(n, p.house, p.sign, p.dignity && p.dignity.status); if (m) out += `<h4 class="aw-h">${esc(n)} in this house</h4><p>${esc(m.text)}</p>`; } catch (e) {} });
+    if (!occ.length) out += `<p class="aw-dim">No planet sits here, so the lord carries the house.</p>`;
+    return out ? `<div class="aw-read">${out}</div>` : msg('The reading is not available.');
+  };
+  W.planetreading = (c, pf, o) => {
+    const n = PL.indexOf(o.planet) >= 0 ? o.planet : 'Jupiter', p = c.planets[n];
+    try { const m = VMF.placement(n, p.house, p.sign, p.dignity && p.dignity.status); if (m) return `<div class="aw-read"><p><b>${esc(m.headline)}</b></p><p>${esc(m.text.replace(m.headline + '. ', ''))}</p></div>`; } catch (e) {}
+    return msg('The reading is not available.');
+  };
+  W.note = (c, pf, o) => {
+    const t = String(o.text || '').trim(); if (!t) return `<p class="aw-dim">An empty note. Edit this step to write your own checklist.</p>`;
+    return `<div class="aw-note">${t.split('\n').map(l => /^\s*[-*•]\s+/.test(l) ? `<div class="aw-nl"><i></i>${esc(l.replace(/^\s*[-*•]\s+/, ''))}</div>` : l.trim() ? `<p>${esc(l)}</p>` : '').join('')}</div>`;
+  };
+
+  function render(id, c, pf, o){
+    const f = W[id]; if (!f) return msg('This card is not part of this version of the app.');
+    if (!c) return msg('Cast a chart first.');
+    try { return f(c, pf || window.__vgProf || {}, o || {}); } catch (e) { if (window.console) console.warn('AWW', id, e); return msg('This card could not be drawn for this chart.'); }
+  }
+  window.AWW = { render, has: id => !!W[id], ids: () => Object.keys(W), esc, chip };
+})();
+</script>
+<script>
+/* ASTROLOGER WORKSPACE UI (AWUI): the Workspace tab (docs/ASTRO_WORKSPACE_PLAN.md).
+   List of saved routines -> open one on the chart on screen (Flow: one step at a time with a rail; Board: all steps stacked; Present: clean view)
+   -> editor (name, icon, colour, steps, order) -> Add-step sheet (cards and every tool of the app, with a live preview) -> share / import.
+   Uses AW (js/160) for storage, AWW (js/161) for the native cards, HOME_ITEMS (js/25) for the tool list, registerLatePanel / ensureLatePanel (js/120).
+   Nothing is built until the tab is first opened. A tool step is the real panel of the app, moved into the step card and put back afterwards.
+   Sheets and the toast live on <body>. Only opacity/transform animate. Classes aw- (css/90-workspace.css). */
+(function(){
+  'use strict';
+  if (typeof AW === 'undefined' || typeof AWW === 'undefined') return;
+  const esc = AWW.esc;
+  const $ = (s, r) => (r || document).querySelector(s), $$ = (s, r) => [].slice.call((r || document).querySelectorAll(s));
+  const ST = { view: 'list', rid: null, step: 0, layout: 'flow', ed: null, sheet: null, pick: null, gen: 0 };
+  const embedded = new Map(), collapsed = {};
+  const SKIPPED = { 'panel-home': 1, 'panel-export': 1, 'panel-contact': 1, 'panel-workspace': 1, 'panel-tools': 1 };
+  let root = null, bound = false, toastT = 0, sheetEl = null, toastEl = null, exitEl = null, imported = '';
+
+  const tools = () => (typeof HOME_ITEMS !== 'undefined' ? HOME_ITEMS : []).filter(i => !SKIPPED[i[0]]);
+  const toolOf = id => tools().find(i => i[0] === id);
+  const chart = () => (typeof currentChartForModal !== 'undefined' ? currentChartForModal : null);
+  const prof = () => window.__vgProf || (typeof currentProfileForExport !== 'undefined' ? currentProfileForExport : {}) || {};
+  const SIGN = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+
+  /* ---------- small helpers ---------- */
+  function stepIcon(s){ if (s.k === 'p'){ const t = toolOf(s.t); return t ? t[1] : '▣'; } const w = AW.WMAP[s.t]; return w ? w.icon : '?'; }
+  function stepTitle(s){
+    if (s.label) return s.label;
+    if (s.k === 'p'){ const t = toolOf(s.t); return t ? t[2] : 'Tool'; }
+    const w = AW.WMAP[s.t]; if (!w) return 'Missing card'; const o = s.o || {};
+    const bit = s.t === 'chart2' ? ' · ' + o.a + ' and ' + o.b : o.varga ? ' · ' + o.varga : o.house ? ' · house ' + o.house : o.planet ? ' · ' + o.planet : '';
+    return w.name + bit;
+  }
+  function stepSummary(s){
+    if (s.k === 'p'){ const t = toolOf(s.t); return t ? 'Tool · ' + t[3] : 'This tool is not in this version.'; }
+    const w = AW.WMAP[s.t]; if (!w) return 'This card is not in this version.';
+    const bits = w.options.filter(x => x.values).map(x => { const v = (s.o || {})[x.k], p = x.values.find(q => q[0] === v); return p ? (p[1].length > 26 ? p[0] : p[1]) : ''; }).filter(Boolean);
+    return bits.length ? bits.join(' · ') : w.about;
+  }
+  function toast(msg, undo){
+    if (!toastEl){ toastEl = document.createElement('div'); toastEl.className = 'aw-toast vax-skip'; toastEl.setAttribute('role', 'status'); document.body.appendChild(toastEl); toastEl.addEventListener('click', e => { if (e.target.closest('[data-act="undo"]') && toastEl._undo){ const f = toastEl._undo; toastEl._undo = null; toastEl.classList.remove('on'); f(); } }); }
+    toastEl._undo = undo || null; toastEl.innerHTML = `<span>${esc(msg)}</span>${undo ? '<button type="button" data-act="undo">Undo</button>' : ''}`;
+    toastEl.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('on'), undo ? 6000 : 2600);
+  }
+  function copyText(t){ try { if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t).then(() => true, () => false); } catch (e) {} return Promise.resolve(false); }
+  function download(name, text, type){ try { const b = new Blob([text], { type: type || 'application/json' }), a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800); } catch (e) { toast('Could not make the file.'); } }
+  const slug = s => String(s || 'routine').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'routine';
+
+  /* ---------- panels moved into step cards ---------- */
+  function restoreAll(){
+    embedded.forEach(e => { try { e.n.classList.remove('aw-embed'); if (e.ph.parentNode) e.ph.parentNode.replaceChild(e.n, e.ph); } catch (x) {} });
+    embedded.clear();
+  }
+  function embed(id, host){
+    try { if (typeof window.ensureLatePanel === 'function') window.ensureLatePanel(id); } catch (e) {}
+    const n = document.getElementById(id);
+    if (!n){ host.innerHTML = `<p class="aw-msg">This tool needs your chart. Cast a chart, then open it once from Home.</p>`; return; }
+    if (embedded.has(id)) restoreOne(id);
+    const ph = document.createComment('aw:' + id); n.parentNode.insertBefore(ph, n); embedded.set(id, { n, ph });
+    n.classList.add('aw-embed'); host.appendChild(n);
+    try { if (id === 'panel-vbday' && typeof vbLazyRender === 'function') vbLazyRender(); if (id === 'panel-tithi' && typeof window.tpRenderPending === 'function') window.tpRenderPending(); } catch (e) {}
+  }
+  function restoreOne(id){ const e = embedded.get(id); if (!e) return; try { e.n.classList.remove('aw-embed'); if (e.ph.parentNode) e.ph.parentNode.replaceChild(e.n, e.ph); } catch (x) {} embedded.delete(id); }
+
+  /* ---------- views ---------- */
+  function set(html){ root.innerHTML = html; }
+  function chartPill(){ const p = prof(), c = chart(); if (!c) return '<span class="aw-pill off">No chart yet</span>'; return `<span class="aw-pill"><i></i>${esc(p.name || 'Your chart')} · ${esc(SIGN[c.ascendant.sign])} rising</span>`; }
+  const MANDALA = `<svg class="aw-mandala" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width=".7"><circle cx="100" cy="100" r="92"/><circle cx="100" cy="100" r="70"/><circle cx="100" cy="100" r="46"/><circle cx="100" cy="100" r="22"/>${Array.from({ length: 12 }, (_, i) => `<line x1="100" y1="8" x2="100" y2="192" transform="rotate(${i * 15} 100 100)"/>`).join('')}<path d="M100 8 L192 100 L100 192 L8 100Z"/></g></svg>`;
+
+  function viewList(){
+    ST.view = 'list'; ST.rid = null; restoreAll(); document.body.classList.remove('aw-present');
+    const all = AW.list(), ui = AW.ui(), sorted = all.map((r, i) => [r, i]).sort((a, b) => (b[0].pin ? 1 : 0) - (a[0].pin ? 1 : 0) || (b[0].used || 0) - (a[0].used || 0) || a[1] - b[1]).map(x => x[0]);
+    let h = `<header class="aw-hero">${MANDALA}<small>Astrologer Workspace</small><h2>Your routines</h2><p>Build what you always check, once, in your own order. Open it on any chart and every item comes up in sequence.</p>${chartPill()}<div class="aw-hero-act"><button type="button" class="aw-btn pri" data-act="new">＋ New routine</button><button type="button" class="aw-btn" data-act="import">Import</button>${all.length ? '<button type="button" class="aw-btn" data-act="backup">Back up all</button>' : ''}</div></header>`;
+    if (imported){ h += `<div class="aw-banner">Imported from a link: <b>${esc(imported)}</b>. It is in your list below.</div>`; imported = ''; }
+    if (!all.length) h += `<div class="aw-empty"><b>No routines yet</b><p>Make your first one, or bring back the starter set.</p><button type="button" class="aw-btn pri" data-act="starters">Add the starter routines</button></div>`;
+    else h += `<section class="aw-grid">${sorted.map((r, i) => `<article class="aw-rc${r.pin ? ' pin' : ''}" style="--c:${esc(r.color)};--d:${Math.min(i, 8) * 45}ms"><button type="button" class="aw-rc-main" data-act="open" data-id="${esc(r.id)}" aria-label="Open ${esc(r.name)}"><span class="aw-rc-top"><span class="aw-ic">${esc(r.icon)}</span><b>${esc(r.name)}</b>${r.pin ? '<em title="Pinned">★</em>' : ''}</span>${r.note ? `<span class="aw-rc-note">${esc(r.note)}</span>` : ''}<span class="aw-rc-steps">${r.steps.slice(0, 9).map(s => `<i title="${esc(stepTitle(s))}">${esc(stepIcon(s))}</i>`).join('')}${r.steps.length > 9 ? `<i class="more">+${r.steps.length - 9}</i>` : ''}</span><span class="aw-rc-meta">${r.steps.length} step${r.steps.length === 1 ? '' : 's'}${r.uses ? ' · opened ' + r.uses + '×' : ''}${r.layout === 'board' ? ' · board' : ''}</span></button><span class="aw-rc-act"><button type="button" data-act="edit" data-id="${esc(r.id)}">Edit</button><button type="button" data-act="share" data-id="${esc(r.id)}">Share</button><button type="button" data-act="more" data-id="${esc(r.id)}" aria-label="More">⋯</button></span></article>`).join('')}</section>`;
+    h += `<p class="aw-foot">Routines are saved on this device only. They hold no birth details, only what you check and in what order.</p>`;
+    set(h); AW.setUi({ lastView: 'list' });
+  }
+
+  function viewRun(id, startAt){
+    const r = AW.get(id); if (!r){ viewList(); return; }
+    if (ST.rid !== id){ AW.touch(id); } ST.rid = id; ST.view = 'run'; ST.layout = r.layout; ST.step = Math.max(0, Math.min(r.steps.length - 1, startAt || 0)); AW.setUi({ last: id }); restoreAll();
+    const c = chart();
+    let h = `<div class="aw-run" style="--c:${esc(r.color)}"><div class="aw-topbar"><button type="button" class="aw-ib" data-act="list" aria-label="Back to routines">‹</button><div class="aw-tt"><b>${esc(r.name)}</b><small>${chartPill().replace(/<[^>]+>/g, '')}</small></div><button type="button" class="aw-ib" data-act="present" aria-label="Present full screen">⛶</button><button type="button" class="aw-ib" data-act="edit" data-id="${esc(r.id)}" aria-label="Edit routine">✎</button></div><div class="aw-modebar"><div class="aw-seg wide" role="group" aria-label="Layout"><button type="button" data-act="layout" data-v="flow" class="${r.layout === 'flow' ? 'on' : ''}">Flow · one at a time</button><button type="button" data-act="layout" data-v="board" class="${r.layout === 'board' ? 'on' : ''}">Board · all stacked</button></div></div>`;
+    if (!c) h += `<div class="aw-empty"><b>Cast a chart first</b><p>A routine shows the chart you have open. Enter birth details on the Home screen, then come back.</p></div></div>`;
+    else if (!r.steps.length) h += `<div class="aw-empty"><b>This routine is empty</b><p>Add the first thing you always check.</p><button type="button" class="aw-btn pri" data-act="edit" data-id="${esc(r.id)}">Add steps</button></div></div>`;
+    else h += `<div class="aw-rail" id="awRail">${r.steps.map((s, i) => `<button type="button" data-act="go" data-i="${i}" class="${i === ST.step ? 'on' : ''}" title="${esc(stepTitle(s))}"><em>${i + 1}</em><i>${esc(stepIcon(s))}</i><span>${esc(stepTitle(s))}</span></button>`).join('')}<u id="awProg"></u></div><div class="aw-stage" id="awStage"></div><div class="aw-nav" id="awNav"><button type="button" data-act="prev">‹ Previous</button><span id="awCount"></span><button type="button" data-act="next">Next ›</button></div></div>`;
+    set(h); if (c && r.steps.length) paintStage(r);
+  }
+
+  function stepCard(r, s, i){
+    const w = s.k === 'w' ? AW.WMAP[s.t] : null, gname = w ? (AW.GROUPS.find(g => g[0] === w.group) || [])[1] : 'Tool';
+    return `<section class="aw-step${collapsed[s.id] ? ' shut' : ''}" data-i="${i}" data-sid="${esc(s.id)}"><header><span class="aw-n">${i + 1}</span><span class="aw-ic">${esc(stepIcon(s))}</span><div class="aw-st"><h3>${esc(stepTitle(s))}</h3><small>${esc(gname || '')}</small></div>${r.layout === 'board' ? `<button type="button" class="aw-ib sm" data-act="fold" data-sid="${esc(s.id)}" aria-label="Fold or unfold">▾</button>` : ''}</header>${s.note ? `<p class="aw-snote">${esc(s.note)}</p>` : ''}<div class="aw-sbody"><div class="aw-skel"><i></i><i></i><i></i></div></div></section>`;
+  }
+  function fillStep(r, s, el){
+    const host = $('.aw-sbody', el); if (!host) return;
+    if (s.k === 'p') embed(s.t, host); else host.innerHTML = AWW.render(s.t, chart(), prof(), s.o || {});
+    el.classList.add('ready');
+  }
+  function paintStage(r){
+    const stage = $('#awStage'); if (!stage) return; const gen = ++ST.gen; restoreAll();
+    document.body.classList.toggle('aw-boardmode', r.layout === 'board');
+    if (r.layout === 'board'){
+      stage.innerHTML = r.steps.map((s, i) => stepCard(r, s, i)).join('');
+      $('#awNav').hidden = true;
+      const els = $$('.aw-step', stage); let k = 0;
+      (function next(){ if (gen !== ST.gen || k >= els.length) return; const i = k++; fillStep(r, r.steps[i], els[i]); (window.requestIdleCallback || (f => setTimeout(f, 24)))(next); })();
+    } else {
+      const s = r.steps[ST.step]; stage.innerHTML = stepCard(r, s, ST.step); $('#awNav').hidden = false;
+      fillStep(r, s, $('.aw-step', stage));
+    }
+    updateRail(r);
+  }
+  function updateRail(r){
+    const rail = $('#awRail'); if (!rail) return;
+    $$('button', rail).forEach((b, i) => b.classList.toggle('on', r.layout === 'board' ? false : i === ST.step));
+    const pr = $('#awProg'); if (pr) pr.style.transform = `scaleX(${r.layout === 'board' ? 1 : (ST.step + 1) / r.steps.length})`;
+    const cnt = $('#awCount'); if (cnt) cnt.textContent = (ST.step + 1) + ' of ' + r.steps.length;
+    const on = $('button.on', rail); if (on && on.scrollIntoView) { try { rail.scrollTo({ left: on.offsetLeft - rail.clientWidth / 2 + on.clientWidth / 2, behavior: 'smooth' }); } catch (e) {} }
+    const pv = $('[data-act="prev"]'), nx = $('[data-act="next"]'); if (pv) pv.disabled = ST.step <= 0; if (nx) nx.disabled = ST.step >= r.steps.length - 1;
+  }
+  function go(i){
+    const r = AW.get(ST.rid); if (!r) return; i = Math.max(0, Math.min(r.steps.length - 1, i));
+    if (r.layout === 'board'){ const el = $(`.aw-step[data-i="${i}"]`); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); ST.step = i; updateRail(r); $$('#awRail button').forEach((b, k) => b.classList.toggle('on', k === i)); return; }
+    if (i === ST.step && $('.aw-step.ready')) return;
+    ST.step = i; paintStage(r); window.scrollTo({ top: ($('.aw-run') || document.body).getBoundingClientRect().top + window.scrollY - 60, behavior: 'auto' });
+  }
+
+  /* ---------- editor ---------- */
+  function persist(){ if (ST.ed) AW.save(ST.ed); }
+  function viewEdit(id){
+    const r = id ? AW.get(id) : null; if (!r){ viewList(); return; }
+    ST.ed = r; ST.view = 'edit'; restoreAll(); document.body.classList.remove('aw-present');
+    drawEditor();
+  }
+  function drawEditor(){
+    const r = ST.ed; if (!r) return;
+    const sc = $('#awEdSteps'), keepY = window.scrollY;
+    const stepsHtml = r.steps.length ? r.steps.map((s, i) => `<li class="aw-es" data-sid="${esc(s.id)}"><span class="aw-n">${i + 1}</span><span class="aw-ic">${esc(stepIcon(s))}</span><button type="button" class="aw-es-t" data-act="editstep" data-sid="${esc(s.id)}"><b>${esc(stepTitle(s))}</b><small>${esc(stepSummary(s))}</small></button><span class="aw-es-a"><button type="button" data-act="up" data-sid="${esc(s.id)}" aria-label="Move up" ${i === 0 ? 'disabled' : ''}>▲</button><button type="button" data-act="down" data-sid="${esc(s.id)}" aria-label="Move down" ${i === r.steps.length - 1 ? 'disabled' : ''}>▼</button><button type="button" data-act="dupstep" data-sid="${esc(s.id)}" aria-label="Duplicate step">⧉</button><button type="button" class="x" data-act="delstep" data-sid="${esc(s.id)}" aria-label="Remove step">✕</button></span></li>`).join('') : `<li class="aw-es-empty">No steps yet. Add the first thing you always check.</li>`;
+    if (sc && root.querySelector('.aw-ed')){ sc.innerHTML = stepsHtml; $('#awEdCount').textContent = r.steps.length + ' of ' + AW.MAXSTEPS; window.scrollTo(0, keepY); return; }
+    set(`<div class="aw-ed" style="--c:${esc(r.color)}"><div class="aw-topbar"><button type="button" class="aw-ib" data-act="done" aria-label="Done">‹</button><div class="aw-tt"><b>Edit routine</b><small>Saved as you type</small></div><button type="button" class="aw-btn pri sm" data-act="run" data-id="${esc(r.id)}">Open</button></div>
+      <div class="aw-form"><label class="aw-lab">Name<input id="awName" type="text" maxlength="60" value="${esc(r.name)}" autocomplete="off"></label>
+      <label class="aw-lab">What it is for<input id="awNote" type="text" maxlength="400" value="${esc(r.note)}" placeholder="Example: first look at a marriage question" autocomplete="off"></label>
+      <div class="aw-lab">Icon<div class="aw-icons" id="awIcons">${AW.ICONS.map(x => `<button type="button" data-act="icon" data-v="${esc(x)}" class="${x === r.icon ? 'on' : ''}">${esc(x)}</button>`).join('')}</div></div>
+      <div class="aw-lab">Colour<div class="aw-swatches" id="awColors">${AW.COLORS.map(x => `<button type="button" data-act="color" data-v="${x}" class="${x === r.color ? 'on' : ''}" style="--k:${x}" aria-label="Colour ${x}"></button>`).join('')}</div></div>
+      <div class="aw-lab">Opens as<div class="aw-seg wide"><button type="button" data-act="edlayout" data-v="flow" class="${r.layout === 'flow' ? 'on' : ''}">Flow · one at a time</button><button type="button" data-act="edlayout" data-v="board" class="${r.layout === 'board' ? 'on' : ''}">Board · all stacked</button></div></div></div>
+      <div class="aw-sech"><h3>Steps, in your order</h3><span id="awEdCount">${r.steps.length} of ${AW.MAXSTEPS}</span></div><ol class="aw-es-list" id="awEdSteps">${stepsHtml}</ol>
+      <button type="button" class="aw-add" data-act="addstep">＋ Add a step</button>
+      <div class="aw-ed-foot"><button type="button" class="aw-btn" data-act="share" data-id="${esc(r.id)}">Share</button><button type="button" class="aw-btn" data-act="dup" data-id="${esc(r.id)}">Duplicate</button><button type="button" class="aw-btn danger" data-act="del" data-id="${esc(r.id)}">Delete</button></div></div>`);
+  }
+
+  /* ---------- sheets ---------- */
+  function sheet(title, body, cls){
+    if (!sheetEl){ sheetEl = document.createElement('div'); sheetEl.className = 'aw-sheet vax-skip'; sheetEl.setAttribute('role', 'dialog'); sheetEl.setAttribute('aria-modal', 'true'); document.body.appendChild(sheetEl);
+      sheetEl.addEventListener('click', onSheetClick); sheetEl.addEventListener('input', onSheetInput); sheetEl.addEventListener('change', onSheetInput); }
+    sheetEl.className = 'aw-sheet vax-skip ' + (cls || ''); sheetEl.innerHTML = `<div class="aw-sh-back" data-act="close"></div><div class="aw-sh-box"><div class="aw-sh-h"><b>${esc(title)}</b><button type="button" class="aw-ib sm" data-act="close" aria-label="Close">✕</button></div><div class="aw-sh-b">${body}</div></div>`;
+    void sheetEl.offsetWidth; sheetEl.classList.add('on'); document.documentElement.classList.add('aw-lock');
+  }
+  function closeSheet(){ if (!sheetEl) return; sheetEl.classList.remove('on'); sheetEl.innerHTML = ''; document.documentElement.classList.remove('aw-lock'); ST.pick = null; }
+
+  function pickerHtml(){
+    const q = (ST.pick && ST.pick.q || '').toLowerCase(), tab = ST.pick.tab, grp = ST.pick.grp;
+    let list;
+    if (tab === 'tools'){
+      list = tools().filter(t => !q || (t[2] + ' ' + t[3] + ' ' + t[4]).toLowerCase().indexOf(q) >= 0).map(t => `<button type="button" class="aw-pr" data-act="picktool" data-id="${esc(t[0])}"><span class="aw-ic">${esc(t[1])}</span><span><b>${esc(t[2])}</b><small>${esc(t[3])}</small></span></button>`).join('');
+    } else {
+      list = AW.WIDGETS.filter(w => (!grp || w.group === grp) && (!q || (w.name + ' ' + w.about).toLowerCase().indexOf(q) >= 0)).map(w => `<button type="button" class="aw-pr" data-act="pickw" data-id="${esc(w.id)}"><span class="aw-ic">${esc(w.icon)}</span><span><b>${esc(w.name)}</b><small>${esc(w.about)}</small></span></button>`).join('');
+    }
+    return `<div class="aw-seg wide"><button type="button" data-act="ptab" data-v="cards" class="${tab === 'cards' ? 'on' : ''}">Cards (${AW.WIDGETS.length})</button><button type="button" data-act="ptab" data-v="tools" class="${tab === 'tools' ? 'on' : ''}">Any tool (${tools().length})</button></div>` +
+      `<input id="awQ" class="aw-search" type="search" placeholder="${tab === 'tools' ? 'Search every tool of the app' : 'Search cards: chart, dasha, yoga, strength'}" value="${esc(ST.pick.q || '')}" autocomplete="off">` +
+      (tab === 'cards' ? `<div class="aw-chips-row">${[['', 'All', '✦']].concat(AW.GROUPS).map(g => `<button type="button" data-act="pgrp" data-v="${esc(g[0])}" class="${(grp || '') === g[0] ? 'on' : ''}">${esc(g[2])} ${esc(g[1])}</button>`).join('')}</div>` : '') +
+      `<div class="aw-plist">${list || '<p class="aw-msg">Nothing matches that search.</p>'}</div>`;
+  }
+  function openPicker(at){ ST.pick = { tab: 'cards', q: '', grp: '', at: at == null ? null : at }; sheet('Add a step', pickerHtml(), 'tall'); }
+  function repaintPicker(keep){ const b = $('.aw-sh-b', sheetEl); if (!b) return; const q = $('#awQ', sheetEl), pos = q ? q.selectionStart : 0; b.innerHTML = pickerHtml(); if (keep){ const n = $('#awQ', sheetEl); if (n){ n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} } } }
+
+  function optionsHtml(w, o){
+    return w.options.map(x => x.values ? `<label class="aw-lab">${esc(x.label)}<select data-opt="${esc(x.k)}">${x.values.map(v => `<option value="${esc(v[0])}"${o[x.k] === v[0] ? ' selected' : ''}>${esc(v[1])}</option>`).join('')}</select></label>` : `<label class="aw-lab">${esc(x.label)}<textarea data-opt="${esc(x.k)}" rows="5" maxlength="1200" placeholder="Write a line or a checklist. Start a line with - for a tick box.">${esc(o[x.k] || '')}</textarea></label>`).join('');
+  }
+  function openConfig(w, step){
+    const o = step ? Object.assign({}, step.o) : AW.defaults(w.id);
+    ST.pick = Object.assign(ST.pick || {}, { cfg: { w: w.id, o, sid: step ? step.id : null, label: step ? step.label : '', note: step ? step.note : '' } });
+    sheet(step ? 'Edit step' : w.name, `<p class="aw-dim">${esc(w.about)}</p>${w.options.length ? `<div class="aw-opts">${optionsHtml(w, o)}</div>` : ''}<label class="aw-lab">Your own title (optional)<input id="awLabel" type="text" maxlength="60" value="${esc(step ? step.label : '')}" placeholder="${esc(w.name)}"></label><label class="aw-lab">A note for this step (optional)<input id="awSNote" type="text" maxlength="400" value="${esc(step ? step.note : '')}" placeholder="Example: look at the 7th lord first"></label><div class="aw-prev"><small>Preview with the chart on screen</small><div id="awPrev" class="aw-prev-b"></div></div><button type="button" class="aw-btn pri full" data-act="savestep">${step ? 'Save step' : 'Add to routine'}</button>`, 'tall');
+    previewCfg();
+  }
+  function previewCfg(){ const c = ST.pick && ST.pick.cfg, el = $('#awPrev', sheetEl); if (!c || !el) return; el.innerHTML = chart() ? AWW.render(c.w, chart(), prof(), c.o) : '<p class="aw-msg">Cast a chart to see a preview.</p>'; }
+  function openToolConfig(id, step){
+    const t = toolOf(id); if (!t) return;
+    ST.pick = Object.assign(ST.pick || {}, { cfg: { tool: id, sid: step ? step.id : null } });
+    sheet(step ? 'Edit step' : t[2], `<p class="aw-dim">${esc(t[3])}</p><p class="aw-dim">The real tool opens inside this step, fully usable.</p><label class="aw-lab">Your own title (optional)<input id="awLabel" type="text" maxlength="60" value="${esc(step ? step.label : '')}" placeholder="${esc(t[2])}"></label><label class="aw-lab">A note for this step (optional)<input id="awSNote" type="text" maxlength="400" value="${esc(step ? step.note : '')}"></label><button type="button" class="aw-btn pri full" data-act="savestep">${step ? 'Save step' : 'Add to routine'}</button>`, '');
+  }
+  function saveStep(){
+    const cfg = ST.pick && ST.pick.cfg, r = ST.ed; if (!cfg || !r) return;
+    const label = ($('#awLabel', sheetEl) || {}).value || '', note = ($('#awSNote', sheetEl) || {}).value || '';
+    let s = cfg.sid ? r.steps.find(x => x.id === cfg.sid) : null;
+    if (!s){ if (r.steps.length >= AW.MAXSTEPS){ toast('A routine can hold ' + AW.MAXSTEPS + ' steps.'); return; } s = AW.step(cfg.tool ? 'p' : 'w', cfg.tool || cfg.w, cfg.o || {}, label, note); r.steps.push(s); }
+    else { s.label = label.trim().slice(0, 60); s.note = note.trim().slice(0, 400); if (cfg.w) s.o = AW.cleanOpts(cfg.w, cfg.o); }
+    persist(); closeSheet(); drawEditor(); toast(cfg.sid ? 'Step saved.' : 'Step added.');
+  }
+
+  function shareSheet(id){
+    const r = AW.get(id); if (!r) return; const code = AW.encode(r), link = location.href.split('#')[0] + '#w=' + code;
+    sheet('Share "' + r.name + '"', `<p class="aw-dim">Anyone who opens this code gets the same routine, ready for their own charts. It holds no birth details.</p><textarea class="aw-code" id="awCode" rows="4" readonly>${esc(code)}</textarea><div class="aw-sh-act"><button type="button" class="aw-btn pri" data-act="sharecode" data-id="${esc(id)}">Share the code</button><button type="button" class="aw-btn" data-act="sharelink" data-id="${esc(id)}">Share as a link</button><button type="button" class="aw-btn" data-act="dl" data-id="${esc(id)}">Save as a file</button></div>`, '');
+  }
+  function importSheet(){
+    sheet('Import routines', `<p class="aw-dim">Paste a routine code, a link, or the contents of a backup file.</p><textarea class="aw-code" id="awImp" rows="5" placeholder="AW1.…" autocomplete="off"></textarea><div class="aw-sh-act"><button type="button" class="aw-btn pri" data-act="doimport">Import</button><label class="aw-btn file">Choose a file<input type="file" id="awFile" accept=".json,.txt,application/json,text/plain" hidden></label></div>`, '');
+  }
+  function importText(t){
+    t = String(t || '').trim(); const found = []; let r;
+    if (t[0] === '['){ try { JSON.parse(t).forEach(x => { const d = AW.decode(JSON.stringify(x)); if (d) found.push(d); }); } catch (e) {} }
+    else if (/AW1\./.test(t)){ (t.match(/AW1\.[A-Za-z0-9_-]+/g) || []).forEach(c => { r = AW.decode(c); if (r) found.push(r); }); }
+    else { r = AW.decode(t); if (r) found.push(r); }
+    found.slice(0, 20).forEach(x => AW.save(x)); return found;
+  }
+  function moreSheet(id){
+    const r = AW.get(id); if (!r) return;
+    sheet(r.name, `<div class="aw-menu"><button type="button" data-act="pin" data-id="${esc(id)}">${r.pin ? '☆ Unpin from the top' : '★ Pin to the top'}</button><button type="button" data-act="dup" data-id="${esc(id)}">⧉ Duplicate</button><button type="button" data-act="share" data-id="${esc(id)}">⇪ Share</button><button type="button" class="danger" data-act="del" data-id="${esc(id)}">🗑 Delete</button></div>`, '');
+  }
+
+  /* ---------- present mode ---------- */
+  function present(on){
+    document.body.classList.toggle('aw-present', on);
+    if (on && !exitEl){ exitEl = document.createElement('button'); exitEl.type = 'button'; exitEl.className = 'aw-exit vax-skip'; exitEl.textContent = '✕ Exit'; exitEl.setAttribute('data-act', 'unpresent'); document.body.appendChild(exitEl); exitEl.addEventListener('click', () => present(false)); }
+    if (exitEl) exitEl.hidden = !on;
+  }
+
+  /* ---------- events ---------- */
+  function mutateSteps(fn){ const r = ST.ed; if (!r) return; fn(r.steps); persist(); drawEditor(); }
+  function onClick(e){
+    const b = e.target.closest('[data-act]'); if (!b || !root.contains(b)) return; const a = b.dataset.act, id = b.dataset.id, sid = b.dataset.sid;
+    act(a, b, id, sid);
+  }
+  function act(a, b, id, sid){
+    const r = ST.ed;
+    switch (a){
+      case 'new': { const n = AW.blank('My routine'); AW.save(n); viewEdit(n.id); break; }
+      case 'open': viewRun(id); break;
+      case 'run': viewRun(id); break;
+      case 'list': case 'done': ST.ed = null; viewList(); break;
+      case 'edit': viewEdit(id); break;
+      case 'share': closeSheet(); shareSheet(id); break;
+      case 'more': moreSheet(id); break;
+      case 'import': importSheet(); break;
+      case 'backup': download('astro-workspace-' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify(AW.list(), null, 1)); toast('Backup saved as a file.'); break;
+      case 'starters': AW.starters().reverse().forEach(s => AW.save(s)); AW.setUi({ seeded: 1 }); viewList(); break;
+      case 'go': go(+b.dataset.i); break;
+      case 'prev': go(ST.step - 1); break;
+      case 'next': go(ST.step + 1); break;
+      case 'layout': { const x = AW.get(ST.rid); if (!x || x.layout === b.dataset.v) break; x.layout = b.dataset.v; AW.save(x); $$('.aw-modebar .aw-seg button').forEach(k => k.classList.toggle('on', k.dataset.v === x.layout)); paintStage(x); break; }
+      case 'present': present(true); break;
+      case 'fold': { collapsed[sid] = !collapsed[sid]; const el = b.closest('.aw-step'); if (el) el.classList.toggle('shut', !!collapsed[sid]); break; }
+      case 'icon': if (r){ r.icon = b.dataset.v; persist(); $$('#awIcons button').forEach(k => k.classList.toggle('on', k === b)); } break;
+      case 'color': if (r){ r.color = b.dataset.v; persist(); $$('#awColors button').forEach(k => k.classList.toggle('on', k === b)); $('.aw-ed').style.setProperty('--c', r.color); } break;
+      case 'edlayout': if (r){ r.layout = b.dataset.v; persist(); $$('.aw-ed .aw-seg button').forEach(k => k.classList.toggle('on', k.dataset.v === r.layout)); } break;
+      case 'addstep': openPicker(); break;
+      case 'editstep': { const s = r && r.steps.find(x => x.id === sid); if (!s) break; ST.pick = {}; if (s.k === 'p') openToolConfig(s.t, s); else if (AW.WMAP[s.t]) openConfig(AW.WMAP[s.t], s); else toast('This card is not in this version.'); break; }
+      case 'up': mutateSteps(st => { const i = st.findIndex(x => x.id === sid); AW.move(st, i, i - 1); }); break;
+      case 'down': mutateSteps(st => { const i = st.findIndex(x => x.id === sid); AW.move(st, i, i + 1); }); break;
+      case 'dupstep': mutateSteps(st => { const i = st.findIndex(x => x.id === sid); if (i < 0 || st.length >= AW.MAXSTEPS) return; const c = JSON.parse(JSON.stringify(st[i])); c.id = AW.sid(); st.splice(i + 1, 0, c); }); break;
+      case 'delstep': { if (!r) break; const i = r.steps.findIndex(x => x.id === sid); if (i < 0) break; const gone = r.steps.splice(i, 1)[0]; persist(); drawEditor(); toast('Step removed.', () => { r.steps.splice(Math.min(i, r.steps.length), 0, gone); persist(); drawEditor(); }); break; }
+      case 'dup': { closeSheet(); const d = AW.duplicate(id); if (d){ toast('Duplicated.'); if (ST.view === 'edit') viewEdit(d.id); else viewList(); } break; }
+      case 'pin': { const x = AW.get(id); if (x){ x.pin = !x.pin; AW.save(x); } closeSheet(); viewList(); break; }
+      case 'del': { closeSheet(); const gone = AW.remove(id); if (!gone) break; ST.ed = null; viewList(); toast('Routine deleted.', () => { AW.save(gone); viewList(); }); break; }
+    }
+  }
+  function onSheetClick(e){
+    const b = e.target.closest('[data-act]'); if (!b) return; const a = b.dataset.act, id = b.dataset.id;
+    switch (a){
+      case 'close': closeSheet(); break;
+      case 'ptab': ST.pick.tab = b.dataset.v; ST.pick.grp = ''; repaintPicker(); break;
+      case 'pgrp': ST.pick.grp = b.dataset.v; repaintPicker(); break;
+      case 'pickw': openConfig(AW.WMAP[id]); break;
+      case 'picktool': openToolConfig(id); break;
+      case 'savestep': saveStep(); break;
+      case 'share': closeSheet(); shareSheet(id); break;
+      case 'dup': case 'pin': case 'del': closeSheet(); act(a, b, id); break;
+      case 'sharecode': { const r = AW.get(id); if (!r) break; const code = AW.encode(r); if (navigator.share){ navigator.share({ title: r.name, text: code }).catch(() => {}); } else copyText(code).then(ok => toast(ok ? 'Code copied.' : 'Select the code and copy it.')); break; }
+      case 'sharelink': { const r = AW.get(id); if (!r) break; const link = location.href.split('#')[0] + '#w=' + AW.encode(r); if (navigator.share){ navigator.share({ title: r.name, url: link }).catch(() => {}); } else copyText(link).then(ok => toast(ok ? 'Link copied.' : 'Could not copy the link.')); break; }
+      case 'dl': { const r = AW.get(id); if (r) download('routine-' + slug(r.name) + '.json', JSON.stringify(r, null, 1)); break; }
+      case 'doimport': { const f = importText(($('#awImp', sheetEl) || {}).value); if (!f.length){ toast('That does not look like a routine code.'); break; } closeSheet(); viewList(); toast(f.length === 1 ? 'Imported "' + f[0].name + '".' : 'Imported ' + f.length + ' routines.'); break; }
+    }
+  }
+  function onSheetInput(e){
+    const t = e.target;
+    if (t.id === 'awQ'){ ST.pick.q = t.value; repaintPicker(true); return; }
+    if (t.id === 'awFile' && t.files && t.files[0]){ const rd = new FileReader(); rd.onload = () => { const f = importText(String(rd.result || '')); if (!f.length){ toast('That file has no routines.'); return; } closeSheet(); viewList(); toast('Imported ' + f.length + (f.length === 1 ? ' routine.' : ' routines.')); }; rd.readAsText(t.files[0]); return; }
+    if (t.dataset && t.dataset.opt && ST.pick && ST.pick.cfg){ ST.pick.cfg.o[t.dataset.opt] = t.value; if (t.tagName === 'TEXTAREA'){ clearTimeout(onSheetInput.t); onSheetInput.t = setTimeout(previewCfg, 250); } else previewCfg(); }
+  }
+  function onInput(e){
+    const r = ST.ed; if (!r) return;
+    if (e.target.id === 'awName'){ r.name = e.target.value.slice(0, 60) || 'My routine'; persist(); }
+    else if (e.target.id === 'awNote'){ r.note = e.target.value.slice(0, 400); persist(); }
+  }
+  function onKey(e){
+    if (!root || !document.getElementById('awRoot') || e.target.matches('input,textarea,select')) return;
+    if (e.key === 'Escape'){ if (sheetEl && sheetEl.classList.contains('on')) closeSheet(); else if (document.body.classList.contains('aw-present')) present(false); return; }
+    if (ST.view !== 'run' || !document.querySelector('#panel-workspace.active')) return;
+    if (e.key === 'ArrowRight') go(ST.step + 1); else if (e.key === 'ArrowLeft') go(ST.step - 1);
+  }
+  let tx = 0, ty = 0, tOK = false;
+  function onTouchStart(e){ const t = e.touches[0]; tx = t.clientX; ty = t.clientY; tOK = !e.target.closest('.aw-scroll,svg,.aw-embed,.aw-rail,input,textarea,select,.aw-cols'); }
+  function onTouchEnd(e){ if (!tOK || ST.view !== 'run') return; const t = e.changedTouches[0], dx = t.clientX - tx, dy = t.clientY - ty; const r = AW.get(ST.rid); if (!r || r.layout !== 'flow') return; if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 2) go(ST.step + (dx < 0 ? 1 : -1)); }
+
+  function bind(){
+    if (bound && root.dataset.bound === '1') return;
+    root.dataset.bound = '1'; bound = true;
+    root.addEventListener('click', onClick); root.addEventListener('input', onInput);
+    root.addEventListener('touchstart', onTouchStart, { passive: true }); root.addEventListener('touchend', onTouchEnd, { passive: true });
+  }
+  if (!window.__awKeys){ window.__awKeys = true; document.addEventListener('keydown', onKey); }
+
+  /* ---------- opening the tab ---------- */
+  function mount(){
+    root = document.getElementById('awRoot'); if (!root) return;
+    bind();
+    const ui = AW.ui();
+    if (!ui.seeded && !AW.list().length){ AW.starters().reverse().forEach(s => AW.save(s)); }
+    AW.setUi({ seeded: 1 });
+    if (ST.view === 'run' && ST.rid && AW.get(ST.rid)) viewRun(ST.rid, ST.step);
+    else if (ST.view === 'edit' && ST.ed) viewEdit(ST.ed.id);
+    else viewList();
+  }
+  function leave(){ restoreAll(); present(false); closeSheet(); }
+
+  if (typeof registerLatePanel === 'function') registerLatePanel('panel-workspace', () => '<div class="aw" id="awRoot"></div>');
+  if (typeof window.switchAppTab === 'function'){
+    const _s = window.switchAppTab;
+    window.switchAppTab = function(id){
+      if (id !== 'panel-workspace' && root && document.getElementById('awRoot')) leave();
+      const out = _s.apply(this, arguments);
+      if (id === 'panel-workspace'){ try { mount(); } catch (e) { if (window.console) console.warn('workspace', e); } }
+      return out;
+    };
+  }
+  /* a #w=AW1... link brings the routine in (a few bytes of work; nothing is drawn) */
+  try { const m = /[#&]w=(AW1\.[A-Za-z0-9_-]+)/.exec(location.hash || ''); if (m){ const r = AW.decode(m[1]); if (r){ AW.save(r); imported = r.name; } } } catch (e) {}
+  window.AWUI = { open: mount, openRoutine: id => { if (typeof switchAppTab === 'function') switchAppTab('panel-workspace'); setTimeout(() => viewRun(id), 0); }, restore: restoreAll };
+})();
 </script>
 <script>
 /* Copy buttons on/off (Settings in the main menu). OFF by default. Hides every "Copy ..." button in the app while off.

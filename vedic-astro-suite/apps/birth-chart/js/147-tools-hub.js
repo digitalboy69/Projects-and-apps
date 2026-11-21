@@ -6,7 +6,7 @@
 const THB = (() => {
   /* [id, title, "use it when you want to...", color, [panel ids]] */
   const CATS = [
-    ['read', 'Read my chart', 'Understand my chart in plain words', '#D4AF37', ['panel-ai', 'panel-reading', 'panel-problem', 'panel-overview', 'panel-avakahada', 'panel-planets', 'panel-bhava', 'panel-vargas', 'panel-lagnas']],
+    ['read', 'Read my chart', 'Understand my chart in plain words', '#D4AF37', ['panel-ai', 'panel-reading', 'panel-problem', 'panel-overview', 'panel-workspace', 'panel-avakahada', 'panel-planets', 'panel-bhava', 'panel-vargas', 'panel-lagnas']],
     ['now', 'Today & now', 'See what the sky is doing today', '#5EC4B7', ['panel-today', 'panel-active', 'panel-transit', 'panel-choghadiya', 'panel-panchanga', 'panel-pcal', 'panel-prashna', 'panel-chakra']],
     ['timing', 'Life timing & cycles', 'Know which period of life is running and what comes next', '#8A6FB8', ['panel-hora', 'panel-ppf', 'panel-dasha', 'panel-dashasys', 'panel-transits', 'panel-sudarshana', 'panel-tithi', 'panel-vbday', 'panel-yeartimeline']],
     ['strength', 'Planet & house strength', 'Check how strong or weak each planet and house is', '#6B7FA3', ['panel-shadbala', 'panel-bhavabala', 'panel-vimshopaka', 'panel-avasthas', 'panel-ashtakavarga', 'panel-asx', 'panel-fate', 'panel-sensitive', 'panel-upagrahas']],
@@ -29,7 +29,7 @@ const THB = (() => {
     'panel-dosha': 'manglik kaal sarp pitru gand mool remedy problem', 'panel-yogas': 'raj yoga dhana combination',
     'panel-rectification': 'birth time wrong unsure correct fix', 'panel-datefinder': 'forgotten birth date festival family remembers',
     'panel-numerology': 'name number lucky', 'panel-atlas': 'basics beginner learn glossary', 'panel-shadbala': 'planet power strength', 'panel-ashtakavarga': 'bindu points sarvashtakavarga',
-    'panel-asx': 'prastara sodhana kakshya reduction transit points', 'panel-export': 'download pdf copy share save report', 'panel-contact': 'bug feedback help support', 'panel-guide': 'help how to use manual index what does explain instructions learn'
+    'panel-asx': 'prastara sodhana kakshya reduction transit points', 'panel-workspace': 'my routine formula checklist favourite saved sequence d1 d9 astrologer custom own view dashboard board', 'panel-export': 'download pdf copy share save report', 'panel-contact': 'bug feedback help support', 'panel-guide': 'help how to use manual index what does explain instructions learn'
   };
   /* four big shortcuts under Recently used (owner's choice): [panel id, label, one line] */
   const QUICK = [['panel-vargas', 'Divisional Charts', 'D1 to D144 chart viewer'], ['panel-dasha', 'Vimshottari Dasha', 'Life-period timeline'], ['panel-reading', 'Reading', 'Plain-language chart reading'], ['panel-ashtakavarga', 'Ashtakavarga', 'Point-strength system']];
