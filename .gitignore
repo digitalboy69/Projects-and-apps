@@ -10,3 +10,4 @@ customer-edition.html
 !assets/*.png
 !archive/signal-decoder/icons/*.png
 !vedic-astro-suite/mobile/resources/*.png
+vedic-astro-suite/tools/ai/.cache/

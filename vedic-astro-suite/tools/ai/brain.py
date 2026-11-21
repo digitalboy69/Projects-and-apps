@@ -10,6 +10,8 @@
   python3 tools/ai/brain.py done "one line" [--lesson "..."] [--pending "..."] [--decision "..."] [--clear] [--force]
   python3 tools/ai/brain.py learn "mistake -> rule"
   python3 tools/ai/brain.py audit [--fix]          self-upgrade pass (cap + archive the log, dedupe lessons, dead paths, size caps)
+  Navigation / token savers (tools/ai/brain_nav.py, loaded only when used):
+  ctx "task" | show NAME | outline FILE | impact NAME | tests-for FILE | run "cmd" | diff | secrets [--all] | handoff | cost | map [DIR]
 
 Stdlib only, no network (except an optional git fetch). Set BRAIN_ROOT to run against another tree (the tests do).
 """
@@ -455,11 +457,18 @@ def cmd_audit(a, quiet=False):
     return 1 if bad else 0
 
 
+NAV = ('ctx', 'show', 'outline', 'impact', 'tests-for', 'run', 'diff', 'secrets', 'handoff', 'cost', 'map')
+
+
 def main():
     a = sys.argv[1:]
     if not a or a[0] in ('-h', '--help', 'help'):
         print(__doc__); return 0
     c, r = a[0], a[1:]
+    if c in NAV:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import brain_nav
+        return brain_nav.dispatch(c, r, ROOT, sh, rd, tok) or 0
     fn = {'start': cmd_start, 'find': cmd_find, 'sec': cmd_sec, 'tests': cmd_tests, 'check': cmd_check, 'new': cmd_new, 'done': cmd_done, 'learn': cmd_learn, 'audit': cmd_audit}.get(c)
     if not fn:
         print('unknown command: %s\n' % c + __doc__); return 2

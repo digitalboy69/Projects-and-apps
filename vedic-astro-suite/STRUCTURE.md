@@ -468,6 +468,8 @@ Whenever you **add, rename, move or delete a file**, or **add/change a feature**
 - `tools/ai-brain-kit/skill/codebase-brain/references/prompts.md` — prompts to paste for the kit (new chat, set-up, impact check, finish, handoff)
 - `tools/ai-brain-kit/skill/codebase-brain/references/working-method.md` — the working method and measured token savings behind the kit
 - `tools/ai/brain.py` — AI Brain command: start, find, sec, tests, check, new, done, learn, audit (stdlib only)
+- `tools/ai/brain_nav.py` — lazy-loaded navigation and token-saving commands for brain.py: ctx, show, outline, impact, tests-for, run, diff, secrets, handoff, cost, map
+- `tools/ai/sim_savings.py` — token-savings simulation (no model tokens): runs real brain commands vs grep + whole-file reads on this repo and prints saved tokens and the break-even
 
 ### tests/
 - `tests/chakra_explorer_browser_test.py` — Chakra Explorer in the real app: Home tile, three drawings, date and step controls, every toggle, Kota Paala override, phone width, rebuild if missing (CHX_SHOTS=dir saves screenshots)

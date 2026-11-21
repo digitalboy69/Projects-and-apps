@@ -4,13 +4,14 @@ Newest first. Old lines move to docs/AI_LOG_ARCHIVE.md (grep it, never read it w
 ## NOW
 <!--NOW-->
 - Updated: 2026-11-21
-- Last task: AI Brain Kit v2 stored as a blank reusable template in tools/ai-brain-kit/ (not wired into this repo; this repo keeps tools/ai/brain.py): adds ctx, show, outline, impact, tests-for, run, secrets, handoff, multi-tool pointers (Cursor, Copilot, Windsurf, Gemini, AGENTS.md, Cline, Aider)
+- Last task: AI Brain: ported ctx/show/outline/impact/tests-for/run/diff/secrets/handoff/cost/map into tools/ai/brain_nav.py (lazy); sim_savings.py shows ~95% fewer tokens per task, ctx 14/14
 - Pending: AI Brain waits for owner push
 - Owner decisions waiting: none
 <!--/NOW-->
 
 ## LOG (one line per finished task)
 <!--LOG-->
+- 2026-11-21 AI Brain: ported ctx/show/outline/impact/tests-for/run/diff/secrets/handoff/cost/map into tools/ai/brain_nav.py (lazy); sim_savings.py shows ~95% fewer tokens per task, ctx 14/14
 - 2026-11-21 AI Brain Kit v2 stored as a blank reusable template in tools/ai-brain-kit/ (not wired into this repo; this repo keeps tools/ai/brain.py): adds ctx, show, outline, impact, tests-for, run, secrets, handoff, multi-tool pointers (Cursor, Copilot, Windsurf, Gemini, AGENTS.md, Cline, Aider)
 - 2026-11-21 AI Brain (2026-11-21, docs/AI_BRAIN_PLAN.md): AI_START.md is the ONE entry file (about 0.9k tokens, was ~30k reading AI_GUIDE); tools/ai/brain.py gives start/find/sec/tests/check/new/done/learn/audit; docs/AI_LOG.md is the one living record (NOW, LOG, LESSONS); old section 7 archived; pre-commit runs audit --fix. Test: tests/ai_brain_test.py.
 - Rectification guide (2026-11-21): `docs/RECTIFICATION_GUIDE.md` documents all 9 Rectify-studio tools, how they work, workflows, accuracy notes and file map. Update it when a rectification tool changes.
@@ -29,6 +30,7 @@ Newest first. Old lines move to docs/AI_LOG_ARCHIVE.md (grep it, never read it w
 
 ## LESSONS (mistake -> rule; shown at the start of every session)
 <!--LESSONS-->
+- 2026-11-21 Brain commands are a lazy module (brain_nav.py) so start/find/done stay fast -> add new commands there, not in brain.py
 - 2026-11-21 A shell heredoc test that writes Python needs no backslash-quote inside single quotes; and untracked new dirs need git status -uall to be seen by test mapping
 - 2026-11-21 Run python and build commands from `vedic-astro-suite/` (not `apps/`, not the git root); `python3 build.py` from elsewhere fails with file not found.
 - 2026-11-21 A new file that is not listed in STRUCTURE.md blocks the build and the commit: add its `- `path` — description` line in the same change (`brain.py new` does it for plans).

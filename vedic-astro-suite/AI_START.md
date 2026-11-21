@@ -23,7 +23,7 @@ Project: Vedic Astro Suite = shell + 4 apps (`apps/birth-chart` is the big one),
 - Commit trailers: `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` and `Claude-Session: <session url>`.
 
 ## Commands
-`start` `find WORDS` `sec N` `tests` `check [--no-tests]` `new SLUG "Title"` `done "line"` `learn "mistake -> rule"` `audit [--fix]` (all via `python3 tools/ai/brain.py`). Pre-commit hook (`sh install-hooks.sh` once per clone) runs `audit --fix`, so the log never bloats and this file stays under 4.5 KB.
+`start` `find WORDS` `sec N` `tests` `check [--no-tests]` `new SLUG "Title"` `done "line"` `learn "mistake -> rule"` `audit [--fix]`; find code cheaply: `ctx "task"` `show NAME` `outline FILE` `impact NAME` `tests-for FILE` `run "cmd"` `diff` `secrets` `handoff` `cost` `map` (all via `python3 tools/ai/brain.py`). Pre-commit hook (`sh install-hooks.sh` once per clone) runs `audit --fix`, so the log never bloats and this file stays under 4.5 KB.
 
 ## Where detail lives (open only when `find` points there)
 `docs/AI_LOG.md` live state and lessons | `AI_GUIDE.md` rules, router | `STRUCTURE.md` file map | `docs/*_PLAN.md` feature plans | `symbols.idx` symbol lines | `docs/AI_LOG_ARCHIVE.md` old history (grep only).

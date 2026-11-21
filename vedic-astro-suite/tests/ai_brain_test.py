@@ -58,6 +58,19 @@ w('AI_START.md', '# start\nUse `docs/AI_LOG.md`.\n')
 rc, o = b('audit'); ok('audit passes again when fixed', rc == 0, o)
 rc, o = b('new', 'my feat', 'My feature'); ok('new scaffolds a plan and its STRUCTURE line', rc == 0 and os.path.exists(os.path.join(T, 'docs/MY_FEAT_PLAN.md')) and 'docs/MY_FEAT_PLAN.md' in open(os.path.join(T, 'STRUCTURE.md')).read(), o)
 rc, o = b('new', 'my feat', 'again'); ok('new refuses to overwrite', rc == 1, o)
+# navigation commands (tools/ai/brain_nav.py) on the REAL repo, read-only
+def real(*a):
+    r = subprocess.run([sys.executable, BRAIN] + list(a), capture_output=True, text=True, cwd=os.path.join(HERE, '..'), env=dict(os.environ))
+    return r.returncode, r.stdout + r.stderr
+rc, o = real('ctx', 'fate meter score'); ok('ctx ranks the fate meter file first', rc == 0 and '75-fate-meter.js' in o.split('\n')[2], o)
+rc, o = real('show', 'computeFate', '--lines', '3'); ok('show prints one function body, capped', rc == 0 and 'window.computeFate' in o and 'more lines' in o, o)
+rc, o = real('outline', '75-fate-meter.js'); ok('outline lists symbols with line numbers', rc == 0 and 'computeFate' in o, o)
+rc, o = real('impact', 'computeFate'); ok('impact reports a blast radius', rc == 0 and 'blast radius' in o, o)
+rc, o = real('tests-for', 'apps/birth-chart/js/164-workspace-vars.js'); ok('tests-for maps a file to its test', 'workspace_vars_test.js' in o, o)
+rc, o = real('run', 'python3 -c "import sys;print(1);sys.exit(3)"'); ok('run keeps the exit code and compresses', rc == 3 and 'exit=3' in o, o)
+rc, o = real('secrets', '--all'); ok('secrets finds nothing in tracked files', rc == 0 and 'none found' in o, o)
+rc, o = real('map'); ok('map lists folders with token counts', rc == 0 and 'apps/' in o and 'tokens' in o, o)
+rc, o = real('ctx'); ok('ctx without words prints usage', rc == 2, o)
 # real repo: the entry file really is under the cap and has no dead path
 r = subprocess.run([sys.executable, BRAIN, 'audit'], capture_output=True, text=True, cwd=os.path.join(HERE, '..'), env=dict(os.environ))
 ok('the real AI_START.md is under 4.5 KB with no dead paths', r.returncode == 0, r.stdout)
