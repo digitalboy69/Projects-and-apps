@@ -25,14 +25,14 @@
   const dignityChip = st => { if (!st) return ''; const t = String(st.label || st.status || ''); const s = String(st.status || ''); return chip(t.replace(/ \(.*\)/, '').replace(/ Sign$/, ''), /Exalt|Own|Moola/.test(s) ? 'g' : /Debil|Enemy/.test(s) ? 'b' : ''); };
 
   /* a chart drawn by the app's own SVG builders (they read window.__vgC) */
-  function drawVarga(c, key, style){
+  function drawVarga(c, key, style, hl){
     const V = c.vargas && c.vargas[key]; if (!V) return null;
     const prev = window.__vgC; window.__vgC = c;
-    try { return style === 'south' ? buildSouthIndianSvg(V, null) : buildNorthIndianSvg(V, null); }
+    try { let svg = style === 'south' ? buildSouthIndianSvg(V, null) : buildNorthIndianSvg(V, null); if (hl && svg) svg = svg.replace(new RegExp('<g class="ch-pl" data-p="' + hl + '">', 'g'), '<g class="ch-pl aw-hl" data-p="' + hl + '">'); return svg; }
     catch (e) { return null; } finally { window.__vgC = prev; }
   }
-  function chartBox(c, key, style, title){
-    const svg = drawVarga(c, key, style), A = AW_().VARGA_ABOUT[key] || '';
+  function chartBox(c, key, style, title, hl){
+    const svg = drawVarga(c, key, style, hl), A = AW_().VARGA_ABOUT[key] || '';
     if (!svg) return msg(key + ' is not available for this chart.');
     const V = c.vargas[key];
     return `<figure class="aw-chartbox"><div class="aw-svg">${svg}</div><figcaption><b>${esc(title || key)}</b><span>${esc(A)}</span><span>Rising: ${esc(SIGN[V.ascendantSign])}</span></figcaption></figure>`;
@@ -48,6 +48,44 @@
     const prev = window.__vgC; window.__vgC = c; let svg = null;
     try { svg = o.style === 'south' ? buildSouthIndianSvg(v, null) : buildNorthIndianSvg(v, null); } catch (e) { svg = null; } finally { window.__vgC = prev; }
     return svg ? `<figure class="aw-chartbox"><div class="aw-svg">${svg}</div><figcaption><b>Chandra Lagna</b><span>Counted from the Moon in ${esc(SIGN[ms])}</span></figcaption></figure>` : msg('The Moon chart could not be drawn.');
+  };
+
+  /* ---------- the point finder cards ---------- */
+  const STC = d => { const t = d && d.status || ''; return /Exalt/.test(t) ? 'ex' : /Own|Moola/.test(t) ? 'ow' : /Debil/.test(t) ? 'de' : /Enemy/.test(t) ? 'en' : /Friend/.test(t) ? 'fr' : ''; };
+  const dchip = d => d ? dignityChip(d) : '';
+  const posTxt = x => x.err ? '' : `${esc(SIGN[x.sign])} · ${ordn(x.house)} house`;
+  const kindNote = r => r.kind === 'sign' ? 'A sign-only point: it has a sign but no degree, so it has no honest place in the other charts.' : '';
+  W.locate = (c, pf, o) => {
+    const AP = window.AWP; if (!AP) return msg('The point finder is not available.');
+    const key = vkey(o.varga), id = o.subject || 'role:AK', r = AP.resolve(id, c, pf);
+    if (r.err) return msg(r.err);
+    const d1 = AP.locate(c, id, 'D1', pf), x = AP.locate(c, id, key, pf);
+    const head = `<div class="aw-fh"><small>${esc(r.group)}</small><b>${esc(r.label)}</b>${r.planet && r.label !== r.planet ? `<span class="aw-fp">${gly(r.planet)}${esc(r.planet)}</span>` : ''}<p class="aw-dim">${esc(r.via)}</p></div>`;
+    if (x.err === 'sign-only') return head + `<div class="aw-find"><div class="aw-fc"><small>D1 · Rashi</small><b>${esc(SIGN[d1.sign])}</b><span>${ordn(d1.house)} house</span></div></div><p class="aw-msg">${esc(kindNote(r))}</p>`;
+    if (x.err) return head + msg(x.err);
+    const chips = (x.dignity ? dchip(x.dignity) : '') + (key === 'D9' && x.same ? chip('Vargottama', 'g') : x.same ? chip('same sign as D1', 'g') : '') + (r.planet && c.planets[r.planet] && c.planets[r.planet].retrograde ? chip('R', 'b') : '') + (x.together.length ? chip('with ' + x.together.join(', ')) : chip('alone in the sign'));
+    const lordLine = x.lordHouse ? `<p class="aw-read">The lord of ${esc(SIGN[x.sign])} here is ${esc(x.lord)}, standing in the ${ordn(x.lordHouse)} house of ${esc(key)}.</p>` : '';
+    return head + `<div class="aw-find"><div class="aw-fc"><small>D1 · Rashi</small><b>${esc(SIGN[d1.sign])}</b><span>${ordn(d1.house)} house</span></div><div class="aw-fa" aria-hidden="true">➜</div><div class="aw-fc hi"><small>${esc(key)} · ${esc((AW_().VARGA_ABOUT[key] || '').split(' (')[0])}</small><b>${esc(SIGN[x.sign])}</b><span>${ordn(x.house)} house</span></div></div><div class="aw-chips">${chips}</div>${lordLine}` + chartBox(c, key, o.style === 'south' ? 'south' : 'north', key, r.planet || '');
+  };
+  W.locateall = (c, pf, o) => {
+    const AP = window.AWP; if (!AP) return msg('The point finder is not available.');
+    const id = o.subject || 'role:AK', a = AP.all(c, id, pf), r = a.r; if (r.err) return msg(r.err);
+    const head = `<div class="aw-fh"><small>${esc(r.group)}</small><b>${esc(r.label)}</b>${r.planet && r.label !== r.planet ? `<span class="aw-fp">${gly(r.planet)}${esc(r.planet)}</span>` : ''}<p class="aw-dim">${esc(r.via)}</p></div>`;
+    const strip = `<div class="aw-strip" role="list">${a.rows.map(x => `<span role="listitem" class="aw-cell ${x.err ? 'na' : STC(x.dignity)}${x.same ? ' sm' : ''}" title="${esc(x.key + ': ' + (x.err ? 'no place' : SIGN[x.sign] + ', ' + ordn(x.house) + ' house' + (x.dignity ? ', ' + (x.dignity.label || '') : '')))}"><i>${esc(x.key)}</i><b>${x.err ? '–' : esc(SIGN[x.sign].slice(0, 3))}</b></span>`).join('')}</div><p class="aw-legend"><i class="ex"></i>exalted <i class="ow"></i>own sign <i class="fr"></i>friend <i class="en"></i>enemy <i class="de"></i>debilitated <i class="sm"></i>same sign as D1</p>`;
+    const rows = a.rows.map(x => [`<b>${esc(x.key)}</b> <span class="aw-dim">${esc((AW_().VARGA_ABOUT[x.key] || '').replace(/ \(.*\)/, ''))}</span>`, x.err ? `<span class="aw-dim">${x.err === 'sign-only' ? 'sign only' : 'n/a'}</span>` : esc(SIGN[x.sign]), x.err ? '' : ordn(x.house), (x.dignity ? dchip(x.dignity) : '') + (x.same ? chip(x.key === 'D9' ? 'Vargottama' : 'same as D1', 'g') : '')]);
+    return head + `<div class="aw-read"><p>${esc(a.summary.text)}</p></div>` + (r.kind === 'sign' ? '' : strip) + table(['Chart', 'Sign', 'House', 'State'], rows);
+  };
+  W.points = (c, pf, o) => {
+    const AP = window.AWP; if (!AP) return msg('The point finder is not available.');
+    const key = vkey(o.varga), ids = String(o.subjects || '').split(',').filter(Boolean);
+    if (!ids.length) return msg('Pick at least one point.');
+    const rows = ids.map(id => {
+      const d1 = AP.locate(c, id, 'D1', pf), x = AP.locate(c, id, key, pf), r = d1.r;
+      if (r.err) return [`<b>${esc(AP.label(id))}</b>`, '', '', `<span class="aw-dim">${esc(r.err)}</span>`, ''];
+      const cell = x.err === 'sign-only' ? '<span class="aw-dim">sign only</span>' : x.err ? '<span class="aw-dim">n/a</span>' : `<b>${esc(SIGN[x.sign])}</b> · ${ordn(x.house)}`;
+      return [`<b>${esc(AP.label(id))}</b>`, r.planet ? gly(r.planet) + esc(r.planet) : '<span class="aw-dim">point</span>', `${esc(SIGN[d1.sign])} · ${ordn(d1.house)}`, cell, (x.dignity ? dchip(x.dignity) : '') + (x.same ? chip(key === 'D9' ? 'Vargottama' : 'same as D1', 'g') : '')];
+    });
+    return `<p class="aw-dim aw-sm" style="margin:0 0 8px">Each point in D1 and in ${esc(key)} (${esc(AW_().VARGA_ABOUT[key] || '')}).</p>` + table(['Point', 'Is', 'D1', key, 'State'], rows);
   };
   W.facts = (c, pf) => {
     const mo = c.planets.Moon, su = c.planets.Sun; let dn = ''; try { const cur = VDA.current(c); if (cur && cur.md) dn = cur.md.lord + (cur.ad ? ' / ' + cur.ad.lord : ''); } catch (e) {}
@@ -164,8 +202,9 @@
     return out ? `<div class="aw-read">${out}</div>` : msg('The reading is not available.');
   };
   W.planetreading = (c, pf, o) => {
-    const n = PL.indexOf(o.planet) >= 0 ? o.planet : 'Jupiter', p = c.planets[n];
-    try { const m = VMF.placement(n, p.house, p.sign, p.dignity && p.dignity.status); if (m) return `<div class="aw-read"><p><b>${esc(m.headline)}</b></p><p>${esc(m.text.replace(m.headline + '. ', ''))}</p></div>`; } catch (e) {}
+    const r = window.AWP ? AWP.resolve(o.planet || 'Jupiter', c, pf) : { planet: PL.indexOf(o.planet) >= 0 ? o.planet : 'Jupiter', label: o.planet };
+    if (r.err) return msg(r.err); const n = r.planet, p = c.planets[n]; if (!p) return msg('The reading is not available for ' + esc(n) + '.');
+    try { const m = VMF.placement(n, p.house, p.sign, p.dignity && p.dignity.status); if (m) return `<div class="aw-read">${r.label && r.label !== n ? `<p class="aw-dim">${esc(r.label)}: ${esc(r.via || n)}</p>` : ''}<p><b>${esc(m.headline)}</b></p><p>${esc(m.text.replace(m.headline + '. ', ''))}</p></div>`; } catch (e) {}
     return msg('The reading is not available.');
   };
   W.note = (c, pf, o) => {

@@ -26,13 +26,14 @@
     if (s.label) return s.label;
     if (s.k === 'p'){ const t = toolOf(s.t); return t ? t[2] : 'Tool'; }
     const w = AW.WMAP[s.t]; if (!w) return 'Missing card'; const o = s.o || {};
-    const bit = s.t === 'chart2' ? ' · ' + o.a + ' and ' + o.b : o.varga ? ' · ' + o.varga : o.house ? ' · house ' + o.house : o.planet ? ' · ' + o.planet : '';
+    const sl = id => { const x = (AW.SUBJECTS || []).find(q => q[0] === id); return x ? x[1].replace(/ \(.*$/, '') : id; };
+    const bit = s.t === 'chart2' ? ' · ' + o.a + ' and ' + o.b : o.subject ? ' · ' + sl(o.subject) + (o.varga ? ' in ' + o.varga : '') : o.subjects ? ' · ' + String(o.subjects).split(',').length + ' points in ' + o.varga : o.varga ? ' · ' + o.varga : o.house ? ' · house ' + o.house : o.planet ? ' · ' + sl(o.planet) : '';
     return w.name + bit;
   }
   function stepSummary(s){
     if (s.k === 'p'){ const t = toolOf(s.t); return t ? 'Tool · ' + t[3] : 'This tool is not in this version.'; }
     const w = AW.WMAP[s.t]; if (!w) return 'This card is not in this version.';
-    const bits = w.options.filter(x => x.values).map(x => { const v = (s.o || {})[x.k], p = x.values.find(q => q[0] === v); return p ? (p[1].length > 26 ? p[0] : p[1]) : ''; }).filter(Boolean);
+    const bits = w.options.filter(x => x.values).map(x => { const v = (s.o || {})[x.k]; if (x.k === 'subjects') return String(v || '').split(',').filter(Boolean).length + ' points'; const p = x.values.find(q => q[0] === v); return p ? p[1].replace(/ \(.*$/, '') : ''; }).filter(Boolean);
     return bits.length ? bits.join(' · ') : w.about;
   }
   function toast(msg, undo){
@@ -68,7 +69,7 @@
   function viewList(){
     ST.view = 'list'; ST.rid = null; restoreAll(); document.body.classList.remove('aw-present');
     const all = AW.list(), ui = AW.ui(), sorted = all.map((r, i) => [r, i]).sort((a, b) => (b[0].pin ? 1 : 0) - (a[0].pin ? 1 : 0) || (b[0].used || 0) - (a[0].used || 0) || a[1] - b[1]).map(x => x[0]);
-    let h = `<header class="aw-hero">${MANDALA}<small>Astrologer Workspace</small><h2>Your routines</h2><p>Build what you always check, once, in your own order. Open it on any chart and every item comes up in sequence.</p>${chartPill()}<div class="aw-hero-act"><button type="button" class="aw-btn pri" data-act="new">＋ New routine</button><button type="button" class="aw-btn" data-act="import">Import</button>${all.length ? '<button type="button" class="aw-btn" data-act="backup">Back up all</button>' : ''}</div></header>`;
+    let h = `<header class="aw-hero">${MANDALA}<small>Astrologer Workspace</small><h2>Your routines</h2><p>Build what you always check, once, in your own order. Open it on any chart and every item comes up in sequence.</p>${chartPill()}<div class="aw-hero-act"><button type="button" class="aw-btn pri" data-act="new">＋ New routine</button><button type="button" class="aw-btn" data-act="finder">⌖ Find a point</button><button type="button" class="aw-btn" data-act="import">Import</button>${all.length ? '<button type="button" class="aw-btn" data-act="backup">Back up all</button>' : ''}</div></header>`;
     if (imported){ h += `<div class="aw-banner">Imported from a link: <b>${esc(imported)}</b>. It is in your list below.</div>`; imported = ''; }
     if (!all.length) h += `<div class="aw-empty"><b>No routines yet</b><p>Make your first one, or bring back the starter set.</p><button type="button" class="aw-btn pri" data-act="starters">Add the starter routines</button></div>`;
     else h += `<section class="aw-grid">${sorted.map((r, i) => `<article class="aw-rc${r.pin ? ' pin' : ''}" style="--c:${esc(r.color)};--d:${Math.min(i, 8) * 45}ms"><button type="button" class="aw-rc-main" data-act="open" data-id="${esc(r.id)}" aria-label="Open ${esc(r.name)}"><span class="aw-rc-top"><span class="aw-ic">${esc(r.icon)}</span><b>${esc(r.name)}</b>${r.pin ? '<em title="Pinned">★</em>' : ''}</span>${r.note ? `<span class="aw-rc-note">${esc(r.note)}</span>` : ''}<span class="aw-rc-steps">${r.steps.slice(0, 9).map(s => `<i title="${esc(stepTitle(s))}">${esc(stepIcon(s))}</i>`).join('')}${r.steps.length > 9 ? `<i class="more">+${r.steps.length - 9}</i>` : ''}</span><span class="aw-rc-meta">${r.steps.length} step${r.steps.length === 1 ? '' : 's'}${r.uses ? ' · opened ' + r.uses + '×' : ''}${r.layout === 'board' ? ' · board' : ''}</span></button><span class="aw-rc-act"><button type="button" data-act="edit" data-id="${esc(r.id)}">Edit</button><button type="button" data-act="share" data-id="${esc(r.id)}">Share</button><button type="button" data-act="more" data-id="${esc(r.id)}" aria-label="More">⋯</button></span></article>`).join('')}</section>`;
@@ -148,6 +149,29 @@
       <div class="aw-ed-foot"><button type="button" class="aw-btn" data-act="share" data-id="${esc(r.id)}">Share</button><button type="button" class="aw-btn" data-act="dup" data-id="${esc(r.id)}">Duplicate</button><button type="button" class="aw-btn danger" data-act="del" data-id="${esc(r.id)}">Delete</button></div></div>`);
   }
 
+  /* ---------- point finder ---------- */
+  function findOut(){
+    const f = ST.find, el = $('#awFindOut'); if (!el) return;
+    el.innerHTML = chart() ? AWW.render(f.mode === 'all' ? 'locateall' : 'locate', chart(), prof(), { subject: f.subject, varga: f.varga, style: 'north' }) : '<p class="aw-msg">Cast a chart first.</p>';
+    $$('[data-act="fmode"]').forEach(b => b.classList.toggle('on', b.dataset.v === f.mode));
+    const cs = $('#awFindChart'); if (cs) cs.hidden = f.mode === 'all';
+    AW.setUi({ find: f });
+  }
+  function viewFinder(){
+    ST.view = 'finder'; ST.rid = null; restoreAll(); document.body.classList.remove('aw-present');
+    const saved = AW.ui().find || {}; ST.find = ST.find || { subject: saved.subject || 'role:AK', varga: saved.varga || 'D9', mode: saved.mode === 'all' ? 'all' : 'one' };
+    const f = ST.find, subj = AW.WMAP.locate.options[0], vg = AW.WMAP.locate.options[1];
+    const quick = [['role:AK', 'Atmakaraka'], ['role:DK', 'Darakaraka'], ['lord:1', 'Lagna lord'], ['lord:7', '7th lord'], ['dasha:md', 'Dasha lord'], ['lagna', 'Lagna'], ['pt:gulika', 'Gulika']];
+    set(`<div class="aw-find-view"><div class="aw-topbar"><button type="button" class="aw-ib" data-act="list" aria-label="Back to routines">‹</button><div class="aw-tt"><b>Point finder</b><small>${chartPill().replace(/<[^>]+>/g, '')}</small></div><button type="button" class="aw-btn pri sm" data-act="addtopick">＋ Routine</button></div>
+      <p class="aw-dim aw-lead">Pick anything: a planet, Atmakaraka, Darakaraka, a house lord, a special lagna. See where it stands in the main chart and in D9 or any divisional chart.</p>
+      <div class="aw-quick">${quick.map(q => `<button type="button" data-act="fquick" data-v="${esc(q[0])}" class="${f.subject === q[0] ? 'on' : ''}">${esc(q[1])}</button>`).join('')}</div>
+      <div class="aw-form"><label class="aw-lab">Point to find${selectHtml(subj, f.subject).replace('data-opt="subject"', 'id="awFSubj"')}</label>
+      <div class="aw-lab">Look in<div class="aw-seg wide"><button type="button" data-act="fmode" data-v="one" class="${f.mode === 'one' ? 'on' : ''}">One chart</button><button type="button" data-act="fmode" data-v="all" class="${f.mode === 'all' ? 'on' : ''}">All 23 charts</button></div></div>
+      <label class="aw-lab" id="awFindChart"${f.mode === 'all' ? ' hidden' : ''}>Divisional chart${selectHtml(vg, f.varga).replace('data-opt="varga"', 'id="awFVarga"')}</label></div>
+      <div class="aw-step ready aw-fstep"><div class="aw-sbody" id="awFindOut"></div></div></div>`);
+    findOut();
+  }
+
   /* ---------- sheets ---------- */
   function sheet(title, body, cls){
     if (!sheetEl){ sheetEl = document.createElement('div'); sheetEl.className = 'aw-sheet vax-skip'; sheetEl.setAttribute('role', 'dialog'); sheetEl.setAttribute('aria-modal', 'true'); document.body.appendChild(sheetEl);
@@ -173,8 +197,18 @@
   function openPicker(at){ ST.pick = { tab: 'cards', q: '', grp: '', at: at == null ? null : at }; sheet('Add a step', pickerHtml(), 'tall'); }
   function repaintPicker(keep){ const b = $('.aw-sh-b', sheetEl); if (!b) return; const q = $('#awQ', sheetEl), pos = q ? q.selectionStart : 0; b.innerHTML = pickerHtml(); if (keep){ const n = $('#awQ', sheetEl); if (n){ n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} } } }
 
+  function subjChips(cur){
+    const on = String(cur || '').split(',').filter(Boolean), groups = [];
+    AW.SUBJECTS.forEach(x => { let g = groups.find(q => q[0] === x[2]); if (!g){ g = [x[2], []]; groups.push(g); } g[1].push(x); });
+    return `<div class="aw-presets">${AW.SUBJ_PRESETS.map(p => `<button type="button" data-act="preset" data-v="${esc(p[1])}">${esc(p[0])}</button>`).join('')}<button type="button" data-act="preset" data-v="">Clear</button></div>` + groups.map(g => `<details class="aw-sg"${g[1].some(x => on.indexOf(x[0]) >= 0) ? ' open' : ''}><summary>${esc(g[0])}<em>${g[1].filter(x => on.indexOf(x[0]) >= 0).length || ''}</em></summary><div class="aw-sc">${g[1].map(x => `<button type="button" data-act="subjtoggle" data-v="${esc(x[0])}" aria-pressed="${on.indexOf(x[0]) >= 0}" class="${on.indexOf(x[0]) >= 0 ? 'on' : ''}">${esc(x[1].replace(/ \(.*$/, ''))}</button>`).join('')}</div></details>`).join('');
+  }
+  function selectHtml(x, val){
+    const grouped = x.values.length && x.values[0][2], opts = grouped ? x.values.reduce((a, v) => { (a[v[2]] = a[v[2]] || []).push(v); return a; }, {}) : null;
+    const one = v => `<option value="${esc(v[0])}"${val === v[0] ? ' selected' : ''}>${esc(v[1])}</option>`;
+    return `<select data-opt="${esc(x.k)}">${grouped ? Object.keys(opts).map(g => `<optgroup label="${esc(g)}">${opts[g].map(one).join('')}</optgroup>`).join('') : x.values.map(one).join('')}</select>`;
+  }
   function optionsHtml(w, o){
-    return w.options.map(x => x.values ? `<label class="aw-lab">${esc(x.label)}<select data-opt="${esc(x.k)}">${x.values.map(v => `<option value="${esc(v[0])}"${o[x.k] === v[0] ? ' selected' : ''}>${esc(v[1])}</option>`).join('')}</select></label>` : `<label class="aw-lab">${esc(x.label)}<textarea data-opt="${esc(x.k)}" rows="5" maxlength="1200" placeholder="Write a line or a checklist. Start a line with - for a tick box.">${esc(o[x.k] || '')}</textarea></label>`).join('');
+    return w.options.map(x => x.k === 'subjects' ? `<div class="aw-lab">${esc(x.label)}<div id="awSubj">${subjChips(o[x.k])}</div></div>` : x.values ? `<label class="aw-lab">${esc(x.label)}${selectHtml(x, o[x.k])}</label>` : `<label class="aw-lab">${esc(x.label)}<textarea data-opt="${esc(x.k)}" rows="5" maxlength="1200" placeholder="Write a line or a checklist. Start a line with - for a tick box.">${esc(o[x.k] || '')}</textarea></label>`).join('');
   }
   function openConfig(w, step){
     const o = step ? Object.assign({}, step.o) : AW.defaults(w.id);
@@ -240,6 +274,10 @@
       case 'share': closeSheet(); shareSheet(id); break;
       case 'more': moreSheet(id); break;
       case 'import': importSheet(); break;
+      case 'finder': ST.find = null; viewFinder(); break;
+      case 'fmode': ST.find.mode = b.dataset.v; findOut(); break;
+      case 'fquick': ST.find.subject = b.dataset.v; { const sel = $('#awFSubj'); if (sel) sel.value = ST.find.subject; } $$('.aw-quick button').forEach(k => k.classList.toggle('on', k === b)); findOut(); break;
+      case 'addtopick': { const all = AW.list(); sheet('Add to which routine?', all.length ? `<div class="aw-menu">${all.map(r => `<button type="button" data-act="addto" data-id="${esc(r.id)}">${esc(r.icon)} ${esc(r.name)} <small>· ${r.steps.length} steps</small></button>`).join('')}</div>` : '<p class="aw-msg">Make a routine first.</p>', ''); break; }
       case 'backup': download('astro-workspace-' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify(AW.list(), null, 1)); toast('Backup saved as a file.'); break;
       case 'starters': AW.starters().reverse().forEach(s => AW.save(s)); AW.setUi({ seeded: 1 }); viewList(); break;
       case 'go': go(+b.dataset.i); break;
@@ -271,6 +309,10 @@
       case 'pickw': openConfig(AW.WMAP[id]); break;
       case 'picktool': openToolConfig(id); break;
       case 'savestep': saveStep(); break;
+      case 'preset': case 'subjtoggle': { const cfg = ST.pick && ST.pick.cfg; if (!cfg) break; let cur = String(cfg.o.subjects || '').split(',').filter(Boolean);
+        if (a === 'preset') cur = b.dataset.v ? b.dataset.v.split(',') : []; else { const v = b.dataset.v, i = cur.indexOf(v); if (i >= 0) cur.splice(i, 1); else if (cur.length < 12) cur.push(v); else toast('Up to 12 points.'); }
+        cfg.o.subjects = cur.join(','); const box = $('#awSubj', sheetEl); if (box) box.innerHTML = subjChips(cfg.o.subjects); previewCfg(); break; }
+      case 'addto': { const r = AW.get(id), f = ST.find; if (!r || !f) break; if (r.steps.length >= AW.MAXSTEPS){ toast('A routine can hold ' + AW.MAXSTEPS + ' steps.'); break; } r.steps.push(f.mode === 'all' ? AW.step('w', 'locateall', { subject: f.subject }) : AW.step('w', 'locate', { subject: f.subject, varga: f.varga })); AW.save(r); closeSheet(); toast('Added to "' + r.name + '".'); break; }
       case 'share': closeSheet(); shareSheet(id); break;
       case 'dup': case 'pin': case 'del': closeSheet(); act(a, b, id); break;
       case 'sharecode': { const r = AW.get(id); if (!r) break; const code = AW.encode(r); if (navigator.share){ navigator.share({ title: r.name, text: code }).catch(() => {}); } else copyText(code).then(ok => toast(ok ? 'Code copied.' : 'Select the code and copy it.')); break; }
@@ -286,6 +328,7 @@
     if (t.dataset && t.dataset.opt && ST.pick && ST.pick.cfg){ ST.pick.cfg.o[t.dataset.opt] = t.value; if (t.tagName === 'TEXTAREA'){ clearTimeout(onSheetInput.t); onSheetInput.t = setTimeout(previewCfg, 250); } else previewCfg(); }
   }
   function onInput(e){
+    if (ST.view === 'finder' && ST.find){ if (e.target.id === 'awFSubj'){ ST.find.subject = e.target.value; $$('.aw-quick button').forEach(k => k.classList.toggle('on', k.dataset.v === ST.find.subject)); findOut(); } else if (e.target.id === 'awFVarga'){ ST.find.varga = e.target.value; findOut(); } return; }
     const r = ST.ed; if (!r) return;
     if (e.target.id === 'awName'){ r.name = e.target.value.slice(0, 60) || 'My routine'; persist(); }
     else if (e.target.id === 'awNote'){ r.note = e.target.value.slice(0, 400); persist(); }
@@ -303,7 +346,7 @@
   function bind(){
     if (bound && root.dataset.bound === '1') return;
     root.dataset.bound = '1'; bound = true;
-    root.addEventListener('click', onClick); root.addEventListener('input', onInput);
+    root.addEventListener('click', onClick); root.addEventListener('input', onInput); root.addEventListener('change', onInput);
     root.addEventListener('touchstart', onTouchStart, { passive: true }); root.addEventListener('touchend', onTouchEnd, { passive: true });
   }
   if (!window.__awKeys){ window.__awKeys = true; document.addEventListener('keydown', onKey); }
@@ -317,6 +360,7 @@
     AW.setUi({ seeded: 1 });
     if (ST.view === 'run' && ST.rid && AW.get(ST.rid)) viewRun(ST.rid, ST.step);
     else if (ST.view === 'edit' && ST.ed) viewEdit(ST.ed.id);
+    else if (ST.view === 'finder') viewFinder();
     else viewList();
   }
   function leave(){ restoreAll(); present(false); closeSheet(); }

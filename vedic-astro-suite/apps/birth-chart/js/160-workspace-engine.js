@@ -12,14 +12,31 @@
   const VARGA_ABOUT = { D1: 'Rashi (the main chart)', D2: 'Hora (wealth)', D3: 'Drekkana (siblings, courage)', D4: 'Chaturthamsha (home, luck)', D5: 'Panchamsha (fame, merit)', D6: 'Shashthamsha (health, debts)', D7: 'Saptamsha (children)', D8: 'Ashtamsha (sudden change)', D9: 'Navamsha (marriage, dharma)', D10: 'Dashamsha (career)', D11: 'Rudramsha (gains, ends)', D12: 'Dwadashamsha (parents)', D16: 'Shodashamsha (vehicles, comforts)', D20: 'Vimshamsha (devotion)', D24: 'Siddhamsha (learning)', D27: 'Bhamsha (strength)', D30: 'Trimshamsha (troubles)', D40: 'Khavedamsha (maternal line)', D45: 'Akshavedamsha (paternal line)', D60: 'Shashtiamsha (past karma)', D81: 'Navanavamsha', D108: 'Ashtottaramsha', D144: 'Dwadashadwadashamsha' };
   const PLANETS = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu'];
   const STYLES = ['north','south'];
-  const GROUPS = [['chart','Charts','◈'],['table','Tables','▤'],['time','Time & dasha','◷'],['strength','Strength','⚖'],['combo','Combinations','✦'],['read','Plain words','✎']];
+  const GROUPS = [['find','Find a point','⌖'],['chart','Charts','◈'],['table','Tables','▤'],['time','Time & dasha','◷'],['strength','Strength','⚖'],['combo','Combinations','✦'],['read','Plain words','✎']];
   const opt = (k, label, values, def) => ({ k, label, values, def });
   const VARGA_OPT = opt('varga', 'Divisional chart', VARGA_KEYS.map(k => [k, k + ' · ' + (VARGA_ABOUT[k] || '')]), 'D1');
   const STYLE_OPT = opt('style', 'Chart style', [['north','North Indian'],['south','South Indian']], 'north');
   const PLANET_OPT = opt('planet', 'Planet', PLANETS.map(p => [p, p]), 'Jupiter');
+  /* variables a person can pick: [id, label, group]. Resolved against a chart by AWP (js/163). */
+  const ORD = n => n + (['th','st','nd','rd'][(n % 100 > 10 && n % 100 < 14) ? 0 : Math.min(n % 10, 4) % 4] || 'th');
+  const SUBJECTS = [].concat(
+    PLANETS.concat(['Uranus', 'Neptune', 'Pluto']).map(p => [p, p, 'Planets']),
+    [['role:AK', 'Atmakaraka (AK, the soul)', 'Chara Karakas'], ['role:AmK', 'Amatyakaraka (AmK, career)', 'Chara Karakas'], ['role:BK', 'Bhratrikaraka (BK, siblings)', 'Chara Karakas'], ['role:MK', 'Matrikaraka (MK, mother)', 'Chara Karakas'], ['role:PuK', 'Putrakaraka (PuK, children)', 'Chara Karakas'], ['role:GK', 'Gnatikaraka (GK, rivals)', 'Chara Karakas'], ['role:DK', 'Darakaraka (DK, partner)', 'Chara Karakas']],
+    Array.from({ length: 12 }, (_, i) => ['lord:' + (i + 1), 'Lord of the ' + ORD(i + 1) + ' house' + (i === 0 ? ' (Lagna lord)' : ''), 'House lords']),
+    [['lagna', 'Lagna (rising point)', 'Special points'], ['pt:gulika', 'Gulika (Mandi)', 'Special points'], ['pt:bb', 'Bhrigu Bindu', 'Special points'], ['pt:hora', 'Hora Lagna', 'Special points'], ['pt:ghati', 'Ghati Lagna', 'Special points'], ['pt:shree', 'Shree Lagna', 'Special points'], ['pt:prana', 'Pranapada Lagna', 'Special points'], ['pt:bhava', 'Bhava Lagna', 'Special points'], ['pt:vighati', 'Vighati Lagna', 'Special points']],
+    [['dasha:md', 'Mahadasha lord now', 'Time and strength'], ['dasha:ad', 'Antardasha lord now', 'Time and strength'], ['strong', 'Strongest planet (Shadbala)', 'Time and strength'], ['weak', 'Weakest planet (Shadbala)', 'Time and strength'], ['nak:Moon', 'Nakshatra lord of the Moon', 'Time and strength'], ['nak:Lagna', 'Nakshatra lord of the Lagna', 'Time and strength']],
+    [['sg:AL', 'Arudha Lagna (AL)', 'Sign-only points'], ['sg:UL', 'Upapada Lagna (UL)', 'Sign-only points'], ['sg:KL', 'Karakamsha (KL)', 'Sign-only points'], ['sg:INDU', 'Indu Lagna', 'Sign-only points'], ['sg:SWAMSHA', 'Swamsha Lagna', 'Sign-only points']]
+  );
+  const SUBJ_VALUES = SUBJECTS.map(x => [x[0], x[1], x[2]]);
+  const PLANET_SUBJECTS = SUBJECTS.filter(x => /^(Sun|Moon|Mars|Mercury|Jupiter|Venus|Saturn|Rahu|Ketu|role:|lord:|dasha:|strong|weak|nak:)/.test(x[0])).map(x => [x[0], x[1], x[2]]);
+  const SUBJ_PRESETS = [['Karakas', 'role:AK,role:AmK,role:BK,role:MK,role:PuK,role:GK,role:DK'], ['Planets', PLANETS.join(',')], ['House lords', Array.from({ length: 12 }, (_, i) => 'lord:' + (i + 1)).join(',')], ['Special points', 'lagna,pt:gulika,pt:bb,pt:hora,pt:ghati,pt:shree'], ['Marriage', 'role:DK,lord:7,Venus,pt:bb,sg:UL']];
+  const SUBJ_OPT = opt('subject', 'Point to find', SUBJ_VALUES, 'role:AK');
   const HOUSE_OPT = opt('house', 'House', Array.from({ length: 12 }, (_, i) => [String(i + 1), 'House ' + (i + 1)]), '7');
   /* [id, name, icon, group, about, options] */
   const W = [
+    ['locate', 'Where is it? (one point, one chart)', '⌖', 'find', 'Pick a planet, Atmakaraka, Darakaraka, a house lord or a special point, and see where it stands in D9 or any divisional chart, drawn with the point lit up.', [SUBJ_OPT, Object.assign({}, VARGA_OPT, { def: 'D9' }), STYLE_OPT]],
+    ['locateall', 'Everywhere (one point, all 23 charts)', '◎', 'find', 'One point across every divisional chart: its sign, house and strength in each, with a strip that shows where it is strong or weak.', [SUBJ_OPT]],
+    ['points', 'Several points in one chart', '⋮⋮', 'find', 'Choose several points (for example AK, AmK and DK, or all house lords) and see all of them in one divisional chart in a single table.', [opt('subjects', 'Points to find', SUBJ_VALUES, 'role:AK,role:AmK,role:DK'), Object.assign({}, VARGA_OPT, { def: 'D9' })]],
     ['chart', 'Divisional chart', '◈', 'chart', 'Any chart from D1 to D144, drawn with its planets, in North or South style.', [VARGA_OPT, STYLE_OPT]],
     ['chart2', 'Two charts side by side', '◫', 'chart', 'Compare two charts at a glance, for example D1 with D9.', [Object.assign({}, VARGA_OPT, { k: 'a', label: 'Left chart', def: 'D1' }), Object.assign({}, VARGA_OPT, { k: 'b', label: 'Right chart', def: 'D9' }), STYLE_OPT]],
     ['moonchart', 'Chart from the Moon', '☾', 'chart', 'The chart counted from the Moon sign (Chandra Lagna).', [STYLE_OPT]],
@@ -40,7 +57,7 @@
     ['dosha', 'Doshas check', '🧿', 'combo', 'Manglik, Kaal Sarp and the other doshas, found or not found.', []],
     ['aspects', 'Aspects on a house', '⇆', 'combo', 'Which planets look at a chosen house and which planets sit in it.', [HOUSE_OPT]],
     ['housereading', 'Reading of a house', '✎', 'read', 'A plain-words reading of one house: its lord, its planets and what it means for you.', [HOUSE_OPT]],
-    ['planetreading', 'Reading of a planet', '✎', 'read', 'A plain-words reading of one planet where it stands in this chart.', [PLANET_OPT]],
+    ['planetreading', 'Reading of a planet', '✎', 'read', 'A plain-words reading of one planet where it stands in this chart. Pick a planet or a role such as Atmakaraka or the 7th lord.', [opt('planet', 'Planet or role', PLANET_SUBJECTS, 'Jupiter')]],
     ['note', 'My own note', '✍', 'read', 'A card with your own words: a checklist, a question to ask, a reminder.', [opt('text', 'Your note', null, '')]]
   ];
   const WIDGETS = W.map(w => ({ id: w[0], name: w[1], icon: w[2], group: w[3], about: w[4], options: w[5] }));
@@ -59,7 +76,8 @@
   function cleanOpts(id, o){
     const w = WMAP[id], out = defaults(id); if (!w || !o || typeof o !== 'object') return out;
     w.options.forEach(x => {
-      if (x.values){ const v = String(o[x.k]); if (x.values.some(p => p[0] === v)) out[x.k] = v; }
+      if (x.k === 'subjects'){ const ok = String(o[x.k] || '').split(',').filter((v, i, a2) => x.values.some(p => p[0] === v) && a2.indexOf(v) === i).slice(0, 12); if (ok.length) out[x.k] = ok.join(','); }
+      else if (x.values){ const v = String(o[x.k]); if (x.values.some(p => p[0] === v)) out[x.k] = v; }
       else if (typeof o[x.k] === 'string') out[x.k] = multi(o[x.k], 1200);
     });
     return out;
@@ -141,6 +159,6 @@
     ];
   }
 
-  const api = { KEY, UIKEY, MAXSTEPS, WIDGETS, WMAP, GROUPS, COLORS, ICONS, VARGA_KEYS, VARGA_ABOUT, PLANETS, STYLES, uid, sid, defaults, cleanOpts, step, blank, sanitize, list, get, save, remove, duplicate, touch, move, ui, setUi, encode, decode, starters };
+  const api = { SUBJECTS, SUBJ_PRESETS, PLANET_SUBJECTS, KEY, UIKEY, MAXSTEPS, WIDGETS, WMAP, GROUPS, COLORS, ICONS, VARGA_KEYS, VARGA_ABOUT, PLANETS, STYLES, uid, sid, defaults, cleanOpts, step, blank, sanitize, list, get, save, remove, duplicate, touch, move, ui, setUi, encode, decode, starters };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.AW = api;
 })(typeof window !== 'undefined' ? window : globalThis);
